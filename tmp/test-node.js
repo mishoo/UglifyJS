@@ -7,14 +7,19 @@
     var sys = require("util");
 
     function load_global(file) {
-        var code = fs.readFileSync(file, "utf8");
-        return vm.runInThisContext(code, file);
+        try {
+            var code = fs.readFileSync(file, "utf8");
+            return vm.runInThisContext(code, file);
+        } catch(ex) {
+            sys.debug("ERROR in file: " + file + " / " + ex);
+            process.exit(1);
+        }
     };
 
-    load_global("./utils.js");
-    load_global("./ast.js");
-    load_global("./parse.js");
-    load_global("./output.js");
+    load_global("../lib/utils.js");
+    load_global("../lib/ast.js");
+    load_global("../lib/parse.js");
+    load_global("../lib/output.js");
 
     ///
 
