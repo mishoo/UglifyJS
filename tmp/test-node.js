@@ -5,8 +5,10 @@
     var fs = require("fs");
     var vm = require("vm");
     var sys = require("util");
+    var path = require("path");
 
     function load_global(file) {
+        file = path.resolve(path.dirname(module.filename), file);
         try {
             var code = fs.readFileSync(file, "utf8");
             return vm.runInThisContext(code, file);
