@@ -18,6 +18,11 @@ time_it("scope", function(){
 time_it("mangle", function(){
     ast.mangle_names();
 });
+time_it("compress", function(){
+    var compressor = new UglifyJS.Compressor({
+    });
+    ast = ast.squeeze(compressor);
+});
 time_it("generate", function(){
     ast.print(stream);
 });

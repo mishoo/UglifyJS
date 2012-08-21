@@ -3,7 +3,9 @@ var vm = require("vm");
 var sys = require("util");
 var path = require("path");
 
-var UglifyJS = vm.createContext({});
+var UglifyJS = vm.createContext({
+    sys: sys
+});
 
 function load_global(file) {
     file = path.resolve(path.dirname(module.filename), file);
