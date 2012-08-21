@@ -18,6 +18,9 @@ time_it("scope", function(){
 time_it("mangle", function(){
     ast.mangle_names();
 });
+
+ast.scope_warnings();
+
 time_it("compress", function(){
     var compressor = new UglifyJS.Compressor({
     });
