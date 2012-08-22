@@ -3,7 +3,7 @@
 var sys = require("util");
 var fs = require("fs");
 
-var UglifyJS = require("../tools/node.js");
+var UglifyJS = require("../tools/node");
 
 var filename = process.argv[2];
 var code = fs.readFileSync(filename, "utf8");

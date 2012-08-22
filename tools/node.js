@@ -4,7 +4,8 @@ var sys = require("util");
 var path = require("path");
 
 var UglifyJS = vm.createContext({
-    sys: sys
+    sys     : sys,
+    console : console
 });
 
 function load_global(file) {
