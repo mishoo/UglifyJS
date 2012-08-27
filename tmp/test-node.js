@@ -11,28 +11,41 @@ var code = fs.readFileSync(filename, "utf8");
 var ast = time_it("parse", function() {
     return UglifyJS.parse(code);
 });
-var stream = UglifyJS.OutputStream({ beautify: false });
+
 time_it("scope", function(){
+    // calling figure_out_scope is a prerequisite for mangle_names,
+    // scope_warnings and compress
+    //
+    // perhaps figure_out_scope should be called automatically by the
+    // parser, but there might be instances where the functionality is
+    // not needed.
     ast.figure_out_scope();
 });
-// time_it("mangle", function(){
-//     ast.mangle_names();
-// });
 
-//ast.scope_warnings();
+ast.scope_warnings();
+
+time_it("mangle", function(){
+    ast.mangle_names();
+});
 
 time_it("compress", function(){
     var compressor = new UglifyJS.Compressor({
+        // sequences     : true,
+        // properties    : true,
+        // dead_code     : true,
+        // keep_comps    : true,
+        // drop_debugger : true,
+        // unsafe        : true,
+        // warnings      : true
     });
     ast = ast.squeeze(compressor);
 });
 
+var stream = UglifyJS.OutputStream({ beautify: false });
 time_it("generate", function(){
     ast.print(stream);
 });
 sys.puts(stream.get());
-
-//ast.scope_warnings();
 
 function time_it(name, cont) {
     var t1 = new Date().getTime();
