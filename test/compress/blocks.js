@@ -20,7 +20,7 @@ keep_some_blocks: {
         // 1.
         if (foo) {
             {{{}}}
-            if (bar) baz();
+            if (bar) { baz(); }
             {{}}
         } else {
             stuff();

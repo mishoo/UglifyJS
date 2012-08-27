@@ -22,11 +22,11 @@ function log() {
 }
 
 function log_directory(dir) {
-    log("--- Entering [{dir}]", { dir: dir });
+    log("*** Entering [{dir}]", { dir: dir });
 }
 
 function log_start_file(file) {
-    log("*** {file}", { file: file });
+    log("--- {file}", { file: file });
 }
 
 function log_test(name) {
