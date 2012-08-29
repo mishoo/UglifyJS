@@ -83,6 +83,12 @@ test file).
 
 #### A word about Esprima
 
+**UPDATE**: A
+[discussion in my commit](https://github.com/mishoo/UglifyJS2/commit/ce8e8d57c0d346dba9527b7a11b03364ce9ad1bb#commitcomment-1771586)
+suggests that Esprima is not as slow as I thought even when requesting
+location information.  YMMV.  In any case, we're going to keep the
+battle-tested parser in UglifyJS.
+
 [Esprima](http://esprima.org/) is a really nice JavaScript parser.  It
 supports EcmaScript 5.1 and it claims to be “up to 3x faster than UglifyJS's
 parse-js”.  I thought that's quite cool and I considered using Esprima in
