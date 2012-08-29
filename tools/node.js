@@ -4,8 +4,10 @@ var sys = require("util");
 var path = require("path");
 
 var UglifyJS = vm.createContext({
-    sys     : sys,
-    console : console
+    sys           : sys,
+    console       : console,
+
+    MOZ_SourceMap : require("source-map")
 });
 
 function load_global(file) {
@@ -27,6 +29,7 @@ load_global("../lib/parse.js");
 load_global("../lib/scope.js");
 load_global("../lib/output.js");
 load_global("../lib/compress.js");
+load_global("../lib/sourcemap.js");
 
 UglifyJS.AST_Node.warn_function = function(txt) {
     sys.debug(txt);
