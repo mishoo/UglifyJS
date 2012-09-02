@@ -28,8 +28,10 @@ function do_file(file) {
 
     // generate source into the output stream
     // first reset the current file name in the source map.
-    map.set_source(file);
-    ast.print(output);
+    UglifyJS.time_it("generate", function(){
+        map.set_source(file);
+        ast.print(output);
+    });
 };
 
 files.forEach(do_file);

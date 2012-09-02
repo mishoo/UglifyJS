@@ -1,0 +1,141 @@
+#! /usr/bin/env node
+// -*- js -*-
+
+var UglifyJS = require("../tools/node");
+var sys = require("util");
+var optimist = require("optimist");
+var fs = require("fs");
+var ARGS = optimist
+    .usage("uglifyjs2 [options] input1.js input2.js ...")
+    .describe("source-map", "Specify an output file where to generate source map")
+    .describe("source-map-root", "The root of the original source to be included in the source map")
+    .describe("p", "Skip prefix for original filenames that appear in source maps")
+    .alias("p", "prefix")
+    .describe("o", "Output file (default STDOUT)")
+    .alias("o", "output")
+    .describe("stats", "Display operations run time on STDERR")
+    .describe("v", "Verbose")
+    .argv
+;
+
+for (var i in ARGS) if (ARGS.hasOwnProperty(i) && /-/.test(i)) {
+    ARGS[i.replace(/-/g, "_")] = ARGS[i];
+}
+
+if (ARGS.h || ARGS.help) {
+    sys.puts(optimist.help());
+    process.exit(0);
+}
+
+var files = ARGS._.slice();
+
+if (files.length == 0) {
+    sys.error("ERROR: No input files.");
+    sys.puts(optimist.help());
+    process.exit(1);
+}
+
+if (files.indexOf("-") >= 0 && ARGS.source_map) {
+    sys.error("ERROR: Source map doesn't work with input from STDIN");
+    process.exit(1);
+}
+
+if (files.filter(function(el){ return el == "-" }).length > 1) {
+    sys.error("ERROR: Can read a single file from STDIN (two or more dashes specified)");
+    process.exit(1);
+}
+
+var STATS = {};
+var OUTPUT_FILE = ARGS.o;
+
+var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
+    file: output,
+    root: ARGS.source_map_root
+}) : null;
+
+var output = UglifyJS.OutputStream({
+    beautify: false,
+    source_map: SOURCE_MAP
+});
+
+files.forEach(do_file);
+
+if (SOURCE_MAP) {
+    fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
+}
+
+if (OUTPUT_FILE) {
+    fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+} else {
+    sys.print(output);
+    sys.error("\n");
+}
+
+if (ARGS.stats) {
+    sys.error(UglifyJS.string_template("Timing information (compressed {count} files):", {
+        count: files.length
+    }));
+    for (var i in STATS) if (STATS.hasOwnProperty(i)) {
+        sys.error(UglifyJS.string_template("- {name}: {time}s", {
+            name: i,
+            time: (STATS[i] / 1000).toFixed(3)
+        }));
+    }
+}
+
+/* -----[ functions ]----- */
+
+function do_file(file) {
+    if (ARGS.v) {
+        sys.error("Compressing " + file);
+    }
+    var code = read_whole_file(file);
+    var ast;
+    time_it("parse", function(){
+        ast = UglifyJS.parse(code);
+    });
+    time_it("scope", function(){
+        ast.figure_out_scope();
+    });
+    time_it("mangle", function(){
+        ast.mangle_names();
+    });
+    time_it("squeeze", function(){
+        var compressor = UglifyJS.Compressor();
+        ast = ast.squeeze(compressor);
+    });
+    time_it("generate", function(){
+        if (SOURCE_MAP) {
+            if (ARGS.p != null) {
+                file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
+            }
+            SOURCE_MAP.set_source(file);
+        }
+        ast.print(output);
+    });
+}
+
+function read_whole_file(filename) {
+    if (filename == "-") {
+        // XXX: this sucks.  How does one read the whole STDIN
+        // synchronously?
+        filename = "/dev/stdin";
+    }
+    try {
+        return fs.readFileSync(filename, "utf8");
+    } catch(ex) {
+        sys.error("ERROR: can't read file: " + filename);
+        process.exit(1);
+    }
+}
+
+function time_it(name, cont) {
+    var t1 = new Date().getTime();
+    var ret = cont();
+    if (ARGS.stats) {
+        var spent = new Date().getTime() - t1;
+        if (STATS[name]) STATS[name] += spent;
+        else STATS[name] = spent;
+    }
+    return ret;
+};
