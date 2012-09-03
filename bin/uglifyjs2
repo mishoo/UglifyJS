@@ -6,15 +6,22 @@ var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
 var ARGS = optimist
-    .usage("uglifyjs2 [options] input1.js input2.js ...")
+    .usage("uglifyjs2 [options] input1.js input2.js ...\n\
+(maximum compression settings are on by default)\
+")
     .describe("source-map", "Specify an output file where to generate source map")
     .describe("source-map-root", "The root of the original source to be included in the source map")
     .describe("p", "Skip prefix for original filenames that appear in source maps")
-    .alias("p", "prefix")
     .describe("o", "Output file (default STDOUT)")
-    .alias("o", "output")
     .describe("stats", "Display operations run time on STDERR")
     .describe("v", "Verbose")
+    .describe("b", "Beautify output")
+
+    .alias("p", "prefix")
+    .alias("o", "output")
+    .alias("v", "verbose")
+    .alias("b", "beautify")
+
     .argv
 ;
 
@@ -54,14 +61,17 @@ var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
 }) : null;
 
 var output = UglifyJS.OutputStream({
-    beautify: false,
+    beautify: ARGS.b,
     source_map: SOURCE_MAP
 });
 
 files.forEach(do_file);
 
+output = output.get();
+
 if (SOURCE_MAP) {
     fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
+    output += "\n//@ sourceMappingURL=" + ARGS.source_map;
 }
 
 if (OUTPUT_FILE) {
@@ -101,7 +111,7 @@ function do_file(file) {
         ast.mangle_names();
     });
     time_it("squeeze", function(){
-        var compressor = UglifyJS.Compressor();
+        var compressor = UglifyJS.Compressor({});
         ast = ast.squeeze(compressor);
     });
     time_it("generate", function(){
