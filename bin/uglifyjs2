@@ -22,6 +22,9 @@ var ARGS = optimist
     .alias("v", "verbose")
     .alias("b", "beautify")
 
+    .boolean("b")
+    .boolean("v")
+
     .argv
 ;
 
