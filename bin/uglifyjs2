@@ -6,8 +6,9 @@ var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
 var ARGS = optimist
-    .usage("uglifyjs2 [options] input1.js input2.js ...\n\
-(maximum compression settings are on by default)\
+    .usage("uglifyjs2 [options] input1.js [input2.js ...]\n\
+Maximum compression settings are on by default.\n\
+Use a single dash to read input from the standard input.\
 ")
     .describe("source-map", "Specify an output file where to generate source map")
     .describe("source-map-root", "The root of the original source to be included in the source map")
