@@ -81,7 +81,7 @@ function parse_test(file) {
         if (node instanceof U.AST_LabeledStatement
             && tw.parent() instanceof U.AST_Toplevel) {
             var name = node.label.name;
-            tests[name] = get_one_test(name, node.statement);
+            tests[name] = get_one_test(name, node.body);
             return true;
         }
         if (!(node instanceof U.AST_Toplevel)) croak(node);
@@ -118,7 +118,7 @@ function parse_test(file) {
                         col: node.label.start.col
                     })
                 );
-                var stat = node.statement;
+                var stat = node.body;
                 if (stat instanceof U.AST_BlockStatement)
                     stat.required = 1;
                 test[node.label.name] = stat;
