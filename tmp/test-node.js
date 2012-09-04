@@ -22,7 +22,7 @@ time_it("scope", function(){
     ast.figure_out_scope();
 });
 
-// ast.scope_warnings();
+ast.scope_warnings();
 
 time_it("mangle", function(){
     ast.mangle_names();
