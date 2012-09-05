@@ -25,6 +25,7 @@ Use a single dash to read input from the standard input.\
 
     .boolean("b")
     .boolean("v")
+    .boolean("stats")
 
     .argv
 ;
