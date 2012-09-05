@@ -41,7 +41,7 @@ time_it("compress", function(){
     ast = ast.squeeze(compressor);
 });
 
-var stream = UglifyJS.OutputStream({ beautify: false });
+var stream = UglifyJS.OutputStream({ beautify: true });
 time_it("generate", function(){
     ast.print(stream);
 });
