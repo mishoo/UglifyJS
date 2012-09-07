@@ -44,6 +44,13 @@ function test_directory(dir) {
     return path.resolve(tests_dir, dir);
 }
 
+function as_toplevel(input) {
+    if (input instanceof U.AST_BlockStatement) input = input.body;
+    else if (input instanceof U.AST_StatementBase) input = [ input ];
+    else throw new Error("Unsupported input syntax");
+    return new U.AST_Toplevel({ body: input });
+}
+
 function run_compress_tests() {
     var dir = test_directory("compress");
     log_directory("compress");
@@ -53,8 +60,10 @@ function run_compress_tests() {
         function test_case(test) {
             log_test(test.name);
             var cmp = new U.Compressor(test.options || {}, true);
-            var expect = make_code(test.expect, false);
-            var output = make_code(test.input.squeeze(cmp), false);
+            var expect = make_code(as_toplevel(test.expect), false);
+            var input = as_toplevel(test.input);
+            input.figure_out_scope();
+            var output = make_code(input.squeeze(cmp), false);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
                     input: make_code(test.input),
