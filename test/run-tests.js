@@ -119,8 +119,8 @@ function parse_test(file) {
                     })
                 );
                 var stat = node.body;
-                if (stat instanceof U.AST_BlockStatement)
-                    stat.required = 1;
+                if (stat instanceof U.AST_BlockStatement && stat.body.length == 1)
+                    stat = stat.body[0];
                 test[node.label.name] = stat;
                 return true;
             }
