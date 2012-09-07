@@ -32,7 +32,7 @@ load_global("../lib/compress.js");
 load_global("../lib/sourcemap.js");
 
 UglifyJS.AST_Node.warn_function = function(txt) {
-    sys.debug(txt);
+    sys.error("WARN: " + txt);
 };
 
 // XXX: perhaps we shouldn't export everything but heck, I'm lazy.

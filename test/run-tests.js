@@ -119,8 +119,10 @@ function parse_test(file) {
                     })
                 );
                 var stat = node.body;
-                if (stat instanceof U.AST_BlockStatement && stat.body.length == 1)
-                    stat = stat.body[0];
+                if (stat instanceof U.AST_BlockStatement) {
+                    if (stat.body.length == 1) stat = stat.body[0];
+                    else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
+                }
                 test[node.label.name] = stat;
                 return true;
             }

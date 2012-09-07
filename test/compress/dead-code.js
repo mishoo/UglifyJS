@@ -57,3 +57,33 @@ dead_code_2_should_warn: {
         }
     }
 }
+
+dead_code_constant_boolean_should_warn_more: {
+    options = {
+        dead_code    : true,
+        loops        : true,
+        booleans     : true,
+        conditionals : true,
+        evaluate     : true
+    };
+    input: {
+        while (!((foo && bar) || (x + "0"))) {
+            console.log("unreachable");
+            var foo;
+            function bar() {}
+        }
+        for (var x = 10; x && (y || x) && (!typeof x); ++x) {
+            asdf();
+            foo();
+            var moo;
+        }
+    }
+    expect: {
+        var foo;
+        function bar() {}
+        // nothing for the while
+        // as for the for, it should keep:
+        var x = 10;
+        var moo;
+    }
+}
