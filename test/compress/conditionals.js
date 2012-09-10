@@ -72,3 +72,18 @@ ifs_3_should_warn: {
         var jj; foo();          // 2
     }
 }
+
+ifs_4: {
+    options = {
+        conditionals: true
+    };
+    input: {
+        if (foo && bar) {
+            x(foo)[10].bar.baz = something();
+        } else
+            x(foo)[10].bar.baz = something_else();
+    }
+    expect: {
+        x(foo)[10].bar.baz = (foo && bar) ? something() : something_else();
+    }
+}
