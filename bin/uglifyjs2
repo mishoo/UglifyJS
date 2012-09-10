@@ -61,7 +61,7 @@ var STATS = {};
 var OUTPUT_FILE = ARGS.o;
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
-    file: output,
+    file: OUTPUT_FILE,
     root: ARGS.source_map_root
 }) : null;
 
