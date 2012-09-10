@@ -70,7 +70,12 @@ var output = UglifyJS.OutputStream({
     source_map: SOURCE_MAP
 });
 
-files.forEach(do_file);
+files = files.map(do_file_1);
+files = files.map(do_file_2);
+files.forEach(do_file_3);
+if (ARGS.v) {
+    sys.error("BASE54 digits: " + UglifyJS.base54.get());
+}
 
 output = output.get();
 
@@ -100,7 +105,7 @@ if (ARGS.stats) {
 
 /* -----[ functions ]----- */
 
-function do_file(file) {
+function do_file_1(file) {
     if (ARGS.v) {
         sys.error("Compressing " + file);
     }
@@ -112,12 +117,26 @@ function do_file(file) {
     time_it("scope", function(){
         ast.figure_out_scope();
     });
-    time_it("mangle", function(){
-        ast.mangle_names();
-    });
     time_it("squeeze", function(){
         var compressor = UglifyJS.Compressor({});
         ast = ast.squeeze(compressor);
+    });
+    ast.filename = file;
+    return ast;
+}
+
+function do_file_2(ast) {
+    time_it("scope", function(){
+        //ast.figure_out_scope();
+        ast.compute_char_frequency();
+    });
+    return ast;
+}
+
+function do_file_3(ast) {
+    var file = ast.filename;
+    time_it("mangle", function(){
+        ast.mangle_names();
     });
     time_it("generate", function(){
         if (SOURCE_MAP) {
