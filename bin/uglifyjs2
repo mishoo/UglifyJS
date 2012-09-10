@@ -41,11 +41,8 @@ if (ARGS.h || ARGS.help) {
 
 var files = ARGS._.slice();
 
-if (files.length == 0) {
-    sys.error("ERROR: No input files.");
-    sys.puts(optimist.help());
-    process.exit(1);
-}
+if (files.length == 0)
+    files = [ "-" ];
 
 if (files.indexOf("-") >= 0 && ARGS.source_map) {
     sys.error("ERROR: Source map doesn't work with input from STDIN");
