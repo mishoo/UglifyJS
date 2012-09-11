@@ -16,6 +16,7 @@ ast.compute_char_frequency();
 UglifyJS.base54.sort();
 
 ast.figure_out_scope();
+ast.scope_warnings();
 ast.mangle_names();
 
 sys.error(UglifyJS.base54.get());

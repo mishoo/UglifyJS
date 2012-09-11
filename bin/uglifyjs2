@@ -73,6 +73,7 @@ UglifyJS.base54.sort();
 files.forEach(do_file_3);
 if (ARGS.v) {
     sys.error("BASE54 digits: " + UglifyJS.base54.get());
+    //sys.error("Frequency: " + sys.inspect(UglifyJS.base54.freq()));
 }
 
 output = output.get();
