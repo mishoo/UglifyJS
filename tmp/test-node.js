@@ -10,5 +10,13 @@ var code = fs.readFileSync(filename, "utf8");
 
 var ast = UglifyJS.parse(code);
 ast.figure_out_scope();
+ast = ast.squeeze(UglifyJS.Compressor());
+
 ast.compute_char_frequency();
-console.log(UglifyJS.base54.get().join(","));
+UglifyJS.base54.sort();
+
+ast.figure_out_scope();
+ast.mangle_names();
+
+sys.error(UglifyJS.base54.get());
+sys.print(ast.print_to_string({ beautify: true }));

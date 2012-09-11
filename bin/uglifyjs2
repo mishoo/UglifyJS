@@ -69,6 +69,7 @@ var output = UglifyJS.OutputStream({
 
 files = files.map(do_file_1);
 files = files.map(do_file_2);
+UglifyJS.base54.sort();
 files.forEach(do_file_3);
 if (ARGS.v) {
     sys.error("BASE54 digits: " + UglifyJS.base54.get());
@@ -124,7 +125,7 @@ function do_file_1(file) {
 
 function do_file_2(ast) {
     time_it("scope", function(){
-        //ast.figure_out_scope();
+        ast.figure_out_scope();
         ast.compute_char_frequency();
     });
     return ast;
