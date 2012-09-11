@@ -105,9 +105,9 @@ if (ARGS.stats) {
 /* -----[ functions ]----- */
 
 function do_file_1(file) {
-    if (ARGS.v) {
-        sys.error("Compressing " + file);
-    }
+    // if (ARGS.v) {
+    //     sys.error("Compressing " + file);
+    // }
     var code = read_whole_file(file);
     var ast;
     time_it("parse", function(){
@@ -134,6 +134,9 @@ function do_file_2(ast) {
 
 function do_file_3(ast) {
     var file = ast.filename;
+    // if (ARGS.v) {
+    //     sys.error("Mangling/generating " + file);
+    // }
     time_it("mangle", function(){
         ast.mangle_names();
     });
