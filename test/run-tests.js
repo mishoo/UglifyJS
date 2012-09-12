@@ -48,7 +48,9 @@ function as_toplevel(input) {
     if (input instanceof U.AST_BlockStatement) input = input.body;
     else if (input instanceof U.AST_StatementBase) input = [ input ];
     else throw new Error("Unsupported input syntax");
-    return new U.AST_Toplevel({ body: input });
+    var toplevel = new U.AST_Toplevel({ body: input });
+    toplevel.figure_out_scope();
+    return toplevel;
 }
 
 function run_compress_tests() {
@@ -62,8 +64,9 @@ function run_compress_tests() {
             var cmp = new U.Compressor(test.options || {}, true);
             var expect = make_code(as_toplevel(test.expect), false);
             var input = as_toplevel(test.input);
-            input.figure_out_scope();
-            var output = make_code(input.squeeze(cmp), false);
+            var output = input.squeeze(cmp);
+            output.figure_out_scope();
+            output = make_code(output, false);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
                     input: make_code(test.input),
