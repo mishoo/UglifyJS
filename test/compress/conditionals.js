@@ -87,3 +87,38 @@ ifs_4: {
         x(foo)[10].bar.baz = (foo && bar) ? something() : something_else();
     }
 }
+
+ifs_5: {
+    options = {
+        conditionals: true
+    };
+    input: {
+        function f() {
+            if (foo) return;
+            bar();
+            baz();
+        }
+        function g() {
+            if (foo) return;
+            if (bar) return;
+            if (baz) return;
+            if (baa) return;
+            a();
+            b()
+        }
+    }
+    expect: {
+        function f() {
+            if (!foo) {
+                bar();
+                baz();
+            }
+        }
+        function g() {
+            if (!(foo || bar || baz || baa)) {
+                a();
+                b()
+            }
+        }
+    }
+}
