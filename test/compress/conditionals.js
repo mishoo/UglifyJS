@@ -90,7 +90,7 @@ ifs_4: {
 
 ifs_5: {
     options = {
-        conditionals: true
+        if_return: true
     };
     input: {
         function f() {
