@@ -17,26 +17,42 @@ Use a single dash to read input from the standard input.\
     .describe("stats", "Display operations run time on STDERR")
     .describe("v", "Verbose")
     .describe("b", "Beautify output")
+    .describe("m", "Don't mangle names")
+    .describe("c", "Compressor options")
 
     .alias("p", "prefix")
     .alias("o", "output")
     .alias("v", "verbose")
     .alias("b", "beautify")
+    .alias("c", "options")
 
     .boolean("b")
     .boolean("v")
     .boolean("stats")
+    .boolean("m")
 
     .argv
 ;
 
-for (var i in ARGS) if (ARGS.hasOwnProperty(i) && /-/.test(i)) {
-    ARGS[i.replace(/-/g, "_")] = ARGS[i];
+function normalize(o) {
+    for (var i in o) if (o.hasOwnProperty(i) && /-/.test(i)) {
+        o[i.replace(/-/g, "_")] = o[i];
+    }
 }
+
+normalize(ARGS);
 
 if (ARGS.h || ARGS.help) {
     sys.puts(optimist.help());
     process.exit(0);
+}
+
+var COMPRESSOR_OPTIONS = {};
+if (ARGS.c) {
+    ARGS.c.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
+        var a = opt.split(/\s*=\s*/);
+        COMPRESSOR_OPTIONS[a[0]] = new Function("return(" + a[1] + ")")();
+    });
 }
 
 var files = ARGS._.slice();
@@ -117,7 +133,7 @@ function do_file_1(file) {
         ast.figure_out_scope();
     });
     time_it("squeeze", function(){
-        var compressor = UglifyJS.Compressor({});
+        var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
         ast = ast.squeeze(compressor);
     });
     ast.filename = file;
@@ -127,7 +143,9 @@ function do_file_1(file) {
 function do_file_2(ast) {
     time_it("scope", function(){
         ast.figure_out_scope();
-        ast.compute_char_frequency();
+        if (!ARGS.m) {
+            ast.compute_char_frequency();
+        }
     });
     return ast;
 }
@@ -137,7 +155,7 @@ function do_file_3(ast) {
     // if (ARGS.v) {
     //     sys.error("Mangling/generating " + file);
     // }
-    time_it("mangle", function(){
+    if (!ARGS.m) time_it("mangle", function(){
         ast.mangle_names();
     });
     time_it("generate", function(){
