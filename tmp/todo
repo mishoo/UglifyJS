@@ -1,11 +1,11 @@
-a = a + x ==> a+=x
+✓ a = a + x ==> a+=x
 
 *******
 
-join consecutive var statements
+✓ join consecutive var statements
 
 *******
-
+✓
 x == false ==> x == 0
 x == true  ==> x == 1
 
@@ -13,6 +13,8 @@ should warn too;
 JS is so sloppy that this could be an indication of a bug.
 
 *******
+
+✓
 
 x, x ==> x
 x = foo, x ==> x
@@ -29,6 +31,8 @@ AST_Toplevel for all files.
 XXX?  Not sure if this is worth the trouble.
 
 *******
+
+✓
 
 discard spurious break statements
 

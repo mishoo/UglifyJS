@@ -18,18 +18,20 @@ Use a single dash to read input from the standard input.\
     .describe("v", "Verbose")
     .describe("b", "Beautify output")
     .describe("m", "Don't mangle names")
-    .describe("c", "Compressor options")
+    .describe("c", "Pass compressor options")
 
     .alias("p", "prefix")
     .alias("o", "output")
     .alias("v", "verbose")
     .alias("b", "beautify")
     .alias("c", "options")
+    .alias("m", "no-mangle")
 
     .boolean("b")
     .boolean("v")
     .boolean("stats")
     .boolean("m")
+    .string("c")
 
     .argv
 ;
@@ -121,9 +123,9 @@ if (ARGS.stats) {
 /* -----[ functions ]----- */
 
 function do_file_1(file) {
-    // if (ARGS.v) {
-    //     sys.error("Compressing " + file);
-    // }
+    if (ARGS.v) {
+        sys.error("Compressing " + file);
+    }
     var code = read_whole_file(file);
     var ast;
     time_it("parse", function(){
