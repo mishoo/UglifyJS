@@ -90,7 +90,9 @@ ifs_4: {
 
 ifs_5: {
     options = {
-        if_return: true
+        if_return: true,
+        conditionals: true,
+        comparations: true,
     };
     input: {
         function f() {
@@ -117,7 +119,7 @@ ifs_5: {
         function g() {
             if (!(foo || bar || baz || baa)) {
                 a();
-                b()
+                b();
             }
         }
     }
