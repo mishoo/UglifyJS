@@ -106,7 +106,7 @@ ifs_5: {
             if (baz) return;
             if (baa) return;
             a();
-            b()
+            b();
         }
     }
     expect: {
