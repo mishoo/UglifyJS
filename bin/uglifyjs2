@@ -10,15 +10,18 @@ var ARGS = optimist
 Maximum compression settings are on by default.\n\
 Use a single dash to read input from the standard input.\
 ")
-    .describe("source-map", "Specify an output file where to generate source map")
-    .describe("source-map-root", "The root of the original source to be included in the source map")
-    .describe("p", "Skip prefix for original filenames that appear in source maps")
+    .describe("source-map", "Specify an output file where to generate source map.")
+    .describe("source-map-root", "The path to the original source to be included in the source map.")
+    .describe("p", "Skip prefix for original filenames that appear in source maps. For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
     .describe("o", "Output file (default STDOUT)")
-    .describe("stats", "Display operations run time on STDERR")
-    .describe("v", "Verbose")
     .describe("b", "Beautify output")
     .describe("m", "Don't mangle names")
-    .describe("c", "Pass compressor options")
+    .describe("c", "Disable compressor, or pass compressor options. \
+Pass options like -c hoist_vars=false,if_return=false. \
+Use -c with no argument if you want to disable the squeezer entirely")
+
+    .describe("stats", "Display operations run time on STDERR")
+    .describe("v", "Verbose")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -32,6 +35,8 @@ Use a single dash to read input from the standard input.\
     .boolean("stats")
     .boolean("m")
     .string("c")
+
+    .wrap(80)
 
     .argv
 ;
@@ -50,7 +55,7 @@ if (ARGS.h || ARGS.help) {
 }
 
 var COMPRESSOR_OPTIONS = {};
-if (ARGS.c) {
+if (ARGS.c && ARGS.c !== true) {
     ARGS.c.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
         var a = opt.split(/\s*=\s*/);
         COMPRESSOR_OPTIONS[a[0]] = new Function("return(" + a[1] + ")")();
@@ -134,10 +139,12 @@ function do_file_1(file) {
     time_it("scope", function(){
         ast.figure_out_scope();
     });
-    time_it("squeeze", function(){
-        var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
-        ast = ast.squeeze(compressor);
-    });
+    if (ARGS.c !== true) {
+        time_it("squeeze", function(){
+            var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
+            ast = ast.squeeze(compressor);
+        });
+    }
     ast.filename = file;
     return ast;
 }
