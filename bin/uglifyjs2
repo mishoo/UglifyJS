@@ -79,6 +79,7 @@ if (files.filter(function(el){ return el == "-" }).length > 1) {
 
 var STATS = {};
 var OUTPUT_FILE = ARGS.o;
+var TOPLEVEL = null;
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
     file: OUTPUT_FILE,
@@ -90,14 +91,47 @@ var output = UglifyJS.OutputStream({
     source_map: SOURCE_MAP
 });
 
-files = files.map(do_file_1);
-files = files.map(do_file_2);
-UglifyJS.base54.sort();
-files.forEach(do_file_3);
-if (ARGS.v) {
-    sys.error("BASE54 digits: " + UglifyJS.base54.get());
-    //sys.error("Frequency: " + sys.inspect(UglifyJS.base54.freq()));
+files.forEach(function(file) {
+    if (ARGS.v) {
+        sys.error("Parsing " + file);
+    }
+    var code = read_whole_file(file);
+    if (ARGS.p != null) {
+        file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
+    }
+    time_it("parse", function(){
+        TOPLEVEL = UglifyJS.parse(code, {
+            filename: file,
+            toplevel: TOPLEVEL
+        });
+    });
+});
+
+time_it("scope", function(){
+    TOPLEVEL.figure_out_scope();
+});
+
+if (ARGS.c !== true) {
+    time_it("squeeze", function(){
+        var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
+        TOPLEVEL = TOPLEVEL.squeeze(compressor);
+    });
 }
+
+time_it("scope", function(){
+    TOPLEVEL.figure_out_scope();
+    if (!ARGS.m) {
+        TOPLEVEL.compute_char_frequency();
+        UglifyJS.base54.sort();
+    }
+});
+
+if (!ARGS.m) time_it("mangle", function(){
+    TOPLEVEL.mangle_names();
+});
+time_it("generate", function(){
+    TOPLEVEL.print(output);
+});
 
 output = output.get();
 
@@ -126,57 +160,6 @@ if (ARGS.stats) {
 }
 
 /* -----[ functions ]----- */
-
-function do_file_1(file) {
-    if (ARGS.v) {
-        sys.error("Compressing " + file);
-    }
-    var code = read_whole_file(file);
-    var ast;
-    time_it("parse", function(){
-        ast = UglifyJS.parse(code);
-    });
-    time_it("scope", function(){
-        ast.figure_out_scope();
-    });
-    if (ARGS.c !== true) {
-        time_it("squeeze", function(){
-            var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
-            ast = ast.squeeze(compressor);
-        });
-    }
-    ast.filename = file;
-    return ast;
-}
-
-function do_file_2(ast) {
-    time_it("scope", function(){
-        ast.figure_out_scope();
-        if (!ARGS.m) {
-            ast.compute_char_frequency();
-        }
-    });
-    return ast;
-}
-
-function do_file_3(ast) {
-    var file = ast.filename;
-    // if (ARGS.v) {
-    //     sys.error("Mangling/generating " + file);
-    // }
-    if (!ARGS.m) time_it("mangle", function(){
-        ast.mangle_names();
-    });
-    time_it("generate", function(){
-        if (SOURCE_MAP) {
-            if (ARGS.p != null) {
-                file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
-            }
-            SOURCE_MAP.set_source(file);
-        }
-        ast.print(output);
-    });
-}
 
 function read_whole_file(filename) {
     if (filename == "-") {
