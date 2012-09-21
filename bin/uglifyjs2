@@ -92,9 +92,6 @@ var output = UglifyJS.OutputStream({
 });
 
 files.forEach(function(file) {
-    if (ARGS.v) {
-        sys.error("Parsing " + file);
-    }
     var code = read_whole_file(file);
     if (ARGS.p != null) {
         file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
