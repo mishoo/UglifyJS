@@ -26,6 +26,7 @@ function load_global(file) {
 load_global("../lib/utils.js");
 load_global("../lib/ast.js");
 load_global("../lib/parse.js");
+load_global("../lib/transform.js");
 load_global("../lib/scope.js");
 load_global("../lib/output.js");
 load_global("../lib/compress.js");
