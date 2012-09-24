@@ -12,6 +12,7 @@ Use a single dash to read input from the standard input.\
 ")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
+    .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("p", "Skip prefix for original filenames that appear in source maps. For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
     .describe("o", "Output file (default STDOUT)")
     .describe("b", "Beautify output")
@@ -60,12 +61,27 @@ if (ARGS.c && ARGS.c !== true) {
         var a = opt.split(/\s*=\s*/);
         COMPRESSOR_OPTIONS[a[0]] = new Function("return(" + a[1] + ")")();
     });
+    normalize(COMPRESSOR_OPTIONS);
 }
 
 var files = ARGS._.slice();
 
-if (files.length == 0)
+var ORIG_MAP = ARGS.in_source_map;
+
+if (ORIG_MAP) {
+    ORIG_MAP = JSON.parse(fs.readFileSync(ORIG_MAP));
+    if (files.length == 0) {
+        sys.error("INFO: Using file from the input source map: " + ORIG_MAP.file);
+        files = [ ORIG_MAP.file ];
+    }
+    if (ARGS.source_map_root == null) {
+        ARGS.source_map_root = ORIG_MAP.sourceRoot;
+    }
+}
+
+if (files.length == 0) {
     files = [ "-" ];
+}
 
 if (files.indexOf("-") >= 0 && ARGS.source_map) {
     sys.error("ERROR: Source map doesn't work with input from STDIN");
@@ -83,7 +99,8 @@ var TOPLEVEL = null;
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
     file: OUTPUT_FILE,
-    root: ARGS.source_map_root
+    root: ARGS.source_map_root,
+    orig: ORIG_MAP,
 }) : null;
 
 var output = UglifyJS.OutputStream({
