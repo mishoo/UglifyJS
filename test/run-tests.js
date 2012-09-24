@@ -87,7 +87,9 @@ function run_compress_tests() {
 
 function parse_test(file) {
     var script = fs.readFileSync(file, "utf8");
-    var ast = U.parse(script);
+    var ast = U.parse(script, {
+        filename: file
+    });
     var tests = {};
     var tw = new U.TreeWalker(function(node, descend){
         if (node instanceof U.AST_LabeledStatement
