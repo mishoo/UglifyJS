@@ -6,7 +6,7 @@ var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
 var ARGS = optimist
-    .usage("uglifyjs2 [options] input1.js [input2.js ...]\n\
+    .usage("$0 [options] input1.js [input2.js ...]\n\
 Maximum compression settings are on by default.\n\
 Use a single dash to read input from the standard input.\
 ")
@@ -121,9 +121,13 @@ files.forEach(function(file) {
     });
 });
 
-time_it("scope", function(){
-    TOPLEVEL.figure_out_scope();
-});
+var SCOPE_IS_NEEDED = ARGS.c !== true || !ARGS.m;
+
+if (SCOPE_IS_NEEDED) {
+    time_it("scope", function(){
+        TOPLEVEL.figure_out_scope();
+    });
+}
 
 if (ARGS.c !== true) {
     time_it("squeeze", function(){
@@ -132,13 +136,15 @@ if (ARGS.c !== true) {
     });
 }
 
-time_it("scope", function(){
-    TOPLEVEL.figure_out_scope();
-    if (!ARGS.m) {
-        TOPLEVEL.compute_char_frequency();
-        UglifyJS.base54.sort();
-    }
-});
+if (SCOPE_IS_NEEDED) {
+    time_it("scope", function(){
+        TOPLEVEL.figure_out_scope();
+        if (!ARGS.m) {
+            TOPLEVEL.compute_char_frequency();
+            UglifyJS.base54.sort();
+        }
+    });
+}
 
 if (!ARGS.m) time_it("mangle", function(){
     TOPLEVEL.mangle_names();
