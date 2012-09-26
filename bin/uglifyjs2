@@ -132,7 +132,7 @@ if (SCOPE_IS_NEEDED) {
 if (ARGS.c !== true) {
     time_it("squeeze", function(){
         var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
-        TOPLEVEL = TOPLEVEL.squeeze(compressor);
+        TOPLEVEL = TOPLEVEL.transform(compressor);
     });
 }
 

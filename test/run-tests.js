@@ -64,7 +64,7 @@ function run_compress_tests() {
             var cmp = new U.Compressor(test.options || {}, true);
             var expect = make_code(as_toplevel(test.expect), false);
             var input = as_toplevel(test.input);
-            var output = input.squeeze(cmp);
+            var output = input.transform(cmp);
             output.figure_out_scope();
             output = make_code(output, false);
             if (expect != output) {
