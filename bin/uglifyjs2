@@ -27,7 +27,7 @@ For example -p 3 will drop 3 directories from file names and ensure they are rel
     .describe("r", "Reserved names to exclude from mangling.")
     .describe("c", "Enable compressor/pass compressor options. \
 Pass options like -c hoist_vars=false,if_return=false. \
-Use -c with no argument if you want to disable the squeezer entirely.")
+Use -c with no argument to use the default compression options.")
     .describe("d", "Global definitions")
 
     .describe("comments", "Preserve copyright comments in the output. \
@@ -51,6 +51,8 @@ because of dead code removal or cascading statements into sequences.")
     .alias("d", "define")
     .alias("r", "reserved")
 
+    .string("source-map")
+    .string("source-map-root")
     .string("b")
     .string("m")
     .string("c")
