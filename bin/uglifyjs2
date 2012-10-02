@@ -8,8 +8,13 @@ var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
 var ARGS = optimist
-    .usage("$0 [options] input1.js [input2.js ...]\n\
+    .usage("$0 input1.js [input2.js ...] [options]\n\
 Use a single dash to read input from the standard input.\
+\n\n\
+NOTE: by default there is no mangling/compression.\n\
+Without [options] it will simply parse input files and dump the AST\n\
+with whitespace and comments discarded.  To achieve compression and\n\
+mangling you need to use `-c` and `-m`.\
 ")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
@@ -25,6 +30,15 @@ Pass options like -c hoist_vars=false,if_return=false. \
 Use -c with no argument if you want to disable the squeezer entirely.")
     .describe("d", "Global definitions")
 
+    .describe("comments", "Preserve copyright comments in the output. \
+By default this works like Google Closure, keeping JSDoc-style comments that contain \"@license\" or \"@preserve\". \
+You can optionally pass one of the following arguments to this flag:\n\
+- \"all\" to keep all comments\n\
+- a valid JS regexp (needs to start with a slash) to keep only comments that match.\n\
+\
+Note that currently not *all* comments can be kept when compression is on, \
+because of dead code removal or cascading statements into sequences.")
+
     .describe("stats", "Display operations run time on STDERR.")
     .describe("v", "Verbose")
 
@@ -35,12 +49,13 @@ Use -c with no argument if you want to disable the squeezer entirely.")
     .alias("m", "mangle")
     .alias("c", "compress")
     .alias("d", "define")
-    .alias("r", "reserved-names")
+    .alias("r", "reserved")
 
     .string("b")
     .string("m")
     .string("c")
     .string("d")
+    .string("comments")
     .boolean("v")
     .boolean("stats")
 
@@ -92,8 +107,27 @@ if (MANGLE && ARGS.r) {
 var OUTPUT_OPTIONS = {
     beautify: BEAUTIFY ? true : false
 };
+
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
+
+if (ARGS.comments) {
+    if (/^\//.test(ARGS.comments)) {
+        OUTPUT_OPTIONS.comments = new Function("return(" + ARGS.comments + ")")();
+    } else if (ARGS.comments == "all") {
+        OUTPUT_OPTIONS.comments = true;
+    } else {
+        OUTPUT_OPTIONS.comments = function(node, comment) {
+            var text = comment.value;
+            var type = comment.type;
+            if (type == "comment2") {
+                // multiline comment
+                return text.indexOf("@preserve") >= 0
+                    || text.indexOf("@license") >= 0;
+            }
+        }
+    }
+}
 
 var files = ARGS._.slice();
 
