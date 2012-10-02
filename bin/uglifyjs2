@@ -19,6 +19,7 @@ For example -p 3 will drop 3 directories from file names and ensure they are rel
     .describe("o", "Output file (default STDOUT).")
     .describe("b", "Beautify output/specify output options.")
     .describe("m", "Mangle names/pass mangler options.")
+    .describe("r", "Reserved names to exclude from mangling.")
     .describe("c", "Enable compressor/pass compressor options. \
 Pass options like -c hoist_vars=false,if_return=false. \
 Use -c with no argument if you want to disable the squeezer entirely.")
@@ -34,6 +35,7 @@ Use -c with no argument if you want to disable the squeezer entirely.")
     .alias("m", "mangle")
     .alias("c", "compress")
     .alias("d", "define")
+    .alias("r", "reserved-names")
 
     .string("b")
     .string("m")
@@ -81,6 +83,10 @@ var BEAUTIFY = getOptions("b");
 
 if (COMPRESS && ARGS.d) {
     COMPRESS.global_defs = getOptions("d");
+}
+
+if (MANGLE && ARGS.r) {
+    MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
 var OUTPUT_OPTIONS = {
