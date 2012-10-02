@@ -22,6 +22,7 @@ For example -p 3 will drop 3 directories from file names and ensure they are rel
     .describe("c", "Enable compressor/pass compressor options. \
 Pass options like -c hoist_vars=false,if_return=false. \
 Use -c with no argument if you want to disable the squeezer entirely.")
+    .describe("d", "Global definitions")
 
     .describe("stats", "Display operations run time on STDERR.")
     .describe("v", "Verbose")
@@ -32,10 +33,12 @@ Use -c with no argument if you want to disable the squeezer entirely.")
     .alias("b", "beautify")
     .alias("m", "mangle")
     .alias("c", "compress")
+    .alias("d", "define")
 
     .string("b")
     .string("m")
     .string("c")
+    .string("d")
     .boolean("v")
     .boolean("stats")
 
@@ -67,7 +70,7 @@ function getOptions(x) {
             var a = opt.split(/\s*[=:]\s*/);
             ret[a[0]] = a.length > 1 ? new Function("return(" + a[1] + ")")() : true;
         });
-        normalize(ret)
+        normalize(ret);
     }
     return ret;
 }
@@ -75,6 +78,10 @@ function getOptions(x) {
 var COMPRESS = getOptions("c");
 var MANGLE = getOptions("m");
 var BEAUTIFY = getOptions("b");
+
+if (COMPRESS && ARGS.d) {
+    COMPRESS.global_defs = getOptions("d");
+}
 
 var OUTPUT_OPTIONS = {
     beautify: BEAUTIFY ? true : false
