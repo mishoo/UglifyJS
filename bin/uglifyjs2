@@ -1,6 +1,8 @@
 #! /usr/bin/env node
 // -*- js -*-
 
+"use strict";
+
 var UglifyJS = require("../tools/node");
 var sys = require("util");
 var optimist = require("optimist");
