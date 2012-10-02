@@ -7,35 +7,35 @@ var optimist = require("optimist");
 var fs = require("fs");
 var ARGS = optimist
     .usage("$0 [options] input1.js [input2.js ...]\n\
-Maximum compression settings are on by default.\n\
 Use a single dash to read input from the standard input.\
 ")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
-    .describe("p", "Skip prefix for original filenames that appear in source maps. For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
-    .describe("o", "Output file (default STDOUT)")
-    .describe("b", "Beautify output")
-    .describe("m", "Don't mangle names")
-    .describe("c", "Disable compressor, or pass compressor options. \
+    .describe("p", "Skip prefix for original filenames that appear in source maps. \
+For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
+    .describe("o", "Output file (default STDOUT).")
+    .describe("b", "Beautify output/specify output options.")
+    .describe("m", "Mangle names/pass mangler options.")
+    .describe("c", "Enable compressor/pass compressor options. \
 Pass options like -c hoist_vars=false,if_return=false. \
-Use -c with no argument if you want to disable the squeezer entirely")
+Use -c with no argument if you want to disable the squeezer entirely.")
 
-    .describe("stats", "Display operations run time on STDERR")
+    .describe("stats", "Display operations run time on STDERR.")
     .describe("v", "Verbose")
 
     .alias("p", "prefix")
     .alias("o", "output")
     .alias("v", "verbose")
     .alias("b", "beautify")
-    .alias("c", "options")
-    .alias("m", "no-mangle")
+    .alias("m", "mangle")
+    .alias("c", "compress")
 
-    .boolean("b")
+    .string("b")
+    .string("m")
+    .string("c")
     .boolean("v")
     .boolean("stats")
-    .boolean("m")
-    .string("c")
 
     .wrap(80)
 
@@ -45,6 +45,7 @@ Use -c with no argument if you want to disable the squeezer entirely")
 function normalize(o) {
     for (var i in o) if (o.hasOwnProperty(i) && /-/.test(i)) {
         o[i.replace(/-/g, "_")] = o[i];
+        delete o[i];
     }
 }
 
@@ -55,14 +56,29 @@ if (ARGS.h || ARGS.help) {
     process.exit(0);
 }
 
-var COMPRESSOR_OPTIONS = {};
-if (ARGS.c && ARGS.c !== true) {
-    ARGS.c.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
-        var a = opt.split(/\s*=\s*/);
-        COMPRESSOR_OPTIONS[a[0]] = new Function("return(" + a[1] + ")")();
-    });
-    normalize(COMPRESSOR_OPTIONS);
+function getOptions(x) {
+    x = ARGS[x];
+    if (!x) return null;
+    var ret = {};
+    if (x !== true) {
+        x.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
+            var a = opt.split(/\s*[=:]\s*/);
+            ret[a[0]] = a.length > 1 ? new Function("return(" + a[1] + ")")() : true;
+        });
+        normalize(ret)
+    }
+    return ret;
 }
+
+var COMPRESS = getOptions("c");
+var MANGLE = getOptions("m");
+var BEAUTIFY = getOptions("b");
+
+var OUTPUT_OPTIONS = {
+    beautify: BEAUTIFY ? true : false
+};
+if (BEAUTIFY)
+    UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
 var files = ARGS._.slice();
 
@@ -103,10 +119,19 @@ var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
     orig: ORIG_MAP,
 }) : null;
 
-var output = UglifyJS.OutputStream({
-    beautify: ARGS.b,
-    source_map: SOURCE_MAP
-});
+OUTPUT_OPTIONS.source_map = SOURCE_MAP;
+
+try {
+    var output = UglifyJS.OutputStream(OUTPUT_OPTIONS);
+    var compressor = COMPRESS && UglifyJS.Compressor(COMPRESS);
+} catch(ex) {
+    if (ex instanceof UglifyJS.DefaultsError) {
+        sys.error(ex.msg);
+        sys.error("Supported options:");
+        sys.error(sys.inspect(ex.defs));
+        process.exit(1);
+    }
+}
 
 files.forEach(function(file) {
     var code = read_whole_file(file);
@@ -121,7 +146,7 @@ files.forEach(function(file) {
     });
 });
 
-var SCOPE_IS_NEEDED = ARGS.c !== true || !ARGS.m;
+var SCOPE_IS_NEEDED = COMPRESS || MANGLE;
 
 if (SCOPE_IS_NEEDED) {
     time_it("scope", function(){
@@ -129,9 +154,8 @@ if (SCOPE_IS_NEEDED) {
     });
 }
 
-if (ARGS.c !== true) {
+if (COMPRESS) {
     time_it("squeeze", function(){
-        var compressor = UglifyJS.Compressor(COMPRESSOR_OPTIONS);
         TOPLEVEL = TOPLEVEL.transform(compressor);
     });
 }
@@ -139,15 +163,15 @@ if (ARGS.c !== true) {
 if (SCOPE_IS_NEEDED) {
     time_it("scope", function(){
         TOPLEVEL.figure_out_scope();
-        if (!ARGS.m) {
+        if (MANGLE) {
             TOPLEVEL.compute_char_frequency();
             UglifyJS.base54.sort();
         }
     });
 }
 
-if (!ARGS.m) time_it("mangle", function(){
-    TOPLEVEL.mangle_names();
+if (MANGLE) time_it("mangle", function(){
+    TOPLEVEL.mangle_names(MANGLE);
 });
 time_it("generate", function(){
     TOPLEVEL.print(output);
