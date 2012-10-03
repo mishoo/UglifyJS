@@ -92,7 +92,7 @@ ifs_5: {
     options = {
         if_return: true,
         conditionals: true,
-        comparations: true,
+        comparisons: true,
     };
     input: {
         function f() {
