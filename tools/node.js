@@ -43,6 +43,7 @@ load_global("../lib/scope.js");
 load_global("../lib/output.js");
 load_global("../lib/compress.js");
 load_global("../lib/sourcemap.js");
+load_global("../lib/mozilla-ast.js");
 
 UglifyJS.AST_Node.warn_function = function(txt) {
     sys.error("WARN: " + txt);
