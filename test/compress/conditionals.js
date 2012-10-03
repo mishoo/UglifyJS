@@ -124,3 +124,20 @@ ifs_5: {
         }
     }
 }
+
+ifs_6: {
+    options = {
+        conditionals: true,
+        comparisons: true
+    };
+    input: {
+        if (!foo && !bar && !baz && !boo) {
+            x = 10;
+        } else {
+            x = 20;
+        }
+    }
+    expect: {
+        x = foo || bar || baz || boo ? 20 : 10;
+    }
+}
