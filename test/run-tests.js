@@ -46,7 +46,7 @@ function test_directory(dir) {
 
 function as_toplevel(input) {
     if (input instanceof U.AST_BlockStatement) input = input.body;
-    else if (input instanceof U.AST_StatementBase) input = [ input ];
+    else if (input instanceof U.AST_Statement) input = [ input ];
     else throw new Error("Unsupported input syntax");
     var toplevel = new U.AST_Toplevel({ body: input });
     toplevel.figure_out_scope();
