@@ -1,296 +1,244 @@
-> **Tl;dr** — I want to make UglifyJS2 faster, better, easier to maintain
-> and more useful than version 1.  If you enjoy using UglifyJS v1, I can
-> promise you that you will love its successor.
+UglifyJS 2
+==========
 
-> Please help me make this happen by funding the development!
+UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
-> <a href='http://www.pledgie.com/campaigns/18110'><img alt='Click here to lend your support to: Funding development of UglifyJS 2.0 and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/18110.png?skin_name=chrome' border='0' /></a>
+For now this page documents the command line utility.  More advanced
+API documentation will be made available later.
 
-UglifyJS v2
-===========
+Usage
+-----
 
-[UglifyJS](https://github.com/mishoo/UglifyJS) is a popular JavaScript
-parser/compressor/beautifier and it's itself written in JavaScript.  Version
-1 is battle-tested and used in many production systems.  The parser is
-[included in WebKit](http://src.chromium.org/multivm/trunk/webkit/Source/WebCore/inspector/front-end/UglifyJS/parse-js.js).
-In two years UglifyJS got over 3000 stars at Github and hundreds of bugs
-have been identified and fixed, thanks to a great and expanding community.
+    uglifyjs2 [input files] [options]
 
-I'd say version 1 is rock stable.  However, its architecture can't be
-stretched much further.  Some features are hard to add, such as source maps
-or keeping comments in the compressed AST.  I started work on version 2 in
-May, but I gave up quickly because I lacked time.  What prompted me to
-resume it was investigating the difficulty of adding source maps (an
-[increasingly popular](https://github.com/mishoo/UglifyJS/issues/315)
-feature request).
+UglifyJS2 can take multiple input files.  It's recommended that you pass the
+input files first, then pass the options.  UglifyJS will parse input files
+in sequence and apply any compression options.  The files are parsed in the
+same global scope, that is, a reference from a file to some
+variable/function declared in another file will be matched properly.
 
-Status and goals
-----------------
+If you want to read from STDIN instead, pass a single dash instead of input
+files.
 
-In short, the goals for v2 are:
+The available options are:
 
-- better modularity, cleaner and more maintainable code; (✓ it's better already)
-- parser generates objects instead of arrays for nodes; (✓ done)
-- store location information in all nodes; (✓ done)
-- better scope representation and mangler; (✓ done)
-- better code generator; (✓ done)
-- compression options at least as good as in v1; (⌛ in progress)
-- support for generating source maps;
-- better regression tests; (⌛ in progress)
-- ability to keep certain comments;
-- command-line utility compatible with UglifyJS v1;
-- documentation for the `AST` node hierarchy and the API.
+    --source-map       Specify an output file where to generate source map.
+    --source-map-root  The path to the original source to be included in the
+                       source map.
+    --in-source-map    Input source map, useful if you're compressing JS that was
+                       generated from some other original code.
+    -p, --prefix       Skip prefix for original filenames that appear in source
+                       maps. For example -p 3 will drop 3 directories from file
+                       names and ensure they are relative paths.
+    -o, --output       Output file (default STDOUT).
+    -b, --beautify     Beautify output/specify output options.            [string]
+    -m, --mangle       Mangle names/pass mangler options.                 [string]
+    -r, --reserved     Reserved names to exclude from mangling.
+    -c, --compress     Enable compressor/pass compressor options. Pass options
+                       like -c hoist_vars=false,if_return=false. Use -c with no
+                       argument to use the default compression options.   [string]
+    -d, --define       Global definitions                                 [string]
+    --comments         Preserve copyright comments in the output. By default this
+                       works like Google Closure, keeping JSDoc-style comments
+                       that contain "@license" or "@preserve". You can optionally
+                       pass one of the following arguments to this flag:
+                       - "all" to keep all comments
+                       - a valid JS regexp (needs to start with a slash) to keep
+                       only comments that match.
+                       Note that currently not *all* comments can be kept when
+                       compression is on, because of dead code removal or
+                       cascading statements into sequences.               [string]
+    --stats            Display operations run time on STDERR.            [boolean]
+    -v, --verbose      Verbose                                           [boolean]
 
-Longer term goals—beyond compressing JavaScript:
+Specify `--output` (`-o`) to declare the output file.  Otherwise the output
+goes to STDOUT.
 
-- provide a linter; (started)
-- feature to dump an AST in a simple JSON format, along with information
-  that could be useful for an editor (such as Emacs);
-- write a minor JS mode for Emacs to highlight obvious errors, locate symbol
-  definition or warn about accidental globals;
-- support type annotations like Closure does (though I'm thinking of a
-  syntax different from comments; no big plans for this yet).
+### Source map options
 
-### Objects for nodes
+UglifyJS2 can generate a source map file, which is highly useful for
+debugging your compressed JavaScript.  To get a source map, pass
+`--source-map output.js.map` (full path to the file where you want the
+source map dumped).
 
-Version 1 uses arrays to represent AST nodes.  This model worked well for
-most operations, but adding additional information in nodes could only be
-done with hacks I don't really like (you _can_ add properties to an array
-just as if it were an object, but that's just a dirty hack; also, such
-properties were not propagated in the compressor).
+Additionally you might need `--source-map-root` to pass the URL where the
+original files can be found.  In case you are passing full paths to input
+files to UglifyJS, you can use `--prefix` (`-p`) to specify the number of
+directories to drop from the path prefix when declaring files in the source
+map.
 
-In v2 I switched to a more “object oriented” approach.  Nodes are objects
-and there's also an inheritance tree that aims to be useful in practice.
-For example in v1 in order to see if a node is an aborting statement, we
-might do something like this:
+For example:
 
-    if (node[0] == "return"
-        || node[0] == "throw"
-        || node[0] == "break"
-        || node[0] == "continue") aborts();
+    uglifyjs2 /home/doe/work/foo/src/js/file1.js \
+              /home/doe/work/foo/src/js/file2.js \
+              -o foo.min.js \
+              --source-map foo.min.js.map \
+              --source-map-root http://foo.com/src \
+              -p 5 -c -m
 
-In v2 they all inherit from the base class `AST_Jump`, so I can say:
+The above will compress and mangle `file1.js` and `file2.js`, will drop the
+output in `foo.min.js` and the source map in `foo.min.js.map`.  The source
+mapping will refer to `http://foo.com/src/js/file1.js` and
+`http://foo.com/src/js/file2.js` (in fact it will list `http://foo.com/src`
+as the source map root, and the original files as `js/file1.js` and
+`js/file2.js`).
 
-    if (node instanceof AST_Jump) aborts();
+#### Composed source map
 
-The parser was _heavily_ modified to support the new node types, however you
-can still find the same code layout as in v1, and I trust it's just as
-stable.  Except for the parser, all other parts of UglifyJS are rewritten
-from scratch.
+When you're compressing JS code that was output by a compiler such as
+CoffeeScript, mapping to the JS code won't be too helpful.  Instead, you'd
+like to map back to the original code (i.e. CoffeeScript).  UglifyJS has an
+option to take an input source map.  Assuming you have a mapping from
+CoffeeScript → compiled JS, UglifyJS can generate a map from CoffeeScript →
+compressed JS by mapping every token in the compiled JS to its original
+location.
 
-The parser itself got a bit slower (430ms instead of 330ms on my usual 650K
-test file).
+To use this feature you need to pass `--in-source-map
+/path/to/input/source.map`.  Normally the input source map should also point
+to the file containing the generated JS, so if that's correct you can omit
+input files from the command line.
 
-#### A word about Esprima
+### Mangler options
 
-**UPDATE**: A
-[discussion in my commit](https://github.com/mishoo/UglifyJS2/commit/ce8e8d57c0d346dba9527b7a11b03364ce9ad1bb#commitcomment-1771586)
-suggests that Esprima is not as slow as I thought even when requesting
-location information.  YMMV.  In any case, we're going to keep the
-battle-tested parser in UglifyJS.
+To enable the mangler you need to pass `--mangle` (`-m`).  Optionally you
+can pass `-m sort` (we'll possibly have other flags in the future) in order
+to assign shorter names to most frequently used variables.  This saves a few
+hundred bytes on jQuery before gzip, but the output is _bigger_ after gzip
+(and seems to happen for other libraries I tried it on) therefore it's not
+enabled by default.
 
-[Esprima](http://esprima.org/) is a really nice JavaScript parser.  It
-supports EcmaScript 5.1 and it claims to be “up to 3x faster than UglifyJS's
-parse-js”.  I thought that's quite cool and I considered using Esprima in
-UglifyJS v2, but then I did some tests.
+When mangling is enabled but you want to prevent certain names from being
+mangled, you can declare those names with `--reserved` (`-r`) — pass a
+comma-separated list of names.  For example:
 
-On my 650K test file, UglifyJS v1's parser takes 330ms and Esprima about
-250ms.  That's not exactly “3x faster” but very good indeed!  However, I
-noticed that in the default configuration Esprima does not keep location
-information in the nodes.  Enabled that, and parse time grew to 680ms.
+    uglifyjs2 ... -m -r '$,require,exports'
 
-Some would claim it's a fair
-[comparison](http://esprima.org/test/compare.html), because UglifyJS doesn't
-keep location information either, but that's not entirely accurate.  It's
-true that the `parse()` function will not propagate location into the AST
-unless you set `embed_tokens`, but the lexer _always_ stores it in the
-tokens.
+to prevent the `require`, `exports` and `$` names from being changed.
 
-Enabling `embed_tokens` makes UglifyJS do it in 400ms, which is still a lot
-better than Esprima's 680ms.
+### Compressor options
 
-In version 2 we always maintain location info and comments in the AST nodes,
-which is why the parser in v2 takes about 430ms on that file (some
-milliseconds get lost because it's more work to create object nodes than
-arrays).  I might try to speed it up, though I'm not sure it's worth the
-trouble (parsing 650K in 430ms (on my rather outdated machine) to get an
-objectual AST with full location/range info and comments seems good enough
-for me).
+You need to pass `--compress` (`-c`) to enable the compressor.  Optionally
+you can pass a comma-separated list of options.  Options are in the form
+`foo=bar`, or just `foo` (the latter implies a boolean option that you want
+to set `true`; it's effectively a shortcut for `foo=true`).
 
-### The code generator, V2 vs. V1
+The defaults should be tuned for maximum compression on most code.  Here are
+the available options (all are `true` by default, except `hoist_vars`):
 
-The code generator in v1 is a big function that takes a node and applies
-various walkers on it in order to generate code.  The code was _returned_
-from each walker function, and finally assembled into a big string by
-concatenation or array.join, and further returned.  It is impossible there
-to know what's the current line/column of the output, which would be
-necessary for source maps.  For the same reason, v1 required an additional
-step to split very long lines (that includes an additional run of the
-tokenizer).  It's _slow_.
+- `sequences` -- join consecutive simple statements using the comma operator
+- `properties` -- rewrite property access using the dot notation, for
+  example `foo["bar"] → foo.bar`
+- `dead-code` -- remove unreachable code
+- `drop-debugger` -- remove `debugger;` statements
+- `unsafe` -- apply "unsafe" transformations (discussion below)
+- `conditionals` -- apply optimizations for `if`-s and conditional
+  expressions
+- `comparisons` -- apply certain optimizations to binary nodes, for example:
+  `!(a <= b) → a > b` (only when `unsafe`), attempts to negate binary nodes,
+  e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
+- `evaluate` -- attempt to evaluate constant expressions
+- `booleans` -- various optimizations for boolean context, for example `!!a
+  ? b : c → a ? b : c`
+- `loops` -- optimizations for `do`, `while` and `for` loops when we can
+  statically determine the condition
+- `unused` -- drop unreferenced functions and variables
+- `hoist-funs` -- hoist function declarations
+- `hoist-vars` -- hoist `var` declarations (this is `false` by default
+  because it seems to increase the size of the output in general)
+- `if-return` -- optimizations for if/return and if/continue
+- `join-vars` -- join consecutive `var` statements
+- `cascade` -- small optimization for sequences, transform `x, x` into `x`
+  and `x = something(), x` into `x = something()`
+- `warnings` -- display warnings when dropping unreachable code or unused
+  declarations etc.
 
-The rules for inserting parentheses in v1 are an unholy mess; we know at
-least [one case](https://github.com/mishoo/UglifyJS/issues/368) where it
-inserts unnecessary parens (non-trivial to fix), and I just discovered one
-case where it generates invalid code—UglifyJS can properly parse the
-following (valid) statement:
+### Conditional compilation
 
-    for (var a = ("foo" in bar), i = 0; i < 5; ++i);
+You can use the `--define` (`-d`) switch in order to declare global
+variables that UglifyJS will assume to be constants (unless defined in
+scope).  For example if you pass `--define DEBUG=false` then, coupled with
+dead code removal UglifyJS will discard the following from the output:
 
-however, the code generator in version 1 will break it by not including the
-parens (the `in` operator is not allowed in a `for` initializer, unless it's
-parenthesized).
-
-The codegen in V2 is a thing of beauty.  Since I now use objects for AST
-nodes, I defined a "print" method on each object type.  This method takes an
-object (an OutputStream) and instead of returning the source code for the
-node, it prints it in the output stream.  The stream object keeps track of
-current line/colum in the output and provides helper functions to insert
-semicolons, to indent etc.  The code is somewhat bigger than the `gen_code`
-in v1, but it's much easier to understand, it's faster and does not require
-an additional pass for splitting long lines.  Also the rules for inserting
-parens are nicely separated from the `print` method definitions.
-
-### More aggressive compressing
-
-As I
-[blogged](http://lisperator.net/blog/javascript-minification-is-it-worth-it/)
-a few days ago, it seems to me that the squeezer works really hard for not
-too much benefit.  On my test file, passing `--no-squeeze` to UglifyJS v1
-adds only 500 bytes after `gzip`, that is 0.68% of the gzipped file size;
-every byte counts, but to be frank, that's not a very big deal either.
-
-Beyond doing what V1 does, I'd like to make it smarter in certain
-situations, for example:
-
-    function foo() {
-        var something = compute_something();
-        var something_else = compute_something_else(something);
-        return something_else;
+    if (DEBUG) {
+        console.log("debug stuff");
     }
 
-I sometimes write this kind of code because it's cleaner, it nests less and
-it avoids the need to add explanatory comments.  It could _safely_ compress
-into:
+UglifyJS will warn about the condition being always false and about dropping
+unreachable code; for now there is no option to turn off only this specific
+warning, you can pass `warnings=false` to turn off *all* warnings.
 
-    function foo() {
-        return compute_something_else(compute_something());
+Another way of doing that is to declare your globals as constants in a
+separate file and include it into the build.  For example you can have a
+`build/defines.js` file with the following:
+
+    const DEBUG = false;
+    const PRODUCTION = true;
+    // etc.
+
+and build your code like this:
+
+    uglifyjs2 build/defines.js js/foo.js js/bar.js... -c
+
+UglifyJS will notice the constants and, since they cannot be altered, it
+will evaluate references to them to the value itself and drop unreachable
+code as usual.  The possible downside of this approach is that the build
+will contain the `const` declarations.
+
+### Beautifier options
+
+The code generator tries to output shortest code possible by default.  In
+case you want beautified output, pass `--beautify` (`-b`).  Optionally you
+can pass additional arguments that control the code output:
+
+- `beautify` (default `true`) -- whether to actually beautify the output.
+  Passing `-b` will set this to true, but you might need to pass `-b` even
+  when you want to generate minified code, in order to specify additional
+  arguments, so you can use `-b beautify=false` to override it.
+- `indent-level` (default 4)
+- `indent-start` (default 0) -- prefix all lines by that many spaces
+- `quote-keys` (default `false`) -- pass `true` to quote all keys in literal
+  objects
+- `space-colon` (default `true`) -- insert a space after the colon signs
+- `ascii-only` (default `false`) -- escape Unicode characters in strings and
+  regexps
+- `inline-script` (default `false`) -- escape the slash in occurrences of
+  `</script` in strings
+- `width` (default 80) -- only takes effect when beautification is on, this
+  specifies an (orientative) line width that the beautifier will try to
+  obey.  It refers to the width of the line text (excluding indentation).
+  It doesn't work very well currently, but it does make the code generated
+  by UglifyJS more readable.
+- `max-line-len` (default 32000) -- maximum line length (for uglified code)
+- `ie-proof` (default `true`) -- generate “IE-proof” code (for now this
+  means add brackets around the do/while in code like this: `if (foo) do
+  something(); while (bar); else ...`.
+- `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
+  `do`, `while` or `with` statements, even if their body is a single
+  statement.
+
+### Keeping copyright notices or other comments
+
+You can pass `--comments` to retain certain comments in the output.  By
+default it will keep JSDoc-style comments that contain "@preserve" or
+"@license".  You can pass `--comments all` to keep all the comments, or a
+valid JavaScript regexp to keep only comments that match this regexp.  For
+example `--comments '/foo|bar/'` will keep only comments that contain "foo"
+or "bar".
+
+Note, however, that there might be situations where comments are lost.  For
+example:
+
+    function f() {
+      /** @preserve Foo Bar */
+      function g() {
+        // this function is never called
+      }
+      return something();
     }
 
-which makes it a single statement (further compressable into sequences and
-allowing to drop brackets in other cases) and it avoids the `var`
-declarations.  That's one tricky optimization to do in V1, but I feel with
-the new architecture is doable, at least for the simple cases.
+Even though it has "@preserve", the comment will be lost because the inner
+function `g` (which is the AST node to which the comment is attached to) is
+discarded by the compressor as not referenced.
 
-Currently the compressor in V2 is far from complete (where by “complete” I
-mean as good as V1), and I'll actually put it on hold to add support for
-generating source maps first.  However the mangler is complete (seems to be
-working properly) as well as the code generator, so V2 is already usable for
-achieving pretty good compression.
-
-### Better regression test suite
-
-The existing test suite in UglifyJS v1 has been contributed (thanks!).
-Unfortunately it's not great because it employs all the compression
-techniques in each test.  Eventually I'd like to port all existing tests to
-v2, but for now I started it from scratch.
-
-Tests broke many times for no good reason as I added new features; for
-example the feature that transforms consecutive simple statements into
-sequences:
-
-    INPUT  → function f(){ if (x) { foo(); bar(); baz(); }}
-    OUTPUT → function f(){ x && foo(), bar(), baz() }
-
-It's an useful technique; without meshing consecutive statements into an
-`AST_Seq` we would have to keep the `if` and the brackets.
-
-Having a test only for this feature is fine; but if the feature is applied
-to all tests, then tests where the “expected” file contains consecutive
-statements will break, although the output is perfectly fine.
-
-In v2 I started a new test suite (I actually took the “test driven
-development” approach: I'm progressing on both compressor and test suite at
-once; for each new compressor option I add a test case).  Tests look like
-this:
-
-    keep_debugger: {
-        options = {
-            drop_debugger: false
-        };
-        input: {
-            debugger;
-        }
-        expect: {
-            debugger;
-        }
-    }
-
-    drop_debugger: {
-        options = {
-            drop_debugger: true
-        };
-        input: {
-            debugger;
-            if (foo) debugger;
-        }
-        expect: {
-            if (foo);
-        }
-    }
-
-That might look funny, but it's syntactically valid JS.  A test file
-consists of a sequence of labeled block statements.  Each label names a test
-in that file.  In each block you can assign to the `options` variable to
-override compressor options (for the purpose of running the tests, all
-compression options are turned off, so you just enable the stuff you test).
-Then you include two other labeled statements: `input` and `expect`.  The
-compressor test suite simply parses these statements to get two AST-s.  It
-applies the compressor on the `input` AST, then the `codegen` on the
-compressed AST.  It applies the `codegen` to the `expect` AST (without
-compressing it).  Then it compares the results and if they match, the test
-passes.
-
-I expect this model to give a lot less false negatives, and it would work
-quite well for the name mangling too (no tests for that yet).
-
-For the code generator we'll need something more fine-tuned, since we care
-exactly how the output is going to look like.  I don't yet have any plans
-about code generator tests.
-
-
-Play with it
-------------
-
-We don't yet have a nice command line utility, but there's a test script for
-NodeJS in tmp/test-node.js.  To play with UglifyJS v2 just clone the
-repository anywhere you like and run `tmp/test-node.js script.js` (script.js
-being the script that you'd like to compress).  Take a look at the source of
-`test-node.js` to see how the API looks like, to enable/disable steps or
-compressor options.
-
-To run the existing tests, run `test/run-tests.js`
-
-
-Status of UglifyJS v1
----------------------
-
-We didn't have any significant new features in the last few months; most
-commits are about bug fixes.  I plan to continue to fix show-stopper bugs in
-v1 for a while, depending on how time permits, but there won't be any new
-development.
-
-
-Help me complete the new version
---------------------------------
-
-I've put a lot of energy already into this project and I think it comes out
-nicely.  It's based on all my previous experience from working on version 1
-and I'm working carefully, trying not to introduce bugs that were already
-fixed, trying to keep it fast and clean.  If you'd like to help me dedicate
-more time to it, please consider making a donation!
-
-<a href='http://www.pledgie.com/campaigns/18110'><img alt='Click here to
-lend your support to: Funding development of UglifyJS 2.0 and make a
-donation at www.pledgie.com !'
-src='http://www.pledgie.com/campaigns/18110.png?skin_name=chrome' border='0'
-/></a>
+The safest comments where to place copyright information (or other info that
+needs to me kept in the output) are comments attached to toplevel nodes.
