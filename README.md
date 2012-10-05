@@ -258,7 +258,7 @@ function `g` (which is the AST node to which the comment is attached to) is
 discarded by the compressor as not referenced.
 
 The safest comments where to place copyright information (or other info that
-needs to me kept in the output) are comments attached to toplevel nodes.
+needs to be kept in the output) are comments attached to toplevel nodes.
 
 ## Support for the SpiderMonkey AST
 
