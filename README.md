@@ -23,8 +23,9 @@ files.
 The available options are:
 
     --source-map       Specify an output file where to generate source map.
+                                                                          [string]
     --source-map-root  The path to the original source to be included in the
-                       source map.
+                       source map.                                        [string]
     --in-source-map    Input source map, useful if you're compressing JS that was
                        generated from some other original code.
     -p, --prefix       Skip prefix for original filenames that appear in source
@@ -49,12 +50,15 @@ The available options are:
                        compression is on, because of dead code removal or
                        cascading statements into sequences.               [string]
     --stats            Display operations run time on STDERR.            [boolean]
+    --acorn            Use Acorn for parsing.                            [boolean]
+    --spidermonkey     Assume input fles are SpiderMonkey AST format (as JSON).
+                                                                         [boolean]
     -v, --verbose      Verbose                                           [boolean]
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
 goes to STDOUT.
 
-### Source map options
+## Source map options
 
 UglifyJS2 can generate a source map file, which is highly useful for
 debugging your compressed JavaScript.  To get a source map, pass
@@ -83,7 +87,7 @@ mapping will refer to `http://foo.com/src/js/file1.js` and
 as the source map root, and the original files as `js/file1.js` and
 `js/file2.js`).
 
-#### Composed source map
+### Composed source map
 
 When you're compressing JS code that was output by a compiler such as
 CoffeeScript, mapping to the JS code won't be too helpful.  Instead, you'd
@@ -98,7 +102,7 @@ To use this feature you need to pass `--in-source-map
 to the file containing the generated JS, so if that's correct you can omit
 input files from the command line.
 
-### Mangler options
+## Mangler options
 
 To enable the mangler you need to pass `--mangle` (`-m`).  Optionally you
 can pass `-m sort` (we'll possibly have other flags in the future) in order
@@ -115,7 +119,7 @@ comma-separated list of names.  For example:
 
 to prevent the `require`, `exports` and `$` names from being changed.
 
-### Compressor options
+## Compressor options
 
 You need to pass `--compress` (`-c`) to enable the compressor.  Optionally
 you can pass a comma-separated list of options.  Options are in the form
@@ -184,7 +188,7 @@ will evaluate references to them to the value itself and drop unreachable
 code as usual.  The possible downside of this approach is that the build
 will contain the `const` declarations.
 
-### Beautifier options
+## Beautifier options
 
 The code generator tries to output shortest code possible by default.  In
 case you want beautified output, pass `--beautify` (`-b`).  Optionally you
@@ -242,3 +246,34 @@ discarded by the compressor as not referenced.
 
 The safest comments where to place copyright information (or other info that
 needs to me kept in the output) are comments attached to toplevel nodes.
+
+## Support for the SpiderMonkey AST
+
+UglifyJS2 has its own abstract syntax tree format; for
+[practical reasons](http://lisperator.net/blog/uglifyjs-why-not-switching-to-spidermonkey-ast/)
+we can't easily change to using the SpiderMonkey AST internally.  However,
+UglifyJS now has a converter which can import a SpiderMonkey AST.
+
+For example [Acorn](https://github.com/marijnh/acorn) is a super-fast parser
+that produces a SpiderMonkey AST.  It has a small CLI utility that parses
+one file and dumps the AST in JSON on the standard output.  To use UglifyJS
+to mangle and compress that:
+
+    acorn file.js | uglifyjs2 --spidermonkey -m -c
+
+The `--spidermonkey` option tells UglifyJS that all input files are not
+JavaScript, but JS code described in SpiderMonkey AST in JSON.  Therefore we
+don't use our own parser in this case, but just transform that AST into our
+internal AST.
+
+### Use Acorn for parsing
+
+More for fun, I added the `--acorn` option which will use Acorn to do all
+the parsing.  If you pass this option, UglifyJS will `require("acorn")`.  At
+the time I'm writing this it needs
+[this commit](https://github.com/mishoo/acorn/commit/17c0d189c7f9ce5447293569036949b5d0a05fef)
+in Acorn to support multiple input files and properly generate source maps.
+
+Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
+converting the SpiderMonkey tree that Acorn produces takes another 150ms so
+in total it's a bit more than just using UglifyJS's own parser.

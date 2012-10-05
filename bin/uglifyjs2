@@ -7,6 +7,7 @@ var UglifyJS = require("../tools/node");
 var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
+var acorn;
 var ARGS = optimist
     .usage("$0 input1.js [input2.js ...] [options]\n\
 Use a single dash to read input from the standard input.\
@@ -40,6 +41,8 @@ Note that currently not *all* comments can be kept when compression is on, \
 because of dead code removal or cascading statements into sequences.")
 
     .describe("stats", "Display operations run time on STDERR.")
+    .describe("acorn", "Use Acorn for parsing.")
+    .describe("spidermonkey", "Assume input fles are SpiderMonkey AST format (as JSON).")
     .describe("v", "Verbose")
 
     .alias("p", "prefix")
@@ -60,39 +63,24 @@ because of dead code removal or cascading statements into sequences.")
     .string("comments")
     .boolean("v")
     .boolean("stats")
+    .boolean("acorn")
+    .boolean("spidermonkey")
 
     .wrap(80)
 
     .argv
 ;
 
-function normalize(o) {
-    for (var i in o) if (o.hasOwnProperty(i) && /-/.test(i)) {
-        o[i.replace(/-/g, "_")] = o[i];
-        delete o[i];
-    }
-}
-
-normalize(ARGS);
-
 if (ARGS.h || ARGS.help) {
     sys.puts(optimist.help());
     process.exit(0);
 }
 
-function getOptions(x) {
-    x = ARGS[x];
-    if (!x) return null;
-    var ret = {};
-    if (x !== true) {
-        x.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
-            var a = opt.split(/\s*[=:]\s*/);
-            ret[a[0]] = a.length > 1 ? new Function("return(" + a[1] + ")")() : true;
-        });
-        normalize(ret);
-    }
-    return ret;
+if (ARGS.acorn) {
+    acorn = require("acorn");
 }
+
+normalize(ARGS);
 
 var COMPRESS = getOptions("c");
 var MANGLE = getOptions("m");
@@ -190,11 +178,30 @@ files.forEach(function(file) {
         file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
     }
     time_it("parse", function(){
-        TOPLEVEL = UglifyJS.parse(code, {
-            filename: file,
-            toplevel: TOPLEVEL
-        });
+        if (ARGS.spidermonkey) {
+            var program = JSON.parse(code);
+            if (!TOPLEVEL) TOPLEVEL = program;
+            else TOPLEVEL.body = TOPLEVEL.body.concat(program.body);
+        }
+        else if (ARGS.acorn) {
+            TOPLEVEL = acorn.parse(code, {
+                locations     : true,
+                trackComments : true,
+                sourceFile    : file,
+                program       : TOPLEVEL
+            });
+        }
+        else {
+            TOPLEVEL = UglifyJS.parse(code, {
+                filename: file,
+                toplevel: TOPLEVEL
+            });
+        };
     });
+});
+
+if (ARGS.acorn || ARGS.spidermonkey) time_it("convert_ast", function(){
+    TOPLEVEL = UglifyJS.AST_Node.from_mozilla_ast(TOPLEVEL);
 });
 
 var SCOPE_IS_NEEDED = COMPRESS || MANGLE;
@@ -256,6 +263,27 @@ if (ARGS.stats) {
 
 /* -----[ functions ]----- */
 
+function normalize(o) {
+    for (var i in o) if (o.hasOwnProperty(i) && /-/.test(i)) {
+        o[i.replace(/-/g, "_")] = o[i];
+        delete o[i];
+    }
+}
+
+function getOptions(x) {
+    x = ARGS[x];
+    if (!x) return null;
+    var ret = {};
+    if (x !== true) {
+        x.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
+            var a = opt.split(/\s*[=:]\s*/);
+            ret[a[0]] = a.length > 1 ? new Function("return(" + a[1] + ")")() : true;
+        });
+        normalize(ret);
+    }
+    return ret;
+}
+
 function read_whole_file(filename) {
     if (filename == "-") {
         // XXX: this sucks.  How does one read the whole STDIN
@@ -279,4 +307,4 @@ function time_it(name, cont) {
         else STATS[name] = spent;
     }
     return ret;
-};
+}
