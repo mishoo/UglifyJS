@@ -6,6 +6,19 @@ UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 For now this page documents the command line utility.  More advanced
 API documentation will be made available later.
 
+Install
+-------
+
+From NPM:
+
+    npm install uglify-js2
+
+From Git:
+
+    git clone git://github.com/mishoo/UglifyJS2.git
+    cd UglifyJS2
+    npm link .
+
 Usage
 -----
 
