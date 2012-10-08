@@ -276,10 +276,10 @@ UglifyJS2 has its own abstract syntax tree format; for
 we can't easily change to using the SpiderMonkey AST internally.  However,
 UglifyJS now has a converter which can import a SpiderMonkey AST.
 
-For example [Acorn](https://github.com/marijnh/acorn) is a super-fast parser
-that produces a SpiderMonkey AST.  It has a small CLI utility that parses
-one file and dumps the AST in JSON on the standard output.  To use UglifyJS
-to mangle and compress that:
+For example [Acorn][acorn] is a super-fast parser that produces a
+SpiderMonkey AST.  It has a small CLI utility that parses one file and dumps
+the AST in JSON on the standard output.  To use UglifyJS to mangle and
+compress that:
 
     acorn file.js | uglifyjs2 --spidermonkey -m -c
 
@@ -299,3 +299,156 @@ in Acorn to support multiple input files and properly generate source maps.
 Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
 converting the SpiderMonkey tree that Acorn produces takes another 150ms so
 in total it's a bit more than just using UglifyJS's own parser.
+
+
+API Reference
+-------------
+
+Assuming installation via NPM, you can load UglifyJS in your application
+like this:
+
+    var UglifyJS = require("uglify-js2");
+
+It exports a lot of names, but I'll discuss here the basics that are needed
+for parsing, mangling and compressing a piece of code.  The sequence is (1)
+parse, (2) compress, (3) mangle, (4) generate output code.
+
+### The parser
+
+    var toplevel_ast = UglifyJS.parse(code, options);
+
+`options` is optional and if present it must be an object.  The following
+properties are available:
+
+- `strict` — disable automatic semicolon insertion and support for trailing
+  comma in arrays and objects
+- `filename` — the name of the file where this code is coming from
+- `toplevel` — a `toplevel` node (as returned by a previous invocation of
+  `parse`)
+
+The last two options are useful when you'd like to minify multiple files and
+get a single file as the output and a proper source map.  Our CLI tool does
+something like this:
+
+    var toplevel = null;
+    files.forEach(function(file){
+        var code = fs.readFileSync(file);
+        toplevel = UglifyJS.parse(code, {
+            filename: file,
+            toplevel: toplevel
+        });
+    });
+
+After this, we have in `toplevel` a big AST containing all our files, with
+each token having proper information about where it came from.
+
+### Scope information
+
+UglifyJS contains a scope analyzer that you need to call manually before
+compressing or mangling.  Basically it augments various nodes in the AST
+with information about where is a name defined, how many times is a name
+referenced, if it is a global or not, if a function is using `eval` or the
+`with` statement etc.  I will discuss this some place else, for now what's
+important to know is that you need to call the following before doing
+anything with the tree:
+
+    toplevel.figure_out_scope()
+
+### Compression
+
+Like this:
+
+    var compressor = UglifyJS.Compressor(options);
+    var compressed_ast = toplevel.transform(compressor);
+
+The `options` can be missing.  Available options are discussed above in
+“Compressor options”.  Defaults should lead to best compression in most
+scripts.
+
+The compressor is destructive, so don't rely that `toplevel` remains the
+original tree.
+
+### Mangling
+
+After compression it is a good idea to call again `figure_out_scope` (since
+the compressor might drop unused variables / unreachable code and this might
+change the number of identifiers or their position).  Optionally, you can
+call a trick that helps after Gzip (counting character frequency in
+non-mangleable words).  Example:
+
+    compressed_ast.figure_out_scope();
+    compressed_ast.compute_char_frequency();
+    compressed_ast.mangle_names();
+
+### Generating output
+
+AST nodes have a `print` method that takes an output stream.  Essentially,
+to generate code you do this:
+
+    var stream = UglifyJS.OutputStream(options);
+    compressed_ast.print(stream);
+    var code = stream.toString(); // this is your minified code
+
+or, for a shortcut you can do:
+
+    var code = compressed_ast.print_to_string(options);
+
+As usual, `options` is optional.  The output stream accepts a lot of otions,
+most of them documented above in section “Beautifier options”.  The two
+which we care about here are `source_map` and `comments`.
+
+#### Keeping comments in the output
+
+In order to keep certain comments in the output you need to pass the
+`comments` option.  Pass a RegExp or a function.  If you pass a RegExp, only
+those comments whose body matches the regexp will be kept.  Note that body
+means without the initial `//` or `/*`.  If you pass a function, it will be
+called for every comment in the tree and will receive two arguments: the
+node that the comment is attached to, and the comment token itself.
+
+The comment token has these properties:
+
+- `type`: "comment1" for single-line comments or "comment2" for multi-line
+  comments
+- `value`: the comment body
+- `pos` and `endpos`: the start/end positions (zero-based indexes) in the
+  original code where this comment appears
+- `line` and `col`: the line and column where this comment appears in the
+  original code
+- `file` — the file name of the original file
+- `nlb` — true if there was a newline before this comment in the original
+  code, or if this comment contains a newline.
+
+Your function should return `true` to keep the comment, or a falsy value
+otherwise.
+
+#### Generating a source mapping
+
+You need to pass the `source_map` argument when calling `print`.  It needs
+to be a `SourceMap` object (which is a thin wrapper on top of the
+[source-map][source-map] library).
+
+Example:
+
+    var source_map = UglifyJS.SourceMap(source_map_options);
+    var stream = UglifyJS.OutputStream({
+        ...
+        source_map: source_map
+    });
+    compressed_ast.print(stream);
+
+    var code = stream.toString();
+    var map = source_map.toString(); // json output for your source map
+
+The `source_map_options` (optional) can contain the following properties:
+
+- `file`: the name of the JavaScript output file that this mapping refers to
+- `root`: the `sourceRoot` property (see the [spec][sm-spec])
+- `orig`: the "original source map", handy when you compress generated JS
+  and want to map the minified output back to the original code where it
+  came from.  It can be simply a string in JSON, or a JSON object containing
+  the original source map.
+
+  [acorn]: https://github.com/marijnh/acorn
+  [source-map]: https://github.com/mozilla/source-map
+  [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
