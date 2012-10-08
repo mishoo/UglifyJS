@@ -43,6 +43,10 @@ because of dead code removal or cascading statements into sequences.")
     .describe("stats", "Display operations run time on STDERR.")
     .describe("acorn", "Use Acorn for parsing.")
     .describe("spidermonkey", "Assume input fles are SpiderMonkey AST format (as JSON).")
+    .describe("self", "Build itself (UglifyJS2) as a library (implies --wrap=UglifyJS --export-all)")
+    .describe("wrap", "Embed everything in a big function, making the “exports” and “global” variables available. \
+You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.")
+    .describe("export-all", "Only used when --wrap, this tells UglifyJS to add code to automatically export all globals.")
     .describe("v", "Verbose")
 
     .alias("p", "prefix")
@@ -61,6 +65,9 @@ because of dead code removal or cascading statements into sequences.")
     .string("c")
     .string("d")
     .string("comments")
+    .string("wrap")
+    .boolean("export-all")
+    .boolean("self")
     .boolean("v")
     .boolean("stats")
     .boolean("acorn")
@@ -120,6 +127,15 @@ if (ARGS.comments) {
 }
 
 var files = ARGS._.slice();
+
+if (ARGS.self) {
+    if (files.length > 0) {
+        sys.error("WARN: Ignoring input files since --self was passed");
+    }
+    files = UglifyJS.FILES;
+    if (!ARGS.wrap) ARGS.wrap = "UglifyJS";
+    ARGS.export_all = true;
+}
 
 var ORIG_MAP = ARGS.in_source_map;
 
@@ -203,6 +219,10 @@ files.forEach(function(file) {
 if (ARGS.acorn || ARGS.spidermonkey) time_it("convert_ast", function(){
     TOPLEVEL = UglifyJS.AST_Node.from_mozilla_ast(TOPLEVEL);
 });
+
+if (ARGS.wrap) {
+    TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
+}
 
 var SCOPE_IS_NEEDED = COMPRESS || MANGLE;
 

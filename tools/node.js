@@ -35,15 +35,21 @@ function load_global(file) {
     }
 };
 
-load_global("../lib/utils.js");
-load_global("../lib/ast.js");
-load_global("../lib/parse.js");
-load_global("../lib/transform.js");
-load_global("../lib/scope.js");
-load_global("../lib/output.js");
-load_global("../lib/compress.js");
-load_global("../lib/sourcemap.js");
-load_global("../lib/mozilla-ast.js");
+var FILES = exports.FILES = [
+    "../lib/utils.js",
+    "../lib/ast.js",
+    "../lib/parse.js",
+    "../lib/transform.js",
+    "../lib/scope.js",
+    "../lib/output.js",
+    "../lib/compress.js",
+    "../lib/sourcemap.js",
+    "../lib/mozilla-ast.js"
+].map(function(file){
+    return path.join(path.dirname(fs.realpathSync(__filename)), file);
+});
+
+FILES.forEach(load_global);
 
 UglifyJS.AST_Node.warn_function = function(txt) {
     sys.error("WARN: " + txt);

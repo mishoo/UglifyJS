@@ -66,6 +66,15 @@ The available options are:
     --acorn            Use Acorn for parsing.                            [boolean]
     --spidermonkey     Assume input fles are SpiderMonkey AST format (as JSON).
                                                                          [boolean]
+    --self             Build itself (UglifyJS2) as a library (implies
+                       --wrap=UglifyJS --export-all)                     [boolean]
+    --wrap             Embed everything in a big function, making the “exports”
+                       and “global” variables available. You need to pass an
+                       argument to this option to specify the name that your
+                       module will take when included in, say, a browser.
+                                                                          [string]
+    --export-all       Only used when --wrap, this tells UglifyJS to add code to
+                       automatically export all globals.                 [boolean]
     -v, --verbose      Verbose                                           [boolean]
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
