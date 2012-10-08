@@ -300,7 +300,6 @@ Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
 converting the SpiderMonkey tree that Acorn produces takes another 150ms so
 in total it's a bit more than just using UglifyJS's own parser.
 
-
 API Reference
 -------------
 
@@ -313,7 +312,53 @@ It exports a lot of names, but I'll discuss here the basics that are needed
 for parsing, mangling and compressing a piece of code.  The sequence is (1)
 parse, (2) compress, (3) mangle, (4) generate output code.
 
-### The parser
+### The simple way
+
+There's a single toplevel function which combines all the steps.  If you
+don't need additional customization, you might want to go with `minify`.
+Example:
+
+    var result = UglifyJS.minify("/path/to/file.js");
+    console.log(result.code); // minified output
+
+You can also compress multiple files:
+
+    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ]);
+    console.log(result.code);
+
+To generate a source map:
+
+    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
+        outSourceMap: "out.js.map"
+    });
+    console.log(result.code); // minified output
+    console.log(result.map);
+
+Note that the source map is not saved in a file, it's just returned in
+`result.map`.  The value passed for `outSourceMap` is only used to set the
+`file` attribute in the source map (see [the spec][sm-spec]).
+
+If you're compressing compiled JavaScript and have a source map for it, you
+can use the `inSourceMap` argument:
+
+    var result = UglifyJS.minify("compiled.js", {
+        inSourceMap: "compiled.js.map",
+        outSourceMap: "minified.js.map"
+    });
+    // same as before, it returns `code` and `map`
+
+The `inSourceMap` is only used if you also request `outSourceMap` (it makes
+no sense otherwise).
+
+We could add more options to `UglifyJS.minify` — if you need additional
+functionality please suggest!
+
+### The hard way
+
+Following there's more detailed API info, in case the `minify` function is
+too simple for your needs.
+
+#### The parser
 
     var toplevel_ast = UglifyJS.parse(code, options);
 
@@ -342,7 +387,7 @@ something like this:
 After this, we have in `toplevel` a big AST containing all our files, with
 each token having proper information about where it came from.
 
-### Scope information
+#### Scope information
 
 UglifyJS contains a scope analyzer that you need to call manually before
 compressing or mangling.  Basically it augments various nodes in the AST
@@ -354,7 +399,7 @@ anything with the tree:
 
     toplevel.figure_out_scope()
 
-### Compression
+#### Compression
 
 Like this:
 
@@ -368,7 +413,7 @@ scripts.
 The compressor is destructive, so don't rely that `toplevel` remains the
 original tree.
 
-### Mangling
+#### Mangling
 
 After compression it is a good idea to call again `figure_out_scope` (since
 the compressor might drop unused variables / unreachable code and this might
@@ -380,7 +425,7 @@ non-mangleable words).  Example:
     compressed_ast.compute_char_frequency();
     compressed_ast.mangle_names();
 
-### Generating output
+#### Generating output
 
 AST nodes have a `print` method that takes an output stream.  Essentially,
 to generate code you do this:

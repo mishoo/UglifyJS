@@ -61,3 +61,45 @@ for (var i in UglifyJS) {
         exports[i] = UglifyJS[i];
     }
 }
+
+exports.minify = function(files, options) {
+    options = UglifyJS.defaults(options, {
+        outSourceMap: null,
+        inSourceMap: null
+    });
+    if (typeof files == "string")
+        files = [ files ];
+
+    // 1. parse
+    var toplevel = null;
+    files.forEach(function(file){
+        var code = fs.readFileSync(file, "utf8");
+        toplevel = UglifyJS.parse(code, {
+            filename: file,
+            toplevel: toplevel
+        });
+    });
+
+    // 2. compress
+    toplevel.figure_out_scope();
+    var sq = UglifyJS.Compressor();
+    toplevel = toplevel.transform(sq);
+
+    // 3. mangle
+    toplevel.figure_out_scope();
+    toplevel.compute_char_frequency();
+    toplevel.mangle_names();
+
+    // 4. output
+    var map = null;
+    if (options.outSourceMap) map = UglifyJS.SourceMap({
+        file: options.outSourceMap,
+        orig: options.inSourceMap
+    });
+    var stream = UglifyJS.OutputStream({ source_map: map });
+    toplevel.print(stream);
+    return {
+        code : stream + "",
+        map  : map + ""
+    };
+};
