@@ -243,7 +243,6 @@ if (SCOPE_IS_NEEDED) {
         TOPLEVEL.figure_out_scope();
         if (MANGLE) {
             TOPLEVEL.compute_char_frequency();
-            UglifyJS.base54.sort();
         }
     });
 }
