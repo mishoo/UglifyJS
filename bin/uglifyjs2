@@ -125,8 +125,7 @@ if (ARGS.comments) {
             var type = comment.type;
             if (type == "comment2") {
                 // multiline comment
-                return text.indexOf("@preserve") >= 0
-                    || text.indexOf("@license") >= 0;
+                return /@preserve|@license|@cc_on/i.test(test);
             }
         }
     }
