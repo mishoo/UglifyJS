@@ -107,3 +107,52 @@ exports.minify = function(files, options) {
         map  : map + ""
     };
 };
+
+// exports.describe_ast = function() {
+//     function doitem(ctor) {
+//         var sub = {};
+//         ctor.SUBCLASSES.forEach(function(ctor){
+//             sub[ctor.TYPE] = doitem(ctor);
+//         });
+//         var ret = {};
+//         if (ctor.SELF_PROPS.length > 0) ret.props = ctor.SELF_PROPS;
+//         if (ctor.SUBCLASSES.length > 0) ret.sub = sub;
+//         return ret;
+//     }
+//     return doitem(UglifyJS.AST_Node).sub;
+// }
+
+exports.describe_ast = function() {
+    var out = UglifyJS.OutputStream({ beautify: true });
+    function doitem(ctor) {
+        out.print("AST_" + ctor.TYPE);
+        var props = ctor.SELF_PROPS.filter(function(prop){
+            return !/^\$/.test(prop);
+        });
+        if (props.length > 0) {
+            out.space();
+            out.with_parens(function(){
+                props.forEach(function(prop, i){
+                    if (i) out.space();
+                    out.print(prop);
+                });
+            });
+        }
+        if (ctor.documentation) {
+            out.space();
+            out.print_string(ctor.documentation);
+        }
+        if (ctor.SUBCLASSES.length > 0) {
+            out.space();
+            out.with_block(function(){
+                ctor.SUBCLASSES.forEach(function(ctor, i){
+                    out.indent();
+                    doitem(ctor);
+                    out.newline();
+                });
+            });
+        }
+    };
+    doitem(UglifyJS.AST_Node);
+    return out + "";
+};

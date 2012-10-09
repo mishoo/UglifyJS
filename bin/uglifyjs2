@@ -78,6 +78,14 @@ You need to pass an argument to this option to specify the name that your module
     .argv
 ;
 
+normalize(ARGS);
+
+if (ARGS.ast_help) {
+    var desc = UglifyJS.describe_ast();
+    sys.puts(typeof desc == "string" ? desc : JSON.stringify(desc, null, 2));
+    process.exit(0);
+}
+
 if (ARGS.h || ARGS.help) {
     sys.puts(optimist.help());
     process.exit(0);
@@ -86,8 +94,6 @@ if (ARGS.h || ARGS.help) {
 if (ARGS.acorn) {
     acorn = require("acorn");
 }
-
-normalize(ARGS);
 
 var COMPRESS = getOptions("c");
 var MANGLE = getOptions("m");
