@@ -92,9 +92,13 @@ exports.minify = function(files, options) {
 
     // 4. output
     var map = null;
+    var inMap = null;
+    if (options.inSourceMap) {
+        inMap = fs.readFileSync(options.inSourceMap, "utf8");
+    }
     if (options.outSourceMap) map = UglifyJS.SourceMap({
         file: options.outSourceMap,
-        orig: fs.readFileSync(options.inSourceMap, "utf8")
+        orig: inMap
     });
     var stream = UglifyJS.OutputStream({ source_map: map });
     toplevel.print(stream);
