@@ -47,6 +47,7 @@ because of dead code removal or cascading statements into sequences.")
     .describe("wrap", "Embed everything in a big function, making the “exports” and “global” variables available. \
 You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.")
     .describe("export-all", "Only used when --wrap, this tells UglifyJS to add code to automatically export all globals.")
+    .describe("lint", "Display some scope warnings")
     .describe("v", "Verbose")
 
     .alias("p", "prefix")
@@ -72,6 +73,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("stats")
     .boolean("acorn")
     .boolean("spidermonkey")
+    .boolean("lint")
 
     .wrap(80)
 
@@ -229,11 +231,14 @@ if (ARGS.wrap) {
     TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
 }
 
-var SCOPE_IS_NEEDED = COMPRESS || MANGLE;
+var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
 
 if (SCOPE_IS_NEEDED) {
     time_it("scope", function(){
         TOPLEVEL.figure_out_scope();
+        if (ARGS.lint) {
+            TOPLEVEL.scope_warnings();
+        }
     });
 }
 
