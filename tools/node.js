@@ -64,8 +64,9 @@ for (var i in UglifyJS) {
 
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
-        outSourceMap: null,
-        inSourceMap: null
+        outSourceMap : null,
+        inSourceMap  : null,
+        warnings     : false,
     });
     if (typeof files == "string")
         files = [ files ];
@@ -82,7 +83,9 @@ exports.minify = function(files, options) {
 
     // 2. compress
     toplevel.figure_out_scope();
-    var sq = UglifyJS.Compressor();
+    var sq = UglifyJS.Compressor({
+        warnings: options.warnings,
+    });
     toplevel = toplevel.transform(sq);
 
     // 3. mangle
