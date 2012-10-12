@@ -291,10 +291,7 @@ internal AST.
 ### Use Acorn for parsing
 
 More for fun, I added the `--acorn` option which will use Acorn to do all
-the parsing.  If you pass this option, UglifyJS will `require("acorn")`.  At
-the time I'm writing this it needs
-[this commit](https://github.com/mishoo/acorn/commit/17c0d189c7f9ce5447293569036949b5d0a05fef)
-in Acorn to support multiple input files and properly generate source maps.
+the parsing.  If you pass this option, UglifyJS will `require("acorn")`.
 
 Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
 converting the SpiderMonkey tree that Acorn produces takes another 150ms so
