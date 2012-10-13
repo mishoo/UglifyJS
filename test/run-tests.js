@@ -37,6 +37,12 @@ function find_test_files(dir) {
     var files = fs.readdirSync(dir).filter(function(name){
         return /\.js$/i.test(name);
     });
+    if (process.argv.length > 2) {
+        var x = process.argv.slice(2);
+        files = files.filter(function(f){
+            return x.indexOf(f) >= 0;
+        });
+    }
     return files;
 }
 
