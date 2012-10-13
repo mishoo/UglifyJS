@@ -67,7 +67,10 @@ function run_compress_tests() {
         log_start_file(file);
         function test_case(test) {
             log_test(test.name);
-            var cmp = new U.Compressor(test.options || {}, true);
+            var options = U.defaults(test.options, {
+                warnings: false
+            });
+            var cmp = new U.Compressor(options, true);
             var expect = make_code(as_toplevel(test.expect), false);
             var input = as_toplevel(test.input);
             var output = input.transform(cmp);
