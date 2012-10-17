@@ -97,9 +97,9 @@ if (ARGS.acorn) {
     acorn = require("acorn");
 }
 
-var COMPRESS = getOptions("c");
-var MANGLE = getOptions("m");
-var BEAUTIFY = getOptions("b");
+var COMPRESS = getOptions("c", true);
+var MANGLE = getOptions("m", true);
+var BEAUTIFY = getOptions("b", true);
 
 if (COMPRESS && ARGS.d) {
     COMPRESS.global_defs = getOptions("d");
@@ -299,16 +299,36 @@ function normalize(o) {
     }
 }
 
-function getOptions(x) {
+function getOptions(x, constants) {
     x = ARGS[x];
     if (!x) return null;
     var ret = {};
     if (x !== true) {
-        x.replace(/^\s+|\s+$/g).split(/\s*,+\s*/).forEach(function(opt){
-            var a = opt.split(/\s*[=:]\s*/);
-            ret[a[0]] = a.length > 1 ? new Function("return(" + a[1] + ")")() : true;
-        });
-        normalize(ret);
+        var ast;
+        try {
+            ast = UglifyJS.parse(x);
+        } catch(ex) {
+            if (ex instanceof UglifyJS.JS_Parse_Error) {
+                sys.error("Error parsing arguments in: " + x);
+                process.exit(1);
+            }
+        }
+        ast.walk(new UglifyJS.TreeWalker(function(node){
+            if (node instanceof UglifyJS.AST_Toplevel) return; // descend
+            if (node instanceof UglifyJS.AST_SimpleStatement) return; // descend
+            if (node instanceof UglifyJS.AST_Seq) return; // descend
+            if (node instanceof UglifyJS.AST_Assign) {
+                var name = node.left.print_to_string({ beautify: false }).replace(/-/g, "_");
+                var value = node.right;
+                if (constants)
+                    value = new Function("return (" + value.print_to_string() + ")")();
+                ret[name] = value;
+                return true;    // no descend
+            }
+            sys.error(node.TYPE)
+            sys.error("Error parsing arguments in: " + x);
+            process.exit(1);
+        }));
     }
     return ret;
 }
