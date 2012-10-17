@@ -241,6 +241,10 @@ can pass additional arguments that control the code output:
 - `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
+- `semicolons` (default `true`) -- separate statements with semicolons.  If
+  you pass `false` then whenever possible we will use a newline instead of a
+  semicolon, leading to more readable output of uglified code (size before
+  gzip could be smaller; size after gzip insignificantly larger).
 
 ### Keeping copyright notices or other comments
 
