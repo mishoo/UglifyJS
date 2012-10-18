@@ -322,6 +322,7 @@ There's a single toplevel function which combines all the steps.  If you
 don't need additional customization, you might want to go with `minify`.
 Example:
 
+    // see "fromString" below if you need to pass code instead of file name
     var result = UglifyJS.minify("/path/to/file.js");
     console.log(result.code); // minified output
 
@@ -353,6 +354,12 @@ can use the `inSourceMap` argument:
 
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
+
+Other options:
+
+- `warnings` (default `false`) — pass `true` to display compressor warnings.
+- `fromString` (default `false`) — if you pass `true` then you can pass
+  JavaScript source code, rather than file names.
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
