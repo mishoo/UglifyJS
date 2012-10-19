@@ -343,6 +343,14 @@ Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
 `file` attribute in the source map (see [the spec][sm-spec]).
 
+You can also specify sourceRoot property to be included in source map:
+
+    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
+        outSourceMap: "out.js.map",
+        sourceRoot: "http://example.com/src"
+    });
+
+
 If you're compressing compiled JavaScript and have a source map for it, you
 can use the `inSourceMap` argument:
 
