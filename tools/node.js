@@ -65,6 +65,7 @@ for (var i in UglifyJS) {
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
         outSourceMap : null,
+        sourceRoot   : null,
         inSourceMap  : null,
         fromString   : false,
         warnings     : false,
@@ -104,7 +105,8 @@ exports.minify = function(files, options) {
     }
     if (options.outSourceMap) map = UglifyJS.SourceMap({
         file: options.outSourceMap,
-        orig: inMap
+        orig: inMap,
+        root: options.sourceRoot
     });
     var stream = UglifyJS.OutputStream({ source_map: map });
     toplevel.print(stream);
