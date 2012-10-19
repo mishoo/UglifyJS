@@ -1,11 +1,7 @@
-var save_stderr = process.stderr;
 var fs = require("fs");
 
 // discard annoying NodeJS warning ("path.existsSync is now called `fs.existsSync`.")
-var devnull = fs.createWriteStream("/dev/null");
-process.__defineGetter__("stderr", function(){
-    return devnull;
-});
+process.stderr.write = function() { return true; };
 
 var vm = require("vm");
 var sys = require("util");
@@ -18,9 +14,8 @@ var UglifyJS = vm.createContext({
     MOZ_SourceMap : require("source-map")
 });
 
-process.__defineGetter__("stderr", function(){
-    return save_stderr;
-});
+// return stderr to normal
+process.stderr.write = process.stderr.constructor.prototype.write;
 
 function load_global(file) {
     file = path.resolve(path.dirname(module.filename), file);
