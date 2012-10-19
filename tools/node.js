@@ -1,7 +1,6 @@
 var fs = require("fs");
 
 // discard annoying NodeJS warning ("path.existsSync is now called `fs.existsSync`.")
-var original_stderr_write = process.stderr.write;
 process.stderr.write = function() { return true; };
 
 var vm = require("vm");
@@ -16,7 +15,7 @@ var UglifyJS = vm.createContext({
 });
 
 // return stderr to normal
-process.stderr.write = original_stderr_write;
+process.stderr.write = process.stderr.constructor.prototype.write;
 
 function load_global(file) {
     file = path.resolve(path.dirname(module.filename), file);
