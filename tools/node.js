@@ -1,25 +1,23 @@
-var save_stderr = process.stderr;
+var path = require("path");
 var fs = require("fs");
 
-// discard annoying NodeJS warning ("path.existsSync is now called `fs.existsSync`.")
-var devnull = fs.createWriteStream("/dev/null");
-process.__defineGetter__("stderr", function(){
-    return devnull;
-});
+// Avoid NodeJS warning.
+//
+// There's a --no-deprecation command line argument supported by
+// NodeJS, but that's tricky to use, so I'd like to set it from the
+// program itself.  Turns out you need to set `process.noDeprecation`,
+// but by the time you can set that the `path` module is already
+// loaded and `path.existsSync` is already changed to display that
+// warning, therefore here's the poor solution:
+path.existsSync = fs.existsSync;
 
 var vm = require("vm");
 var sys = require("util");
-var path = require("path");
 
 var UglifyJS = vm.createContext({
     sys           : sys,
     console       : console,
-
     MOZ_SourceMap : require("source-map")
-});
-
-process.__defineGetter__("stderr", function(){
-    return save_stderr;
 });
 
 function load_global(file) {
