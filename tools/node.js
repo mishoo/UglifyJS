@@ -9,7 +9,9 @@ var fs = require("fs");
 // but by the time you can set that the `path` module is already
 // loaded and `path.existsSync` is already changed to display that
 // warning, therefore here's the poor solution:
-path.existsSync = fs.existsSync;
+if (fs.existsSync) {
+    path.existsSync = fs.existsSync;
+}
 
 var vm = require("vm");
 var sys = require("util");
