@@ -3,8 +3,11 @@ UglifyJS 2
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
-For now this page documents the command line utility.  More advanced
-API documentation will be made available later.
+This page documents the command line utility.  For
+[API and internals documentation see my website](http://lisperator.net/uglifyjs/).
+There's also an
+[in-browser online demo](http://lisperator.net/uglifyjs/#demo) (for Firefox,
+Chrome and probably Safari).
 
 Install
 -------
@@ -319,6 +322,7 @@ There's a single toplevel function which combines all the steps.  If you
 don't need additional customization, you might want to go with `minify`.
 Example:
 
+    // see "fromString" below if you need to pass code instead of file name
     var result = UglifyJS.minify("/path/to/file.js");
     console.log(result.code); // minified output
 
@@ -339,6 +343,14 @@ Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
 `file` attribute in the source map (see [the spec][sm-spec]).
 
+You can also specify sourceRoot property to be included in source map:
+
+    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
+        outSourceMap: "out.js.map",
+        sourceRoot: "http://example.com/src"
+    });
+
+
 If you're compressing compiled JavaScript and have a source map for it, you
 can use the `inSourceMap` argument:
 
@@ -350,6 +362,12 @@ can use the `inSourceMap` argument:
 
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
+
+Other options:
+
+- `warnings` (default `false`) — pass `true` to display compressor warnings.
+- `fromString` (default `false`) — if you pass `true` then you can pass
+  JavaScript source code, rather than file names.
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!

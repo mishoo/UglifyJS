@@ -1,25 +1,25 @@
-var save_stderr = process.stderr;
+var path = require("path");
 var fs = require("fs");
 
-// discard annoying NodeJS warning ("path.existsSync is now called `fs.existsSync`.")
-var devnull = fs.createWriteStream("/dev/null");
-process.__defineGetter__("stderr", function(){
-    return devnull;
-});
+// Avoid NodeJS warning.
+//
+// There's a --no-deprecation command line argument supported by
+// NodeJS, but that's tricky to use, so I'd like to set it from the
+// program itself.  Turns out you need to set `process.noDeprecation`,
+// but by the time you can set that the `path` module is already
+// loaded and `path.existsSync` is already changed to display that
+// warning, therefore here's the poor solution:
+if (fs.existsSync) {
+    path.existsSync = fs.existsSync;
+}
 
 var vm = require("vm");
 var sys = require("util");
-var path = require("path");
 
 var UglifyJS = vm.createContext({
     sys           : sys,
     console       : console,
-
     MOZ_SourceMap : require("source-map")
-});
-
-process.__defineGetter__("stderr", function(){
-    return save_stderr;
 });
 
 function load_global(file) {
@@ -66,7 +66,9 @@ exports.minify = function(files, options)
 {
     options = UglifyJS.defaults(options, {
         outSourceMap : null,
+        sourceRoot   : null,
         inSourceMap  : null,
+        fromString   : false,
         warnings     : false,
         compressor   : null,
         output       : null,
@@ -104,9 +106,11 @@ exports.minify = function(files, options)
     // 1. parse
     var toplevel = null;
     files.forEach(function(file){
-        var code = fs.readFileSync(file, "utf8");
+        var code = options.fromString
+            ? file
+            : fs.readFileSync(file, "utf8");
         toplevel = UglifyJS.parse(code, {
-            filename: file,
+            filename: options.fromString ? "?" : file,
             toplevel: toplevel
         });
     });
@@ -133,7 +137,8 @@ exports.minify = function(files, options)
     }
     if (options.outSourceMap) map = UglifyJS.SourceMap({
         file: options.outSourceMap,
-        orig: inMap
+        orig: inMap,
+        root: options.sourceRoot
     });
     
     // Add sourcemap to output options

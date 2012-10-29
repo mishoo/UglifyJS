@@ -73,12 +73,13 @@ function run_compress_tests() {
             var cmp = new U.Compressor(options, true);
             var expect = make_code(as_toplevel(test.expect), false);
             var input = as_toplevel(test.input);
+            var input_code = make_code(test.input);
             var output = input.transform(cmp);
             output.figure_out_scope();
             output = make_code(output, false);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
-                    input: make_code(test.input),
+                    input: input_code,
                     output: output,
                     expected: expect
                 });
