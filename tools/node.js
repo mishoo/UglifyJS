@@ -73,14 +73,11 @@ exports.minify = function(files, options)
         comments: false
     });
     
-    var compressorOptions =  UglifyJS.defaults(options.compressor, {
-    	warnings : false
-    });
+    // Available options in lib/compress.js
+    var compressorOptions =  UglifyJS.merge({}, options.compressor);
     
-    var outputOptions = UglifyJS.defaults(options.output, {
-    	comments: false,
-    	beautify: false
-    });
+    // Available options in lib/output.js
+    var outputOptions = UglifyJS.merge({}, options.output);
     
     // Got comment option?
     if (options.comments) {
