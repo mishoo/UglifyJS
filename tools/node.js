@@ -1,18 +1,5 @@
 var path = require("path");
 var fs = require("fs");
-
-// Avoid NodeJS warning.
-//
-// There's a --no-deprecation command line argument supported by
-// NodeJS, but that's tricky to use, so I'd like to set it from the
-// program itself.  Turns out you need to set `process.noDeprecation`,
-// but by the time you can set that the `path` module is already
-// loaded and `path.existsSync` is already changed to display that
-// warning, therefore here's the poor solution:
-if (fs.existsSync) {
-    path.existsSync = fs.existsSync;
-}
-
 var vm = require("vm");
 var sys = require("util");
 
