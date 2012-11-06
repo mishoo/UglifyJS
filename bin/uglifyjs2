@@ -252,7 +252,7 @@ if (SCOPE_IS_NEEDED) {
     time_it("scope", function(){
         TOPLEVEL.figure_out_scope();
         if (MANGLE) {
-            TOPLEVEL.compute_char_frequency();
+            TOPLEVEL.compute_char_frequency(MANGLE);
         }
     });
 }
