@@ -15,8 +15,8 @@
         "url": "https://github.com/mishoo/UglifyJS2.git"
     }],
     "dependencies": {
-        "source-map" : "*",
-        "optimist"   : "*"
+        "source-map" : "~0.1.7",
+        "optimist"   : "~0.3.5"
     },
     "bin": {
         "uglifyjs2" : "bin/uglifyjs2"
