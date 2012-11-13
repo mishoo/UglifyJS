@@ -197,9 +197,7 @@ try {
 
 files.forEach(function(file) {
     var code = read_whole_file(file);
-    if (ARGS.p != null) {
-        file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
-    }
+    file = drop_prefix(file, ARGS.p);
     time_it("parse", function(){
         if (ARGS.spidermonkey) {
             var program = JSON.parse(code);
@@ -268,7 +266,7 @@ output = output.get();
 
 if (SOURCE_MAP) {
     fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-    output += "\n//@ sourceMappingURL=" + ARGS.source_map;
+    output += "\n//@ sourceMappingURL=" + ARGS.source_map_root + drop_prefix(ARGS.source_map, ARGS.p);
 }
 
 if (OUTPUT_FILE) {
@@ -345,6 +343,13 @@ function read_whole_file(filename) {
         sys.error("ERROR: can't read file: " + filename);
         process.exit(1);
     }
+}
+
+function drop_prefix(filename, prefix) {
+    if (prefix != null) {
+        filename = filename.replace(/^\/+/, "").split(/\/+/).slice(prefix).join("/");
+    }
+    return filename;
 }
 
 function time_it(name, cont) {
