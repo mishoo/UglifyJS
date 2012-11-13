@@ -49,14 +49,44 @@ for (var i in UglifyJS) {
     }
 }
 
-exports.minify = function(files, options) {
+exports.minify = function(files, options)
+{
     options = UglifyJS.defaults(options, {
         outSourceMap : null,
         sourceRoot   : null,
         inSourceMap  : null,
         fromString   : false,
         warnings     : false,
+        compressor   : null,
+        output       : null,
+        comments: false
     });
+    
+    // Available options in lib/compress.js
+    var compressorOptions =  UglifyJS.merge({}, options.compressor);
+    
+    // Available options in lib/output.js
+    var outputOptions = UglifyJS.merge({}, options.output);
+    
+    // Got comment option?
+    if (options.comments) {
+	    if (/^\//.test(options.comments)) {
+	        outputOptions.comments = new Function("return(" + options.comments + ")")();
+	    } else if (options.comments == "all") {
+	        outputOptions.comments = true;
+	    } else {
+	        outputOptions.comments = function(node, comment) {
+	            var text = comment.value;
+	            var type = comment.type;
+	            if (type == "comment2") {
+	                // preserved multiline comments
+	                 return /License|license|@preserve|@license|@cc_on/i.test(text);
+	            }
+	        }
+	    }
+	}
+
+    
     if (typeof files == "string")
         files = [ files ];
 
@@ -74,9 +104,11 @@ exports.minify = function(files, options) {
 
     // 2. compress
     toplevel.figure_out_scope();
-    var sq = UglifyJS.Compressor({
-        warnings: options.warnings,
-    });
+    
+    // Toplevel warnings override
+    if(options.warnings) compressorOptions.warnings = true;
+    
+    var sq = UglifyJS.Compressor(compressorOptions);
     toplevel = toplevel.transform(sq);
 
     // 3. mangle
@@ -95,7 +127,11 @@ exports.minify = function(files, options) {
         orig: inMap,
         root: options.sourceRoot
     });
-    var stream = UglifyJS.OutputStream({ source_map: map });
+    
+    // Add sourcemap to output options
+    outputOptions.source_map = map;
+    
+    var stream = UglifyJS.OutputStream(outputOptions);
     toplevel.print(stream);
     return {
         code : stream + "",
