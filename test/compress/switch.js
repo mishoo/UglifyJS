@@ -176,11 +176,35 @@ constant_switch_8: {
         }
     }
     expect: {
-        OUT: switch (1) {
-          case 1:
+        OUT: {
             x();
             for (;;) break OUT;
             y();
+        }
+    }
+}
+
+constant_switch_9: {
+    options = { dead_code: true, evaluate: true };
+    input: {
+        OUT: switch (1) {
+          case 1:
+            x();
+            for (;;) if (foo) break OUT;
+            y();
+          case 1+1:
+            bar();
+          default:
+            def();
+        }
+    }
+    expect: {
+        OUT: {
+            x();
+            for (;;) if (foo) break OUT;
+            y();
+            bar();
+            def();
         }
     }
 }
