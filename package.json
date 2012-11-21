@@ -1,9 +1,9 @@
 {
-    "name": "uglify-js2",
+    "name": "uglify-js",
     "description": "JavaScript parser, mangler/compressor and beautifier toolkit",
     "homepage": "http://lisperator.net/uglifyjs",
     "main": "tools/node.js",
-    "version": "2.1.11",
+    "version": "2.2.0",
     "engines": { "node" : ">=0.4.0" },
     "maintainers": [{
         "name": "Mihai Bazon",
@@ -19,7 +19,7 @@
         "optimist"   : "~0.3.5"
     },
     "bin": {
-        "uglifyjs2" : "bin/uglifyjs2"
+        "uglifyjs" : "bin/uglifyjs"
     },
     "scripts": {"test": "node test/run-tests.js"}
 }

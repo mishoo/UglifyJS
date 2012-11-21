@@ -14,7 +14,7 @@ Install
 
 From NPM:
 
-    npm install uglify-js2
+    npm install uglify-js
 
 From Git:
 
@@ -25,7 +25,7 @@ From Git:
 Usage
 -----
 
-    uglifyjs2 [input files] [options]
+    uglifyjs [input files] [options]
 
 UglifyJS2 can take multiple input files.  It's recommended that you pass the
 input files first, then pass the options.  UglifyJS will parse input files
@@ -98,12 +98,12 @@ map.
 
 For example:
 
-    uglifyjs2 /home/doe/work/foo/src/js/file1.js \
-              /home/doe/work/foo/src/js/file2.js \
-              -o foo.min.js \
-              --source-map foo.min.js.map \
-              --source-map-root http://foo.com/src \
-              -p 5 -c -m
+    uglifyjs /home/doe/work/foo/src/js/file1.js \
+             /home/doe/work/foo/src/js/file2.js \
+             -o foo.min.js \
+             --source-map foo.min.js.map \
+             --source-map-root http://foo.com/src \
+             -p 5 -c -m
 
 The above will compress and mangle `file1.js` and `file2.js`, will drop the
 output in `foo.min.js` and the source map in `foo.min.js.map`.  The source
@@ -140,7 +140,7 @@ When mangling is enabled but you want to prevent certain names from being
 mangled, you can declare those names with `--reserved` (`-r`) — pass a
 comma-separated list of names.  For example:
 
-    uglifyjs2 ... -m -r '$,require,exports'
+    uglifyjs ... -m -r '$,require,exports'
 
 to prevent the `require`, `exports` and `$` names from being changed.
 
@@ -206,7 +206,7 @@ separate file and include it into the build.  For example you can have a
 
 and build your code like this:
 
-    uglifyjs2 build/defines.js js/foo.js js/bar.js... -c
+    uglifyjs build/defines.js js/foo.js js/bar.js... -c
 
 UglifyJS will notice the constants and, since they cannot be altered, it
 will evaluate references to them to the value itself and drop unreachable
@@ -288,7 +288,7 @@ SpiderMonkey AST.  It has a small CLI utility that parses one file and dumps
 the AST in JSON on the standard output.  To use UglifyJS to mangle and
 compress that:
 
-    acorn file.js | uglifyjs2 --spidermonkey -m -c
+    acorn file.js | uglifyjs --spidermonkey -m -c
 
 The `--spidermonkey` option tells UglifyJS that all input files are not
 JavaScript, but JS code described in SpiderMonkey AST in JSON.  Therefore we
@@ -310,7 +310,7 @@ API Reference
 Assuming installation via NPM, you can load UglifyJS in your application
 like this:
 
-    var UglifyJS = require("uglify-js2");
+    var UglifyJS = require("uglify-js");
 
 It exports a lot of names, but I'll discuss here the basics that are needed
 for parsing, mangling and compressing a piece of code.  The sequence is (1)
