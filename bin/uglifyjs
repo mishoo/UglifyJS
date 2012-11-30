@@ -335,8 +335,9 @@ function getOptions(x, constants) {
 
 function read_whole_file(filename) {
     if (filename == "-") {
-        var size = fs.fstatSync(process.stdin.fd).size;
-        return size > 0 ? fs.readSync(process.stdin.fd, size)[0] : "";
+        // XXX: this sucks.  How does one read the whole STDIN
+        // synchronously?
+        filename = "/dev/stdin";
     }
     try {
         return fs.readFileSync(filename, "utf8");
