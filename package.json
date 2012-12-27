@@ -21,5 +21,6 @@
     "bin": {
         "uglifyjs" : "bin/uglifyjs"
     },
+    "main": "./tools/node",
     "scripts": {"test": "node test/run-tests.js"}
 }
