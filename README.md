@@ -130,7 +130,7 @@ input files from the command line.
 ## Mangler options
 
 To enable the mangler you need to pass `--mangle` (`-m`).  Optionally you
-can pass `-m sort` (we'll possibly have other flags in the future) in order
+can pass `-m sort=true` (we'll possibly have other flags in the future) in order
 to assign shorter names to most frequently used variables.  This saves a few
 hundred bytes on jQuery before gzip, but the output is _bigger_ after gzip
 (and seems to happen for other libraries I tried it on) therefore it's not
