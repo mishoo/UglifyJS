@@ -95,7 +95,11 @@ exports.minify = function(files, options) {
         orig: inMap,
         root: options.sourceRoot
     });
-    var stream = UglifyJS.OutputStream({ source_map: map });
+    var output_options = {
+        source_map: map
+    };
+    UglifyJS.merge(output_options, options.output_options);
+    var stream = UglifyJS.OutputStream(output_options);
     toplevel.print(stream);
     return {
         code : stream + "",
