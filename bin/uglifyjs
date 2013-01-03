@@ -49,6 +49,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("export-all", "Only used when --wrap, this tells UglifyJS to add code to automatically export all globals.")
     .describe("lint", "Display some scope warnings")
     .describe("v", "Verbose")
+    .describe("V", "Print version number and exit.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -58,6 +59,7 @@ You need to pass an argument to this option to specify the name that your module
     .alias("c", "compress")
     .alias("d", "define")
     .alias("r", "reserved")
+    .alias("V", "version")
 
     .string("source-map")
     .string("source-map-root")
@@ -74,6 +76,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("acorn")
     .boolean("spidermonkey")
     .boolean("lint")
+    .boolean("V")
 
     .wrap(80)
 
@@ -81,6 +84,12 @@ You need to pass an argument to this option to specify the name that your module
 ;
 
 normalize(ARGS);
+
+if (ARGS.version || ARGS.V) {
+    var json = require("../package.json");
+    sys.puts(json.name + ' ' + json.version);
+    process.exit(0);
+}
 
 if (ARGS.ast_help) {
     var desc = UglifyJS.describe_ast();
