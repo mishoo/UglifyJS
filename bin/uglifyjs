@@ -76,6 +76,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("acorn")
     .boolean("spidermonkey")
     .boolean("lint")
+    .boolean("V")
 
     .wrap(80)
 
