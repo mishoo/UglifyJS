@@ -79,6 +79,7 @@ The available options are:
     --export-all       Only used when --wrap, this tells UglifyJS to add code to
                        automatically export all globals.                 [boolean]
     -v, --verbose      Verbose                                           [boolean]
+    -V, --version      Print version number and exits.                   [boolean]
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
 goes to STDOUT.
