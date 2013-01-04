@@ -214,6 +214,7 @@ will evaluate references to them to the value itself and drop unreachable
 code as usual.  The possible downside of this approach is that the build
 will contain the `const` declarations.
 
+<a name="codegen-options"></a>
 ## Beautifier options
 
 The code generator tries to output shortest code possible by default.  In
@@ -367,8 +368,18 @@ no sense otherwise).
 Other options:
 
 - `warnings` (default `false`) — pass `true` to display compressor warnings.
+
 - `fromString` (default `false`) — if you pass `true` then you can pass
   JavaScript source code, rather than file names.
+
+- `mangle` — pass `false` to skip mangling names.
+
+- `output` (default `null`) — pass an object if you wish to specify
+  additional [output options][codegen].  The defaults are optimized
+  for best compression.
+
+- `compress` (default `{}`) — pass `false` to skip compressing entirely.
+  Pass an object to specify custom [compressor options][compressor].
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
@@ -517,3 +528,5 @@ The `source_map_options` (optional) can contain the following properties:
   [acorn]: https://github.com/marijnh/acorn
   [source-map]: https://github.com/mozilla/source-map
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
+  [codegen]: http://lisperator.net/uglifyjs/codegen
+  [compressor]: http://lisperator.net/uglifyjs/compress

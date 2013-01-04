@@ -56,6 +56,9 @@ exports.minify = function(files, options) {
         inSourceMap  : null,
         fromString   : false,
         warnings     : false,
+        mangle       : {},
+        output       : null,
+        compress     : {}
     });
     if (typeof files == "string")
         files = [ files ];
@@ -73,16 +76,20 @@ exports.minify = function(files, options) {
     });
 
     // 2. compress
-    toplevel.figure_out_scope();
-    var sq = UglifyJS.Compressor({
-        warnings: options.warnings,
-    });
-    toplevel = toplevel.transform(sq);
+    if (options.compress) {
+        var compress = { warnings: options.warnings };
+        UglifyJS.merge(compress, options.compress);
+        toplevel.figure_out_scope();
+        var sq = UglifyJS.Compressor(compress);
+        toplevel = toplevel.transform(sq);
+    }
 
     // 3. mangle
-    toplevel.figure_out_scope();
-    toplevel.compute_char_frequency();
-    toplevel.mangle_names();
+    if (options.mangle) {
+        toplevel.figure_out_scope();
+        toplevel.compute_char_frequency();
+        toplevel.mangle_names(options.mangle);
+    }
 
     // 4. output
     var map = null;
@@ -95,7 +102,11 @@ exports.minify = function(files, options) {
         orig: inMap,
         root: options.sourceRoot
     });
-    var stream = UglifyJS.OutputStream({ source_map: map });
+    var output = { source_map: map };
+    if (options.output) {
+        UglifyJS.merge(output, options.output);
+    }
+    var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
     return {
         code : stream + "",
