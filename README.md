@@ -158,8 +158,8 @@ the available options (all are `true` by default, except `hoist_vars`):
 - `sequences` -- join consecutive simple statements using the comma operator
 - `properties` -- rewrite property access using the dot notation, for
   example `foo["bar"] → foo.bar`
-- `dead-code` -- remove unreachable code
-- `drop-debugger` -- remove `debugger;` statements
+- `dead_code` -- remove unreachable code
+- `drop_debugger` -- remove `debugger;` statements
 - `unsafe` -- apply "unsafe" transformations (discussion below)
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
@@ -172,11 +172,11 @@ the available options (all are `true` by default, except `hoist_vars`):
 - `loops` -- optimizations for `do`, `while` and `for` loops when we can
   statically determine the condition
 - `unused` -- drop unreferenced functions and variables
-- `hoist-funs` -- hoist function declarations
-- `hoist-vars` -- hoist `var` declarations (this is `false` by default
+- `hoist_funs` -- hoist function declarations
+- `hoist_vars` -- hoist `var` declarations (this is `false` by default
   because it seems to increase the size of the output in general)
-- `if-return` -- optimizations for if/return and if/continue
-- `join-vars` -- join consecutive `var` statements
+- `if_return` -- optimizations for if/return and if/continue
+- `join_vars` -- join consecutive `var` statements
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 - `warnings` -- display warnings when dropping unreachable code or unused
