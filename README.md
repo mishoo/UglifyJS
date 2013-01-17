@@ -12,7 +12,14 @@ Chrome and probably Safari).
 Install
 -------
 
-From NPM:
+First make sure you have installed the latest version of [node.js](http://nodejs.org/)
+(You may need to restart your computer after this step).
+
+From NPM for use as a command line app:
+
+    npm install uglify-js -g
+
+From NPM for programmatic use:
 
     npm install uglify-js
 
