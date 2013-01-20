@@ -49,6 +49,9 @@ The available options are:
                                                                           [string]
     --source-map-root  The path to the original source to be included in the
                        source map.                                        [string]
+    --source-map-url   The path to the source map to be added in //@
+                       sourceMappingURL.  Defaults to the value passed with
+                       --source-map.                                      [string]
     --in-source-map    Input source map, useful if you're compressing JS that was
                        generated from some other original code.
     -p, --prefix       Skip prefix for original filenames that appear in source
@@ -85,8 +88,9 @@ The available options are:
                                                                           [string]
     --export-all       Only used when --wrap, this tells UglifyJS to add code to
                        automatically export all globals.                 [boolean]
+    --lint             Display some scope warnings                       [boolean]
     -v, --verbose      Verbose                                           [boolean]
-    -V, --version      Print version number and exits.                   [boolean]
+    -V, --version      Print version number and exit.                    [boolean]
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
 goes to STDOUT.

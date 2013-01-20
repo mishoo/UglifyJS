@@ -19,6 +19,7 @@ mangling you need to use `-c` and `-m`.\
 ")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
+    .describe("source-map-url", "The path to the source map to be added in //@ sourceMappingURL.  Defaults to the value passed with --source-map.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
@@ -63,6 +64,7 @@ You need to pass an argument to this option to specify the name that your module
 
     .string("source-map")
     .string("source-map-root")
+    .string("source-map-url")
     .string("b")
     .string("m")
     .string("c")
@@ -277,7 +279,7 @@ output = output.get();
 
 if (SOURCE_MAP) {
     fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-    output += "\n//@ sourceMappingURL=" + ARGS.source_map;
+    output += "\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map);
 }
 
 if (OUTPUT_FILE) {
