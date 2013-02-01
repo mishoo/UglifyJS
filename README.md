@@ -335,9 +335,10 @@ There's a single toplevel function which combines all the steps.  If you
 don't need additional customization, you might want to go with `minify`.
 Example:
 
-    // see "fromString" below if you need to pass code instead of file name
     var result = UglifyJS.minify("/path/to/file.js");
     console.log(result.code); // minified output
+    // if you need to pass code instead of file name
+    var result = UglifyJS.minify("var b = function () {};", {fromString: true});
 
 You can also compress multiple files:
 
