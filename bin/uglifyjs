@@ -279,7 +279,7 @@ output = output.get();
 
 if (SOURCE_MAP) {
     fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-    output += "\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map);
+    output += "\n/*\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map) + "\n*/";
 }
 
 if (OUTPUT_FILE) {
