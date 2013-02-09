@@ -192,6 +192,7 @@ dead code removal UglifyJS will discard the following from the output:
         console.log("debug stuff");
     }
 ```
+
 UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
 warning, you can pass `warnings=false` to turn off *all* warnings.
