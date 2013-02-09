@@ -204,6 +204,7 @@ separate file and include it into the build.  For example you can have a
     const PRODUCTION = true;
     // etc.
 ```
+
 and build your code like this:
 
     uglifyjs build/defines.js js/foo.js js/bar.js... -c
@@ -269,6 +270,7 @@ function f() {
   return something();
 }
 ```
+
 Even though it has "@preserve", the comment will be lost because the inner
 function `g` (which is the AST node to which the comment is attached to) is
 discarded by the compressor as not referenced.
@@ -312,6 +314,7 @@ like this:
 ```javascript
 var UglifyJS = require("uglify-js");
 ```
+
 It exports a lot of names, but I'll discuss here the basics that are needed
 for parsing, mangling and compressing a piece of code.  The sequence is (1)
 parse, (2) compress, (3) mangle, (4) generate output code.
@@ -326,11 +329,13 @@ Example:
 var result = UglifyJS.minify("/path/to/file.js");
 console.log(result.code); // minified output
 ```
+
 You can also compress multiple files:
 ```javascript
 var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ]);
 console.log(result.code);
 ```
+
 To generate a source map:
 ```javascript
 var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
@@ -339,6 +344,7 @@ var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
 console.log(result.code); // minified output
 console.log(result.map);
 ```
+
 Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
 `file` attribute in the source map (see [the spec][sm-spec]).
@@ -360,6 +366,7 @@ var result = UglifyJS.minify("compiled.js", {
 });
     // same as before, it returns `code` and `map`
 ```
+
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
 
@@ -381,6 +388,7 @@ too simple for your needs.
 ```javascript
 var toplevel_ast = UglifyJS.parse(code, options);
 ```
+
 `options` is optional and if present it must be an object.  The following
 properties are available:
 
@@ -403,6 +411,7 @@ files.forEach(function(file){
     });
 });
 ```
+
 After this, we have in `toplevel` a big AST containing all our files, with
 each token having proper information about where it came from.
 
@@ -418,6 +427,7 @@ anything with the tree:
 ```javascript
 toplevel.figure_out_scope()
 ```
+
 #### Compression
 
 Like this:
@@ -425,6 +435,7 @@ Like this:
 var compressor = UglifyJS.Compressor(options);
 var compressed_ast = toplevel.transform(compressor);
 ```
+
 The `options` can be missing.  Available options are discussed above in
 “Compressor options”.  Defaults should lead to best compression in most
 scripts.
@@ -444,6 +455,7 @@ compressed_ast.figure_out_scope();
 compressed_ast.compute_char_frequency();
 compressed_ast.mangle_names();
 ```
+
 #### Generating output
 
 AST nodes have a `print` method that takes an output stream.  Essentially,
@@ -453,10 +465,12 @@ var stream = UglifyJS.OutputStream(options);
 compressed_ast.print(stream);
 var code = stream.toString(); // this is your minified code
 ```
+
 or, for a shortcut you can do:
 ```javascript
 var code = compressed_ast.print_to_string(options);
 ```
+
 As usual, `options` is optional.  The output stream accepts a lot of otions,
 most of them documented above in section “Beautifier options”.  The two
 which we care about here are `source_map` and `comments`.
@@ -504,6 +518,7 @@ compressed_ast.print(stream);
 var code = stream.toString();
 var map = source_map.toString(); // json output for your source map
 ```
+
 The `source_map_options` (optional) can contain the following properties:
 
 - `file`: the name of the JavaScript output file that this mapping refers to
