@@ -31,6 +31,7 @@ For example -p 3 will drop 3 directories from file names and ensure they are rel
 Pass options like -c hoist_vars=false,if_return=false. \
 Use -c with no argument to use the default compression options.")
     .describe("d", "Global definitions")
+    .describe("e", "Embed everything in a big function, with a configurable parameter/argument list.")
 
     .describe("comments", "Preserve copyright comments in the output. \
 By default this works like Google Closure, keeping JSDoc-style comments that contain \"@license\" or \"@preserve\". \
@@ -61,6 +62,7 @@ You need to pass an argument to this option to specify the name that your module
     .alias("d", "define")
     .alias("r", "reserved")
     .alias("V", "version")
+    .alias("e", "enclose")
 
     .string("source-map")
     .string("source-map-root")
@@ -69,6 +71,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("m")
     .string("c")
     .string("d")
+    .string("e")
     .string("comments")
     .string("wrap")
     .boolean("export-all")
@@ -240,6 +243,16 @@ if (ARGS.acorn || ARGS.spidermonkey) time_it("convert_ast", function(){
 
 if (ARGS.wrap) {
     TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
+}
+
+if (ARGS.enclose) {
+    var arg_parameter_list = ARGS.enclose;
+
+    if (!(arg_parameter_list instanceof Array)) {
+        arg_parameter_list = [arg_parameter_list];
+    }
+
+    TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
 }
 
 var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
