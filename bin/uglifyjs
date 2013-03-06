@@ -347,12 +347,15 @@ function getOptions(x, constants) {
 }
 
 function read_whole_file(filename) {
-    if (filename == "-") {
-        // XXX: this sucks.  How does one read the whole STDIN
-        // synchronously?
-        filename = "/dev/stdin";
-    }
     try {
+        if (filename == "-") {
+            var chunks = [];
+            do {
+                var chunk = fs.readFileSync("/dev/stdin", "utf8");
+                chunks.push(chunk);
+            } while (chunk.length);
+            return chunks.join("");
+        }
         return fs.readFileSync(filename, "utf8");
     } catch(ex) {
         sys.error("ERROR: can't read file: " + filename);
