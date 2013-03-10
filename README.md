@@ -163,15 +163,12 @@ you can pass a comma-separated list of options.  Options are in the form
 `foo=bar`, or just `foo` (the latter implies a boolean option that you want
 to set `true`; it's effectively a shortcut for `foo=true`).
 
-The defaults should be tuned for maximum compression on most code.  Here are
-the available options (all are `true` by default, except `hoist_vars`):
-
 - `sequences` -- join consecutive simple statements using the comma operator
 - `properties` -- rewrite property access using the dot notation, for
   example `foo["bar"] → foo.bar`
 - `dead_code` -- remove unreachable code
 - `drop_debugger` -- remove `debugger;` statements
-- `unsafe` -- apply "unsafe" transformations (discussion below)
+- `unsafe` (default: false) -- apply "unsafe" transformations (discussion below)
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 - `comparisons` -- apply certain optimizations to binary nodes, for example:
@@ -184,14 +181,30 @@ the available options (all are `true` by default, except `hoist_vars`):
   statically determine the condition
 - `unused` -- drop unreferenced functions and variables
 - `hoist_funs` -- hoist function declarations
-- `hoist_vars` -- hoist `var` declarations (this is `false` by default
-  because it seems to increase the size of the output in general)
+- `hoist_vars` (default: false) -- hoist `var` declarations (this is `false`
+  by default because it seems to increase the size of the output in general)
 - `if_return` -- optimizations for if/return and if/continue
 - `join_vars` -- join consecutive `var` statements
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 - `warnings` -- display warnings when dropping unreachable code or unused
   declarations etc.
+
+### The `unsafe` option
+
+It enables some transformations that *might* break code logic in certain
+contrived cases, but should be fine for most code.  You might want to try it
+on your own code, it should reduce the minified size.  Here's what happens
+when this flag is on:
+
+- `new Array(1, 2, 3)` or `Array(1, 2, 3)` → `[1, 2, 3 ]`
+- `new Object()` → `{}`
+- `String(exp)` or `exp.toString()` → `"" + exp`
+- `new Object/RegExp/Function/Error/Array (...)` → we discard the `new`
+- `typeof foo == "undefined"` → `foo === void 0`
+- `void 0` → `"undefined"` (if there is a variable named "undefined" in
+  scope; we do it because the variable name will be mangled, typically
+  reduced to a single character).
 
 ### Conditional compilation
 
