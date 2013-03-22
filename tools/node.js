@@ -115,10 +115,10 @@ exports.minify = function(files, options) {
     };
 };
 
-// UglifyJS.beautifyJSON(files, options) { return beautifyedString; };
+// UglifyJS.beautifyJSON(files, options) { return beautifiedString; };
 // files = a (single or array of) file names, JSON strings, or JSON Objects.
 // options = UglifyJS minify options.
-// returns beautifyed string of JSON info.
+// returns a beautified string of the passed JSON information.
 //
 // NEW OPTIONS:
 //     fromObject:true allows passing a JSON object or an array of JSON objects.
