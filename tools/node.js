@@ -115,16 +115,22 @@ exports.minify = function(files, options) {
     };
 };
 
+// UglifyJS.beautifyJSON(files, options) { return beautifyedString; };
+// files = a (single or array of) file names, JSON strings, or JSON Objects.
+// options = UglifyJS minify options.
+// returns beautifyed string of JSON info.
+//
+// NEW OPTIONS:
+//     fromObject:true allows passing a JSON object or an array of JSON objects.
+//     replacer:function(key, oldValue){ return newValue; }
+//     replacer:["Array", "of", "kept", "properties", "all", "others", "discarded"]
+//
+// UNSUPPORTED: (Source Maps):true, compress:true, quote_keys:false.
+//
+// WARNING: All input is run through JSON.stringify() which will change some invalid
+//     values (like NaN and infinity) and error on others (like incorrect syntax).
 exports.beautifyJSON = function(files, options) {
-    // files = a (single or array of) file names, JSON strings, or JSON Objects.
-    // options = UglifyJS minify options.
-    // NEW OPTIONS:
-    //     fromObject:true allows passing a JSON object or an array of JSON objects.
-    //     replacer:function(key, oldValue){ return newValue; }
-    //     replacer:["Array", "of", "kept", "properties", "all", "others", "discarded"]
-    // UNSUPPORTED: (Source Maps):true, compress:true, quote_keys:false.
-    // WARNING: All input is run through JSON.stringify() which will change some invalid
-    //     values (like NaN and infinity) and error on others (like incorrect syntax).
+    
 
     // 1. updating options with standard beautify settings and overrides:
     options = UglifyJS.defaults(options, {
