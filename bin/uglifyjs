@@ -122,6 +122,10 @@ if (MANGLE && ARGS.r) {
     MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
+if (MANGLE && ARGS.screw_ie) {
+    MANGLE.screw_ie = true;
+}
+
 var OUTPUT_OPTIONS = {
     beautify: BEAUTIFY ? true : false
 };
