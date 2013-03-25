@@ -21,7 +21,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("source-map-url", "The path to the source map to be added in //@ sourceMappingURL.  Defaults to the value passed with --source-map.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
-    .describe("screw-ie", "Pass this flag if you don't care about full compliance with Internet Explorer quirks (by default UglifyJS will try to be IE-proof).")
+    .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
     .describe("o", "Output file (default STDOUT).")
@@ -75,7 +75,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("e")
     .string("comments")
     .string("wrap")
-    .boolean("screw-ie")
+    .boolean("screw-ie8")
     .boolean("export-all")
     .boolean("self")
     .boolean("v")
@@ -125,8 +125,8 @@ if (MANGLE && ARGS.r) {
     MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
-if (MANGLE && ARGS.screw_ie) {
-    MANGLE.screw_ie = true;
+if (MANGLE && ARGS.screw_ie8) {
+    MANGLE.screw_ie8 = true;
 }
 
 var OUTPUT_OPTIONS = {
@@ -265,7 +265,7 @@ var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
 
 if (SCOPE_IS_NEEDED) {
     time_it("scope", function(){
-        TOPLEVEL.figure_out_scope({ screw_ie: ARGS.screw_ie });
+        TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
         if (ARGS.lint) {
             TOPLEVEL.scope_warnings();
         }
@@ -280,7 +280,7 @@ if (COMPRESS) {
 
 if (SCOPE_IS_NEEDED) {
     time_it("scope", function(){
-        TOPLEVEL.figure_out_scope({ screw_ie: ARGS.screw_ie });
+        TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
         if (MANGLE) {
             TOPLEVEL.compute_char_frequency(MANGLE);
         }
