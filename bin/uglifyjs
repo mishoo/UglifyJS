@@ -7,6 +7,7 @@ var UglifyJS = require("../tools/node");
 var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
+var async = require("async");
 var acorn;
 var ARGS = optimist
     .usage("$0 input1.js [input2.js ...] [options]\n\
@@ -215,110 +216,116 @@ try {
     }
 }
 
-files.forEach(function(file) {
-    var code = read_whole_file(file);
-    if (ARGS.p != null) {
-        file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
-    }
-    time_it("parse", function(){
-        if (ARGS.spidermonkey) {
-            var program = JSON.parse(code);
-            if (!TOPLEVEL) TOPLEVEL = program;
-            else TOPLEVEL.body = TOPLEVEL.body.concat(program.body);
+async.eachLimit(files, 1, function (file, cb) {
+    read_whole_file(file, function (err, code) {
+        if (err) {
+            sys.error("ERROR: can't read file: " + filename);
+            process.exit(1);
         }
-        else if (ARGS.acorn) {
-            TOPLEVEL = acorn.parse(code, {
-                locations     : true,
-                trackComments : true,
-                sourceFile    : file,
-                program       : TOPLEVEL
-            });
+        if (ARGS.p != null) {
+            file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
         }
-        else {
-            TOPLEVEL = UglifyJS.parse(code, {
-                filename: file,
-                toplevel: TOPLEVEL
-            });
-        };
+        time_it("parse", function(){
+            if (ARGS.spidermonkey) {
+                var program = JSON.parse(code);
+                if (!TOPLEVEL) TOPLEVEL = program;
+                else TOPLEVEL.body = TOPLEVEL.body.concat(program.body);
+            }
+            else if (ARGS.acorn) {
+                TOPLEVEL = acorn.parse(code, {
+                    locations     : true,
+                    trackComments : true,
+                    sourceFile    : file,
+                    program       : TOPLEVEL
+                });
+            }
+            else {
+                TOPLEVEL = UglifyJS.parse(code, {
+                    filename: file,
+                    toplevel: TOPLEVEL
+                });
+            };
+        });
+        cb();
     });
-});
+}, function () {
+    if (ARGS.acorn || ARGS.spidermonkey) time_it("convert_ast", function(){
+        TOPLEVEL = UglifyJS.AST_Node.from_mozilla_ast(TOPLEVEL);
+    });
 
-if (ARGS.acorn || ARGS.spidermonkey) time_it("convert_ast", function(){
-    TOPLEVEL = UglifyJS.AST_Node.from_mozilla_ast(TOPLEVEL);
-});
-
-if (ARGS.wrap) {
-    TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
-}
-
-if (ARGS.enclose) {
-    var arg_parameter_list = ARGS.enclose;
-
-    if (!(arg_parameter_list instanceof Array)) {
-        arg_parameter_list = [arg_parameter_list];
+    if (ARGS.wrap) {
+        TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
     }
 
-    TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
-}
+    if (ARGS.enclose) {
+        var arg_parameter_list = ARGS.enclose;
 
-var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
-
-if (SCOPE_IS_NEEDED) {
-    time_it("scope", function(){
-        TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
-        if (ARGS.lint) {
-            TOPLEVEL.scope_warnings();
+        if (!(arg_parameter_list instanceof Array)) {
+            arg_parameter_list = [arg_parameter_list];
         }
+
+        TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
+    }
+
+    var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
+
+    if (SCOPE_IS_NEEDED) {
+        time_it("scope", function(){
+            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
+            if (ARGS.lint) {
+                TOPLEVEL.scope_warnings();
+            }
+        });
+    }
+
+    if (COMPRESS) {
+        time_it("squeeze", function(){
+            TOPLEVEL = TOPLEVEL.transform(compressor);
+        });
+    }
+
+    if (SCOPE_IS_NEEDED) {
+        time_it("scope", function(){
+            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
+            if (MANGLE) {
+                TOPLEVEL.compute_char_frequency(MANGLE);
+            }
+        });
+    }
+
+    if (MANGLE) time_it("mangle", function(){
+        TOPLEVEL.mangle_names(MANGLE);
     });
-}
-
-if (COMPRESS) {
-    time_it("squeeze", function(){
-        TOPLEVEL = TOPLEVEL.transform(compressor);
+    time_it("generate", function(){
+        TOPLEVEL.print(output);
     });
-}
 
-if (SCOPE_IS_NEEDED) {
-    time_it("scope", function(){
-        TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
-        if (MANGLE) {
-            TOPLEVEL.compute_char_frequency(MANGLE);
-        }
-    });
-}
+    output = output.get();
 
-if (MANGLE) time_it("mangle", function(){
-    TOPLEVEL.mangle_names(MANGLE);
-});
-time_it("generate", function(){
-    TOPLEVEL.print(output);
-});
+    if (SOURCE_MAP) {
+        fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
+        output += "\n/*\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map) + "\n*/";
+    }
 
-output = output.get();
+    if (OUTPUT_FILE) {
+        fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+    } else {
+        sys.print(output);
+        sys.error("\n");
+    }
 
-if (SOURCE_MAP) {
-    fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-    output += "\n/*\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map) + "\n*/";
-}
-
-if (OUTPUT_FILE) {
-    fs.writeFileSync(OUTPUT_FILE, output, "utf8");
-} else {
-    sys.print(output);
-    sys.error("\n");
-}
-
-if (ARGS.stats) {
-    sys.error(UglifyJS.string_template("Timing information (compressed {count} files):", {
-        count: files.length
-    }));
-    for (var i in STATS) if (STATS.hasOwnProperty(i)) {
-        sys.error(UglifyJS.string_template("- {name}: {time}s", {
-            name: i,
-            time: (STATS[i] / 1000).toFixed(3)
+    if (ARGS.stats) {
+        sys.error(UglifyJS.string_template("Timing information (compressed {count} files):", {
+            count: files.length
         }));
+        for (var i in STATS) if (STATS.hasOwnProperty(i)) {
+            sys.error(UglifyJS.string_template("- {name}: {time}s", {
+                name: i,
+                time: (STATS[i] / 1000).toFixed(3)
+            }));
+        }
     }
-}
+});
 
 /* -----[ functions ]----- */
 
@@ -363,20 +370,18 @@ function getOptions(x, constants) {
     return ret;
 }
 
-function read_whole_file(filename) {
-    try {
-        if (filename == "-") {
-            var chunks = [];
-            do {
-                var chunk = fs.readFileSync("/dev/stdin", "utf8");
-                chunks.push(chunk);
-            } while (chunk.length);
-            return chunks.join("");
-        }
-        return fs.readFileSync(filename, "utf8");
-    } catch(ex) {
-        sys.error("ERROR: can't read file: " + filename);
-        process.exit(1);
+function read_whole_file(filename, cb) {
+    if (filename == "-") {
+        var chunks = [];
+        process.stdin.setEncoding('utf-8');
+        process.stdin.on('data', function (chunk) {
+            chunks.push(chunk);
+        }).on('end', function () {
+            cb(null, chunks.join(""));
+        });
+        process.openStdin();
+    } else {
+        fs.readFile(filename, "utf-8", cb);
     }
 }
 
