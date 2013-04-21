@@ -114,21 +114,21 @@ if (ARGS.acorn) {
     acorn = require("acorn");
 }
 
-var COMPRESS = getOptions("c", true) || {};
-var MANGLE = getOptions("m", true) || {};
+var COMPRESS = getOptions("c", true);
+var MANGLE = getOptions("m", true);
 var BEAUTIFY = getOptions("b", true);
 
 if (ARGS.d) {
-    COMPRESS.global_defs = getOptions("d");
+    if (COMPRESS) COMPRESS.global_defs = getOptions("d");
 }
 
 if (ARGS.screw_ie8) {
-    COMPRESS.screw_ie8 = true;
-    MANGLE.screw_ie8 = true;
+    if (COMPRESS) COMPRESS.screw_ie8 = true;
+    if (MANGLE) MANGLE.screw_ie8 = true;
 }
 
 if (ARGS.r) {
-    MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
+    if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
 var OUTPUT_OPTIONS = {
