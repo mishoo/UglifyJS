@@ -56,7 +56,7 @@ The available options are:
                        generated from some other original code.
     --screw-ie8        Pass this flag if you don't care about full compliance with
                        Internet Explorer 6-8 quirks (by default UglifyJS will try
-                       to be IE-proof.
+                       to be IE-proof).
     -p, --prefix       Skip prefix for original filenames that appear in source
                        maps. For example -p 3 will drop 3 directories from file
                        names and ensure they are relative paths.
