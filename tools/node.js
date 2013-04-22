@@ -59,6 +59,7 @@ exports.minify = function(files, options) {
         warnings     : false,
         mangle       : {},
         output       : null,
+        prefix       : null,
         compress     : {}
     });
     if (typeof files == "string")
@@ -70,6 +71,11 @@ exports.minify = function(files, options) {
         var code = options.fromString
             ? file
             : fs.readFileSync(file, "utf8");
+				
+				if (options.prefix !== null) {
+	        file = file.replace(/^\/+/, "").split(/\/+/).slice(options.prefix).join("/");
+				}
+				
         toplevel = UglifyJS.parse(code, {
             filename: options.fromString ? "?" : file,
             toplevel: toplevel
