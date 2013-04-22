@@ -52,6 +52,7 @@ for (var i in UglifyJS) {
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
         outSourceMap : null,
+        sourceMapURL : null,
         sourceRoot   : null,
         inSourceMap  : null,
         fromString   : false,
@@ -110,7 +111,7 @@ exports.minify = function(files, options) {
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
     return {
-        code : stream + "",
+        code : stream + (output.source_map ? "\n//@ sourceMappingURL=" + (options.sourceMapURL || options.outSourceMap) : ""),
         map  : output.source_map + ""
     };
 };
