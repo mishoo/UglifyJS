@@ -17,10 +17,14 @@ dot_properties: {
     input: {
         a["foo"] = "bar";
         a["if"] = "if";
+        a["*"] = "asterisk";
+        a["\u0EB3"] = "unicode";
     }
     expect: {
         a.foo = "bar";
         a["if"] = "if";
+        a["*"] = "asterisk";
+        a.\u0EB3 = "unicode";
     }
 }
 
@@ -32,9 +36,13 @@ dot_properties_es5: {
     input: {
         a["foo"] = "bar";
         a["if"] = "if";
+        a["*"] = "asterisk";
+        a["\u0EB3"] = "unicode";
     }
     expect: {
         a.foo = "bar";
         a.if = "if";
+        a["*"] = "asterisk";
+        a.\u0EB3 = "unicode";
     }
 }
