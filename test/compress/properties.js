@@ -17,10 +17,12 @@ dot_properties: {
     input: {
         a["foo"] = "bar";
         a["if"] = "if";
+        a["*"] = "asterisk";
     }
     expect: {
         a.foo = "bar";
         a["if"] = "if";
+        a["*"] = "asterisk";
     }
 }
 
@@ -32,9 +34,11 @@ dot_properties_es5: {
     input: {
         a["foo"] = "bar";
         a["if"] = "if";
+        a["*"] = "asterisk";
     }
     expect: {
         a.foo = "bar";
         a.if = "if";
+        a["*"] = "asterisk";
     }
 }
