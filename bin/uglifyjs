@@ -46,7 +46,7 @@ because of dead code removal or cascading statements into sequences.")
 
     .describe("stats", "Display operations run time on STDERR.")
     .describe("acorn", "Use Acorn for parsing.")
-    .describe("spidermonkey", "Assume input fles are SpiderMonkey AST format (as JSON).")
+    .describe("spidermonkey", "Assume input files are SpiderMonkey AST format (as JSON).")
     .describe("self", "Build itself (UglifyJS2) as a library (implies --wrap=UglifyJS --export-all)")
     .describe("wrap", "Embed everything in a big function, making the “exports” and “global” variables available. \
 You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.")
