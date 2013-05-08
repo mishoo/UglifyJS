@@ -80,7 +80,7 @@ The available options are:
                        cascading statements into sequences.               [string]
     --stats            Display operations run time on STDERR.            [boolean]
     --acorn            Use Acorn for parsing.                            [boolean]
-    --spidermonkey     Assume input fles are SpiderMonkey AST format (as JSON).
+    --spidermonkey     Assume input files are SpiderMonkey AST format (as JSON).
                                                                          [boolean]
     --self             Build itself (UglifyJS2) as a library (implies
                        --wrap=UglifyJS --export-all)                     [boolean]
