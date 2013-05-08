@@ -19,12 +19,14 @@ dot_properties: {
         a["if"] = "if";
         a["*"] = "asterisk";
         a["\u0EB3"] = "unicode";
+        a[""] = "whitespace";
     }
     expect: {
         a.foo = "bar";
         a["if"] = "if";
         a["*"] = "asterisk";
         a.\u0EB3 = "unicode";
+        a[""] = "whitespace";
     }
 }
 
@@ -38,11 +40,13 @@ dot_properties_es5: {
         a["if"] = "if";
         a["*"] = "asterisk";
         a["\u0EB3"] = "unicode";
+        a[""] = "whitespace";
     }
     expect: {
         a.foo = "bar";
         a.if = "if";
         a["*"] = "asterisk";
         a.\u0EB3 = "unicode";
+        a[""] = "whitespace";
     }
 }
