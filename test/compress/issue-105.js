@@ -1,10 +1,9 @@
 typeof_eq_undefined: {
     options = {
-        comparisons: true,
-        unsafe: false
+        comparisons: true
     };
     input: { a = typeof b.c != "undefined" }
-    expect: { a = "undefined" != typeof b.c }
+    expect: { a = typeof b.c != "undefined" }
 }
 
 typeof_eq_undefined_unsafe: {
