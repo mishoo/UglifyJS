@@ -1,5 +1,6 @@
 UglifyJS 2
 ==========
+[![Build Status](https://travis-ci.org/mishoo/UglifyJS2.png)](https://travis-ci.org/mishoo/UglifyJS2)
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
