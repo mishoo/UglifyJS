@@ -20,6 +20,7 @@ dot_properties: {
         a["*"] = "asterisk";
         a["\u0EB3"] = "unicode";
         a[""] = "whitespace";
+        a["1_1"] = "foo";
     }
     expect: {
         a.foo = "bar";
@@ -27,6 +28,7 @@ dot_properties: {
         a["*"] = "asterisk";
         a.\u0EB3 = "unicode";
         a[""] = "whitespace";
+        a["1_1"] = "foo";
     }
 }
 
