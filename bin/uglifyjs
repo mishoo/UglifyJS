@@ -23,6 +23,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map-url", "The path to the source map to be added in //@ sourceMappingURL.  Defaults to the value passed with --source-map.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
+    .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
     .describe("o", "Output file (default STDOUT).")
@@ -76,6 +77,8 @@ You need to pass an argument to this option to specify the name that your module
     .string("e")
     .string("comments")
     .string("wrap")
+
+    .boolean("expr")
     .boolean("screw-ie8")
     .boolean("export-all")
     .boolean("self")
@@ -242,8 +245,9 @@ async.eachLimit(files, 1, function (file, cb) {
             }
             else {
                 TOPLEVEL = UglifyJS.parse(code, {
-                    filename: file,
-                    toplevel: TOPLEVEL
+                    filename   : file,
+                    toplevel   : TOPLEVEL,
+                    expression : ARGS.expr,
                 });
             };
         });
