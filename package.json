@@ -10,10 +10,10 @@
         "email": "mihai.bazon@gmail.com",
         "web": "http://lisperator.net/"
     }],
-    "repositories": [{
+    "repository": {
         "type": "git",
         "url": "https://github.com/mishoo/UglifyJS2.git"
-    }],
+    },
     "dependencies": {
         "async"      : "~0.2.6",
         "source-map" : "~0.1.7",
