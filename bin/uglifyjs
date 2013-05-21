@@ -309,7 +309,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SOURCE_MAP) {
         fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-        output += "\n/*\n//# sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map) + "\n*/";
+        output += "\n//# sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map);
     }
 
     if (OUTPUT_FILE) {
