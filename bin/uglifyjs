@@ -20,7 +20,7 @@ mangling you need to use `-c` and `-m`.\
 ")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
-    .describe("source-map-url", "The path to the source map to be added in //@ sourceMappingURL.  Defaults to the value passed with --source-map.")
+    .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
@@ -309,7 +309,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SOURCE_MAP) {
         fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-        output += "\n/*\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map) + "\n*/";
+        output += "\n//# sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map);
     }
 
     if (OUTPUT_FILE) {
