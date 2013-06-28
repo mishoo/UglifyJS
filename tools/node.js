@@ -63,6 +63,8 @@ exports.minify = function(files, options) {
     if (typeof files == "string")
         files = [ files ];
 
+    UglifyJS.base54.reset();
+
     // 1. parse
     var toplevel = null;
     files.forEach(function(file){
