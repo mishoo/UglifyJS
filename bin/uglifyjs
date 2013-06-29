@@ -223,7 +223,7 @@ try {
 async.eachLimit(files, 1, function (file, cb) {
     read_whole_file(file, function (err, code) {
         if (err) {
-            sys.error("ERROR: can't read file: " + filename);
+            sys.error("ERROR: can't read file: " + file);
             process.exit(1);
         }
         if (ARGS.p != null) {
