@@ -244,11 +244,17 @@ async.eachLimit(files, 1, function (file, cb) {
                 });
             }
             else {
-                TOPLEVEL = UglifyJS.parse(code, {
-                    filename   : file,
-                    toplevel   : TOPLEVEL,
-                    expression : ARGS.expr,
-                });
+                try {
+                    TOPLEVEL = UglifyJS.parse(code, {
+                        filename   : file,
+                        toplevel   : TOPLEVEL,
+                        expression : ARGS.expr,
+                    });
+                }
+                catch (ex) {
+                    sys.error("ERROR: " + ex);
+                    process.exit(1);
+                }
             };
         });
         cb();
