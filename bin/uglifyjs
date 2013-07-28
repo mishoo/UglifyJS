@@ -264,11 +264,12 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (ARGS.enclose) {
         var arg_parameter_list = ARGS.enclose;
-
-        if (!(arg_parameter_list instanceof Array)) {
+        if (arg_parameter_list === true) {
+            arg_parameter_list = [];
+        }
+        else if (!(arg_parameter_list instanceof Array)) {
             arg_parameter_list = [arg_parameter_list];
         }
-
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
     }
 
