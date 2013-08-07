@@ -95,3 +95,27 @@ unused_circular_references_3: {
         }
     }
 }
+
+unused_keep_setter_arg: {
+    options = { unused: true };
+    input: {
+        var x = {
+            _foo: null,
+            set foo(val) {
+            },
+            get foo() {
+                return this._foo;
+            }
+        }
+    }
+    expect: {
+        var x = {
+            _foo: null,
+            set foo(val) {
+            },
+            get foo() {
+                return this._foo;
+            }
+        }
+    }
+}
