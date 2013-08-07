@@ -46,6 +46,7 @@ files.
 
 The available options are:
 
+```
   --source-map       Specify an output file where to generate source map.
                                                                         [string]
   --source-map-root  The path to the original source to be included in the
@@ -102,6 +103,7 @@ The available options are:
   --lint             Display some scope warnings                       [boolean]
   -v, --verbose      Verbose                                           [boolean]
   -V, --version      Print version number and exit.                    [boolean]
+```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
 goes to STDOUT.
