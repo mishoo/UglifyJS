@@ -7,6 +7,7 @@ var UglifyJS = require("../tools/node");
 var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
+var path = require("path");
 var async = require("async");
 var acorn;
 var ARGS = optimist
@@ -25,7 +26,9 @@ mangling you need to use `-c` and `-m`.\
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
-For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
+For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
+You can also specify -p relative, which will make UglifyJS figure out itself the relative paths between original sources, \
+the source map and the output file.")
     .describe("o", "Output file (default STDOUT).")
     .describe("b", "Beautify output/specify output options.")
     .describe("m", "Mangle names/pass mangler options.")
@@ -77,6 +80,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("e")
     .string("comments")
     .string("wrap")
+    .string("p")
 
     .boolean("expr")
     .boolean("screw-ie8")
@@ -199,9 +203,10 @@ if (files.filter(function(el){ return el == "-" }).length > 1) {
 var STATS = {};
 var OUTPUT_FILE = ARGS.o;
 var TOPLEVEL = null;
+var P_RELATIVE = ARGS.p && ARGS.p == "relative";
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
-    file: OUTPUT_FILE,
+    file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
     root: ARGS.source_map_root,
     orig: ORIG_MAP,
 }) : null;
@@ -227,7 +232,14 @@ async.eachLimit(files, 1, function (file, cb) {
             process.exit(1);
         }
         if (ARGS.p != null) {
-            file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
+            if (P_RELATIVE) {
+                file = path.relative(path.dirname(ARGS.source_map), file);
+            } else {
+                var p = parseInt(ARGS.p, 10);
+                if (!isNaN(p)) {
+                    file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
+                }
+            }
         }
         time_it("parse", function(){
             if (ARGS.spidermonkey) {
@@ -310,7 +322,12 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SOURCE_MAP) {
         fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-        output += "\n//# sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map);
+        var source_map_url = ARGS.source_map_url || (
+            P_RELATIVE
+                ? path.relative(path.dirname(OUTPUT_FILE), ARGS.source_map)
+                : ARGS.source_map
+        );
+        output += "\n//# sourceMappingURL=" + source_map_url;
     }
 
     if (OUTPUT_FILE) {
