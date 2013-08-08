@@ -42,69 +42,37 @@ same global scope, that is, a reference from a file to some
 variable/function declared in another file will be matched properly.
 
 If you want to read from STDIN instead, pass a single dash instead of input
-files.
+files. Specify `--output` (`-o`) to declare the output file.  Otherwise the
+output goes to STDOUT.
 
 The available options are:
 
-  --source-map       Specify an output file where to generate source map.
-                                                                        [string]
-  --source-map-root  The path to the original source to be included in the
-                     source map.                                        [string]
-  --source-map-url   The path to the source map to be added in //#
-                     sourceMappingURL.  Defaults to the value passed with
-                     --source-map.                                      [string]
-  --in-source-map    Input source map, useful if you're compressing JS that was
-                     generated from some other original code.
-  --screw-ie8        Pass this flag if you don't care about full compliance
-                     with Internet Explorer 6-8 quirks (by default UglifyJS
-                     will try to be IE-proof).                         [boolean]
-  --expr             Parse a single expression, rather than a program (for
-                     parsing JSON)                                     [boolean]
-  -p, --prefix       Skip prefix for original filenames that appear in source
-                     maps. For example -p 3 will drop 3 directories from file
-                     names and ensure they are relative paths. You can also
-                     specify -p relative, which will make UglifyJS figure out
-                     itself the relative paths between original sources, the
-                     source map and the output file.                    [string]
-  -o, --output       Output file (default STDOUT).
-  -b, --beautify     Beautify output/specify output options.            [string]
-  -m, --mangle       Mangle names/pass mangler options.                 [string]
-  -r, --reserved     Reserved names to exclude from mangling.
-  -c, --compress     Enable compressor/pass compressor options. Pass options
-                     like -c hoist_vars=false,if_return=false. Use -c with no
-                     argument to use the default compression options.   [string]
-  -d, --define       Global definitions                                 [string]
-  -e, --enclose      Embed everything in a big function, with a configurable
-                     parameter/argument list.                           [string]
-  --comments         Preserve copyright comments in the output. By default this
-                     works like Google Closure, keeping JSDoc-style comments
-                     that contain "@license" or "@preserve". You can optionally
-                     pass one of the following arguments to this flag:
-                     - "all" to keep all comments
-                     - a valid JS regexp (needs to start with a slash) to keep
-                     only comments that match.
-                     Note that currently not *all* comments can be kept when
-                     compression is on, because of dead code removal or
-                     cascading statements into sequences.               [string]
-  --stats            Display operations run time on STDERR.            [boolean]
-  --acorn            Use Acorn for parsing.                            [boolean]
-  --spidermonkey     Assume input files are SpiderMonkey AST format (as JSON).
-                                                                       [boolean]
-  --self             Build itself (UglifyJS2) as a library (implies
-                     --wrap=UglifyJS --export-all)                     [boolean]
-  --wrap             Embed everything in a big function, making the “exports”
-                     and “global” variables available. You need to pass an
-                     argument to this option to specify the name that your
-                     module will take when included in, say, a browser.
-                                                                        [string]
-  --export-all       Only used when --wrap, this tells UglifyJS to add code to
-                     automatically export all globals.                 [boolean]
-  --lint             Display some scope warnings                       [boolean]
-  -v, --verbose      Verbose                                           [boolean]
-  -V, --version      Print version number and exit.                    [boolean]
-
-Specify `--output` (`-o`) to declare the output file.  Otherwise the output
-goes to STDOUT.
+| Option | Description | Type |
+|--------|-------------|------|
+| `--source-map` | Specify an output file where to generate source map.  | String | 
+| `--source-map-root` | Path to the original source to be included in the source map. | String |
+| `--source-map-url` | Path to the source map to be added in sourceMappingURL.  Defaults to the value passed with `--source-map`. | String |
+| `--in-source-map` | Input source map, useful if you're compressing JS that was generated from some other original code. | Path |
+| `--screw-ie8` | Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof). | Boolean |
+| `--expr` | Parse a single expression, rather than a program (for parsing JSON) | Boolean |
+| `-p`, `--prefix` | Skip prefix for original filenames that appear in source maps. For example `-p 3` will drop 3 directories from file names and ensure they are relative paths. You can also specify `-p` relative, which will make UglifyJS figure out itself the relative paths between original sources, the source map and the output file. | String |
+| `-o`, `--output` | Output file (default STDOUT). | Path |
+| `-b`, `--beautify` | Beautify output/specify output options. | String |
+| `-m`, `--mangle` | Mangle names/pass mangler options. | String |
+| `-r`, `--reserved` | Reserved names to exclude from mangling. | Path |
+| `-c`, `--compress` | Enable compressor/pass compressor options. Pass options like `-c hoist_vars=false,if_return=false`. Use `-c` with no argument to use the default compression options. | String |
+| `-d`, `--define` | Global definitions | String |
+| `-e`, `--enclose` | Embed everything in a big function, with a configurable parameter/argument list. | String |
+| `--comments` | Preserve copyright comments in the output. By default this works like Google Closure, keeping JSDoc-style comments that contain `@license` or `@preserve`. You can optionally pass one of the following arguments to this flag: `all` to keep all comments, or a valid JS regexp (needs to start with a slash) to keep only comments that match.  Note that currently not *all* comments can be kept when compression is on, because of dead code removal or cascading statements into sequences. | String |
+| `--stats` | Display operations run time on STDERR. | Boolean |
+| `--acorn` | Use Acorn for parsing. | Boolean |
+| `--spidermonkey` | Assume input files are SpiderMonkey AST format (as JSON). | Boolean |
+| `--self` | Build itself (UglifyJS2) as a library (implies --wrap=UglifyJS --export-all) | Boolean |
+| `--wrap` | Embed everything in a big function, making the “exports” and “global” variables available. You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.  | String |
+| `--export-all` | Only used when --wrap, this tells UglifyJS to add code to automatically export all globals. | Boolean |
+| `--lint` | Display some scope warnings | Boolean |
+| `-v`, `--verbose` | Verbose | Boolean |
+| `-V`, `--version` | Print version number and exit. | Boolean |
 
 ## Source map options
 
