@@ -129,11 +129,6 @@ if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
 }
 
-if (ARGS.screw_ie8) {
-    if (COMPRESS) COMPRESS.screw_ie8 = true;
-    if (MANGLE) MANGLE.screw_ie8 = true;
-}
-
 if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
@@ -141,6 +136,12 @@ if (ARGS.r) {
 var OUTPUT_OPTIONS = {
     beautify: BEAUTIFY ? true : false
 };
+
+if (ARGS.screw_ie8) {
+    if (COMPRESS) COMPRESS.screw_ie8 = true;
+    if (MANGLE) MANGLE.screw_ie8 = true;
+    OUTPUT_OPTIONS.screw_ie8 = true;
+}
 
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
