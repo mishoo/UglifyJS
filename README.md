@@ -209,6 +209,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   and `x = something(), x` into `x = something()`
 - `warnings` -- display warnings when dropping unreachable code or unused
   declarations etc.
+- `negate_iife` -- negate "Immediately-Called Function Expressions"
+  where the return value is discarded, to avoid the parens that the
+  code generator would insert.
 
 ### The `unsafe` option
 
@@ -296,10 +299,6 @@ can pass additional arguments that control the code output:
   you pass `false` then whenever possible we will use a newline instead of a
   semicolon, leading to more readable output of uglified code (size before
   gzip could be smaller; size after gzip insignificantly larger).
-- `negate-iife` (default `!beautify`) -- prefer negation, rather than
-  parens, for "Immediately-Called Function Expressions".  This defaults to
-  `true` when beautification is off, and `false` if beautification is on;
-  pass it manually to force a value.
 
 ### Keeping copyright notices or other comments
 
