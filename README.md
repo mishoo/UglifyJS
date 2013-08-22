@@ -289,9 +289,6 @@ can pass additional arguments that control the code output:
   It doesn't work very well currently, but it does make the code generated
   by UglifyJS more readable.
 - `max-line-len` (default 32000) -- maximum line length (for uglified code)
-- `ie-proof` (default `true`) -- generate “IE-proof” code (for now this
-  means add brackets around the do/while in code like this: `if (foo) do
-  something(); while (bar); else ...`.
 - `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
