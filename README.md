@@ -263,6 +263,19 @@ will evaluate references to them to the value itself and drop unreachable
 code as usual.  The possible downside of this approach is that the build
 will contain the `const` declarations.
 
+You can also define variables via the API (if UglifyJS is being called
+from a JavaScript file, for instance).  Just supply the values to 
+`UglifyJS.Compressor`:
+
+```javascript
+var compressor = UglifyJS.Compressor({
+	global_defs: {
+		DEBUG: false,
+		PRODUCTION: true
+	}
+});
+```
+
 <a name="codegen-options"></a>
 ## Beautifier options
 
