@@ -23,11 +23,13 @@ constant_join: {
         var b = [ "foo", 1, 2, 3, "bar" ].join("");
         var c = [ boo(), "foo", 1, 2, 3, "bar", bar() ].join("");
         var d = [ "foo", 1 + 2 + "bar", "baz" ].join("-");
+        var e = [].join(foo + bar);
     }
     expect: {
         var a = "foobarbaz";
         var b = "foo123bar";
         var c = [ boo(), "foo", 1, 2, 3, "bar", bar() ].join(""); // we could still shorten this one, but oh well.
         var d = "foo-3bar-baz";
+        var e = [].join(foo + bar);
     }
 }
