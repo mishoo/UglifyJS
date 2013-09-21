@@ -19,15 +19,21 @@ constant_join: {
         evaluate : true
     };
     input: {
-        var a = [ "foo", "bar", "baz" ].join("");
+        var a = [ "foo", "bar", "baz" ].join();
         var b = [ "foo", 1, 2, 3, "bar" ].join("");
         var c = [ boo(), "foo", 1, 2, 3, "bar", bar() ].join("");
         var d = [ "foo", 1 + 2 + "bar", "baz" ].join("-");
+        var e = [ boo ].join(foo + bar);
+        var f = [ boo ].join("");
+        var g = [ "foo", "boo" + bar, "baz"].join("-");
     }
     expect: {
-        var a = "foobarbaz";
+        var a = "foo,bar,baz";
         var b = "foo123bar";
-        var c = [ boo(), "foo", 1, 2, 3, "bar", bar() ].join(""); // we could still shorten this one, but oh well.
+        var c = boo() + "foo123bar" + bar();
         var d = "foo-3bar-baz";
+        var e = [ boo ].join(foo + bar);
+        var f = [ boo ].join();
+        var g = "foo-" + ("boo" + bar) + "-baz"; // we could still shorten this one, but oh well.
     }
 }
