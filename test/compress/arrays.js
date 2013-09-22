@@ -69,6 +69,6 @@ constant_join_2: {
         var e = [ "foo", "bar", boo(),
                   "foo+1+2+3+bar",
                   "baz", "x", "y" ].join("really-long-separator");
-        var f = "str" + ("str" + variable) + "foobar" + ("moo" + foo);
+        var f = "strstr" + variable + "foobar" + ("moo" + foo);
     }
 }
