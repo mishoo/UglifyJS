@@ -212,6 +212,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `negate_iife` -- negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the
   code generator would insert.
+- `clean_getters` -- the default is `false`.  If you pass `true` for
+  this, UglifyJS will assume that object property access
+  (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
 
 ### The `unsafe` option
 
