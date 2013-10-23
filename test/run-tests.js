@@ -7,8 +7,10 @@ var assert = require("assert");
 var sys = require("util");
 
 var tests_dir = path.dirname(module.filename);
+var failures = 0;
 
 run_compress_tests();
+if (failures) process.exit(1);
 
 /* -----[ utils ]----- */
 
@@ -83,6 +85,7 @@ function run_compress_tests() {
                     output: output,
                     expected: expect
                 });
+                failures++;
             }
         }
         var tests = parse_test(path.resolve(dir, file));
