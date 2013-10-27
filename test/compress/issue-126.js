@@ -10,6 +10,7 @@ concatenate_rhs_strings: {
         foo(bar() + 123 + "Hello" + "World" + ("Foo" + "Bar"));
         foo("Foo" + "Bar" + bar() + 123 + "Hello" + "World" + ("Foo" + "Bar"));
         foo("Hello" + bar() + 123 + "World");
+        foo(bar() + 'Foo' + (10 + parseInt('10')));
     }
     expect: {
         foo(bar() + 123 + "HelloWorld");
@@ -18,5 +19,6 @@ concatenate_rhs_strings: {
         foo(bar() + 123 + "HelloWorldFooBar");
         foo("FooBar" + bar() + "123HelloWorldFooBar");
         foo("Hello" + bar() + "123World");
+        foo(bar() + 'Foo' + (10 + parseInt('10')));
     }
 }
