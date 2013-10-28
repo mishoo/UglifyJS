@@ -251,7 +251,6 @@ async.eachLimit(files, 1, function (file, cb) {
             else if (ARGS.acorn) {
                 TOPLEVEL = acorn.parse(code, {
                     locations     : true,
-                    trackComments : true,
                     sourceFile    : file,
                     program       : TOPLEVEL
                 });
