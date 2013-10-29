@@ -381,7 +381,7 @@ function getOptions(x, constants) {
     if (x !== true) {
         var ast;
         try {
-            ast = UglifyJS.parse(x);
+            ast = UglifyJS.parse(x, { expression: true });
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
                 sys.error("Error parsing arguments in: " + x);
@@ -389,8 +389,6 @@ function getOptions(x, constants) {
             }
         }
         ast.walk(new UglifyJS.TreeWalker(function(node){
-            if (node instanceof UglifyJS.AST_Toplevel) return; // descend
-            if (node instanceof UglifyJS.AST_SimpleStatement) return; // descend
             if (node instanceof UglifyJS.AST_Seq) return; // descend
             if (node instanceof UglifyJS.AST_Assign) {
                 var name = node.left.print_to_string({ beautify: false }).replace(/-/g, "_");
@@ -398,6 +396,11 @@ function getOptions(x, constants) {
                 if (constants)
                     value = new Function("return (" + value.print_to_string() + ")")();
                 ret[name] = value;
+                return true;    // no descend
+            }
+            if (node instanceof UglifyJS.AST_Symbol || node instanceof UglifyJS.AST_Binary) {
+                var name = node.print_to_string({ beautify: false }).replace(/-/g, "_");
+                ret[name] = true;
                 return true;    // no descend
             }
             sys.error(node.TYPE)
