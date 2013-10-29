@@ -48,6 +48,10 @@ You can optionally pass one of the following arguments to this flag:\n\
 Note that currently not *all* comments can be kept when compression is on, \
 because of dead code removal or cascading statements into sequences.")
 
+    .describe("preamble", "Preamble to prepend to the output.  You can use this to insert a \
+comment, for example for licensing information.  This will not be \
+parsed, but the source map will adjust for its presence.")
+
     .describe("stats", "Display operations run time on STDERR.")
     .describe("acorn", "Use Acorn for parsing.")
     .describe("spidermonkey", "Assume input files are SpiderMonkey AST format (as JSON).")
@@ -134,7 +138,8 @@ if (ARGS.r) {
 }
 
 var OUTPUT_OPTIONS = {
-    beautify: BEAUTIFY ? true : false
+    beautify: BEAUTIFY ? true : false,
+    preamble: ARGS.preamble || null,
 };
 
 if (ARGS.screw_ie8) {

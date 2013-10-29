@@ -87,6 +87,10 @@ The available options are:
                      Note that currently not *all* comments can be kept when
                      compression is on, because of dead code removal or
                      cascading statements into sequences.               [string]
+  --preamble         Preamble to prepend to the output.  You can use this to
+                     insert a comment, for example for licensing information.
+                     This will not be parsed, but the source map will adjust
+                     for its presence.
   --stats            Display operations run time on STDERR.            [boolean]
   --acorn            Use Acorn for parsing.                            [boolean]
   --spidermonkey     Assume input files are SpiderMonkey AST format (as JSON).
@@ -328,6 +332,10 @@ can pass additional arguments that control the code output:
   you pass `false` then whenever possible we will use a newline instead of a
   semicolon, leading to more readable output of uglified code (size before
   gzip could be smaller; size after gzip insignificantly larger).
+- `preamble` (default `null`) -- when passed it must be a string and
+  it will be prepended to the output literally.  The source map will
+  adjust for this text.  Can be used to insert a comment containing
+  licensing information, for example.
 
 ### Keeping copyright notices or other comments
 
