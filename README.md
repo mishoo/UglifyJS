@@ -261,7 +261,7 @@ when this flag is on:
 - `String(exp)` or `exp.toString()` → `"" + exp`
 - `new Object/RegExp/Function/Error/Array (...)` → we discard the `new`
 - `typeof foo == "undefined"` → `foo === void 0`
-- `void 0` → `"undefined"` (if there is a variable named "undefined" in
+- `void 0` → `undefined` (if there is a variable named "undefined" in
   scope; we do it because the variable name will be mangled, typically
   reduced to a single character).
 
