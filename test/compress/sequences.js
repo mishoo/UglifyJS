@@ -101,10 +101,12 @@ lift_sequences_1: {
 lift_sequences_2: {
     options = { sequences: true, evaluate: true };
     input: {
-        q = 1 + (foo(), bar(), 5) + 7 * (5 / (3 - (a(), (QW=ER), c(), 2))) - (x(), y(), 5);
+        foo.x = (foo = {}, 10);
+        bar = (bar = {}, 10);
     }
     expect: {
-        foo(), bar(), a(), QW = ER, c(), x(), y(), q = 36
+        foo.x = (foo = {}, 10),
+        bar = {}, bar = 10;
     }
 }
 
