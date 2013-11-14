@@ -5,6 +5,7 @@ var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
 var sys = require("util");
+var Unit = require("deadunit")
 
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
@@ -16,6 +17,38 @@ if (failures) {
     sys.error("!!! " + Object.keys(failed_files).join(", "));
     process.exit(1);
 }
+
+Unit.test("pretty tests", function() {
+    this.test("proper errors", function() {
+        this.count(10)
+
+        try {
+            var js = "var =  { invalid_js ]"
+            U.minify(js, {
+                fromString: true
+            })
+        } catch(e) {
+
+            this.ok(e instanceof U.JS_Parse_Error)
+            this.ok(e.line === 1, e.line)
+            this.ok(e.col === 4, e.col)
+            this.ok(e.pos === 4, e.pos)
+            this.ok(e.message === "Name expected", e.message)
+            this.ok(e.stack.indexOf("Name expected") !== -1, e.stack)
+            this.ok(e.toString().indexOf("Name expected (line: 1, col: 4, pos: 4)") !== -1, e.toString())
+            this.ok(e.stack.indexOf("JS_Parse_Error") !== -1, e.stack)
+
+            // the following test fails because the original calling line of code isn't included in the stack trace
+            // to be clear, its not ok that this fails - this needs to be fixed
+            this.ok(e.stack.indexOf("run-tests.js") !== -1, e.stack)
+
+            // I think the following fails because of the use of runInContext in tools/node.js
+            // again, this is *not* ok
+            this.ok(e instanceof Error)
+
+        }
+    })
+}).writeConsole()
 
 /* -----[ utils ]----- */
 
