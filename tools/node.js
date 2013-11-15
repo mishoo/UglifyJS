@@ -55,24 +55,27 @@ exports.minify = function(files, options) {
         sourceRoot   : null,
         inSourceMap  : null,
         fromString   : false,
+        fromFile     : null,
         warnings     : false,
         mangle       : {},
         output       : null,
         compress     : {}
     });
-    if (typeof files == "string")
+    if (typeof files == "string") {
         files = [ files ];
+        options.fromFile = options.fromFile ? [options.fromFile] : ["?"]
+    }
 
     UglifyJS.base54.reset();
 
     // 1. parse
     var toplevel = null;
-    files.forEach(function(file){
+    files.forEach(function(file, index){
         var code = options.fromString
             ? file
             : fs.readFileSync(file, "utf8");
         toplevel = UglifyJS.parse(code, {
-            filename: options.fromString ? "?" : file,
+            filename: options.fromString ? options.fromFile[index] : file,
             toplevel: toplevel
         });
     });
