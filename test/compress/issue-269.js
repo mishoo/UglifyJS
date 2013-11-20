@@ -54,15 +54,13 @@ strings_concat: {
 	input: {
 		f(
 			String(x + 'str'),
-			String('str' + x),
-			String(x + 5)
+			String('str' + x)
 		);
 	}
 	expect: {
 		f(
 			x + 'str',
-			'str' + x,
-			x + '5'
+			'str' + x
 		);
 	}
 }
