@@ -6,6 +6,8 @@ var sys = require("util");
 var UglifyJS = vm.createContext({
     sys           : sys,
     console       : console,
+    process       : process,
+    Buffer        : Buffer,
     MOZ_SourceMap : require("source-map")
 });
 
