@@ -62,6 +62,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("lint", "Display some scope warnings")
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
+    .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -96,6 +97,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("spidermonkey")
     .boolean("lint")
     .boolean("V")
+    .boolean("noerr")
 
     .wrap(80)
 
@@ -103,6 +105,12 @@ You need to pass an argument to this option to specify the name that your module
 ;
 
 normalize(ARGS);
+
+if (ARGS.noerr) {
+    UglifyJS.DefaultsError.croak = function(msg, defs) {
+        sys.error("WARN: " + msg);
+    };
+}
 
 if (ARGS.version || ARGS.V) {
     var json = require("../package.json");
