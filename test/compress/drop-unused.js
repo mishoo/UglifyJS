@@ -119,3 +119,47 @@ unused_keep_setter_arg: {
         }
     }
 }
+
+unused_var_in_catch: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                var x = 10;
+            }
+        }
+    }
+    expect: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {}
+        }
+    }
+}
+
+used_var_in_catch: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                var x = 10;
+            }
+            return x;
+        }
+    }
+    expect: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                var x = 10;
+            }
+            return x;
+        }
+    }
+}
