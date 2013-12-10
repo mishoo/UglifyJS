@@ -249,6 +249,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   statement would get discarded.  The current implementation adds some
   overhead (compression will be slower).
 
+- `drop_console` -- default `false`.  Pass `true` to discard calls to
+  `console.*` functions.
+
 ### The `unsafe` option
 
 It enables some transformations that *might* break code logic in certain
