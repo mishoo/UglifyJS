@@ -141,3 +141,67 @@ ifs_6: {
         x = foo || bar || baz || boo ? 20 : 10;
     }
 }
+
+cond_1: {
+    options = {
+        conditionals: true
+    };
+    input: {
+        if (some_condition()) {
+            do_something(x);
+        } else {
+            do_something(y);
+        }
+    }
+    expect: {
+        do_something(some_condition() ? x : y);
+    }
+}
+
+cond_2: {
+    options = {
+        conditionals: true
+    };
+    input: {
+        if (some_condition()) {
+            x = new FooBar(1);
+        } else {
+            x = new FooBar(2);
+        }
+    }
+    expect: {
+        x = new FooBar(some_condition() ? 1 : 2);
+    }
+}
+
+cond_3: {
+    options = {
+        conditionals: true
+    };
+    input: {
+        if (some_condition()) {
+            new FooBar(1);
+        } else {
+            FooBar(2);
+        }
+    }
+    expect: {
+        some_condition() ? new FooBar(1) : FooBar(2);
+    }
+}
+
+cond_4: {
+    options = {
+        conditionals: true
+    };
+    input: {
+        if (some_condition()) {
+            do_something();
+        } else {
+            do_something();
+        }
+    }
+    expect: {
+        some_condition(), do_something();
+    }
+}

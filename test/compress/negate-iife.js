@@ -60,16 +60,16 @@ negate_iife_4: {
     };
     input: {
         if ((function(){ return true })()) {
-            console.log(true);
+            foo(true);
         } else {
-            console.log(false);
+            bar(false);
         }
         (function(){
             console.log("something");
         })();
     }
     expect: {
-        !function(){ return true }() ? console.log(false) : console.log(true), function(){
+        !function(){ return true }() ? bar(false) : foo(true), function(){
             console.log("something");
         }();
     }
