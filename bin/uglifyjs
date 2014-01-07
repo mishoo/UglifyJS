@@ -357,7 +357,6 @@ async.eachLimit(files, 1, function (file, cb) {
         fs.writeFileSync(OUTPUT_FILE, output, "utf8");
     } else {
         sys.print(output);
-        sys.error("\n");
     }
 
     if (ARGS.stats) {
