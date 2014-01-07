@@ -51,6 +51,7 @@ for (var i in UglifyJS) {
 
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
+        spidermonkey : false,
         outSourceMap : null,
         sourceRoot   : null,
         inSourceMap  : null,
@@ -60,22 +61,26 @@ exports.minify = function(files, options) {
         output       : null,
         compress     : {}
     });
-    if (typeof files == "string")
-        files = [ files ];
-
     UglifyJS.base54.reset();
 
     // 1. parse
     var toplevel = null;
-    files.forEach(function(file){
-        var code = options.fromString
-            ? file
-            : fs.readFileSync(file, "utf8");
-        toplevel = UglifyJS.parse(code, {
-            filename: options.fromString ? "?" : file,
-            toplevel: toplevel
+
+    if (options.spidermonkey) {
+        toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
+    } else {
+        if (typeof files == "string")
+            files = [ files ];
+        files.forEach(function(file){
+            var code = options.fromString
+                ? file
+                : fs.readFileSync(file, "utf8");
+            toplevel = UglifyJS.parse(code, {
+                filename: options.fromString ? "?" : file,
+                toplevel: toplevel
+            });
         });
-    });
+    }
 
     // 2. compress
     if (options.compress) {
