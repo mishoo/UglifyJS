@@ -114,7 +114,9 @@ exports.minify = function(files, options) {
         });
         if (options.sourceMapIncludeSources) {
             for (var file in sourcesContent) {
-                options.source_map.get().setSourceContent(file, sourcesContent[file]);
+                if (sourcesContent.hasOwnProperty(file)) {
+                    options.source_map.get().setSourceContent(file, sourcesContent[file]);
+                }
             }
         }
 
