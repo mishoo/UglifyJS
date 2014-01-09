@@ -54,6 +54,10 @@ The available options are:
   --source-map-url   The path to the source map to be added in //#
                      sourceMappingURL.  Defaults to the value passed with
                      --source-map.                                      [string]
+  --source-map-include-sources
+                     Pass this flag if you want to include the content of
+                     source files in the source map as sourcesContent
+                     property.                                         [boolean]
   --in-source-map    Input source map, useful if you're compressing JS that was
                      generated from some other original code.
   --screw-ie8        Pass this flag if you don't care about full compliance

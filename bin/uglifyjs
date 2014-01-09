@@ -22,6 +22,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
+    .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
@@ -88,6 +89,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("p")
 
     .boolean("expr")
+    .boolean("source-map-include-sources")
     .boolean("screw-ie8")
     .boolean("export-all")
     .boolean("self")
@@ -218,6 +220,7 @@ var STATS = {};
 var OUTPUT_FILE = ARGS.o;
 var TOPLEVEL = null;
 var P_RELATIVE = ARGS.p && ARGS.p == "relative";
+var SOURCES_CONTENT = {};
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
     file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
@@ -255,6 +258,7 @@ async.eachLimit(files, 1, function (file, cb) {
                 }
             }
         }
+        SOURCES_CONTENT[file] = code;
         time_it("parse", function(){
             if (ARGS.spidermonkey) {
                 var program = JSON.parse(code);
@@ -337,6 +341,15 @@ async.eachLimit(files, 1, function (file, cb) {
     if (MANGLE) time_it("mangle", function(){
         TOPLEVEL.mangle_names(MANGLE);
     });
+
+    if (ARGS.source_map_include_sources) {
+        for (var file in SOURCES_CONTENT) {
+            if (SOURCES_CONTENT.hasOwnProperty(file)) {
+                SOURCE_MAP.get().setSourceContent(file, SOURCES_CONTENT[file]);
+            }
+        }
+    }
+
     time_it("generate", function(){
         TOPLEVEL.print(output);
     });
