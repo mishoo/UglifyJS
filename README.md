@@ -505,7 +505,7 @@ something like this:
 ```javascript
 var toplevel = null;
 files.forEach(function(file){
-	var code = fs.readFileSync(file);
+	var code = fs.readFileSync(file, "utf8");
 	toplevel = UglifyJS.parse(code, {
 		filename: file,
 		toplevel: toplevel
