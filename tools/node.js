@@ -64,7 +64,8 @@ exports.minify = function(files, options) {
     UglifyJS.base54.reset();
 
     // 1. parse
-    var toplevel = null;
+    var toplevel = null,
+        sourcesContent = {};
 
     if (options.spidermonkey) {
         toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
@@ -75,6 +76,7 @@ exports.minify = function(files, options) {
             var code = options.fromString
                 ? file
                 : fs.readFileSync(file, "utf8");
+            sourcesContent[file] = code;
             toplevel = UglifyJS.parse(code, {
                 filename: options.fromString ? "?" : file,
                 toplevel: toplevel
@@ -110,6 +112,14 @@ exports.minify = function(files, options) {
             orig: inMap,
             root: options.sourceRoot
         });
+        if (options.sourceMapIncludeSources) {
+            for (var file in sourcesContent) {
+                if (sourcesContent.hasOwnProperty(file)) {
+                    options.source_map.get().setSourceContent(file, sourcesContent[file]);
+                }
+            }
+        }
+
     }
     if (options.output) {
         UglifyJS.merge(output, options.output);
