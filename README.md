@@ -173,7 +173,7 @@ To enable the mangler you need to pass `--mangle` (`-m`).  The following
 - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
 
-- `eval` — mangle names visible in scopes where `eval` or `when` are used
+- `eval` — mangle names visible in scopes where `eval` or `with` are used
   (disabled by default).
 
 When mangling is enabled but you want to prevent certain names from being
