@@ -256,6 +256,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `drop_console` -- default `false`.  Pass `true` to discard calls to
   `console.*` functions.
 
+- `alphabetize` -- default `false`.  Pass `true` to alphabetize keys in object
+  literals.
+
 ### The `unsafe` option
 
 It enables some transformations that *might* break code logic in certain
