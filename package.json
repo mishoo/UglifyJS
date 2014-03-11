@@ -3,7 +3,7 @@
     "description": "JavaScript parser, mangler/compressor and beautifier toolkit",
     "homepage": "http://lisperator.net/uglifyjs",
     "main": "tools/node.js",
-    "version": "2.4.12",
+    "version": "2.4.13",
     "engines": { "node" : ">=0.4.0" },
     "maintainers": [{
         "name": "Mihai Bazon",
