@@ -59,7 +59,8 @@ exports.minify = function(files, options) {
         warnings     : false,
         mangle       : {},
         output       : null,
-        compress     : {}
+        compress     : {},
+        sourcePaths  : []
     });
     UglifyJS.base54.reset();
 
@@ -72,13 +73,16 @@ exports.minify = function(files, options) {
     } else {
         if (typeof files == "string")
             files = [ files ];
-        files.forEach(function(file){
+        files.forEach(function(file, index){
             var code = options.fromString
                 ? file
                 : fs.readFileSync(file, "utf8");
+            var filename = options.fromString
+                ? options.sourcePaths[index] || "?"
+                : file;
             sourcesContent[file] = code;
             toplevel = UglifyJS.parse(code, {
-                filename: options.fromString ? "?" : file,
+                filename: filename,
                 toplevel: toplevel
             });
         });
