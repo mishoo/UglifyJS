@@ -444,6 +444,15 @@ Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
 `file` attribute in the source map (see [the spec][sm-spec]).
 
+You can also pass in an array of file contents to minify, as well as an array of the relative file paths to include in the source map:
+```javascript
+var result = UglifyJS.minify(["function () {/* ... */}"], {
+  outSourceMap: "out.js.map",
+  sourcePaths: ["some-file.js"]
+});
+```
+Note that the sourcePaths need to be relative to where you end up saving the outSourceMap. The array of file contents also need to match up with the sourcePaths array. This functionality has only found itself useful in certain build processes.
+
 You can also specify sourceRoot property to be included in source map:
 ```javascript
 var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
