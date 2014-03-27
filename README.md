@@ -576,7 +576,7 @@ or, for a shortcut you can do:
 var code = compressed_ast.print_to_string(options);
 ```
 
-As usual, `options` is optional.  The output stream accepts a lot of otions,
+As usual, `options` is optional.  The output stream accepts a lot of options,
 most of them documented above in section “Beautifier options”.  The two
 which we care about here are `source_map` and `comments`.
 
