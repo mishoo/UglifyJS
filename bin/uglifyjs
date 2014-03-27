@@ -66,6 +66,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
     .describe("charset-input", "Charset of input (default utf-8)")
+    .describe("charset-output", "Charset of output (default utf-8)")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -370,9 +371,13 @@ async.eachLimit(files, 1, function (file, cb) {
     }
 
     if (OUTPUT_FILE) {
-        fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+        if(ARGS.charset_output) {
+            fs.writeFileSync(OUTPUT_FILE, iconv.encode(output, ARGS.charset_output));
+        } else {
+            fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+        }
     } else {
-        sys.print(output);
+        sys.print(ARGS.charset_output ? iconv.encode(output, ARGS.charset_output) : output);
     }
 
     if (ARGS.stats) {
