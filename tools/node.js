@@ -70,6 +70,8 @@ exports.minify = function(files, options) {
     if (options.spidermonkey) {
         toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
     } else {
+        if (typeof files == "undefined")
+            {files = ""};
         if (typeof files == "string")
             files = [ files ];
         files.forEach(function(file){
