@@ -115,7 +115,7 @@ exports.minify = function(files, options) {
         if (options.sourceMapIncludeSources) {
             for (var file in sourcesContent) {
                 if (sourcesContent.hasOwnProperty(file)) {
-                    options.source_map.get().setSourceContent(file, sourcesContent[file]);
+                    output.source_map.get().setSourceContent(file, sourcesContent[file]);
                 }
             }
         }
