@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ColaScript Playground</title>
+		<script src="./utils.js"></script>
+    	<script src="./ast.js"></script>
+    	<script src="./parse.js"></script>
+    	<script src="./transform.js"></script>
+    	<script src="./scope.js"></script>
+    	<script src="./output.js"></script>
+    	<script src="./compress.js"></script>
+    	<script src="./sourcemap.js"></script>
+    	<script src="./mozilla-ast.js"></script>
+    	<script src="./translate.js"></script>
+    	<script src="./std.js"></script>
+	</head>
+	<body>
+		<textarea id="source" style="width: 100%; min-height: 300px"></textarea>
+	</body>
+	<script>
+		var sourceArea = document.getElementById("source"), source;
+		sourceArea.value = source = localStorage.source;
+
+		sourceArea.onkeyup = function(){
+			source = sourceArea.value;
+			localStorage.source = source;
+		};
+
+		function Translate(){
+			stream = OutputStream();
+			translate(parse(source)).print(stream);
+			return stream.toString();
+		}
+	</script>
+</html>
