@@ -13,23 +13,91 @@
     	<script src="./mozilla-ast.js"></script>
     	<script src="./translate.js"></script>
     	<script src="./std.js"></script>
+    	<style>
+    	
+    	body {
+    	    padding: 0; 
+    	    margin: 0; 
+    	    line-height: 100%; 
+    	    position: fixed; 
+    	    top: 0; 
+    	    left: 0; 
+    	    width: 100%; 
+    	    height: 100%;
+    	}
+    	
+    	textarea {
+    		box-sizing: border-box;
+    	    width: 33.333%; 
+    	    height: 100%; 
+    	    font-size: 12px; 
+    	    float: left;
+    	    font-family: "Andale Mono";
+    	}
+
+    	#controls {
+    		position: fixed;
+    		bottom: 0;
+    		left: 0;
+    	}
+    	
+    	</style>
 	</head>
 	<body>
-		<textarea id="source" style="width: 100%; min-height: 300px"></textarea>
+		<textarea id="source" onkeyup="compile()"></textarea>
+		<textarea id="translation"></textarea>
+		<textarea id="result"></textarea>
+		<div id="controls"><button id="exec" onclick="exec()">Execute</button></div>
 	</body>
 	<script>
-		var sourceArea = document.getElementById("source"), source;
+		var sourceArea = document.getElementById("source"), 
+			translationArea = document.getElementById("translation"), 
+			resultArea = document.getElementById("result"), 
+			source;
 		sourceArea.value = source = localStorage.source;
 
-		sourceArea.onkeyup = function(){
+		function compile(){
 			source = sourceArea.value;
 			localStorage.source = source;
-		};
+
+			stream = OutputStream({ beautify : true });
+			compressor = Compressor();
+
+			try {
+				// 1. compile
+				ast = parse(source);
+				ast = translate(ast);
+				ast.print(stream);
+				translationArea.value = stream.toString();
+
+				// 2. compress
+        		ast.figure_out_scope();
+        		ast = ast.transform(compressor);
+
+    			// 3. mangle
+        		ast.figure_out_scope();
+        		ast.compute_char_frequency();
+        		ast.mangle_names({ sort : true, toplevel : true });
+
+        		stream = OutputStream();
+        		ast.print(stream);
+				resultArea.value = stream.toString();
+			} catch(e){
+				translationArea.value = '';
+				resultArea.value = '';
+			}
+		}
+
+		function exec(){
+			eval(resultArea.value)
+		}
 
 		function Translate(){
-			stream = OutputStream();
+			stream = OutputStream({ beautify : true });
 			translate(parse(source)).print(stream);
 			return stream.toString();
 		}
+
+		compile();
 	</script>
 </html>
