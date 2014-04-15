@@ -74,7 +74,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		if( 0 < x < 100 ) console.log("x E (0; 100)");
 		
 
-### Compilator                
+### Compiler               
 - `@require`
 
 		@require "./library/jquery.js", "./library/underscore.js" 
