@@ -93,7 +93,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		@end_if
 
 
-## Expressins
+## Expressions
 - `switch` assigmention
 
 		String weather = switch(temperature){
