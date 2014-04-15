@@ -104,7 +104,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 - `with` scoping, status: it need??       
 
-		with(document.body.querySelector('ul').childNodes){
+		with(document.body.querySelectorAll('ul').childNodes){
 			var txt = 'text';
 			
 			forEach((li){
