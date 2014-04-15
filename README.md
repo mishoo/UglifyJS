@@ -102,7 +102,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 			case 35: 'hot';
 		};
 
-- `with` scoping, status: its need??       
+- `with` scoping, status: it need??       
 
 		with(document.body.querySelector('ul').childNodes){
 			var txt = 'text';
