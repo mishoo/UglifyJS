@@ -65,7 +65,7 @@
 
 			try {
 				// 1. compile
-				ast = parse(source);
+				ast = Cola.parse(source);
 				ast = translate(ast);
 				ast.print(stream);
 				translationArea.value = stream.toString();
@@ -85,6 +85,8 @@
 			} catch(e){
 				translationArea.value = '';
 				resultArea.value = '';
+
+                throw e;
 			}
 		}
 
@@ -94,7 +96,7 @@
 
 		function Translate(){
 			stream = OutputStream({ beautify : true });
-			translate(parse(source)).print(stream);
+			translate(Cola.parse(source)).print(stream);
 			return stream.toString();
 		}
 

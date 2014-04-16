@@ -1,0 +1,32 @@
+function main(){
+    console.log(`
+
+        Hello!
+        My name is ColaScript, and i know who you are }:->
+        @{navigator.userAgent}
+
+    `);
+
+    console.log("pow:", 5 ** 2, "; modulo:", 5 %% 3, ";");
+
+    var a = 3.14, b = 584;
+
+    a ?= b; console.log(a);
+    a = undefined;
+    a ?= b; console.log(a);
+
+    console.log(`is:`, location.href is String, `; isnt:`, 123 isnt Number, ";");
+
+    if(yes === true && on === true && no === false && off === false) console.log('Boolean alternatives');
+
+    console.log('Raw string:', r`@test \n \t \r`);
+    var isEmail = /
+        ([\w-\.]+)
+        @
+        ((?:[\w]+\.)+)
+        ([a-zA-Z]{2,4})
+    /, email = r'danon0404@gmail.com';
+    console.log("@email is email:", isEmail.test(email));
+}
+
+main();
