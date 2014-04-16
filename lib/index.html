@@ -47,26 +47,29 @@
 		<textarea id="source" onkeyup="compile()"></textarea>
 		<textarea id="translation"></textarea>
 		<textarea id="result"></textarea>
-		<div id="controls"><button id="exec" onclick="exec()">Execute</button></div>
+		<div id="controls"><button id="exec" onclick="exec()">Execute</button><input type="checkbox" id="is_js" onclick="compile()"><label for="is_js">js parser</label></div>
 	</body>
 	<script>
 		var sourceArea = document.getElementById("source"), 
 			translationArea = document.getElementById("translation"), 
 			resultArea = document.getElementById("result"), 
+            isjs = document.getElementById("is_js"),
 			source;
 		sourceArea.value = source = localStorage.source;
+        isjs.checked = localStorage.isjs == "t";
 
 		function compile(){
 			source = sourceArea.value;
 			localStorage.source = source;
+            localStorage.isjs = isjs.checked ? "t" : "f";
 
 			stream = OutputStream({ beautify : true });
 			compressor = Compressor();
 
 			try {
 				// 1. compile
-				ast = Cola.parse(source);
-				ast = translate(ast);
+				ast = Cola.parse(source, null, isjs.checked);
+				if(!isjs.checked) ast = translate(ast);
 				ast.print(stream);
 				translationArea.value = stream.toString();
 
@@ -96,7 +99,7 @@
 
 		function Translate(){
 			stream = OutputStream({ beautify : true });
-			translate(Cola.parse(source)).print(stream);
+			translate(Cola.parse(source, null, isjs.checked)).print(stream);
 			return stream.toString();
 		}
 
