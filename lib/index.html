@@ -63,8 +63,8 @@
 			localStorage.source = source;
             localStorage.isjs = isjs.checked ? "t" : "f";
 
-			stream = OutputStream({ beautify : true });
-			compressor = Compressor();
+			stream = OutputStream({ beautify : true, is_js : isjs.checked });
+			compressor = Compressor({ is_js : isjs.checked });
 
 			try {
 				// 1. compile
@@ -80,7 +80,7 @@
     			// 3. mangle
         		ast.figure_out_scope();
         		ast.compute_char_frequency();
-        		ast.mangle_names({ sort : true, toplevel : true });
+        		ast.mangle_names({ is_js : isjs.checked, sort : true, toplevel : true });
 
         		stream = OutputStream();
         		ast.print(stream);
