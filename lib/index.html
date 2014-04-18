@@ -64,11 +64,11 @@
             localStorage.isjs = isjs.checked ? "t" : "f";
 
 			stream = new Cola.OutputStream({ beautify : true, is_js : isjs.checked });
-			compressor = Cola.Compressor({ is_js : isjs.checked });
+			compressor = new Cola.Compressor({ is_js : isjs.checked });
 
 			try {
 				// 1. compile
-				ast = Cola.parse(source, null, isjs.checked);
+				ast = Cola.parse(source, { is_js : isjs.checked });
 				if(!isjs.checked) ast = ast.toJavaScript();
 				ast.print(stream);
 				translationArea.value = stream.toString();
@@ -82,7 +82,7 @@
         		ast.compute_char_frequency();
         		ast.mangle_names({ is_js : isjs.checked, sort : true, toplevel : true });
 
-        		stream = new Cola.OutputStream();
+        		stream = new Cola.OutputStream({ is_js : isjs.checked });
         		ast.print(stream);
 				resultArea.value = stream.toString();
 			} catch(e){
