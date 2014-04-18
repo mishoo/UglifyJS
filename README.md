@@ -9,9 +9,10 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 ## Operators:
 
 ### Unary
-- `varname?`                     
+- `varname??` and alternative `isset varname` - which is better? status: done                     
 
-		bool exist = SOME?;
+		bool exist = SOME??;
+		bool exist2 = isset SOME;
 
 
 ### Binary
@@ -31,13 +32,13 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		undef = 6;
 		def ?= undef; // def == 6
           
-- `a ? b`
+- `a ? b`, status: done
 
-		int a = 5, b = 3;
+		var a = undefined, b = 3;
 		
-		a = a > 10 ? b; // a == 5
+		a ? b == 3;
 		a = 11;
-		a = a > 10 ? b; // a == 3 
+		a ? b == 1;
                        
 - `is`, status: done                           
 
@@ -116,7 +117,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 
 ## Vars
-- declaration with type
+- declaration with type, status: done, only declaration
 
 		int b = 584;
 		Array arr = [];
