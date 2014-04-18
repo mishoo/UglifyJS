@@ -44,7 +44,38 @@
     	</style>
 	</head>
 	<body>
-		<textarea id="source" onkeyup="compile()"></textarea>
+		<textarea id="source" onkeyup="compile()">function main(){
+    console.log(`
+
+        Hello!
+        My name is ColaScript, and i know who you are }:->
+        @{navigator.userAgent}
+
+    `);
+
+    console.log("pow:", 5 ** 2, "; modulo:", 5 %% 3, ";");
+
+    var a = 3.14, b = 584;
+
+    a ?= b; console.log(a);
+    a = undefined;
+    a ?= b; console.log(a);
+
+    console.log(`is:`, location.href is String, `; isnt:`, 123 isnt Number, ";");
+
+    if(yes === true && on === true && no === false && off === false) console.log('Boolean alternatives');
+
+    console.log('Raw string:', r`@test \n \t \r`);
+    var isEmail = /
+        ([\w-\.]+)
+        @
+        ((?:[\w]+\.)+)
+        ([a-zA-Z]{2,4})
+    /, email = r'danon0404@gmail.com';
+    console.log("@email is email:", isEmail.test(email));
+}
+
+main();</textarea>
 		<textarea id="translation"></textarea>
 		<textarea id="result"></textarea>
 		<div id="controls"><button id="exec" onclick="exec()">Execute</button><input type="checkbox" id="is_js" onclick="compile()"><label for="is_js">js parser</label></div>
@@ -55,7 +86,9 @@
 			resultArea = document.getElementById("result"), 
             isjs = document.getElementById("is_js"),
 			source;
-		sourceArea.value = source = localStorage.source;
+
+        if(!localStorage.source) localStorage.source = source = sourceArea.value;
+		else sourceArea.value = source = localStorage.source;
         isjs.checked = localStorage.isjs == "t";
 
 		function compile(){
