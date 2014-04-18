@@ -311,4 +311,4 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 ### Statistic
 
 - 30 feature ( without classes )
-- 12 done
+- 15 done
