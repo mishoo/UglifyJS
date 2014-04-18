@@ -55,18 +55,25 @@
 
     console.log("pow:", 5 ** 2, "; modulo:", 5 %% 3, ";");
 
-    var a = 3.14, b = 584;
+    Number a = 3.14, b = 584, c;
 
     a ?= b; console.log(a);
     a = undefined;
     a ?= b; console.log(a);
+
+    console.log(a = c ? b);
+    c = 404;
+    console.log(a = c ? b);
+
+    b = undefined;
+    console.log("a is {{isset a ? 'set' : 'undefiend'}}, b is {{b?? ? 'set' : 'undefined'}}");
 
     console.log(`is:`, location.href is String, `; isnt:`, 123 isnt Number, ";");
 
     if(yes === true && on === true && no === false && off === false) console.log('Boolean alternatives');
 
     console.log('Raw string:', r`@test \n \t \r`);
-    var isEmail = /
+    RegExp isEmail = /
         ([\w-\.]+)
         @
         ((?:[\w]+\.)+)
