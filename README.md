@@ -13,6 +13,13 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 		bool exist = SOME??;
 		bool exist2 = isset SOME;
+		
+- `clone`
+
+		a = [];
+		b = [];
+		Array b = clone a;
+		b[0] = 584; // a == []
 
 
 ### Binary
@@ -191,7 +198,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		arr = [1..10]; // [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]     
 
 ### Functions
-- without `function` keyword
+- without `function` keyword, status: done
 
 		void main(){
 			console.log('Hello World!');
