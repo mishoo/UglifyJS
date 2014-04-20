@@ -14,12 +14,14 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		bool exist = SOME??;
 		bool exist2 = isset SOME;
 		
-- `clone`
+- `clone`, status: done
 
 		a = [];
 		b = [];
 		Array b = clone a;
 		b[0] = 584; // a == []
+		
+	if object have method `__clone__`, object will be copied with it.
 
 
 ### Binary

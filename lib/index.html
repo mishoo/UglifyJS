@@ -66,6 +66,17 @@
     console.log(a = c ? b);
 
     b = undefined;
+
+    Array x, y;
+    x = [123];
+    y = clone x;
+    y.push(321);
+    console.log('original:',x,'cloned:',y);
+
+    y.forEach((val){
+        console.log(val);
+    });
+
     console.log("a is {{isset a ? 'set' : 'undefiend'}}, b is {{b?? ? 'set' : 'undefined'}}");
 
     console.log(`is:`, location.href is String, `; isnt:`, 123 isnt Number, ";");
