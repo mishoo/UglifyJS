@@ -88,7 +88,7 @@ The available options are:
                      only comments that match.
                      For example, to keep JSDoc-style comments that contain
                      "@license" or "@preserve", use this option:
-                     `comments: /@license|@licence|@preserve/`
+                     `comments: /@[Ll]icen[sc]e|@[Pp]reserve/`
                      Note that currently not *all* comments can be kept when
                      compression is on, because of dead code removal or
                      cascading statements into sequences.               [string]
