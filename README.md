@@ -165,7 +165,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 		String str = r"\n \r"; // "\\n \\r" 
                      
-- templating, status : done      
+- templating, status: done      
 
 		String name = "dan";
 		
@@ -222,7 +222,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 			console.log('Hello World!');
 		}
 		
-- arrow functions
+- arrow functions, status: done
 
 		print(str) => console.log(str);
 
@@ -320,4 +320,4 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 ### Statistic
 
 - 30 feature ( without classes )
-- 15 done
+- 18 done
