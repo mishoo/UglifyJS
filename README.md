@@ -184,10 +184,11 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
              
 
 ### Arrays
-- pushing       
+- pushing and getting last, status: done       
 
 		var arr = [3, 5, 6, 7];
 		arr[] = 4; // [3, 5, 6, 7, 4]
+		console.log(arr[]); // 4
               
 - part assigment 
 

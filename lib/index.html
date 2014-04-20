@@ -90,12 +90,10 @@
     Array x, y;
     x = [123];
     y = clone x;
-    y.push(321);
-    console.log('original:',x,'cloned:',y);
+    y[] = 321;
+    console.log('original:',x,'cloned:',y, y[]);
 
-    y.forEach((val){
-        console.log(val);
-    });
+    y.forEach((val) => console.log(val));
 
     console.log("a is {{isset a ? 'set' : 'undefiend'}}, b is {{b?? ? 'set' : 'undefined'}}");
 
@@ -166,6 +164,8 @@ main();</textarea>
 			} catch(e){
 				translationArea.value = '';
 				resultArea.value = '';
+
+                throw e;
 			}
 
             document.querySelector('#lenstat').innerHTML = sourceArea.value.length+" : "+translationArea.value.length+" : "+resultArea.value.length;
