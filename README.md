@@ -190,12 +190,17 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		arr[] = 4; // [3, 5, 6, 7, 4]
 		console.log(arr[]); // 4
               
-- part assigment 
+- part assigment, status: done  
 
 		arr[0..2] = [0,1]; // [0, 1, 7, 4]
-		arr[0..2] = [];    // [7, 4] 
+		arr[0..2] = [];    // [7, 4]
+		
+- slice, status: done 
+
+		arr = arr[0..2]; 
+
              
-- inline array ranging  
+- inline array ranging, status: done  
 
 		arr = [10..1]; // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 		arr = [1..10]; // [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]     
@@ -320,5 +325,5 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 ### Statistic
 
-- 30 feature ( without classes )
-- 18 done
+- 34 feature ( without classes )
+- 22 done

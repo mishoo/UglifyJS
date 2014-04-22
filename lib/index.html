@@ -118,6 +118,7 @@ main();</textarea>
             <div class="bg">&nbsp;</div>
             <div class="m">
                 <button id="exec" onclick="exec()">Execute</button>
+                <button id="benchmark" onclick="benchmark()">Benchmark</button>
                 <input type="checkbox" id="is_js" onclick="compile()">
                 <label for="is_js">js parser</label>
                 <span id="lenstat"></span>
@@ -139,7 +140,7 @@ main();</textarea>
 			localStorage.source = source;
             localStorage.isjs = isjs.checked ? "t" : "f";
 
-			stream = new Cola.OutputStream({ beautify : true, is_js : isjs.checked });
+			stream = new Cola.OutputStream({ beautify : true });
 			compressor = new Cola.Compressor({ is_js : isjs.checked });
 
 			try {
@@ -156,9 +157,9 @@ main();</textarea>
     			// 3. mangle
         		ast.figure_out_scope();
         		ast.compute_char_frequency();
-        		ast.mangle_names({ is_js : isjs.checked, sort : true, toplevel : true });
+        		ast.mangle_names({ sort : true, toplevel : true });
 
-        		stream = new Cola.OutputStream({ is_js : isjs.checked });
+        		stream = new Cola.OutputStream();
         		ast.print(stream);
 				resultArea.value = stream.toString();
 			} catch(e){
@@ -170,6 +171,16 @@ main();</textarea>
 
             document.querySelector('#lenstat').innerHTML = sourceArea.value.length+" : "+translationArea.value.length+" : "+resultArea.value.length;
 		}
+
+        function benchmark(){
+            console.time("Uncompressed");
+            eval(translationArea.result);
+            console.timeEnd("Uncompressed");
+
+            console.time("Compressed");
+            eval(resultArea.result);
+            console.timeEnd("Compressed");
+        }
 
 		function exec(){
 			eval(resultArea.value)
