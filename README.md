@@ -212,7 +212,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 			console.log('Hello World!');
 		}
 
-- binding toplevel `main` functions to onload event
+- binding toplevel `main` functions to onload event, status: done
 
 		// lib.cola
 		
@@ -326,4 +326,4 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 ### Statistic
 
 - 34 feature ( without classes )
-- 22 done
+- 23 done

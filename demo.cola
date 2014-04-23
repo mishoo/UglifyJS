@@ -27,6 +27,9 @@ main(){
     y[] = 321;
     console.log('original:',x,'cloned:',y, y[]);
 
+    y[0..1] = [1..10];
+    console.log(y[0..4]);
+
     y.forEach((val) => console.log(val));
 
     console.log("a is {{isset a ? 'set' : 'undefiend'}}, b is {{b?? ? 'set' : 'undefined'}}");

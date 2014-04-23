@@ -93,6 +93,9 @@
     y[] = 321;
     console.log('original:',x,'cloned:',y, y[]);
 
+    y[0..1] = [1..10];
+    console.log(y[0..4]);
+
     y.forEach((val) => console.log(val));
 
     console.log("a is {{isset a ? 'set' : 'undefiend'}}, b is {{b?? ? 'set' : 'undefined'}}");
@@ -146,7 +149,7 @@ main();</textarea>
 			try {
 				// 1. compile
 				ast = Cola.parse(source, { is_js : isjs.checked });
-				if(!isjs.checked) ast = ast.toJavaScript();
+				if(!isjs.checked) ast = ast.toJavaScript({ main_binding : false });
 				ast.print(stream);
 				translationArea.value = stream.toString();
 
