@@ -233,7 +233,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		print(str) => console.log(str);
 
 
-- named arguments
+- named arguments, status: done
 
 		hello(String name:) => console.log("Hello @name!");
 		hello(name: 'dangreen'); // Hello dangreen!
@@ -241,13 +241,13 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		hello(name: "World") => console.log("Hello @name!");
 		hello(); // Hello World!
 		
-- defaults for positional arguments
+- defaults for positional arguments, status: done
 
-		hello(String name = "World!") => console.log("Hello @name!");
+		hello(String name = "World") => console.log("Hello @name!");
 		hello('dangreen'); // Hello dangreen!
 		hello(); // Hello World!
 
-- some arguments into array
+- some arguments into array, status: done
 
 		main(name, skills...){
     		console.log("My name is @name, my skills:");
