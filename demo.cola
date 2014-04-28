@@ -1,51 +1,102 @@
+// `main` functions may binding to a onload event 
+// Functions can defined without `function` keyword, with and without `type`
 main(){
+
+    // Unary operators
+    // Two variants of `isset` operator. Which is better?
+    bool _seted = true, _empty;
+    console.log("`_seted` is", _seted?? ? "seted" : "empty");
+    console.log("`_empty` is", isset _empty ? "seted" : "empty");
+
+    // `clone` operator 
+    Array _first = [584], _second = clone _first;
+    _first.push(404);
+    console.log("`_first`:",_first,"`_second`:",_second);
+
+    // Binary operators
+    // `pow` operator
+    console.log("5 ** 3 =", 5 ** 3);
+
+    // `modulo` operator
+    console.log("10 %% 4 = ", 10 %% 4);
+
+    // `isset` conditional assigment
+    int a, b = 4;
+    console.log("`a` is", a, ", now `a` is", a ?= b); 
+    console.log("`a` is", a, ", now `a` still", a ?= 584);
+
+    // `isset` binary conditional
+    int x, y = 5;
+    console.log("`x` is", x, ", `y` is", y, ", x ? y = ", x ? y), x = 1;
+    console.log("`x` is", x, ", `y` is", y, ", x ? y = ", x ? y);
+
+    // `is` operator
+    console.log("'hello'", "hello" is String ? "is" : "isnt", "`String`");
+
+    // `isnt` operator
+    console.log("'goodby'", "goodby" isnt Number ? "isnt" : "is", "`Number`");
+
+    // Boolean alternatives
+    console.log("`yes` and `no`", yes is Boolean && no is Boolean ? "is" : "isnt", "`Boolean`");
+    console.log("`on` and `off`", on is Boolean && off is Boolean ? "is" : "isnt", "`Boolean`");
+
+    // Strings
+    // New quotes symbol, multi-lining and templating
     console.log(`
 
         Hello!
         My name is ColaScript, and i know who you are }:->
-        @{navigator.userAgent}
+        User agent: @{navigator.userAgent}
+        Vendor: {{navigator.vendor}}
 
     `);
 
-    console.log("pow:", 5 ** 2, "; modulo:", 5 %% 3, ";");
+    // Raw strings
+    console.log(r"\n \r \t some@email.ru");
 
-    Number a = 3.14, b = 584, c;
-
-    a ?= b; console.log(a);
-    a = undefined;
-    a ?= b; console.log(a);
-
-    console.log(a = c ? b);
-    c = 404;
-    console.log(a = c ? b);
-
-    b = undefined;
-
-    Array x, y;
-    x = [123];
-    y = clone x;
-    y[] = 321;
-    console.log('original:',x,'cloned:',y, y[]);
-
-    y[0..1] = [1..10];
-    console.log(y[0..4]);
-
-    y.forEach((val) => console.log(val));
-
-    console.log("a is {{isset a ? 'set' : 'undefiend'}}, b is {{b?? ? 'set' : 'undefined'}}");
-
-    console.log(`is:`, location.href is String, `; isnt:`, 123 isnt Number, ";");
-
-    if(yes === true && on === true && no === false && off === false) console.log('Boolean alternatives');
-
-    console.log('Raw string:', r`@test \n \t \r`);
+    // Multiline RegExp's
     RegExp isEmail = /
         ([\w-\.]+)
         @
         ((?:[\w]+\.)+)
         ([a-zA-Z]{2,4})
-    /, email = r'danon0404@gmail.com';
-    console.log("@email is email:", isEmail.test(email));
+    /; 
+    String email = r'some@email.ru';
+    console.log("@email {{ isEmail.test(email) ? "is" : "isnt" }} valid email adress");
+
+    // Arrays
+    // Empty getter and setter ( pushig )
+    Array arr = [2, 4, 8, 16, 32];
+    console.log("Last element of `arr` is", arr[]), arr[] = 64;
+    console.log("Now last element of `arr` is", arr[]);
+
+    // Splice assigment
+    arr[2..4] = [3, 2, 1];
+    console.log("`arr` is", arr);
+
+    // Range
+    console.log("`[0..10]` is", [0..10]);
+
+    // Calling function
+    console.log(Profile(
+        "Dan", "Green",
+        "HTML5", "JavaScript", "Dart", "PHP", "CSS3", "LESS", "Qt",
+        age : 19,
+        petName : "Felix"
+    ));
 }
 
-main();
+// Functions
+// Named, positional and splated arguments, with default values.
+// Arrow functions.
+Object Profile(String firstName, String secondName, String country = "Russia", Array skills..., age:, petName: "Tux"){
+    skills.forEach((val) => val == "JavaScript" && console.log("JavaScript - It Awesome!"));
+    return {
+        firstName : firstName,
+        secondName : secondName,
+        age : age,
+        country : country,
+        skills : skills,
+        petName : petName
+    };
+}
