@@ -2,11 +2,16 @@ var path = require("path");
 var fs = require("fs");
 var vm = require("vm");
 var sys = require("util");
+var sourceMap;
+try {
+	sourceMap = require("source-map");
+} catch(e) {
+}
 
 var UglifyJS = vm.createContext({
     sys           : sys,
     console       : console,
-    MOZ_SourceMap : require("source-map")
+    MOZ_SourceMap : sourceMap
 });
 
 function load_global(file) {
@@ -107,17 +112,21 @@ exports.minify = function(files, options) {
         inMap = fs.readFileSync(options.inSourceMap, "utf8");
     }
     if (options.outSourceMap) {
-        output.source_map = UglifyJS.SourceMap({
-            file: options.outSourceMap,
-            orig: inMap,
-            root: options.sourceRoot
-        });
-        if (options.sourceMapIncludeSources) {
-            for (var file in sourcesContent) {
-                if (sourcesContent.hasOwnProperty(file)) {
-                    output.source_map.get().setSourceContent(file, sourcesContent[file]);
+        if (sourceMap) {
+            output.source_map = UglifyJS.SourceMap({
+                file: options.outSourceMap,
+                orig: inMap,
+                root: options.sourceRoot
+            });
+            if (options.sourceMapIncludeSources) {
+                for (var file in sourcesContent) {
+                    if (sourcesContent.hasOwnProperty(file)) {
+                        output.source_map.get().setSourceContent(file, sourcesContent[file]);
+                    }
                 }
             }
+        } else {
+            console.error("source-map module is missing and needed by outSourceMap option");
         }
 
     }
