@@ -31,10 +31,12 @@
     		box-sizing: border-box;
     	    width: 33.333%; 
     	    height: 100%; 
-    	    font-size: 12px; 
+    	    font-size: 15px; 
     	    float: left;
     	    font-family: "Andale Mono";
             padding: 0 5px 26px 5px;
+            background-color: #272A32;
+            color: #D6D7D9;
     	}
 
     	#controls {
@@ -51,6 +53,9 @@
             left: 0;
             width: 100%;
             height: 100%;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 2px 0 0 2px;
         }
 
         #controls .bg {
@@ -60,12 +65,12 @@
             width: 100%;
             height: 100%;
             background-color: white;
-            opacity: 0.5;
+            opacity: 0.8;
         }
 
         #lenstat {
             float: right;
-            margin: 5px 8px 0 0;
+            margin: 2px 10px;
         }
     	
     	</style>
@@ -93,7 +98,7 @@ main(){
     // `modulo` operator
     console.log("10 %% 4 = ", 10 %% 4);
 
-    // `isset` conditional assigment
+    // `isset` conditional assignment
     int a, b = 4;
     console.log("`a` is", a, ", now `a` is", a ?= b); 
     console.log("`a` is", a, ", now `a` still", a ?= 584);
@@ -138,25 +143,36 @@ main(){
     console.log("@email {{ isEmail.test(email) ? "is" : "isnt" }} valid email adress");
 
     // Arrays
-    // Empty getter and setter ( pushig )
+    // Empty getter and setter ( pushing )
     Array arr = [2, 4, 8, 16, 32];
     console.log("Last element of `arr` is", arr[]), arr[] = 64;
     console.log("Now last element of `arr` is", arr[]);
 
-    // Splice assigment
+    // Splice assignment
     arr[2..4] = [3, 2, 1];
     console.log("`arr` is", arr);
 
     // Range
     console.log("`[0..10]` is", [0..10]);
 
-    // Calling function
-    console.log(Profile(
-        "Dan", "Green",
+    // Calling function 
+    Object pro;
+    console.log(pro = Profile(
+        "Dan", "Green", "Russia",
         "HTML5", "JavaScript", "Dart", "PHP", "CSS3", "LESS", "Qt",
         age : 19,
         petName : "Felix"
     ));
+
+    // Cascade operator
+    pro
+        ..firstName += "iil"
+        ..secondName = "Onoshko"
+        ..skills:
+            ..[1] = "JS";
+        ;
+
+    console.log(pro);
 }
 
 // Functions
@@ -173,14 +189,16 @@ Object Profile(String firstName, String secondName, String country = "Russia", A
         petName : petName
     };
 }
-</textarea>
+
+main();</textarea>
 		<textarea id="translation"></textarea>
 		<textarea id="result"></textarea>
 		<div id="controls">  
             <div class="bg">&nbsp;</div>
             <div class="m">
                 <button id="exec" onclick="exec()">Execute</button>
-                <button id="benchmark" onclick="benchmark()">Benchmark</button>
+                <button onclick="benchmarkTranslate()">Benchmark Translation</button>
+                <button onclick="benchmarkResult()">Benchmark Result</button>
                 <input type="checkbox" id="is_js" onclick="compile()">
                 <label for="is_js">js parser</label>
                 <input type="checkbox" id="main_binding" onclick="compile()">
@@ -239,10 +257,16 @@ Object Profile(String firstName, String secondName, String country = "Russia", A
             document.querySelector('#lenstat').innerHTML = sourceArea.value.length+" : "+translationArea.value.length+" : "+resultArea.value.length;
 		}
 
-        function benchmark(){
-            console.time("ColaScript");
-            eval(resultArea.result);
-            console.timeEnd("ColaScript");
+        function benchmarkResult(){
+            console.time("Result");
+            eval(resultArea.value);
+            console.timeEnd("Result");
+        }
+
+        function benchmarkTranslate(){
+            console.time("Translation");
+            eval(translationArea.value);
+            console.timeEnd("Translation");
         }
 
 		function exec(){

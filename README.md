@@ -61,7 +61,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 
 ### Multiple
-- `..:`      
+- `..:`, status: done      
 
 		Object profile = { 
 			name : "dan",
@@ -104,7 +104,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 
 ## Expressions
-- `switch` assigmention
+- `switch` assignment
 
 		String weather = switch(temperature){
 			case -10: 'cold';
@@ -133,7 +133,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		Object obj = {};
 		String str = "";
    
-- multiple assigment    
+- multiple assignment    
 
 		[a, b, c] = [b, c, a];
     	{poet: {String name, address: [street, city]}} = futurists;
@@ -190,7 +190,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		arr[] = 4; // [3, 5, 6, 7, 4]
 		console.log(arr[]); // 4
               
-- part assigment, status: done  
+- part assignment, status: done  
 
 		arr[0..2] = [0,1]; // [0, 1, 7, 4]
 		arr[0..2] = [];    // [7, 4]
@@ -325,5 +325,5 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 ### Statistic
 
-- 34 feature ( without classes )
-- 26 done
+- 34 features ( without classes )
+- 27 done

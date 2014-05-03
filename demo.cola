@@ -20,7 +20,7 @@ main(){
     // `modulo` operator
     console.log("10 %% 4 = ", 10 %% 4);
 
-    // `isset` conditional assigment
+    // `isset` conditional assignment
     int a, b = 4;
     console.log("`a` is", a, ", now `a` is", a ?= b); 
     console.log("`a` is", a, ", now `a` still", a ?= 584);
@@ -65,25 +65,36 @@ main(){
     console.log("@email {{ isEmail.test(email) ? "is" : "isnt" }} valid email adress");
 
     // Arrays
-    // Empty getter and setter ( pushig )
+    // Empty getter and setter ( pushing )
     Array arr = [2, 4, 8, 16, 32];
     console.log("Last element of `arr` is", arr[]), arr[] = 64;
     console.log("Now last element of `arr` is", arr[]);
 
-    // Splice assigment
+    // Splice assignment
     arr[2..4] = [3, 2, 1];
     console.log("`arr` is", arr);
 
     // Range
     console.log("`[0..10]` is", [0..10]);
 
-    // Calling function
-    console.log(Profile(
-        "Dan", "Green",
+    // Calling function 
+    Object pro;
+    console.log(pro = Profile(
+        "Dan", "Green", "Russia",
         "HTML5", "JavaScript", "Dart", "PHP", "CSS3", "LESS", "Qt",
         age : 19,
         petName : "Felix"
     ));
+
+    // Cascade operator
+    pro
+        ..firstName += "iil"
+        ..secondName = "Onoshko"
+        ..skills:
+            ..[1] = "JS";
+        ;
+
+    console.log(pro);
 }
 
 // Functions
@@ -100,3 +111,5 @@ Object Profile(String firstName, String secondName, String country = "Russia", A
         petName : petName
     };
 }
+
+main();
