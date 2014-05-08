@@ -202,6 +202,10 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 
 - `unsafe` (default: false) -- apply "unsafe" transformations (discussion below)
 
+- `null_this` -- if `null` appears in the `this`-parameter position of `.call(..)`, `.apply(..)`, or `.bind(..)`, rewrite `null` to `0`.
+
+    **Note:** potentially unsafe operation, only use if `null` implies the `this` binding is not relevant for the function call in question.
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 
