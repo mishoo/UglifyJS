@@ -79,7 +79,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
    		 	..info += ", student"; 
 
                    
-- `a > b > c`
+- `a > b > c`, status: done
 
 		if( 0 < x < 100 ) console.log("x E (0; 100)");
 		
@@ -112,18 +112,6 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 			case 35: 'hot';
 		};
 
-- `with` scoping, status: it need??       
-
-		with(document.body.querySelectorAll('ul').childNodes){
-			var txt = 'text';
-			
-			forEach((li){
-				li.innerHTML = txt;
-			});
-		}
-		
-		console.log(txt); // undefined
-
 
 ## Vars
 - declaration with type, status: done, only declaration
@@ -133,10 +121,10 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		Object obj = {};
 		String str = "";
    
-- multiple assignment    
+- multiple assignment, status: done    
 
 		[a, b, c] = [b, c, a];
-    	{poet: {String name, address: [street, city]}} = futurists;
+    	var {poet: {String name, address: [street, city]}} = futurists;
     	[a, ..., b] = someArray; 
       
 
@@ -325,5 +313,5 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 ### Statistic
 
-- 34 features ( without classes )
-- 27 done
+- 33 features ( without classes )
+- 29 done
