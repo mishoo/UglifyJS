@@ -112,4 +112,4 @@ Object Profile(String firstName, String secondName, String country = "Russia", A
     };
 }
 
-main();
+//main();

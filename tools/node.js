@@ -3,17 +3,13 @@ var fs = require("fs");
 var vm = require("vm");
 var sys = require("util");
 
-var UglifyJS = vm.createContext({
-    sys           : sys,
-    console       : console,
-    MOZ_SourceMap : require("source-map")
-});
+var MOZ_SourceMap = require("source-map");
 
 function load_global(file) {
     file = path.resolve(path.dirname(module.filename), file);
     try {
         var code = fs.readFileSync(file, "utf8");
-        return vm.runInContext(code, UglifyJS, file);
+        return eval(code);
     } catch(ex) {
         // XXX: in case of a syntax error, the message is kinda
         // useless. (no location information).
@@ -31,26 +27,28 @@ var FILES = exports.FILES = [
     "../lib/output.js",
     "../lib/compress.js",
     "../lib/sourcemap.js",
-    "../lib/mozilla-ast.js"
+    "../lib/mozilla-ast.js",
+    "../lib/translate.js",
+    "../lib/std.js"
 ].map(function(file){
     return path.join(path.dirname(fs.realpathSync(__filename)), file);
 });
 
 FILES.forEach(load_global);
 
-UglifyJS.AST_Node.warn_function = function(txt) {
+Cola.AST_Node.warn_function = function(txt) {
     sys.error("WARN: " + txt);
 };
 
-// XXX: perhaps we shouldn't export everything but heck, I'm lazy.
-for (var i in UglifyJS) {
-    if (UglifyJS.hasOwnProperty(i)) {
-        exports[i] = UglifyJS[i];
+// XXX: perhaps we shouldn't export everything but heck, I'm lazy. 
+for (var i in Cola) {
+    if (Cola.hasOwnProperty(i)) {
+        exports[i] = Cola[i];
     }
 }
 
 exports.minify = function(files, options) {
-    options = UglifyJS.defaults(options, {
+    options = Cola.defaults(options, {
         spidermonkey : false,
         outSourceMap : null,
         sourceRoot   : null,
@@ -59,16 +57,18 @@ exports.minify = function(files, options) {
         warnings     : false,
         mangle       : {},
         output       : null,
-        compress     : {}
+        compress     : {},
+        is_js        : false,
+        main_binding : true
     });
-    UglifyJS.base54.reset();
+    Cola.base54.reset();
 
     // 1. parse
     var toplevel = null,
         sourcesContent = {};
 
     if (options.spidermonkey) {
-        toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
+        toplevel = Cola.AST_Node.from_mozilla_ast(files);
     } else {
         if (typeof files == "string")
             files = [ files ];
@@ -77,19 +77,22 @@ exports.minify = function(files, options) {
                 ? file
                 : fs.readFileSync(file, "utf8");
             sourcesContent[file] = code;
-            toplevel = UglifyJS.parse(code, {
+            toplevel = Cola.parse(code, {
                 filename: options.fromString ? "?" : file,
-                toplevel: toplevel
+                toplevel: toplevel,
+                is_js   : options.is_js
             });
+
+            if (!options.is_js) toplevel = toplevel.toJavaScript({ main_binding : options.main_binding });
         });
     }
 
     // 2. compress
     if (options.compress) {
-        var compress = { warnings: options.warnings };
-        UglifyJS.merge(compress, options.compress);
+        var compress = { warnings: options.warnings, is_js : options.is_js };
+        Cola.merge(compress, options.compress);
         toplevel.figure_out_scope();
-        var sq = UglifyJS.Compressor(compress);
+        var sq = new Cola.Compressor(compress);
         toplevel = toplevel.transform(sq);
     }
 
@@ -107,7 +110,7 @@ exports.minify = function(files, options) {
         inMap = fs.readFileSync(options.inSourceMap, "utf8");
     }
     if (options.outSourceMap) {
-        output.source_map = UglifyJS.SourceMap({
+        output.source_map = new Cola.SourceMap({
             file: options.outSourceMap,
             orig: inMap,
             root: options.sourceRoot
@@ -122,9 +125,9 @@ exports.minify = function(files, options) {
 
     }
     if (options.output) {
-        UglifyJS.merge(output, options.output);
+        Cola.merge(output, options.output);
     }
-    var stream = UglifyJS.OutputStream(output);
+    var stream = new Cola.OutputStream(output);
     toplevel.print(stream);
     return {
         code : stream + "",
@@ -143,11 +146,11 @@ exports.minify = function(files, options) {
 //         if (ctor.SUBCLASSES.length > 0) ret.sub = sub;
 //         return ret;
 //     }
-//     return doitem(UglifyJS.AST_Node).sub;
+//     return doitem(Cola.AST_Node).sub;
 // }
 
 exports.describe_ast = function() {
-    var out = UglifyJS.OutputStream({ beautify: true });
+    var out = new Cola.OutputStream({ beautify: true });
     function doitem(ctor) {
         out.print("AST_" + ctor.TYPE);
         var props = ctor.SELF_PROPS.filter(function(prop){
@@ -177,6 +180,6 @@ exports.describe_ast = function() {
             });
         }
     };
-    doitem(UglifyJS.AST_Node);
+    doitem(Cola.AST_Node);
     return out + "";
 };

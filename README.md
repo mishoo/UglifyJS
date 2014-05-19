@@ -91,8 +91,9 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		
 - `@use`
 
-		@use strict, typing
+		@use strict
 		@use asmjs
+		@use closure
 
 - `@if @end_if @else`
 

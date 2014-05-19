@@ -3,7 +3,7 @@
 
 "use strict";
 
-var UglifyJS = require("../tools/node");
+var Cola = require("../tools/node");
 var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
@@ -16,19 +16,21 @@ Use a single dash to read input from the standard input.\
 \n\n\
 NOTE: by default there is no mangling/compression.\n\
 Without [options] it will simply parse input files and dump the AST\n\
-with whitespace and comments discarded.  To achieve compression and\n\
+with whitespace and comments discarded. To achieve compression and\n\
 mangling you need to use `-c` and `-m`.\
 ")
+    .describe("j", "Work with JavaScript (by default Cola will expect ColaScript).")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
     .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
-    .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
+    .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default Cola will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
+    .describe("n", "Disable `main` binding.")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
-You can also specify -p relative, which will make UglifyJS figure out itself the relative paths between original sources, \
+You can also specify -p relative, which will make Cola figure out itself the relative paths between original sources, \
 the source map and the output file.")
     .describe("o", "Output file (default STDOUT).")
     .describe("b", "Beautify output/specify output options.")
@@ -56,15 +58,18 @@ parsed, but the source map will adjust for its presence.")
     .describe("stats", "Display operations run time on STDERR.")
     .describe("acorn", "Use Acorn for parsing.")
     .describe("spidermonkey", "Assume input files are SpiderMonkey AST format (as JSON).")
-    .describe("self", "Build itself (UglifyJS2) as a library (implies --wrap=UglifyJS --export-all)")
+    .describe("self", "Build itself (Cola) as a library (implies --wrap=Cola --export-all)")
     .describe("wrap", "Embed everything in a big function, making the “exports” and “global” variables available. \
 You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.")
-    .describe("export-all", "Only used when --wrap, this tells UglifyJS to add code to automatically export all globals.")
+    .describe("export-all", "Only used when --wrap, this tells Cola to add code to automatically export all globals.")
     .describe("lint", "Display some scope warnings")
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
 
+    .alias("j", "js")
+    .alias("j", "javascript")
+    .alias("n", "no-main-binding")
     .alias("p", "prefix")
     .alias("o", "output")
     .alias("v", "verbose")
@@ -88,7 +93,9 @@ You need to pass an argument to this option to specify the name that your module
     .string("wrap")
     .string("p")
 
+    .boolean("j")
     .boolean("expr")
+    .boolean("n")
     .boolean("source-map-include-sources")
     .boolean("screw-ie8")
     .boolean("export-all")
@@ -109,7 +116,7 @@ You need to pass an argument to this option to specify the name that your module
 normalize(ARGS);
 
 if (ARGS.noerr) {
-    UglifyJS.DefaultsError.croak = function(msg, defs) {
+    Cola.DefaultsError.croak = function(msg, defs) {
         sys.error("WARN: " + msg);
     };
 }
@@ -121,7 +128,7 @@ if (ARGS.version || ARGS.V) {
 }
 
 if (ARGS.ast_help) {
-    var desc = UglifyJS.describe_ast();
+    var desc = Cola.describe_ast();
     sys.puts(typeof desc == "string" ? desc : JSON.stringify(desc, null, 2));
     process.exit(0);
 }
@@ -138,6 +145,10 @@ if (ARGS.acorn) {
 var COMPRESS = getOptions("c", true);
 var MANGLE = getOptions("m", true);
 var BEAUTIFY = getOptions("b", true);
+
+if (ARGS.j) {
+    if (COMPRESS) COMPRESS.is_js = getOptions("j");
+}
 
 if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
@@ -159,7 +170,7 @@ if (ARGS.screw_ie8) {
 }
 
 if (BEAUTIFY)
-    UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
+    Cola.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
 if (ARGS.comments) {
     if (/^\//.test(ARGS.comments)) {
@@ -184,8 +195,8 @@ if (ARGS.self) {
     if (files.length > 0) {
         sys.error("WARN: Ignoring input files since --self was passed");
     }
-    files = UglifyJS.FILES;
-    if (!ARGS.wrap) ARGS.wrap = "UglifyJS";
+    files = Cola.FILES;
+    if (!ARGS.wrap) ARGS.wrap = "Cola";
     ARGS.export_all = true;
 }
 
@@ -222,7 +233,7 @@ var TOPLEVEL = null;
 var P_RELATIVE = ARGS.p && ARGS.p == "relative";
 var SOURCES_CONTENT = {};
 
-var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
+var SOURCE_MAP = ARGS.source_map ? new Cola.SourceMap({
     file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
     root: ARGS.source_map_root,
     orig: ORIG_MAP,
@@ -231,10 +242,10 @@ var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
 OUTPUT_OPTIONS.source_map = SOURCE_MAP;
 
 try {
-    var output = UglifyJS.OutputStream(OUTPUT_OPTIONS);
-    var compressor = COMPRESS && UglifyJS.Compressor(COMPRESS);
+    var output = new Cola.OutputStream(OUTPUT_OPTIONS);
+    var compressor = COMPRESS && new Cola.Compressor(COMPRESS);
 } catch(ex) {
-    if (ex instanceof UglifyJS.DefaultsError) {
+    if (ex instanceof Cola.DefaultsError) {
         sys.error(ex.msg);
         sys.error("Supported options:");
         sys.error(sys.inspect(ex.defs));
@@ -274,13 +285,16 @@ async.eachLimit(files, 1, function (file, cb) {
             }
             else {
                 try {
-                    TOPLEVEL = UglifyJS.parse(code, {
+                    TOPLEVEL = Cola.parse(code, {
                         filename   : file,
                         toplevel   : TOPLEVEL,
                         expression : ARGS.expr,
+                        is_js      : ARGS.j
                     });
+
+                    if (!ARGS.j) TOPLEVEL = TOPLEVEL.toJavaScript({ main_bindiing: !ARGS.n });
                 } catch(ex) {
-                    if (ex instanceof UglifyJS.JS_Parse_Error) {
+                    if (ex instanceof Cola.JS_Parse_Error) {
                         sys.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
                         sys.error(ex.message);
                         sys.error(ex.stack);
@@ -294,7 +308,7 @@ async.eachLimit(files, 1, function (file, cb) {
     });
 }, function () {
     if (ARGS.acorn || ARGS.spidermonkey) time_it("convert_ast", function(){
-        TOPLEVEL = UglifyJS.AST_Node.from_mozilla_ast(TOPLEVEL);
+        TOPLEVEL = Cola.AST_Node.from_mozilla_ast(TOPLEVEL);
     });
 
     if (ARGS.wrap) {
@@ -373,11 +387,11 @@ async.eachLimit(files, 1, function (file, cb) {
     }
 
     if (ARGS.stats) {
-        sys.error(UglifyJS.string_template("Timing information (compressed {count} files):", {
+        sys.error(Cola.string_template("Timing information (compressed {count} files):", {
             count: files.length
         }));
         for (var i in STATS) if (STATS.hasOwnProperty(i)) {
-            sys.error(UglifyJS.string_template("- {name}: {time}s", {
+            sys.error(Cola.string_template("- {name}: {time}s", {
                 name: i,
                 time: (STATS[i] / 1000).toFixed(3)
             }));
@@ -401,16 +415,17 @@ function getOptions(x, constants) {
     if (x !== true) {
         var ast;
         try {
-            ast = UglifyJS.parse(x, { expression: true });
+            ast = Cola.parse(x, { expression: true, is_js: ARGS.j });
+            if (!ARGS.j) ast = ast.toJavaScript({ main_bindiing: !ARGS.n });
         } catch(ex) {
-            if (ex instanceof UglifyJS.JS_Parse_Error) {
+            if (ex instanceof Cola.JS_Parse_Error) {
                 sys.error("Error parsing arguments in: " + x);
                 process.exit(1);
             }
         }
-        ast.walk(new UglifyJS.TreeWalker(function(node){
-            if (node instanceof UglifyJS.AST_Seq) return; // descend
-            if (node instanceof UglifyJS.AST_Assign) {
+        ast.walk(new Cola.TreeWalker(function(node){
+            if (node instanceof Cola.AST_Seq) return; // descend
+            if (node instanceof Cola.AST_Assign) {
                 var name = node.left.print_to_string({ beautify: false }).replace(/-/g, "_");
                 var value = node.right;
                 if (constants)
@@ -418,7 +433,7 @@ function getOptions(x, constants) {
                 ret[name] = value;
                 return true;    // no descend
             }
-            if (node instanceof UglifyJS.AST_Symbol || node instanceof UglifyJS.AST_Binary) {
+            if (node instanceof Cola.AST_Symbol || node instanceof Cola.AST_Binary) {
                 var name = node.print_to_string({ beautify: false }).replace(/-/g, "_");
                 ret[name] = true;
                 return true;    // no descend
