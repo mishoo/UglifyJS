@@ -26,10 +26,17 @@
     	    height: 100%;
     	}
     	
+        .triple textarea { 
+            width: 33.333%;
+        }
+
+        .double textarea {
+            width: 50%;
+        }
+
     	textarea {
             -moz-box-sizing: border-box;
-    		box-sizing: border-box;
-    	    width: 33.333%; 
+    		box-sizing: border-box; 
     	    height: 100%; 
     	    font-size: 15px; 
     	    float: left;
@@ -75,7 +82,7 @@
     	
     	</style>
 	</head>
-	<body>
+	<body class="triple">
 		<textarea id="source" onkeyup="compile()">// `main` functions may binding to a onload event 
 // Functions can defined without `function` keyword, with and without `type`
 main(){
@@ -203,6 +210,8 @@ main();</textarea>
                 <label for="is_js">js parser</label>
                 <input type="checkbox" id="main_binding" onclick="compile()">
                 <label for="main_binding">`main` binding</label>
+                <input type="checkbox" id="compressed" onclick="changeClass()">
+                <label for="compressed">compressed</label>
                 <span id="lenstat"></span>
             </div>
 	</body>
@@ -212,12 +221,19 @@ main();</textarea>
 			resultArea = document.getElementById("result"), 
             isjs = document.getElementById("is_js"),
             mainbinding = document.getElementById("main_binding"),
+            compressed = document.getElementById("compressed"),
 			source;
 
         if(!localStorage.source) localStorage.source = source = sourceArea.value;
 		else sourceArea.value = source = localStorage.source;
         isjs.checked = localStorage.isjs == "t";
         mainbinding.checked = localStorage.mainbinding == "t";
+        compressed.checked = localStorage.compressed == "t";
+
+        function changeClass(){
+            document.body.className = compressed.checked ? "triple" : "double";
+            localStorage.compressed = compressed.checked ? "t" : "f";
+        }
 
 		function compile(){
 			source = sourceArea.value;
@@ -280,5 +296,6 @@ main();</textarea>
 		}
 
 		compile();
+        changeClass();
 	</script>
 </html>

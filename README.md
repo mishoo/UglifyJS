@@ -104,12 +104,12 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 
 
 ## Expressions
-- `switch` assignment
+- `switch` assignment, status: done!
 
 		String weather = switch(temperature){
-			case -10: 'cold';
-			case 20: 'normal';
-			case 35: 'hot';
+			when -10: 'cold';
+			when 20: 'normal';
+			when 35: 'hot';
 		};
 
 
@@ -314,4 +314,4 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 ### Statistic
 
 - 33 features ( without classes )
-- 29 done
+- 30 done
