@@ -1,7 +1,9 @@
 // `main` functions may binding to a onload event 
 // Functions can defined without `function` keyword, with and without `type`
-main(){
+@require './sugar.min.js' 
 
+main(){
+    @require './sugar.min.js' 
     // Unary operators
     // Two variants of `isset` operator. Which is better?
     bool _seted = true, _empty;
@@ -103,12 +105,7 @@ main(){
 Object Profile(String firstName, String secondName, String country = "Russia", Array skills..., age:, petName: "Tux"){
     skills.forEach((val) => val == "JavaScript" && console.log("JavaScript - It Awesome!"));
     return {
-        firstName : firstName,
-        secondName : secondName,
-        age : age,
-        country : country,
-        skills : skills,
-        petName : petName
+        firstName, secondName, age, country, skills, petName
     };
 }
 

@@ -40,6 +40,10 @@ Cola.AST_Node.warn_function = function(txt) {
     sys.error("WARN: " + txt);
 };
 
+Cola.getSource = function(file) {
+    return fs.readFileSync(path.join(process.cwd(), file), "utf8");
+};
+
 // XXX: perhaps we shouldn't export everything but heck, I'm lazy. 
 for (var i in Cola) {
     if (Cola.hasOwnProperty(i)) {
@@ -83,7 +87,13 @@ exports.minify = function(files, options) {
                 is_js   : options.is_js
             });
 
-            if (!options.is_js) toplevel = toplevel.toJavaScript({ main_binding : options.main_binding });
+            if (!options.is_js) toplevel = toplevel.toJavaScript({ 
+                main_binding: options.main_binding, 
+                parser: {
+                    filename: options.fromString ? "?" : file,
+                    is_js   : options.is_js
+                }
+            });
         });
     }
 

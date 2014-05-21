@@ -292,7 +292,14 @@ async.eachLimit(files, 1, function (file, cb) {
                         is_js      : ARGS.j
                     });
 
-                    if (!ARGS.j) TOPLEVEL = TOPLEVEL.toJavaScript({ main_bindiing: !ARGS.n });
+                    if (!ARGS.j) TOPLEVEL = TOPLEVEL.toJavaScript({ 
+                        main_binding: !ARGS.n,
+                        parser: {
+                            filename   : file,
+                            expression : ARGS.expr,
+                            is_js      : ARGS.j
+                        }
+                    });
                 } catch(ex) {
                     if (ex instanceof Cola.JS_Parse_Error) {
                         sys.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
@@ -416,7 +423,7 @@ function getOptions(x, constants) {
         var ast;
         try {
             ast = Cola.parse(x, { expression: true, is_js: ARGS.j });
-            if (!ARGS.j) ast = ast.toJavaScript({ main_bindiing: !ARGS.n });
+            if (!ARGS.j) ast = ast.toJavaScript({ main_binding: !ARGS.n, parser: { expression: true, is_js: ARGS.j } });
         } catch(ex) {
             if (ex instanceof Cola.JS_Parse_Error) {
                 sys.error("Error parsing arguments in: " + x);
