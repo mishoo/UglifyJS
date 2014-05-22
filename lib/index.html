@@ -2,17 +2,8 @@
 <html>
 	<head>
 		<title>ColaScript Playground</title>
-		<script src="./utils.js"></script>
-    	<script src="./ast.js"></script>
-    	<script src="./parse.js"></script>
-    	<script src="./transform.js"></script>
-    	<script src="./scope.js"></script>
-    	<script src="./output.js"></script>
-    	<script src="./compress.js"></script>
-    	<script src="./sourcemap.js"></script>
-    	<script src="./mozilla-ast.js"></script>
-    	<script src="./translate.js"></script>
-    	<script src="./std.js"></script>
+		<script src="../cola.js"></script>
+        <script src="../demo.cola" type="text/colascript"></script>
     	<style>
     	
     	body {
@@ -286,7 +277,7 @@ main();</textarea>
         }
 
 		function exec(){
-			eval(resultArea.value)
+			eval.call(window, translationArea.value);
 		}
 
 		function Translate(){

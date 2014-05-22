@@ -85,23 +85,19 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		
 
 ### Compiler               
-- `@require`
+- `@require`, status: done
 
 		@require "./library/jquery.js" "./library/underscore.js" 
+		
+- `@include`, status: done
+		
+		@include "./app/my.js"
 		
 - `@use`
 
 		@use strict
 		@use asmjs
 		@use closure
-
-- `@if @end_if @else`
-
-		@if target == 'web'
-			@require './main.cola'
-		@else
-			@require './mobile/main.cola'
-		@end_if
 
 
 ## Expressions
