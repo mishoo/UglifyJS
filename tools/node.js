@@ -51,7 +51,7 @@ for (var i in Cola) {
     }
 }
 
-exports.minify = function(files, options) {
+exports.translate = function(files, options) {
     options = Cola.defaults(options, {
         spidermonkey : false,
         outSourceMap : null,
