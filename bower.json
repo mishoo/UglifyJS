@@ -1,0 +1,24 @@
+{
+  "name": "cola-script",
+  "version": "0.5.0",
+  "homepage": "https://github.com/TrigenSoftware/ColaScript",
+  "authors": [
+    "Onoshko Dan"
+  ],
+  "description": "ColaScript translator / parser / mangler / compressor / beautifier toolkit",
+  "main": "lib/browser-cola.js",
+  "keywords": [
+    "ColaScript",
+    "Cola",
+    "JavaScript"
+  ],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "bin",
+    "tools"
+  ]
+}
