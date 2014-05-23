@@ -2,6 +2,26 @@
 
 ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). In present time compiler in development. Play with language you can [here](http://develop.trigen.pro/cola/).
 
+# Install
+
+First make sure you have installed the latest version of [node.js](http://nodejs.org/)
+(You may need to restart your computer after this step).
+
+From NPM for use as a command line app:
+
+    npm install cola-script -g
+
+From NPM for programmatic use:
+
+    npm install cola-script
+
+From Git:
+
+    git clone git://github.com/TrigenSoftware/ColaScript.git
+    cd ColaScript
+    npm link .
+    
+
 # to do:
 
 - semicolon is always required, status: done
@@ -93,7 +113,7 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 		
 		@include "./app/my.js"
 		
-- `@use`
+- `@use`, status: done
 
 		@use strict
 		@use asmjs
@@ -311,4 +331,4 @@ ColaScript is a language that compiles in JavaScript. This language is similar t
 ### Statistic
 
 - 33 features ( without classes )
-- 30 done
+- 33 done
