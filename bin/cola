@@ -294,8 +294,8 @@ async.eachLimit(files, 1, function (file, cb) {
 
                     if (!ARGS.j) TOPLEVEL = TOPLEVEL.toJavaScript({ 
                         main_binding: !ARGS.n,
+                        path: path.dirname(file),
                         parser: {
-                            filename   : file,
                             expression : ARGS.expr,
                             is_js      : ARGS.j
                         }

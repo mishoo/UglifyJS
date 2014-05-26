@@ -1,6 +1,6 @@
 // `main` functions may binding to a onload event 
 // Functions can defined without `function` keyword, with and without `type`
-@require '../sugar.min.js' 
+@require './sugar.min.js' 
 
 main(){
     // Unary operators

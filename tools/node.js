@@ -40,9 +40,11 @@ Cola.AST_Node.warn_function = function(txt) {
     sys.error("WARN: " + txt);
 };
 
-Cola.getSource = function(file, not_cwd) {
-    return fs.readFileSync(not_cwd ? file : path.join(process.cwd(), file), "utf8");
+Cola.getSource = function(file) {
+    return fs.readFileSync(Cola.notRoot(file) ? path.join(process.cwd(), file) : file, "utf8");
 };
+
+Cola.dirname = path.dirname;
 
 // XXX: perhaps we shouldn't export everything but heck, I'm lazy. 
 for (var i in Cola) {
@@ -64,7 +66,7 @@ exports.translate = function(files, options) {
         compress     : {},
         is_js        : false,
         main_binding : true,
-        path_prefix  : ""
+        path         : false
     });
     Cola.base54.reset();
 
@@ -90,9 +92,8 @@ exports.translate = function(files, options) {
 
             if (!options.is_js) toplevel = toplevel.toJavaScript({ 
                 main_binding: options.main_binding,
-                path_prefix : options.path_prefix, 
+                path: options.path || path.dirname(file), 
                 parser: {
-                    filename: options.fromString ? "?" : file,
                     is_js   : options.is_js
                 }
             });
