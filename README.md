@@ -2,7 +2,9 @@
 
 ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). In present time compiler in development. Play with language you can [here](http://develop.trigen.pro/cola/).
 
-# Install
+
+Install
+===
 
 First make sure you have installed the latest version of [node.js](http://nodejs.org/)
 (You may need to restart your computer after this step).
@@ -21,39 +23,205 @@ From Git:
     cd ColaScript
     npm link .
     
+Usage same as in [UglifyJS2](https://github.com/mishoo/UglifyJS2), except:
 
-# to do:
+	-j, --js, --javascript        Work with JavaScript (by default Cola will
+	                              expect ColaScript).                    [boolean]
+    -n, --no-main-binding         Disable `main` binding.                [boolean]
+    
+    
+Simple example of usage:
 
-- semicolon is always required, status: done
+	cola main.cola -o main.min.js -m -c    
+
+    
+In browser
+===
+
+In developing more comfortable to compile the code directly in your browser, for this add `browser-cola.js` to `your.html` code:
+
+	<script src="path/to/browser-cola.js"></script>
+	
+Now you can run your Cola-Code:
+
+	<script type="text/colascript" src="path/to/your.cola"></script>
+	
+If `your.cola` depends on other scripts in `your.html`, better to notice `browser-cola` about it:
+
+	<script type="text/colascript" src="angular.min.js"></script>
+	<script type="text/colascript" src="path/to/your.cola"></script>
+    
+
+Overview
+===
+
+## Need to know:
+- not always valid-javascript is valid-colascript
+- semicolon is always required
+- in present time typing is just syntax
+
+
+## Variables
+In current version you can set any type which you want, frankly speaking is not good.. In future we will have static typing.
+
+	var num = 1;           // valid JavaScript
+	int i, j = 3;
+	String str = `someString`; // yes, you can use ` quotes
+	
+In ColaScript, like in CoffeScript, exists boolean-aliases:
+
+	yes == on == true;
+	no == off == false	
+
+
+## Strings
+We have templating! We can paste variable in string:
+
+	console.log("my login in twitter \@@twLogin");
+	
+Also we can paset expression this way:
+
+	console.log("length of my name @{ name.length }");
+	
+and this way:
+
+	console.log("first letter in my name is {{ name[0] }}");
+	
+Still possible to use raw strings:
+
+	console.log(r"\n\r\t@raw");
+	
+Any string in ColaScript is multiline:
+
+	console.log("
+	
+		List1:
+			- Write code
+			- Drink tea
+			- Watch Instagram
+			
+		List2
+			* Write code
+			* Read Habrahabr
+			* Listen music
+			
+		");
+		
+align goes by closing-quote. 
+
+
+## RegExps
+Modifer `x` skips whitespaces and new-line same as if you use multiline RegExp:
+
+	RegExp url = /
+		^
+			(https?:\/\/)?
+			([\w\.]+)
+			\.([a-z]{2,6}\.?)
+			(\/[\w\.]*)*\/?
+		$/;
+
+
+## Arrays
+Most of array features was taken from CoffeeScript:
+
+	Array arr = [0..9];      // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+	// same as
+	Array arr = [0...10];
+	
+	arr[0..2] = [584, 404];  // [584, 404, 3, 4, 5, 6, 7, 8, 9]
+	console.log(arr[0..2]);  // [584, 404]
+	
+one feature getted from PHP:
+
+	arr[] = 22;              // [584, 404, 3, 4, 5, 6, 7, 8, 9, 22]
+	
+absolutely new feature is: 
+
+	console.log(arr[]);      // 22 
+
+	
+## Functions
+You have opportunity to declarate functions without `function` keyword, with and without type:
+
+	function f1(){
+	
+	}
+	
+	void f2(){
+	
+	}
+	
+	f2(){
+	
+	}
+	
+From Dart we borrowd arrow-functions:
+
+	helloString(name) => "Hello @name!";
+	
+Arguments have `positional` or `named` types and can have default value:
+
+	hello(String name:) => console.log("Hello @name!");
+	hello(name: 'dangreen');                             // Hello dangreen!
+		
+	hello(name: "World") => console.log("Hello @name!");
+	hello();                                             // Hello World!
+
+	// or
+
+    hello(String name = "World") => console.log("Hello @name!");
+	hello('dangreen');                                   // Hello dangreen!
+	hello();                                             // Hello World!
+
+As in CoffeScript we can declare `splated` argument
+
+	info(name, skills...){
+    	console.log("My name is @name, my skills:");
+    	skills.forEach((skill) => console.log("@skill,"));
+	}
+
+All `main` functions in root namespace will bind on `DOMContentLoaded` event:
+
+	// lib.cola
+		
+	main(){
+		console.log('Hello World from lib.cola!');
+	}
+
+	// main.cola
+		
+	@require "lib.cola";
+		
+	main(){
+		console.log('Hello World!');
+	}
+	
 
 ## Operators:
 
-### Unary
-- `varname??` and alternative `isset varname` - which is better? status: done                     
+- `isset` operator, `??` alternative - which is better?                    
 
-		bool exist = SOME??;
-		bool exist2 = isset SOME;
+		bool a = true, b;
+		console.log(isset a ? "seted" : "not seted"); // seted
+		console.log(isset b ? "seted" : "not seted"); // not seted
 		
-- `clone`, status: done
+- `clone` of variable:
 
-		a = [];
-		b = [];
-		Array b = clone a;
+		Array a = [], b = clone a;
 		b[0] = 584; // a == []
 		
 	if object have method `__clone__`, object will be copied with it.
 
-
-### Binary
-- `**`, status: done                
+- Math.pow operator:           
 
 		int pow = 5 ** 2; // 25
             
-- `%%`, status: done       
+- CoffeeScript's modulo operator:  
 
 		int modulo = 5 %% 3; // 2
                     
-- `?=`, status: done                 
+- Existential assignment from CoffeeScript:                
 
 		var undef, def = 5;
 		
@@ -131,12 +299,6 @@ From Git:
 
 
 ## Vars
-- declaration with type, status: done, only declaration
-
-		int b = 584;
-		Array arr = [];
-		Object obj = {};
-		String str = "";
    
 - multiple assignment, status: done    
 
@@ -144,122 +306,6 @@ From Git:
     	var {poet: {String name, address: [street, city]}} = futurists;
     	[a, ..., b] = someArray; 
       
-
-### bool
-- aliases, status: done 
-
-		yes === on === true;
-		no === off === false; 
-                 
-
-### String
-- \` new string \`, status: done  
-
-		String name = `dangreen`; 
-            
-- multiline, status: done                    
-
-		String ml = "
-		
-		Lorem ipsum,
-		Lorem ipsum.
-		
-		";
-
-- raw, status: done   
-
-		String str = r"\n \r"; // "\\n \\r" 
-                     
-- templating, status: done      
-
-		String name = "dan";
-		
-		console.log("My name is @name."); // My name is dan.
-		name = "eric";  
-        console.log("My name is @name."); // My name is eric.
-        console.log("My name is @{name.capitalize()} or {{name.capitalize()}}"); // My name is Eric.   
-
-### RegExp
-- multiline ( and x flag ), status: done      
-
-		RegExp re = /
-			([^\d]+)-
-			(\w+)
-		/gx; 
-             
-
-### Arrays
-- pushing and getting last, status: done       
-
-		var arr = [3, 5, 6, 7];
-		arr[] = 4; // [3, 5, 6, 7, 4]
-		console.log(arr[]); // 4
-              
-- part assignment, status: done  
-
-		arr[0..2] = [0,1]; // [0, 1, 7, 4]
-		arr[0..2] = [];    // [7, 4]
-		
-- slice, status: done 
-
-		arr = arr[0..2]; 
-
-             
-- inline array ranging, status: done  
-
-		arr = [10..1]; // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-		arr = [1..10]; // [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]     
-
-### Functions
-- without `function` keyword, status: done
-
-		void main(){
-			console.log('Hello World!');
-		}
-
-- binding toplevel `main` functions to onload event, status: done
-
-		// lib.cola
-		
-		main(){
-			console.log('Hello World from lib.cola!');
-		}
-
-		// main.cola
-		
-		require "./lib.cola";
-		
-		main(){
-			console.log('Hello World!');
-		}
-		
-- arrow functions, status: done
-
-		print(str) => console.log(str);
-
-
-- named arguments, status: done
-
-		hello(String name:) => console.log("Hello @name!");
-		hello(name: 'dangreen'); // Hello dangreen!
-		
-		hello(name: "World") => console.log("Hello @name!");
-		hello(); // Hello World!
-		
-- defaults for positional arguments, status: done
-
-		hello(String name = "World") => console.log("Hello @name!");
-		hello('dangreen'); // Hello dangreen!
-		hello(); // Hello World!
-
-- some arguments into array, status: done
-
-		main(name, skills...){
-    		console.log("My name is @name, my skills:");
-    		skills.forEach((skill) => console.log("@skill,"));
-		}
-
-
 ## Classes
 - classes
 - singletones
@@ -327,8 +373,3 @@ From Git:
     		while(res.indexOf(a) != -1) res = res.replace(a, b);
     		return res;
 		}
-
-### Statistic
-
-- 33 features ( without classes )
-- 33 done
