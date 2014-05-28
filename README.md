@@ -55,13 +55,13 @@ If `your.cola` depends on other scripts in `your.html`, better to notice `browse
 Overview
 ===
 
-## Need to know:
+### Need to know
 - not always valid-javascript is valid-colascript
 - semicolon is always required
 - in present time typing is just syntax
 
 
-## Variables
+### Variables
 In current version you can set any type which you want, frankly speaking is not good.. In future we will have static typing.
 
 	var num = 1;           // valid JavaScript
@@ -74,7 +74,7 @@ In ColaScript, like in CoffeScript, exists boolean-aliases:
 	no == off == false	
 
 
-## Strings
+### Strings
 We have templating! We can paste variable in string:
 
 	console.log("my login in twitter \@@twLogin");
@@ -110,7 +110,7 @@ Any string in ColaScript is multiline:
 align goes by closing-quote. 
 
 
-## RegExps
+### RegExps
 Modifer `x` skips whitespaces and new-line same as if you use multiline RegExp:
 
 	RegExp url = /
@@ -122,7 +122,7 @@ Modifer `x` skips whitespaces and new-line same as if you use multiline RegExp:
 		$/;
 
 
-## Arrays
+### Arrays
 Most of array features was taken from CoffeeScript:
 
 	Array arr = [0..9];      // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -141,7 +141,7 @@ absolutely new feature is:
 	console.log(arr[]);      // 22 
 
 	
-## Functions
+### Functions
 You have opportunity to declarate functions without `function` keyword, with and without type:
 
 	function f1(){
@@ -152,7 +152,7 @@ You have opportunity to declarate functions without `function` keyword, with and
 	
 	}
 	
-	f2(){
+	f3(){
 	
 	}
 	
@@ -198,9 +198,8 @@ All `main` functions in root namespace will bind on `DOMContentLoaded` event:
 	}
 	
 
-## Operators:
-
-- `isset` operator, `??` alternative - which is better?                    
+### Operators
+- `isset` operator:                
 
 		bool a = true, b;
 		console.log(isset a ? "seted" : "not seted"); // seted
@@ -219,97 +218,149 @@ All `main` functions in root namespace will bind on `DOMContentLoaded` event:
             
 - CoffeeScript's modulo operator:  
 
-		int modulo = 5 %% 3; // 2
+		Array nums = [0..9];
+		console.log(nums[4 %% nums.length]);  // 4
+		console.log(nums[14 %% nums.length]); // 4
                     
 - Existential assignment from CoffeeScript:                
 
-		var undef, def = 5;
-		
-		def ?= undef; // def == 5
-		undef = 6;
-		def ?= undef; // def == 6
-          
-- `a ? b`, status: done
+		defaults(Object input, Object defaults){
+    		for(int key in defaults) input[key] ?= defaults[key];
+    		return input;
+		}
 
-		var a = undefined, b = 3;
+		console.log(defaults({ 
+			compress: true 
+		}, { 
+			compress: false, 
+			mangle: false
+		})); // { compress: true, mangle: false }
+          
+- Existential operator:
+
+		int a, b = 3;
 		
-		a ? b == 3;
+		console.log(a ? b); // 3
 		a = 11;
-		a ? b == 1;
+		console.log(a ? b); // 11
                        
-- `is`, status: done                           
+- Binary operator `is`:                       
 
 		bool isRegExp = /[^\d]+/g is RegExp; // true
 
-- `isnt`, status: done                         
+-  Binary operator `isnt`:                         
 
 		bool isntString = 3.14 isnt String; // true
 
 
+### Constructions
+In ColaScript you can use next syntax with object, to not repeat var names:
 
+	String name = "dangreen";
+	int age = 19;
+	String about = "
+	
+	Web programmer, NSTU student.
+	
+	";
+	
+	Object info = { name, age, about };
 
-### Multiple
-- `..:`, status: done      
+Also you can use `destructuring assignment`:
 
-		Object profile = { 
-			name : "dan",
-			nick : "dan",
-			friends : [
-				{ name : "eric", nick : "eric" }
-			], 
-			"info" : "coder"
-		}
-    		..name += "iil"
-    		..nick += "green"
-    		..friends[0]:
-        		..name = profile.friends[0].name.capitalize()
-        		..nick += "bro";
-   		 	..info += ", student"; 
+	int a = 2, b = 3;
+		
+	// swap
+	[a, b] = [b, a];
+		
+	// with object
+    { name, age, about, friends : [firstFriend] } = info;
+    
+    // with array
+    [firstSkill, ..., lastSkill] = skills; 
+
+From Dart we took `cascade operator`:
+
+	document.querySelector("#myelement").style
+		..fontSize = "16px"
+		..color   =  "black";
+		
+but we made some modification:     
+
+	document.querySelector("#myelement")
+		..style:
+			..fontSize = "16px"
+			..color   =  "black";
+		..innerHTML = "Hello World!";
 
                    
-- `a > b > c`, status: done
+As in CoffeeScript, you can use `chained comprassions`:
 
-		if( 0 < x < 100 ) console.log("x E (0; 100)");
+	if( 1 < x < 100 ) console.log("x E ( 1 ; 100 )");
 		
+`inline conditions`:
 
-### Compiler               
-- `@require`, status: done
+	String name = 
+		if (sex == "male") "Dan" 
+		else if (sex == "female") "Dasha" 
+		else "none";
+
+`inline switch` and `switch without expression`:
+
+	String grade = switch {
+  		when score < 60: 'F'
+  		when score < 70: 'D'
+  		when score < 80: 'C'
+  		when score < 90: 'B'
+  		default: 'A'
+  	}
+  	
+As you see you can use keyword `when`, its like `case`, but if the condition is satisfied, `switch` will `break`.
+
+### Compiler commands              
+- `@require`, pushed required code to front
 
 		@require "./library/jquery.js" "./library/underscore.js" 
 		
-- `@include`, status: done
+- `@include`, insert included code on `@include` place
 		
 		@include "./app/my.js"
 		
-- `@use`, status: done
+- `@use`, enable one of mods
 
 		@use strict
-		@use asmjs
+		@use asm
 		@use closure
-
-
-## Expressions
-- `switch` assignment, status: done!
-
-		String weather = switch(temperature){
-			when -10: 'cold';
-			when 20: 'normal';
-			when 35: 'hot';
-		};
-
-
-## Vars
+		
+	`@use closure` wrapping code in closue:
+	
+		// cola
+		
+		@use closure
+		
+		NgModule app = angular.module('app', []);
+		
+		// js
+		
+		(function(){
+			NgModule app = angular.module('app', []);
+		})(); 
+		
+	Also you can use multiple closures in one file:
+	
+		@use closure {
+			int a = 123;
+		}
+		
+		@use closure {
+			int a = 321;
+		}
    
-- multiple assignment, status: done    
-
-		[a, b, c] = [b, c, a];
-    	var {poet: {String name, address: [street, city]}} = futurists;
-    	[a, ..., b] = someArray; 
-      
-## Classes
+   
+Future
+===
+- static typing
 - classes
-- singletones
-- injectors
 
 		class A {
     
@@ -341,6 +392,18 @@ All `main` functions in root namespace will bind on `DOMContentLoaded` event:
     		get some => "some " + about;
     		set some(val) => about += val; 
 		}
+		
+- classes and typing with templates
+
+		class A<T> {
+			// ...
+		}
+		
+		Array<int> arr = [0...10];
+		Object<String, String> obj = { name: "Eric" };
+
+		
+- singletones
 
 		singleton S { // in fact this is object
     		int x = 45;
@@ -353,10 +416,9 @@ All `main` functions in root namespace will bind on `DOMContentLoaded` event:
     		int operator[](int index) => index + 584;
     		operator[]=(int index, int val) => x = index + val;
     
-    		String operator.(String key) => key + "!";
-    		operator.(String key, String value) => s = "@key @value";
-    
 		}
+		
+- injectors
 
 		injector String {
     		String replaceAll(a, b){
@@ -366,10 +428,75 @@ All `main` functions in root namespace will bind on `DOMContentLoaded` event:
     		}
 		}
 
-		// or 
+- declaration function by object property
 
 		String String::replaceAll(a, b){
   			String res = this;
     		while(res.indexOf(a) != -1) res = res.replace(a, b);
     		return res;
 		}
+		
+		// or
+		
+		Object data = someData;
+		int data.getFriendsCount() => this.friends.length;
+		
+- destructed function arguments
+
+	test({String name, String login, String photoUrl}){
+		console.log(name, login, photoUrl);
+	}
+	
+- ES6 `for` 
+
+	for({String name, String login, String photoUrl} in usesr){
+	
+	}
+	
+	for(name of names){
+	
+	}
+	
+- asm.js native syntax, for example
+
+		// cola
+		// ...
+	
+		@use asm
+	
+		int f(double j){
+			int i = 1;
+			return i;
+		}
+	
+		// js
+		// ...
+	
+		"use asm";
+	
+		function f(j){
+			j = +j;
+	    	var i = 1|0;
+	    	return i|0;
+		}
+
+- plugin api to making native syntax for libraries and frameworks, example:
+
+		class MyComponent extends PolymerComponent {
+			String tagname = "my-component";
+			
+			ready(){
+				// ...
+			}	
+		}
+		
+		to 
+		
+		Polymer('my-component', {
+      		ready: function(){ 
+      			// ...
+      		}
+     	});
+
+
+	
