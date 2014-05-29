@@ -360,6 +360,12 @@ As you see you can use keyword `when`, its like `case`, but if the condition is 
 Future
 ===
 - static typing
+- set parameters to calling function
+
+		$(".btn").on("click", () use (context: myContext){
+			this; // myContext
+		});
+
 - classes
 
 		class A {
@@ -480,7 +486,7 @@ Future
 	    	return i|0;
 		}
 
-- plugin api to making native syntax for libraries and frameworks, example:
+- Plugin API to making native syntax for libraries and frameworks
 
 		class MyComponent extends PolymerComponent {
 			String tagname = "my-component";
@@ -497,6 +503,17 @@ Future
       			// ...
       		}
      	});
+     	
+- write documentation of tokenizer/parser methods
+    
+- HTML and CSS stuff
+
+		String width = 12px;
+		String div = <div class="inline">
+			<h1>Example of Embedded HTML</h1>
+		</div>;
+		
+	by default it will parsed as `String`, but it may be handled by Plugins. 
 
 
 	
