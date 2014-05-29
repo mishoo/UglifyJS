@@ -449,19 +449,19 @@ Future
 		
 - destructed function arguments
 
-	test({String name, String login, String photoUrl}){
-		console.log(name, login, photoUrl);
-	}
+		test({String name, String login, String photoUrl}){
+			console.log(name, login, photoUrl);
+		}
 	
 - ES6 `for` 
 
-	for({String name, String login, String photoUrl} in usesr){
+		for({String name, String login, String photoUrl} in usesr){
 	
-	}
+		}
 	
-	for(name of names){
+		for(name of names){
 	
-	}
+		}
 	
 - asm.js native syntax, for example
 
