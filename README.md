@@ -308,12 +308,12 @@ As in CoffeeScript, you can use `chained comprassions`:
 `inline switch` and `switch without expression`:
 
 	String grade = switch {
-  		when score < 60: 'F'
-  		when score < 70: 'D'
-  		when score < 80: 'C'
-  		when score < 90: 'B'
-  		default: 'A'
-  	}
+  		when score < 60: 'F';
+  		when score < 70: 'D';
+  		when score < 80: 'C';
+  		when score < 90: 'B';
+  		default: 'A';
+  	};
   	
 As you see, you can use keyword `when`, it's like `case`, but if the condition is satisfied, `switch` will `break`.
 
