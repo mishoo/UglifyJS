@@ -360,6 +360,14 @@ As you see you can use keyword `when`, its like `case`, but if the condition is 
 Future
 ===
 - static typing
+- Compiler command `@import` to import modules ( AMD, CommonJS... )
+
+		// node.js
+		@import 'fs' as fs
+		@import dirname from 'path'
+		
+		String code = fs.readFileSync(dirname(filePath) + "/main.cola", "utf8");
+
 - set parameters to calling function
 
 		$(".btn").on("click", () use (context: myContext){
@@ -504,6 +512,8 @@ Future
       		}
      	});
      	
+- Compiler command `@use plugin "path/to/plugin.cola"`
+     	    	
 - write documentation of tokenizer/parser methods
     
 - HTML and CSS stuff
