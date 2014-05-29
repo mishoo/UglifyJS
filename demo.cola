@@ -6,7 +6,7 @@ main(){
     // Unary operators
     // Two variants of `isset` operator. Which is better?
     bool _seted = true, _empty;
-    console.log("`_seted` is", _seted?? ? "seted" : "empty");
+    console.log("`_seted` is", isset _seted ? "seted" : "empty");
     console.log("`_empty` is", isset _empty ? "seted" : "empty");
 
     // `clone` operator 
@@ -91,9 +91,7 @@ main(){
     pro
         ..firstName += "iil"
         ..secondName = "Onoshko"
-        ..skills:
-            ..[1] = "JS";
-        ;
+        ..skills[1] = "JS";
 
     console.log(pro);
 }
