@@ -1,12 +1,12 @@
 ![logo](http://trigen.pro/colalogo.png)
 
-ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). In present time compiler in development. Play with language you can [here](http://develop.trigen.pro/cola/).
+ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). The compiler is in development now. You can play with language [here](http://develop.trigen.pro/cola/).
 
 
-Install
+Installation
 ===
 
-First make sure you have installed the latest version of [node.js](http://nodejs.org/)
+Firstly, make sure you have installed the latest version of [node.js](http://nodejs.org/)
 (You may need to restart your computer after this step).
 
 From NPM for use as a command line app:
@@ -23,7 +23,7 @@ From Git:
     cd ColaScript
     npm link .
     
-Usage same as in [UglifyJS2](https://github.com/mishoo/UglifyJS2), except:
+Use it same as in [UglifyJS2](https://github.com/mishoo/UglifyJS2), except:
 
 	-j, --js, --javascript        Work with JavaScript (by default Cola will
 	                              expect ColaScript).                    [boolean]
@@ -38,7 +38,7 @@ Simple example of usage:
 In browser
 ===
 
-In developing more comfortable to compile the code directly in your browser, for this add `browser-cola.js` to `your.html` code:
+In developing is more comfortable to compile the code directly in your browser, for this add `browser-cola.js` to `your.html` code:
 
 	<script src="path/to/browser-cola.js"></script>
 	
@@ -46,7 +46,7 @@ Now you can run your Cola-Code:
 
 	<script type="text/colascript" src="path/to/your.cola"></script>
 	
-If `your.cola` depends on other scripts in `your.html`, better to notice `browser-cola` about it:
+If `your.cola` depends on other scripts in `your.html`,it's better to notice `browser-cola` about it:
 
 	<script type="text/colascript" src="angular.min.js"></script>
 	<script type="text/colascript" src="path/to/your.cola"></script>
@@ -62,7 +62,7 @@ Overview
 
 
 ### Variables
-In current version you can set any type which you want, frankly speaking is not good.. In future we will have static typing.
+You can set any type which you want in current version , to tell you the truth it's not so good. In future we will have static typing.
 
 	var num = 1;           // valid JavaScript
 	int i, j = 3;
@@ -79,7 +79,7 @@ We have templating! We can paste variable in string:
 
 	console.log("my login in twitter \@@twLogin");
 	
-Also we can paset expression this way:
+Also we can paste expression in this way:
 
 	console.log("length of my name @{ name.length }");
 	
@@ -87,7 +87,7 @@ and this way:
 
 	console.log("first letter in my name is {{ name[0] }}");
 	
-Still possible to use raw strings:
+It is still possible to use raw strings:
 
 	console.log(r"\n\r\t@raw");
 	
@@ -123,7 +123,7 @@ Modifer `x` skips whitespaces and new-line same as if you use multiline RegExp:
 
 
 ### Arrays
-Most of array features was taken from CoffeeScript:
+Most of array features were taken from CoffeeScript:
 
 	Array arr = [0..9];      // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	// same as
@@ -132,7 +132,7 @@ Most of array features was taken from CoffeeScript:
 	arr[0..2] = [584, 404];  // [584, 404, 3, 4, 5, 6, 7, 8, 9]
 	console.log(arr[0..2]);  // [584, 404]
 	
-one feature getted from PHP:
+one feature was taken from PHP:
 
 	arr[] = 22;              // [584, 404, 3, 4, 5, 6, 7, 8, 9, 22]
 	
@@ -142,7 +142,7 @@ absolutely new feature is:
 
 	
 ### Functions
-You have opportunity to declarate functions without `function` keyword, with and without type:
+You have opportunity to declarate functions without `function` keyword, with type and without it:
 
 	function f1(){
 	
@@ -156,7 +156,7 @@ You have opportunity to declarate functions without `function` keyword, with and
 	
 	}
 	
-From Dart we borrowd arrow-functions:
+From Dart we have borrowed arrow-functions:
 
 	helloString(name) => "Hello @name!";
 	
@@ -248,13 +248,13 @@ All `main` functions in root namespace will bind on `DOMContentLoaded` event:
 
 		bool isRegExp = /[^\d]+/g is RegExp; // true
 
--  Binary operator `isnt`:                         
+- Binary operator `isnt`:                         
 
 		bool isntString = 3.14 isnt String; // true
 
 
 ### Constructions
-In ColaScript you can use next syntax with object, to not repeat var names:
+In ColaScript you can use those syntax with object, in way not to repeat var names:
 
 	String name = "dangreen";
 	int age = 19;
@@ -279,13 +279,13 @@ Also you can use `destructuring assignment`:
     // with array
     [firstSkill, ..., lastSkill] = skills; 
 
-From Dart we took `cascade operator`:
+From Dart we have taken `cascade operator`:
 
 	document.querySelector("#myelement").style
 		..fontSize = "16px"
 		..color   =  "black";
 		
-but we made some modification:     
+but we have made some modification:     
 
 	document.querySelector("#myelement")
 		..style:
@@ -315,7 +315,7 @@ As in CoffeeScript, you can use `chained comprassions`:
   		default: 'A'
   	}
   	
-As you see you can use keyword `when`, its like `case`, but if the condition is satisfied, `switch` will `break`.
+As you see, you can use keyword `when`, it's like `case`, but if the condition is satisfied, `switch` will `break`.
 
 ### Compiler commands              
 - `@require`, pushed required code to front
@@ -332,7 +332,7 @@ As you see you can use keyword `when`, its like `case`, but if the condition is 
 		@use asm
 		@use closure
 		
-	`@use closure` wrapping code in closue:
+	`@use closure` wrapping code in closure:
 	
 		// cola
 		
@@ -357,7 +357,7 @@ As you see you can use keyword `when`, its like `case`, but if the condition is 
 		}
    
    
-Future
+Future plans
 ===
 - static typing
 - Compiler command `@import` to import modules ( AMD, CommonJS... )
@@ -442,7 +442,7 @@ Future
     		}
 		}
 
-- declaration function by object property
+- declaration function by objects' property
 
 		String String::replaceAll(a, b){
   			String res = this;
@@ -494,7 +494,7 @@ Future
 	    	return i|0;
 		}
 
-- Plugin API to making native syntax for libraries and frameworks
+- Plugin API to make native syntax for libraries and frameworks
 
 		class MyComponent extends PolymerComponent {
 			String tagname = "my-component";
@@ -524,6 +524,3 @@ Future
 		</div>;
 		
 	by default it will parsed as `String`, but it may be handled by Plugins. 
-
-
-	
