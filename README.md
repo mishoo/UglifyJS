@@ -343,7 +343,7 @@ As you see, you can use keyword `when`, it's like `case`, but if the condition i
 		// js
 		
 		(function(){
-			NgModule app = angular.module('app', []);
+			var app = angular.module('app', []);
 		})(); 
 		
 	Also you can use multiple closures in one file:
