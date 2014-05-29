@@ -71,7 +71,7 @@ You can set any type which you want in current version , to tell you the truth i
 In ColaScript, like in CoffeScript, exists boolean-aliases:
 
 	yes == on == true;
-	no == off == false	
+	no == off == false;	
 
 
 ### Strings
@@ -130,7 +130,7 @@ Most of array features were taken from CoffeeScript:
 	Array arr = [0...10];
 	
 	arr[0..2] = [584, 404];  // [584, 404, 3, 4, 5, 6, 7, 8, 9]
-	console.log(arr[0..2]);  // [584, 404]
+	console.log(arr[0..2]);  // [584, 404, 3]
 	
 one feature was taken from PHP:
 
