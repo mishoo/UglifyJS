@@ -53,12 +53,14 @@ exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
         spidermonkey : false,
         outSourceMap : null,
+        sourceMapURL : null,
         sourceRoot   : null,
         inSourceMap  : null,
         fromString   : false,
         warnings     : false,
         mangle       : {},
         output       : null,
+        prefix       : null,
         compress     : {}
     });
     UglifyJS.base54.reset();
@@ -76,6 +78,11 @@ exports.minify = function(files, options) {
             var code = options.fromString
                 ? file
                 : fs.readFileSync(file, "utf8");
+
+            if (options.prefix !== null) {
+                file = file.replace(/^\/+/, "").split(/\/+/).slice(options.prefix).join("/");
+            }
+
             sourcesContent[file] = code;
             toplevel = UglifyJS.parse(code, {
                 filename: options.fromString ? "?" : file,
@@ -132,7 +139,7 @@ exports.minify = function(files, options) {
     }
 
     return {
-        code : stream + "",
+        code : stream + (output.source_map ? "\n//@ sourceMappingURL=" + (options.sourceMapURL || options.outSourceMap) : ""),
         map  : output.source_map + ""
     };
 };
