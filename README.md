@@ -359,21 +359,30 @@ As you see, you can use keyword `when`, it's like `case`, but if the condition i
    
 Future plans
 ===
-- static typing
-- Compiler command `@import` to import modules ( AMD, CommonJS... )
+- Use inline `isset` expression instead function. status: done
+- `some is NaN` to `isNaN(some)` status: done
+- Negate array accessor ( getter )
+ 
+		arr[-1]; // last element
 
-		// node.js
-		@import 'fs' as fs
-		@import dirname from 'path'
+	only for static negate index, for other cases you can use `%` unary prefix:
+	
+		int index = -10;
+		arr[%index] = 34; // arr[index %% arr.length];
+
+- static typing	
+- declaration function by object's property
+
+		String String::replaceAll(a, b){
+  			String res = this;
+    		while(res.indexOf(a) != -1) res = res.replace(a, b);
+    		return res;
+		}
 		
-		String code = fs.readFileSync(dirname(filePath) + "/main.cola", "utf8");
-
-- set parameters to calling function
-
-		$(".btn").on("click", () use (context: myContext){
-			this; // myContext
-		});
-
+		// or
+		
+		Object data = someData;
+		int data.getFriendsCount() => this.friends.length;		
 - classes
 
 		class A {
@@ -405,9 +414,7 @@ Future plans
     
     		get some => "some " + about;
     		set some(val) => about += val; 
-		}
-		
-- classes and typing with templates
+		}- classes and typing with templates
 
 		class A<T> {
 			// ...
@@ -415,8 +422,7 @@ Future plans
 		
 		Array<int> arr = [0...10];
 		Object<String, String> obj = { name: "Eric" };
-
-		
+			
 - singletones
 
 		singleton S { // in fact this is object
@@ -441,19 +447,6 @@ Future plans
         		return res;
     		}
 		}
-
-- declaration function by objects' property
-
-		String String::replaceAll(a, b){
-  			String res = this;
-    		while(res.indexOf(a) != -1) res = res.replace(a, b);
-    		return res;
-		}
-		
-		// or
-		
-		Object data = someData;
-		int data.getFriendsCount() => this.friends.length;
 		
 - destructed function arguments
 
@@ -470,7 +463,52 @@ Future plans
 		for(name of names){
 	
 		}
+
+- Compiler command `@import` to import modules ( AMD, CommonJS... )
+
+		// node.js
+		@import 'fs' as fs
+		@import dirname from 'path'
+		
+		String code = fs.readFileSync(dirname(filePath) + "/main.cola", "utf8");
+
+- set parameters to calling function
+
+		$(".btn").on("click", *(){
+			this; // parent context
+		});
+		
+- write documentation of tokenizer/parser methods
+- more informative exceptions
+- better source maps
+- HTML and CSS stuff
+
+		String width = 12px;
+		String div = <div class="inline">
+			<h1>Example of Embedded HTML</h1>
+		</div>;
+		
+	by default it will parsed as `String`, but it may be handled by Plugins. 
 	
+- Plugin API to make native syntax for libraries and frameworks
+
+		class MyComponent extends PolymerComponent {
+			String tagname = "my-component";
+			
+			ready(){
+				// ...
+			}	
+		}
+		
+		to 
+		
+		Polymer('my-component', {
+      		ready: function(){ 
+      			// ...
+      		}
+     	});
+     	
+- Compiler command `@use plugin "path/to/plugin.cola"` 
 - asm.js native syntax, for example
 
 		// cola
@@ -493,34 +531,4 @@ Future plans
 	    	var i = 1|0;
 	    	return i|0;
 		}
-
-- Plugin API to make native syntax for libraries and frameworks
-
-		class MyComponent extends PolymerComponent {
-			String tagname = "my-component";
-			
-			ready(){
-				// ...
-			}	
-		}
 		
-		to 
-		
-		Polymer('my-component', {
-      		ready: function(){ 
-      			// ...
-      		}
-     	});
-     	
-- Compiler command `@use plugin "path/to/plugin.cola"`
-     	    	
-- write documentation of tokenizer/parser methods
-    
-- HTML and CSS stuff
-
-		String width = 12px;
-		String div = <div class="inline">
-			<h1>Example of Embedded HTML</h1>
-		</div>;
-		
-	by default it will parsed as `String`, but it may be handled by Plugins. 

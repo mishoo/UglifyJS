@@ -241,7 +241,7 @@ main();</textarea>
             localStorage.isjs = isjs.checked ? "t" : "f";
             localStorage.mainbinding = mainbinding.checked ? "t" : "f";
 
-			stream = new Cola.OutputStream({ beautify : true });
+			stream = new Cola.OutputStream({ beautify : true, comments : true });
 			compressor = new Cola.Compressor({ is_js : isjs.checked });
 
 			try {
