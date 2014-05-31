@@ -414,7 +414,9 @@ Future plans
     
     		get some => "some " + about;
     		set some(val) => about += val; 
-		}- classes and typing with templates
+		}
+		
+- classes and typing with templates
 
 		class A<T> {
 			// ...
