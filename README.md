@@ -361,6 +361,18 @@ Future plans
 ===
 - Use inline `isset` expression instead function. status: done
 - `some is NaN` to `isNaN(some)` status: done
+- operator `?` instead `isset`, fix the operator with function call
+- operator `?.`
+- operator `?` to sign an argument as not-required
+
+		int sqr(int x) => x ** 2;
+		
+		sqr(2); // 4
+		sqr();  // Exception
+		
+		int sqrt(int x?) => x ** 2;
+		sqr();  // NaN
+
 - Negate array accessor ( getter )
  
 		arr[-1]; // last element
@@ -382,7 +394,16 @@ Future plans
 		// or
 		
 		Object data = someData;
-		int data.getFriendsCount() => this.friends.length;		
+		int data.getFriendsCount() => this.friends.length;
+		
+- intarface
+
+		inerface UserProfile {
+			String name, email;					
+			Date birth;
+			String info?;
+		}
+
 - classes
 
 		class A {
