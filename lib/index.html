@@ -295,6 +295,25 @@ main();</textarea>
 			return stream.toString();
 		}
 
+        function Mangle(){
+            var ast;
+
+            try {
+                // 1. compile
+                ast = Cola.parse(source, { is_js : isjs.checked });
+                if(!isjs.checked) ast = ast.toJavaScript({ main_binding : mainbinding.checked });
+
+                // 3. mangle
+                //ast.figure_out_scope();
+                //ast.compute_char_frequency();
+                //ast.mangle_names({ sort : true, toplevel : true });
+
+                return ast;
+            } catch(e){
+                throw e;
+            }
+        }
+
 		compile();
         changeClass();
 	</script>
