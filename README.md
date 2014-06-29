@@ -1,4 +1,4 @@
-![logo](http://trigen.pro/colalogo.png)
+![logo](https://raw.githubusercontent.com/TrigenSoftware/ColaScript/master/colalogo.png)
 
 ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). You can play with language [here](http://develop.trigen.pro/cola/).
 
