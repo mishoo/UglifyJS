@@ -100,7 +100,7 @@ main(){
 // Named, positional and splated arguments, with default values.
 // Arrow functions.
 Object Profile(String firstName, String secondName, String country = "Russia", Array skills..., age:, petName: "Tux"){
-    skills.forEach((val) => val == "JavaScript" && console.log("JavaScript - It Awesome!"));
+    skills.forEach((val) => val == "JavaScript" && console.log("JavaScript - It's Awesome!"));
     return {
         firstName, secondName, age, country, skills, petName
     };
