@@ -13,6 +13,7 @@
         <script src="./mozilla-ast.js"></script>
         <script src="./translate.js"></script>
         <script src="./std.js"></script>
+        <script src="./typecheck.js"></script>
     	<style>
     	
     	body {
@@ -295,7 +296,7 @@ main();</textarea>
 			return stream.toString();
 		}
 
-        function Mangle(){
+        function Test(){
             var ast;
 
             try {
@@ -304,7 +305,7 @@ main();</textarea>
                 if(!isjs.checked) ast = ast.toJavaScript({ main_binding : mainbinding.checked });
 
                 // 3. mangle
-                //ast.figure_out_scope();
+                ast.figure_out_scope();
                 //ast.compute_char_frequency();
                 //ast.mangle_names({ sort : true, toplevel : true });
 
