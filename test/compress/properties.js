@@ -52,3 +52,23 @@ dot_properties_es5: {
         a[""] = "whitespace";
     }
 }
+
+evaluate_length: {
+    options = {
+        properties: true,
+        unsafe: true,
+        evaluate: true
+    };
+    input: {
+        a = "foo".length;
+        a = ("foo" + "bar")["len" + "gth"];
+        a = b.length;
+        a = ("foo" + b).length;
+    }
+    expect: {
+        a = 3;
+        a = 6;
+        a = b.length;
+        a = ("foo" + b).length;
+    }
+}
