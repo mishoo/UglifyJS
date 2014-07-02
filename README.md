@@ -383,7 +383,8 @@ Future plans
 		arr[%index] = 34; // arr[index %% arr.length];
 
 - static typing	
-- declaration function by object's property
+- rename runtime prefix `$_cola` to `_crt$$`
+- dotal names of refs
 
 		String String::replaceAll(a, b){
   			String res = this;
@@ -395,6 +396,10 @@ Future plans
 		
 		Object data = someData;
 		int data.getFriendsCount() => this.friends.length;
+		
+		// or
+		
+		Cola.AST_Node node = new Cola.AST_Node;
 		
 - intarface
 
@@ -501,6 +506,19 @@ Future plans
 			this; // parent context
 		});
 		
+- namespaces
+
+		@use namespace Cola {
+			
+			class AST_Node {
+				...
+			}
+			
+		}
+		
+		Cola.AST_Node node = new Cola.AST_Node();
+		
+
 - write documentation of tokenizer/parser methods
 - more informative exceptions
 - better source maps
