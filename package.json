@@ -16,9 +16,11 @@
     },
     "dependencies": {
         "async"      : "~0.2.6",
-        "source-map" : "~0.1.33",
         "optimist"   : "~0.3.5",
         "uglify-to-browserify": "~1.0.0"
+    },
+    "optionalDependencies": {
+        "source-map" : "~0.1.33"
     },
     "browserify": {
         "transform": [ "uglify-to-browserify" ]
