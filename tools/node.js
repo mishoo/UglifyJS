@@ -51,6 +51,7 @@ for (var i in UglifyJS) {
 
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
+        spidermonkey : false,
         outSourceMap : null,
         sourceMapURL : null,
         sourceRoot   : null,
@@ -62,25 +63,33 @@ exports.minify = function(files, options) {
         prefix       : null,
         compress     : {}
     });
-    if (typeof files == "string")
-        files = [ files ];
+    UglifyJS.base54.reset();
 
     // 1. parse
-    var toplevel = null;
-    files.forEach(function(file){
-        var code = options.fromString
-            ? file
-            : fs.readFileSync(file, "utf8");
-				
-				if (options.prefix !== null) {
-	        file = file.replace(/^\/+/, "").split(/\/+/).slice(options.prefix).join("/");
-				}
-				
-        toplevel = UglifyJS.parse(code, {
-            filename: options.fromString ? "?" : file,
-            toplevel: toplevel
+    var toplevel = null,
+        sourcesContent = {};
+
+    if (options.spidermonkey) {
+        toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
+    } else {
+        if (typeof files == "string")
+            files = [ files ];
+        files.forEach(function(file){
+            var code = options.fromString
+                ? file
+                : fs.readFileSync(file, "utf8");
+
+            if (options.prefix !== null) {
+                file = file.replace(/^\/+/, "").split(/\/+/).slice(options.prefix).join("/");
+            }
+
+            sourcesContent[file] = code;
+            toplevel = UglifyJS.parse(code, {
+                filename: options.fromString ? "?" : file,
+                toplevel: toplevel
+            });
         });
-    });
+    }
 
     // 2. compress
     if (options.compress) {
@@ -110,12 +119,25 @@ exports.minify = function(files, options) {
             orig: inMap,
             root: options.sourceRoot
         });
+        if (options.sourceMapIncludeSources) {
+            for (var file in sourcesContent) {
+                if (sourcesContent.hasOwnProperty(file)) {
+                    output.source_map.get().setSourceContent(file, sourcesContent[file]);
+                }
+            }
+        }
+
     }
     if (options.output) {
         UglifyJS.merge(output, options.output);
     }
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
+
+    if(options.outSourceMap){
+        stream += "\n//# sourceMappingURL=" + options.outSourceMap;
+    }
+
     return {
         code : stream + (output.source_map ? "\n//@ sourceMappingURL=" + (options.sourceMapURL || options.outSourceMap) : ""),
         map  : output.source_map + ""

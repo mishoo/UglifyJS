@@ -7,6 +7,7 @@ var UglifyJS = require("../tools/node");
 var sys = require("util");
 var optimist = require("optimist");
 var fs = require("fs");
+var path = require("path");
 var async = require("async");
 var acorn;
 var ARGS = optimist
@@ -20,11 +21,15 @@ mangling you need to use `-c` and `-m`.\
 ")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
-    .describe("source-map-url", "The path to the source map to be added in //@ sourceMappingURL.  Defaults to the value passed with --source-map.")
+    .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
+    .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
+    .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
-For example -p 3 will drop 3 directories from file names and ensure they are relative paths.")
+For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
+You can also specify -p relative, which will make UglifyJS figure out itself the relative paths between original sources, \
+the source map and the output file.")
     .describe("o", "Output file (default STDOUT).")
     .describe("b", "Beautify output/specify output options.")
     .describe("m", "Mangle names/pass mangler options.")
@@ -44,9 +49,13 @@ You can optionally pass one of the following arguments to this flag:\n\
 Note that currently not *all* comments can be kept when compression is on, \
 because of dead code removal or cascading statements into sequences.")
 
+    .describe("preamble", "Preamble to prepend to the output.  You can use this to insert a \
+comment, for example for licensing information.  This will not be \
+parsed, but the source map will adjust for its presence.")
+
     .describe("stats", "Display operations run time on STDERR.")
     .describe("acorn", "Use Acorn for parsing.")
-    .describe("spidermonkey", "Assume input fles are SpiderMonkey AST format (as JSON).")
+    .describe("spidermonkey", "Assume input files are SpiderMonkey AST format (as JSON).")
     .describe("self", "Build itself (UglifyJS2) as a library (implies --wrap=UglifyJS --export-all)")
     .describe("wrap", "Embed everything in a big function, making the “exports” and “global” variables available. \
 You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.")
@@ -54,6 +63,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("lint", "Display some scope warnings")
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
+    .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -76,6 +86,10 @@ You need to pass an argument to this option to specify the name that your module
     .string("e")
     .string("comments")
     .string("wrap")
+    .string("p")
+
+    .boolean("expr")
+    .boolean("source-map-include-sources")
     .boolean("screw-ie8")
     .boolean("export-all")
     .boolean("self")
@@ -85,6 +99,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("spidermonkey")
     .boolean("lint")
     .boolean("V")
+    .boolean("noerr")
 
     .wrap(80)
 
@@ -92,6 +107,12 @@ You need to pass an argument to this option to specify the name that your module
 ;
 
 normalize(ARGS);
+
+if (ARGS.noerr) {
+    UglifyJS.DefaultsError.croak = function(msg, defs) {
+        sys.error("WARN: " + msg);
+    };
+}
 
 if (ARGS.version || ARGS.V) {
     var json = require("../package.json");
@@ -122,18 +143,20 @@ if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
 }
 
-if (ARGS.screw_ie8) {
-    if (COMPRESS) COMPRESS.screw_ie8 = true;
-    if (MANGLE) MANGLE.screw_ie8 = true;
-}
-
 if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
 var OUTPUT_OPTIONS = {
-    beautify: BEAUTIFY ? true : false
+    beautify: BEAUTIFY ? true : false,
+    preamble: ARGS.preamble || null,
 };
+
+if (ARGS.screw_ie8) {
+    if (COMPRESS) COMPRESS.screw_ie8 = true;
+    if (MANGLE) MANGLE.screw_ie8 = true;
+    OUTPUT_OPTIONS.screw_ie8 = true;
+}
 
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
@@ -196,9 +219,11 @@ if (files.filter(function(el){ return el == "-" }).length > 1) {
 var STATS = {};
 var OUTPUT_FILE = ARGS.o;
 var TOPLEVEL = null;
+var P_RELATIVE = ARGS.p && ARGS.p == "relative";
+var SOURCES_CONTENT = {};
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
-    file: OUTPUT_FILE,
+    file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
     root: ARGS.source_map_root,
     orig: ORIG_MAP,
 }) : null;
@@ -220,12 +245,20 @@ try {
 async.eachLimit(files, 1, function (file, cb) {
     read_whole_file(file, function (err, code) {
         if (err) {
-            sys.error("ERROR: can't read file: " + filename);
+            sys.error("ERROR: can't read file: " + file);
             process.exit(1);
         }
         if (ARGS.p != null) {
-            file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
+            if (P_RELATIVE) {
+                file = path.relative(path.dirname(ARGS.source_map), file);
+            } else {
+                var p = parseInt(ARGS.p, 10);
+                if (!isNaN(p)) {
+                    file = file.replace(/^\/+/, "").split(/\/+/).slice(ARGS.p).join("/");
+                }
+            }
         }
+        SOURCES_CONTENT[file] = code;
         time_it("parse", function(){
             if (ARGS.spidermonkey) {
                 var program = JSON.parse(code);
@@ -235,16 +268,26 @@ async.eachLimit(files, 1, function (file, cb) {
             else if (ARGS.acorn) {
                 TOPLEVEL = acorn.parse(code, {
                     locations     : true,
-                    trackComments : true,
                     sourceFile    : file,
                     program       : TOPLEVEL
                 });
             }
             else {
-                TOPLEVEL = UglifyJS.parse(code, {
-                    filename: file,
-                    toplevel: TOPLEVEL
-                });
+                try {
+                    TOPLEVEL = UglifyJS.parse(code, {
+                        filename   : file,
+                        toplevel   : TOPLEVEL,
+                        expression : ARGS.expr,
+                    });
+                } catch(ex) {
+                    if (ex instanceof UglifyJS.JS_Parse_Error) {
+                        sys.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
+                        sys.error(ex.message);
+                        sys.error(ex.stack);
+                        process.exit(1);
+                    }
+                    throw ex;
+                }
             };
         });
         cb();
@@ -260,11 +303,12 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (ARGS.enclose) {
         var arg_parameter_list = ARGS.enclose;
-
-        if (!(arg_parameter_list instanceof Array)) {
+        if (arg_parameter_list === true) {
+            arg_parameter_list = [];
+        }
+        else if (!(arg_parameter_list instanceof Array)) {
             arg_parameter_list = [arg_parameter_list];
         }
-
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
     }
 
@@ -297,6 +341,15 @@ async.eachLimit(files, 1, function (file, cb) {
     if (MANGLE) time_it("mangle", function(){
         TOPLEVEL.mangle_names(MANGLE);
     });
+
+    if (ARGS.source_map_include_sources) {
+        for (var file in SOURCES_CONTENT) {
+            if (SOURCES_CONTENT.hasOwnProperty(file)) {
+                SOURCE_MAP.get().setSourceContent(file, SOURCES_CONTENT[file]);
+            }
+        }
+    }
+
     time_it("generate", function(){
         TOPLEVEL.print(output);
     });
@@ -305,14 +358,18 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SOURCE_MAP) {
         fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-        output += "\n/*\n//@ sourceMappingURL=" + (ARGS.source_map_url || ARGS.source_map) + "\n*/";
+        var source_map_url = ARGS.source_map_url || (
+            P_RELATIVE
+                ? path.relative(path.dirname(OUTPUT_FILE), ARGS.source_map)
+                : ARGS.source_map
+        );
+        output += "\n//# sourceMappingURL=" + source_map_url;
     }
 
     if (OUTPUT_FILE) {
         fs.writeFileSync(OUTPUT_FILE, output, "utf8");
     } else {
         sys.print(output);
-        sys.error("\n");
     }
 
     if (ARGS.stats) {
@@ -344,7 +401,7 @@ function getOptions(x, constants) {
     if (x !== true) {
         var ast;
         try {
-            ast = UglifyJS.parse(x);
+            ast = UglifyJS.parse(x, { expression: true });
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
                 sys.error("Error parsing arguments in: " + x);
@@ -352,8 +409,6 @@ function getOptions(x, constants) {
             }
         }
         ast.walk(new UglifyJS.TreeWalker(function(node){
-            if (node instanceof UglifyJS.AST_Toplevel) return; // descend
-            if (node instanceof UglifyJS.AST_SimpleStatement) return; // descend
             if (node instanceof UglifyJS.AST_Seq) return; // descend
             if (node instanceof UglifyJS.AST_Assign) {
                 var name = node.left.print_to_string({ beautify: false }).replace(/-/g, "_");
@@ -361,6 +416,11 @@ function getOptions(x, constants) {
                 if (constants)
                     value = new Function("return (" + value.print_to_string() + ")")();
                 ret[name] = value;
+                return true;    // no descend
+            }
+            if (node instanceof UglifyJS.AST_Symbol || node instanceof UglifyJS.AST_Binary) {
+                var name = node.print_to_string({ beautify: false }).replace(/-/g, "_");
+                ret[name] = true;
                 return true;    // no descend
             }
             sys.error(node.TYPE)

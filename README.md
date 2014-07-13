@@ -1,5 +1,6 @@
 UglifyJS 2
 ==========
+[![Build Status](https://travis-ci.org/mishoo/UglifyJS2.png)](https://travis-ci.org/mishoo/UglifyJS2)
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
@@ -45,55 +46,72 @@ files.
 
 The available options are:
 
-    --source-map       Specify an output file where to generate source map.
-                                                                          [string]
-    --source-map-root  The path to the original source to be included in the
-                       source map.                                        [string]
-    --source-map-url   The path to the source map to be added in //@
-                       sourceMappingURL.  Defaults to the value passed with
-                       --source-map.                                      [string]
-    --in-source-map    Input source map, useful if you're compressing JS that was
-                       generated from some other original code.
-    --screw-ie8        Pass this flag if you don't care about full compliance with
-                       Internet Explorer 6-8 quirks (by default UglifyJS will try
-                       to be IE-proof).
-    -p, --prefix       Skip prefix for original filenames that appear in source
-                       maps. For example -p 3 will drop 3 directories from file
-                       names and ensure they are relative paths.
-    -o, --output       Output file (default STDOUT).
-    -b, --beautify     Beautify output/specify output options.            [string]
-    -m, --mangle       Mangle names/pass mangler options.                 [string]
-    -r, --reserved     Reserved names to exclude from mangling.
-    -c, --compress     Enable compressor/pass compressor options. Pass options
-                       like -c hoist_vars=false,if_return=false. Use -c with no
-                       argument to use the default compression options.   [string]
-    -d, --define       Global definitions                                 [string]
-    --comments         Preserve copyright comments in the output. By default this
-                       works like Google Closure, keeping JSDoc-style comments
-                       that contain "@license" or "@preserve". You can optionally
-                       pass one of the following arguments to this flag:
-                       - "all" to keep all comments
-                       - a valid JS regexp (needs to start with a slash) to keep
-                       only comments that match.
-                       Note that currently not *all* comments can be kept when
-                       compression is on, because of dead code removal or
-                       cascading statements into sequences.               [string]
-    --stats            Display operations run time on STDERR.            [boolean]
-    --acorn            Use Acorn for parsing.                            [boolean]
-    --spidermonkey     Assume input fles are SpiderMonkey AST format (as JSON).
-                                                                         [boolean]
-    --self             Build itself (UglifyJS2) as a library (implies
-                       --wrap=UglifyJS --export-all)                     [boolean]
-    --wrap             Embed everything in a big function, making the “exports”
-                       and “global” variables available. You need to pass an
-                       argument to this option to specify the name that your
-                       module will take when included in, say, a browser.
-                                                                          [string]
-    --export-all       Only used when --wrap, this tells UglifyJS to add code to
-                       automatically export all globals.                 [boolean]
-    --lint             Display some scope warnings                       [boolean]
-    -v, --verbose      Verbose                                           [boolean]
-    -V, --version      Print version number and exit.                    [boolean]
+```
+  --source-map       Specify an output file where to generate source map.
+                                                                        [string]
+  --source-map-root  The path to the original source to be included in the
+                     source map.                                        [string]
+  --source-map-url   The path to the source map to be added in //#
+                     sourceMappingURL.  Defaults to the value passed with
+                     --source-map.                                      [string]
+  --source-map-include-sources
+                     Pass this flag if you want to include the content of
+                     source files in the source map as sourcesContent
+                     property.                                         [boolean]
+  --in-source-map    Input source map, useful if you're compressing JS that was
+                     generated from some other original code.
+  --screw-ie8        Pass this flag if you don't care about full compliance
+                     with Internet Explorer 6-8 quirks (by default UglifyJS
+                     will try to be IE-proof).                         [boolean]
+  --expr             Parse a single expression, rather than a program (for
+                     parsing JSON)                                     [boolean]
+  -p, --prefix       Skip prefix for original filenames that appear in source
+                     maps. For example -p 3 will drop 3 directories from file
+                     names and ensure they are relative paths. You can also
+                     specify -p relative, which will make UglifyJS figure out
+                     itself the relative paths between original sources, the
+                     source map and the output file.                    [string]
+  -o, --output       Output file (default STDOUT).
+  -b, --beautify     Beautify output/specify output options.            [string]
+  -m, --mangle       Mangle names/pass mangler options.                 [string]
+  -r, --reserved     Reserved names to exclude from mangling.
+  -c, --compress     Enable compressor/pass compressor options. Pass options
+                     like -c hoist_vars=false,if_return=false. Use -c with no
+                     argument to use the default compression options.   [string]
+  -d, --define       Global definitions                                 [string]
+  -e, --enclose      Embed everything in a big function, with a configurable
+                     parameter/argument list.                           [string]
+  --comments         Preserve copyright comments in the output. By default this
+                     works like Google Closure, keeping JSDoc-style comments
+                     that contain "@license" or "@preserve". You can optionally
+                     pass one of the following arguments to this flag:
+                     - "all" to keep all comments
+                     - a valid JS regexp (needs to start with a slash) to keep
+                     only comments that match.
+                     Note that currently not *all* comments can be kept when
+                     compression is on, because of dead code removal or
+                     cascading statements into sequences.               [string]
+  --preamble         Preamble to prepend to the output.  You can use this to
+                     insert a comment, for example for licensing information.
+                     This will not be parsed, but the source map will adjust
+                     for its presence.
+  --stats            Display operations run time on STDERR.            [boolean]
+  --acorn            Use Acorn for parsing.                            [boolean]
+  --spidermonkey     Assume input files are SpiderMonkey AST format (as JSON).
+                                                                       [boolean]
+  --self             Build itself (UglifyJS2) as a library (implies
+                     --wrap=UglifyJS --export-all)                     [boolean]
+  --wrap             Embed everything in a big function, making the “exports”
+                     and “global” variables available. You need to pass an
+                     argument to this option to specify the name that your
+                     module will take when included in, say, a browser.
+                                                                        [string]
+  --export-all       Only used when --wrap, this tells UglifyJS to add code to
+                     automatically export all globals.                 [boolean]
+  --lint             Display some scope warnings                       [boolean]
+  -v, --verbose      Verbose                                           [boolean]
+  -V, --version      Print version number and exit.                    [boolean]
+```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
 goes to STDOUT.
@@ -155,7 +173,7 @@ To enable the mangler you need to pass `--mangle` (`-m`).  The following
 - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
 
-- `eval` — mangle names visible in scopes where `eval` or `when` are used
+- `eval` — mangle names visible in scopes where `eval` or `with` are used
   (disabled by default).
 
 When mangling is enabled but you want to prevent certain names from being
@@ -174,31 +192,69 @@ you can pass a comma-separated list of options.  Options are in the form
 to set `true`; it's effectively a shortcut for `foo=true`).
 
 - `sequences` -- join consecutive simple statements using the comma operator
+
 - `properties` -- rewrite property access using the dot notation, for
   example `foo["bar"] → foo.bar`
+
 - `dead_code` -- remove unreachable code
+
 - `drop_debugger` -- remove `debugger;` statements
+
 - `unsafe` (default: false) -- apply "unsafe" transformations (discussion below)
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
+
 - `comparisons` -- apply certain optimizations to binary nodes, for example:
   `!(a <= b) → a > b` (only when `unsafe`), attempts to negate binary nodes,
   e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
+
 - `evaluate` -- attempt to evaluate constant expressions
+
 - `booleans` -- various optimizations for boolean context, for example `!!a
   ? b : c → a ? b : c`
+
 - `loops` -- optimizations for `do`, `while` and `for` loops when we can
   statically determine the condition
+
 - `unused` -- drop unreferenced functions and variables
+
 - `hoist_funs` -- hoist function declarations
+
 - `hoist_vars` (default: false) -- hoist `var` declarations (this is `false`
   by default because it seems to increase the size of the output in general)
+
 - `if_return` -- optimizations for if/return and if/continue
+
 - `join_vars` -- join consecutive `var` statements
+
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
+
 - `warnings` -- display warnings when dropping unreachable code or unused
   declarations etc.
+
+- `negate_iife` -- negate "Immediately-Called Function Expressions"
+  where the return value is discarded, to avoid the parens that the
+  code generator would insert.
+
+- `pure_getters` -- the default is `false`.  If you pass `true` for
+  this, UglifyJS will assume that object property access
+  (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
+
+- `pure_funcs` -- default `null`.  You can pass an array of names and
+  UglifyJS will assume that those functions do not produce side
+  effects.  DANGER: will not check if the name is redefined in scope.
+  An example case here, for instance `var q = Math.floor(a/b)`.  If
+  variable `q` is not used elsewhere, UglifyJS will drop it, but will
+  still keep the `Math.floor(a/b)`, not knowing what it does.  You can
+  pass `pure_funcs: [ 'Math.floor' ]` to let it know that this
+  function won't produce any side effect, in which case the whole
+  statement would get discarded.  The current implementation adds some
+  overhead (compression will be slower).
+
+- `drop_console` -- default `false`.  Pass `true` to discard calls to
+  `console.*` functions.
 
 ### The `unsafe` option
 
@@ -212,7 +268,7 @@ when this flag is on:
 - `String(exp)` or `exp.toString()` → `"" + exp`
 - `new Object/RegExp/Function/Error/Array (...)` → we discard the `new`
 - `typeof foo == "undefined"` → `foo === void 0`
-- `void 0` → `"undefined"` (if there is a variable named "undefined" in
+- `void 0` → `undefined` (if there is a variable named "undefined" in
   scope; we do it because the variable name will be mangled, typically
   reduced to a single character).
 
@@ -222,10 +278,11 @@ You can use the `--define` (`-d`) switch in order to declare global
 variables that UglifyJS will assume to be constants (unless defined in
 scope).  For example if you pass `--define DEBUG=false` then, coupled with
 dead code removal UglifyJS will discard the following from the output:
-
-    if (DEBUG) {
-        console.log("debug stuff");
-    }
+```javascript
+if (DEBUG) {
+	console.log("debug stuff");
+}
+```
 
 UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
@@ -234,10 +291,11 @@ warning, you can pass `warnings=false` to turn off *all* warnings.
 Another way of doing that is to declare your globals as constants in a
 separate file and include it into the build.  For example you can have a
 `build/defines.js` file with the following:
-
-    const DEBUG = false;
-    const PRODUCTION = true;
-    // etc.
+```javascript
+const DEBUG = false;
+const PRODUCTION = true;
+// etc.
+```
 
 and build your code like this:
 
@@ -274,9 +332,6 @@ can pass additional arguments that control the code output:
   It doesn't work very well currently, but it does make the code generated
   by UglifyJS more readable.
 - `max-line-len` (default 32000) -- maximum line length (for uglified code)
-- `ie-proof` (default `true`) -- generate “IE-proof” code (for now this
-  means add brackets around the do/while in code like this: `if (foo) do
-  something(); while (bar); else ...`.
 - `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
@@ -284,6 +339,10 @@ can pass additional arguments that control the code output:
   you pass `false` then whenever possible we will use a newline instead of a
   semicolon, leading to more readable output of uglified code (size before
   gzip could be smaller; size after gzip insignificantly larger).
+- `preamble` (default `null`) -- when passed it must be a string and
+  it will be prepended to the output literally.  The source map will
+  adjust for this text.  Can be used to insert a comment containing
+  licensing information, for example.
 
 ### Keeping copyright notices or other comments
 
@@ -296,14 +355,15 @@ keep only comments that match this regexp.  For example `--comments
 
 Note, however, that there might be situations where comments are lost.  For
 example:
-
-    function f() {
-      /** @preserve Foo Bar */
-      function g() {
-        // this function is never called
-      }
-      return something();
-    }
+```javascript
+function f() {
+	/** @preserve Foo Bar */
+	function g() {
+	  // this function is never called
+	}
+	return something();
+}
+```
 
 Even though it has "@preserve", the comment will be lost because the inner
 function `g` (which is the AST node to which the comment is attached to) is
@@ -345,8 +405,9 @@ API Reference
 
 Assuming installation via NPM, you can load UglifyJS in your application
 like this:
-
-    var UglifyJS = require("uglify-js");
+```javascript
+var UglifyJS = require("uglify-js");
+```
 
 It exports a lot of names, but I'll discuss here the basics that are needed
 for parsing, mangling and compressing a piece of code.  The sequence is (1)
@@ -357,45 +418,49 @@ parse, (2) compress, (3) mangle, (4) generate output code.
 There's a single toplevel function which combines all the steps.  If you
 don't need additional customization, you might want to go with `minify`.
 Example:
-
-    var result = UglifyJS.minify("/path/to/file.js");
-    console.log(result.code); // minified output
-    // if you need to pass code instead of file name
-    var result = UglifyJS.minify("var b = function () {};", {fromString: true});
+```javascript
+var result = UglifyJS.minify("/path/to/file.js");
+console.log(result.code); // minified output
+// if you need to pass code instead of file name
+var result = UglifyJS.minify("var b = function () {};", {fromString: true});
+```
 
 You can also compress multiple files:
-
-    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ]);
-    console.log(result.code);
+```javascript
+var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ]);
+console.log(result.code);
+```
 
 To generate a source map:
-
-    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
-        outSourceMap: "out.js.map"
-    });
-    console.log(result.code); // minified output
-    console.log(result.map);
+```javascript
+var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
+	outSourceMap: "out.js.map"
+});
+console.log(result.code); // minified output
+console.log(result.map);
+```
 
 Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
 `file` attribute in the source map (see [the spec][sm-spec]).
 
 You can also specify sourceRoot property to be included in source map:
-
-    var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
-        outSourceMap: "out.js.map",
-        sourceRoot: "http://example.com/src"
-    });
-
+```javascript
+var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
+	outSourceMap: "out.js.map",
+	sourceRoot: "http://example.com/src"
+});
+```
 
 If you're compressing compiled JavaScript and have a source map for it, you
 can use the `inSourceMap` argument:
-
-    var result = UglifyJS.minify("compiled.js", {
-        inSourceMap: "compiled.js.map",
-        outSourceMap: "minified.js.map"
-    });
-    // same as before, it returns `code` and `map`
+```javascript
+var result = UglifyJS.minify("compiled.js", {
+	inSourceMap: "compiled.js.map",
+	outSourceMap: "minified.js.map"
+});
+// same as before, it returns `code` and `map`
+```
 
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
@@ -425,8 +490,9 @@ Following there's more detailed API info, in case the `minify` function is
 too simple for your needs.
 
 #### The parser
-
-    var toplevel_ast = UglifyJS.parse(code, options);
+```javascript
+var toplevel_ast = UglifyJS.parse(code, options);
+```
 
 `options` is optional and if present it must be an object.  The following
 properties are available:
@@ -440,15 +506,16 @@ properties are available:
 The last two options are useful when you'd like to minify multiple files and
 get a single file as the output and a proper source map.  Our CLI tool does
 something like this:
-
-    var toplevel = null;
-    files.forEach(function(file){
-        var code = fs.readFileSync(file);
-        toplevel = UglifyJS.parse(code, {
-            filename: file,
-            toplevel: toplevel
-        });
-    });
+```javascript
+var toplevel = null;
+files.forEach(function(file){
+	var code = fs.readFileSync(file, "utf8");
+	toplevel = UglifyJS.parse(code, {
+		filename: file,
+		toplevel: toplevel
+	});
+});
+```
 
 After this, we have in `toplevel` a big AST containing all our files, with
 each token having proper information about where it came from.
@@ -462,15 +529,17 @@ referenced, if it is a global or not, if a function is using `eval` or the
 `with` statement etc.  I will discuss this some place else, for now what's
 important to know is that you need to call the following before doing
 anything with the tree:
-
-    toplevel.figure_out_scope()
+```javascript
+toplevel.figure_out_scope()
+```
 
 #### Compression
 
 Like this:
-
-    var compressor = UglifyJS.Compressor(options);
-    var compressed_ast = toplevel.transform(compressor);
+```javascript
+var compressor = UglifyJS.Compressor(options);
+var compressed_ast = toplevel.transform(compressor);
+```
 
 The `options` can be missing.  Available options are discussed above in
 “Compressor options”.  Defaults should lead to best compression in most
@@ -486,23 +555,26 @@ the compressor might drop unused variables / unreachable code and this might
 change the number of identifiers or their position).  Optionally, you can
 call a trick that helps after Gzip (counting character frequency in
 non-mangleable words).  Example:
-
-    compressed_ast.figure_out_scope();
-    compressed_ast.compute_char_frequency();
-    compressed_ast.mangle_names();
+```javascript
+compressed_ast.figure_out_scope();
+compressed_ast.compute_char_frequency();
+compressed_ast.mangle_names();
+```
 
 #### Generating output
 
 AST nodes have a `print` method that takes an output stream.  Essentially,
 to generate code you do this:
-
-    var stream = UglifyJS.OutputStream(options);
-    compressed_ast.print(stream);
-    var code = stream.toString(); // this is your minified code
+```javascript
+var stream = UglifyJS.OutputStream(options);
+compressed_ast.print(stream);
+var code = stream.toString(); // this is your minified code
+```
 
 or, for a shortcut you can do:
-
-    var code = compressed_ast.print_to_string(options);
+```javascript
+var code = compressed_ast.print_to_string(options);
+```
 
 As usual, `options` is optional.  The output stream accepts a lot of otions,
 most of them documented above in section “Beautifier options”.  The two
@@ -540,16 +612,17 @@ to be a `SourceMap` object (which is a thin wrapper on top of the
 [source-map][source-map] library).
 
 Example:
+```javascript
+var source_map = UglifyJS.SourceMap(source_map_options);
+var stream = UglifyJS.OutputStream({
+	...
+	source_map: source_map
+});
+compressed_ast.print(stream);
 
-    var source_map = UglifyJS.SourceMap(source_map_options);
-    var stream = UglifyJS.OutputStream({
-        ...
-        source_map: source_map
-    });
-    compressed_ast.print(stream);
-
-    var code = stream.toString();
-    var map = source_map.toString(); // json output for your source map
+var code = stream.toString();
+var map = source_map.toString(); // json output for your source map
+```
 
 The `source_map_options` (optional) can contain the following properties:
 

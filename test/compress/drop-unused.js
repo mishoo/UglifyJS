@@ -95,3 +95,71 @@ unused_circular_references_3: {
         }
     }
 }
+
+unused_keep_setter_arg: {
+    options = { unused: true };
+    input: {
+        var x = {
+            _foo: null,
+            set foo(val) {
+            },
+            get foo() {
+                return this._foo;
+            }
+        }
+    }
+    expect: {
+        var x = {
+            _foo: null,
+            set foo(val) {
+            },
+            get foo() {
+                return this._foo;
+            }
+        }
+    }
+}
+
+unused_var_in_catch: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                var x = 10;
+            }
+        }
+    }
+    expect: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {}
+        }
+    }
+}
+
+used_var_in_catch: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                var x = 10;
+            }
+            return x;
+        }
+    }
+    expect: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                var x = 10;
+            }
+            return x;
+        }
+    }
+}
