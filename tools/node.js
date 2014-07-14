@@ -134,12 +134,14 @@ exports.minify = function(files, options) {
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
 
-    if(options.outSourceMap){
+    if(options.sourceMapURL){
+        stream += "\n//# sourceMappingURL=" + options.sourceMapURL;
+    } else if(options.outSourceMap){
         stream += "\n//# sourceMappingURL=" + options.outSourceMap;
     }
 
     return {
-        code : stream + (output.source_map ? "\n//@ sourceMappingURL=" + (options.sourceMapURL || options.outSourceMap) : ""),
+        code : stream + "",
         map  : output.source_map + ""
     };
 };
