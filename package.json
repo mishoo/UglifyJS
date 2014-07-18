@@ -26,5 +26,11 @@
     "bin": {
         "uglifyjs" : "bin/uglifyjs"
     },
-    "scripts": {"test": "node test/run-tests.js"}
+    "scripts": {"test": "node test/run-tests.js"},
+    "licenses": [
+      {
+        "type": "BSD",
+        "url": "https://raw.github.com/mishoo/UglifyJS2/master/LICENSE"
+      }
+    ]
 }
