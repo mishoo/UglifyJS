@@ -9,6 +9,7 @@ var optimist = require("optimist");
 var fs = require("fs");
 var path = require("path");
 var async = require("async");
+var iconv = require("iconv-lite")
 var acorn;
 var ARGS = optimist
     .usage("$0 input1.js [input2.js ...] [options]\n\
@@ -64,6 +65,8 @@ You need to pass an argument to this option to specify the name that your module
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
+    .describe("charset-input", "Charset of input (default utf-8)")
+    .describe("charset-output", "Charset of output (default utf-8)")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -87,6 +90,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("comments")
     .string("wrap")
     .string("p")
+    .string("charset-input")
 
     .boolean("expr")
     .boolean("source-map-include-sources")
@@ -367,9 +371,13 @@ async.eachLimit(files, 1, function (file, cb) {
     }
 
     if (OUTPUT_FILE) {
-        fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+        if(ARGS.charset_output) {
+            fs.writeFileSync(OUTPUT_FILE, iconv.encode(output, ARGS.charset_output));
+        } else {
+            fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+        }
     } else {
-        sys.print(output);
+        sys.print(ARGS.charset_output ? iconv.encode(output, ARGS.charset_output) : output);
     }
 
     if (ARGS.stats) {
@@ -434,15 +442,27 @@ function getOptions(x, constants) {
 function read_whole_file(filename, cb) {
     if (filename == "-") {
         var chunks = [];
-        process.stdin.setEncoding('utf-8');
+        if(!ARGS.charset_input) process.stdin.setEncoding('utf-8');
         process.stdin.on('data', function (chunk) {
             chunks.push(chunk);
         }).on('end', function () {
-            cb(null, chunks.join(""));
+            if(ARGS.charset_input) {
+                cb(null, iconv.decode(Buffer.concat(chunks), ARGS.charset_input));
+            } else {
+                cb(null, chunks.join(""));
+            }
         });
         process.openStdin();
     } else {
-        fs.readFile(filename, "utf-8", cb);
+        if(ARGS.charset_input) {
+            fs.readFile(filename, function (err, data) {
+                if(err) cb(err, data);
+
+                cb(err, iconv.decode(data, ARGS.charset_input));
+            });
+        } else {
+            fs.readFile(filename, "utf-8", cb);
+        }
     }
 }
 
