@@ -46,7 +46,7 @@ Now you can run your Cola-Code:
 
 	<script type="text/colascript" src="path/to/your.cola"></script>
 	
-If `your.cola` depends on other scripts in `your.html`,it's better to notice `browser-cola` about it:
+If `your.cola` depends on other scripts in `your.html`, it's better to notice `browser-cola` about it:
 
 	<script type="text/colascript" src="angular.min.js"></script>
 	<script type="text/colascript" src="path/to/your.cola"></script>
@@ -384,6 +384,18 @@ Future plans
 
 - static typing	
 - rename runtime prefix `$_cola` to `_crt$$`
+- inline using of `@use`
+
+		@use meteor
+		@use strict
+		
+		@use closure
+		
+		// or you can...
+		
+		@use meteor strict closure
+		
+
 - dotal names of refs
 
 		String String::replaceAll(a, b){
@@ -483,10 +495,6 @@ Future plans
 		}
 	
 - ES6 `for` 
-
-		for({String name, String login, String photoUrl} in usesr){
-	
-		}
 	
 		for(name of names){
 	
@@ -506,9 +514,9 @@ Future plans
 			this; // parent context
 		});
 		
-- namespaces
+- namespaces, name of namespace must be cupitalized
 
-		@use namespace Cola {
+		@use Cola {
 			
 			class AST_Node {
 				...
@@ -549,7 +557,7 @@ Future plans
       		}
      	});
      	
-- Compiler command `@use plugin "path/to/plugin.cola"` 
+- Compiler command `@use pluginname` , pluginname must be in lower case.
 - asm.js native syntax, for example
 
 		// cola
