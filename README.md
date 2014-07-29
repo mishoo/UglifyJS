@@ -360,6 +360,7 @@ As you see, you can use keyword `when`, it's like `case`, but if the condition i
 Future plans
 ===
 - Use inline `isset` expression instead function. status: done
+- Use inline `is`.
 - `some is NaN` to `isNaN(some)` status: done
 - operator `?` instead `isset`, fix the operator with function call
 - operator `?.`

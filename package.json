@@ -3,7 +3,7 @@
     "description": "ColaScript translator / parser / mangler / compressor / beautifier toolkit",
     "homepage": "https://github.com/TrigenSoftware/ColaScript",
     "main": "tools/node.js",
-    "version": "0.5.81",
+    "version": "0.5.83",
     "engines": { "node" : ">=0.4.0" },
     "maintainers": [{
         "name": "Dan Onoshko (dangreen)",
