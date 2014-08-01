@@ -385,6 +385,28 @@ Future plans
 
 - static typing	
 - rename runtime prefix `$_cola` to `_crt$$`
+- `@use klosure` wrapped code will be execute on `DOMContentLoaded`, `main` functions will triggered firstly:
+	
+		// cola
+		
+		@use klosure
+		
+		main(){
+			alert('loaded!');
+		}
+		
+		document.title = "Page";
+		
+		// js
+		
+		document.addEventListener('DOMContentLoaded', function(){
+			alert('loaded!');
+		}, false); 
+		
+		document.addEventListener('DOMContentLoaded', function(){
+			document.title = "Page";
+		}, false); 
+
 - inline using of `@use`
 
 		@use meteor
@@ -414,9 +436,9 @@ Future plans
 		
 		Cola.AST_Node node = new Cola.AST_Node;
 		
-- intarface
+- interface
 
-		inerface UserProfile {
+		interface UserProfile {
 			String name, email;					
 			Date birth;
 			String info?;
