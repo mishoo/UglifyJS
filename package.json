@@ -26,5 +26,6 @@
     "bin": {
         "uglifyjs" : "bin/uglifyjs"
     },
+    "license": "BSD",
     "scripts": {"test": "node test/run-tests.js"}
 }
