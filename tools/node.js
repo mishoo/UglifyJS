@@ -80,7 +80,7 @@ exports.minify = function(files, options) {
                 : fs.readFileSync(file, "utf8");
 
             if (options.prefix !== null) {
-                file = file.replace(/^\/+/, "").split(/\/+/).slice(options.prefix).join("/");
+                file = '/' + file.replace(/^\/+/, "").split(/\/+/).slice(options.prefix).join("/");
             }
 
             sourcesContent[file] = code;
