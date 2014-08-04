@@ -400,6 +400,38 @@ Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
 converting the SpiderMonkey tree that Acorn produces takes another 150ms so
 in total it's a bit more than just using UglifyJS's own parser.
 
+### Using UglifyJS to transform SpiderMonkey AST
+
+Now you can use UglifyJS as any other intermediate tool for transforming
+JavaScript ASTs in SpiderMonkey format.
+
+Example:
+
+```javascript
+function uglify(ast, options, mangle) {
+  // Conversion from SpiderMonkey AST to internal format
+  var uAST = UglifyJS.AST_Node.from_mozilla_ast(ast);
+
+  // Compression
+  uAST.figure_out_scope();
+  uAST = uAST.transform(UglifyJS.Compressor(options));
+
+  // Mangling (optional)
+  if (mangle) {
+    uAST.figure_out_scope();
+    uAST.compute_char_frequency();
+    uAST.mangle_names();
+  }
+
+  // Back-conversion to SpiderMonkey AST
+  return uAST.to_mozilla_ast();
+}
+```
+
+Check out
+[original blog post](http://rreverser.com/using-mozilla-ast-with-uglifyjs/)
+for details.
+
 API Reference
 -------------
 
