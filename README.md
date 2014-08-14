@@ -377,7 +377,7 @@ Future plans
 		Object data = someData;
 		int data.getFriendsCount() => this.friends.length;
 	 
-- operator `?.`
+- operator `?.`. status: done
 - Negate array accessor ( getter )
  
 		arr[-1]; // last element
