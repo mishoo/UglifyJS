@@ -224,7 +224,7 @@ main();</textarea>
             mainbinding = document.getElementById("main_binding"),
             compressed = document.getElementById("compressed"),
 			source;
-
+        //localStorage.clear();
         if(!localStorage.source) localStorage.source = source = sourceArea.value;
 		else sourceArea.value = source = localStorage.source;
         isjs.checked = localStorage.isjs == "t";
@@ -315,7 +315,7 @@ main();</textarea>
             }
         }
 
-		compile();
         changeClass();
+		compile();
 	</script>
 </html>

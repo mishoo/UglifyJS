@@ -360,10 +360,33 @@ As you see, you can use keyword `when`, it's like `case`, but if the condition i
 Future plans
 ===
 - Use inline `isset` expression instead function. status: done
-- Use inline `is`.
-- `some is NaN` to `isNaN(some)` status: done
-- operator `?` instead `isset`, fix the operator with function call
+- Use inline `is`. status: done
+- `some is NaN` to `isNaN(some)`. status: done
+- operator `?` instead `isset`. status: done
+- rename runtime prefix `$_cola` to `_ColaRuntime$$`. status: done
+- dotal names of refs: done
+
+		String String::replaceAll(a, b){
+  			String res = this;
+    		while(res.indexOf(a) != -1) res = res.replace(a, b);
+    		return res;
+		}
+		
+		// or
+		
+		Object data = someData;
+		int data.getFriendsCount() => this.friends.length;
+	 
 - operator `?.`
+- Negate array accessor ( getter )
+ 
+		arr[-1]; // last element
+
+	only for static negate index, for other cases you can use `%` unary prefix:
+	
+		int index = -10;
+		arr[%index] = 34; // arr[index %% arr.length];
+
 - operator `?` to sign an argument as not-required
 
 		int sqr(int x) => x ** 2;
@@ -374,22 +397,16 @@ Future plans
 		int sqrt(int x?) => x ** 2;
 		sqr();  // NaN
 
-- Negate array accessor ( getter )
- 
-		arr[-1]; // last element
-
-	only for static negate index, for other cases you can use `%` unary prefix:
-	
-		int index = -10;
-		arr[%index] = 34; // arr[index %% arr.length];
-
 - static typing	
-- rename runtime prefix `$_cola` to `_crt$$`
-- `@use klosure` wrapped code will be execute on `DOMContentLoaded`, `main` functions will triggered firstly:
+- `@use` expressions
+		
+		@use strict closure
+		
+- `@use await closure` wrapped code will be execute on `DOMContentLoaded`, `main` functions will triggered firstly:
 	
 		// cola
 		
-		@use klosure
+		@use await closure
 		
 		main(){
 			alert('loaded!');
@@ -406,36 +423,7 @@ Future plans
 		document.addEventListener('DOMContentLoaded', function(){
 			document.title = "Page";
 		}, false); 
-
-- inline using of `@use`
-
-		@use meteor
-		@use strict
-		
-		@use closure
-		
-		// or you can...
-		
-		@use meteor strict closure
-		
-
-- dotal names of refs
-
-		String String::replaceAll(a, b){
-  			String res = this;
-    		while(res.indexOf(a) != -1) res = res.replace(a, b);
-    		return res;
-		}
-		
-		// or
-		
-		Object data = someData;
-		int data.getFriendsCount() => this.friends.length;
-		
-		// or
-		
-		Cola.AST_Node node = new Cola.AST_Node;
-		
+			
 - interface
 
 		interface UserProfile {
@@ -448,10 +436,10 @@ Future plans
 
 		class A {
     
-		    private int a = 123;
-    		protected var o = {};
-    
+		    int a = 123;
     		readonly String about = "class";
+    		
+    		$("button").click(() => console.log("Button Clicked!"));
     
     		A(a){
         		about = "some else";
@@ -510,12 +498,6 @@ Future plans
         		return res;
     		}
 		}
-		
-- destructed function arguments
-
-		test({String name, String login, String photoUrl}){
-			console.log(name, login, photoUrl);
-		}
 	
 - ES6 `for` 
 	
@@ -530,24 +512,6 @@ Future plans
 		@import dirname from 'path'
 		
 		String code = fs.readFileSync(dirname(filePath) + "/main.cola", "utf8");
-
-- set parameters to calling function
-
-		$(".btn").on("click", *(){
-			this; // parent context
-		});
-		
-- namespaces, name of namespace must be cupitalized
-
-		@use Cola {
-			
-			class AST_Node {
-				...
-			}
-			
-		}
-		
-		Cola.AST_Node node = new Cola.AST_Node();
 		
 
 - write documentation of tokenizer/parser methods
