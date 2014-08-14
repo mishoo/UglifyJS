@@ -378,16 +378,7 @@ Future plans
 		int data.getFriendsCount() => this.friends.length;
 	 
 - operator `?.`. status: done
-- Negate array accessor ( getter )
- 
-		arr[-1]; // last element
-
-	only for static negate index, for other cases you can use `%` unary prefix:
-	
-		int index = -10;
-		arr[%index] = 34; // arr[index %% arr.length];
-
-- operator `?` to sign an argument as not-required
+- operator `?` to sign an argument as not-required. status: done
 
 		int sqr(int x) => x ** 2;
 		
@@ -396,6 +387,15 @@ Future plans
 		
 		int sqrt(int x?) => x ** 2;
 		sqr();  // NaN
+
+- Negate array accessor ( getter )
+ 
+		arr[-1]; // last element
+
+	only for static negate index, for other cases you can use `%` unary prefix:
+	
+		int index = -10;
+		arr[%index] = 34; // arr[index %% arr.length];
 
 - static typing	
 - `@use` expressions
