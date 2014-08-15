@@ -388,7 +388,7 @@ Future plans
 		int sqrt(int x?) => x ** 2;
 		sqr();  // NaN
 
-- Negate array accessor ( getter )
+- Negate array accessor ( getter ). status: done
  
 		arr[-1]; // last element
 
@@ -397,6 +397,64 @@ Future plans
 		int index = -10;
 		arr[%index] = 34; // arr[index %% arr.length];
 
+- classes
+
+		class A {
+    
+		    int a = 123;
+    		readonly String about = "class";
+    		
+    		$("button").click(() => console.log("Button Clicked!"));
+    
+    		A(a){
+        		about = "some else";
+    		}
+    
+    		static Hello() => "hello!";
+    
+    		public String about() => about;
+		}
+
+		class B extends A {
+    
+    		B(){
+        		parent();
+        		about += "!";  
+    		}
+    
+    		B.anotherConstructor(){
+        		about = "ups!";  
+    		}
+    
+    		get some => "some " + about;
+    		set some(val) => about += val; 
+		}
+		
+- singletones
+
+		singleton S { // in fact this is object
+    		int x = 45;
+    		String s = "txt";
+    
+    		say(some){
+        		alert(some);
+    		}
+    
+    		int operator[](int index) => index + 584;
+    		operator[]=(int index, int val) => x = index + val;
+    
+		}
+		
+- injectors
+
+		injector String {
+    		String replaceAll(a, b){
+        		String res = this;
+        		while(res.indexOf(a) != -1) res = res.replace(a, b);
+        		return res;
+    		}
+		}
+			
 - static typing	
 - `@use` expressions
 		
@@ -432,39 +490,6 @@ Future plans
 			String info?;
 		}
 
-- classes
-
-		class A {
-    
-		    int a = 123;
-    		readonly String about = "class";
-    		
-    		$("button").click(() => console.log("Button Clicked!"));
-    
-    		A(a){
-        		about = "some else";
-    		}
-    
-    		static Hello() => "hello!";
-    
-    		public String about() => about;
-		}
-
-		class B extends A {
-    
-    		B(){
-        		parent();
-        		about += "!";  
-    		}
-    
-    		B.anotherConstructor(){
-        		about = "ups!";  
-    		}
-    
-    		get some => "some " + about;
-    		set some(val) => about += val; 
-		}
-		
 - classes and typing with templates
 
 		class A<T> {
@@ -474,31 +499,6 @@ Future plans
 		Array<int> arr = [0...10];
 		Object<String, String> obj = { name: "Eric" };
 			
-- singletones
-
-		singleton S { // in fact this is object
-    		int x = 45;
-    		String s = "txt";
-    
-    		say(some){
-        		alert(some);
-    		}
-    
-    		int operator[](int index) => index + 584;
-    		operator[]=(int index, int val) => x = index + val;
-    
-		}
-		
-- injectors
-
-		injector String {
-    		String replaceAll(a, b){
-        		String res = this;
-        		while(res.indexOf(a) != -1) res = res.replace(a, b);
-        		return res;
-    		}
-		}
-	
 - ES6 `for` 
 	
 		for(name of names){
