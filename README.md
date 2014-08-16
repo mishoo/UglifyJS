@@ -397,6 +397,15 @@ Future plans
 		int index = -10;
 		arr[%index] = 34; // arr[index %% arr.length];
 
+- var modificators. status: done
+
+		readonly int Math.Pi = 3.14;
+		
+	list of modificators
+	* static: vars, funcs, getters and setters in class
+	* const: vars
+	* covert: vars, funcs, getters and setters in class and objects
+
 - classes
 
 		class A {
