@@ -376,7 +376,29 @@ Future plans
 		
 		Object data = someData;
 		int data.getFriendsCount() => this.friends.length;
-	 
+		
+- dotal getters and setters definition
+
+		covert int get Math.rand() => 123;
+		covert int set Math.rand(int val) => console.log(val);
+		
+		to
+		
+		_ColaRuntime$$updateProperty(Math, "rand", {
+    		get: function rand() {
+        		return 123;
+        	},
+        	configurable: true
+    	});
+
+    	_ColaRuntime$$updateProperty(Math, "rand", {
+        	set: function rand() {
+          		var val = arguments[0] !== undefined ? arguments[0] : _ColaRuntime$$error("Argument `val` is required!");
+        		return console.log(val);
+    		},
+    		configurable: true
+		});
+
 - operator `?.`. status: done
 - operator `?` to sign an argument as not-required. status: done
 
