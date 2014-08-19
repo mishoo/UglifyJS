@@ -428,7 +428,7 @@ Future plans
 	* const: vars
 	* covert: vars, funcs, getters and setters in class and objects
 
-- classes
+- classes. status: done
 
 		class A {
     
