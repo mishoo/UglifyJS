@@ -485,7 +485,7 @@ Future plans
         		return res;
     		}
 		}
-			
+- add `observe` modificator.		
 - static typing	
 - `@use` expressions
 		
