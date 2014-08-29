@@ -35,7 +35,7 @@ var FILES = exports.FILES = [
     "../lib/sourcemap.js",
     "../lib/mozilla-ast.js"
 ].map(function(file){
-    return path.join(path.dirname(fs.realpathSync(__filename)), file);
+    return fs.realpathSync(path.join(path.dirname(__filename), file));
 });
 
 FILES.forEach(load_global);
