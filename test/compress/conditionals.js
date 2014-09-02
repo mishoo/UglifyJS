@@ -246,6 +246,14 @@ cond_7: {
             x = 2;
         }
 
+        if (y) {
+            x = 1+1;
+        } else if (z) {
+            x = 2;
+        } else {
+            x = 3-1;
+        }
+
         x = y ? 'foo' : 'fo'+'o';
 
         x = y ? 'foo' : y ? 'foo' : 'fo'+'o';
@@ -266,6 +274,7 @@ cond_7: {
         x = some_condition() ? 'foo' : 'fo'+'o';
     }
     expect: {
+        x = 2;
         x = 2;
         x = 'foo';
         x = 'foo';
