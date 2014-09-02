@@ -232,3 +232,47 @@ cond_5: {
         some_condition() && some_other_condition() && do_something();
     }
 }
+
+cond_7: {
+    options = {
+        conditionals: true,
+        evaluate    : true
+    };
+    input: {
+        // compress these
+        if (y) {
+            x = 1+1;
+        } else {
+            x = 2;
+        }
+
+        x = y ? 'foo' : 'fo'+'o';
+
+        x = y ? 'foo' : y ? 'foo' : 'fo'+'o';
+
+        // don't compress these
+        x = y ? a : b;
+
+        x = y ? 'foo' : 'fo';
+
+        // make sure not to mess with conditions that have side effects
+        // TODO: Make sure to mess with conditions that have side effects... proprely
+        if (some_condition()) {
+            x = 1+1;
+        } else {
+            x = 2;
+        }
+
+        x = some_condition() ? 'foo' : 'fo'+'o';
+    }
+    expect: {
+        x = 2;
+        x = 'foo';
+        x = 'foo';
+        x = y ? a : b;
+        x = y ? 'foo' : 'fo';
+        x = some_condition() ? 2 : 2;
+        x = some_condition() ? 'foo' : 'foo';
+    }
+}
+
