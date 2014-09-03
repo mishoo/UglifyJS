@@ -22,6 +22,9 @@ From Git:
     git clone git://github.com/TrigenSoftware/ColaScript.git
     cd ColaScript
     npm link .
+
+Usage
+===
     
 Use it same as in [UglifyJS2](https://github.com/mishoo/UglifyJS2), except:
 
@@ -485,6 +488,7 @@ Future plans
         		return res;
     		}
 		}
+		
 - add `observe` modificator.		
 - static typing	
 - `@use` expressions
