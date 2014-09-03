@@ -258,30 +258,38 @@ cond_7: {
 
         x = y ? 'foo' : y ? 'foo' : 'fo'+'o';
 
+        // Compress conditions that have side effects
+        if (condition()) {
+            x = 10+10;
+        } else {
+            x = 20;
+        }
+
+        if (z) {
+            x = 'fuji';
+        } else if (condition()) {
+            x = 'fu'+'ji';
+        } else {
+            x = 'fuji';
+        }
+
+        x = condition() ? 'foobar' : 'foo'+'bar';
+
         // don't compress these
         x = y ? a : b;
 
         x = y ? 'foo' : 'fo';
-
-        // make sure not to mess with conditions that have side effects
-        // TODO: Make sure to mess with conditions that have side effects... proprely
-        if (some_condition()) {
-            x = 1+1;
-        } else {
-            x = 2;
-        }
-
-        x = some_condition() ? 'foo' : 'fo'+'o';
     }
     expect: {
         x = 2;
         x = 2;
         x = 'foo';
         x = 'foo';
+        x = (condition(), 20);
+        x = z ? 'fuji' : (condition(), 'fuji');
+        x = (condition(), 'foobar');
         x = y ? a : b;
         x = y ? 'foo' : 'fo';
-        x = some_condition() ? 2 : 2;
-        x = some_condition() ? 'foo' : 'foo';
     }
 }
 
