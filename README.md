@@ -1,6 +1,6 @@
 ![logo](https://raw.githubusercontent.com/TrigenSoftware/ColaScript/master/colalogo.png)
 
-ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). You can play with language [here](http://develop.trigen.pro/cola/).
+ColaScript is a language that compiles in JavaScript. This language is similar to Dart, CoffeeScript, Python and PHP, with some original ideas. Compiler based on [UglifyJS2](https://github.com/mishoo/UglifyJS2). You can play with language [here (stable)](http://cola.trigen.pro) or [here (dev)](http://cola.trigen.pro/dev/).
 
 
 Installation
@@ -380,7 +380,7 @@ Future plans
 		Object data = someData;
 		int data.getFriendsCount() => this.friends.length;
 		
-- dotal getters and setters definition
+- dotal getters and setters definition. status: done
 
 		covert int get Math.rand() => 123;
 		covert int set Math.rand(int val) => console.log(val);
