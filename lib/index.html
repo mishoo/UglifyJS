@@ -94,15 +94,14 @@
 main(){
 
     // Unary operators
-    // Two variants of `isset` operator. Which is better?
+    // `isset` operator.
     bool _seted = true, _empty;
-    console.log("`_seted` is", _seted?? ? "seted" : "empty");
-    console.log("`_empty` is", isset _empty ? "seted" : "empty");
+    console.log("`_seted` is", _seted? ? "seted" : "empty");
 
     // `clone` operator 
     Array _first = [584], _second = clone _first;
     _first.push(404);
-    console.log("`_first`:",_first,"`_second`:",_second);
+    console.log("`_first`:", _first, "`_second`:", _second);
 
     // Binary operators
     // `pow` operator
@@ -218,8 +217,8 @@ main();</textarea>
                 <label for="main_binding">`main` binding</label>
                 <input type="checkbox" id="compressed" onclick="changeClass()">
                 <label for="compressed">compressed</label>
-                <span id="lenstat"></span>
                 <span id="version">v0.6.0</span>
+                <span id="lenstat"></span>
             </div>
 	</body>
 	<script>
