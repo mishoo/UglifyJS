@@ -293,3 +293,38 @@ cond_7: {
     }
 }
 
+cond_8: {
+    options = {
+        conditionals: true,
+        evaluate    : true
+    };
+    input: {
+        // compress these
+        a = condition ? condition : b;
+
+        if (condition) {
+            a = condition;
+        } else {
+            a = b;
+        }
+
+        a = condition ? condition : b();
+
+        // Don't compress conditions that have side effects
+        if (condition()) {
+            a = condition();
+        } else {
+            a = b;
+        }
+
+        a = condition() ? condition() : b;
+
+    }
+    expect: {
+        a = condition || b;
+        a = condition || b;
+        a = condition || b();
+        a = condition() ? condition() : b;
+        a = condition() ? condition() : b;
+    }
+}
