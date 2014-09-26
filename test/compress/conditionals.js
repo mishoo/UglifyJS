@@ -293,3 +293,45 @@ cond_7: {
     }
 }
 
+cond_8: {
+    options = {
+        conditionals: true,
+        evaluate    : true
+    };
+    input: {
+        // compress these
+        a = condition ? true : false;
+
+        a = !condition ? true : false;
+
+        a = condition() ? true : false;
+
+        if (condition) {
+            a = true;
+        } else {
+            a = false;
+        }
+
+        a = condition ? false : true;
+
+        a = !condition ? false : true;
+
+        a = condition() ? false : true;
+
+        if (condition) {
+            a = false;
+        } else {
+            a = true;
+        }
+    }
+    expect: {
+        a = !!condition;
+        a = !condition;
+        a = !!condition();
+        a = !!condition;
+        a = !condition;
+        a = !!condition;
+        a = !condition();
+        a = !condition;
+    }
+}
