@@ -256,6 +256,10 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `drop_console` -- default `false`.  Pass `true` to discard calls to
   `console.*` functions.
 
+- `keep_fargs` -- default `false`.  Pass `true` to prevent the
+  compressor from discarding unused function arguments.  You need this
+  for code which relies on `Function.length`.
+
 ### The `unsafe` option
 
 It enables some transformations that *might* break code logic in certain
