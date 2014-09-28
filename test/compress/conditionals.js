@@ -239,6 +239,7 @@ cond_7: {
         evaluate    : true
     };
     input: {
+        var x, y, z, a, b;
         // compress these
         if (y) {
             x = 1+1;
@@ -281,6 +282,7 @@ cond_7: {
         x = y ? 'foo' : 'fo';
     }
     expect: {
+        var x, y, z, a, b;
         x = 2;
         x = 2;
         x = 'foo';
@@ -293,3 +295,20 @@ cond_7: {
     }
 }
 
+cond_7_1: {
+    options = {
+        conditionals: true,
+        evaluate    : true
+    };
+    input: {
+        // access to global should be assumed to have side effects
+        if (y) {
+            x = 1+1;
+        } else {
+            x = 2;
+        }
+    }
+    expect: {
+        x = (y, 2);
+    }
+}
