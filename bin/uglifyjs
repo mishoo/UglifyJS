@@ -64,6 +64,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
+    .describe("respect-quotes", "When output javascript save original quotes")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -100,6 +101,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("lint")
     .boolean("V")
     .boolean("noerr")
+    .boolean("respect-quotes")
 
     .wrap(80)
 
@@ -150,6 +152,7 @@ if (ARGS.r) {
 var OUTPUT_OPTIONS = {
     beautify: BEAUTIFY ? true : false,
     preamble: ARGS.preamble || null,
+    respect_quotes: ARGS.respect_quotes
 };
 
 if (ARGS.screw_ie8) {
