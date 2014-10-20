@@ -64,6 +64,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
+    .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -100,6 +101,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("lint")
     .boolean("V")
     .boolean("noerr")
+    .boolean("bare-returns")
 
     .wrap(80)
 
@@ -275,9 +277,10 @@ async.eachLimit(files, 1, function (file, cb) {
             else {
                 try {
                     TOPLEVEL = UglifyJS.parse(code, {
-                        filename   : file,
-                        toplevel   : TOPLEVEL,
-                        expression : ARGS.expr,
+                        filename     : file,
+                        toplevel     : TOPLEVEL,
+                        expression   : ARGS.expr,
+                        bare_returns : ARGS.bare_returns,
                     });
                 } catch(ex) {
                     if (ex instanceof UglifyJS.JS_Parse_Error) {
