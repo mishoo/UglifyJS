@@ -252,7 +252,7 @@ async.eachLimit(files, 1, function (file, cb) {
         }
         if (ARGS.p != null) {
             if (P_RELATIVE) {
-                file = path.relative(path.dirname(ARGS.source_map), file);
+                file = path.relative(path.dirname(ARGS.source_map), file).replace(/\\/g, '/');
             } else {
                 var p = parseInt(ARGS.p, 10);
                 if (!isNaN(p)) {
