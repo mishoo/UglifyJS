@@ -78,7 +78,7 @@ exports.minify = function(files, options) {
                 : fs.readFileSync(file, "utf8");
             sourcesContent[file] = code;
             toplevel = UglifyJS.parse(code, {
-                filename: options.fromString ? "?" : file,
+                filename: options.fromString ? options.outSourceMap : file,
                 toplevel: toplevel
             });
         });
