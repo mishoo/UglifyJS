@@ -390,16 +390,14 @@ Future plans
 		_ColaRuntime$$updateProperty(Math, "rand", {
     		get: function rand() {
         		return 123;
-        	},
-        	configurable: true
+        	}
     	});
 
     	_ColaRuntime$$updateProperty(Math, "rand", {
         	set: function rand() {
           		var val = arguments[0] !== undefined ? arguments[0] : _ColaRuntime$$error("Argument `val` is required!");
         		return console.log(val);
-    		},
-    		configurable: true
+    		}
 		});
 
 - operator `?.`. status: done
@@ -424,12 +422,13 @@ Future plans
 
 - var modificators. status: done
 
-		readonly int Math.Pi = 3.14;
+		const int Math.Pi = 3.14;
 		
 	list of modificators
-	* static: vars, funcs, getters and setters in class
-	* const: vars
-	* covert: vars, funcs, getters and setters in class and objects
+	* static: vars, funcs, getters and setters in classes
+	* const: vars, props
+	* covert: vars, funcs, getters and setters in classes and objects, props
+	* export: vars, funcs, classes, singletones
 
 - classes. status: done
 
@@ -464,7 +463,7 @@ Future plans
     		set some(val) => about += val; 
 		}
 		
-- singletones
+- singletones. status: done
 
 		singleton S { // in fact this is object
     		int x = 45;
@@ -478,18 +477,40 @@ Future plans
     		operator[]=(int index, int val) => x = index + val;
     
 		}
-		
-- injectors
 
-		injector String {
-    		String replaceAll(a, b){
-        		String res = this;
-        		while(res.indexOf(a) != -1) res = res.replace(a, b);
-        		return res;
-    		}
-		}
+- Compiler command `@import` to import modules ( CommonJS ), status: done
+
+		@import 'sugar'
+		@import 'fs' as fs
+		@import dirname from 'path'
+		@import print as echo, prompt as ask, test from 'mylib'
 		
-- add `observe` modificator.		
+		String code = fs.readFileSync(dirname(filePath) + "/main.cola", "utf8");
+		echo("hello!");
+
+- Compiler command `@export` to export modules ( CommonJS ), status: done
+		
+		Object hash = {};
+		Array users = [];
+		
+		@export hash as _, users
+		@export each as forEach from "underscore"
+		@export "mylib"
+		
+- `await` operator (only with Promise support)
+        
+        String name = await getNameFromServer(id);
+        console.log(name);
+        
+        to
+   	    
+   	    getNameFromServer(id).then(function(_ColaRuntime$$fulfilled, _ColaRuntime$$rejected) {
+   	    	if (_ColaRuntime$$rejected) throw _ColaRuntime$$rejected;
+   	    	String name = __ColaRuntime$$fulfilled;
+   	    	console.log(name);
+   	    });
+   	    
+	
 - static typing	
 - `@use` expressions
 		
@@ -539,15 +560,6 @@ Future plans
 		for(name of names){
 	
 		}
-
-- Compiler command `@import` to import modules ( AMD, CommonJS... )
-
-		// node.js
-		@import 'fs' as fs
-		@import dirname from 'path'
-		
-		String code = fs.readFileSync(dirname(filePath) + "/main.cola", "utf8");
-		
 
 - write documentation of tokenizer/parser methods
 - more informative exceptions

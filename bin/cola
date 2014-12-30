@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 // -*- js -*-
 
 "use strict";
@@ -20,6 +20,8 @@ with whitespace and comments discarded. To achieve compression and\n\
 mangling you need to use `-c` and `-m`.\
 ")
     .describe("j", "Work with JavaScript (by default Cola will expect ColaScript).")
+    .describe("n", "Enable compilation for node.")
+    .describe("k", "Path to packages.json (packages.json by default).")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
@@ -27,7 +29,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default Cola will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
-    .describe("n", "Disable `main` binding.")
+    .describe("i", "ignore `main` binding.")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
 You can also specify -p relative, which will make Cola figure out itself the relative paths between original sources, \
@@ -69,7 +71,9 @@ You need to pass an argument to this option to specify the name that your module
 
     .alias("j", "js")
     .alias("j", "javascript")
-    .alias("n", "no-main-binding")
+    .alias("n", "node")
+    .alias("k", "packages")
+    .alias("i", "ignore-main-binding")
     .alias("p", "prefix")
     .alias("o", "output")
     .alias("v", "verbose")
@@ -81,6 +85,7 @@ You need to pass an argument to this option to specify the name that your module
     .alias("V", "version")
     .alias("e", "enclose")
 
+    .string("k")
     .string("source-map")
     .string("source-map-root")
     .string("source-map-url")
@@ -94,8 +99,9 @@ You need to pass an argument to this option to specify the name that your module
     .string("p")
 
     .boolean("j")
-    .boolean("expr")
     .boolean("n")
+    .boolean("expr")
+    .boolean("i")
     .boolean("source-map-include-sources")
     .boolean("screw-ie8")
     .boolean("export-all")
@@ -293,7 +299,9 @@ async.eachLimit(files, 1, function (file, cb) {
                     });
 
                     if (!ARGS.j) TOPLEVEL = TOPLEVEL.toJavaScript({ 
-                        main_binding: !ARGS.n,
+                        main_binding: !ARGS.i,
+                        is_node: ARGS.n,
+                        modules: Cola.getPackages(ARGS.k),
                         path: path.dirname(file),
                         parser: {
                             expression : ARGS.expr,
@@ -423,7 +431,15 @@ function getOptions(x, constants) {
         var ast;
         try {
             ast = Cola.parse(x, { expression: true, is_js: ARGS.j });
-            if (!ARGS.j) ast = ast.toJavaScript({ main_binding: !ARGS.n, parser: { expression: true, is_js: ARGS.j } });
+            if (!ARGS.j) ast = ast.toJavaScript({ 
+                main_binding: !ARGS.i, 
+                is_node: ARGS.n, 
+                modules: Cola.getPackages(ARGS.k),
+                parser: { 
+                    expression: true, 
+                    is_js: ARGS.j 
+                } 
+            });
         } catch(ex) {
             if (ex instanceof Cola.JS_Parse_Error) {
                 sys.error("Error parsing arguments in: " + x);

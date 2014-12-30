@@ -2,6 +2,13 @@
 <html>
 	<head>
 		<title>ColaScript Playground</title>
+        <script type="text/packages-json">
+            { 
+                "underscore" : "/components/jashkenas/underscore/1.7.0/underscore.js",
+                "uid" : "/components/matthewmueller-uid@0.0.2/index.js",
+                "fmt" : "/components/yields-fmt@0.1.0/index.js" 
+            }
+        </script>
 		<script src="./utils.js"></script>
         <script src="./ast.js"></script>
         <script src="./parse.js"></script>
@@ -89,7 +96,7 @@
     	</style>
 	</head>
 	<body class="triple">
-		<textarea id="source" onkeyup="compile()">// `main` functions may binding to a onload event 
+		<textarea id="source">// `main` functions may binding to a onload event 
 // Functions can defined without `function` keyword, with and without `type`
 main(){
 
@@ -215,6 +222,8 @@ main();</textarea>
                 <label for="is_js">js parser</label>
                 <input type="checkbox" id="main_binding" onclick="compile()">
                 <label for="main_binding">`main` binding</label>
+                <input type="checkbox" id="is_node" onclick="compile()">
+                <label for="is_node">node</label>
                 <input type="checkbox" id="compressed" onclick="changeClass()">
                 <label for="compressed">compressed</label>
                 <span id="version">v0.6.0</span>
@@ -222,18 +231,37 @@ main();</textarea>
             </div>
 	</body>
 	<script>
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        }; 
+
 		var sourceArea = document.getElementById("source"), 
 			translationArea = document.getElementById("translation"), 
 			resultArea = document.getElementById("result"), 
             isjs = document.getElementById("is_js"),
             mainbinding = document.getElementById("main_binding"),
+            isnode = document.getElementById("is_node"),
             compressed = document.getElementById("compressed"),
 			source;
+
+        sourceArea.onkeyup = debounce(compile, 600);
         //localStorage.clear();
         if(!localStorage.source) localStorage.source = source = sourceArea.value;
 		else sourceArea.value = source = localStorage.source;
         isjs.checked = localStorage.isjs == "t";
         mainbinding.checked = localStorage.mainbinding == "t";
+        isnode.checked = localStorage.isnode == "t";
         compressed.checked = localStorage.compressed == "t";
 
         function changeClass(){
@@ -246,6 +274,7 @@ main();</textarea>
 			localStorage.source = source;
             localStorage.isjs = isjs.checked ? "t" : "f";
             localStorage.mainbinding = mainbinding.checked ? "t" : "f";
+            localStorage.isnode = isnode.checked ? "t" : "f";
 
 			stream = new Cola.OutputStream({ beautify : true, comments : true });
 			compressor = new Cola.Compressor({ is_js : isjs.checked });
@@ -253,7 +282,7 @@ main();</textarea>
 			try {
 				// 1. compile
 				ast = Cola.parse(source, { is_js : isjs.checked });
-				if(!isjs.checked) ast = ast.toJavaScript({ main_binding : mainbinding.checked });
+				if(!isjs.checked) ast = ast.toJavaScript({ main_binding : mainbinding.checked, modules : Cola.getPackages(), is_node : isnode.checked });
 				ast.print(stream);
 				translationArea.value = stream.toString();
 
