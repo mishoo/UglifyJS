@@ -497,6 +497,43 @@ Future plans
 		@export each as forEach from "underscore"
 		@export "mylib"
 		
+- `async` function modificator
+
+		async GET(String url) {
+		    var xhr = new XMLHttpRequest();
+		    
+		    xhr.onreadystatechange() {
+		    	if (xhr.readyState != 4) return;
+		    	if (xhr.status == 200) resolve xhr.response;
+		    	
+		    	reject false;
+		    }
+		    
+		    xhr.open("GET", url, true);
+			xhr.send();
+		}
+		
+		to
+		
+		function GET(url) {
+			var _ColaRuntime$$arguments = arguments;
+			return new Promise(function(_ColaRuntime$$resolve, _ColaRuntime$$reject) {
+				arguments = _ColaRuntime$$arguments;
+		    	var xhr = new XMLHttpRequest();
+		    
+		    	xhr.onreadystatechange = function() {
+		    		if (xhr.readyState != 4) return;
+		    		if (xhr.status == 200) return _ColaRuntime$$resolve(xhr.response);
+		    	
+		    		return _ColaRuntime$$reject(false);
+		    	}
+		    
+		    	xhr.open("GET", url, true);
+				xhr.send();
+			}.bind(this));
+		}
+
+		
 - `await` operator (only with Promise support)
         
         String name = await getNameFromServer(id);
