@@ -435,7 +435,7 @@ Future plans
 		class A {
     
 		    int a = 123;
-    		readonly String about = "class";
+    		String about = "class";
     		
     		$("button").click(() => console.log("Button Clicked!"));
     
@@ -459,7 +459,7 @@ Future plans
         		about = "ups!";  
     		}
     
-    		get some => "some " + about;
+    		get some() => "some " + about;
     		set some(val) => about += val; 
 		}
 		
@@ -473,8 +473,6 @@ Future plans
         		alert(some);
     		}
     
-    		int operator[](int index) => index + 584;
-    		operator[]=(int index, int val) => x = index + val;
     
 		}
 
