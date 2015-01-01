@@ -497,7 +497,7 @@ Future plans
 		@export each as forEach from "underscore"
 		@export "mylib"
 		
-- `async` function modificator
+- `async` function modificator, status: done
 
 		async GET(String url) {
 		    var xhr = new XMLHttpRequest();
@@ -534,46 +534,26 @@ Future plans
 		}
 
 		
-- `await` operator (only with Promise support)
+- `await` operator (only with Promise support), status: done
         
         String name = await getNameFromServer(id);
         console.log(name);
         
         to
    	    
-   	    getNameFromServer(id).then(function(_ColaRuntime$$fulfilled, _ColaRuntime$$rejected) {
+   	    var _ColaRuntime$$arguments = arguments;
+   	    _ColaRuntime$$promise(getNameFromServer(id), function(_ColaRuntime$$fulfilled, _ColaRuntime$$rejected) {
+   	        arguments = _ColaRuntime$$arguments;
    	    	if (_ColaRuntime$$rejected) throw _ColaRuntime$$rejected;
-   	    	String name = __ColaRuntime$$fulfilled;
+   	    	String name = _ColaRuntime$$fulfilled;
    	    	console.log(name);
-   	    });
+   	    }, this);
    	    
 	
 - static typing	
 - `@use` expressions
 		
 		@use strict closure
-		
-- `@use await closure` wrapped code will be execute on `DOMContentLoaded`, `main` functions will triggered firstly:
-	
-		// cola
-		
-		@use await closure
-		
-		main(){
-			alert('loaded!');
-		}
-		
-		document.title = "Page";
-		
-		// js
-		
-		document.addEventListener('DOMContentLoaded', function(){
-			alert('loaded!');
-		}, false); 
-		
-		document.addEventListener('DOMContentLoaded', function(){
-			document.title = "Page";
-		}, false); 
 			
 - interface
 
