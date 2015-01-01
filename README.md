@@ -547,7 +547,7 @@ Future plans
    	    	console.log(name);
    	    }, this);
    	    
-	
+- `@use client` and `@use server` commands
 - static typing	
 - `@use` expressions
 		
