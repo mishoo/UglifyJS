@@ -549,6 +549,12 @@ Future plans
    	    
 - `@use client` and `@use server` commands, status: done
 - control flows without braces, status: done
+- ES6 `for`, status: done
+	
+		for(name of names){
+	
+		}
+
 - static typing	
 - `@use` expressions
 		
@@ -570,13 +576,7 @@ Future plans
 		
 		Array<int> arr = [0...10];
 		Object<String, String> obj = { name: "Eric" };
-			
-- ES6 `for` 
-	
-		for(name of names){
-	
-		}
-
+		
 - write documentation of tokenizer/parser methods
 - more informative exceptions
 - better source maps
