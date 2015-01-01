@@ -547,7 +547,8 @@ Future plans
    	    	console.log(name);
    	    }, this);
    	    
-- `@use client` and `@use server` commands
+- `@use client` and `@use server` commands, status: done
+- control flows without braces, status: done
 - static typing	
 - `@use` expressions
 		
