@@ -5,12 +5,12 @@
 
 var UglifyJS = require("../tools/node");
 var sys = require("util");
-var optimist = require("optimist");
+var yargs = require("yargs");
 var fs = require("fs");
 var path = require("path");
 var async = require("async");
 var acorn;
-var ARGS = optimist
+var ARGS = yargs
     .usage("$0 input1.js [input2.js ...] [options]\n\
 Use a single dash to read input from the standard input.\
 \n\n\
@@ -129,7 +129,7 @@ if (ARGS.ast_help) {
 }
 
 if (ARGS.h || ARGS.help) {
-    sys.puts(optimist.help());
+    sys.puts(yargs.help());
     process.exit(0);
 }
 
