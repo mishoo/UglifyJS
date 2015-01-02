@@ -2,13 +2,6 @@
 <html>
 	<head>
 		<title>ColaScript Playground</title>
-        <script type="text/packages-json">
-            { 
-                "underscore" : "/components/jashkenas/underscore/1.7.0/underscore.js",
-                "uid" : "/components/matthewmueller-uid@0.0.2/index.js",
-                "fmt" : "/components/yields-fmt@0.1.0/index.js" 
-            }
-        </script>
 		<script src="./utils.js"></script>
         <script src="./ast.js"></script>
         <script src="./parse.js"></script>
@@ -21,6 +14,7 @@
         <script src="./translate.js"></script>
         <script src="./std.js"></script>
         <script src="./typecheck.js"></script>
+        <!--script src="./browser-cola.js"></script-->
     	<style>
     	
     	body {
@@ -226,7 +220,7 @@ main();</textarea>
                 <label for="is_node">node</label>
                 <input type="checkbox" id="compressed" onclick="changeClass()">
                 <label for="compressed">compressed</label>
-                <span id="version">v0.6.0</span>
+                <span id="version">v0.8.0</span>
                 <span id="lenstat"></span>
             </div>
 	</body>

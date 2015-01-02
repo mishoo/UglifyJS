@@ -1,12 +1,12 @@
 {
     "name": "cola-script",
-    "version": "0.6.0",
+    "version": "0.8.0",
     "homepage": "https://github.com/TrigenSoftware/ColaScript",
     "authors": [
         "Onoshko Dan"
     ],
     "description": "ColaScript translator / parser / mangler / compressor / beautifier toolkit",
-    "main": "./lib/browser-cola.js",
+    "main": "lib/browser-cola.js",
     "keywords": [
         "ColaScript",
         "Cola",
@@ -22,11 +22,6 @@
         "*.md",
         "colalogo.png",
         ".gitignore",
-        ".travis.yml",
-        "bower.json",
-        "demo.cola",
-        "demo.cola.js",
-        "LICENSE",
-        "package.json"
+        ".travis.yml"
     ]
 }

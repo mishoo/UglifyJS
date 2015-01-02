@@ -21,7 +21,8 @@ mangling you need to use `-c` and `-m`.\
 ")
     .describe("j", "Work with JavaScript (by default Cola will expect ColaScript).")
     .describe("n", "Enable compilation for node.")
-    .describe("k", "Path to packages.json (packages.json by default).")
+    .describe("P", "Path to packages.json (packages.json by default).")
+    .describe("i", "ignore `main` wrapping.")
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
@@ -29,7 +30,6 @@ mangling you need to use `-c` and `-m`.\
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default Cola will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
-    .describe("i", "ignore `main` binding.")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
 You can also specify -p relative, which will make Cola figure out itself the relative paths between original sources, \
@@ -61,6 +61,7 @@ parsed, but the source map will adjust for its presence.")
     .describe("acorn", "Use Acorn for parsing.")
     .describe("spidermonkey", "Assume input files are SpiderMonkey AST format (as JSON).")
     .describe("self", "Build itself (Cola) as a library (implies --wrap=Cola --export-all)")
+    .describe("browser-cola", "Build itself (Cola) for running Cola in browser.")
     .describe("wrap", "Embed everything in a big function, making the “exports” and “global” variables available. \
 You need to pass an argument to this option to specify the name that your module will take when included in, say, a browser.")
     .describe("export-all", "Only used when --wrap, this tells Cola to add code to automatically export all globals.")
@@ -72,8 +73,8 @@ You need to pass an argument to this option to specify the name that your module
     .alias("j", "js")
     .alias("j", "javascript")
     .alias("n", "node")
-    .alias("k", "packages")
-    .alias("i", "ignore-main-binding")
+    .alias("P", "packages")
+    .alias("i", "ignore-main-wrapping")
     .alias("p", "prefix")
     .alias("o", "output")
     .alias("v", "verbose")
@@ -85,7 +86,7 @@ You need to pass an argument to this option to specify the name that your module
     .alias("V", "version")
     .alias("e", "enclose")
 
-    .string("k")
+    .string("P")
     .string("source-map")
     .string("source-map-root")
     .string("source-map-url")
@@ -106,6 +107,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("screw-ie8")
     .boolean("export-all")
     .boolean("self")
+    .boolean("browser-cola")
     .boolean("v")
     .boolean("stats")
     .boolean("acorn")
@@ -204,6 +206,16 @@ if (ARGS.self) {
     files = Cola.FILES;
     if (!ARGS.wrap) ARGS.wrap = "Cola";
     ARGS.export_all = true;
+    ARGS.j = true;
+}
+
+if (ARGS.browser_cola) {
+    if (files.length > 0) {
+        sys.error("WARN: Ignoring input files since --self was passed");
+    }
+    files = Cola.FILES;
+    files.push(path.join(path.dirname(fs.realpathSync(__filename)), "../lib/browser.js"));
+    ARGS.j = true;
 }
 
 var ORIG_MAP = ARGS.in_source_map;
@@ -301,7 +313,7 @@ async.eachLimit(files, 1, function (file, cb) {
                     if (!ARGS.j) TOPLEVEL = TOPLEVEL.toJavaScript({ 
                         main_binding: !ARGS.i,
                         is_node: ARGS.n,
-                        modules: Cola.getPackages(ARGS.k),
+                        modules: Cola.getPackages(ARGS.P),
                         path: path.dirname(file),
                         parser: {
                             expression : ARGS.expr,
@@ -434,7 +446,7 @@ function getOptions(x, constants) {
             if (!ARGS.j) ast = ast.toJavaScript({ 
                 main_binding: !ARGS.i, 
                 is_node: ARGS.n, 
-                modules: Cola.getPackages(ARGS.k),
+                modules: Cola.getPackages(ARGS.P),
                 parser: { 
                     expression: true, 
                     is_js: ARGS.j 
