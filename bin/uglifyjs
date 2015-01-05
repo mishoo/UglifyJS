@@ -103,6 +103,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("V")
     .boolean("noerr")
     .boolean("bare-returns")
+    .boolean("keep-fnames")
 
     .wrap(80)
 
