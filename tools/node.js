@@ -97,8 +97,8 @@ exports.minify = function(files, options) {
 
     // 3. mangle
     if (options.mangle) {
-        toplevel.figure_out_scope();
-        toplevel.compute_char_frequency();
+        toplevel.figure_out_scope(options.mangle);
+        toplevel.compute_char_frequency(options.mangle);
         toplevel.mangle_names(options.mangle);
     }
 
