@@ -163,3 +163,17 @@ used_var_in_catch: {
         }
     }
 }
+
+keep_fnames: {
+    options = { unused: true, keep_fnames: true };
+    input: {
+        function foo() {
+            return function bar(baz) {};
+        }
+    }
+    expect: {
+        function foo() {
+            return function bar() {};
+        }
+    }
+}
