@@ -65,6 +65,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
     .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
+    .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -158,6 +159,11 @@ if (ARGS.screw_ie8) {
     if (COMPRESS) COMPRESS.screw_ie8 = true;
     if (MANGLE) MANGLE.screw_ie8 = true;
     OUTPUT_OPTIONS.screw_ie8 = true;
+}
+
+if (ARGS.keep_fnames) {
+    if (COMPRESS) COMPRESS.keep_fnames = true;
+    if (MANGLE) MANGLE.keep_fnames = true;
 }
 
 if (BEAUTIFY)
