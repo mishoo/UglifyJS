@@ -44,6 +44,11 @@ variable/function declared in another file will be matched properly.
 If you want to read from STDIN instead, pass a single dash instead of input
 files.
 
+If you wish to pass your options before the input files, separate the two with
+a double dash to prevent input files being used as option arguments:
+
+    uglifyjs --compress --mangle -- input.js
+
 The available options are:
 
 ```
