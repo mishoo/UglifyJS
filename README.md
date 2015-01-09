@@ -86,13 +86,14 @@ The available options are:
   -d, --define       Global definitions                                 [string]
   -e, --enclose      Embed everything in a big function, with a configurable
                      parameter/argument list.                           [string]
-  --comments         Preserve copyright comments in the output. By default this
-                     works like Google Closure, keeping JSDoc-style comments
-                     that contain "@license" or "@preserve". You can optionally
+  --comments         Preserve comments in the output.  You can optionally
                      pass one of the following arguments to this flag:
-                     - "all" to keep all comments
+                     - "all" or "true" to keep all comments
                      - a valid JS regexp (needs to start with a slash) to keep
                      only comments that match.
+                     For example, to keep JSDoc-style comments that contain
+                     "@license" or "@preserve", use this option:
+                     `comments: /@[Ll]icen[sc]e|@[Pp]reserve/`
                      Note that currently not *all* comments can be kept when
                      compression is on, because of dead code removal or
                      cascading statements into sequences.               [string]
