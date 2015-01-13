@@ -312,3 +312,57 @@ cond_7_1: {
         x = (y, 2);
     }
 }
+
+cond_8: {
+    options = {
+        conditionals: true,
+        evaluate    : true
+    };
+    input: {
+        // compress these
+        a = condition ? true : false;
+
+        a = !condition ? true : false;
+
+        a = condition() ? true : false;
+
+        if (condition) {
+            a = true;
+        } else {
+            a = false;
+        }
+
+        a = condition ? false : true;
+
+        a = !condition ? false : true;
+
+        a = condition() ? false : true;
+
+        if (condition) {
+            a = false;
+        } else {
+            a = true;
+        }
+
+        // don't compress these
+        a = condition ? 1 : false;
+
+        a = !condition ? true : 0;
+
+        a = condition ? 1 : 0;
+
+    }
+    expect: {
+        a = !!condition;
+        a = !condition;
+        a = !!condition();
+        a = !!condition;
+        a = !condition;
+        a = !!condition;
+        a = !condition();
+        a = !condition;
+        a = condition ? 1 : false;
+        a = condition ? 0 : true;
+        a = condition ? 1 : 0;
+    }
+}
