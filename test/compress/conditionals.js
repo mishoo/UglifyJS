@@ -343,6 +343,14 @@ cond_8: {
         } else {
             a = true;
         }
+
+        // don't compress these
+        a = condition ? 1 : false;
+
+        a = !condition ? true : 0;
+
+        a = condition ? 1 : 0;
+
     }
     expect: {
         a = !!condition;
@@ -353,5 +361,8 @@ cond_8: {
         a = !!condition;
         a = !condition();
         a = !condition;
+        a = condition ? 1 : false;
+        a = condition ? 0 : true;
+        a = condition ? 1 : 0;
     }
 }
