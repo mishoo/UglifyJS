@@ -6,6 +6,8 @@ var sys = require("util");
 var UglifyJS = vm.createContext({
     sys           : sys,
     console       : console,
+    process       : process,
+    Buffer        : Buffer,
     MOZ_SourceMap : require("source-map")
 });
 
@@ -33,7 +35,7 @@ var FILES = exports.FILES = [
     "../lib/sourcemap.js",
     "../lib/mozilla-ast.js"
 ].map(function(file){
-    return path.join(path.dirname(fs.realpathSync(__filename)), file);
+    return fs.realpathSync(path.join(path.dirname(__filename), file));
 });
 
 FILES.forEach(load_global);
@@ -95,8 +97,8 @@ exports.minify = function(files, options) {
 
     // 3. mangle
     if (options.mangle) {
-        toplevel.figure_out_scope();
-        toplevel.compute_char_frequency();
+        toplevel.figure_out_scope(options.mangle);
+        toplevel.compute_char_frequency(options.mangle);
         toplevel.mangle_names(options.mangle);
     }
 

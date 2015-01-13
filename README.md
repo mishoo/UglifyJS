@@ -1,6 +1,6 @@
 UglifyJS 2
 ==========
-[![Build Status](https://travis-ci.org/mishoo/UglifyJS2.png)](https://travis-ci.org/mishoo/UglifyJS2)
+[![Build Status](https://travis-ci.org/mishoo/UglifyJS2.svg)](https://travis-ci.org/mishoo/UglifyJS2)
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
@@ -43,6 +43,11 @@ variable/function declared in another file will be matched properly.
 
 If you want to read from STDIN instead, pass a single dash instead of input
 files.
+
+If you wish to pass your options before the input files, separate the two with
+a double dash to prevent input files being used as option arguments:
+
+    uglifyjs --compress --mangle -- input.js
 
 The available options are:
 
@@ -612,7 +617,7 @@ or, for a shortcut you can do:
 var code = compressed_ast.print_to_string(options);
 ```
 
-As usual, `options` is optional.  The output stream accepts a lot of otions,
+As usual, `options` is optional.  The output stream accepts a lot of options,
 most of them documented above in section “Beautifier options”.  The two
 which we care about here are `source_map` and `comments`.
 

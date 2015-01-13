@@ -5,12 +5,12 @@
 
 var UglifyJS = require("../tools/node");
 var sys = require("util");
-var optimist = require("optimist");
+var yargs = require("yargs");
 var fs = require("fs");
 var path = require("path");
 var async = require("async");
 var acorn;
-var ARGS = optimist
+var ARGS = yargs
     .usage("$0 input1.js [input2.js ...] [options]\n\
 Use a single dash to read input from the standard input.\
 \n\n\
@@ -64,6 +64,8 @@ You need to pass an argument to this option to specify the name that your module
     .describe("v", "Verbose")
     .describe("V", "Print version number and exit.")
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
+    .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
+    .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -100,6 +102,8 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("lint")
     .boolean("V")
     .boolean("noerr")
+    .boolean("bare-returns")
+    .boolean("keep-fnames")
 
     .wrap(80)
 
@@ -127,7 +131,7 @@ if (ARGS.ast_help) {
 }
 
 if (ARGS.h || ARGS.help) {
-    sys.puts(optimist.help());
+    sys.puts(yargs.help());
     process.exit(0);
 }
 
@@ -156,6 +160,11 @@ if (ARGS.screw_ie8) {
     if (COMPRESS) COMPRESS.screw_ie8 = true;
     if (MANGLE) MANGLE.screw_ie8 = true;
     OUTPUT_OPTIONS.screw_ie8 = true;
+}
+
+if (ARGS.keep_fnames) {
+    if (COMPRESS) COMPRESS.keep_fnames = true;
+    if (MANGLE) MANGLE.keep_fnames = true;
 }
 
 if (BEAUTIFY)
@@ -250,7 +259,7 @@ async.eachLimit(files, 1, function (file, cb) {
         }
         if (ARGS.p != null) {
             if (P_RELATIVE) {
-                file = path.relative(path.dirname(ARGS.source_map), file);
+                file = path.relative(path.dirname(ARGS.source_map), file).replace(/\\/g, '/');
             } else {
                 var p = parseInt(ARGS.p, 10);
                 if (!isNaN(p)) {
@@ -275,9 +284,10 @@ async.eachLimit(files, 1, function (file, cb) {
             else {
                 try {
                     TOPLEVEL = UglifyJS.parse(code, {
-                        filename   : file,
-                        toplevel   : TOPLEVEL,
-                        expression : ARGS.expr,
+                        filename     : file,
+                        toplevel     : TOPLEVEL,
+                        expression   : ARGS.expr,
+                        bare_returns : ARGS.bare_returns,
                     });
                 } catch(ex) {
                     if (ex instanceof UglifyJS.JS_Parse_Error) {
