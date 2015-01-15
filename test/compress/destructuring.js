@@ -32,3 +32,12 @@ destructuring_vardef_in_loops: {
     }
     expect_exact: "for(var[x,y]in pairs);for(var[a]=0;;);for(var{c}of cees);"
 }
+destructuring_expressions: {
+    input: {
+        ({a, b});
+        [{a}];
+        f({x});
+    }
+    expect_exact: "({a,b});[{a}];f({x});"
+}
+
