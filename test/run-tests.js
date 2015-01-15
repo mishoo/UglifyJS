@@ -28,6 +28,10 @@ run_ast_conversion_tests({
     iterations: 1000
 });
 
+var run_parser_tests = require('./parser.js');
+
+run_parser_tests();
+
 /* -----[ utils ]----- */
 
 function tmpl() {
