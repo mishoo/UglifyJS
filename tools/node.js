@@ -61,7 +61,8 @@ exports.minify = function(files, options) {
         warnings     : false,
         mangle       : {},
         output       : null,
-        compress     : {}
+        compress     : {},
+        comments     : false
     });
     UglifyJS.base54.reset();
 
@@ -123,6 +124,25 @@ exports.minify = function(files, options) {
         }
 
     }
+
+    //5. comments
+    if (options.comments) {
+        if (/^\//.test(options.comments)) {
+            output.comments = new Function("return(" + options.comments + ")")();
+        } else if (options.comments == "all") {
+            output.comments = true;
+        } else {
+            output.comments = function(node, comment) {
+                var text = comment.value;
+                var type = comment.type;
+                if (type == "comment2") {
+                    // multiline comment
+                    return /@preserve|@license|@cc_on/i.test(text);
+                }
+            };
+        }
+    }
+    
     if (options.output) {
         UglifyJS.merge(output, options.output);
     }
