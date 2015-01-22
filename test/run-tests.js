@@ -23,6 +23,8 @@ run_ast_conversion_tests({
     iterations: 1000
 });
 
+run_feature_extraction_tests();
+
 /* -----[ utils ]----- */
 
 function tmpl() {
@@ -109,6 +111,51 @@ function run_compress_tests() {
         test_file(file);
     });
 }
+
+
+function removeWhitespace(input){
+    return input.replace(/\s/g,"");
+}
+
+function run_feature_extraction_tests() {
+    var dir = test_directory("feature_extraction");
+    log_directory("feature_extraction");
+    var files = find_test_files(dir);
+    function test_file(file) {
+        log_start_file(file);
+        function test_case(test) {
+            log_test(test.name);
+
+            var features = "FNAMES,ASTREL";
+            if (test.options.hasOwnProperty("features")) {
+                features = test.options.features;
+            };
+
+            var expect = test.expect.body.value;
+
+            var input_code = make_code(test.input);
+            var output = U.extractFeatures(input_code, test.name, false, features);
+
+            if (removeWhitespace(expect) != removeWhitespace(output)) {
+                log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
+                    input: input_code,
+                    output: output,
+                    expected: expect
+                });
+                failures++;
+                failed_files[file] = 1;
+            }
+        }
+        var tests = parse_test(path.resolve(dir, file));
+        for (var i in tests) if (tests.hasOwnProperty(i)) {
+            test_case(tests[i]);
+        }
+    }
+    files.forEach(function(file){
+        test_file(file);
+    });
+}
+
 
 function parse_test(file) {
     var script = fs.readFileSync(file, "utf8");
