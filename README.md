@@ -8,8 +8,10 @@ The implementation of UnuglifyJS is based on [UglifyJS 2](https://github.com/mis
 
 This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/2Nice) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. An online demo of the Unuglify client is available at http://www.nice2predict.org.
 
-Install UnuglifyJS
+Install 
 -------
+
+#### UnuglifyJS
 
 First make sure you have installed the latest version of [node.js](http://nodejs.org/) and [NPM](https://www.npmjs.com/). (You may need to restart your computer after this step).
 
@@ -27,12 +29,15 @@ Once the sources are downloaded, install all the dependencies using NPM:
 
 > ./test/run-tests.js
 
-Install Nice 2 Predict
--------
+(Optional) Package for the browser. The UglifyJS2 provides a quick way to build itself for the browser using followig command:
+
+> ./bin/uglifyjs --self -o /tmp/uglify.js
+
+#### Nice 2 Predict
 
 To install Nice 2 Predict framework please follow the instructions on the https://github.com/eth-srl/2Nice page.
 
-Obtaining Training Dataset
+Obtaining Training Dataset (UnuglifyJS)
 -------
 
 As a first step we need to obtain a large number of JavaScript files that can be used to train the statistical model. This can be easily achieved by downloading large amount of projects from GitHub or other repositories. 
@@ -42,8 +47,6 @@ To produce the training dataset, from the `UnuglifyJS` directory run the followi
 > ./extract_features.py --dir . > training_data
 
 Here, the `--dir .` is used to specify which directory is searched for JavaScript files. In this demo we simply use the source files of the UnuglifyJS itself. While the script is runnig, you might notice output such as `Skipping minified file: './test/compress/issue-611.js'`. This is because our goal is to predict good variable names, therefore we do not want to train on already minified files.
-
-### Program Representation & Format
 
 Before we discuss how to train the statistical model, we briefly describe how the programs are represented and the format of the training dataset.
 
@@ -92,5 +95,26 @@ The JSON consists of two parts `query` describing the features and `assign` desc
 
 The training dataset produced by running UnuglifyJS simply consists of JSON program representations as shown above, one per line.
 
-Training
+Training (Nice2Predict)
 -------
+
+Succesfull compilation of `Nice2Predict` creates a training binary in `Nice2Predict` installation directory.
+To train to model we simply run:
+
+> ./bin/training/train --logtostderr -num_threads 16 --input training_data
+
+where training_data is the file produced in previous step and num_threads specifies how many threads should the training algorithm used. To get full options available for training (such as learning rate, regularization and margin), use:
+
+> ./bin/training/train --help
+
+As a result, it creates two files with the trained model: `model_strings` and `model_features`.
+
+Predicting Properties (Nice2Predict)
+-------
+
+To predict properties for new programs, start a server after a model was trained:
+
+> ./bin/server/nice2server --logtostderr
+
+Then, the server will predict properties for programs given in JsonRPC format. One can debug and observe deobfuscation from the viewer available in the [viewer/viewer.html](https://github.com/eth-srl/Nice2Predict/blob/master/viewer/viewer.html) (online demo available at http://www.nice2predict.org).
+
