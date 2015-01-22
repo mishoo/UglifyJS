@@ -1,12 +1,12 @@
-UnglifyJS
+UnuglifyJS
 ==========
 
-UnglifyJS is a JavaScript tool that renames variables and parameters to names based on statistical model learnt from thousands of open source projects.
+UnuglifyJS is a JavaScript tool that renames variables and parameters to names based on statistical model learnt from thousands of open source projects.
 This is on open-source reimplementation of the [JS Nice](http://www.jsnice.org) tool which provides similar functionality.
 
-The implementation of UnglifyJS is based on [UglifyJS 2](https://github.com/mishoo/UglifyJS2) -- parser, minifier, compressor or beautifier toolkit for JavaScript. 
+The implementation of UnuglifyJS is based on [UglifyJS 2](https://github.com/mishoo/UglifyJS2) -- parser, minifier, compressor or beautifier toolkit for JavaScript. 
 
-This page documents how to use the UnglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/2Nice) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. An online demo of the Unuglify client is available at http://www.nice2predict.org.
+This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/2Nice) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. An online demo of the Unuglify client is available at http://www.nice2predict.org.
 
 Install UnuglifyJS
 -------
@@ -41,10 +41,9 @@ To produce the training dataset, from the `UnuglifyJS` directory run the followi
 
 	./extract_features.py --dir . > training_data
 
-Here, the `--dir .` is used to specify which directory is searched for JavaScript files. In this demo we simply use the source files of the UnglifyJS itself. While the script is runnig, you might notice output such as `Skipping minified file: './test/compress/issue-611.js'`. This is because our goal is to predict good variable names, therefore we do not want to train on already minified files.
+Here, the `--dir .` is used to specify which directory is searched for JavaScript files. In this demo we simply use the source files of the UnuglifyJS itself. While the script is runnig, you might notice output such as `Skipping minified file: './test/compress/issue-611.js'`. This is because our goal is to predict good variable names, therefore we do not want to train on already minified files.
 
-Program Representation & Format
--------
+### Program Representation & Format
 
 Before we discuss how to train the statistical model, we briefly describe how the programs are represented and the format of the training dataset.
 
@@ -72,9 +71,9 @@ We illustrate the program representation using the following code snippet `var a
 ##### Program Format
 
 The program representation as described above is translated into a JSON format which the 2Nice server can process. 
-The JSON consists of two parts 'query' describing the features and 'assign' describing the properties and their initial assignments with the attribute 'giv' or 'inf' for known and unknown properties respectively. That is, the JSON representation of the code snippet `var a = s in _MAP;` is:
+The JSON consists of two parts `query` describing the features and `assign` describing the properties and their initial assignments with the attribute `giv` or `inf` for known and unknown properties respectively. That is, the JSON representation of the code snippet `var a = s in _MAP;` is:
 
-```
+```JSON
 {
  "query":[
   {"a": 0,	"b": 1,	"f2": ":VarDef:Binaryin[0]"},
@@ -89,4 +88,7 @@ The JSON consists of two parts 'query' describing the features and 'assign' desc
 }
 ```
 
+##### Training Dataset Format
+
+The training dataset produced by running UnuglifyJS simply consists of JSON program representations, one per line.
 
