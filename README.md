@@ -13,19 +13,19 @@ Install UnuglifyJS
 
 First make sure you have installed the latest version of [node.js](http://nodejs.org/) and [NPM](https://www.npmjs.com/). (You may need to restart your computer after this step).
 
-	sudo apt-get install nodejs npm
+> sudo apt-get install nodejs npm
 
 Download UnuglifyJS git repository:
 
-	git clone https://github.com/eth-srl/UnuglifyJS.git
+> git clone https://github.com/eth-srl/UnuglifyJS.git
 	
 Once the sources are downloaded, install all the dependencies using NPM:
 
-	sudo npm install
+> sudo npm install
 
 (Optional) Check that everything is installed correctly by running the tests:
 
-	./test/run-tests.js
+> ./test/run-tests.js
 
 Install Nice 2 Predict
 -------
@@ -39,7 +39,7 @@ As a first step we need to obtain a large number of JavaScript files that can be
 
 To produce the training dataset, from the `UnuglifyJS` directory run the following script:
 
-	./extract_features.py --dir . > training_data
+> ./extract_features.py --dir . > training_data
 
 Here, the `--dir .` is used to specify which directory is searched for JavaScript files. In this demo we simply use the source files of the UnuglifyJS itself. While the script is runnig, you might notice output such as `Skipping minified file: './test/compress/issue-611.js'`. This is because our goal is to predict good variable names, therefore we do not want to train on already minified files.
 
@@ -90,5 +90,7 @@ The JSON consists of two parts `query` describing the features and `assign` desc
 
 ##### Training Dataset Format
 
-The training dataset produced by running UnuglifyJS simply consists of JSON program representations, one per line.
+The training dataset produced by running UnuglifyJS simply consists of JSON program representations as shown above, one per line.
 
+Training
+-------
