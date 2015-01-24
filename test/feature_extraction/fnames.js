@@ -244,3 +244,38 @@ func_return: {
 		}'
 	}
 }
+
+func_scopes: {
+	options = {
+		features	: "FNAMES, FSCOPE"
+	};
+	input: {
+		function foo(x,b){
+			var a = x + y + 1;
+			(function(r) {
+				return r + x;
+			})(2);
+		}
+	}
+	expect: {
+		'{
+			"query":[
+			{"a": 0,	"b": 1,	"f2": "FNPAR"},
+			{"a": 0,	"b": 2,	"f2": "FNPAR"},
+			{"a": 0,	"b": 3,	"f2": "FNDECL"},
+			{"cn":"!=", "n":[0,4]},
+			{"cn":"!=", "n":[0,1,2,3,4]},
+			{"cn":"!=", "n":[1,4,5]}
+			],
+			"assign":[
+			{"v": 0,	"giv": "foo"},
+			{"v": 1,	"inf": "x"},
+			{"v": 2,	"inf": "b"},
+			{"v": 3,	"inf": "a"},
+			{"v": 4,	"giv": "y"},
+			{"v": 5,	"inf": "r"}
+			]
+		}'
+	}
+}
+

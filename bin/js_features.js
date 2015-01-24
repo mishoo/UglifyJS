@@ -15,9 +15,10 @@ var ARGS = yargs
 	.describe("skip_minified", "Whether to skip processing minified files")
 	.describe("features", "Comma separated list of features: \n" + 
          "ASTREL - relations in AST, \n" + 
-         "FNAMES - function names to internal calls")
+         "FNAMES - function names to internal calls,\n" +
+		 "FSCOPE - add variable scope constraints.")
 	.demand(1)
-	.default('features', 'ASTREL,FNAMES')	
+	.default('features', 'ASTREL,FNAMES,FSCOPE')
 	.boolean("print_ast")
 	.boolean("skip_minified")
 	.boolean("json_formatting")
@@ -45,8 +46,8 @@ if (ARGS.features === true) {
 
 var features = ARGS.features.split(",");
 for (var i = 0; i < features.length; i++) {
-	if (features[i] != "FNAMES" && features[i] != "ASTREL") {
-		sys.error("WARNING: ignoring not suppored feature '" + features[i] + "'.");
+	if (features[i] != "FNAMES" && features[i] != "ASTREL" && features[i] != "FSCOPE") {
+		sys.error("WARNING: ignoring not supported feature '" + features[i] + "'.");
 	};
 };
 
