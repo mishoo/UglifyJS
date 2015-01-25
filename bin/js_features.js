@@ -80,12 +80,12 @@ function processFile(file, print_ast, features, json_formatting, skip_minified) 
 	try {
 		var output = UglifyJS.extractFeatures(code, file, print_ast, features, skip_minified);
 	} catch (ex){
-		if (ex instanceof UglifyJS.JS_Parse_Error){
-			sys.error("ERROR: ".red + "cannot parse file '" + file + "'");
-		} else if (ex instanceof  UglifyJS.JS_Minified_Error){
+		if (ex instanceof UglifyJS.Parse_Error){
+			sys.error("ERROR: ".red + "cannot parse file '" + file + "': " + ex.message);
+		} else if (ex instanceof  UglifyJS.Minified_Error){
 			//sys.error("WARN: ".yellow + "skipping minified file '" + file + "'");
 		} else {
-			sys.error("ERROR: ".red + "'" + file + "'" + ex);
+			sys.error("ERROR: ".red + "'" + file + "': " + ex);
 		}
 
 		return;
