@@ -83,9 +83,9 @@ function processFile(file, print_ast, features, json_formatting, skip_minified) 
 		if (ex instanceof UglifyJS.JS_Parse_Error){
 			sys.error("ERROR: ".red + "cannot parse file '" + file + "'");
 		} else if (ex instanceof  UglifyJS.JS_Minified_Error){
-			sys.error("WARN: ".yellow + "skipping minified file '" + file + "'");
+			//sys.error("WARN: ".yellow + "skipping minified file '" + file + "'");
 		} else {
-			sys.error("ERROR: ".red + "'" + file + "'" + e);
+			sys.error("ERROR: ".red + "'" + file + "'" + ex);
 		}
 
 		return;
@@ -109,9 +109,9 @@ function processFile(file, print_ast, features, json_formatting, skip_minified) 
 
     if (removeWhitespace(output) != '{"query":[],"assign":[]}') {
     	console.log(output);
-		sys.error("OK: ".green + "'" + file + "'");
+		//sys.error("OK: ".green + "'" + file + "'");
     } else {
-		sys.error("EMPTY: ".yellow + "'" + file + "'");
+		sys.error("WARN: ".yellow + " no features extracted '" + file + "'");
 	}
 	
 }
