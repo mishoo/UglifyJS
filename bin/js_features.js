@@ -1,4 +1,4 @@
-//#! /usr/bin/env nodejs
+#! /usr/bin/env node
 // -*- js -*-
 
 "use strict";
@@ -22,7 +22,10 @@ var ARGS = yargs
          "ASTREL - relations in AST, \n" + 
          "FNAMES - function names to internal calls,\n" +
 		 "FSCOPE - add variable scope constraints.")
+	.describe("package", "Build itself (UnuglifyJS) as a library")
+	.describe("V", "Print version number and exit.")
 	//.demand(1)
+	.alias("V", "version")
 	.default('features', 'ASTREL,FNAMES,FSCOPE')
 	.default('nice2predict_server', 'www.nice2predict.org:5745')
 	.default('rename', true)
@@ -31,11 +34,13 @@ var ARGS = yargs
 	.boolean("print_ast")
 	.boolean("skip_minified")
 	.boolean("nice_formatting")
+	.boolean("package")
+	.boolean("V")
 	.string("features")
 	.string("nice2predict_server")
 	.wrap(80)
 	.check(function(argv, options){
-		if (argv._.length == 0){
+		if (argv._.length == 0 && !argv.package){
 			throw "ERROR: ".red + "Nothing to analyze. No input file provided.";
 		}
 	})
@@ -43,6 +48,12 @@ var ARGS = yargs
 ;
 
 normalize(ARGS);
+
+if (ARGS.version || ARGS.V) {
+	var json = require("../package.json");
+	sys.puts(json.name + ' ' + json.version);
+	process.exit(0);
+}
 
 if (ARGS.h || ARGS.help) {
 	sys.puts(yargs.help());
@@ -76,16 +87,21 @@ for (var i = 0; i < features.length; i++) {
 	}
 }
 
-for (var i = 0; i < files.length; i++) {
-	processFile(files[i]);
+if (ARGS.package) {
+	if (files.length > 0) {
+		sys.error("WARN: ".yellow + "Ignoring input files since --package was passed");
+	}
+	files = UglifyJS.FILES;
+	ARGS.wrap = "UglifyJS";
+	ARGS.export_all = true;
+
 }
 
-function stripInterpreter(code){
-	if (code.slice(0,2) != "#!"){
-		return code;
-	}
+var json_rpc_id = 0;
+var TOPLEVEL = null;
 
-	return code.slice(code.indexOf('\n') + 1);
+for (var i = 0; i < files.length; i++) {
+	processFile(files[i]);
 }
 
 function processFile(file) {
@@ -100,6 +116,24 @@ function processFile(file) {
 
 	//if it is a script, the UglifyJS parser will fail to parse it
 	code = stripInterpreter(code);
+
+	if (ARGS.package){
+		try {
+			TOPLEVEL = UglifyJS.parse(code, {
+				filename     : file,
+				toplevel     : TOPLEVEL
+			});
+		} catch(ex) {
+			if (ex instanceof UglifyJS.JS_Parse_Error) {
+				sys.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
+				sys.error(ex.message);
+				sys.error(ex.stack);
+				process.exit(1);
+			}
+			throw ex;
+		}
+		return;
+	}
 
 	try {
 		var output = UglifyJS.extractFeatures(code, file, ARGS.print_ast, ARGS.features, ARGS.skip_minified);
@@ -146,7 +180,11 @@ function processFile(file) {
 		if (removeWhitespace(output) != '{"query":[],"assign":[]}') {
 			console.log(output);
 		}
-	} else if (ARGS.rename){
+
+		return;
+	}
+
+	if (ARGS.rename){
 		callServer(
 			HOST,
 			PORT,
@@ -171,10 +209,29 @@ function processFile(file) {
 			function(err) {
 				sys.error("ERROR: ".red + "connecting to server '" + HOST + ":" + PORT + "' " + err);
 			});
+		return;
 	}
 }
 
-var json_rpc_id = 0;
+if (ARGS.package){
+	try {
+		var output = UglifyJS.OutputStream({});
+	} catch(ex) {
+		if (ex instanceof UglifyJS.DefaultsError) {
+			sys.error(ex.msg);
+			sys.error("Supported options:");
+			sys.error(sys.inspect(ex.defs));
+			process.exit(1);
+		}
+	}
+
+	TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
+	TOPLEVEL.print(output);
+
+	output = output.get();
+
+	sys.print(output);
+}
 
 function callServer(server, port, methodName, params, success_cb, error_cb) {
 	var req = {
@@ -225,4 +282,12 @@ function normalize(o) {
 
 function removeWhitespace(input){
     return input.replace(/\s/g,"");
+}
+
+function stripInterpreter(code){
+	if (code.slice(0,2) != "#!"){
+		return code;
+	}
+
+	return code.slice(code.indexOf('\n') + 1);
 }
