@@ -7,7 +7,6 @@ var UglifyJS = require("../tools/node");
 var sys = require("util");
 var yargs = require("yargs");
 var fs = require("fs");
-var colors = require("colors");
 var http = require('http');
 
 var ARGS = yargs
@@ -23,6 +22,7 @@ var ARGS = yargs
          "FNAMES - function names to internal calls,\n" +
 		 "FSCOPE - add variable scope constraints.")
 	.describe("package", "Build itself (UnuglifyJS) as a library")
+	.describe("colored", "Add colors to the output")
 	.describe("V", "Print version number and exit.")
 	//.demand(1)
 	.alias("V", "version")
@@ -36,6 +36,7 @@ var ARGS = yargs
 	.boolean("nice_formatting")
 	.boolean("package")
 	.boolean("V")
+	.boolean("colors")
 	.string("features")
 	.string("nice2predict_server")
 	.wrap(80)
@@ -48,6 +49,27 @@ var ARGS = yargs
 ;
 
 normalize(ARGS);
+
+if (ARGS.colors){
+	require("colors");
+} else {
+	// in case we dont use colors simply return the string
+	var addProperty = function (color, func) {
+		String.prototype.__defineGetter__(color, func);
+	};
+
+	addProperty('red', function () {
+		return this;
+	});
+
+	addProperty('green', function () {
+		return this;
+	});
+
+	addProperty('yellow', function () {
+		return this;
+	});
+}
 
 if (ARGS.version || ARGS.V) {
 	var json = require("../package.json");
