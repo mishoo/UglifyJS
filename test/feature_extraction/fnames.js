@@ -90,7 +90,7 @@ inner_lambda_assign_local: {
 			{"v": 1,	"inf": "x"},
 			{"v": 2,	"inf": "local"},
 			{"v": 3,	"giv": "log"},
-			{"v": 4,	"giv": "hello"}
+			{"v": 4,	"giv": "!String!hello"}
 			]
 		}'
 	}

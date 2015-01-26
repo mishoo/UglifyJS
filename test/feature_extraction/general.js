@@ -10,11 +10,11 @@ truncate_constants: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef:"}
+			{"a": 0,	"b": 1,	"f2": ":VarDef[1]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "x"},
-			{"v": 1,	"giv": "very%20long%20string%2C%20very%20long%20string%2C%20very%20long%20string%2C%20very%20long%20"}
+			{"v": 1,	"giv": "!String!very%20long%20string%2C%20very%20long%20string%2C%20very%20long%20string%2C%20very%20long%20"}
 			]
 		}'
 	}
@@ -32,11 +32,11 @@ escape_constants: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef:"}
+			{"a": 0,	"b": 1,	"f2": ":VarDef[1]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "x"},
-			{"v": 1,	"giv": "%22quoted%20text%22"}
+			{"v": 1,	"giv": "!String!%22quoted%20text%22"}
 			]
 		}'
 	}
@@ -58,19 +58,19 @@ var_scope: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef:"},
-			{"a": 2,	"b": 3,	"f2": ":VarDef:"},
-			{"a": 4,	"b": 0,	"f2": ":VarDef:Binary+[0]"},
-			{"a": 4,	"b": 2,	"f2": ":VarDef:Binary+[1]"},
-			{"a": 0,	"b": 2,	"f2": ":Binary+:"},
-			{"a": 4,	"b": 0,	"f2": ":Assign=:Binary+[0]"},
-			{"a": 4,	"b": 2,	"f2": ":Assign=:Binary+[1]"}
+			{"a": 0,	"b": 1,	"f2": ":VarDef[1]"},
+			{"a": 2,	"b": 3,	"f2": ":VarDef[1]"},
+			{"a": 4,	"b": 0,	"f2": ":VarDef[1]Binary+[0]"},
+			{"a": 4,	"b": 2,	"f2": ":VarDef[1]Binary+[1]"},
+			{"a": 0,	"b": 2,	"f2": ":Binary+[1]"},
+			{"a": 4,	"b": 0,	"f2": ":Assign=[1]Binary+[0]"},
+			{"a": 4,	"b": 2,	"f2": ":Assign=[1]Binary+[1]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "a"},
-			{"v": 1,	"giv": "1"},
+			{"v": 1,	"giv": "!Number!1"},
 			{"v": 2,	"inf": "b"},
-			{"v": 3,	"giv": "2"},
+			{"v": 3,	"giv": "!Number!2"},
 			{"v": 4,	"inf": "x"}
 			]
 		}'
@@ -93,10 +93,10 @@ this_scope: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Assign=:"},			
-			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=:"},
-			{"a": 0,	"b": 3,	"f2": ":Assign=:"},			
-			{"a": 2,	"b": 3,	"f2": "Dot[0]:Assign=:"}
+			{"a": 0,	"b": 1,	"f2": ":Assign=[1]"},			
+			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=[1]"},
+			{"a": 0,	"b": 3,	"f2": ":Assign=[1]"},			
+			{"a": 2,	"b": 3,	"f2": "Dot[0]:Assign=[1]"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "x"},
@@ -120,8 +120,8 @@ this_is_given: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Assign=:"},			
-			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=:"}
+			{"a": 0,	"b": 1,	"f2": ":Assign=[1]"},			
+			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=[1]"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "x"},
@@ -146,10 +146,10 @@ this_attr_scope: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Assign=:"},			
-			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=:"},
-			{"a": 0,	"b": 3,	"f2": ":Assign=:"},
-			{"a": 2,	"b": 3,	"f2": "Dot[0]:Assign=:"}
+			{"a": 0,	"b": 1,	"f2": ":Assign=[1]"},			
+			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=[1]"},
+			{"a": 0,	"b": 3,	"f2": ":Assign=[1]"},
+			{"a": 2,	"b": 3,	"f2": "Dot[0]:Assign=[1]"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "x"},
@@ -241,8 +241,8 @@ func_no_duplicates: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef:New[0]"},
-			{"a": 0,	"b": 1,	"f2": ":Assign=:New[0]"}
+			{"a": 0,	"b": 1,	"f2": ":VarDef[1]New[0]"},
+			{"a": 0,	"b": 1,	"f2": ":Assign=[1]New[0]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "a"},
@@ -265,13 +265,16 @@ func_allow_different_features_duplicates: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Dot:"},
-			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call:"}
+			{"a": 0,	"b": 1,	"f2": ":Dot[0]"},
+			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[1]"},
+			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[2]"},
+			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[3]"},
+			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[4]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "x"},
 			{"v": 1,	"giv": "foo"},
-			{"v": 2,	"giv": "42"}
+			{"v": 2,	"giv": "!Number!42"}
 			]
 		}'
 	}
@@ -287,7 +290,7 @@ method_name_fixed: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Dot:"},
+			{"a": 0,	"b": 1,	"f2": ":Dot[0]"},
 			{"a": 2,	"b": 0,	"f2": "FNPAR"}
 			],
 			"assign":[
