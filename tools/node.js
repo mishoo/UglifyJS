@@ -133,9 +133,14 @@ exports.minify = function(files, options) {
         stream += "\n//# sourceMappingURL=" + options.outSourceMap;
     }
 
+    var source_map = output.source_map;
+    if (source_map) {
+        source_map = source_map + "";
+    }
+
     return {
         code : stream + "",
-        map  : output.source_map + ""
+        map  : source_map
     };
 };
 
