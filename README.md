@@ -11,9 +11,31 @@ This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict
 NPM Module 
 -------
 
-comming soon.
+The npm module is available at https://www.npmjs.com/package/unuglify-js. To install run:
 
-Install 
+> sudo npm install unuglify-js --global
+
+To use the UnuglifyJS simply supply the JavaScript file to be analyzed. For example:
+
+```JavaScript
+//demo.js - minified file
+function f(a,b,c) {
+  b.open('GET', a, false);
+  b.send(c);
+}
+```
+
+> unuglifyjs demo.js > demo_renamed.js
+
+```JavaScript
+//demo_renamed.js
+function f(fileUrl, req, message) {
+  req.open('GET', fileUrl, false);
+  req.send(message);
+}
+```
+
+Install from Source
 -------
 
 #### UnuglifyJS
