@@ -8,6 +8,11 @@ The implementation of UnuglifyJS is based on [UglifyJS 2](https://github.com/mis
 
 This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/2Nice) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. A live demo of the Unuglify client is available at http://www.nice2predict.org.
 
+NPM Module 
+-------
+
+comming soon.
+
 Install 
 -------
 
