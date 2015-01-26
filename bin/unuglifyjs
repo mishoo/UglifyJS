@@ -40,7 +40,7 @@ var ARGS = yargs
 	.string("nice2predict_server")
 	.wrap(80)
 	.check(function(argv, options){
-		if (argv._.length == 0 && !argv.package){
+		if (argv._.length == 0 && !argv.package && !argv.version){
 			throw "ERROR: ".red + "Nothing to analyze. No input file provided.";
 		}
 	})
