@@ -119,6 +119,11 @@ function processFile(file) {
 		return;
 	}
 
+	if (ARGS.print_ast){
+		console.log(output);
+		return;
+	}
+
 	if (!ARGS.nice_formatting) {
 		output = removeWhitespace(output);
 	}
@@ -155,10 +160,16 @@ function processFile(file) {
 						inferred_names[result[i].v] = result[i].inf.green;
 					}
 				}
-				console.log(UglifyJS.replaceMangled(code, file, inferred_names));
+				try {
+					var renamed_js = UglifyJS.replaceMangled(code, file, inferred_names);
+					console.log(renamed_js);
+				} catch (ex){
+					sys.error("ERROR: ".red + "failed rename '" + file + "': " + ex);
+				}
+
 			},
 			function(err) {
-				console.log("ERROR: ".red + "connecting to server '" + HOST + ":" + PORT + "' " + err);
+				sys.error("ERROR: ".red + "connecting to server '" + HOST + ":" + PORT + "' " + err);
 			});
 	}
 }
