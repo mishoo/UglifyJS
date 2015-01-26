@@ -138,7 +138,9 @@ function processFile(file) {
 	}
 
 	if (ARGS.extract_features) {
-		console.log(output);
+		if (removeWhitespace(output) != '{"query":[],"assign":[]}') {
+			console.log(output);
+		}
 	} else if (ARGS.rename){
 		callServer(
 			HOST,
