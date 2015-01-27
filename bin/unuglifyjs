@@ -8,6 +8,7 @@ var sys = require("util");
 var yargs = require("yargs");
 var fs = require("fs");
 var http = require('http');
+var json = require("../package.json");
 
 var ARGS = yargs
 	.usage("$0 input1.js \n")
@@ -72,7 +73,7 @@ if (ARGS.colors){
 }
 
 if (ARGS.version || ARGS.V) {
-	var json = require("../package.json");
+	//var json = require("../package.json");
 	sys.puts(json.name + ' ' + json.version);
 	process.exit(0);
 }
@@ -213,18 +214,26 @@ function processFile(file) {
 			"infer",
 			JSON.parse(output),
 			function(data) {
-				var result = JSON.parse(data).result;
-				var inferred_names = {};
-				for (var i = 0; i < result.length; i++) {
-					if (result[i].hasOwnProperty("inf")) {
-						inferred_names[result[i].v] = result[i].inf.green;
-					}
+				var data_json = JSON.parse(data);
+				if (data_json.hasOwnProperty('error')){
+					console.log("ERROR: ".red + data_json.error.message);
 				}
-				try {
-					var renamed_js = UglifyJS.replaceMangled(code, file, inferred_names);
-					console.log(renamed_js);
-				} catch (ex){
-					sys.error("ERROR: ".red + "failed rename '" + file + "': " + ex);
+				else if (data_json.hasOwnProperty('result')) {
+					var result = data_json.result;
+					var inferred_names = {};
+					for (var i = 0; i < result.length; i++) {
+						if (result[i].hasOwnProperty("inf")) {
+							inferred_names[result[i].v] = result[i].inf.green;
+						}
+					}
+					try {
+						var renamed_js = UglifyJS.replaceMangled(code, file, inferred_names);
+						console.log(renamed_js);
+					} catch (ex) {
+						sys.error("ERROR: ".red + "failed rename '" + file + "': " + ex);
+					}
+				} else {
+					sys.error("ERROR: ".red + "undefined response. Try to update unuglify-js to the latest version by 'npm update -g unuglify-js'");
 				}
 
 			},
@@ -261,6 +270,7 @@ function callServer(server, port, methodName, params, success_cb, error_cb) {
 		method : methodName,
 		id : (++json_rpc_id)
 	};
+	params.version = json.version;
 	req.params = params;
 	var post_data = JSON.stringify(req);
 
