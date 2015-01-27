@@ -66,6 +66,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
     .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
     .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
+    .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -77,6 +78,7 @@ You need to pass an argument to this option to specify the name that your module
     .alias("r", "reserved")
     .alias("V", "version")
     .alias("e", "enclose")
+    .alias("q", "quotes")
 
     .string("source-map")
     .string("source-map-root")
@@ -151,9 +153,14 @@ if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
+if (ARGS.quotes === true) {
+    ARGS.quotes = 3;
+}
+
 var OUTPUT_OPTIONS = {
-    beautify: BEAUTIFY ? true : false,
-    preamble: ARGS.preamble || null,
+    beautify    : BEAUTIFY ? true : false,
+    preamble    : ARGS.preamble || null,
+    quote_style : ARGS.quotes != null ? ARGS.quotes : 0
 };
 
 if (ARGS.screw_ie8) {

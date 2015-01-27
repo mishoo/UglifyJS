@@ -352,6 +352,13 @@ can pass additional arguments that control the code output:
   it will be prepended to the output literally.  The source map will
   adjust for this text.  Can be used to insert a comment containing
   licensing information, for example.
+- `quote_style` (default `0`) -- preferred quote style for strings (affects
+  quoted property names and directives as well):
+  - `0` -- prefers double quotes, switches to single quotes when there are
+    more double quotes in the string itself.
+  - `1` -- always use single quotes
+  - `2` -- always use double quotes
+  - `3` -- always use the original quotes
 
 ### Keeping copyright notices or other comments
 
