@@ -265,14 +265,14 @@ if (ARGS.package){
 }
 
 function callServer(server, port, methodName, params, success_cb, error_cb) {
-	var req = {
+	var data = {
 		jsonrpc : '2.0',
 		method : methodName,
 		id : (++json_rpc_id)
 	};
 	params.version = json.version;
-	req.params = params;
-	var post_data = JSON.stringify(req);
+	data.params = params;
+	var post_data = JSON.stringify(data);
 
 	var options = {
 		host: server,
