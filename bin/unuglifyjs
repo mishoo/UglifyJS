@@ -223,7 +223,7 @@ function processFile(file) {
 					var inferred_names = {};
 					for (var i = 0; i < result.length; i++) {
 						if (result[i].hasOwnProperty("inf")) {
-							inferred_names[result[i].v] = result[i].inf.green;
+							inferred_names[result[i].v] = UglifyJS.unescapeString(result[i].inf).green;
 						}
 					}
 					try {
