@@ -83,14 +83,14 @@ inner_lambda_assign_local: {
 			{"a": 0,	"b": 1,	"f2": "FNPAR"},
 			{"a": 0,	"b": 2,	"f2": "FNDECL"},
 			{"a": 2,	"b": 3,	"f2": "FNCALL"},			
-			{"a": 2,	"b": 4,	"f2": "FNSTRING"}			
+			{"a": 2,	"b": 4,	"f2": "FNSTRING-String"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "chunkData"},
 			{"v": 1,	"inf": "x"},
 			{"v": 2,	"inf": "local"},
 			{"v": 3,	"giv": "log"},
-			{"v": 4,	"giv": "!String!hello"}
+			{"v": 4,	"giv": "hello"}
 			]
 		}'
 	}
@@ -134,10 +134,10 @@ inner_lambda_assign_sub: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": "FNPAR"}
+			{"a": 0,	"b": 1,	"f2": "[]-FNPAR"}
 			],
 			"assign":[
-			{"v": 0,	"giv": "global%5B%5D"},
+			{"v": 0,	"giv": "global"},
 			{"v": 1,	"inf": "a"}
 			]
 		}'
@@ -187,10 +187,10 @@ inner_lambda_arg: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": "FNPAR"}
+			{"a": 0,	"b": 1,	"f2": "(2)-FNPAR"}
 			],
 			"assign":[
-			{"v": 0,	"giv": "substring(2)"},
+			{"v": 0,	"giv": "substring"},
 			{"v": 1,	"inf": "x"}
 			]
 		}'
@@ -211,10 +211,10 @@ inner_lambda_arg2: {
 	expect: {
 		'{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": "FNPAR"}
+			{"a": 0,	"b": 1,	"f2": "(2)-FNPAR"}
 			],
 			"assign":[
-			{"v": 0,	"giv": "substring(2)"},
+			{"v": 0,	"giv": "substring"},
 			{"v": 1,	"inf": "b"}
 			]
 		}'
