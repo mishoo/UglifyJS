@@ -178,8 +178,13 @@ if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
 if (ARGS.comments) {
-    if (/^\//.test(ARGS.comments)) {
-        OUTPUT_OPTIONS.comments = new Function("return(" + ARGS.comments + ")")();
+    if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
+        var regex_pos = ARGS.comments.lastIndexOf("/");
+        try {
+            OUTPUT_OPTIONS.comments = new RegExp(ARGS.comments.substr(1, regex_pos - 1), ARGS.comments.substr(regex_pos + 1));
+        } catch (e) {
+            sys.error("ERROR: Invalid --comments: " + e.message);
+        }
     } else if (ARGS.comments == "all") {
         OUTPUT_OPTIONS.comments = true;
     } else {
