@@ -57,6 +57,7 @@ exports.minify = function(files, options) {
         outSourceMap : null,
         sourceRoot   : null,
         inSourceMap  : null,
+        sourceMapURL : null,
         fromString   : false,
         warnings     : false,
         mangle       : {},
@@ -130,7 +131,7 @@ exports.minify = function(files, options) {
     toplevel.print(stream);
 
     if(options.outSourceMap){
-        stream += "\n//# sourceMappingURL=" + options.outSourceMap;
+        stream += "\n//# sourceMappingURL=" + (options.sourceMapURL || options.outSourceMap);
     }
 
     var source_map = output.source_map;
