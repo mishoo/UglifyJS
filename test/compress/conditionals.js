@@ -53,6 +53,7 @@ ifs_3_should_warn: {
         booleans     : true
     };
     input: {
+        var x, y;
         if (x && !(x + "1") && y) { // 1
             var qq;
             foo();
@@ -68,6 +69,7 @@ ifs_3_should_warn: {
         }
     }
     expect: {
+        var x, y;
         var qq; bar();          // 1
         var jj; foo();          // 2
     }

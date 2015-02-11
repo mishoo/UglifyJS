@@ -72,7 +72,7 @@ dead_code_constant_boolean_should_warn_more: {
             var foo;
             function bar() {}
         }
-        for (var x = 10; x && (y || x) && (!typeof x); ++x) {
+        for (var x = 10, y; x && (y || x) && (!typeof x); ++x) {
             asdf();
             foo();
             var moo;
@@ -83,7 +83,7 @@ dead_code_constant_boolean_should_warn_more: {
         function bar() {}
         // nothing for the while
         // as for the for, it should keep:
-        var x = 10;
+        var x = 10, y;
         var moo;
     }
 }
