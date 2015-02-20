@@ -3,7 +3,7 @@
   "description": "JavaScript tool that renames variables and parameters to names based on statistical model learnt from thousands of open source projects",
     "homepage": "https://github.com/eth-srl/UnuglifyJS",
     "main": "tools/node.js",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "engines": { "node" : ">=0.4.0" },
     "maintainers": [{
         "name": "Pavol Bielik",
