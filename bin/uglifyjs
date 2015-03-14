@@ -159,6 +159,7 @@ if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
+var RESERVED = null;
 if (ARGS.reserved_file) (function(){
     var data = fs.readFileSync(ARGS.reserved_file, "utf8");
     RESERVED = data = JSON.parse(data);
@@ -258,7 +259,6 @@ var OUTPUT_FILE = ARGS.o;
 var TOPLEVEL = null;
 var P_RELATIVE = ARGS.p && ARGS.p == "relative";
 var SOURCES_CONTENT = {};
-var RESERVED = null;
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
     file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
