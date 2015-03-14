@@ -33,7 +33,8 @@ var FILES = exports.FILES = [
     "../lib/output.js",
     "../lib/compress.js",
     "../lib/sourcemap.js",
-    "../lib/mozilla-ast.js"
+    "../lib/mozilla-ast.js",
+    "../lib/propmangle.js"
 ].map(function(file){
     return fs.realpathSync(path.join(path.dirname(__filename), file));
 });

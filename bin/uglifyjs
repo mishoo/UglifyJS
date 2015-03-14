@@ -67,6 +67,9 @@ You need to pass an argument to this option to specify the name that your module
     .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
     .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
     .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
+    .describe("reserved-file", "File containing reserved names")
+    .describe("mangle-props", "Mangle property names")
+    .describe("prop-cache", "File to hold mangled properties mapping")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -91,6 +94,8 @@ You need to pass an argument to this option to specify the name that your module
     .string("comments")
     .string("wrap")
     .string("p")
+    .string("reserved-file")
+    .string("prop-cache")
 
     .boolean("expr")
     .boolean("source-map-include-sources")
@@ -106,6 +111,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("noerr")
     .boolean("bare-returns")
     .boolean("keep-fnames")
+    .boolean("mangle-props")
 
     .wrap(80)
 
@@ -152,6 +158,16 @@ if (ARGS.d) {
 if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
+
+if (ARGS.reserved_file) (function(){
+    var data = fs.readFileSync(ARGS.reserved_file, "utf8");
+    RESERVED = data = JSON.parse(data);
+    if (data.vars) {
+        MANGLE.except = MANGLE.except
+            ? MANGLE.except.concat(data.vars)
+            : data.vars;
+    }
+})();
 
 if (ARGS.quotes === true) {
     ARGS.quotes = 3;
@@ -242,6 +258,7 @@ var OUTPUT_FILE = ARGS.o;
 var TOPLEVEL = null;
 var P_RELATIVE = ARGS.p && ARGS.p == "relative";
 var SOURCES_CONTENT = {};
+var RESERVED = null;
 
 var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
     file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
@@ -333,6 +350,33 @@ async.eachLimit(files, 1, function (file, cb) {
         }
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
     }
+
+    if (ARGS.mangle_props) (function(){
+        var reserved = RESERVED ? RESERVED.props : null;
+        var cache = null;
+        if (ARGS.prop_cache) {
+            try {
+                cache = fs.readFileSync(ARGS.prop_cache, "utf8");
+                cache = JSON.parse(cache);
+                cache.props = UglifyJS.Dictionary.fromObject(cache.props);
+            } catch(ex) {
+                cache = {
+                    cname: -1,
+                    props: new UglifyJS.Dictionary()
+                };
+            }
+        }
+        TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
+            reserved: reserved,
+            cache: cache
+        });
+        if (ARGS.prop_cache) {
+            fs.writeFileSync(ARGS.prop_cache, JSON.stringify({
+                cname: cache.cname,
+                props: cache.props.toObject()
+            }, null, 2), "utf8");
+        }
+    })();
 
     var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
 
