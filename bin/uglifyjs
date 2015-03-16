@@ -69,7 +69,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
     .describe("reserved-file", "File containing reserved names")
     .describe("mangle-props", "Mangle property names")
-    .describe("prop-cache", "File to hold mangled properties mapping")
+    .describe("name-cache", "File to hold mangled names mappings")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -95,7 +95,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("wrap")
     .string("p")
     .string("reserved-file")
-    .string("prop-cache")
+    .string("name-cache")
 
     .boolean("expr")
     .boolean("source-map-include-sources")
@@ -169,6 +169,41 @@ if (ARGS.reserved_file) (function(){
             : data.vars;
     }
 })();
+
+function readNameCache(key) {
+    var cache = null;
+    if (ARGS.name_cache) {
+        try {
+            var cache = fs.readFileSync(ARGS.name_cache, "utf8");
+            cache = JSON.parse(cache)[key];
+            if (!cache) throw "init";
+            cache.props = UglifyJS.Dictionary.fromObject(cache.props);
+        } catch(ex) {
+            cache = {
+                cname: -1,
+                props: new UglifyJS.Dictionary()
+            };
+        }
+    }
+    return cache;
+}
+
+function writeNameCache(key, cache) {
+    if (ARGS.name_cache) {
+        var data;
+        try {
+            data = fs.readFileSync(ARGS.name_cache, "utf8");
+            data = JSON.parse(data);
+        } catch(ex) {
+            data = {};
+        }
+        data[key] = {
+            cname: cache.cname,
+            props: cache.props.toObject()
+        };
+        fs.writeFileSync(ARGS.name_cache, JSON.stringify(data, null, 2), "utf8");
+    }
+}
 
 if (ARGS.quotes === true) {
     ARGS.quotes = 3;
@@ -353,36 +388,20 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (ARGS.mangle_props) (function(){
         var reserved = RESERVED ? RESERVED.props : null;
-        var cache = null;
-        if (ARGS.prop_cache) {
-            try {
-                cache = fs.readFileSync(ARGS.prop_cache, "utf8");
-                cache = JSON.parse(cache);
-                cache.props = UglifyJS.Dictionary.fromObject(cache.props);
-            } catch(ex) {
-                cache = {
-                    cname: -1,
-                    props: new UglifyJS.Dictionary()
-                };
-            }
-        }
+        var cache = readNameCache("props");
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
             reserved: reserved,
             cache: cache
         });
-        if (ARGS.prop_cache) {
-            fs.writeFileSync(ARGS.prop_cache, JSON.stringify({
-                cname: cache.cname,
-                props: cache.props.toObject()
-            }, null, 2), "utf8");
-        }
+        writeNameCache("props", cache);
     })();
 
     var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
+    var TL_CACHE = readNameCache("vars");
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
+            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
             if (ARGS.lint) {
                 TOPLEVEL.scope_warnings();
             }
@@ -397,16 +416,19 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
-            if (MANGLE) {
+            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
+            if (MANGLE && !TL_CACHE) {
                 TOPLEVEL.compute_char_frequency(MANGLE);
             }
         });
     }
 
     if (MANGLE) time_it("mangle", function(){
+        MANGLE.cache = TL_CACHE;
         TOPLEVEL.mangle_names(MANGLE);
     });
+
+    writeNameCache("vars", TL_CACHE);
 
     if (ARGS.source_map_include_sources) {
         for (var file in SOURCES_CONTENT) {
