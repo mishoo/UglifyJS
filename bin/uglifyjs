@@ -171,38 +171,11 @@ if (ARGS.reserved_file) (function(){
 })();
 
 function readNameCache(key) {
-    var cache = null;
-    if (ARGS.name_cache) {
-        try {
-            var cache = fs.readFileSync(ARGS.name_cache, "utf8");
-            cache = JSON.parse(cache)[key];
-            if (!cache) throw "init";
-            cache.props = UglifyJS.Dictionary.fromObject(cache.props);
-        } catch(ex) {
-            cache = {
-                cname: -1,
-                props: new UglifyJS.Dictionary()
-            };
-        }
-    }
-    return cache;
+    return UglifyJS.readNameCache(ARGS.name_cache, key);
 }
 
 function writeNameCache(key, cache) {
-    if (ARGS.name_cache) {
-        var data;
-        try {
-            data = fs.readFileSync(ARGS.name_cache, "utf8");
-            data = JSON.parse(data);
-        } catch(ex) {
-            data = {};
-        }
-        data[key] = {
-            cname: cache.cname,
-            props: cache.props.toObject()
-        };
-        fs.writeFileSync(ARGS.name_cache, JSON.stringify(data, null, 2), "utf8");
-    }
+    return UglifyJS.writeNameCache(ARGS.name_cache, key, cache);
 }
 
 if (ARGS.quotes === true) {
