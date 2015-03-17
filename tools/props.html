@@ -7,7 +7,9 @@
 
       function addObject(obj) {
         if (obj == null) return;
-        Object.getOwnPropertyNames(obj).forEach(add);
+        try {
+          Object.getOwnPropertyNames(obj).forEach(add);
+        } catch(ex) {}
         if (obj.prototype) {
           Object.getOwnPropertyNames(obj.prototype).forEach(add);
         }
@@ -26,13 +28,15 @@
         addObject(window[thing]);
       });
 
-      addObject(new Event("click"));
-      addObject(new Event("contextmenu"));
-      addObject(new Event("mouseup"));
-      addObject(new Event("mousedown"));
-      addObject(new Event("keydown"));
-      addObject(new Event("keypress"));
-      addObject(new Event("keyup"));
+      try {
+        addObject(new Event("click"));
+        addObject(new Event("contextmenu"));
+        addObject(new Event("mouseup"));
+        addObject(new Event("mousedown"));
+        addObject(new Event("keydown"));
+        addObject(new Event("keypress"));
+        addObject(new Event("keyup"));
+      } catch(ex) {}
 
       var ta = document.createElement("textarea");
       ta.style.width = "100%";
