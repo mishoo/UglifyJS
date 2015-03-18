@@ -94,8 +94,8 @@ You need to pass an argument to this option to specify the name that your module
     .string("comments")
     .string("wrap")
     .string("p")
-    .string("reserved-file")
     .string("name-cache")
+    .array("reserved-file")
 
     .boolean("expr")
     .boolean("source-map-include-sources")
@@ -150,6 +150,11 @@ if (ARGS.acorn) {
 var COMPRESS = getOptions("c", true);
 var MANGLE = getOptions("m", true);
 var BEAUTIFY = getOptions("b", true);
+var RESERVED = null;
+
+if (ARGS.reserved_file) ARGS.reserved_file.forEach(function(filename){
+    RESERVED = UglifyJS.readReservedFile(filename, RESERVED);
+});
 
 if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
@@ -159,16 +164,10 @@ if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
 }
 
-var RESERVED = null;
-if (ARGS.reserved_file) (function(){
-    var data = fs.readFileSync(ARGS.reserved_file, "utf8");
-    RESERVED = data = JSON.parse(data);
-    if (data.vars) {
-        MANGLE.except = MANGLE.except
-            ? MANGLE.except.concat(data.vars)
-            : data.vars;
-    }
-})();
+if (RESERVED && MANGLE) {
+    if (!MANGLE.except) MANGLE.except = RESERVED.vars;
+    else MANGLE.except = MANGLE.except.concat(RESERVED.vars);
+}
 
 function readNameCache(key) {
     return UglifyJS.readNameCache(ARGS.name_cache, key);
@@ -457,9 +456,9 @@ function normalize(o) {
 
 function getOptions(x, constants) {
     x = ARGS[x];
-    if (!x) return null;
+    if (x == null) return null;
     var ret = {};
-    if (x !== true) {
+    if (x !== "") {
         var ast;
         try {
             ast = UglifyJS.parse(x, { expression: true });

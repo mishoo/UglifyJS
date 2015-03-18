@@ -194,6 +194,25 @@ exports.describe_ast = function() {
     return out + "";
 };
 
+exports.readReservedFile = function(filename, reserved) {
+    if (!reserved) {
+        reserved = { vars: [], props: [] };
+    }
+    var data = fs.readFileSync(filename, "utf8");
+    data = JSON.parse(data);
+    if (data.vars) {
+        data.vars.forEach(function(name){
+            UglifyJS.push_uniq(reserved.vars, name);
+        });
+    }
+    if (data.props) {
+        data.props.forEach(function(name){
+            UglifyJS.push_uniq(reserved.props, name);
+        });
+    }
+    return reserved;
+};
+
 exports.readNameCache = function(filename, key) {
     var cache = null;
     if (filename) {
