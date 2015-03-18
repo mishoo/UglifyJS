@@ -68,6 +68,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
     .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
     .describe("reserved-file", "File containing reserved names")
+    .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
     .describe("mangle-props", "Mangle property names")
     .describe("name-cache", "File to hold mangled names mappings")
 
@@ -112,6 +113,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("bare-returns")
     .boolean("keep-fnames")
     .boolean("mangle-props")
+    .boolean("reserve-domprops")
 
     .wrap(80)
 
@@ -155,6 +157,10 @@ var RESERVED = null;
 if (ARGS.reserved_file) ARGS.reserved_file.forEach(function(filename){
     RESERVED = UglifyJS.readReservedFile(filename, RESERVED);
 });
+
+if (ARGS.reserve_domprops) {
+    RESERVED = UglifyJS.readReservedFile(path.join(__dirname, "..", "tools", "domprops.json"), RESERVED);
+}
 
 if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
