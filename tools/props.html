@@ -42,9 +42,13 @@
       ta.style.width = "100%";
       ta.style.height = "20em";
       ta.style.boxSizing = "border-box";
-      ta.value = Object.keys(props).sort(cmp).map(function(name){
-        return JSON.stringify(name);
-      }).join(",\n");
+      <!-- ta.value = Object.keys(props).sort(cmp).map(function(name){ -->
+      <!--   return JSON.stringify(name); -->
+      <!-- }).join(",\n"); -->
+      ta.value = JSON.stringify({
+        vars: [],
+        props: Object.keys(props).sort(cmp)
+      }, null, 2);
       document.body.appendChild(ta);
 
       function cmp(a, b) {
