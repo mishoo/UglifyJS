@@ -1,5 +1,5 @@
 unused_funarg_1: {
-    options = { unused: true };
+    options = { unused: true, unsafe: true };
     input: {
         function f(a, b, c, d, e) {
             return a + b;
@@ -13,7 +13,7 @@ unused_funarg_1: {
 }
 
 unused_funarg_2: {
-    options = { unused: true };
+    options = { unused: true, unsafe: true };
     input: {
         function f(a, b, c, d, e) {
             return a + c;
@@ -165,7 +165,7 @@ used_var_in_catch: {
 }
 
 keep_fnames: {
-    options = { unused: true, keep_fnames: true };
+    options = { unused: true, keep_fnames: true, unsafe: true };
     input: {
         function foo() {
             return function bar(baz) {};

@@ -272,14 +272,15 @@ contrived cases, but should be fine for most code.  You might want to try it
 on your own code, it should reduce the minified size.  Here's what happens
 when this flag is on:
 
-- `new Array(1, 2, 3)` or `Array(1, 2, 3)` → `[1, 2, 3 ]`
+- `new Array(1, 2, 3)` or `Array(1, 2, 3)` → `[ 1, 2, 3 ]`
 - `new Object()` → `{}`
 - `String(exp)` or `exp.toString()` → `"" + exp`
 - `new Object/RegExp/Function/Error/Array (...)` → we discard the `new`
 - `typeof foo == "undefined"` → `foo === void 0`
 - `void 0` → `undefined` (if there is a variable named "undefined" in
   scope; we do it because the variable name will be mangled, typically
-  reduced to a single character).
+  reduced to a single character)
+- discards unused function arguments (affects `function.length`)
 
 ### Conditional compilation
 
