@@ -159,7 +159,7 @@ if (ARGS.reserved_file) ARGS.reserved_file.forEach(function(filename){
 });
 
 if (ARGS.reserve_domprops) {
-    RESERVED = UglifyJS.readReservedFile(path.join(__dirname, "..", "tools", "domprops.json"), RESERVED);
+    RESERVED = UglifyJS.readDefaultReservedFile(RESERVED);
 }
 
 if (ARGS.d) {

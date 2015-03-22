@@ -194,7 +194,7 @@ exports.describe_ast = function() {
     return out + "";
 };
 
-exports.readReservedFile = function(filename, reserved) {
+function readReservedFile(filename, reserved) {
     if (!reserved) {
         reserved = { vars: [], props: [] };
     }
@@ -211,6 +211,12 @@ exports.readReservedFile = function(filename, reserved) {
         });
     }
     return reserved;
+}
+
+exports.readReservedFile = readReservedFile;
+
+exports.readDefaultReservedFile = function(reserved) {
+    return readReservedFile(path.join(__dirname, "domprops.json"), reserved);
 };
 
 exports.readNameCache = function(filename, key) {
