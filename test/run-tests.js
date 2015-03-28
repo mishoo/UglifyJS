@@ -12,8 +12,8 @@ var failed_files = {};
 
 run_compress_tests();
 if (failures) {
-    sys.error("\n!!! Failed " + failures + " test cases.");
-    sys.error("!!! " + Object.keys(failed_files).join(", "));
+    console.error("\n!!! Failed " + failures + " test cases.");
+    console.error("!!! " + Object.keys(failed_files).join(", "));
     process.exit(1);
 }
 
@@ -31,7 +31,7 @@ function tmpl() {
 
 function log() {
     var txt = tmpl.apply(this, arguments);
-    sys.puts(txt);
+    console.log(txt);
 }
 
 function log_directory(dir) {
