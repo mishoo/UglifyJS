@@ -67,6 +67,10 @@ You need to pass an argument to this option to specify the name that your module
     .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
     .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
     .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
+    .describe("reserved-file", "File containing reserved names")
+    .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
+    .describe("mangle-props", "Mangle property names")
+    .describe("name-cache", "File to hold mangled names mappings")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -91,6 +95,8 @@ You need to pass an argument to this option to specify the name that your module
     .string("comments")
     .string("wrap")
     .string("p")
+    .string("name-cache")
+    .array("reserved-file")
 
     .boolean("expr")
     .boolean("source-map-include-sources")
@@ -106,6 +112,8 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("noerr")
     .boolean("bare-returns")
     .boolean("keep-fnames")
+    .boolean("mangle-props")
+    .boolean("reserve-domprops")
 
     .wrap(80)
 
@@ -144,6 +152,15 @@ if (ARGS.acorn) {
 var COMPRESS = getOptions("c", true);
 var MANGLE = getOptions("m", true);
 var BEAUTIFY = getOptions("b", true);
+var RESERVED = null;
+
+if (ARGS.reserved_file) ARGS.reserved_file.forEach(function(filename){
+    RESERVED = UglifyJS.readReservedFile(filename, RESERVED);
+});
+
+if (ARGS.reserve_domprops) {
+    RESERVED = UglifyJS.readDefaultReservedFile(RESERVED);
+}
 
 if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
@@ -151,6 +168,19 @@ if (ARGS.d) {
 
 if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
+}
+
+if (RESERVED && MANGLE) {
+    if (!MANGLE.except) MANGLE.except = RESERVED.vars;
+    else MANGLE.except = MANGLE.except.concat(RESERVED.vars);
+}
+
+function readNameCache(key) {
+    return UglifyJS.readNameCache(ARGS.name_cache, key);
+}
+
+function writeNameCache(key, cache) {
+    return UglifyJS.writeNameCache(ARGS.name_cache, key, cache);
 }
 
 if (ARGS.quotes === true) {
@@ -334,11 +364,22 @@ async.eachLimit(files, 1, function (file, cb) {
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
     }
 
+    if (ARGS.mangle_props) (function(){
+        var reserved = RESERVED ? RESERVED.props : null;
+        var cache = readNameCache("props");
+        TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
+            reserved: reserved,
+            cache: cache
+        });
+        writeNameCache("props", cache);
+    })();
+
     var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
+    var TL_CACHE = readNameCache("vars");
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
+            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
             if (ARGS.lint) {
                 TOPLEVEL.scope_warnings();
             }
@@ -353,16 +394,19 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8 });
-            if (MANGLE) {
+            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
+            if (MANGLE && !TL_CACHE) {
                 TOPLEVEL.compute_char_frequency(MANGLE);
             }
         });
     }
 
     if (MANGLE) time_it("mangle", function(){
+        MANGLE.cache = TL_CACHE;
         TOPLEVEL.mangle_names(MANGLE);
     });
+
+    writeNameCache("vars", TL_CACHE);
 
     if (ARGS.source_map_include_sources) {
         for (var file in SOURCES_CONTENT) {
@@ -418,9 +462,9 @@ function normalize(o) {
 
 function getOptions(x, constants) {
     x = ARGS[x];
-    if (!x) return null;
+    if (x == null) return null;
     var ret = {};
-    if (x !== true) {
+    if (x !== "") {
         var ast;
         try {
             ast = UglifyJS.parse(x, { expression: true });

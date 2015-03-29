@@ -33,7 +33,8 @@ var FILES = exports.FILES = [
     "../lib/output.js",
     "../lib/compress.js",
     "../lib/sourcemap.js",
-    "../lib/mozilla-ast.js"
+    "../lib/mozilla-ast.js",
+    "../lib/propmangle.js"
 ].map(function(file){
     return fs.realpathSync(path.join(path.dirname(__filename), file));
 });
@@ -191,4 +192,64 @@ exports.describe_ast = function() {
     };
     doitem(UglifyJS.AST_Node);
     return out + "";
+};
+
+function readReservedFile(filename, reserved) {
+    if (!reserved) {
+        reserved = { vars: [], props: [] };
+    }
+    var data = fs.readFileSync(filename, "utf8");
+    data = JSON.parse(data);
+    if (data.vars) {
+        data.vars.forEach(function(name){
+            UglifyJS.push_uniq(reserved.vars, name);
+        });
+    }
+    if (data.props) {
+        data.props.forEach(function(name){
+            UglifyJS.push_uniq(reserved.props, name);
+        });
+    }
+    return reserved;
+}
+
+exports.readReservedFile = readReservedFile;
+
+exports.readDefaultReservedFile = function(reserved) {
+    return readReservedFile(path.join(__dirname, "domprops.json"), reserved);
+};
+
+exports.readNameCache = function(filename, key) {
+    var cache = null;
+    if (filename) {
+        try {
+            var cache = fs.readFileSync(filename, "utf8");
+            cache = JSON.parse(cache)[key];
+            if (!cache) throw "init";
+            cache.props = UglifyJS.Dictionary.fromObject(cache.props);
+        } catch(ex) {
+            cache = {
+                cname: -1,
+                props: new UglifyJS.Dictionary()
+            };
+        }
+    }
+    return cache;
+};
+
+exports.writeNameCache = function(filename, key, cache) {
+    if (filename) {
+        var data;
+        try {
+            data = fs.readFileSync(filename, "utf8");
+            data = JSON.parse(data);
+        } catch(ex) {
+            data = {};
+        }
+        data[key] = {
+            cname: cache.cname,
+            props: cache.props.toObject()
+        };
+        fs.writeFileSync(filename, JSON.stringify(data, null, 2), "utf8");
+    }
 };
