@@ -106,7 +106,7 @@ exports.minify = function(files, options) {
     // 4. output
     var inMap = options.inSourceMap;
     var output = {};
-    if (typeof options.inSourceMap == "string") {
+    if (typeof options.inSourceMap == "string" && !options.inSourceMapFromString) {
         inMap = fs.readFileSync(options.inSourceMap, "utf8");
     }
     if (options.outSourceMap) {
