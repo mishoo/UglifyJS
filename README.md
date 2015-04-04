@@ -591,6 +591,16 @@ var result = UglifyJS.minify("compiled.js", {
 // same as before, it returns `code` and `map`
 ```
 
+If your input source map is not in a file, you can pass it in as an object
+using the `inSourceMap` argument:
+
+```javascript
+var result = UglifyJS.minify("compiled.js", {
+	inSourceMap: JSON.parse(my_source_map_string),
+	outSourceMap: "minified.js.map"
+});
+```
+
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
 
