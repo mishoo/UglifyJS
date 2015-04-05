@@ -215,7 +215,7 @@ if (ARGS.keep_fnames) {
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
-if (ARGS.comments) {
+if (ARGS.comments != null) {
     if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
         var regex_pos = ARGS.comments.lastIndexOf("/");
         try {
@@ -357,11 +357,11 @@ async.eachLimit(files, 1, function (file, cb) {
         TOPLEVEL = UglifyJS.AST_Node.from_mozilla_ast(TOPLEVEL);
     });
 
-    if (ARGS.wrap) {
+    if (ARGS.wrap != null) {
         TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
     }
 
-    if (ARGS.enclose) {
+    if (ARGS.enclose != null) {
         var arg_parameter_list = ARGS.enclose;
         if (arg_parameter_list === true) {
             arg_parameter_list = [];
