@@ -1,5 +1,10 @@
 language: node_js
 before_install: "npm install -g npm"
 node_js:
-    - "0.10"
+    - "iojs"
+    - "0.12"
     - "0.11"
+    - "0.10"
+matrix:
+  fast_finish: true
+sudo: false
