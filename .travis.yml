@@ -1,5 +1,23 @@
 language: node_js
 before_install: "npm install -g npm"
 node_js:
-    - "0.10"
+    - "iojs-v1.6"
+    - "iojs-v1.5"
+    - "iojs-v1.4"
+    - "iojs-v1.3"
+    - "iojs-v1.2"
+    - "iojs-v1.1"
+    - "iojs-v1.0"
+    - "0.12"
     - "0.11"
+    - "0.10"
+matrix:
+  fast_finish: true
+  allow_failures:
+    - node_js: "iojs-v1.4"
+    - node_js: "iojs-v1.3"
+    - node_js: "iojs-v1.2"
+    - node_js: "iojs-v1.1"
+    - node_js: "iojs-v1.0"
+    - node_js: "0.11"
+sudo: false
