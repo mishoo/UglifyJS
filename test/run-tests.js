@@ -168,6 +168,10 @@ function parse_test(file) {
                     else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
                 }
                 if (node.label.name === "expect_exact") {
+                    if (!(stat.TYPE === "SimpleStatement" && stat.body.TYPE === "String")) {
+                        throw new Error("The value of the expect_exact clause should be a string! " +
+                            "Like this: `expect_exact: \"some.exact.javascript;\"`");
+                    }
                     test[node.label.name] = stat.body.start.value
                 } else {
                     test[node.label.name] = stat;
