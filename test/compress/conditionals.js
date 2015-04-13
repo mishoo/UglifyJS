@@ -86,7 +86,9 @@ ifs_4: {
             x(foo)[10].bar.baz = something_else();
     }
     expect: {
-        x(foo)[10].bar.baz = (foo && bar) ? something() : something_else();
+        foo && bar
+            ? x(foo)[10].bar.baz = something()
+            : x(foo)[10].bar.baz = something_else();
     }
 }
 
@@ -133,6 +135,7 @@ ifs_6: {
         comparisons: true
     };
     input: {
+        var x;
         if (!foo && !bar && !baz && !boo) {
             x = 10;
         } else {
@@ -140,6 +143,7 @@ ifs_6: {
         }
     }
     expect: {
+        var x;
         x = foo || bar || baz || boo ? 20 : 10;
     }
 }
@@ -165,6 +169,7 @@ cond_2: {
         conditionals: true
     };
     input: {
+        var x;
         if (some_condition()) {
             x = new FooBar(1);
         } else {
@@ -172,6 +177,7 @@ cond_2: {
         }
     }
     expect: {
+        var x;
         x = new FooBar(some_condition() ? 1 : 2);
     }
 }
@@ -303,6 +309,7 @@ cond_7_1: {
         evaluate    : true
     };
     input: {
+        var x;
         // access to global should be assumed to have side effects
         if (y) {
             x = 1+1;
@@ -311,6 +318,7 @@ cond_7_1: {
         }
     }
     expect: {
+        var x;
         x = (y, 2);
     }
 }
@@ -321,6 +329,7 @@ cond_8: {
         evaluate    : true
     };
     input: {
+        var a;
         // compress these
         a = condition ? true : false;
 
@@ -355,6 +364,7 @@ cond_8: {
 
     }
     expect: {
+        var a;
         a = !!condition;
         a = !condition;
         a = !!condition();
