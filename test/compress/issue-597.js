@@ -6,7 +6,7 @@ NaN_and_Infinity_must_have_parens: {
     }
     expect: {
         (1/0).toString();
-        (0/0).toString();
+        NaN.toString();         // transformation to 0/0 dropped
     }
 }
 
