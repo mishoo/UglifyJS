@@ -372,12 +372,13 @@ async.eachLimit(files, 1, function (file, cb) {
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
     }
 
-    if (ARGS.mangle_props) (function(){
+    if (ARGS.mangle_props || ARGS.name_cache) (function(){
         var reserved = RESERVED ? RESERVED.props : null;
         var cache = readNameCache("props");
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
-            reserved: reserved,
-            cache: cache
+            reserved   : reserved,
+            cache      : cache,
+            only_cache : !ARGS.mangle_props
         });
         writeNameCache("props", cache);
     })();
