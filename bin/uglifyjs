@@ -476,7 +476,7 @@ function getOptions(x, constants) {
     if (x !== "") {
         var ast;
         try {
-            ast = UglifyJS.parse(x, { expression: true });
+            ast = UglifyJS.parse(x + "", { expression: true });
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
                 sys.error("Error parsing arguments in: " + x);
