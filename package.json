@@ -3,7 +3,7 @@
   "description": "JavaScript parser, mangler/compressor and beautifier toolkit",
   "homepage": "http://lisperator.net/uglifyjs",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "version": "2.4.21",
   "engines": {
     "node": ">=0.4.0"
