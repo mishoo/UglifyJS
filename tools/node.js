@@ -19,7 +19,7 @@ function load_global(file) {
     } catch(ex) {
         // XXX: in case of a syntax error, the message is kinda
         // useless. (no location information).
-        sys.debug("ERROR in file: " + file + " / " + ex);
+        console.debug("ERROR in file: " + file + " / " + ex);
         process.exit(1);
     }
 };
@@ -42,7 +42,7 @@ var FILES = exports.FILES = [
 FILES.forEach(load_global);
 
 UglifyJS.AST_Node.warn_function = function(txt) {
-    sys.error("WARN: " + txt);
+    console.error("WARN: " + txt);
 };
 
 // XXX: perhaps we shouldn't export everything but heck, I'm lazy.
