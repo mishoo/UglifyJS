@@ -153,6 +153,7 @@ cond_1: {
         conditionals: true
     };
     input: {
+        var do_something; // if undeclared it's assumed to have side-effects
         if (some_condition()) {
             do_something(x);
         } else {
@@ -160,6 +161,7 @@ cond_1: {
         }
     }
     expect: {
+        var do_something;
         do_something(some_condition() ? x : y);
     }
 }
@@ -169,7 +171,7 @@ cond_2: {
         conditionals: true
     };
     input: {
-        var x;
+        var x, FooBar;
         if (some_condition()) {
             x = new FooBar(1);
         } else {
@@ -177,7 +179,7 @@ cond_2: {
         }
     }
     expect: {
-        var x;
+        var x, FooBar;
         x = new FooBar(some_condition() ? 1 : 2);
     }
 }
@@ -187,6 +189,7 @@ cond_3: {
         conditionals: true
     };
     input: {
+        var FooBar;
         if (some_condition()) {
             new FooBar(1);
         } else {
@@ -194,6 +197,7 @@ cond_3: {
         }
     }
     expect: {
+        var FooBar;
         some_condition() ? new FooBar(1) : FooBar(2);
     }
 }
@@ -203,6 +207,7 @@ cond_4: {
         conditionals: true
     };
     input: {
+        var do_something;
         if (some_condition()) {
             do_something();
         } else {
@@ -210,6 +215,7 @@ cond_4: {
         }
     }
     expect: {
+        var do_something;
         some_condition(), do_something();
     }
 }
