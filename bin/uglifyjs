@@ -132,24 +132,24 @@ normalize(ARGS);
 
 if (ARGS.noerr) {
     UglifyJS.DefaultsError.croak = function(msg, defs) {
-        sys.error("WARN: " + msg);
+        print_error("WARN: " + msg);
     };
 }
 
 if (ARGS.version || ARGS.V) {
     var json = require("../package.json");
-    sys.puts(json.name + ' ' + json.version);
+    print(json.name + ' ' + json.version);
     process.exit(0);
 }
 
 if (ARGS.ast_help) {
     var desc = UglifyJS.describe_ast();
-    sys.puts(typeof desc == "string" ? desc : JSON.stringify(desc, null, 2));
+    print(typeof desc == "string" ? desc : JSON.stringify(desc, null, 2));
     process.exit(0);
 }
 
 if (ARGS.h || ARGS.help) {
-    sys.puts(yargs.help());
+    print(yargs.help());
     process.exit(0);
 }
 
@@ -221,7 +221,7 @@ if (ARGS.comments != null) {
         try {
             OUTPUT_OPTIONS.comments = new RegExp(ARGS.comments.substr(1, regex_pos - 1), ARGS.comments.substr(regex_pos + 1));
         } catch (e) {
-            sys.error("ERROR: Invalid --comments: " + e.message);
+            print_error("ERROR: Invalid --comments: " + e.message);
         }
     } else if (ARGS.comments == "all") {
         OUTPUT_OPTIONS.comments = true;
@@ -241,7 +241,7 @@ var files = ARGS._.slice();
 
 if (ARGS.self) {
     if (files.length > 0) {
-        sys.error("WARN: Ignoring input files since --self was passed");
+        print_error("WARN: Ignoring input files since --self was passed");
     }
     files = UglifyJS.FILES;
     if (!ARGS.wrap) ARGS.wrap = "UglifyJS";
@@ -253,7 +253,7 @@ var ORIG_MAP = ARGS.in_source_map;
 if (ORIG_MAP) {
     ORIG_MAP = JSON.parse(fs.readFileSync(ORIG_MAP));
     if (files.length == 0) {
-        sys.error("INFO: Using file from the input source map: " + ORIG_MAP.file);
+        print_error("INFO: Using file from the input source map: " + ORIG_MAP.file);
         files = [ ORIG_MAP.file ];
     }
     if (ARGS.source_map_root == null) {
@@ -266,12 +266,12 @@ if (files.length == 0) {
 }
 
 if (files.indexOf("-") >= 0 && ARGS.source_map) {
-    sys.error("ERROR: Source map doesn't work with input from STDIN");
+    print_error("ERROR: Source map doesn't work with input from STDIN");
     process.exit(1);
 }
 
 if (files.filter(function(el){ return el == "-" }).length > 1) {
-    sys.error("ERROR: Can read a single file from STDIN (two or more dashes specified)");
+    print_error("ERROR: Can read a single file from STDIN (two or more dashes specified)");
     process.exit(1);
 }
 
@@ -294,9 +294,9 @@ try {
     var compressor = COMPRESS && UglifyJS.Compressor(COMPRESS);
 } catch(ex) {
     if (ex instanceof UglifyJS.DefaultsError) {
-        sys.error(ex.msg);
-        sys.error("Supported options:");
-        sys.error(sys.inspect(ex.defs));
+        print_error(ex.msg);
+        print_error("Supported options:");
+        print_error(sys.inspect(ex.defs));
         process.exit(1);
     }
 }
@@ -304,7 +304,7 @@ try {
 async.eachLimit(files, 1, function (file, cb) {
     read_whole_file(file, function (err, code) {
         if (err) {
-            sys.error("ERROR: can't read file: " + file);
+            print_error("ERROR: can't read file: " + file);
             process.exit(1);
         }
         if (ARGS.p != null) {
@@ -341,9 +341,9 @@ async.eachLimit(files, 1, function (file, cb) {
                     });
                 } catch(ex) {
                     if (ex instanceof UglifyJS.JS_Parse_Error) {
-                        sys.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
-                        sys.error(ex.message);
-                        sys.error(ex.stack);
+                        print_error("Parse error at " + file + ":" + ex.line + "," + ex.col);
+                        print_error(ex.message);
+                        print_error(ex.stack);
                         process.exit(1);
                     }
                     throw ex;
@@ -372,12 +372,13 @@ async.eachLimit(files, 1, function (file, cb) {
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
     }
 
-    if (ARGS.mangle_props) (function(){
+    if (ARGS.mangle_props || ARGS.name_cache) (function(){
         var reserved = RESERVED ? RESERVED.props : null;
         var cache = readNameCache("props");
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
-            reserved: reserved,
-            cache: cache
+            reserved   : reserved,
+            cache      : cache,
+            only_cache : !ARGS.mangle_props
         });
         writeNameCache("props", cache);
     })();
@@ -443,15 +444,15 @@ async.eachLimit(files, 1, function (file, cb) {
     if (OUTPUT_FILE) {
         fs.writeFileSync(OUTPUT_FILE, output, "utf8");
     } else {
-        sys.print(output);
+        print(output);
     }
 
     if (ARGS.stats) {
-        sys.error(UglifyJS.string_template("Timing information (compressed {count} files):", {
+        print_error(UglifyJS.string_template("Timing information (compressed {count} files):", {
             count: files.length
         }));
         for (var i in STATS) if (STATS.hasOwnProperty(i)) {
-            sys.error(UglifyJS.string_template("- {name}: {time}s", {
+            print_error(UglifyJS.string_template("- {name}: {time}s", {
                 name: i,
                 time: (STATS[i] / 1000).toFixed(3)
             }));
@@ -478,7 +479,7 @@ function getOptions(x, constants) {
             ast = UglifyJS.parse(x, { expression: true });
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
-                sys.error("Error parsing arguments in: " + x);
+                print_error("Error parsing arguments in: " + x);
                 process.exit(1);
             }
         }
@@ -497,8 +498,8 @@ function getOptions(x, constants) {
                 ret[name] = true;
                 return true;    // no descend
             }
-            sys.error(node.TYPE)
-            sys.error("Error parsing arguments in: " + x);
+            print_error(node.TYPE)
+            print_error("Error parsing arguments in: " + x);
             process.exit(1);
         }));
     }
@@ -529,4 +530,12 @@ function time_it(name, cont) {
         else STATS[name] = spent;
     }
     return ret;
+}
+
+function print_error(msg) {
+    console.error("%s", msg);
+}
+
+function print(txt) {
+    console.log("%s", txt);
 }
