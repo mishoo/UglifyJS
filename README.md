@@ -6,7 +6,7 @@ This is on open-source reimplementation of the [JS Nice](http://www.jsnice.org) 
 
 The implementation of UnuglifyJS is based on [UglifyJS 2](https://github.com/mishoo/UglifyJS2) -- parser, minifier, compressor or beautifier toolkit for JavaScript. 
 
-This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/2Nice) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. A live demo of the Unuglify client is available at http://www.nice2predict.org.
+This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/Nice2Pre) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. A live demo of the Unuglify client is available at http://www.nice2predict.org.
 
 NPM Module 
 -------
@@ -58,11 +58,11 @@ Once the sources are downloaded, install all the dependencies using NPM:
 
 (Optional) Package for the browser. The UglifyJS2 provides a quick way to build itself for the browser using followig command:
 
-> ./bin/uglifyjs --self -o /tmp/uglify.js
+> bin/unuglifyjs --package > /tmp/uglify.js
 
 #### Nice 2 Predict
 
-To install Nice 2 Predict framework please follow the instructions on the https://github.com/eth-srl/2Nice page.
+To install Nice 2 Predict framework please follow the instructions on the https://github.com/eth-srl/Nice2Predict page.
 
 Obtaining Training Dataset (UnuglifyJS)
 -------
@@ -78,7 +78,7 @@ Here, the `--dir .` is used to specify which directory is searched for JavaScrip
 Before we discuss how to train the statistical model, we briefly describe how the programs are represented and the format of the training dataset.
 
 ##### Program Representation
-The role of the Unuglify client to perform a program analysis which transforms the input program into a representation that allows usage of machine learning algorithms provided by [Nice 2 Predict](https://github.com/eth-srl/2Nice).
+The role of the Unuglify client to perform a program analysis which transforms the input program into a representation that allows usage of machine learning algorithms provided by [Nice 2 Predict](https://github.com/eth-srl/Nice2Predict).
 Here, the program is represented as a set of features that relate known and unknown properties of the program.
 We illustrate the program representation using the following code snippet `var a = s in _MAP;` where `_MAP` is a global variable. 
 
@@ -100,7 +100,7 @@ We illustrate the program representation using the following code snippet `var a
 	
 ##### Program Format
 
-The program representation as described above is translated into a JSON format which the 2Nice server can process. 
+The program representation as described above is translated into a JSON format which the Nice2Predict server can process. 
 The JSON consists of two parts `query` describing the features and `assign` describing the properties and their initial assignments with the attribute `giv` or `inf` for known and unknown properties respectively. That is, the JSON representation of the code snippet `var a = s in _MAP;` is:
 
 ```JSON
@@ -145,4 +145,12 @@ To predict properties for new programs, start a server after a model was trained
 
 Then, the server will predict properties for programs given in JsonRPC format. One can debug and observe deobfuscation from the viewer available in the [viewer/viewer.html](https://github.com/eth-srl/Nice2Predict/blob/master/viewer/viewer.html) (online demo available at http://www.nice2predict.org).
 The server takes as an input same JSON format as described above and returns best assigment to the unknown properties (labelled as `inf`).
+
+Changing UnuglifyJS
+-------
+
+When changing the features of Unuglify js, you may want to use the Nice2Predict viewer to see the updates. The Nice2Predict viewer calls UnuglifyJS from the browser, not from nodeJS. To update its viewer run:
+
+> bin/unuglifyjs --package > /tmp/uglify.js
+> cp /tmp/uglify.js <path_to_nice2predict>/viewer/uglifyjs/uglify.js
 
