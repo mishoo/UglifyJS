@@ -376,7 +376,15 @@ async.eachLimit(files, 1, function (file, cb) {
     if (ARGS.mangle_props || ARGS.name_cache) (function(){
         var reserved = RESERVED ? RESERVED.props : null;
         var cache = readNameCache("props");
-        var regex = ARGS.mangle_regex ? new RegExp(ARGS.mangle_regex) : null;
+        var regex;
+
+        try {
+          regex = ARGS.mangle_regex ? new RegExp(ARGS.mangle_regex) : null;
+        } catch (e) {
+            print_error("ERROR: Invalid --mangle-regex: " + e.message);
+            process.exit(1);
+        }
+
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
             reserved   : reserved,
             cache      : cache,
