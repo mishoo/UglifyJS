@@ -70,6 +70,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("reserved-file", "File containing reserved names")
     .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
     .describe("mangle-props", "Mangle property names")
+    .describe("mangle-regex", "Only mangle property names matching the regex")
     .describe("name-cache", "File to hold mangled names mappings")
 
     .alias("p", "prefix")
@@ -375,10 +376,12 @@ async.eachLimit(files, 1, function (file, cb) {
     if (ARGS.mangle_props || ARGS.name_cache) (function(){
         var reserved = RESERVED ? RESERVED.props : null;
         var cache = readNameCache("props");
+        var regex = ARGS.mangle_regex ? new RegExp(ARGS.mangle_regex) : null;
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
             reserved   : reserved,
             cache      : cache,
-            only_cache : !ARGS.mangle_props
+            only_cache : !ARGS.mangle_props,
+            regex      : regex
         });
         writeNameCache("props", cache);
     })();
