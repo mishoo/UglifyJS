@@ -132,6 +132,7 @@ The available options are:
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
   --mangle-props                Mangle property names
+  --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
 ```
 
@@ -250,6 +251,10 @@ arguments) — in this case it will exclude names from all those files.
 A default exclusion file is provided in `tools/domprops.json` which should
 cover most standard JS and DOM properties defined in various browsers.  Pass
 `--reserve-domprops` to read that in.
+
+You can also use a regular expression to define which property names should be
+mangled.  For example, `--mangle-regex="/^_/"` will only mangle property names
+that start with an underscore.
 
 When you compress multiple files using this option, in order for them to
 work together in the end we need to ensure somehow that one property gets

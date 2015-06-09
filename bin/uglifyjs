@@ -70,6 +70,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("reserved-file", "File containing reserved names")
     .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
     .describe("mangle-props", "Mangle property names")
+    .describe("mangle-regex", "Only mangle property names matching the regex")
     .describe("name-cache", "File to hold mangled names mappings")
 
     .alias("p", "prefix")
@@ -191,6 +192,15 @@ function writeNameCache(key, cache) {
     return UglifyJS.writeNameCache(ARGS.name_cache, key, cache);
 }
 
+function extractRegex(str) {
+  if (/^\/.*\/[a-zA-Z]*$/.test(str)) {
+    var regex_pos = str.lastIndexOf("/");
+    return new RegExp(str.substr(1, regex_pos - 1), str.substr(regex_pos + 1));
+  } else {
+    throw new Error("Invalid regular expression: " + str);
+  }
+}
+
 if (ARGS.quotes === true) {
     ARGS.quotes = 3;
 }
@@ -217,9 +227,8 @@ if (BEAUTIFY)
 
 if (ARGS.comments != null) {
     if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
-        var regex_pos = ARGS.comments.lastIndexOf("/");
         try {
-            OUTPUT_OPTIONS.comments = new RegExp(ARGS.comments.substr(1, regex_pos - 1), ARGS.comments.substr(regex_pos + 1));
+            OUTPUT_OPTIONS.comments = extractRegex(ARGS.comments);
         } catch (e) {
             print_error("ERROR: Invalid --comments: " + e.message);
         }
@@ -375,10 +384,20 @@ async.eachLimit(files, 1, function (file, cb) {
     if (ARGS.mangle_props || ARGS.name_cache) (function(){
         var reserved = RESERVED ? RESERVED.props : null;
         var cache = readNameCache("props");
+        var regex;
+
+        try {
+          regex = ARGS.mangle_regex ? extractRegex(ARGS.mangle_regex) : null;
+        } catch (e) {
+            print_error("ERROR: Invalid --mangle-regex: " + e.message);
+            process.exit(1);
+        }
+
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
             reserved   : reserved,
             cache      : cache,
-            only_cache : !ARGS.mangle_props
+            only_cache : !ARGS.mangle_props,
+            regex      : regex
         });
         writeNameCache("props", cache);
     })();
