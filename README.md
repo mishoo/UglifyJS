@@ -253,7 +253,7 @@ cover most standard JS and DOM properties defined in various browsers.  Pass
 `--reserve-domprops` to read that in.
 
 You can also use a regular expression to define which property names should be
-mangled.  For example, `--mangle-regex="^_"` will only mangle property names
+mangled.  For example, `--mangle-regex="/^_/"` will only mangle property names
 that start with an underscore.
 
 When you compress multiple files using this option, in order for them to

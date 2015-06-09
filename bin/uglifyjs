@@ -192,6 +192,15 @@ function writeNameCache(key, cache) {
     return UglifyJS.writeNameCache(ARGS.name_cache, key, cache);
 }
 
+function extractRegex(str) {
+  if (/^\/.*\/[a-zA-Z]*$/.test(str)) {
+    var regex_pos = str.lastIndexOf("/");
+    return new RegExp(str.substr(1, regex_pos - 1), str.substr(regex_pos + 1));
+  } else {
+    throw new Error("Invalid regular expression: " + str);
+  }
+}
+
 if (ARGS.quotes === true) {
     ARGS.quotes = 3;
 }
@@ -218,9 +227,8 @@ if (BEAUTIFY)
 
 if (ARGS.comments != null) {
     if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
-        var regex_pos = ARGS.comments.lastIndexOf("/");
         try {
-            OUTPUT_OPTIONS.comments = new RegExp(ARGS.comments.substr(1, regex_pos - 1), ARGS.comments.substr(regex_pos + 1));
+            OUTPUT_OPTIONS.comments = extractRegex(ARGS.comments);
         } catch (e) {
             print_error("ERROR: Invalid --comments: " + e.message);
         }
@@ -379,7 +387,7 @@ async.eachLimit(files, 1, function (file, cb) {
         var regex;
 
         try {
-          regex = ARGS.mangle_regex ? new RegExp(ARGS.mangle_regex) : null;
+          regex = ARGS.mangle_regex ? extractRegex(ARGS.mangle_regex) : null;
         } catch (e) {
             print_error("ERROR: Invalid --mangle-regex: " + e.message);
             process.exit(1);
