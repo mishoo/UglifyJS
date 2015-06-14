@@ -456,7 +456,7 @@ conditional_and: {
 
         a = condition        && false;
         a = console.log("b") && NaN;
-        a = console.log("c") && 0; 
+        a = console.log("c") && 0;
         a = 2 * condition    && void 0;
         a = condition + 3    && null;
     }
@@ -544,4 +544,3 @@ conditional_or: {
         a = condition + 3    || null;
     }
 }
-
