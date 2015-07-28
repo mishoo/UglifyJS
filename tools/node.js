@@ -84,6 +84,9 @@ exports.minify = function(files, options) {
             });
         });
     }
+    if (options.wrap) {
+      toplevel = toplevel.wrap_commonjs(options.wrap, options.exportAll);
+    }
 
     // 2. compress
     if (options.compress) {
