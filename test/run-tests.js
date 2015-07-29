@@ -31,7 +31,7 @@ function tmpl() {
 
 function log() {
     var txt = tmpl.apply(this, arguments);
-    sys.puts(txt);
+    console.log("%s", txt);
 }
 
 function log_directory(dir) {
