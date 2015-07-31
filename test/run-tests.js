@@ -92,6 +92,9 @@ function run_compress_tests() {
             }
             var input = as_toplevel(test.input);
             var input_code = make_code(test.input);
+            if (test.mangle_props) {
+                input = U.mangle_properties(input, test.mangle_props);
+            }
             var output = input.transform(cmp);
             output.figure_out_scope();
             output = make_code(output, false);
