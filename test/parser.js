@@ -21,6 +21,12 @@ module.exports = function () {
     ok.equal(destr_fun1.argnames.length, 1);
     ok.equal(destr_fun2.argnames.length, 1);
 
+    var destr_fun1 = UglifyJS.parse('({a, b}) => null').body[0].body;
+    var destr_fun2 = UglifyJS.parse('([a, [b]]) => null').body[0].body;
+    
+    ok.equal(destr_fun1.argnames.length, 1);
+    ok.equal(destr_fun2.argnames.length, 1);
+
     var destruct1 = destr_fun1.argnames[0];
     var destruct2 = destr_fun2.argnames[0];
 
