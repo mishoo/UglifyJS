@@ -35,3 +35,65 @@ regression_arrow_functions_and_hoist: {
     }
     expect_exact: "a=>b;"
 }
+
+destructuring_arguments: {
+    input: {
+        (function ( a ) { });
+        (function ( [ a ] ) { });
+        (function ( [ a, b ] ) { });
+        (function ( [ [ a ] ] ) { });
+        (function ( [ [ a, b ] ] ) { });
+        (function ( [ a, [ b ] ] ) { });
+        (function ( [ [ b ], a ] ) { });
+
+        (function ( { a } ) { });
+        (function ( { a, b } ) { });
+
+        (function ( [ { a } ] ) { });
+        (function ( [ { a, b } ] ) { });
+        (function ( [ a, { b } ] ) { });
+        (function ( [ { b }, a ] ) { });
+
+        ( [ a ] ) => { };
+        ( [ a, b ] ) => { };
+
+        ( { a } ) => { };
+        ( { a, b, c, d, e } ) => { };
+
+        ( [ a ] ) => b;
+        ( [ a, b ] ) => c;
+
+        ( { a } ) => b;
+        ( { a, b } ) => c;
+    }
+    expect: {
+        (function(a){});
+        (function([a]){});
+        (function([a,b]){});
+        (function([[a]]){});
+        (function([[a,b]]){});
+        (function([a,[b]]){});
+        (function([[b],a]){});
+
+        (function({a}){});
+        (function({a,b}){});
+
+        (function([{a}]){});
+        (function([{a,b}]){});
+        (function([a,{b}]){});
+        (function([{b},a]){});
+
+        ([a])=>{};
+        ([a,b])=>{};
+
+        ({a})=>{};
+        ({a,b,c,d,e})=>{};
+
+        ([a])=>b;
+        ([a,b])=>c;
+
+        ({a})=>b;
+        ({a,b})=>c;
+    }
+}
+
