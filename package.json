@@ -6,7 +6,7 @@
   "license": "BSD",
   "version": "2.4.24",
   "engines": {
-    "node": ">=0.4.0"
+    "node": ">=0.8.0"
   },
   "maintainers": [
     "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)"
