@@ -350,6 +350,11 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
 
+- `keep_fnames` -- default `false`.  Pass `true` to prevent the
+  compressor from mangling/discarding function names.  Useful for code relying on
+  `Function.prototype.name`.
+
+
 ### The `unsafe` option
 
 It enables some transformations that *might* break code logic in certain
