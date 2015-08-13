@@ -94,6 +94,14 @@ module.exports = function () {
         UglifyJS.parse('(function [a] { })');
     });
 
+    // Destructuring variable declaration
+
+    var decls = UglifyJS.parse('var {a,b} = foo, { c, d } = bar');
+
+    ok.equal(decls.body[0].TYPE, 'Var');
+    ok.equal(decls.body[0].definitions.length, 2);
+    ok.equal(decls.body[0].definitions[0].name.TYPE, 'Destructuring');
+
     ok.throws(function () {
         // Note: this *is* a valid destructuring, but before we implement
         // destructuring (right now it's only destructuring *arguments*),

@@ -164,6 +164,21 @@ used_var_in_catch: {
     }
 }
 
+unused_keep_harmony_destructuring: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            var {x, y} = foo;
+            var a = foo;
+        }
+    }
+    expect:  {
+        function foo() {
+            var {x, y} = foo;
+        }
+    }
+}
+
 keep_fnames: {
     options = { unused: true, keep_fnames: true, unsafe: true };
     input: {
