@@ -65,3 +65,21 @@ hoist_no_destructurings: {
         }
     }
 }
+
+dont_hoist_var_destructurings: {
+    options = {
+        hoist_vars: true,
+        hoist_funs: true
+    }
+    input: {
+        function x() {
+            // If foo is null or undefined, this should be an exception
+            var {x,y} = foo;
+        }
+    }
+    expect: {
+        function x() {
+            var {x,y} = foo;
+        }
+    }
+}
