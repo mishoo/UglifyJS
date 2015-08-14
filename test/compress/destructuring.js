@@ -23,3 +23,12 @@ nested_destructuring_objects: {
     }
     expect_exact: 'var[{a},b]=c;';
 }
+
+destructuring_vardef_in_loops: {
+    input: {
+        for (var [x,y] in pairs);
+        for (var [a] = 0;;);
+        for (var {c} of cees);
+    }
+    expect_exact: "for(var[x,y]in pairs);for(var[a]=0;;);for(var{c}of cees);"
+}
