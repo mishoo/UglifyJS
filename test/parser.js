@@ -101,6 +101,17 @@ module.exports = function () {
     ok.equal(decls.body[0].TYPE, 'Var');
     ok.equal(decls.body[0].definitions.length, 2);
     ok.equal(decls.body[0].definitions[0].name.TYPE, 'Destructuring');
+    ok.equal(decls.body[0].definitions[0].value.TYPE, 'SymbolRef');
+
+    var nested_def = UglifyJS.parse('var [{x}] = foo').body[0].definitions[0];
+
+    ok.equal(nested_def.name.names[0].names[0].TYPE, 'SymbolVar')
+    ok.equal(nested_def.name.names[0].names[0].name, 'x')
+
+    var holey_def = UglifyJS.parse('const [,,third] = [1,2,3]').body[0].definitions[0];
+
+    ok.equal(holey_def.name.names[0].TYPE, 'Hole')
+    ok.equal(holey_def.name.names[2].TYPE, 'SymbolConst')
 
     ok.throws(function () {
         // Note: this *is* a valid destructuring, but before we implement

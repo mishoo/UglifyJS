@@ -17,3 +17,9 @@ destructuring_objects: {
     }
 }
 
+nested_destructuring_objects: {
+    input: {
+        var [{a},b] = c;
+    }
+    expect_exact: 'var[{a},b]=c;';
+}
