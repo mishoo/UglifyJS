@@ -97,3 +97,18 @@ destructuring_arguments: {
     }
 }
 
+binary_literals: {
+    input: {
+        0b1001;
+        0B1001;
+        0o11;
+        0O11;
+    }
+
+    expect: {
+        9;
+        9;
+        9;
+        9;
+    }
+}
