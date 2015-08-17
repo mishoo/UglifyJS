@@ -107,7 +107,7 @@ destructuring_arguments: {
     }
 }
 
-binary_literals: {
+number_literals: {
     input: {
         0b1001;
         0B1001;
