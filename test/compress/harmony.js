@@ -36,6 +36,16 @@ regression_arrow_functions_and_hoist: {
     expect_exact: "a=>b;"
 }
 
+typeof_arrow_functions: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        typeof (x) => null;
+    }
+    expect_exact: "\"function\";"
+}
+
 destructuring_arguments: {
     input: {
         (function ( a ) { });
