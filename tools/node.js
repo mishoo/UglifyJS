@@ -73,16 +73,19 @@ exports.minify = function(files, options) {
     } else {
         if (typeof files == "string")
             files = [ files ];
-        files.forEach(function(file){
+        files.forEach(function(file, i){
             var code = options.fromString
                 ? file
                 : fs.readFileSync(file, "utf8");
             sourcesContent[file] = code;
             toplevel = UglifyJS.parse(code, {
-                filename: options.fromString ? "?" : file,
+                filename: options.fromString ? i : file,
                 toplevel: toplevel
             });
         });
+    }
+    if (options.wrap) {
+      toplevel = toplevel.wrap_commonjs(options.wrap, options.exportAll);
     }
 
     // 2. compress
