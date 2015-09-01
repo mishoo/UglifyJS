@@ -581,7 +581,15 @@ console.log(result.map);
 
 Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
-`file` attribute in the source map (see [the spec][sm-spec]).
+`file` attribute in the source map (see [the spec][sm-spec]). The value set
+in the `//# sourceMappingURL` comment defaults to `outSourceMap`, but this
+can be overridden by setting the `sourceMapURL` parameter:
+```javascript
+var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
+	outSourceMap: "out.js.map",
+	sourceMapURL: "sourcemaps/out.js.map",
+});
+```
 
 You can also specify sourceRoot property to be included in source map:
 ```javascript
