@@ -56,6 +56,14 @@ template_strings: {
     expect_exact: "``;`xx\\`x`;`${foo+2}`;` foo ${bar+`baz ${qux}`}`;";
 }
 
+template_string_prefixes: {
+    input: {
+        String.raw`foo`;
+        foo `bar`;
+    }
+    expect_exact: "String.raw`foo`;foo`bar`;";
+}
+
 destructuring_arguments: {
     input: {
         (function ( a ) { });
