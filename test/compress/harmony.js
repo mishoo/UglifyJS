@@ -46,6 +46,16 @@ typeof_arrow_functions: {
     expect_exact: "\"function\";"
 }
 
+template_strings: {
+    input: {
+        ``;
+        `xx\`x`;
+        `${ foo + 2 }`;
+        ` foo ${ bar + `baz ${ qux }` }`;
+    }
+    expect_exact: "``;`xx\\`x`;`${foo+2}`;` foo ${bar+`baz ${qux}`}`;";
+}
+
 destructuring_arguments: {
     input: {
         (function ( a ) { });
