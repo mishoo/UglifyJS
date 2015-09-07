@@ -36,6 +36,13 @@ regression_arrow_functions_and_hoist: {
     expect_exact: "a=>b;"
 }
 
+computed_property_names: {
+    input: {
+        obj({ ["x" + "x"]: 6 });
+    }
+    expect_exact: "obj({[\"x\"+\"x\"]:6});"
+}
+
 typeof_arrow_functions: {
     options = {
         evaluate: true
