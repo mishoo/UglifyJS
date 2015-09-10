@@ -225,6 +225,9 @@ if (ARGS.keep_fnames) {
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
+if (COMPRESS)
+    OUTPUT_OPTIONS.ascii_only = !!COMPRESS.ascii_only
+
 if (ARGS.comments != null) {
     if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
         try {
