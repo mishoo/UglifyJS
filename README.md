@@ -354,8 +354,8 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   compressor from mangling/discarding function names.  Useful for code relying on
   `Function.prototype.name`.
 
-- `ascii-only` (default `false`) -- escape Unicode characters in strings and
-  regexps
+- `ascii-only` -- default `false`. Escape Unicode characters in strings and
+  regexps.
 
 
 ### The `unsafe` option
