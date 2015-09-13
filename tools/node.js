@@ -131,7 +131,7 @@ exports.minify = function(files, options) {
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
 
-    if(options.outSourceMap){
+    if (options.outSourceMap && "string" === typeof options.outSourceMap) {
         stream += "\n//# sourceMappingURL=" + options.outSourceMap;
     }
 
