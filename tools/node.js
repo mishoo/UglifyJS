@@ -1,26 +1,5 @@
 var path = require("path");
 var fs = require("fs");
-var vm = require("vm");
-
-var UglifyJS = vm.createContext({
-    console       : console,
-    process       : process,
-    Buffer        : Buffer,
-    MOZ_SourceMap : require("source-map")
-});
-
-function load_global(file) {
-    file = path.resolve(path.dirname(module.filename), file);
-    try {
-        var code = fs.readFileSync(file, "utf8");
-        return vm.runInContext(code, UglifyJS, file);
-    } catch(ex) {
-        // XXX: in case of a syntax error, the message is kinda
-        // useless. (no location information).
-        console.log("ERROR in file: " + file + " / " + ex);
-        process.exit(1);
-    }
-};
 
 var FILES = exports.FILES = [
     "../lib/utils.js",
@@ -32,23 +11,24 @@ var FILES = exports.FILES = [
     "../lib/compress.js",
     "../lib/sourcemap.js",
     "../lib/mozilla-ast.js",
-    "../lib/propmangle.js"
+    "../lib/propmangle.js",
+    "./exports.js",
 ].map(function(file){
     return fs.realpathSync(path.join(path.dirname(__filename), file));
 });
 
-FILES.forEach(load_global);
+var UglifyJS = exports;
+
+new Function("MOZ_SourceMap", "exports", FILES.map(function(file){
+    return fs.readFileSync(file, "utf8");
+}).join("\n\n"))(
+    require("source-map"),
+    UglifyJS
+);
 
 UglifyJS.AST_Node.warn_function = function(txt) {
     console.error("WARN: %s", txt);
 };
-
-// XXX: perhaps we shouldn't export everything but heck, I'm lazy.
-for (var i in UglifyJS) {
-    if (UglifyJS.hasOwnProperty(i)) {
-        exports[i] = UglifyJS[i];
-    }
-}
 
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {

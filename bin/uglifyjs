@@ -254,7 +254,6 @@ if (ARGS.self) {
     }
     files = UglifyJS.FILES;
     if (!ARGS.wrap) ARGS.wrap = "UglifyJS";
-    ARGS.export_all = true;
 }
 
 var ORIG_MAP = ARGS.in_source_map;
