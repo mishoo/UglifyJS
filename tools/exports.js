@@ -14,3 +14,4 @@ exports["merge"] = merge;
 exports["parse"] = parse;
 exports["push_uniq"] = push_uniq;
 exports["string_template"] = string_template;
+exports["is_identifier"] = is_identifier;
