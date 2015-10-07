@@ -401,7 +401,7 @@ async.eachLimit(files, 1, function (file, cb) {
         writeNameCache("props", cache);
     })();
 
-    var SCOPE_IS_NEEDED = COMPRESS || MANGLE || BEAUTIFY || ARGS.lint;
+    var SCOPE_IS_NEEDED = true;
     var TL_CACHE = readNameCache("vars");
 
     if (SCOPE_IS_NEEDED) {
