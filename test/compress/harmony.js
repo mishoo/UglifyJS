@@ -132,6 +132,22 @@ destructuring_arguments: {
     }
 }
 
+concise_methods: {
+    input: {
+        x = {
+            foo(a, b) {
+                return x;
+            }
+        }
+        y = {
+            foo([{a}]) {
+                return a;
+            }
+        }
+    }
+    expect_exact: "x={foo(a,b){return x}};y={foo([{a}]){return a}};"
+}
+
 number_literals: {
     input: {
         0b1001;
