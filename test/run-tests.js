@@ -190,7 +190,7 @@ function parse_test(file) {
 
 function make_code(ast, beautify) {
     if (arguments.length == 1) beautify = true;
-    var stream = U.OutputStream({ beautify: beautify });
+    var stream = U.OutputStream({ beautify: beautify, inline_script: true });
     ast.print(stream);
     return stream.get();
 }
