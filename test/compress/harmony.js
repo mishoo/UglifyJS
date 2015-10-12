@@ -40,7 +40,7 @@ computed_property_names: {
     input: {
         obj({ ["x" + "x"]: 6 });
     }
-    expect_exact: "obj({[\"x\"+\"x\"]:6});"
+    expect_exact: 'obj({["x"+"x"]:6});'
 }
 
 typeof_arrow_functions: {
