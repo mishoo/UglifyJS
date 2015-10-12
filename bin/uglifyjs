@@ -254,7 +254,6 @@ if (ARGS.self) {
     }
     files = UglifyJS.FILES;
     if (!ARGS.wrap) ARGS.wrap = "UglifyJS";
-    ARGS.export_all = true;
 }
 
 var ORIG_MAP = ARGS.in_source_map;
@@ -402,17 +401,14 @@ async.eachLimit(files, 1, function (file, cb) {
         writeNameCache("props", cache);
     })();
 
-    var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
     var TL_CACHE = readNameCache("vars");
 
-    if (SCOPE_IS_NEEDED) {
-        time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
-            if (ARGS.lint) {
-                TOPLEVEL.scope_warnings();
-            }
-        });
-    }
+    time_it("scope", function(){
+        TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
+        if (ARGS.lint) {
+            TOPLEVEL.scope_warnings();
+        }
+    });
 
     if (COMPRESS) {
         time_it("squeeze", function(){
@@ -420,14 +416,12 @@ async.eachLimit(files, 1, function (file, cb) {
         });
     }
 
-    if (SCOPE_IS_NEEDED) {
-        time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
-            if (MANGLE && !TL_CACHE) {
-                TOPLEVEL.compute_char_frequency(MANGLE);
-            }
-        });
-    }
+    time_it("scope", function(){
+        TOPLEVEL.figure_out_scope({ screw_ie8: ARGS.screw_ie8, cache: TL_CACHE });
+        if (MANGLE && !TL_CACHE) {
+            TOPLEVEL.compute_char_frequency(MANGLE);
+        }
+    });
 
     if (MANGLE) time_it("mangle", function(){
         MANGLE.cache = TL_CACHE;

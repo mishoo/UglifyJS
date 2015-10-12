@@ -1,5 +1,5 @@
 unused_funarg_1: {
-    options = { unused: true, unsafe: true };
+    options = { unused: true, keep_fargs: false };
     input: {
         function f(a, b, c, d, e) {
             return a + b;
@@ -13,7 +13,7 @@ unused_funarg_1: {
 }
 
 unused_funarg_2: {
-    options = { unused: true, unsafe: true };
+    options = { unused: true, keep_fargs: false };
     input: {
         function f(a, b, c, d, e) {
             return a + c;
@@ -188,7 +188,7 @@ keep_fnames: {
     }
     expect: {
         function foo() {
-            return function bar() {};
+            return function bar(baz) {};
         }
     }
 }
