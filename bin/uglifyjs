@@ -72,6 +72,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("mangle-props", "Mangle property names")
     .describe("mangle-regex", "Only mangle property names matching the regex")
     .describe("name-cache", "File to hold mangled names mappings")
+    .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -104,6 +105,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("prefix")
     .string("name-cache")
     .array("reserved-file")
+    .array("pure-funcs")
 
     .boolean("expr")
     .boolean("source-map-include-sources")
@@ -173,6 +175,10 @@ if (ARGS.reserve_domprops) {
 
 if (ARGS.d) {
     if (COMPRESS) COMPRESS.global_defs = getOptions("d");
+}
+
+if (ARGS.pure_funcs) {
+    if (COMPRESS) COMPRESS.pure_funcs = ARGS.pure_funcs;
 }
 
 if (ARGS.r) {

@@ -134,6 +134,8 @@ The available options are:
   --mangle-props                Mangle property names
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
+  --pure-funcs                  List of functions that can be safely removed if
+                                their return value is not used           [array]
 ```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
