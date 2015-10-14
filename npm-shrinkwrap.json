@@ -115,9 +115,9 @@
       "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.2.tgz"
     },
     "yargs": {
-      "version": "3.5.4",
-      "from": "yargs@>=3.5.4 <3.6.0",
-      "resolved": "https://registry.npmjs.org/yargs/-/yargs-3.5.4.tgz"
+      "version": "3.10.0",
+      "from": "yargs@>=3.10.0 <3.11.0",
+      "resolved": "https://registry.npmjs.org/yargs/-/yargs-3.10.0.tgz"
     },
     "zeparser": {
       "version": "0.0.7",
