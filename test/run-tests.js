@@ -17,6 +17,9 @@ if (failures) {
     process.exit(1);
 }
 
+var run_sourcemaps_tests = require('./sourcemaps');
+run_sourcemaps_tests();
+
 var run_ast_conversion_tests = require("./mozilla-ast");
 
 run_ast_conversion_tests({
