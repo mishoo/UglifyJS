@@ -142,10 +142,11 @@ concise_methods: {
         y = {
             foo([{a}]) {
                 return a;
-            }
+            },
+            bar(){}
         }
     }
-    expect_exact: "x={foo(a,b){return x}};y={foo([{a}]){return a}};"
+    expect_exact: "x={foo(a,b){return x}};y={foo([{a}]){return a},bar(){}};"
 }
 
 number_literals: {
