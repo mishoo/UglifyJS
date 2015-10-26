@@ -149,6 +149,26 @@ concise_methods: {
     expect_exact: "x={foo(a,b){return x}};y={foo([{a}]){return a},bar(){}};"
 }
 
+concise_methods_and_mangle_props: {
+    mangle_props = {
+        regex: /_/
+    };
+    input: {
+        function x() {
+            obj = {
+                _foo() { return 1; }
+            }
+        }
+    }
+    expect: {
+        function x() {
+            obj = {
+                a() { return 1; }
+            }
+        }
+    }
+}
+
 number_literals: {
     input: {
         0b1001;
