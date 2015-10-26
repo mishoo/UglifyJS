@@ -158,3 +158,20 @@ regression_cannot_destructure: {
     expect_exact: "var x={x:3};x({x:3});";
 }
 
+regression_cannot_use_of: {
+    input: {
+        function of() {
+        }
+        var of = "is a valid variable name";
+        of = { of: "is ok" };
+        x.of;
+        of: foo()
+    }
+    expect: {
+        function of(){}
+        var of="is a valid variable name";
+        of={of:"is ok"};
+        x.of;
+        foo();  /* Label statement missing? No prob. */
+    }
+}
