@@ -169,6 +169,18 @@ concise_methods_and_mangle_props: {
     }
 }
 
+concise_methods_and_keyword_names: {
+    input: {
+        x = {
+            catch() {},
+            throw() {}
+        }
+    }
+    expect: {
+        x={catch(){},throw(){}};
+    }
+}
+
 number_literals: {
     input: {
         0b1001;
