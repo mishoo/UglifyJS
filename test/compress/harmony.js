@@ -200,6 +200,20 @@ classes: {
     expect_exact: "class SomeClass{constructor(){}foo(){}}class NoSemi{constructor(...args){}foo(){}}class ChildClass extends SomeClass{}var asExpression=class AsExpression{};var nameless=class{};"
 }
 
+class_statics: {
+    input: {
+        x = class {
+            static staticMethod() {}
+            static get foo() {}
+            static set bar() {}
+            static() { /* "static" can be a method name! */ }
+            get() { /* "get" can be a method name! */ }
+            set() { /* "set" can be a method name! */ }
+        }
+    }
+    expect_exact: "x=class{static staticMethod(){}static get foo(){}static set bar(){}static(){}get(){}set(){}};"
+}
+
 number_literals: {
     input: {
         0b1001;
