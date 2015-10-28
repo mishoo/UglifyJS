@@ -87,20 +87,21 @@ function run_compress_tests() {
                 warnings: false
             });
             var cmp = new U.Compressor(options, true);
+            var output_options = test.beautify || {};
             var expect;
             if (test.expect) {
-                expect = make_code(as_toplevel(test.expect), false);
+                expect = make_code(as_toplevel(test.expect), output_options);
             } else {
                 expect = test.expect_exact;
             }
             var input = as_toplevel(test.input);
-            var input_code = make_code(test.input);
+            var input_code = make_code(test.input, { beautify: true });
             if (test.mangle_props) {
                 input = U.mangle_properties(input, test.mangle_props);
             }
             var output = input.transform(cmp);
             output.figure_out_scope();
-            output = make_code(output, false);
+            output = make_code(output, output_options);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
                     input: input_code,
@@ -144,7 +145,7 @@ function parse_test(file) {
             file: file,
             line: node.start.line,
             col: node.start.col,
-            code: make_code(node, false)
+            code: make_code(node, { beautify: false })
         }));
     }
 
@@ -191,15 +192,15 @@ function parse_test(file) {
     };
 }
 
-function make_code(ast, beautify) {
-    if (arguments.length == 1) beautify = true;
-    var stream = U.OutputStream({ beautify: beautify, inline_script: true });
+function make_code(ast, options) {
+    options.inline_script = true;
+    var stream = U.OutputStream(options);
     ast.print(stream);
     return stream.get();
 }
 
 function evaluate(code) {
     if (code instanceof U.AST_Node)
-        code = make_code(code);
+        code = make_code(code, { beautify: true });
     return new Function("return(" + code + ")")();
 }
