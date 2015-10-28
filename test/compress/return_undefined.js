@@ -69,6 +69,15 @@ return_void_0_true: {
             bar(b);
             return undefined;
         }
+        function f10() {
+            return false;
+        }
+        function f11() {
+            return null;
+        }
+        function f12() {
+            return 0;
+        }
     }
     expect: {
         function f0() {}
@@ -102,6 +111,15 @@ return_void_0_true: {
         function f9(a, b) {
             foo(a);
             bar(b);
+        }
+        function f10() {
+            return !1;
+        }
+        function f11() {
+            return null;
+        }
+        function f12() {
+            return 0;
         }
     }
 }
@@ -177,6 +195,15 @@ return_void_0_false: {
             bar(b);
             return undefined;
         }
+        function f10() {
+            return false;
+        }
+        function f11() {
+            return null;
+        }
+        function f12() {
+            return 0;
+        }
     }
     expect: {
         function f0() {
@@ -223,6 +250,15 @@ return_void_0_false: {
             foo(a);
             bar(b);
             return void 0;
+        }
+        function f10() {
+            return !1;
+        }
+        function f11() {
+            return null;
+        }
+        function f12() {
+            return 0;
         }
     }
 }
