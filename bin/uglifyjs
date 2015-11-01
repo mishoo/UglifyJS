@@ -73,6 +73,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("mangle-regex", "Only mangle property names matching the regex")
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
+    .describe("dump-spidermonkey-ast", "Dump SpiderMonkey AST to stdout.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -117,6 +118,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("stats")
     .boolean("acorn")
     .boolean("spidermonkey")
+    .boolean("dump-spidermonkey-ast")
     .boolean("lint")
     .boolean("V")
     .boolean("version")
@@ -444,26 +446,30 @@ async.eachLimit(files, 1, function (file, cb) {
         }
     }
 
-    time_it("generate", function(){
-        TOPLEVEL.print(output);
-    });
-
-    output = output.get();
-
-    if (SOURCE_MAP) {
-        fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-        var source_map_url = ARGS.source_map_url || (
-            P_RELATIVE
-                ? path.relative(path.dirname(OUTPUT_FILE), ARGS.source_map)
-                : ARGS.source_map
-        );
-        output += "\n//# sourceMappingURL=" + source_map_url;
-    }
-
-    if (OUTPUT_FILE) {
-        fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+    if (ARGS.dump_spidermonkey_ast) {
+        print(JSON.stringify(TOPLEVEL.to_mozilla_ast(), null, 2));
     } else {
-        print(output);
+        time_it("generate", function(){
+            TOPLEVEL.print(output);
+        });
+
+        output = output.get();
+
+        if (SOURCE_MAP) {
+            fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
+            var source_map_url = ARGS.source_map_url || (
+                P_RELATIVE
+                    ? path.relative(path.dirname(OUTPUT_FILE), ARGS.source_map)
+                    : ARGS.source_map
+            );
+            output += "\n//# sourceMappingURL=" + source_map_url;
+        }
+
+        if (OUTPUT_FILE) {
+            fs.writeFileSync(OUTPUT_FILE, output, "utf8");
+        } else {
+            print(output);
+        }
     }
 
     if (ARGS.stats) {
