@@ -45,7 +45,6 @@ exports.minify = function(files, options) {
     UglifyJS.base54.reset();
 
     // 1. parse
-    var haveScope = false;
     var toplevel = null,
         sourcesContent = {};
 
@@ -74,7 +73,6 @@ exports.minify = function(files, options) {
         var compress = { warnings: options.warnings };
         UglifyJS.merge(compress, options.compress);
         toplevel.figure_out_scope();
-        haveScope = true;
         var sq = UglifyJS.Compressor(compress);
         toplevel = toplevel.transform(sq);
     }
@@ -82,17 +80,11 @@ exports.minify = function(files, options) {
     // 3. mangle
     if (options.mangle) {
         toplevel.figure_out_scope(options.mangle);
-        haveScope = true;
         toplevel.compute_char_frequency(options.mangle);
         toplevel.mangle_names(options.mangle);
     }
 
-    // 4. scope (if needed)
-    if (!haveScope) {
-        toplevel.figure_out_scope();
-    }
-
-    // 5. output
+    // 4. output
     var inMap = options.inSourceMap;
     var output = {};
     if (typeof options.inSourceMap == "string") {
