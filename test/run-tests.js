@@ -4,7 +4,6 @@ var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
-var sys = require("util");
 
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
@@ -12,8 +11,8 @@ var failed_files = {};
 
 run_compress_tests();
 if (failures) {
-    sys.error("\n!!! Failed " + failures + " test cases.");
-    sys.error("!!! " + Object.keys(failed_files).join(", "));
+    console.error("\n!!! Failed " + failures + " test cases.");
+    console.error("!!! " + Object.keys(failed_files).join(", "));
     process.exit(1);
 }
 
