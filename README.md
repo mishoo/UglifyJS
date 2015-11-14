@@ -348,7 +348,7 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `drop_console` -- default `false`.  Pass `true` to discard calls to
   `console.*` functions.
 
-- `keep_fargs` -- default `false`.  Pass `true` to prevent the
+- `keep_fargs` -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
 
@@ -372,7 +372,6 @@ when this flag is on:
 - `void 0` → `undefined` (if there is a variable named "undefined" in
   scope; we do it because the variable name will be mangled, typically
   reduced to a single character)
-- discards unused function arguments (affects `function.length`)
 
 ### Conditional compilation
 
