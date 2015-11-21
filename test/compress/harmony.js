@@ -251,6 +251,14 @@ class_name_can_be_preserved: {
     }
 }
 
+new_target: {
+    input: {
+        new.target;
+        new.target.name;
+    }
+    expect_exact: "new.target;new.target.name;"
+}
+
 number_literals: {
     input: {
         0b1001;
