@@ -233,6 +233,24 @@ class_name_can_be_mangled: {
     }
 }
 
+class_name_can_be_preserved: {
+    mangle = {
+        keep_classnames: true
+    }
+    input: {
+        function x() {
+            (class Baz { });
+            class Foo {};
+        }
+    }
+    expect: {
+        function x() {
+            (class Baz { });
+            class Foo {};
+        }
+    }
+}
+
 number_literals: {
     input: {
         0b1001;
