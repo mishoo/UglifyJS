@@ -214,6 +214,25 @@ class_statics: {
     expect_exact: "x=class{static staticMethod(){}static get foo(){}static set bar(){}static(){}get(){}set(){}};"
 }
 
+class_name_can_be_mangled: {
+    mangle = { };
+    input: {
+        function x() {
+            class Foo {
+            }
+            var class1 = Foo
+            var class2 = class Bar {}
+        }
+    }
+    expect: {
+        function x() {
+            class a { }
+            var b = a
+            var c = class a {}
+        }
+    }
+}
+
 number_literals: {
     input: {
         0b1001;
