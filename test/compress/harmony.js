@@ -132,6 +132,14 @@ destructuring_arguments: {
     }
 }
 
+default_arguments: {
+    input: {
+        function x(a = 6) { }
+        function x(a = (6 + 5)) { }
+    }
+    expect_exact: "function x(a=6){}function x(a=6+5){}"
+}
+
 concise_methods: {
     input: {
         x = {
