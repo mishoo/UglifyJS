@@ -141,6 +141,16 @@ default_arguments: {
     expect_exact: "function x(a=6){}function x(a=6+5){}function x({foo}={},[bar]=[1]){}"
 }
 
+default_values_in_destructurings: {
+    input: {
+        function x({a=(4), b}) {}
+        function x([b, c=(12)]) {}
+        var { x = (6), y } = x;
+        var [ x, y = (6) ] = x;
+    }
+    expect_exact: "function x({a=4,b}){}function x([b,c=12]){}var{x=6,y}=x;var[x,y=6]=x;"
+}
+
 concise_methods: {
     input: {
         x = {
