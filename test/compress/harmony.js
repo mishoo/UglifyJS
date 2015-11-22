@@ -136,8 +136,9 @@ default_arguments: {
     input: {
         function x(a = 6) { }
         function x(a = (6 + 5)) { }
+        function x({ foo } = {}, [ bar ] = [ 1 ]) { }
     }
-    expect_exact: "function x(a=6){}function x(a=6+5){}"
+    expect_exact: "function x(a=6){}function x(a=6+5){}function x({foo}={},[bar]=[1]){}"
 }
 
 concise_methods: {
