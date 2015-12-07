@@ -783,7 +783,7 @@ The `source_map_options` (optional) can contain the following properties:
   came from.  It can be simply a string in JSON, or a JSON object containing
   the original source map.
 
-  [acorn]: https://github.com/marijnh/acorn
+  [acorn]: https://github.com/ternjs/acorn
   [source-map]: https://github.com/mozilla/source-map
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
   [codegen]: http://lisperator.net/uglifyjs/codegen
