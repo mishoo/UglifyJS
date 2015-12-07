@@ -181,6 +181,84 @@ concise_methods_and_keyword_names: {
     }
 }
 
+classes: {
+    input: {
+        class SomeClass {
+            constructor() {
+            };
+            foo() {};
+        };
+        class NoSemi {
+            constructor(...args) {
+            }
+            foo() {}
+        };
+        class ChildClass extends SomeClass {};
+        var asExpression = class AsExpression {};
+        var nameless = class {};
+    }
+    expect_exact: "class SomeClass{constructor(){}foo(){}}class NoSemi{constructor(...args){}foo(){}}class ChildClass extends SomeClass{}var asExpression=class AsExpression{};var nameless=class{};"
+}
+
+class_statics: {
+    input: {
+        x = class {
+            static staticMethod() {}
+            static get foo() {}
+            static set bar() {}
+            static() { /* "static" can be a method name! */ }
+            get() { /* "get" can be a method name! */ }
+            set() { /* "set" can be a method name! */ }
+        }
+    }
+    expect_exact: "x=class{static staticMethod(){}static get foo(){}static set bar(){}static(){}get(){}set(){}};"
+}
+
+class_name_can_be_mangled: {
+    mangle = { };
+    input: {
+        function x() {
+            class Foo {
+            }
+            var class1 = Foo
+            var class2 = class Bar {}
+        }
+    }
+    expect: {
+        function x() {
+            class a { }
+            var b = a
+            var c = class a {}
+        }
+    }
+}
+
+class_name_can_be_preserved: {
+    mangle = {
+        keep_classnames: true
+    }
+    input: {
+        function x() {
+            (class Baz { });
+            class Foo {};
+        }
+    }
+    expect: {
+        function x() {
+            (class Baz { });
+            class Foo {};
+        }
+    }
+}
+
+new_target: {
+    input: {
+        new.target;
+        new.target.name;
+    }
+    expect_exact: "new.target;new.target.name;"
+}
+
 number_literals: {
     input: {
         0b1001;
