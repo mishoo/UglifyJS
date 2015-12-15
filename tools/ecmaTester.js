@@ -67,6 +67,9 @@ try {
     if (!sameError) {
         console.log("Minified output:");
         console.log(minified);
+        console.log("\n\n==========\n\n");
+        console.log("Original code:");
+        console.log(source);
         console.log();
     }
     console.log("==========\n");
