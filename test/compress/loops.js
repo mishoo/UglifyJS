@@ -121,3 +121,25 @@ drop_if_else_break_4: {
         for (; bar() && (x(), y(), foo());) baz(), z(), k();
     }
 }
+
+parse_do_while_with_semicolon: {
+    input: {
+        do {
+            x();
+        } while (false);y()
+    }
+    expect: {
+        do x(); while (false);y();
+    }
+}
+
+parse_do_while_without_semicolon: {
+    input: {
+        do {
+            x();
+        } while (false)y()
+    }
+    expect: {
+        do x(); while (false);y();
+    }
+}
