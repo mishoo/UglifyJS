@@ -123,6 +123,7 @@ drop_if_else_break_4: {
 }
 
 parse_do_while_with_semicolon: {
+    options = { loops: false };
     input: {
         do {
             x();
@@ -134,6 +135,7 @@ parse_do_while_with_semicolon: {
 }
 
 parse_do_while_without_semicolon: {
+    options = { loops: false };
     input: {
         do {
             x();
