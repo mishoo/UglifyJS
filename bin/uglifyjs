@@ -364,7 +364,7 @@ async.eachLimit(files, 1, function (file, cb) {
                     }
                     throw ex;
                 }
-            };
+            }
         });
         cb();
     });
