@@ -348,7 +348,7 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `drop_console` -- default `false`.  Pass `true` to discard calls to
   `console.*` functions.
 
-- `keep_fargs` -- default `false`.  Pass `true` to prevent the
+- `keep_fargs` -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
 
@@ -372,7 +372,6 @@ when this flag is on:
 - `void 0` → `undefined` (if there is a variable named "undefined" in
   scope; we do it because the variable name will be mangled, typically
   reduced to a single character)
-- discards unused function arguments (affects `function.length`)
 
 ### Conditional compilation
 
@@ -784,7 +783,7 @@ The `source_map_options` (optional) can contain the following properties:
   came from.  It can be simply a string in JSON, or a JSON object containing
   the original source map.
 
-  [acorn]: https://github.com/marijnh/acorn
+  [acorn]: https://github.com/ternjs/acorn
   [source-map]: https://github.com/mozilla/source-map
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
   [codegen]: http://lisperator.net/uglifyjs/codegen
