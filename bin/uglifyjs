@@ -409,7 +409,7 @@ async.eachLimit(files, 1, function (file, cb) {
         writeNameCache("props", cache);
     })();
 
-    var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint
+    var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint;
     var TL_CACHE = readNameCache("vars");
 
     if (SCOPE_IS_NEEDED) {
@@ -528,7 +528,7 @@ function getOptions(x, constants) {
                 ret[name] = true;
                 return true;    // no descend
             }
-            print_error(node.TYPE)
+            print_error(node.TYPE);
             print_error("Error parsing arguments in: " + x);
             process.exit(1);
         }));
