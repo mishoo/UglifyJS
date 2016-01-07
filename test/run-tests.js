@@ -195,7 +195,7 @@ function parse_test(file) {
         });
         block.walk(tw);
         return test;
-    };
+    }
 }
 
 function make_code(ast, options) {

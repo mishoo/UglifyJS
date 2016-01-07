@@ -170,7 +170,7 @@ exports.describe_ast = function() {
                 });
             });
         }
-    };
+    }
     doitem(UglifyJS.AST_Node);
     return out + "";
 };

@@ -62,7 +62,7 @@ module.exports = function(options) {
         var ast1 = normalizeInput(esfuzz.generate({
             maxDepth: options.maxDepth
         }));
-        
+
         var ast2 =
             UglifyJS
             .AST_Node
