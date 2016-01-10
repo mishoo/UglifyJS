@@ -103,6 +103,10 @@ function run_compress_tests() {
             }
             var output = input.transform(cmp);
             output.figure_out_scope();
+            if (test.mangle) {
+                output.compute_char_frequency(test.mangle);
+                output.mangle_names(test.mangle);
+            }
             output = make_code(output, output_options);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
