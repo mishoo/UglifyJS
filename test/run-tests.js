@@ -16,6 +16,9 @@ if (failures) {
     process.exit(1);
 }
 
+var mocha_tests = require("./mocha.js");
+mocha_tests();
+
 var run_sourcemaps_tests = require('./sourcemaps');
 run_sourcemaps_tests();
 
