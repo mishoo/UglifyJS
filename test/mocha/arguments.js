@@ -6,7 +6,10 @@ describe("arguments", function() {
         var ast = UglifyJS.parse("var arguments; var f = function() {arguments.length}");
         ast.figure_out_scope();
 
-        // Select symbol in function
+        // Test scope of `var arguments`
+        assert.strictEqual(ast.find_variable("arguments").global, true);
+
+        // Select arguments symbol in function
         var symbol = ast.body[1].definitions[0].value.find_variable("arguments");
 
         assert.strictEqual(symbol.global, false);
