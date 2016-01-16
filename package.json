@@ -49,5 +49,8 @@
   "scripts": {
     "shrinkwrap": "rm ./npm-shrinkwrap.json; rm -rf ./node_modules; npm i && npm shrinkwrap && npm outdated",
     "test": "node test/run-tests.js"
+  },
+  "keywords": {
+    "uglify", "uglify-js"
   }
 }
