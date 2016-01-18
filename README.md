@@ -626,6 +626,9 @@ Other options:
 
 - `mangle` — pass `false` to skip mangling names.
 
+- `mangleProperties` (default `false`) — pass an object to specify custom
+  mangle property options.
+
 - `output` (default `null`) — pass an object if you wish to specify
   additional [output options][codegen].  The defaults are optimized
   for best compression.
