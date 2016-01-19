@@ -87,3 +87,49 @@ dead_code_constant_boolean_should_warn_more: {
         var moo;
     }
 }
+
+dead_code_const_declaration: {
+    options = {
+        dead_code    : true,
+        loops        : true,
+        booleans     : true,
+        conditionals : true,
+        evaluate     : true
+    };
+    input: {
+        const CONST_FOO = false;
+        if (CONST_FOO) {
+            console.log("unreachable");
+            var moo;
+            function bar() {}
+        }
+    }
+    expect: {
+        const CONST_FOO = !1;
+        var moo;
+        function bar() {}
+    }
+}
+
+dead_code_const_annotation: {
+    options = {
+        dead_code    : true,
+        loops        : true,
+        booleans     : true,
+        conditionals : true,
+        evaluate     : true
+    };
+    input: {
+        /** @const*/ var CONST_FOO_ANN = false;
+        if (CONST_FOO_ANN) {
+            console.log("unreachable");
+            var moo;
+            function bar() {}
+        }
+    }
+    expect: {
+        var CONST_FOO_ANN = !1;
+        var moo;
+        function bar() {}
+    }
+}
