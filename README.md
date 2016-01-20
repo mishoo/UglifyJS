@@ -395,6 +395,8 @@ separate file and include it into the build.  For example you can have a
 ```javascript
 const DEBUG = false;
 const PRODUCTION = true;
+// Alternative for environments that don't support `const`
+/** @const */ var STAGING = false;
 // etc.
 ```
 
@@ -404,8 +406,8 @@ and build your code like this:
 
 UglifyJS will notice the constants and, since they cannot be altered, it
 will evaluate references to them to the value itself and drop unreachable
-code as usual.  The possible downside of this approach is that the build
-will contain the `const` declarations.
+code as usual.  The build will contain the `const` declarations if you use
+them. If you are targeting < ES6 environments, use `/** @const */ var`.
 
 <a name="codegen-options"></a>
 ## Beautifier options
