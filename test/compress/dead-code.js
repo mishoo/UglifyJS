@@ -138,6 +138,29 @@ dead_code_const_annotation: {
     }
 }
 
+dead_code_const_annotation_regex: {
+    options = {
+        dead_code    : true,
+        loops        : true,
+        booleans     : true,
+        conditionals : true,
+        evaluate     : true
+    };
+    input: {
+        var unused;
+        // @constraint this shouldn't be a constant
+        var CONST_FOO_ANN = false;
+        if (CONST_FOO_ANN) {
+            console.log("reachable");
+        }
+    }
+    expect: {
+        var unused;
+        var CONST_FOO_ANN = !1;
+        CONST_FOO_ANN && console.log('reachable');
+    }
+}
+
 dead_code_const_annotation_complex_scope: {
     options = {
         dead_code    : true,
@@ -149,7 +172,8 @@ dead_code_const_annotation_complex_scope: {
     input: {
         var unused_var;
         /** @const */ var test = 'test';
-        /** @const */ var CONST_FOO_ANN = false;
+        // @const
+        var CONST_FOO_ANN = false;
         var unused_var_2;
         if (CONST_FOO_ANN) {
             console.log("unreachable");
