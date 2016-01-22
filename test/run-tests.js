@@ -16,6 +16,9 @@ if (failures) {
     process.exit(1);
 }
 
+var mocha_tests = require("./mocha.js");
+mocha_tests();
+
 var run_sourcemaps_tests = require('./sourcemaps');
 run_sourcemaps_tests();
 
@@ -104,9 +107,19 @@ function run_compress_tests() {
             }
             var output = input.transform(cmp);
             output.figure_out_scope();
+
+            var mangle = U.defaults(test.mangle, {
+                compute_char_frequency: false
+            });
+
+            if (mangle.compute_char_frequency) {
+                output.compute_char_frequency(test.mangle);
+            }
+
             if (test.mangle) {
                 output.mangle_names(test.mangle);
             }
+
             output = make_code(output, output_options);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
