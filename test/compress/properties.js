@@ -12,7 +12,8 @@ keep_properties: {
 
 dot_properties: {
     options = {
-        properties: true
+        properties: true,
+        screw_ie8: false
     };
     input: {
         a["foo"] = "bar";
@@ -34,8 +35,7 @@ dot_properties: {
 
 dot_properties_es5: {
     options = {
-        properties: true,
-        screw_ie8: true
+        properties: true
     };
     input: {
         a["foo"] = "bar";

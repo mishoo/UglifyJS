@@ -24,7 +24,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
     .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
-    .describe("screw-ie8", "Pass this flag if you don't care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
+    .describe("support-old-ie", "Pass this flag if you care about full compliance with Internet Explorer 6-8 quirks (by default UglifyJS will try to be IE-proof).")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
@@ -110,7 +110,7 @@ You need to pass an argument to this option to specify the name that your module
 
     .boolean("expr")
     .boolean("source-map-include-sources")
-    .boolean("screw-ie8")
+    .boolean("support-old-ie")
     .boolean("export-all")
     .boolean("self")
     .boolean("v")
@@ -219,10 +219,10 @@ var OUTPUT_OPTIONS = {
     quote_style : ARGS.quotes != null ? ARGS.quotes : 0
 };
 
-if (ARGS.screw_ie8) {
-    if (COMPRESS) COMPRESS.screw_ie8 = true;
-    if (MANGLE) MANGLE.screw_ie8 = true;
-    OUTPUT_OPTIONS.screw_ie8 = true;
+if (ARGS.support_old_ie) {
+    if (COMPRESS) COMPRESS.screw_ie8 = false;
+    if (MANGLE) MANGLE.screw_ie8 = false;
+    OUTPUT_OPTIONS.screw_ie8 = false;
 }
 
 if (ARGS.keep_fnames) {
