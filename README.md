@@ -636,6 +636,10 @@ Other options:
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compressor options][compressor].
 
+##### mangleProperties options
+
+ - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
+
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
 
