@@ -1087,3 +1087,33 @@ collapse_vars_short_circuit: {
     }
 }
 
+collapse_vars_repeat_of_same_var_name: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+    }
+    input: {
+        (function(x){
+             var a = "GOOD" + x, e = "BAD", k = "?", e = a;
+             console.log(e + k);
+        })("!"),
+
+        (function(x){
+            var a = "GOOD" + x, e = "BAD" + x, k = "?", e = a;
+            console.log(e + k);
+        })("!");
+    }
+    expect: {
+        (function(x){
+             var a = "GOOD" + x, e = "BAD", e = a;
+             console.log(e + "?");
+        })("!"),
+
+        (function(x){
+            var a = "GOOD" + x, e = "BAD" + x, e = a;
+            console.log(e + "?");
+        })("!");
+    }
+}
+
