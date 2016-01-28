@@ -685,19 +685,35 @@ collapse_vars_repeated: {
             var dummy = 3, a = 5, unused = 2, a = 1, a = 3;
             return -a;
         }
-        function f2() {
-            var a = 3, a = a + 2;
+        function f2(x) {
+            var a = 3, a = x;
             return a;
         }
+        (function(x){
+             var a = "GOOD" + x, e = "BAD", k = "!", e = a;
+             console.log(e + k);
+        })("!"),
+
+        (function(x){
+            var a = "GOOD" + x, e = "BAD" + x, k = "!", e = a;
+            console.log(e + k);
+        })("!");
     }
     expect: {
         function f1() {
             return -3
         }
-        function f2() {
-            var a = 3, a = a + 2;
-            return a
+        function f2(x) {
+            return x
         }
+        (function(x){
+             var a = "GOOD" + x, e = "BAD", e = a;
+             console.log(e + "!");
+        })("!"),
+        (function(x){
+            var a = "GOOD" + x, e = "BAD" + x, e = a;
+            console.log(e + "!");
+        })("!");
     }
 }
 
@@ -1084,36 +1100,6 @@ collapse_vars_short_circuit: {
         function f12(x,y) { var a = foo(), b = bar(); return (x - y) || (b - a); }
         function f13(x,y) { return (foo() - bar()) || (x - y); }
         function f14(x,y) { var a = foo(); return (bar() - a) || (x - y); }
-    }
-}
-
-collapse_vars_repeat_of_same_var_name: {
-    options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
-        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
-    }
-    input: {
-        (function(x){
-             var a = "GOOD" + x, e = "BAD", k = "?", e = a;
-             console.log(e + k);
-        })("!"),
-
-        (function(x){
-            var a = "GOOD" + x, e = "BAD" + x, k = "?", e = a;
-            console.log(e + k);
-        })("!");
-    }
-    expect: {
-        (function(x){
-             var a = "GOOD" + x, e = "BAD", e = a;
-             console.log(e + "?");
-        })("!"),
-
-        (function(x){
-            var a = "GOOD" + x, e = "BAD" + x, e = a;
-            console.log(e + "?");
-        })("!");
     }
 }
 
