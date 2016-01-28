@@ -323,7 +323,7 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 
-- `collapse_vars` -- default `false`. Collapse single-use var and const
+- `collapse_vars` -- default `false`. Collapse single-use `var` and `const`
   definitions when possible.
 
 - `warnings` -- display warnings when dropping unreachable code or unused
