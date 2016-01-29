@@ -305,6 +305,14 @@ number_literals: {
     }
 }
 
+import_statement: {
+    input: {
+        import "mod-name";
+        import "module2";
+    }
+    expect_exact: "import\"mod-name\";import\"module2\";"
+}
+
 // Fabio: My patches accidentally caused a crash whenever
 // there's an extraneous set of parens around an object.
 regression_cannot_destructure: {
