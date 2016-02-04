@@ -418,3 +418,19 @@ regression_cannot_use_of: {
         foo();  /* Label statement missing? No prob. */
     }
 }
+
+generators: {
+    input: {
+        function* fn() {};
+    }
+    expect_exact: "function*fn(){}"
+}
+
+generators_yield: {
+    input: {
+      function* fn() {
+        yield remote();
+      }
+    }
+    expect_exact: "function*fn(){yield remote()}"
+}

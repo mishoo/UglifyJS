@@ -118,6 +118,17 @@ module.exports = function () {
     ok.equal(expanding_def.name.names[0].TYPE, 'SymbolVar');
     ok.equal(expanding_def.name.names[1].TYPE, 'Expansion');
     ok.equal(expanding_def.name.names[1].symbol.TYPE, 'SymbolVar');
+
+    // generators
+    var generators_def = UglifyJS.parse('function* fn() {}').body[0];
+    ok.equal(generators_def.is_generator, true);
+
+    ok.throws(function () {
+        UglifyJS.parse('function* (){ }');
+    });
+
+    var generators_yield_def = UglifyJS.parse('function* fn() {\nyield remote();\}').body[0].body[0];
+    ok.equal(generators_yield_def.body.operator, 'yield');
 }
 
 // Run standalone
