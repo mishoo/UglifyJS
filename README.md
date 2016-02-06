@@ -125,7 +125,9 @@ The available options are:
   --noerr                       Don't throw an error for unknown options in -c,
                                 -b or -m.
   --bare-returns                Allow return outside of functions.  Useful when
-                                minifying CommonJS modules.
+                                minifying CommonJS modules and Userscripts that
+                                may be anonymous function wrapped (IIFE) by the
+                                .user.js engine `caller`.
   --keep-fnames                 Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
   --reserved-file               File containing reserved names
@@ -636,6 +638,9 @@ Other options:
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compressor options][compressor].
 
+- `parse` (default {}) — pass an object if you wish to specify some
+  additional [parser options][parser]. (not all options available... see below)
+
 ##### mangleProperties options
 
  - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
@@ -658,6 +663,9 @@ properties are available:
 
 - `strict` — disable automatic semicolon insertion and support for trailing
   comma in arrays and objects
+- `bare_returns` — Allow return outside of functions. (maps to the
+  `--bare-returns` CLI arguments option and available to `minify` `parse`
+  other options object)
 - `filename` — the name of the file where this code is coming from
 - `toplevel` — a `toplevel` node (as returned by a previous invocation of
   `parse`)
@@ -797,3 +805,4 @@ The `source_map_options` (optional) can contain the following properties:
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
   [codegen]: http://lisperator.net/uglifyjs/codegen
   [compressor]: http://lisperator.net/uglifyjs/compress
+  [parser]: http://lisperator.net/uglifyjs/parser
