@@ -639,7 +639,7 @@ Other options:
   Pass an object to specify custom [compressor options][compressor].
 
 - `parse` (default `{}`) — pass an object if you wish to specify
-  additional [parser options][parser]
+  additional [parser options][parser].
 
 
 ##### mangleProperties options
