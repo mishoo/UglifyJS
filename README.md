@@ -660,11 +660,11 @@ properties are available:
 
 - `strict` — disable automatic semicolon insertion and support for trailing
   comma in arrays and objects
+- `bare_returns` — Allow return outside of functions. (maps to the
+  `--bare-returns` CLI arguments option)
 - `filename` — the name of the file where this code is coming from
 - `toplevel` — a `toplevel` node (as returned by a previous invocation of
   `parse`)
-- `bare_returns` — Allow return outside of functions. (maps to the
-  `--bare-returns` CLI arguments option)
 
 The last two options are useful when you'd like to minify multiple files and
 get a single file as the output and a proper source map.  Our CLI tool does
