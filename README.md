@@ -638,6 +638,10 @@ Other options:
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compressor options][compressor].
 
+- `parse` (default `{}`) — pass an object if you wish to specify
+  additional [parser options][parser]
+
+
 ##### mangleProperties options
 
  - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
@@ -801,3 +805,4 @@ The `source_map_options` (optional) can contain the following properties:
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
   [codegen]: http://lisperator.net/uglifyjs/codegen
   [compressor]: http://lisperator.net/uglifyjs/compress
+  [parser]: http://lisperator.net/uglifyjs/parser
