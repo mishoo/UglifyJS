@@ -125,7 +125,9 @@ The available options are:
   --noerr                       Don't throw an error for unknown options in -c,
                                 -b or -m.
   --bare-returns                Allow return outside of functions.  Useful when
-                                minifying CommonJS modules.
+                                minifying CommonJS modules and Userscripts that
+                                may be anonymous function wrapped (IIFE) by the
+                                .user.js engine `caller`.
   --keep-fnames                 Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
   --reserved-file               File containing reserved names
@@ -654,6 +656,8 @@ properties are available:
 - `filename` — the name of the file where this code is coming from
 - `toplevel` — a `toplevel` node (as returned by a previous invocation of
   `parse`)
+- `bare_returns` — Allow return outside of functions. (maps to the
+  `--bare-returns` CLI arguments option)
 
 The last two options are useful when you'd like to minify multiple files and
 get a single file as the output and a proper source map.  Our CLI tool does
