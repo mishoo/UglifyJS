@@ -43,7 +43,7 @@ exports.minify = function(files, options) {
         nameCache        : null,
         output           : null,
         compress         : {},
-        parse        : {}
+        parse            : {}
     });
     UglifyJS.base54.reset();
 
