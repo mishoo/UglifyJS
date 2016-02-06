@@ -42,7 +42,8 @@ exports.minify = function(files, options) {
         mangleProperties : false,
         nameCache        : null,
         output           : null,
-        compress         : {}
+        compress         : {},
+        parse            : {}
     });
     UglifyJS.base54.reset();
 
@@ -62,7 +63,8 @@ exports.minify = function(files, options) {
             sourcesContent[file] = code;
             toplevel = UglifyJS.parse(code, {
                 filename: options.fromString ? i : file,
-                toplevel: toplevel
+                toplevel: toplevel,
+                bare_returns: options.parse ? options.parse.bare_returns : undefined
             });
         });
     }
