@@ -1,6 +1,5 @@
 var path = require("path");
 var fs = require("fs");
-
 var FILES = exports.FILES = [
     "../lib/utils.js",
     "../lib/ast.js",
@@ -16,20 +15,16 @@ var FILES = exports.FILES = [
 ].map(function(file){
     return fs.realpathSync(path.join(path.dirname(__filename), file));
 });
-
 var UglifyJS = exports;
-
 new Function("MOZ_SourceMap", "exports", FILES.map(function(file){
     return fs.readFileSync(file, "utf8");
 }).join("\n\n"))(
     require("source-map"),
     UglifyJS
 );
-
 UglifyJS.AST_Node.warn_function = function(txt) {
     console.error("WARN: %s", txt);
 };
-
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
         spidermonkey     : false,
@@ -71,7 +66,6 @@ exports.minify = function(files, options) {
     if (options.wrap) {
       toplevel = toplevel.wrap_commonjs(options.wrap, options.exportAll);
     }
-
     // 2. compress
     if (options.compress) {
         var compress = { warnings: options.warnings };
@@ -87,7 +81,6 @@ exports.minify = function(files, options) {
         toplevel = UglifyJS.mangle_properties(toplevel, options.mangleProperties);
         UglifyJS.writeNameCache(options.nameCache, "props", options.mangleProperties.cache);
     }
-
     // 4. mangle
     if (options.mangle) {
         toplevel.figure_out_scope(options.mangle);
@@ -136,21 +129,6 @@ exports.minify = function(files, options) {
         map  : source_map
     };
 };
-
-// exports.describe_ast = function() {
-//     function doitem(ctor) {
-//         var sub = {};
-//         ctor.SUBCLASSES.forEach(function(ctor){
-//             sub[ctor.TYPE] = doitem(ctor);
-//         });
-//         var ret = {};
-//         if (ctor.SELF_PROPS.length > 0) ret.props = ctor.SELF_PROPS;
-//         if (ctor.SUBCLASSES.length > 0) ret.sub = sub;
-//         return ret;
-//     }
-//     return doitem(UglifyJS.AST_Node).sub;
-// }
-
 exports.describe_ast = function() {
     var out = UglifyJS.OutputStream({ beautify: true });
     function doitem(ctor) {
@@ -185,7 +163,6 @@ exports.describe_ast = function() {
     doitem(UglifyJS.AST_Node);
     return out + "";
 };
-
 function readReservedFile(filename, reserved) {
     if (!reserved) {
         reserved = { vars: [], props: [] };
@@ -228,7 +205,6 @@ exports.readNameCache = function(filename, key) {
     }
     return cache;
 };
-
 exports.writeNameCache = function(filename, key, cache) {
     if (filename) {
         var data;
