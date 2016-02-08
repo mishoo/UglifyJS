@@ -137,19 +137,6 @@ exports.minify = function(files, options) {
     };
 };
 
-// exports.describe_ast = function() {
-//     function doitem(ctor) {
-//         var sub = {};
-//         ctor.SUBCLASSES.forEach(function(ctor){
-//             sub[ctor.TYPE] = doitem(ctor);
-//         });
-//         var ret = {};
-//         if (ctor.SELF_PROPS.length > 0) ret.props = ctor.SELF_PROPS;
-//         if (ctor.SUBCLASSES.length > 0) ret.sub = sub;
-//         return ret;
-//     }
-//     return doitem(UglifyJS.AST_Node).sub;
-// }
 
 exports.describe_ast = function() {
     var out = UglifyJS.OutputStream({ beautify: true });
