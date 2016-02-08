@@ -504,6 +504,8 @@ function getOptions(x, constants) {
     if (x == null) return null;
     var ret = {};
     if (x !== "") {
+        if (Array.isArray(x)) x = x.map(function (v) { return "(" + v + ")"; }).join(", ");
+
         var ast;
         try {
             ast = UglifyJS.parse(x, { expression: true });
