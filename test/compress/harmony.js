@@ -36,6 +36,17 @@ regression_arrow_functions_and_hoist: {
     expect_exact: "a=>b;"
 }
 
+regression_assign_arrow_functions: {
+    input: {
+        oninstall = e => false;
+        oninstall = () => false;
+    }
+    expect: {
+        oninstall=e=>false;
+        oninstall=()=>false;
+    }
+}
+
 computed_property_names: {
     input: {
         obj({ ["x" + "x"]: 6 });
