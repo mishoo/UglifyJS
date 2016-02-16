@@ -18,6 +18,11 @@ this_binding_conditionals: {
         (0 || a[b])();
         (0 || 1 && a[b])();
         (1 ? a[b] : 0)();
+
+        (1 && eval)();
+        (0 || eval)();
+        (0 || 1 && eval)();
+        (1 ? eval : 0)();
     }
     expect: {
         a();
@@ -34,6 +39,11 @@ this_binding_conditionals: {
         (0, a[b])();
         (0, a[b])();
         (0, a[b])();
+
+        (0, eval)();
+        (0, eval)();
+        (0, eval)();
+        (0, eval)();
     }
 }
 
@@ -44,26 +54,43 @@ this_binding_collapse_vars: {
     input: {
         var c = a; c();
         var d = a.b; d();
+        var e = eval; e();
     }
     expect: {
         a();
         (0, a.b)();
+        (0, eval)();
     }
 }
 
-eval_direct_calls: {
+this_binding_side_effects: {
     options = {
-        side_effects: true,
-        collapse_vars: true
-    }
+        side_effects : true
+    };
     input: {
-        (0, eval)('');
-
-        var fn = eval;
-        fn('');
+        (function (foo) {
+            (0, foo)();
+            (0, foo.bar)();
+            (0, eval)('console.log(foo);');
+        }());
+        (function (foo) {
+            var eval = console;
+            (0, foo)();
+            (0, foo.bar)();
+            (0, eval)('console.log(foo);');
+        }());
     }
     expect: {
-        (0, eval)('');
-        (0, eval)('');
+        (function (foo) {
+            foo();
+            (0, foo.bar)();
+            (0, eval)('console.log(foo);');
+        }());
+        (function (foo) {
+            var eval = console;
+            foo();
+            (0, foo.bar)();
+            (0, eval)('console.log(foo);');
+        }());
     }
 }
