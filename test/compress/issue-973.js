@@ -50,3 +50,20 @@ this_binding_collapse_vars: {
         (0, a.b)();
     }
 }
+
+eval_direct_calls: {
+    options = {
+        side_effects: true,
+        collapse_vars: true
+    }
+    input: {
+        (0, eval)('');
+
+        var fn = eval;
+        fn('');
+    }
+    expect: {
+        (0, eval)('');
+        (0, eval)('');
+    }
+}
