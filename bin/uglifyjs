@@ -501,7 +501,7 @@ function normalize(o) {
 
 function getOptions(flag, constants) {
     var x = ARGS[flag];
-    if (x == null) return null;
+    if (x == null || x === false) return null;
     var ret = {};
     if (x !== "") {
         if (Array.isArray(x)) x = x.map(function (v) { return "(" + v + ")"; }).join(", ");
