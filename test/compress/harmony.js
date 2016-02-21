@@ -308,9 +308,21 @@ number_literals: {
 import_statement: {
     input: {
         import "mod-name";
-        import "module2";
+        import Foo from "bar";
     }
-    expect_exact: "import\"mod-name\";import\"module2\";"
+    expect_exact: "import\"mod-name\";import Foo from\"bar\";"
+}
+
+import_statement_mangling: {
+    mangle = { };
+    input: {
+        import Foo from "foo";
+        Foo();
+    }
+    expect: {
+        import a from "foo";
+        a();
+    }
 }
 
 // Fabio: My patches accidentally caused a crash whenever
