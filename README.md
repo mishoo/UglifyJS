@@ -192,11 +192,6 @@ input files from the command line.
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
 
-- `sort` — to assign shorter names to most frequently used variables.  This
-  saves a few hundred bytes on jQuery before gzip, but the output is
-  _bigger_ after gzip (and seems to happen for other libraries I tried it
-  on) therefore it's not enabled by default.
-
 - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
 
