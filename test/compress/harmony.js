@@ -320,11 +320,21 @@ import_statement_mangling: {
     mangle = { };
     input: {
         import Foo from "foo";
+        import Bar, {Food} from "lel";
+        import {What as Whatever} from "lel";
         Foo();
+        Bar();
+        Food();
+        Whatever();
     }
     expect: {
         import a from "foo";
+        import b, {Food as c} from "lel";
+        import {What as d} from "lel";
         a();
+        b();
+        c();
+        d();
     }
 }
 
