@@ -316,6 +316,18 @@ import_statement: {
     expect_exact: "import\"mod-name\";import Foo from\"bar\";import{Bar,Baz}from\"lel\";import Bar,{Foo}from\"lel\";import{Bar as kex,Baz as food}from\"lel\";"
 }
 
+export_statement: {
+    input: {
+        export default 1;
+        export var foo = 4;
+        export let foo = 6;
+        export const foo = 6;
+        export function foo() {};
+        export class foo { };
+    }
+    expect_exact: "export default 1;export var foo=4;export let foo=6;export const foo=6;export function foo(){};export class foo{};"
+}
+
 import_statement_mangling: {
     mangle = { };
     input: {
