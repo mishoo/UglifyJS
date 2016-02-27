@@ -350,6 +350,22 @@ import_statement_mangling: {
     }
 }
 
+export_statement_mangling: {
+    mangle = { };
+    input: {
+        export var foo = 6;
+        export function bar() { }
+        export class Baz { }
+        bar(foo, Baz)
+    }
+    expect: {
+        export var foo = 6;
+        export function bar() { }
+        export class Baz { }
+        bar(foo, Baz)
+    }
+}
+
 // Fabio: My patches accidentally caused a crash whenever
 // there's an extraneous set of parens around an object.
 regression_cannot_destructure: {
