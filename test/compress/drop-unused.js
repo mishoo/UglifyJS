@@ -164,6 +164,72 @@ used_var_in_catch: {
     }
 }
 
+unused_block_decls_in_catch: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                let x = 10;
+                const y = 10;
+                class Zee {};
+            }
+        }
+    }
+    expect: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {}
+        }
+    }
+}
+
+used_block_decls_in_catch: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {
+                let x = 10;
+                const y = 10;
+                class Zee {};
+            }
+            console.log(x, y, Zee);
+        }
+    }
+    expect: {
+        function foo() {
+            try {
+                foo();
+            } catch(ex) {}
+            console.log(x, y, Zee);
+        }
+    }
+}
+
+unused_block_decls: {
+    options = { unused: true };
+    input: {
+        function foo() {
+            {
+                const x;
+            }
+            {
+                let y;
+            }
+            console.log(x, y);
+        }
+    }
+    expect: {
+        function foo() {
+            console.log(x, y);
+        }
+    }
+}
+
 unused_keep_harmony_destructuring: {
     options = { unused: true };
     input: {

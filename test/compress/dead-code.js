@@ -87,3 +87,25 @@ dead_code_constant_boolean_should_warn_more: {
         var moo;
     }
 }
+
+dead_code_block_decls_die: {
+    options = {
+        dead_code    : true,
+        conditionals : true,
+        booleans     : true,
+        evaluate     : true
+    };
+    input: {
+        if (0) {
+            let foo = 6;
+            const bar = 12;
+            class Baz {};
+            var qux;
+        }
+        console.log(foo, bar, Baz);
+    }
+    expect: {
+        var qux;
+        console.log(foo, bar, Baz);
+    }
+}
