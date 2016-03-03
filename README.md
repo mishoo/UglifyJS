@@ -617,6 +617,19 @@ var result = UglifyJS.minify("compiled.js", {
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
 
+Beside of passing `true` or `false` to `mangle` option, in order to enable or
+disable mangling process. The `mangle` option can take an object that allows you to exclude the list of
+reserved name by using `except`, which is similar to the `--reserved` option in commandline.
+
+```javascript
+var result = UglifyJS.minify("compiled.js", {
+    mangle: {
+        except: ['require', '$super'] // ignore the require, and $super keywords
+    }
+});
+```
+
+
 Other options:
 
 - `warnings` (default `false`) — pass `true` to display compressor warnings.
