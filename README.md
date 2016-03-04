@@ -410,6 +410,22 @@ code as usual.  The build will contain the `const` declarations if you use
 them. If you are targeting < ES6 environments, use `/** @const */ var`.
 
 <a name="codegen-options"></a>
+
+#### Conditional compilation, API
+You can also use conditional compilation via the programmatic API. With the difference that the 
+property name is `global_defs` and is a compressor property:
+
+```js
+uglifyJS.minify([ "input.js"], {
+    compress: {
+        dead_code: true,
+        global_defs: {
+            DEBUG: false
+        }
+    }
+});
+```
+
 ## Beautifier options
 
 The code generator tries to output shortest code possible by default.  In
