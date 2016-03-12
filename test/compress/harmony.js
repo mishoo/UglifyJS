@@ -54,6 +54,20 @@ computed_property_names: {
     expect_exact: 'obj({["x"+"x"]:6});'
 }
 
+shorthand_properties: {
+    mangle = true;
+    input: (function() {
+        var prop = 1;
+        const value = {prop};
+        return value;
+    })();
+    expect: (function() {
+        var a = 1;
+        const b = {prop:a};
+        return b;
+    })();
+}
+
 typeof_arrow_functions: {
     options = {
         evaluate: true
