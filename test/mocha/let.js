@@ -2,7 +2,9 @@ var Uglify = require('../../');
 var assert = require("assert");
 
 describe("let", function() {
-    it("Should not produce `let` as a variable name in mangle", function() {
+    it("Should not produce `let` as a variable name in mangle", function(done) {
+        this.timeout(10000);
+
         // Produce a lot of variables in a function and run it through mangle.
         var s = '"use strict"; function foo() {';
         for (var i = 0; i < 21000; ++i) {
@@ -21,6 +23,8 @@ describe("let", function() {
         // to show the test generated enough symbols.
         assert(result.code.indexOf("var ket=") >= 0);
         assert(result.code.indexOf("var met=") >= 0);
+
+        done();
     });
 });
 
