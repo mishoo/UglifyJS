@@ -125,7 +125,9 @@ The available options are:
   --noerr                       Don't throw an error for unknown options in -c,
                                 -b or -m.
   --bare-returns                Allow return outside of functions.  Useful when
-                                minifying CommonJS modules.
+                                minifying CommonJS modules and Userscripts that
+                                may be anonymous function wrapped (IIFE) by the
+                                .user.js engine `caller`.
   --keep-fnames                 Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
   --reserved-file               File containing reserved names
@@ -189,11 +191,6 @@ input files from the command line.
 
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
-
-- `sort` — to assign shorter names to most frequently used variables.  This
-  saves a few hundred bytes on jQuery before gzip, but the output is
-  _bigger_ after gzip (and seems to happen for other libraries I tried it
-  on) therefore it's not enabled by default.
 
 - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
@@ -323,6 +320,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 
+- `collapse_vars` -- default `false`. Collapse single-use `var` and `const`
+  definitions when possible.
+
 - `warnings` -- display warnings when dropping unreachable code or unused
   declarations etc.
 
@@ -395,6 +395,8 @@ separate file and include it into the build.  For example you can have a
 ```javascript
 const DEBUG = false;
 const PRODUCTION = true;
+// Alternative for environments that don't support `const`
+/** @const */ var STAGING = false;
 // etc.
 ```
 
@@ -404,8 +406,8 @@ and build your code like this:
 
 UglifyJS will notice the constants and, since they cannot be altered, it
 will evaluate references to them to the value itself and drop unreachable
-code as usual.  The possible downside of this approach is that the build
-will contain the `const` declarations.
+code as usual.  The build will contain the `const` declarations if you use
+them. If you are targeting < ES6 environments, use `/** @const */ var`.
 
 <a name="codegen-options"></a>
 ## Beautifier options
@@ -624,12 +626,22 @@ Other options:
 
 - `mangle` — pass `false` to skip mangling names.
 
+- `mangleProperties` (default `false`) — pass an object to specify custom
+  mangle property options.
+
 - `output` (default `null`) — pass an object if you wish to specify
   additional [output options][codegen].  The defaults are optimized
   for best compression.
 
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compressor options][compressor].
+
+- `parse` (default {}) — pass an object if you wish to specify some
+  additional [parser options][parser]. (not all options available... see below)
+
+##### mangleProperties options
+
+ - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
@@ -649,6 +661,9 @@ properties are available:
 
 - `strict` — disable automatic semicolon insertion and support for trailing
   comma in arrays and objects
+- `bare_returns` — Allow return outside of functions. (maps to the
+  `--bare-returns` CLI arguments option and available to `minify` `parse`
+  other options object)
 - `filename` — the name of the file where this code is coming from
 - `toplevel` — a `toplevel` node (as returned by a previous invocation of
   `parse`)
@@ -788,3 +803,4 @@ The `source_map_options` (optional) can contain the following properties:
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
   [codegen]: http://lisperator.net/uglifyjs/codegen
   [compressor]: http://lisperator.net/uglifyjs/compress
+  [parser]: http://lisperator.net/uglifyjs/parser

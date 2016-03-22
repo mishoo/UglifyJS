@@ -16,6 +16,9 @@ if (failures) {
     process.exit(1);
 }
 
+var mocha_tests = require("./mocha.js");
+mocha_tests();
+
 var run_sourcemaps_tests = require('./sourcemaps');
 run_sourcemaps_tests();
 
@@ -105,6 +108,7 @@ function run_compress_tests() {
             var output = input.transform(cmp);
             output.figure_out_scope();
             if (test.mangle) {
+                output.compute_char_frequency(test.mangle);
                 output.mangle_names(test.mangle);
             }
             output = make_code(output, output_options);
