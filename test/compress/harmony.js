@@ -380,6 +380,17 @@ export_statement_mangling: {
     }
 }
 
+// https://github.com/mishoo/UglifyJS2/issues/1021
+regression_for_of_const: {
+    input: {
+        for (const x of y) {}
+        for (const x in y) {}
+    }
+    expect: {
+        for (const x of y);for (const x in y);
+    }
+}
+
 // Fabio: My patches accidentally caused a crash whenever
 // there's an extraneous set of parens around an object.
 regression_cannot_destructure: {
