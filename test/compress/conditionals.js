@@ -344,7 +344,7 @@ cond_8: {
 
         a = condition ? !0 : !1;
         a = !condition ? !null : !2;
-        a = condition() ? !0 : !3.5;
+        a = condition() ? !0 : !-3.5;
 
         if (condition) {
             a = true;
@@ -428,7 +428,7 @@ cond_8b: {
 
         a = condition ? !0 : !1;
         a = !condition ? !null : !2;
-        a = condition() ? !0 : !3.5;
+        a = condition() ? !0 : !-3.5;
 
         if (condition) {
             a = true;
@@ -511,7 +511,7 @@ cond_8c: {
 
         a = condition ? !0 : !1;
         a = !condition ? !null : !2;
-        a = condition() ? !0 : !3.5;
+        a = condition() ? !0 : !-3.5;
 
         if (condition) {
             a = true;
@@ -557,7 +557,7 @@ cond_8c: {
 
         a = !!condition;
         a = !condition;
-        a = !!condition();
+        a = !!condition() || !-3.5;
 
         a = !!condition;
         a = !!condition;
