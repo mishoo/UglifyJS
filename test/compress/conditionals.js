@@ -344,7 +344,7 @@ cond_8: {
 
         a = condition ? !0 : !1;
         a = !condition ? !null : !2;
-        a = condition() ? !0 : !-3.5;
+        a = condition() ? !0 : !3.5;
 
         if (condition) {
             a = true;
@@ -407,8 +407,8 @@ cond_8: {
         a = !condition;
         a = !condition;
 
-        a = condition ? 1 : false;
-        a = condition ? 0 : true;
+        a = !!condition && 1;
+        a = !condition || 0;
         a = condition ? 1 : 0;
     }
 }
@@ -428,7 +428,7 @@ cond_8b: {
 
         a = condition ? !0 : !1;
         a = !condition ? !null : !2;
-        a = condition() ? !0 : !-3.5;
+        a = condition() ? !0 : !3.5;
 
         if (condition) {
             a = true;
@@ -490,8 +490,8 @@ cond_8b: {
         a = !condition;
         a = !condition;
 
-        a = condition ? 1 : !1;
-        a = condition ? 0 : !0;
+        a = !!condition && 1;
+        a = !condition || 0;
         a = condition ? 1 : 0;
     }
 }
@@ -511,7 +511,7 @@ cond_8c: {
 
         a = condition ? !0 : !1;
         a = !condition ? !null : !2;
-        a = condition() ? !0 : !-3.5;
+        a = condition() ? !0 : !3.5;
 
         if (condition) {
             a = true;
@@ -557,7 +557,7 @@ cond_8c: {
 
         a = !!condition;
         a = !condition;
-        a = condition() ? !0 : !-3.5;
+        a = !!condition();
 
         a = !!condition;
         a = !!condition;
@@ -573,9 +573,65 @@ cond_8c: {
         a = !condition;
         a = !condition;
 
-        a = condition ? 1 : false;
-        a = condition ? 0 : true;
+        a = !!condition && 1;
+        a = !condition || 0;
         a = condition ? 1 : 0;
+    }
+}
+
+ternary_boolean_consequent: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+    }
+    input: {
+        function f1() { return a == b ? true : x; }
+        function f2() { return a == b ? false : x; }
+        function f3() { return a < b ? !0 : x; }
+        function f4() { return a < b ? !1 : x; }
+        function f5() { return c ? !0 : x; }
+        function f6() { return c ? false : x; }
+        function f7() { return !c ? true : x; }
+        function f8() { return !c ? !1 : x; }
+    }
+    expect: {
+        function f1() { return a == b || x; }
+        function f2() { return a != b && x; }
+        function f3() { return a < b || x; }
+        function f4() { return !(a < b) && x; }
+        function f5() { return !!c || x; }
+        function f6() { return !c && x; }
+        function f7() { return !c || x; }
+        function f8() { return !!c && x; }
+    }
+}
+
+ternary_boolean_alternative: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+    }
+    input: {
+        function f1() { return a == b ? x : true; }
+        function f2() { return a == b ? x : false; }
+        function f3() { return a < b ? x : !0; }
+        function f4() { return a < b ? x : !1; }
+        function f5() { return c ? x : true; }
+        function f6() { return c ? x : !1; }
+        function f7() { return !c ? x : !0; }
+        function f8() { return !c ? x : false; }
+    }
+    expect: {
+        function f1() { return a != b || x; }
+        function f2() { return a == b && x; }
+        function f3() { return !(a < b) || x; }
+        function f4() { return a < b && x; }
+        function f5() { return !c || x; }
+        function f6() { return !!c && x; }
+        function f7() { return !!c || x; }
+        function f8() { return !c && x; }
     }
 }
 
