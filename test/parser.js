@@ -121,7 +121,7 @@ module.exports = function () {
 
     // generators
     var generators_def = UglifyJS.parse('function* fn() {}').body[0];
-    ok.equal(generators_def.isgenerator, true);
+    ok.equal(generators_def.is_generator, true);
 
     ok.throws(function () {
         UglifyJS.parse('function* (){ }');
