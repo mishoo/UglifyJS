@@ -88,6 +88,14 @@ function run_compress_tests() {
             var options = U.defaults(test.options, {
                 warnings: false
             });
+            var warnings_emitted = [];
+            var original_warn_function = U.AST_Node.warn_function;
+            if (test.expect_warnings) {
+                U.AST_Node.warn_function = function(text) {
+                    warnings_emitted.push("WARN: " + text);
+                };
+                options.warnings = true;
+            }
             var cmp = new U.Compressor(options, true);
             var output_options = test.beautify || {};
             var expect;
@@ -116,6 +124,21 @@ function run_compress_tests() {
                 });
                 failures++;
                 failed_files[file] = 1;
+            }
+            else if (test.expect_warnings) {
+                U.AST_Node.warn_function = original_warn_function;
+                var expected_warnings = make_code(test.expect_warnings, { beautify: false });
+                var actual_warnings = JSON.stringify(warnings_emitted);
+                actual_warnings = actual_warnings.split(process.cwd() + "/").join("");
+                if (expected_warnings != actual_warnings) {
+                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
+                        input: input_code,
+                        expected_warnings: expected_warnings,
+                        actual_warnings: actual_warnings,
+                    });
+                    failures++;
+                    failed_files[file] = 1;
+                }
             }
         }
         var tests = parse_test(path.resolve(dir, file));
@@ -168,7 +191,7 @@ function parse_test(file) {
             }
             if (node instanceof U.AST_LabeledStatement) {
                 assert.ok(
-                    node.label.name == "input" || node.label.name == "expect" || node.label.name == "expect_exact",
+                    ["input", "expect", "expect_exact", "expect_warnings"].indexOf(node.label.name) >= 0,
                     tmpl("Unsupported label {name} [{line},{col}]", {
                         name: node.label.name,
                         line: node.label.start.line,
