@@ -127,7 +127,10 @@ function run_compress_tests() {
             }
             else if (test.expect_warnings) {
                 U.AST_Node.warn_function = original_warn_function;
-                var expected_warnings = make_code(test.expect_warnings, { beautify: false });
+                var expected_warnings = make_code(test.expect_warnings, {
+                    beautify: false,
+                    quote_style: 2, // force double quote to match JSON
+                });
                 var actual_warnings = JSON.stringify(warnings_emitted);
                 actual_warnings = actual_warnings.split(process.cwd() + "/").join("");
                 if (expected_warnings != actual_warnings) {

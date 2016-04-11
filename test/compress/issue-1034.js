@@ -27,7 +27,7 @@ non_hoisted_function_def_after_return: {
         }
     }
     expect_warnings: [
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:11,16]",
+        'WARN: Dropping unreachable code [test/compress/issue-1034.js:11,16]',
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:14,16]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:17,12]",
         "WARN: Dropping unused function UnusedFunction [test/compress/issue-1034.js:18,21]"
