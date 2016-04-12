@@ -423,7 +423,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (COMPRESS) {
         time_it("squeeze", function(){
-            TOPLEVEL = TOPLEVEL.transform(compressor);
+            TOPLEVEL = compressor.compress(TOPLEVEL);
         });
     }
 
