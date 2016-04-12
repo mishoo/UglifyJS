@@ -85,6 +85,7 @@ function run_compress_tests() {
         log_start_file(file);
         function test_case(test) {
             log_test(test.name);
+            U.base54.reset();
             var options = U.defaults(test.options, {
                 warnings: false
             });
