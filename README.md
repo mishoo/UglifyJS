@@ -356,6 +356,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   compressor from mangling/discarding function names.  Useful for code relying on
   `Function.prototype.name`.
 
+- `passes` -- default `1`. Number of times to run compress. Use an
+  integer argument larger than 1 to further reduce code size in some cases.
+  Note: raising the number of passes will increase uglify compress time.
 
 ### The `unsafe` option
 
