@@ -130,4 +130,3 @@ regression_block_scope_resolves: {
         }());
     }
 }
-

@@ -499,17 +499,19 @@ function normalize(o) {
     }
 }
 
-function getOptions(x, constants) {
-    x = ARGS[x];
-    if (x == null) return null;
+function getOptions(flag, constants) {
+    var x = ARGS[flag];
+    if (x == null || x === false) return null;
     var ret = {};
     if (x !== "") {
+        if (Array.isArray(x)) x = x.map(function (v) { return "(" + v + ")"; }).join(", ");
+
         var ast;
         try {
             ast = UglifyJS.parse(x, { expression: true });
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
-                print_error("Error parsing arguments in: " + x);
+                print_error("Error parsing arguments for flag `" + flag + "': " + x);
                 process.exit(1);
             }
         }
@@ -529,7 +531,7 @@ function getOptions(x, constants) {
                 return true;    // no descend
             }
             print_error(node.TYPE)
-            print_error("Error parsing arguments in: " + x);
+            print_error("Error parsing arguments for flag `" + flag + "': " + x);
             process.exit(1);
         }));
     }
