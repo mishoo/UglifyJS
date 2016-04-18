@@ -117,13 +117,13 @@ regression_block_scope_resolves: {
     expect: {
         (function () {
             if (1) {
-                let a;
-                const b;
+                let o;
+                const n;
                 class c {};
             }
             if (1) {
-                let a;
-                const b;
+                let o;
+                const n;
                 class c {};
             }
             console.log(x, y, Zee, ex, why, Zi);

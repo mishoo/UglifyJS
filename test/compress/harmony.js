@@ -62,9 +62,9 @@ shorthand_properties: {
         return value;
     })();
     expect: (function() {
-        var a = 1;
-        const b = {prop:a};
-        return b;
+        var n = 1;
+        const r = {prop:n};
+        return r;
     })();
 }
 
@@ -271,8 +271,8 @@ class_name_can_be_mangled: {
     expect: {
         function x() {
             class a { }
-            var b = a
-            var c = class a {}
+            var n = a
+            var r = class a {}
         }
     }
 }
@@ -354,13 +354,13 @@ import_statement_mangling: {
         Whatever();
     }
     expect: {
-        import a from "foo";
-        import b, {Food as c} from "lel";
-        import {What as d} from "lel";
-        a();
-        b();
-        c();
-        d();
+        import l from "foo";
+        import e, {Food as o} from "lel";
+        import {What as f} from "lel";
+        l();
+        e();
+        o();
+        f();
     }
 }
 
