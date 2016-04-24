@@ -4,6 +4,7 @@ var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
+var exit = require("exit");
 
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
@@ -13,7 +14,7 @@ run_compress_tests();
 if (failures) {
     console.error("\n!!! Failed " + failures + " test cases.");
     console.error("!!! " + Object.keys(failed_files).join(", "));
-    process.exit(1);
+    exit(1);
 }
 
 var mocha_tests = require("./mocha.js");
