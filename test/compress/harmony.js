@@ -434,3 +434,13 @@ generators_yield: {
     }
     expect_exact: "function*fn(){yield remote()}"
 }
+
+generators_yield_assign: {
+    input: {
+      function* fn() {
+          var x = {};
+          x.prop = yield 5;
+      }
+    }
+    expect_exact: "function*fn(){var x={};x.prop=yield 5}"
+}
