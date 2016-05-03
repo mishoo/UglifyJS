@@ -133,7 +133,7 @@ function run_compress_tests() {
                     quote_style: 2, // force double quote to match JSON
                 });
                 var actual_warnings = JSON.stringify(warnings_emitted);
-                actual_warnings = actual_warnings.split(process.cwd() + "/").join("");
+                actual_warnings = actual_warnings.split(process.cwd() + path.sep).join("");
                 if (expected_warnings != actual_warnings) {
                     log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
                         input: input_code,
