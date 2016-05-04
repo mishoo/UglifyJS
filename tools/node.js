@@ -1,3 +1,9 @@
+// workaround for tty output truncation upon process.exit()
+[process.stdout, process.stderr].forEach(function(stream){
+    if (stream._handle && stream._handle.setBlocking)
+        stream._handle.setBlocking(true);
+});
+
 var path = require("path");
 var fs = require("fs");
 
@@ -78,7 +84,7 @@ exports.minify = function(files, options) {
         UglifyJS.merge(compress, options.compress);
         toplevel.figure_out_scope();
         var sq = UglifyJS.Compressor(compress);
-        toplevel = toplevel.transform(sq);
+        toplevel = sq.compress(toplevel);
     }
 
     // 3. mangle properties
