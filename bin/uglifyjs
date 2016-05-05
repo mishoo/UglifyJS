@@ -69,7 +69,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
     .describe("reserved-file", "File containing reserved names")
     .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
-    .describe("mangle-props", "Mangle property names")
+    .describe("mangle-props", "Mangle property names (0 - disabled, 1 - mangle all properties, 2 - mangle unquoted properies)")
     .describe("mangle-regex", "Only mangle property names matching the regex")
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
@@ -125,7 +125,6 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("noerr")
     .boolean("bare-returns")
     .boolean("keep-fnames")
-    .boolean("mangle-props")
     .boolean("reserve-domprops")
 
     .wrap(80)
@@ -213,11 +212,23 @@ if (ARGS.quotes === true) {
     ARGS.quotes = 3;
 }
 
+if (ARGS.mangle_props === true) {
+    ARGS.mangle_props = 1;
+} else if (ARGS.mangle_props === "unquoted") {
+    ARGS.mangle_props = 2;
+}
+
 var OUTPUT_OPTIONS = {
     beautify    : BEAUTIFY ? true : false,
     preamble    : ARGS.preamble || null,
     quote_style : ARGS.quotes != null ? ARGS.quotes : 0
 };
+
+if (ARGS.mangle_props == 2) {
+    OUTPUT_OPTIONS.keep_quoted_props = true;
+    if (COMPRESS && !("properties" in COMPRESS))
+        COMPRESS.properties = false;
+}
 
 if (ARGS.screw_ie8) {
     if (COMPRESS) COMPRESS.screw_ie8 = true;
@@ -401,10 +412,11 @@ async.eachLimit(files, 1, function (file, cb) {
         }
 
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
-            reserved   : reserved,
-            cache      : cache,
-            only_cache : !ARGS.mangle_props,
-            regex      : regex
+            reserved      : reserved,
+            cache         : cache,
+            only_cache    : !ARGS.mangle_props,
+            regex         : regex,
+            ignore_quoted : ARGS.mangle_props == 2
         });
         writeNameCache("props", cache);
     })();

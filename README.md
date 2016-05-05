@@ -133,7 +133,16 @@ The available options are:
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
-  --mangle-props                Mangle property names
+  --mangle-props                Mangle property names (default `0`). Set to 
+                                `true` or `1` to mangle all property names. Set
+                                to `unquoted` or `2` to only mangle unquoted 
+                                property names. Mode `2` also enables the
+                                `keep_quoted_props` beautifier option to 
+                                preserve the quotes around property names and
+                                disables the `properties` compressor option to
+                                prevent rewriting quoted properties with dot
+                                notation. You can override these by setting
+                                them explicitly on the command line.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
   --pure-funcs                  List of functions that can be safely removed if
@@ -479,6 +488,8 @@ can pass additional arguments that control the code output:
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
+- `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
+  quotes from property names in object literals.
 
 ### Keeping copyright notices or other comments
 
@@ -667,7 +678,8 @@ Other options:
 
 ##### mangleProperties options
 
- - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
+ - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
+ - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
