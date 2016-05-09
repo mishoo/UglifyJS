@@ -74,3 +74,27 @@ negate_iife_4: {
         }();
     }
 }
+
+negate_iife_issue_1073: {
+    options = {
+        negate_iife: true,
+        sequences: true,
+        conditionals: true,
+    };
+    input: {
+        new (function(a) {
+            return function Foo() {
+                this.x = a;
+                console.log(this);
+            };
+        }(7))();
+    }
+    expect: {
+        new (function(a) {
+            return function Foo() {
+                this.x = a,
+                console.log(this);
+            };
+        }(7))();
+    }
+}
