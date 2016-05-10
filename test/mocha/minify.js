@@ -7,5 +7,35 @@ describe("minify", function() {
         var result = Uglify.minify(js, {fromString: true});
         assert.strictEqual(result.code, 'function foo(n){return n?3:7}');
     });
-});
 
+    describe("keep_quoted_props", function() {
+        it("Should preserve quotes in object literals", function() {
+            var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
+            var result = Uglify.minify(js, {
+                fromString: true, output: {
+                    keep_quoted_props: true
+                }});
+            assert.strictEqual(result.code, 'var foo={"x":1,y:2,"z":3};');
+        });
+
+        it("Should preserve quote styles when quote_style is 3", function() {
+            var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
+            var result = Uglify.minify(js, {
+                fromString: true, output: {
+                    keep_quoted_props: true,
+                    quote_style: 3
+                }});
+            assert.strictEqual(result.code, 'var foo={"x":1,y:2,\'z\':3};');
+        });
+
+        it("Should not preserve quotes in object literals when disabled", function() {
+            var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
+            var result = Uglify.minify(js, {
+                fromString: true, output: {
+                    keep_quoted_props: false,
+                    quote_style: 3
+                }});
+            assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
+        });
+    });
+});
