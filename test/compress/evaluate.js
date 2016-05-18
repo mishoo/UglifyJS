@@ -1,9 +1,19 @@
 negative_zero: {
     options = { evaluate: true }
     input: {
-        assert.sameValue(-"", -0, '-""');
+        console.log(
+            -"",
+            - -"",
+            1 / (-0),
+            1 / (-"")
+        );
     }
     expect: {
-        assert.sameValue(-"", -0, '-""');
+        console.log(
+            -0,
+            0,
+            1 / (-0),
+            1 / (-0)
+        );
     }
 }
