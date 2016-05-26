@@ -128,7 +128,7 @@ module.exports = function () {
     });
 
     var generators_yield_def = UglifyJS.parse('function* fn() {\nyield remote();\}').body[0].body[0];
-    ok.equal(generators_yield_def.body.operator, 'yield');
+    ok.strictEqual(generators_yield_def.body.is_star, false);
 }
 
 // Run standalone
