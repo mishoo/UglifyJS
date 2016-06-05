@@ -30,5 +30,27 @@ describe("line-endings", function() {
         var result = Uglify.minify(js, options);
         assert.strictEqual(result.code, expected_code);
     });
+
+    it("Should not allow line terminators in regexp", function() {
+        var inputs = [
+            "/\n/",
+            "/\r/",
+            "/\u2028/",
+            "/\u2029/",
+            "/someRandomTextLike[]()*AndThen\n/"
+        ]
+        var test = function(input) {
+            return function() {
+                Uglify.parse(input);
+            }
+        }
+        var fail = function(e) {
+            return e instanceof Uglify.JS_Parse_Error &&
+                e.message === "Unexpected line terminator";
+        }
+        for (var i = 0; i < inputs.length; i++) {
+            assert.throws(test(inputs[i]), fail);
+        }
+    });
 });
 
