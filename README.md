@@ -1,6 +1,10 @@
-UglifyJS 2
-==========
-[![Build Status](https://travis-ci.org/mishoo/UglifyJS2.svg)](https://travis-ci.org/mishoo/UglifyJS2)
+# UglifyJS 2
+
+[![NPM version](https://img.shields.io/npm/v/uglify-js.svg)](https://www.npmjs.com/package/uglify-js)
+[![Build Status](https://img.shields.io/travis/mishoo/UglifyJS2/master.svg)](https://travis-ci.org/mishoo/UglifyJS2)
+[![Dependency Status](https://img.shields.io/david/mishoo/UglifyJS2.svg)](https://david-dm.org/mishoo/UglifyJS2)
+[![devDependency Status](https://img.shields.io/david/dev/mishoo/UglifyJS2.svg)](https://david-dm.org/mishoo/UglifyJS2#info=devDependencies)
+
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
@@ -10,10 +14,9 @@ There's also an
 [in-browser online demo](http://lisperator.net/uglifyjs/#demo) (for Firefox,
 Chrome and probably Safari).
 
-Install
--------
+## Install
 
-First make sure you have installed the latest version of [node.js](http://nodejs.org/)
+First make sure you have installed the latest version of [node.js](https://nodejs.org/)
 (You may need to restart your computer after this step).
 
 From NPM for use as a command line app:
@@ -30,8 +33,7 @@ From Git:
     cd UglifyJS2
     npm link .
 
-Usage
------
+## Usage
 
     uglifyjs [input files] [options]
 
@@ -382,9 +384,9 @@ You can use the `--define` (`-d`) switch in order to declare global
 variables that UglifyJS will assume to be constants (unless defined in
 scope).  For example if you pass `--define DEBUG=false` then, coupled with
 dead code removal UglifyJS will discard the following from the output:
-```javascript
+```js
 if (DEBUG) {
-	console.log("debug stuff");
+    console.log("debug stuff");
 }
 ```
 
@@ -395,7 +397,7 @@ warning, you can pass `warnings=false` to turn off *all* warnings.
 Another way of doing that is to declare your globals as constants in a
 separate file and include it into the build.  For example you can have a
 `build/defines.js` file with the following:
-```javascript
+```js
 const DEBUG = false;
 const PRODUCTION = true;
 // Alternative for environments that don't support `const`
@@ -484,13 +486,13 @@ keep only comments that match this regexp.  For example `--comments
 
 Note, however, that there might be situations where comments are lost.  For
 example:
-```javascript
+```js
 function f() {
-	/** @preserve Foo Bar */
-	function g() {
-	  // this function is never called
-	}
-	return something();
+    /** @preserve Foo Bar */
+    function g() {
+      // this function is never called
+    }
+    return something();
 }
 ```
 
@@ -536,7 +538,7 @@ JavaScript ASTs in SpiderMonkey format.
 
 Example:
 
-```javascript
+```js
 function uglify(ast, options, mangle) {
   // Conversion from SpiderMonkey AST to internal format
   var uAST = UglifyJS.AST_Node.from_mozilla_ast(ast);
@@ -561,12 +563,11 @@ Check out
 [original blog post](http://rreverser.com/using-mozilla-ast-with-uglifyjs/)
 for details.
 
-API Reference
--------------
+## API Reference
 
 Assuming installation via NPM, you can load UglifyJS in your application
 like this:
-```javascript
+```js
 var UglifyJS = require("uglify-js");
 ```
 
@@ -579,7 +580,7 @@ parse, (2) compress, (3) mangle, (4) generate output code.
 There's a single toplevel function which combines all the steps.  If you
 don't need additional customization, you might want to go with `minify`.
 Example:
-```javascript
+```js
 var result = UglifyJS.minify("/path/to/file.js");
 console.log(result.code); // minified output
 // if you need to pass code instead of file name
@@ -587,15 +588,15 @@ var result = UglifyJS.minify("var b = function () {};", {fromString: true});
 ```
 
 You can also compress multiple files:
-```javascript
+```js
 var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ]);
 console.log(result.code);
 ```
 
 To generate a source map:
-```javascript
+```js
 var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
-	outSourceMap: "out.js.map"
+    outSourceMap: "out.js.map"
 });
 console.log(result.code); // minified output
 console.log(result.map);
@@ -606,19 +607,19 @@ Note that the source map is not saved in a file, it's just returned in
 `file` attribute in the source map (see [the spec][sm-spec]).
 
 You can also specify sourceRoot property to be included in source map:
-```javascript
+```js
 var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
-	outSourceMap: "out.js.map",
-	sourceRoot: "http://example.com/src"
+    outSourceMap: "out.js.map",
+    sourceRoot: "http://example.com/src"
 });
 ```
 
 If you're compressing compiled JavaScript and have a source map for it, you
 can use the `inSourceMap` argument:
-```javascript
+```js
 var result = UglifyJS.minify("compiled.js", {
-	inSourceMap: "compiled.js.map",
-	outSourceMap: "minified.js.map"
+    inSourceMap: "compiled.js.map",
+    outSourceMap: "minified.js.map"
 });
 // same as before, it returns `code` and `map`
 ```
@@ -626,10 +627,10 @@ var result = UglifyJS.minify("compiled.js", {
 If your input source map is not in a file, you can pass it in as an object
 using the `inSourceMap` argument:
 
-```javascript
+```js
 var result = UglifyJS.minify("compiled.js", {
-	inSourceMap: JSON.parse(my_source_map_string),
-	outSourceMap: "minified.js.map"
+    inSourceMap: JSON.parse(my_source_map_string),
+    outSourceMap: "minified.js.map"
 });
 ```
 
@@ -671,7 +672,7 @@ Following there's more detailed API info, in case the `minify` function is
 too simple for your needs.
 
 #### The parser
-```javascript
+```js
 var toplevel_ast = UglifyJS.parse(code, options);
 ```
 
@@ -690,14 +691,14 @@ properties are available:
 The last two options are useful when you'd like to minify multiple files and
 get a single file as the output and a proper source map.  Our CLI tool does
 something like this:
-```javascript
+```js
 var toplevel = null;
 files.forEach(function(file){
-	var code = fs.readFileSync(file, "utf8");
-	toplevel = UglifyJS.parse(code, {
-		filename: file,
-		toplevel: toplevel
-	});
+    var code = fs.readFileSync(file, "utf8");
+    toplevel = UglifyJS.parse(code, {
+        filename: file,
+        toplevel: toplevel
+    });
 });
 ```
 
@@ -713,14 +714,14 @@ referenced, if it is a global or not, if a function is using `eval` or the
 `with` statement etc.  I will discuss this some place else, for now what's
 important to know is that you need to call the following before doing
 anything with the tree:
-```javascript
+```js
 toplevel.figure_out_scope()
 ```
 
 #### Compression
 
 Like this:
-```javascript
+```js
 var compressor = UglifyJS.Compressor(options);
 var compressed_ast = toplevel.transform(compressor);
 ```
@@ -739,7 +740,7 @@ the compressor might drop unused variables / unreachable code and this might
 change the number of identifiers or their position).  Optionally, you can
 call a trick that helps after Gzip (counting character frequency in
 non-mangleable words).  Example:
-```javascript
+```js
 compressed_ast.figure_out_scope();
 compressed_ast.compute_char_frequency();
 compressed_ast.mangle_names();
@@ -749,14 +750,14 @@ compressed_ast.mangle_names();
 
 AST nodes have a `print` method that takes an output stream.  Essentially,
 to generate code you do this:
-```javascript
+```js
 var stream = UglifyJS.OutputStream(options);
 compressed_ast.print(stream);
 var code = stream.toString(); // this is your minified code
 ```
 
 or, for a shortcut you can do:
-```javascript
+```js
 var code = compressed_ast.print_to_string(options);
 ```
 
@@ -796,11 +797,11 @@ to be a `SourceMap` object (which is a thin wrapper on top of the
 [source-map][source-map] library).
 
 Example:
-```javascript
+```js
 var source_map = UglifyJS.SourceMap(source_map_options);
 var stream = UglifyJS.OutputStream({
-	...
-	source_map: source_map
+    ...
+    source_map: source_map
 });
 compressed_ast.print(stream);
 
