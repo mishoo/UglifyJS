@@ -1153,3 +1153,59 @@ collapse_vars_short_circuited_conditions: {
     }
 }
 
+collapse_vars_regexp: {
+    options = {
+        collapse_vars: true,
+        loops:         false,
+        sequences:     true,
+        dead_code:     true,
+        conditionals:  true,
+        comparisons:   true,
+        evaluate:      true,
+        booleans:      true,
+        unused:        true,
+        hoist_funs:    true,
+        keep_fargs:    true,
+        if_return:     true,
+        join_vars:     true,
+        cascade:       true,
+        side_effects:  true,
+    }
+    input: {
+        function f1() {
+            var k = 9;
+            var rx = /[A-Z]+/;
+            return [rx, k];
+        }
+        function f2() {
+            var rx = /[abc123]+/;
+            return function(s) {
+                return rx.exec(s);
+            };
+        }
+        (function(){
+            var result;
+            var s = 'acdabcdeabbb';
+            var rx = /ab*/g;
+            while (result = rx.exec(s)) {
+                console.log(result[0]);
+            }
+        })();
+    }
+    expect: {
+        function f1() {
+            return [/[A-Z]+/, 9];
+        }
+        function f2() {
+            var rx = /[abc123]+/;
+            return function(s) {
+                return rx.exec(s);
+            };
+        }
+        (function(){
+            var result, rx = /ab*/g;
+            while (result = rx.exec('acdabcdeabbb'))
+                console.log(result[0]);
+        })();
+    }
+}
