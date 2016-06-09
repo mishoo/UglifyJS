@@ -476,11 +476,11 @@ can pass additional arguments that control the code output:
 ### Keeping copyright notices or other comments
 
 You can pass `--comments` to retain certain comments in the output.  By
-default it will keep JSDoc-style comments that contain "@preserve",
-"@license" or "@cc_on" (conditional compilation for IE).  You can pass
-`--comments all` to keep all the comments, or a valid JavaScript regexp to
-keep only comments that match this regexp.  For example `--comments
-'/foo|bar/'` will keep only comments that contain "foo" or "bar".
+default it will keep JSDoc-style comments that contain "@preserve" or
+"@license".  You can pass `--comments all` to keep all the comments, or
+a valid JavaScript regexp to keep only comments that match this regexp.  
+For example `--comments '/foo|bar/'` will keep only comments that 
+contain "foo" or "bar".
 
 Note, however, that there might be situations where comments are lost.  For
 example:
