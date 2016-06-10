@@ -472,6 +472,8 @@ can pass additional arguments that control the code output:
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
+- `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
+  quotes from property names in object literals.
 
 ### Keeping copyright notices or other comments
 
