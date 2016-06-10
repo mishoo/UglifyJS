@@ -117,7 +117,7 @@ module.exports = function () {
 
     ok.equal(expanding_def.name.names[0].TYPE, 'SymbolVar');
     ok.equal(expanding_def.name.names[1].TYPE, 'Expansion');
-    ok.equal(expanding_def.name.names[1].symbol.TYPE, 'SymbolVar');
+    ok.equal(expanding_def.name.names[1].expression.TYPE, 'SymbolVar');
 
     // generators
     var generators_def = UglifyJS.parse('function* fn() {}').body[0];
