@@ -133,7 +133,11 @@ The available options are:
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
-  --mangle-props                Mangle property names
+  --mangle-props                Mangle property names (default `0`). Set to 
+                                `true` or `1` to mangle all property names. Set
+                                to `1` to only mangle unquoted property names.
+                                Use the `keep_quoted_props` beautifier option to
+                                preserve the quotes around property names.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
   --pure-funcs                  List of functions that can be safely removed if

@@ -72,3 +72,35 @@ evaluate_length: {
         a = ("foo" + b).length;
     }
 }
+
+mangle_properties: {
+    mangle_props = {
+        ignore_quoted: false
+    };
+    input: {
+        a["foo"] = "bar";
+        a.color = "red";
+        x = {"bar": 10};
+    }
+    expect: {
+        a["a"] = "bar";
+        a.b = "red";
+        x = {c: 10};
+    }
+}
+
+mangle_unquoted_properties: {
+    mangle_props = {
+        ignore_quoted: true
+    };
+    input: {
+        a["foo"] = "bar";
+        a.color = "red";
+        x = {"bar": 10};
+    }
+    expect: {
+        a["foo"] = "bar";
+        a.a = "red";
+        x = {"bar": 10};
+    }
+}
