@@ -20,8 +20,20 @@ describe("Yield", function() {
         assert.throws(test, expect);
     });
 
-    it("Should not allow yield* followed by a newline in generators", function() {
-        var js = "function* test() {yield*\n123;}";
+    it("Should not allow yield* followed by a semicolon in generators", function() {
+        var js = "function* test() {yield*\n;}";
+        var test = function() {
+            UglifyJS.parse(js);
+        }
+        var expect = function(e) {
+            return e instanceof UglifyJS.JS_Parse_Error &&
+                e.message === "Unexpected token: punc (;)";
+        }
+        assert.throws(test, expect);
+    });
+
+    it("Should not allow yield with next token star on next line", function() {
+        var js = "function* test() {yield\n*123;}";
         var test = function() {
             UglifyJS.parse(js);
         }
