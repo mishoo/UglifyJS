@@ -60,10 +60,10 @@ describe("String literals", function() {
     it("Should not throw error outside strict mode if string contains escaped octalIntegerLiteral", function() {
         var tests = [
             ['"\\76";', '">";'],
-            ['"\\0"', '"\\x00";'],
-            ['"\\08"', '"\\x008";'],
-            ['"\\008"', '"\\x008";'],
-            ['"\\0008"', '"\\x008";'],
+            ['"\\0"', '"\\0";'],
+            ['"\\08"', '"\\08";'],
+            ['"\\008"', '"\\08";'],
+            ['"\\0008"', '"\\08";'],
             ['"use strict" === "use strict";\n"\\76";', '"use strict"==="use strict";">";'],
             // ['"use\\\n strict";\n"\\07";', '"use\\\n strict";\n"\\u0007";'] // TODO No way to store this content literally yet as directive
         ];
@@ -75,7 +75,7 @@ describe("String literals", function() {
     });
 
     it("Should not throw error when digit is 8 or 9", function() {
-        assert.equal(UglifyJS.parse('"use strict";"\\08"').print_to_string(), '"use strict";"\\x008";');
-        assert.equal(UglifyJS.parse('"use strict";"\\09"').print_to_string(), '"use strict";"\\x009";');
+        assert.equal(UglifyJS.parse('"use strict";"\\08"').print_to_string(), '"use strict";"\\08";');
+        assert.equal(UglifyJS.parse('"use strict";"\\09"').print_to_string(), '"use strict";"\\09";');
     });
 });
