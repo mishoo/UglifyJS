@@ -65,7 +65,7 @@ The available options are:
   --in-source-map               Input source map, useful if you're compressing
                                 JS that was generated from some other original
                                 code.
-  --screw-ie8                   Pass this flag if you don't care about full
+  --support-old-ie              Pass this flag if you don't care about full
                                 compliance with Internet Explorer 6-8 quirks
                                 (by default UglifyJS will try to be IE-proof).
   --expr                        Parse a single expression, rather than a
