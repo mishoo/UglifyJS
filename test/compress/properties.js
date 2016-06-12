@@ -92,15 +92,34 @@ mangle_properties: {
 mangle_unquoted_properties: {
     mangle_props = {
         ignore_quoted: true
-    };
+    }
+    beautify = {
+        beautify: false,
+        quote_style: 3,
+        keep_quoted_props: true,
+    }
     input: {
-        a["foo"] = "bar";
-        a.color = "red";
-        x = {"bar": 10};
+        function f1() {
+            a["foo"] = "bar";
+            a.color = "red";
+            x = {"bar": 10};
+        }
+        function f2() {
+            a.foo = "bar";
+            a['color'] = "red";
+            x = {bar: 10};
+        }
     }
     expect: {
-        a["foo"] = "bar";
-        a.a = "red";
-        x = {"bar": 10};
+        function f1() {
+            a["foo"] = "bar";
+            a.a = "red";
+            x = {"bar": 10};
+        }
+        function f2() {
+            a.b = "bar";
+            a['color'] = "red";
+            x = {c: 10};
+        }
     }
 }

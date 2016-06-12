@@ -38,4 +38,25 @@ describe("minify", function() {
             assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
         });
     });
+
+    describe("mangleProperties", function() {
+        it("Shouldn't mangle quoted properties", function() {
+            var js = 'a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
+            var result = Uglify.minify(js, {
+                fromString: true,
+                compress: {
+                    properties: false
+                },
+                mangleProperties: {
+                    ignore_quoted: true
+                },
+                output: {
+                    keep_quoted_props: true,
+                    quote_style: 3
+                }
+            });
+            assert.strictEqual(result.code,
+                    'a["foo"]="bar",a.a="red",x={"bar":10};');
+        });
+    });
 });

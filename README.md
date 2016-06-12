@@ -135,9 +135,12 @@ The available options are:
                                 --mangle-props
   --mangle-props                Mangle property names (default `0`). Set to 
                                 `true` or `1` to mangle all property names. Set
-                                to `1` to only mangle unquoted property names.
+                                to `2` to only mangle unquoted property names.
                                 Use the `keep_quoted_props` beautifier option to
-                                preserve the quotes around property names.
+                                preserve the quotes around property names and set
+                                the `properties` compressor option to `false` to
+                                prevent rewriting quoted properties with dot 
+                                notation.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
   --pure-funcs                  List of functions that can be safely removed if
@@ -666,7 +669,8 @@ Other options:
 
 ##### mangleProperties options
 
- - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
+ - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
+ - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
