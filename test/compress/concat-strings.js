@@ -11,6 +11,9 @@ concat_1: {
         var d = 1 + x() + 2 + 3 + "boo";
 
         var e = 1 + x() + 2 + "X" + 3 + "boo";
+
+        // be careful with concatentation with "\0" with octal-looking strings.
+        var f = "\0" + 360 + "\0" + 8 + "\0";
     }
     expect: {
         var a = "foobar" + x() + "moofoo" + y() + "xyz" + q();
@@ -18,5 +21,6 @@ concat_1: {
         var c = 1 + x() + 2 + "boo";
         var d = 1 + x() + 2 + 3 + "boo";
         var e = 1 + x() + 2 + "X3boo";
+        var f = "\x00360\08\0";
     }
 }
