@@ -37,6 +37,10 @@ describe("line-endings", function() {
             "/\r/",
             "/\u2028/",
             "/\u2029/",
+            "/\\\n/",
+            "/\\\r/",
+            "/\\\u2028/",
+            "/\\\u2029/",
             "/someRandomTextLike[]()*AndThen\n/"
         ]
         var test = function(input) {
@@ -46,7 +50,7 @@ describe("line-endings", function() {
         }
         var fail = function(e) {
             return e instanceof Uglify.JS_Parse_Error &&
-                e.message === "Unexpected line terminator";
+                e.message === "SyntaxError: Unexpected line terminator";
         }
         for (var i = 0; i < inputs.length; i++) {
             assert.throws(test(inputs[i]), fail);

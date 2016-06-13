@@ -19,7 +19,7 @@ describe("String literals", function() {
 
         var error = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Unterminated string constant";
+                e.message === "SyntaxError: Unterminated string constant";
         };
 
         for (var input in inputs) {
