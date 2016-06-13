@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+global.UGLIFY_DEBUG = true;
+
 var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");

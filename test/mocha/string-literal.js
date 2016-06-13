@@ -59,13 +59,13 @@ describe("String literals", function() {
 
     it("Should not throw error outside strict mode if string contains escaped octalIntegerLiteral", function() {
         var tests = [
-            ['"\\76";', '">";'],
+            ['"\\76";', ';">";'],
             ['"\\0"', '"\\0";'],
             ['"\\08"', '"\\08";'],
             ['"\\008"', '"\\08";'],
             ['"\\0008"', '"\\08";'],
             ['"use strict" === "use strict";\n"\\76";', '"use strict"==="use strict";">";'],
-            // ['"use\\\n strict";\n"\\07";', '"use\\\n strict";\n"\\u0007";'] // TODO No way to store this content literally yet as directive
+            ['"use\\\n strict";\n"\\07";', ';"use strict";"\07";']
         ];
 
         for (var test in tests) {
