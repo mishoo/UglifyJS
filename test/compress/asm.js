@@ -92,7 +92,7 @@ asm_mixed: {
             function logSum(start, end) {
                 start = 0 | start, end = 0 | end;
                 var sum = 0, p = 0, q = 0;
-                for (p = start << 3, q = end << 3; (0 | q) > (0 | p); p = p + 8 | 0) sum += +log(values[p >> 3]);
+                for (p = start << 3, q = end << 3; (0 | p) < (0 | q); p = p + 8 | 0) sum += +log(values[p >> 3]);
                 return +sum;
             }
             function geometricMean(start, end) {

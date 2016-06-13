@@ -291,12 +291,19 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 
 - `unsafe` (default: false) -- apply "unsafe" transformations (discussion below)
 
+- `unsafe_comps` (default: false) -- Reverse `<` and `<=` to `>` and `>=` to
+  allow improved compression. This might be unsafe when an at least one of two
+  operands is an object with computed values due the use of methods like `get`,
+  or `valueOf`. This could cause change in execution order after operands in the
+  comparison are switching. Compression only works if both `comparisons` and
+  `unsafe_comps` are both set to true.
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 
 - `comparisons` -- apply certain optimizations to binary nodes, for example:
-  `!(a <= b) → a > b` (only when `unsafe`), attempts to negate binary nodes,
-  e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
+  `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
+  nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
 
 - `evaluate` -- attempt to evaluate constant expressions
 
@@ -415,7 +422,7 @@ them. If you are targeting < ES6 environments, use `/** @const */ var`.
 <a name="codegen-options"></a>
 
 #### Conditional compilation, API
-You can also use conditional compilation via the programmatic API. With the difference that the 
+You can also use conditional compilation via the programmatic API. With the difference that the
 property name is `global_defs` and is a compressor property:
 
 ```js
