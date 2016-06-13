@@ -25,11 +25,12 @@ var FILES = exports.FILES = [
 
 var UglifyJS = exports;
 
-new Function("MOZ_SourceMap", "exports", FILES.map(function(file){
+new Function("MOZ_SourceMap", "exports", "DEBUG", FILES.map(function(file){
     return fs.readFileSync(file, "utf8");
 }).join("\n\n"))(
     require("source-map"),
-    UglifyJS
+    UglifyJS,
+    !!global.UGLIFY_DEBUG
 );
 
 UglifyJS.AST_Node.warn_function = function(txt) {

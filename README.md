@@ -445,7 +445,7 @@ can pass additional arguments that control the code output:
   objects
 - `space-colon` (default `true`) -- insert a space after the colon signs
 - `ascii-only` (default `false`) -- escape Unicode characters in strings and
-  regexps
+  regexps (affects directives with non-ascii characters becoming invalid)
 - `inline-script` (default `false`) -- escape the slash in occurrences of
   `</script` in strings
 - `width` (default 80) -- only takes effect when beautification is on, this
