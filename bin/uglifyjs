@@ -212,11 +212,25 @@ if (ARGS.quotes === true) {
     ARGS.quotes = 3;
 }
 
+if (ARGS.mangle_props === true) {
+    ARGS.mangle_props = 1;
+}
+
+if (ARGS.mangle_props === "unquoted") {
+    ARGS.mangle_props = 2;
+}
+
 var OUTPUT_OPTIONS = {
-    beautify    : BEAUTIFY ? true : false,
-    preamble    : ARGS.preamble || null,
-    quote_style : ARGS.quotes != null ? ARGS.quotes : 0
+    beautify          : BEAUTIFY ? true : false,
+    preamble          : ARGS.preamble || null,
+    quote_style       : ARGS.quotes != null ? ARGS.quotes : 0,
 };
+
+if (ARGS.mangle_props == 2) {
+    OUTPUT_OPTIONS.keep_quoted_props = true;
+    if (COMPRESS && !("properties" in COMPRESS))
+        COMPRESS.properties = false;
+}
 
 if (ARGS.screw_ie8) {
     if (COMPRESS) COMPRESS.screw_ie8 = true;
@@ -385,10 +399,6 @@ async.eachLimit(files, 1, function (file, cb) {
             arg_parameter_list = [arg_parameter_list];
         }
         TOPLEVEL = TOPLEVEL.wrap_enclose(arg_parameter_list);
-    }
-
-    if (ARGS.mangle_props === true) {
-        ARGS.mangle_props = 1;
     }
 
     if (ARGS.mangle_props || ARGS.name_cache) (function(){

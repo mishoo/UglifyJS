@@ -136,11 +136,13 @@ The available options are:
   --mangle-props                Mangle property names (default `0`). Set to 
                                 `true` or `1` to mangle all property names. Set
                                 to `2` to only mangle unquoted property names.
-                                Use the `keep_quoted_props` beautifier option to
-                                preserve the quotes around property names and set
-                                the `properties` compressor option to `false` to
-                                prevent rewriting quoted properties with dot 
-                                notation.
+                                This also enables the `keep_quoted_props` 
+                                beautifier option to preserve the quotes around
+                                property names and disables the `properties`
+                                compressor option to prevent rewriting quoted
+                                properties with dot notation. You can override
+                                these by setting them explicitly on the command
+                                line.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
   --pure-funcs                  List of functions that can be safely removed if
