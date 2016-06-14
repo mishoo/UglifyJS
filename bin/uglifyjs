@@ -214,16 +214,14 @@ if (ARGS.quotes === true) {
 
 if (ARGS.mangle_props === true) {
     ARGS.mangle_props = 1;
-}
-
-if (ARGS.mangle_props === "unquoted") {
+} else if (ARGS.mangle_props === "unquoted") {
     ARGS.mangle_props = 2;
 }
 
 var OUTPUT_OPTIONS = {
-    beautify          : BEAUTIFY ? true : false,
-    preamble          : ARGS.preamble || null,
-    quote_style       : ARGS.quotes != null ? ARGS.quotes : 0,
+    beautify    : BEAUTIFY ? true : false,
+    preamble    : ARGS.preamble || null,
+    quote_style : ARGS.quotes != null ? ARGS.quotes : 0,
 };
 
 if (ARGS.mangle_props == 2) {
