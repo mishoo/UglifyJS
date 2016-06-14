@@ -254,7 +254,22 @@ if (ARGS.comments != null) {
     }
 }
 
-var files = ARGS._.slice();
+var files = (function expand_folder_of_JS_files( arrFiles) {
+    var arrJS_files = [];
+    arrFiles.forEach( function(filename) {
+        var fsStats = fs.statSync(filename);
+        if (fsStats.isFile() && filename.match(/.js$/i)) { arrJS_files.push(filename);}
+        else if (fsStats.isDirectory()) {
+            var strFolder = fs.realpathSync(filename)+ "/";
+            var arrDir = fs.readdirSync(strFolder,'utf8');
+            arrDir.forEach( function(dirFile) {
+                var arrFile = expand_folder_of_JS_files( [strFolder+ dirFile]);
+                if (arrFile && arrFile.length) { arrJS_files.push(arrFile[0]);}
+            });
+        }
+    });
+    return arrJS_files;
+})(ARGS._.slice());
 
 if (ARGS.self) {
     if (files.length > 0) {
