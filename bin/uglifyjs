@@ -221,7 +221,7 @@ if (ARGS.mangle_props === true) {
 var OUTPUT_OPTIONS = {
     beautify    : BEAUTIFY ? true : false,
     preamble    : ARGS.preamble || null,
-    quote_style : ARGS.quotes != null ? ARGS.quotes : 0,
+    quote_style : ARGS.quotes != null ? ARGS.quotes : 0
 };
 
 if (ARGS.mangle_props == 2) {
