@@ -15,7 +15,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "Unexpected token: expand (...)";
+                e.message === "SyntaxError: Unexpected token: expand (...)";
         }
 
         for (var i = 0; i < tests.length; i++) {

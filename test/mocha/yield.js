@@ -15,7 +15,7 @@ describe("Yield", function() {
         }
         var expect = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Yield cannot be used as label inside generators";
+                e.message === "SyntaxError: Yield cannot be used as label inside generators";
         }
         assert.throws(test, expect);
     });
@@ -27,7 +27,7 @@ describe("Yield", function() {
         }
         var expect = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Unexpected token: punc (;)";
+                e.message === "SyntaxError: Unexpected token: punc (;)";
         }
         assert.throws(test, expect);
     });
@@ -39,7 +39,7 @@ describe("Yield", function() {
         }
         var expect = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Unexpected token: operator (*)";
+                e.message === "SyntaxError: Unexpected token: operator (*)";
         }
         assert.throws(test, expect);
     });
@@ -63,5 +63,44 @@ describe("Yield", function() {
             UglifyJS.minify("function *f() { yield undefined; yield; yield* undefined; yield void 0}", {fromString: true, compress: true}).code,
             "function*f(){yield,yield,yield*void 0,yield}"
         );
+    });
+
+    it("Should not allow yield to be used as symbol, identifier or property outside generators in strict mode", function() {
+        var tests = [
+            // Fail as as_symbol
+            '"use strict"; import yield from "bar";',
+            '"use strict"; yield = 123;',
+            '"use strict"; yield: "123";',
+            '"use strict"; for(;;){break yield;}',
+            '"use strict"; for(;;){continue yield;}',
+            '"use strict"; function yield(){}',
+            '"use strict"; function foo(...yield){}',
+            '"use strict"; try { new Error("")} catch (yield) {}',
+            '"use strict"; var yield = "foo";',
+            '"use strict"; class yield {}',
+
+            // Fail as maybe_assign
+            '"use strict"; var foo = yield;',
+            '"use strict"; var foo = bar = yield',
+
+            // Fail as as_property_name
+            '"use strict"; var foo = {yield};',
+            '"use strict"; var bar = {yield: "foo"};'
+        ];
+
+        var fail = function(e) {
+            return e instanceof UglifyJS.JS_Parse_Error &&
+                e.message === "SyntaxError: Unexpected yield identifier inside strict mode";
+        }
+
+        var test = function(input) {
+            return function() {
+                UglifyJS.parse(input);
+            }
+        }
+
+        for (var i = 0; i < tests.length; i++) {
+            assert.throws(test(tests[i]), fail, tests[i]);
+        }
     });
 });
