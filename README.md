@@ -658,9 +658,13 @@ Other options:
 - `parse` (default {}) — pass an object if you wish to specify some
   additional [parser options][parser]. (not all options available... see below)
 
+##### mangle
+
+ - `except` - pass an array of identifiers that should be excluded from mangling
+
 ##### mangleProperties options
 
- - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
+ - `regex` — pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
