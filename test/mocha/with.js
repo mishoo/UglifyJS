@@ -9,7 +9,7 @@ describe("With", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "Strict mode may not include a with statement";
+                e.message === "SyntaxError: Strict mode may not include a with statement";
         }
         assert.throws(test, error);
     });
