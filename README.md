@@ -667,7 +667,7 @@ Other options:
 
 ##### mangleProperties options
 
- - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mange-regex` CLI arguments option)
+ - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
