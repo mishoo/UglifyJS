@@ -18,6 +18,6 @@ exports["tokenizer"] = tokenizer;
 exports["is_identifier"] = is_identifier;
 exports["SymbolDef"] = SymbolDef;
 
-if (DEBUG) {
+if (typeof DEBUG !== "undefined" && DEBUG) {
     exports["EXPECT_DIRECTIVE"] = EXPECT_DIRECTIVE;
 }
