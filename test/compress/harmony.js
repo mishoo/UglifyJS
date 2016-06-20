@@ -73,9 +73,9 @@ typeof_arrow_functions: {
         evaluate: true
     }
     input: {
-        typeof (x) => null;
+        var foo = typeof (x) => null;
     }
-    expect_exact: "\"function\";"
+    expect_exact: "var foo=\"function\";"
 }
 
 template_strings: {
