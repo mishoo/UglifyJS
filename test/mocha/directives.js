@@ -224,7 +224,7 @@ describe("Directives", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
-                uglify.minify(tests[i][0], {fromString: true, quote_style: 3, compress: false}).code,
+                uglify.minify(tests[i][0], {fromString: true, quote_style: 3, compress: false, mangle: false}).code,
                 tests[i][1],
                 tests[i][0]
             );
