@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+global.UGLIFY_DEBUG = true;
+
 var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
@@ -110,7 +112,11 @@ function run_compress_tests() {
                 expect = test.expect_exact;
             }
             var input = as_toplevel(test.input);
-            var input_code = make_code(test.input, { beautify: true });
+            var input_code = make_code(test.input, {
+                beautify: true,
+                quote_style: 3,
+                keep_quoted_props: true
+            });
             if (test.mangle_props) {
                 input = U.mangle_properties(input, test.mangle_props);
             }
