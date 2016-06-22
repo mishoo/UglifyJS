@@ -78,24 +78,6 @@ typeof_arrow_functions: {
     expect_exact: "var foo=\"function\";"
 }
 
-template_strings: {
-    input: {
-        ``;
-        `xx\`x`;
-        `${ foo + 2 }`;
-        ` foo ${ bar + `baz ${ qux }` }`;
-    }
-    expect_exact: "``;`xx\\`x`;`${foo+2}`;` foo ${bar+`baz ${qux}`}`;";
-}
-
-template_string_prefixes: {
-    input: {
-        String.raw`foo`;
-        foo `bar`;
-    }
-    expect_exact: "String.raw`foo`;foo`bar`;";
-}
-
 destructuring_arguments: {
     input: {
         (function ( a ) { });
