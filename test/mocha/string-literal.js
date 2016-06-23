@@ -49,7 +49,7 @@ describe("String literals", function() {
 
         var error = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Octal literals are not allowed in strict mode";
+                e.message === "SyntaxError: Octal literals are not allowed in strict mode";
         }
 
         for (var input in inputs) {
