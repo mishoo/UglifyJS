@@ -661,7 +661,8 @@ Other options:
 - `fromString` (default `false`) — if you pass `true` then you can pass
   JavaScript source code, rather than file names.
 
-- `mangle` — pass `false` to skip mangling names.
+- `mangle` (default `true`) — pass `false` to skip mangling names, or pass
+  an object to specify mangling options (see below).
 
 - `mangleProperties` (default `false`) — pass an object to specify custom
   mangle property options.
@@ -679,6 +680,32 @@ Other options:
 ##### mangle
 
  - `except` - pass an array of identifiers that should be excluded from mangling
+
+ - `toplevel` — mangle names declared in the toplevel scope (disabled by
+  default).
+
+  - `eval` — mangle names visible in scopes where eval or with are used
+  (disabled by default).
+
+  Examples:
+
+  ```javascript
+  //tst.js
+  var globalVar;
+  function funcName(firstLongName, anotherLongName)
+  {
+    var myVariable = firstLongName +  anotherLongName;
+  }
+
+  UglifyJS.minify("tst.js").code;
+  // 'function funcName(a,n){}var globalVar;'
+
+  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] }}).code;
+  // 'function funcName(firstLongName,a){}var globalVar;'
+
+  UglifyJS.minify("tst.js", { mangle: toplevel: true }}).code;
+  // 'function n(n,a){}var a;'
+  ```
 
 ##### mangleProperties options
 
