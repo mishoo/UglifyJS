@@ -99,7 +99,8 @@ describe("Unicode", function() {
             'var \\u0069\\u006e = "foo"',        // in
             'var \\u0076\\u0061\\u0072 = "bar"', // var
             'var \\u{66}\\u{6f}\\u{72} = "baz"', // for
-            'var \\u0069\\u{66} = "foobar"'      // if
+            'var \\u0069\\u{66} = "foobar"',     // if
+            'var \\u{73}uper'                    // super
         ];
 
         var exec = function(test) {
