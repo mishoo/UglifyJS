@@ -61,18 +61,25 @@ exports.minify = function(files, options) {
     if (options.spidermonkey) {
         toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
     } else {
-        if (typeof files == "string")
-            files = [ files ];
-        files.forEach(function(file, i){
+        function addFile(file, fileUrl) {
             var code = options.fromString
                 ? file
                 : fs.readFileSync(file, "utf8");
-            sourcesContent[file] = code;
+            sourcesContent[fileUrl] = code;
             toplevel = UglifyJS.parse(code, {
-                filename: options.fromString ? i : file,
+                filename: fileUrl,
                 toplevel: toplevel,
                 bare_returns: options.parse ? options.parse.bare_returns : undefined
             });
+        }
+        [].concat(files).forEach(function (files, i) {
+            if (typeof files === 'string') {
+                addFile(files, options.fromString ? i : files);
+            } else {
+                for (var fileUrl in files) {
+                    addFile(files[fileUrl], fileUrl);
+                }
+            }
         });
     }
     if (options.wrap) {
