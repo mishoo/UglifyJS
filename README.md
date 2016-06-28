@@ -326,6 +326,10 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 
 - `hoist_funs` -- hoist function declarations
 
+- `reorder_funs` -- rearrange function declarations in order of increasing
+  complexity.  This has no effect on size before gzip, but often reduces size
+  after gzip.
+
 - `hoist_vars` (default: false) -- hoist `var` declarations (this is `false`
   by default because it seems to increase the size of the output in general)
 
