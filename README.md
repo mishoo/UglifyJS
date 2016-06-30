@@ -292,9 +292,11 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `sequences` (default: true) -- join consecutive simple statements using the
   comma operator.  May be set to a positive integer to specify the maximum number
   of consecutive comma sequences that will be generated. If this option is set to
-  `true` then the default sequences limit is `200`. Set option to `false` or `0`
-  to disable. On rare occasions the default sequences limit leads to very slow
-  compress times in which case a value of `20` or less is recommended.
+  `true` then the default `sequences` limit is `200`. Set option to `false` or `0`
+  to disable. The smallest `sequences` length is `2`. A `sequences` value of `1`
+  is grandfathered to be equivalent to `true` and as such means `200`. On rare
+  occasions the default sequences limit leads to very slow compress times in which
+  case a value of `20` or less is recommended.
 
 - `properties` -- rewrite property access using the dot notation, for
   example `foo["bar"] → foo.bar`
