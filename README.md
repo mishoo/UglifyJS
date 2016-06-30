@@ -65,9 +65,11 @@ The available options are:
   --in-source-map               Input source map, useful if you're compressing
                                 JS that was generated from some other original
                                 code.
-  --screw-ie8                   Pass this flag if you don't care about full
-                                compliance with Internet Explorer 6-8 quirks
-                                (by default UglifyJS will try to be IE-proof).
+  --screw-ie8                   Use this flag if you don't wish to support
+                                Internet Explorer 6-8 quirks.
+                                By default UglifyJS will not try to be IE-proof.
+  --support-ie8                 Use this flag to support Internet Explorer 6-8 quirks.
+                                Note: may break standards compliant `catch` identifiers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear
