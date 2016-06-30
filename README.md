@@ -292,7 +292,7 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `sequences` (default: true) -- join consecutive simple statements using the
   comma operator.  May be set to a positive integer to specify the maximum number
   of consecutive comma sequences that will be generated. If this option is set to
-  `true` then the default sequences limit is `2000`. Set option to `false` or `0`
+  `true` then the default sequences limit is `200`. Set option to `false` or `0`
   to disable. On rare occasions the default sequences limit leads to very slow
   compress times in which case a value of `20` or less is recommended.
 
