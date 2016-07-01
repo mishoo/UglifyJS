@@ -65,9 +65,11 @@ The available options are:
   --in-source-map               Input source map, useful if you're compressing
                                 JS that was generated from some other original
                                 code.
-  --screw-ie8                   Pass this flag if you don't care about full
-                                compliance with Internet Explorer 6-8 quirks
-                                (by default UglifyJS will try to be IE-proof).
+  --screw-ie8                   Use this flag if you don't wish to support
+                                Internet Explorer 6-8 quirks.
+                                By default UglifyJS will not try to be IE-proof.
+  --support-ie8                 Use this flag to support Internet Explorer 6-8 quirks.
+                                Note: may break standards compliant `catch` identifiers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear
@@ -289,7 +291,14 @@ you can pass a comma-separated list of options.  Options are in the form
 `foo=bar`, or just `foo` (the latter implies a boolean option that you want
 to set `true`; it's effectively a shortcut for `foo=true`).
 
-- `sequences` -- join consecutive simple statements using the comma operator
+- `sequences` (default: true) -- join consecutive simple statements using the
+  comma operator.  May be set to a positive integer to specify the maximum number
+  of consecutive comma sequences that will be generated. If this option is set to
+  `true` then the default `sequences` limit is `200`. Set option to `false` or `0`
+  to disable. The smallest `sequences` length is `2`. A `sequences` value of `1`
+  is grandfathered to be equivalent to `true` and as such means `200`. On rare
+  occasions the default sequences limit leads to very slow compress times in which
+  case a value of `20` or less is recommended.
 
 - `properties` -- rewrite property access using the dot notation, for
   example `foo["bar"] → foo.bar`
@@ -661,7 +670,8 @@ Other options:
 - `fromString` (default `false`) — if you pass `true` then you can pass
   JavaScript source code, rather than file names.
 
-- `mangle` — pass `false` to skip mangling names.
+- `mangle` (default `true`) — pass `false` to skip mangling names, or pass
+  an object to specify mangling options (see below).
 
 - `mangleProperties` (default `false`) — pass an object to specify custom
   mangle property options.
@@ -679,6 +689,32 @@ Other options:
 ##### mangle
 
  - `except` - pass an array of identifiers that should be excluded from mangling
+
+ - `toplevel` — mangle names declared in the toplevel scope (disabled by
+  default).
+
+  - `eval` — mangle names visible in scopes where eval or with are used
+  (disabled by default).
+
+  Examples:
+
+  ```javascript
+  //tst.js
+  var globalVar;
+  function funcName(firstLongName, anotherLongName)
+  {
+    var myVariable = firstLongName +  anotherLongName;
+  }
+
+  UglifyJS.minify("tst.js").code;
+  // 'function funcName(a,n){}var globalVar;'
+
+  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] }}).code;
+  // 'function funcName(firstLongName,a){}var globalVar;'
+
+  UglifyJS.minify("tst.js", { mangle: toplevel: true }}).code;
+  // 'function n(n,a){}var a;'
+  ```
 
 ##### mangleProperties options
 
