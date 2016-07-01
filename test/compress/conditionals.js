@@ -868,3 +868,41 @@ trivial_boolean_ternary_expressions : {
         f(!(x >= y));
     }
 }
+
+issue_1154: {
+    options = {
+        conditionals: true,
+        evaluate    : true,
+        booleans    : true,
+    };
+    input: {
+        function f1(x) { return x ? -1 : -1; }
+        function f2(x) { return x ? +2 : +2; }
+        function f3(x) { return x ? ~3 : ~3; }
+        function f4(x) { return x ? !4 : !4; }
+        function f5(x) { return x ? void 5 : void 5; }
+        function f6(x) { return x ? typeof 6 : typeof 6; }
+
+        function g1() { return g() ? -1 : -1; }
+        function g2() { return g() ? +2 : +2; }
+        function g3() { return g() ? ~3 : ~3; }
+        function g4() { return g() ? !4 : !4; }
+        function g5() { return g() ? void 5 : void 5; }
+        function g6() { return g() ? typeof 6 : typeof 6; }
+    }
+    expect: {
+        function f1(x) { return -1; }
+        function f2(x) { return 2; }
+        function f3(x) { return -4; }
+        function f4(x) { return !1; }
+        function f5(x) { return; }
+        function f6(x) { return "number"; }
+
+        function g1() { return g(), -1; }
+        function g2() { return g(), 2; }
+        function g3() { return g(), -4; }
+        function g4() { return g(), !1; }
+        function g5() { return g(), void 0; }
+        function g6() { return g(), "number"; }
+    }
+}
