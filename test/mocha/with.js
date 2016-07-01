@@ -13,4 +13,11 @@ describe("With", function() {
         }
         assert.throws(test, error);
     });
+    it("Should set uses_with for scopes involving With statements", function() {
+        var ast = uglify.parse("with(e) {f(1, 2)}");
+        ast.figure_out_scope();
+        assert.equal(ast.uses_with, true);
+        assert.equal(ast.body[0].expression.scope.uses_with, true);
+        assert.equal(ast.body[0].body.body[0].body.expression.scope.uses_with, true);
+    });
 });
