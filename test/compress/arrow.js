@@ -83,3 +83,10 @@ arrow_functions_with_body: {
         };
     }
 }
+
+arrow_function_with_single_parameter_with_default: {
+    input: {
+        var foo = (a = 0) => doSomething(a);
+    }
+    expect_exact: "var foo=(a=0)=>doSomething(a);"
+}
