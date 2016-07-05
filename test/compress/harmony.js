@@ -47,27 +47,6 @@ regression_assign_arrow_functions: {
     }
 }
 
-computed_property_names: {
-    input: {
-        obj({ ["x" + "x"]: 6 });
-    }
-    expect_exact: 'obj({["x"+"x"]:6});'
-}
-
-shorthand_properties: {
-    mangle = true;
-    input: (function() {
-        var prop = 1;
-        const value = {prop};
-        return value;
-    })();
-    expect: (function() {
-        var n = 1;
-        const r = {prop:n};
-        return r;
-    })();
-}
-
 typeof_arrow_functions: {
     options = {
         evaluate: true
@@ -158,72 +137,6 @@ default_values_in_destructurings: {
     expect_exact: "function x({a=4,b}){}function x([b,c=12]){}var{x=6,y}=x;var[x,y=6]=x;"
 }
 
-concise_methods: {
-    input: {
-        x = {
-            foo(a, b) {
-                return x;
-            }
-        }
-        y = {
-            foo([{a}]) {
-                return a;
-            },
-            bar(){}
-        }
-    }
-    expect_exact: "x={foo(a,b){return x}};y={foo([{a}]){return a},bar(){}};"
-}
-
-concise_methods_and_mangle_props: {
-    mangle_props = {
-        regex: /_/
-    };
-    input: {
-        function x() {
-            obj = {
-                _foo() { return 1; }
-            }
-        }
-    }
-    expect: {
-        function x() {
-            obj = {
-                a() { return 1; }
-            }
-        }
-    }
-}
-
-concise_generators: {
-    input: {
-        x = {
-            *foo(a, b) {
-                return x;
-            }
-        }
-        y = {
-            *foo([{a}]) {
-                yield a;
-            },
-            bar(){}
-        }
-    }
-    expect_exact: "x={*foo(a,b){return x}};y={*foo([{a}]){yield a},bar(){}};"
-}
-
-concise_methods_and_keyword_names: {
-    input: {
-        x = {
-            catch() {},
-            throw() {}
-        }
-    }
-    expect: {
-        x={catch(){},throw(){}};
-    }
-}
-
 classes: {
     input: {
         class SomeClass {
@@ -305,6 +218,32 @@ classes_can_have_generators: {
         class Foo {
             *bar() {}
             static *baz() {}
+        }
+    }
+}
+
+classes_can_have_computed_generators: {
+    input: {
+        class C4 {
+            *['constructor']() {}
+        }
+    }
+    expect: {
+        class C4 {
+            *['constructor']() {}
+        }
+    }
+}
+
+classes_can_have_computed_static: {
+    input: {
+        class C4 {
+            static ['constructor']() {}
+        }
+    }
+    expect: {
+        class C4 {
+            static ['constructor']() {}
         }
     }
 }
