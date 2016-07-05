@@ -193,6 +193,32 @@ concise_methods: {
     expect_exact: "x={foo(a,b){return x}};y={foo([{a}]){return a},bar(){}};"
 }
 
+concise_methods_with_computed_property: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        var foo = {
+            [Symbol.iterator]() {
+                return { /* stuff */ }
+            },
+            [1 + 2]() {
+                return 3;
+            }
+        }
+    }
+    expect: {
+        var foo = {
+            [Symbol.iterator]() {
+                return { /* stuff */ }
+            },
+            [3]() {
+                return 3;
+            }
+        }
+    }
+}
+
 concise_methods_and_mangle_props: {
     mangle_props = {
         regex: /_/
@@ -261,6 +287,29 @@ classes: {
     expect_exact: "class SomeClass{constructor(){}foo(){}}class NoSemi{constructor(...args){}foo(){}}class ChildClass extends SomeClass{}var asExpression=class AsExpression{};var nameless=class{};"
 }
 
+getter_setter_with_computed_value: {
+    input: {
+        class C {
+            get ['a']() {
+                return 'A';
+            }
+            set ['a'](value) {
+                do_something(a);
+            }
+        }
+    }
+    expect: {
+        class C {
+            get ['a']() {
+                return 'A';
+            }
+            set ['a'](value) {
+                do_something(a);
+            }
+        }
+    }
+}
+
 class_statics: {
     input: {
         x = class {
@@ -323,6 +372,32 @@ classes_can_have_generators: {
         class Foo {
             *bar() {}
             static *baz() {}
+        }
+    }
+}
+
+classes_can_have_computed_generators: {
+    input: {
+        class C4 {
+            *['constructor']() {}
+        }
+    }
+    expect: {
+        class C4 {
+            *['constructor']() {}
+        }
+    }
+}
+
+classes_can_have_computed_static: {
+    input: {
+        class C4 {
+            static ['constructor']() {}
+        }
+    }
+    expect: {
+        class C4 {
+            static ['constructor']() {}
         }
     }
 }
