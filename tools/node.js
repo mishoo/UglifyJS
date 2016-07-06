@@ -43,6 +43,7 @@ exports.minify = function(files, options) {
         outSourceMap     : null,
         sourceRoot       : null,
         inSourceMap      : null,
+        sourceMapUrl     : null,
         fromString       : false,
         warnings         : false,
         mangle           : {},
@@ -136,8 +137,9 @@ exports.minify = function(files, options) {
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
 
-    if (options.outSourceMap && "string" === typeof options.outSourceMap) {
-        stream += "\n//# sourceMappingURL=" + options.outSourceMap;
+    var mappingUrlPrefix = "\n//# sourceMappingURL=";
+    if (options.outSourceMap && typeof options.outSourceMap === "string" && options.sourceMapUrl !== false) {
+        stream += mappingUrlPrefix + (typeof options.sourceMapUrl === "string" ? options.sourceMapUrl : options.outSourceMap);
     }
 
     var source_map = output.source_map;
