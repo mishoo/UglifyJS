@@ -663,6 +663,17 @@ var result = UglifyJS.minify("compiled.js", {
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
 
+To set the source map url, use the `sourceMapUrl` option.
+If you're using the X-SourceMap header instead, you can just set the `sourceMapUrl` option to false.
+Defaults to outSourceMap:
+
+```javascript
+var result = UglifyJS.minify([ "file1.js" ], {
+  outSourceMap: "out.js.map",
+  sourceMapUrl: "localhost/out.js.map"
+});
+```
+
 Other options:
 
 - `warnings` (default `false`) — pass `true` to display compressor warnings.
