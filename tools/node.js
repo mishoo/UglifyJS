@@ -138,7 +138,7 @@ exports.minify = function(files, options) {
     toplevel.print(stream);
 
     var mappingUrlPrefix = "\n//# sourceMappingURL=";
-    if (options.outSourceMap && typeof options.outSourceMap === "string") {
+    if (options.outSourceMap && typeof options.outSourceMap === "string" && options.sourceMapUrl !== false) {
         stream += mappingUrlPrefix + (typeof options.sourceMapUrl === "string" ? options.sourceMapUrl : options.outSourceMap);
     }
 
