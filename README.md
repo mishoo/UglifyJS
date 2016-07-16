@@ -379,8 +379,7 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 
 - `keep_fnames` -- default `false`.  Pass `true` to prevent the
   compressor from discarding function names.  Useful for code relying on
-  `Function.prototype.name`. You may also would like to refer to
-  [the mangle option](#mangle).
+  `Function.prototype.name`. See also [the mangle option](#mangle).
 
 - `passes` -- default `1`. Number of times to run compress. Use an
   integer argument larger than 1 to further reduce code size in some cases.
