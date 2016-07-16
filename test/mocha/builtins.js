@@ -4,7 +4,7 @@ var assert = require("assert");
 describe("builtins", function() {
     it ("Should not mangle builtins", function() {
         var test = "function foo(something){\n" +
-            "    return [Object,Array,Function,Number,String,Boolean,Error,Math,Date,RegExp,Symbol,something];\n" +
+            "    return [Object,Array,Function,Number,String,Boolean,Error,Math,Date,RegExp,Symbol,Map,Promise,Proxy,Reflect,Set,WeakMap,WeakSet,Float32Array,something];\n" +
             "};";
 
         var result = UglifyJS.minify(test, {fromString: true, parse: {bare_returns: true}}).code;
@@ -22,5 +22,13 @@ describe("builtins", function() {
         assert.notEqual(result.indexOf("Date"), -1);
         assert.notEqual(result.indexOf("RegExp"), -1);
         assert.notEqual(result.indexOf("Symbol"), -1);
+        assert.notEqual(result.indexOf("Promise"), -1);
+        assert.notEqual(result.indexOf("Proxy"), -1);
+        assert.notEqual(result.indexOf("Reflect"), -1);
+        assert.notEqual(result.indexOf("Set"), -1);
+        assert.notEqual(result.indexOf("WeakMap"), -1);
+        assert.notEqual(result.indexOf("WeakSet"), -1);
+        assert.notEqual(result.indexOf("Map"), -1);
+        assert.notEqual(result.indexOf("Float32Array"), -1);
     });
 });
