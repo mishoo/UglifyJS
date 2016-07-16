@@ -693,10 +693,10 @@ Other options:
  - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
 
-  - `eval` — mangle names visible in scopes where eval or with are used
+   - `eval` — mangle names visible in scopes where eval or with are used
   (disabled by default).
 
-- `keep_fnames` -- default `false`.  Pass `true` when you'd not like to mangle
+ - `keep_fnames` -- default `false`.  Pass `true` to not mangle
   function names.  Useful for code relying on `Function.prototype.name`.
   See also: the `keep_fnames` [compress option](#compressor-options).
 
