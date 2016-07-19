@@ -140,3 +140,29 @@ yield_as_identifier_outside_strict_mode: {
         class yield {}
     }
 }
+
+empty_generator_as_parameter_with_side_effects: {
+    options = {
+        side_effects: true
+    }
+    input: {
+        var GeneratorPrototype = Object.getPrototypeOf(
+          Object.getPrototypeOf(function*() {}())
+        );
+        evaluate(GeneratorPrototype);
+    }
+    expect_exact: "var GeneratorPrototype=Object.getPrototypeOf(Object.getPrototypeOf(function*(){}()));evaluate(GeneratorPrototype);"
+}
+
+empty_generator_as_parameter_without_side_effects: {
+    options = {
+        side_effects: false
+    }
+    input: {
+        var GeneratorPrototype = Object.getPrototypeOf(
+          Object.getPrototypeOf(function*() {}())
+        );
+        evaluate(GeneratorPrototype);
+    }
+    expect_exact: "var GeneratorPrototype=Object.getPrototypeOf(Object.getPrototypeOf(function*(){}()));evaluate(GeneratorPrototype);"
+}
