@@ -132,24 +132,38 @@ function run_compress_tests() {
                 failures++;
                 failed_files[file] = 1;
             }
-            else if (test.expect_warnings) {
-                U.AST_Node.warn_function = original_warn_function;
-                var expected_warnings = make_code(test.expect_warnings, {
-                    beautify: false,
-                    quote_style: 2, // force double quote to match JSON
-                });
-                warnings_emitted = warnings_emitted.map(function(input) {
-                  return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
-                });
-                var actual_warnings = JSON.stringify(warnings_emitted);
-                if (expected_warnings != actual_warnings) {
-                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
+            else {
+                // expect == output
+                try {
+                    var reparsed_ast = U.parse(output);
+                } catch (ex) {
+                    log("!!! Test matched expected result but cannot parse output\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--REPARSE ERROR--\n{error}\n\n", {
                         input: input_code,
-                        expected_warnings: expected_warnings,
-                        actual_warnings: actual_warnings,
+                        output: output,
+                        error: ex.toString(),
                     });
                     failures++;
                     failed_files[file] = 1;
+                }
+                if (test.expect_warnings) {
+                    U.AST_Node.warn_function = original_warn_function;
+                    var expected_warnings = make_code(test.expect_warnings, {
+                        beautify: false,
+                        quote_style: 2, // force double quote to match JSON
+                    });
+                    warnings_emitted = warnings_emitted.map(function(input) {
+                      return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
+                    });
+                    var actual_warnings = JSON.stringify(warnings_emitted);
+                    if (expected_warnings != actual_warnings) {
+                        log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
+                            input: input_code,
+                            expected_warnings: expected_warnings,
+                            actual_warnings: actual_warnings,
+                        });
+                        failures++;
+                        failed_files[file] = 1;
+                    }
                 }
             }
         }
