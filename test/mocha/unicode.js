@@ -52,7 +52,11 @@ describe("Unicode", function() {
         var tests = [
             'var \\u{0} = "foo";',
             'var \\u{10ffff} = "bar";',
-            'var \\u000a = "what\'s up";'
+            'var \\u000a = "what\'s up";',
+             // Valid ID_Start, but using up 2 escaped characters and not fitting in IdentifierStart
+            'var \\ud800\\udc00 = "Hello";',
+            'var \\udbff\\udfff = "Unicode";', // Same as previous test
+            'var \\ud800\udc01 = "Weird unicode";', // Same as above, but mixed escaped with unicode chars
         ];
 
         var exec = function(test) {
