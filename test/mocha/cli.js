@@ -3,7 +3,7 @@ var exec = require("child_process").exec;
 
 describe("bin/uglifyjs", function () {
     it("should produce a functional build when using --self", function (done) {
-        this.timeout(5000);
+        this.timeout(15000);
 
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
         var command = uglifyjs + ' --self -cm --wrap WrappedUglifyJS';

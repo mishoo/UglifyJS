@@ -242,3 +242,100 @@ getter_setter_with_computed_value: {
     }
     expect_exact: 'class C{get["a"](){return"A"}set["a"](value){do_something(a)}}var x={get[a.b](){return 42}};class MyArray extends Array{get[Symbol.species](){return Array}}'
 }
+
+property_with_operator_value: {
+    input: {
+        var foo = {
+            "*": 1,
+            get "*"() {
+                return 2;
+            },
+            *"*"() {
+                return 3;
+            },
+            "%": 1,
+            get "%"() {
+                return 2;
+            },
+            *"%"() {
+                return 3;
+            }
+        }
+        class bar {
+            get "*"() {
+                return 1
+            }
+            *"*"() {
+                return 2;
+            }
+            get "%"() {
+                return 1
+            }
+            *"%"() {
+                return 2;
+            }
+        }
+    }
+    expect_exact: 'var foo={"*":1,get"*"(){return 2},*"*"(){return 3},"%":1,get"%"(){return 2},*"%"(){return 3}};class bar{get"*"(){return 1}*"*"(){return 2}get"%"(){return 1}*"%"(){return 2}}'
+}
+
+property_with_unprintable: {
+    input: {
+        var foo = {
+            "\x00\x01": "foo",
+            get "\x00\x01"() {
+                return "bar";
+            },
+            set "\x00\x01"(foo) {
+                save(foo);
+            },
+            *"\x00\x01"() {
+                return "foobar";
+            }
+        }
+        class bar {
+            get "\x00\x01"() {
+                return "bar"
+            }
+            set "\x00\x01"(foo) {
+                save(foo);
+            }
+            *"\x00\x01"() {
+                return "foobar";
+            }
+        }
+    }
+    expect_exact: 'var foo={"\\0\x01":"foo",get"\\0\x01"(){return"bar"},set"\\0\x01"(foo){save(foo)},*"\\0\x01"(){return"foobar"}};class bar{get"\\0\x01"(){return"bar"}set"\\0\x01"(foo){save(foo)}*"\\0\x01"(){return"foobar"}}'
+}
+
+property_with_unprintable_ascii_only: {
+    beautify = {
+        ascii_only: true,
+    }
+    input: {
+        var foo = {
+            "\x00\x01": "foo",
+            get "\x00\x01"() {
+                return "bar";
+            },
+            set "\x00\x01"(foo) {
+                save(foo);
+            },
+            *"\x00\x01"() {
+                return "foobar";
+            }
+        }
+        class bar {
+            get "\x00\x01"() {
+                return "bar"
+            }
+            set "\x00\x01"(foo) {
+                save(foo);
+            }
+            *"\x00\x01"() {
+                return "foobar";
+            }
+        }
+    }
+    expect_exact: 'var foo={"\\0\\x01":"foo",get"\\0\\x01"(){return"bar"},set"\\0\\x01"(foo){save(foo)},*"\\0\\x01"(){return"foobar"}};class bar{get"\\0\\x01"(){return"bar"}set"\\0\\x01"(foo){save(foo)}*"\\0\\x01"(){return"foobar"}}'
+}
