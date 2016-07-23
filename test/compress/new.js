@@ -50,3 +50,28 @@ new_with_many_parameters: {
     }
     expect_exact: 'new foo.bar("baz");new x(/123/,456);'
 }
+
+new_constructor_with_unary_arguments: {
+    input: {
+        new x();
+        new x(-1);
+        new x(-1, -2);
+        new x(void 1, +2, -3, ~4, !5, --a, ++b, c--, d++, typeof e, delete f);
+        new (-1);     // should parse despite being invalid at runtime.
+        new (-1)();   // should parse despite being invalid at runtime.
+        new (-1)(-2); // should parse despite being invalid at runtime.
+    }
+    expect_exact: "new x;new x(-1);new x(-1,-2);new x(void 1,+2,-3,~4,!5,--a,++b,c--,d++,typeof e,delete f);new(-1);new(-1);new(-1)(-2);"
+}
+
+call_with_unary_arguments: {
+    input: {
+        x();
+        x(-1);
+        x(-1, -2);
+        x(void 1, +2, -3, ~4, !5, --a, ++b, c--, d++, typeof e, delete f);
+        (-1)();   // should parse despite being invalid at runtime.
+        (-1)(-2); // should parse despite being invalid at runtime.
+    }
+    expect_exact: "x();x(-1);x(-1,-2);x(void 1,+2,-3,~4,!5,--a,++b,c--,d++,typeof e,delete f);(-1)();(-1)(-2);"
+}
