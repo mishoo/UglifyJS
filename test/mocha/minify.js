@@ -58,5 +58,14 @@ describe("minify", function() {
             assert.strictEqual(result.code,
                     'a["foo"]="bar",a.a="red",x={"bar":10};');
         });
+    }); 
+
+    describe('Unary operators', function () {
+        it('Should preserve a space before increment/decrement', function () {
+            var js = 'var a = 1 + ++1;var b = 2 - ++1;';
+            var result = Uglify.minify(js, { fromString: true });
+            assert.strictEqual(result.code, 'var a=1+ ++1,b=2- ++1;');
+        });
     });
+
 });
