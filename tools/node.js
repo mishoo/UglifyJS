@@ -114,7 +114,7 @@ exports.minify = function(files, options) {
     var inMap = options.inSourceMap;
     var output = {};
     if (typeof options.inSourceMap == "string") {
-        inMap = fs.readFileSync(options.inSourceMap, "utf8");
+        inMap = JSON.parse(fs.readFileSync(options.inSourceMap, "utf8"));
     }
     if (options.outSourceMap) {
         output.source_map = UglifyJS.SourceMap({
