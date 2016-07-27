@@ -59,4 +59,20 @@ describe("minify", function() {
                     'a["foo"]="bar",a.a="red",x={"bar":10};');
         });
     });
+
+    describe("inSourceMap", function() {
+        it("Should read the given string filename correctly when sourceMapIncludeSources is enabled (#1236)", function() {
+            var result = Uglify.minify('./test/mocha/input/issue-1236/simple.js', {
+                outSourceMap: "simple.js.min.map",
+                inSourceMap: "./test/mocha/input/issue-1236/simple.js.map",
+                sourceMapIncludeSources: true
+            });
+
+            var map = JSON.parse(result.map);
+
+            assert.equal(map.sourcesContent.length, 1);
+            assert.equal(map.sourcesContent[0],
+                'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
+        });
+    });
 });
