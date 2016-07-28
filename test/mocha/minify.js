@@ -62,9 +62,9 @@ describe("minify", function() {
 
     describe("inSourceMap", function() {
         it("Should read the given string filename correctly when sourceMapIncludeSources is enabled (#1236)", function() {
-            var result = Uglify.minify('./test/mocha/input/issue-1236/simple.js', {
+            var result = Uglify.minify('./test/input/issue-1236/simple.js', {
                 outSourceMap: "simple.js.min.map",
-                inSourceMap: "./test/mocha/input/issue-1236/simple.js.map",
+                inSourceMap: "./test/input/issue-1236/simple.js.map",
                 sourceMapIncludeSources: true
             });
 
