@@ -258,7 +258,7 @@ var files = (function expand_folder_of_JS_files( arrFiles) {
     var arrJS_files = [];
     arrFiles.forEach( function(filename) {
         var fsStats = fs.statSync(filename);
-        if (fsStats.isFile() && filename.match(/.js$/i)) { arrJS_files.push(filename);}
+        if (fsStats.isFile() && filename.match(/\.js$/i)) { arrJS_files.push(filename);}
         else if (fsStats.isDirectory()) {
             var strFolder = fs.realpathSync(filename)+ "/";
             var arrDir = fs.readdirSync(strFolder,'utf8');
