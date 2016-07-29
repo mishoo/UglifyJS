@@ -261,3 +261,47 @@ exports.writeNameCache = function(filename, key, cache) {
         fs.writeFileSync(filename, JSON.stringify(data, null, 2), "utf8");
     }
 };
+
+// A file glob function that only supports "*" and "?" wildcards in the basename.
+// Example: "foo/bar/*baz??.*.js"
+// Argument `glob` may be a string or an array of strings.
+// Returns an array of strings. Garbage in, garbage out.
+exports.simple_glob = function simple_glob(glob) {
+    var results = [];
+    if (Array.isArray(glob)) {
+        glob.forEach(function(elem) {
+            results = results.concat(simple_glob(elem));
+        });
+        return results;
+    }
+    if (glob.match(/\*|\?/)) {
+        var dir = path.dirname(glob);
+        try {
+            var entries = fs.readdirSync(dir);
+        } catch (ex) {}
+        if (entries) {
+            var pattern = "^" + (path.basename(glob)
+                .replace(/\(/g, "\\(")
+                .replace(/\)/g, "\\)")
+                .replace(/\{/g, "\\{")
+                .replace(/\}/g, "\\}")
+                .replace(/\[/g, "\\[")
+                .replace(/\]/g, "\\]")
+                .replace(/\+/g, "\\+")
+                .replace(/\^/g, "\\^")
+                .replace(/\$/g, "\\$")
+                .replace(/\*/g, "[^/\\\\]*")
+                .replace(/\./g, "\\.")
+                .replace(/\?/g, ".")) + "$";
+            var mod = process.platform === "win32" ? "i" : "";
+            var rx = new RegExp(pattern, mod);
+            for (var i in entries) {
+                if (rx.test(entries[i]))
+                    results.push(dir + "/" + entries[i]);
+            }
+        }
+    }
+    if (results.length === 0)
+        results = [ glob ];
+    return results;
+};
