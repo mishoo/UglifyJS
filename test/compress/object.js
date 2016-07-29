@@ -112,6 +112,35 @@ computed_property_names: {
     expect_exact: 'obj({["x"+"x"]:6});'
 }
 
+computed_property_names_evaluated_1: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        obj({
+            [1 + 1]: 2,
+            ["x" + "x"]: 6
+        });
+    }
+    expect_exact: 'obj({[2]:2,["xx"]:6});'
+}
+
+computed_property_names_evaluated_2: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        var foo = something();
+
+        var obj = {
+            [foo]() {
+                return "blah";
+            }
+        }
+    }
+    expect_exact: 'var foo=something();var obj={[foo](){return"blah"}};'
+}
+
 shorthand_properties: {
     mangle = true;
     input: (function() {
@@ -154,6 +183,9 @@ concise_methods_with_computed_property: {
             },
             [1 + 2]() {
                 return 3;
+            },
+            ["1" + "4"]() {
+                return 14;
             }
         }
     }
@@ -164,8 +196,71 @@ concise_methods_with_computed_property: {
             },
             [3]() {
                 return 3;
+            },
+            ["14"]() {
+                return 14;
             }
         }
+    }
+}
+
+concise_methods_with_computed_property2: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        var foo = {
+            [[1]](){
+                return "success";
+            }
+        };
+        doSomething(foo[[1]]());
+    }
+    expect_exact: {
+        'var foo={[[1]](){return"success"}};doSomething(foo[[1]]());'
+    }
+}
+
+concise_methods_with_various_property_names: {
+    input: {
+        var get = "bar";
+        var a = {
+            bar() {
+                return this.get;
+            },
+            5() {
+                return "five";
+            },
+            0xf55() {
+                return "f five five";
+            },
+            "five"() {
+                return 5;
+            },
+            0b1010(value) {
+                this._ten = value;
+            }
+        };
+    }
+    expect: {
+        var get = "bar";
+        var a = {
+            bar() {
+                return this.get;
+            },
+            5() {
+                return "five";
+            },
+            0xf55() {
+                return "f five five";
+            },
+            "five"() {
+                return 5;
+            },
+            0b1010(value) {
+                this._ten = value;
+            }
+        };
     }
 }
 
@@ -217,7 +312,6 @@ concise_methods_and_keyword_names: {
         x={catch(){},throw(){}};
     }
 }
-
 
 getter_setter_with_computed_value: {
     input: {
@@ -338,4 +432,39 @@ property_with_unprintable_ascii_only: {
         }
     }
     expect_exact: 'var foo={"\\0\\x01":"foo",get"\\0\\x01"(){return"bar"},set"\\0\\x01"(foo){save(foo)},*"\\0\\x01"(){return"foobar"}};class bar{get"\\0\\x01"(){return"bar"}set"\\0\\x01"(foo){save(foo)}*"\\0\\x01"(){return"foobar"}}'
+}
+
+property_with_unprintable_ascii_only_static: {
+    beautify = {
+        ascii_only: true
+    }
+    input: {
+        class foo {
+            static get "\x02\x03"() {
+                return "bar";
+            }
+            static set "\x04\x05"(foo) {
+                save(foo);
+            }
+        }
+    }
+    expect_exact: 'class foo{static get"\\x02\\x03"(){return"bar"}static set"\\x04\\x05"(foo){save(foo)}}'
+}
+
+methods_and_getters_with_keep_quoted_props_enabled: {
+    beautify = {
+        quote_style: 3,
+        keep_quoted_props: true,
+    }
+    input: {
+        var obj = {
+            a() {},
+            "b"() {},
+            get c() { return "c"},
+            get "d"() { return "d"},
+            set e(a) { doSomething(a); },
+            set f(a) { doSomething(b); }
+        }
+    }
+    expect_exact: 'var obj={a(){},"b"(){},get c(){return"c"},get"d"(){return"d"},set e(a){doSomething(a)},set f(a){doSomething(b)}};'
 }

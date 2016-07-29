@@ -248,6 +248,26 @@ classes_can_have_computed_static: {
     }
 }
 
+class_methods_and_getters_with_keep_quoted_props_enabled: {
+    beautify = {
+        quote_style: 3,
+        keep_quoted_props: true,
+    }
+    input: {
+        class clss {
+            a() {}
+            "b"() {}
+            get c() { return "c"}
+            get "d"() { return "d"}
+            set e(a) { doSomething(a); }
+            set 'f'(a) { doSomething(b); }
+            static g() {}
+            static "h"() {}
+        }
+    }
+    expect_exact: 'class clss{a(){}"b"(){}get c(){return"c"}get"d"(){return"d"}set e(a){doSomething(a)}set\'f\'(a){doSomething(b)}static g(){}static"h"(){}}'
+}
+
 new_target: {
     input: {
         new.target;
