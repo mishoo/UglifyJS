@@ -1,0 +1,4 @@
+function bar(x) {
+    var triple = x * (2 + 1);
+    return triple;
+}
