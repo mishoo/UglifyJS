@@ -73,6 +73,7 @@ exports.minify = function(files, options) {
                 bare_returns: options.parse ? options.parse.bare_returns : undefined
             });
         }
+        if (!options.fromString) files = UglifyJS.simple_glob(files);
         [].concat(files).forEach(function (files, i) {
             if (typeof files === 'string') {
                 addFile(files, options.fromString ? i : files);
