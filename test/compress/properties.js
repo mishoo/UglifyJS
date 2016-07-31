@@ -82,15 +82,22 @@ mangle_properties: {
         a["foo"] = "bar";
         a.color = "red";
         x = {"bar": 10};
+        a.run(x.bar, a.foo);
+        a['run']({color: "blue", foo: "baz"});
     }
     expect: {
         a["a"] = "bar";
         a.b = "red";
         x = {c: 10};
+        a.d(x.c, a.a);
+        a['d']({b: "blue", a: "baz"});
     }
 }
 
 mangle_unquoted_properties: {
+    options = {
+        properties: false
+    }
     mangle_props = {
         ignore_quoted: true
     }
@@ -100,27 +107,37 @@ mangle_unquoted_properties: {
         keep_quoted_props: true,
     }
     input: {
+        a.top = 1;
         function f1() {
             a["foo"] = "bar";
             a.color = "red";
-            x = {"bar": 10};
+            a.stuff = 2;
+            x = {"bar": 10, size: 7};
+            a.size = 9;
         }
         function f2() {
             a.foo = "bar";
             a['color'] = "red";
-            x = {bar: 10};
+            x = {bar: 10, size: 7};
+            a.size = 9;
+            a.stuff = 3;
         }
     }
     expect: {
+        a.a = 1;
         function f1() {
             a["foo"] = "bar";
-            a.a = "red";
-            x = {"bar": 10};
+            a.color = "red";
+            a.b = 2;
+            x = {"bar": 10, c: 7};
+            a.c = 9;
         }
         function f2() {
-            a.b = "bar";
+            a.foo = "bar";
             a['color'] = "red";
-            x = {c: 10};
+            x = {bar: 10, c: 7};
+            a.c = 9;
+            a.b = 3;
         }
     }
 }
