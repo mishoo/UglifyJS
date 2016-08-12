@@ -732,10 +732,10 @@ Other options:
   UglifyJS.minify("tst.js").code;
   // 'function funcName(a,n){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] }}).code;
+  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] } }).code;
   // 'function funcName(firstLongName,a){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: toplevel: true }}).code;
+  UglifyJS.minify("tst.js", { mangle: { toplevel: true } }).code;
   // 'function n(n,a){}var a;'
   ```
 
