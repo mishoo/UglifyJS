@@ -145,3 +145,45 @@ parse_do_while_without_semicolon: {
         do x(); while (false);y();
     }
 }
+
+
+keep_collapse_const_in_own_block_scope: {
+    options = {
+        join_vars: true,
+        loops: true
+    }
+    input: {
+        var i=2;
+        const c=5;
+        while(i--)
+            console.log(i);
+        console.log(c);
+    }
+    expect: {
+        var i=2;
+        const c=5;
+        for(;i--;)
+            console.log(i);
+        console.log(c);
+    }
+}
+
+keep_collapse_const_in_own_block_scope_2: {
+    options = {
+        join_vars: true,
+        loops: true
+    }
+    input: {
+        const c=5;
+        var i=2; // Moves to loop, while it did not in previous test
+        while(i--)
+            console.log(i);
+        console.log(c);
+    }
+    expect: {
+        const c=5;
+        for(var i=2;i--;)
+            console.log(i);
+        console.log(c);
+    }
+}

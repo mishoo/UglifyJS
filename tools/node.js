@@ -43,6 +43,7 @@ exports.minify = function(files, options) {
         outSourceMap     : null,
         sourceRoot       : null,
         inSourceMap      : null,
+        sourceMapUrl     : null,
         fromString       : false,
         warnings         : false,
         mangle           : {},
@@ -72,6 +73,7 @@ exports.minify = function(files, options) {
                 bare_returns: options.parse ? options.parse.bare_returns : undefined
             });
         }
+        if (!options.fromString) files = UglifyJS.simple_glob(files);
         [].concat(files).forEach(function (files, i) {
             if (typeof files === 'string') {
                 addFile(files, options.fromString ? i : files);
@@ -113,7 +115,7 @@ exports.minify = function(files, options) {
     var inMap = options.inSourceMap;
     var output = {};
     if (typeof options.inSourceMap == "string") {
-        inMap = fs.readFileSync(options.inSourceMap, "utf8");
+        inMap = JSON.parse(fs.readFileSync(options.inSourceMap, "utf8"));
     }
     if (options.outSourceMap) {
         output.source_map = UglifyJS.SourceMap({
@@ -136,8 +138,9 @@ exports.minify = function(files, options) {
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
 
-    if (options.outSourceMap && "string" === typeof options.outSourceMap) {
-        stream += "\n//# sourceMappingURL=" + options.outSourceMap;
+    var mappingUrlPrefix = "\n//# sourceMappingURL=";
+    if (options.outSourceMap && typeof options.outSourceMap === "string" && options.sourceMapUrl !== false) {
+        stream += mappingUrlPrefix + (typeof options.sourceMapUrl === "string" ? options.sourceMapUrl : options.outSourceMap);
     }
 
     var source_map = output.source_map;
@@ -258,4 +261,48 @@ exports.writeNameCache = function(filename, key, cache) {
         };
         fs.writeFileSync(filename, JSON.stringify(data, null, 2), "utf8");
     }
+};
+
+// A file glob function that only supports "*" and "?" wildcards in the basename.
+// Example: "foo/bar/*baz??.*.js"
+// Argument `glob` may be a string or an array of strings.
+// Returns an array of strings. Garbage in, garbage out.
+exports.simple_glob = function simple_glob(glob) {
+    var results = [];
+    if (Array.isArray(glob)) {
+        glob.forEach(function(elem) {
+            results = results.concat(simple_glob(elem));
+        });
+        return results;
+    }
+    if (glob.match(/\*|\?/)) {
+        var dir = path.dirname(glob);
+        try {
+            var entries = fs.readdirSync(dir);
+        } catch (ex) {}
+        if (entries) {
+            var pattern = "^" + (path.basename(glob)
+                .replace(/\(/g, "\\(")
+                .replace(/\)/g, "\\)")
+                .replace(/\{/g, "\\{")
+                .replace(/\}/g, "\\}")
+                .replace(/\[/g, "\\[")
+                .replace(/\]/g, "\\]")
+                .replace(/\+/g, "\\+")
+                .replace(/\^/g, "\\^")
+                .replace(/\$/g, "\\$")
+                .replace(/\*/g, "[^/\\\\]*")
+                .replace(/\./g, "\\.")
+                .replace(/\?/g, ".")) + "$";
+            var mod = process.platform === "win32" ? "i" : "";
+            var rx = new RegExp(pattern, mod);
+            for (var i in entries) {
+                if (rx.test(entries[i]))
+                    results.push(dir + "/" + entries[i]);
+            }
+        }
+    }
+    if (results.length === 0)
+        results = [ glob ];
+    return results;
 };

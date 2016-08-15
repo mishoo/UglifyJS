@@ -273,6 +273,9 @@ if (ARGS.comments != null) {
 
 var files = ARGS._.slice();
 
+if (process.platform === "win32")
+    files = UglifyJS.simple_glob(files);
+
 if (ARGS.self) {
     if (files.length > 0) {
         print_error("WARN: Ignoring input files since --self was passed");

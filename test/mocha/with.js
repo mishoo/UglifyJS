@@ -2,7 +2,7 @@ var assert = require("assert");
 var uglify = require("../../");
 
 describe("With", function() {
-    it ("Should throw syntaxError when using with statement in strict mode", function() {
+    it("Should throw syntaxError when using with statement in strict mode", function() {
         var code = '"use strict";\nthrow NotEarlyError;\nwith ({}) { }';
         var test = function() {
             uglify.parse(code);

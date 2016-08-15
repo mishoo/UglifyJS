@@ -135,11 +135,11 @@ The available options are:
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
-  --mangle-props                Mangle property names (default `0`). Set to 
+  --mangle-props                Mangle property names (default `0`). Set to
                                 `true` or `1` to mangle all property names. Set
-                                to `unquoted` or `2` to only mangle unquoted 
+                                to `unquoted` or `2` to only mangle unquoted
                                 property names. Mode `2` also enables the
-                                `keep_quoted_props` beautifier option to 
+                                `keep_quoted_props` beautifier option to
                                 preserve the quotes around property names and
                                 disables the `properties` compressor option to
                                 prevent rewriting quoted properties with dot
@@ -378,8 +378,8 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   for code which relies on `Function.length`.
 
 - `keep_fnames` -- default `false`.  Pass `true` to prevent the
-  compressor from mangling/discarding function names.  Useful for code relying on
-  `Function.prototype.name`.
+  compressor from discarding function names.  Useful for code relying on
+  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
 - `passes` -- default `1`. Number of times to run compress. Use an
   integer argument larger than 1 to further reduce code size in some cases.
@@ -628,6 +628,14 @@ console.log(result.code); // minified output
 console.log(result.map);
 ```
 
+To generate a source map with the fromString option, you can also use an object:
+```javascript
+var result = UglifyJS.minify({"file1.js": "var a = function () {};"}, {
+  outSourceMap: "out.js.map",
+  fromString: true
+});
+```
+
 Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
 `file` attribute in the source map (see [the spec][sm-spec]).
@@ -663,6 +671,17 @@ var result = UglifyJS.minify("compiled.js", {
 The `inSourceMap` is only used if you also request `outSourceMap` (it makes
 no sense otherwise).
 
+To set the source map url, use the `sourceMapUrl` option.
+If you're using the X-SourceMap header instead, you can just set the `sourceMapUrl` option to false.
+Defaults to outSourceMap:
+
+```javascript
+var result = UglifyJS.minify([ "file1.js" ], {
+  outSourceMap: "out.js.map",
+  sourceMapUrl: "localhost/out.js.map"
+});
+```
+
 Other options:
 
 - `warnings` (default `false`) — pass `true` to display compressor warnings.
@@ -693,8 +712,12 @@ Other options:
  - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
 
-  - `eval` — mangle names visible in scopes where eval or with are used
+ - `eval` — mangle names visible in scopes where eval or with are used
   (disabled by default).
+
+ - `keep_fnames` -- default `false`.  Pass `true` to not mangle
+  function names.  Useful for code relying on `Function.prototype.name`.
+  See also: the `keep_fnames` [compress option](#compressor-options).
 
   Examples:
 
@@ -709,10 +732,10 @@ Other options:
   UglifyJS.minify("tst.js").code;
   // 'function funcName(a,n){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] }}).code;
+  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] } }).code;
   // 'function funcName(firstLongName,a){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: toplevel: true }}).code;
+  UglifyJS.minify("tst.js", { mangle: { toplevel: true } }).code;
   // 'function n(n,a){}var a;'
   ```
 
