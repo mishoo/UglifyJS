@@ -99,7 +99,8 @@ mangle_unquoted_properties: {
         properties: false
     }
     mangle_props = {
-        ignore_quoted: true
+        ignore_quoted: true,
+        reserved: []
     }
     beautify = {
         beautify: false,
