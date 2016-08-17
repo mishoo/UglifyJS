@@ -158,3 +158,17 @@ issue_1254_negate_iife_true: {
     }
     expect_exact: '!function(){return function(){console.log("test")}}()();'
 }
+
+issue_1254_negate_iife_nested: {
+    options = {
+        negate_iife: true,
+    }
+    input: {
+        (function() {
+            return function() {
+                console.log('test')
+            };
+        })()()()()();
+    }
+    expect_exact: '!function(){return function(){console.log("test")}}()()()()();'
+}

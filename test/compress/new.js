@@ -75,3 +75,10 @@ call_with_unary_arguments: {
     }
     expect_exact: "x();x(-1);x(-1,-2);x(void 1,+2,-3,~4,!5,--a,++b,c--,d++,typeof e,delete f);(-1)();(-1)(-2);"
 }
+
+new_with_unary_prefix: {
+    input: {
+        var bar = (+new Date()).toString(32);
+    }
+    expect_exact: 'var bar=(+new Date).toString(32);';
+}
