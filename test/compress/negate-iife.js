@@ -130,3 +130,31 @@ negate_iife_issue_1073: {
         }(7))();
     }
 }
+
+issue_1254_negate_iife_false: {
+    options = {
+        negate_iife: false,
+    }
+    input: {
+        (function() {
+            return function() {
+                console.log('test')
+            };
+        })()();
+    }
+    expect_exact: '(function(){return function(){console.log("test")}})()();'
+}
+
+issue_1254_negate_iife_true: {
+    options = {
+        negate_iife: true,
+    }
+    input: {
+        (function() {
+            return function() {
+                console.log('test')
+            };
+        })()();
+    }
+    expect_exact: '!function(){return function(){console.log("test")}}()();'
+}
