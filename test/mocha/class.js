@@ -16,7 +16,7 @@ describe("Class", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: expand (...)";
+                e.message.substr(0, 31) === "SyntaxError: Unexpected token: ";
         }
 
         for (var i = 0; i < tests.length; i++) {

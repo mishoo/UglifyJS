@@ -1,27 +1,75 @@
-
 destructuring_arrays: {
     input: {
+        {const [aa, bb] = cc;}
+        {const [aa, [bb, cc]] = dd;}
+        {let [aa, bb] = cc;}
+        {let [aa, [bb, cc]] = dd;}
         var [aa, bb] = cc;
+        var [aa, [bb, cc]] = dd;
+        var [,[,,,,,],,,zz,] = xx;
     }
     expect: {
-        var[aa,bb]=cc;
+        {const [aa, bb] = cc;}
+        {const [aa, [bb, cc]] = dd;}
+        {let [aa, bb] = cc;}
+        {let [aa, [bb, cc]] = dd;}
+        var [aa, bb] = cc;
+        var [aa, [bb, cc]] = dd;
+        var [,[,,,,,],,,zz,] = xx;
     }
 }
 
 destructuring_objects: {
     input: {
+        {const {aa, bb} = {aa:1, bb:2};}
+        {const {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        {let {aa, bb} = {aa:1, bb:2};}
+        {let {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
         var {aa, bb} = {aa:1, bb:2};
+        var {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};
     }
     expect: {
-        var{aa,bb}={aa:1,bb:2};
+        {const {aa, bb} = {aa:1, bb:2};}
+        {const {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        {let {aa, bb} = {aa:1, bb:2};}
+        {let {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        var {aa, bb} = {aa:1, bb:2};
+        var {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};
     }
+}
+
+destructuring_objects_trailing_elision: {
+    input: {
+        var {cc,} = foo;
+    }
+    expect_exact: "var{cc}=foo;"
 }
 
 nested_destructuring_objects: {
     input: {
+        const [{a},b] = c;
+        let [{a},b] = c;
         var [{a},b] = c;
     }
-    expect_exact: 'var[{a},b]=c;';
+    expect_exact: 'const[{a},b]=c;let[{a},b]=c;var[{a},b]=c;';
+}
+
+destructuring_constdef_in_loops: {
+    input: {
+        for (const [x,y] in pairs);
+        for (const [a] = 0;;);
+        for (const {c} of cees);
+    }
+    expect_exact: "for(const[x,y]in pairs);for(const[a]=0;;);for(const{c}of cees);"
+}
+
+destructuring_letdef_in_loops: {
+    input: {
+        for (let [x,y] in pairs);
+        for (let [a] = 0;;);
+        for (let {c} of cees);
+    }
+    expect_exact: "for(let[x,y]in pairs);for(let[a]=0;;);for(let{c}of cees);"
 }
 
 destructuring_vardef_in_loops: {
@@ -32,6 +80,7 @@ destructuring_vardef_in_loops: {
     }
     expect_exact: "for(var[x,y]in pairs);for(var[a]=0;;);for(var{c}of cees);"
 }
+
 destructuring_expressions: {
     input: {
         ({a, b});

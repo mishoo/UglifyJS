@@ -1,17 +1,3 @@
-arrow_functions: {
-    input: {
-        (a) => b;  // 1 args
-        (a, b) => c;  // n args
-        () => b;  // 0 args
-        (a) => (b) => c;  // func returns func returns func
-        (a) => ((b) => c);  // So these parens are dropped
-        () => (b,c) => d;  // func returns func returns func
-        a=>{return b;}
-        a => 'lel';  // Dropping the parens
-    }
-    expect_exact: "a=>b;(a,b)=>c;()=>b;a=>b=>c;a=>b=>c;()=>(b,c)=>d;a=>{return b};a=>\"lel\";"
-}
-
 arrow_function_parens: {
     input: {
         something && (() => {});
@@ -25,28 +11,6 @@ arrow_function_parens_2: {
     expect_exact: "(()=>null)();"
 }
 
-regression_arrow_functions_and_hoist: {
-    options = {
-        hoist_vars: true,
-        hoist_funs: true
-    }
-    input: {
-        (a) => b;
-    }
-    expect_exact: "a=>b;"
-}
-
-regression_assign_arrow_functions: {
-    input: {
-        oninstall = e => false;
-        oninstall = () => false;
-    }
-    expect: {
-        oninstall=e=>false;
-        oninstall=()=>false;
-    }
-}
-
 typeof_arrow_functions: {
     options = {
         evaluate: true
@@ -55,86 +19,6 @@ typeof_arrow_functions: {
         var foo = typeof (x) => null;
     }
     expect_exact: "var foo=\"function\";"
-}
-
-destructuring_arguments: {
-    input: {
-        (function ( a ) { });
-        (function ( [ a ] ) { });
-        (function ( [ a, b ] ) { });
-        (function ( [ [ a ] ] ) { });
-        (function ( [ [ a, b ] ] ) { });
-        (function ( [ a, [ b ] ] ) { });
-        (function ( [ [ b ], a ] ) { });
-
-        (function ( { a } ) { });
-        (function ( { a, b } ) { });
-
-        (function ( [ { a } ] ) { });
-        (function ( [ { a, b } ] ) { });
-        (function ( [ a, { b } ] ) { });
-        (function ( [ { b }, a ] ) { });
-
-        ( [ a ] ) => { };
-        ( [ a, b ] ) => { };
-
-        ( { a } ) => { };
-        ( { a, b, c, d, e } ) => { };
-
-        ( [ a ] ) => b;
-        ( [ a, b ] ) => c;
-
-        ( { a } ) => b;
-        ( { a, b } ) => c;
-    }
-    expect: {
-        (function(a){});
-        (function([a]){});
-        (function([a,b]){});
-        (function([[a]]){});
-        (function([[a,b]]){});
-        (function([a,[b]]){});
-        (function([[b],a]){});
-
-        (function({a}){});
-        (function({a,b}){});
-
-        (function([{a}]){});
-        (function([{a,b}]){});
-        (function([a,{b}]){});
-        (function([{b},a]){});
-
-        ([a])=>{};
-        ([a,b])=>{};
-
-        ({a})=>{};
-        ({a,b,c,d,e})=>{};
-
-        ([a])=>b;
-        ([a,b])=>c;
-
-        ({a})=>b;
-        ({a,b})=>c;
-    }
-}
-
-default_arguments: {
-    input: {
-        function x(a = 6) { }
-        function x(a = (6 + 5)) { }
-        function x({ foo } = {}, [ bar ] = [ 1 ]) { }
-    }
-    expect_exact: "function x(a=6){}function x(a=6+5){}function x({foo}={},[bar]=[1]){}"
-}
-
-default_values_in_destructurings: {
-    input: {
-        function x({a=(4), b}) {}
-        function x([b, c=(12)]) {}
-        var { x = (6), y } = x;
-        var [ x, y = (6) ] = x;
-    }
-    expect_exact: "function x({a=4,b}){}function x([b,c=12]){}var{x=6,y}=x;var[x,y=6]=x;"
 }
 
 classes: {

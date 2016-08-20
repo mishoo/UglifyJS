@@ -90,7 +90,7 @@ describe("Yield", function() {
 
         var fail = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected yield identifier inside strict mode";
+                /SyntaxError: Unexpected yield identifier (?:as parameter )?inside strict mode/.test(e.message);
         }
 
         var test = function(input) {
