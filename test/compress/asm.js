@@ -90,13 +90,13 @@ asm_mixed: {
         }
         function no_asm_GeometricMean(stdlib, foreign, buffer) {
             function logSum(start, end) {
-                start = 0 | start, end = 0 | end;
+                start |= 0, end |= 0;
                 var sum = 0, p = 0, q = 0;
                 for (p = start << 3, q = end << 3; (0 | p) < (0 | q); p = p + 8 | 0) sum += +log(values[p >> 3]);
                 return +sum;
             }
             function geometricMean(start, end) {
-                return start = 0 | start, end = 0 | end, +exp(+logSum(start, end) / +(end - start | 0));
+                return start |= 0, end |= 0, +exp(+logSum(start, end) / +(end - start | 0));
             }
             var exp = stdlib.Math.exp, log = stdlib.Math.log, values = new stdlib.Float64Array(buffer);
             return { geometricMean: geometricMean };
