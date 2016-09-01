@@ -396,6 +396,9 @@ fat_arrow_as_param: {
     input: {
         foo(x => x);
         foo(x => x, y => y);
+
+        foo(x => (x, x));
+        foo(x => (x, x), y => (y, y));
     }
-    expect_exact: "foo(x=>x);foo(x=>x,y=>y);"
+    expect_exact: "foo(x=>x);foo(x=>x,y=>y);foo(x=>(x,x));foo(x=>(x,x),y=>(y,y));"
 }
