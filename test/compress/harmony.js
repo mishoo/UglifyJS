@@ -391,3 +391,11 @@ regression_cannot_use_of: {
         foo();  /* Label statement missing? No prob. */
     }
 }
+
+fat_arrow_as_param: {
+    input: {
+        foo(x => x);
+        foo(x => x, y => y);
+    }
+    expect_exact: "foo(x=>x);foo(x=>x,y=>y);"
+}
