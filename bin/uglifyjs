@@ -250,25 +250,10 @@ if (ARGS.keep_fnames) {
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
-if (ARGS.comments != null) {
-    if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
-        try {
-            OUTPUT_OPTIONS.comments = extractRegex(ARGS.comments);
-        } catch (e) {
-            print_error("ERROR: Invalid --comments: " + e.message);
-        }
-    } else if (ARGS.comments == "all") {
-        OUTPUT_OPTIONS.comments = true;
-    } else {
-        OUTPUT_OPTIONS.comments = function(node, comment) {
-            var text = comment.value;
-            var type = comment.type;
-            if (type == "comment2") {
-                // multiline comment
-                return /@preserve|@license|@cc_on/i.test(text);
-            }
-        }
-    }
+if (ARGS.comments === "") {
+    OUTPUT_OPTIONS.comments = "some";
+} else {
+    OUTPUT_OPTIONS.comments = ARGS.comments;
 }
 
 var files = ARGS._.slice();

@@ -849,8 +849,10 @@ which we care about here are `source_map` and `comments`.
 #### Keeping comments in the output
 
 In order to keep certain comments in the output you need to pass the
-`comments` option.  Pass a RegExp or a function.  If you pass a RegExp, only
-those comments whose body matches the regexp will be kept.  Note that body
+`comments` option.  Pass a RegExp, boolean or a function.  Stringified options
+`all` and `some` can be passed too, where `some` behaves like it's cli
+equivalent `--comments` without passing a value. If you pass a RegExp,
+only those comments whose body matches the regexp will be kept.  Note that body
 means without the initial `//` or `/*`.  If you pass a function, it will be
 called for every comment in the tree and will receive two arguments: the
 node that the comment is attached to, and the comment token itself.
