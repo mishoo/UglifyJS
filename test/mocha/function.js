@@ -13,30 +13,39 @@ describe("Function", function() {
         // Destructurings as arguments
         var destr_fun1 = uglify.parse('(function ({a, b}) {})').body[0].body;
         var destr_fun2 = uglify.parse('(function ([a, [b]]) {})').body[0].body;
+        var destr_fun3 = uglify.parse('({a, b}) => null').body[0].body;
+        var destr_fun4 = uglify.parse('([a, [b]]) => null').body[0].body;
 
         assert.equal(destr_fun1.argnames.length, 1);
         assert.equal(destr_fun2.argnames.length, 1);
-
-        var destr_fun1 = uglify.parse('({a, b}) => null').body[0].body;
-        var destr_fun2 = uglify.parse('([a, [b]]) => null').body[0].body;
-
-        assert.equal(destr_fun1.argnames.length, 1);
-        assert.equal(destr_fun2.argnames.length, 1);
+        assert.equal(destr_fun3.argnames.length, 1);
+        assert.equal(destr_fun4.argnames.length, 1);
 
         var destruct1 = destr_fun1.argnames[0];
         var destruct2 = destr_fun2.argnames[0];
+        var destruct3 = destr_fun3.argnames[0];
+        var destruct4 = destr_fun4.argnames[0];
 
         assert(destruct1 instanceof uglify.AST_Destructuring);
         assert(destruct2 instanceof uglify.AST_Destructuring);
+        assert(destruct3 instanceof uglify.AST_Destructuring);
+        assert(destruct4 instanceof uglify.AST_Destructuring);
         assert(destruct2.names[1] instanceof uglify.AST_Destructuring);
+        assert(destruct4.names[1] instanceof uglify.AST_Destructuring);
 
         assert.equal(destruct1.start.value, '{');
         assert.equal(destruct1.end.value, '}');
         assert.equal(destruct2.start.value, '[');
         assert.equal(destruct2.end.value, ']');
+        assert.equal(destruct3.start.value, '{');
+        assert.equal(destruct3.end.value, '}');
+        assert.equal(destruct4.start.value, '[');
+        assert.equal(destruct4.end.value, ']');
 
         assert.equal(destruct1.is_array, false);
         assert.equal(destruct2.is_array, true);
+        assert.equal(destruct3.is_array, false);
+        assert.equal(destruct4.is_array, true);
 
         var aAndB = [
             ['SymbolFunarg', 'a'],
@@ -46,13 +55,41 @@ describe("Function", function() {
         assert.deepEqual(
             [
                 destruct1.names[0].TYPE,
-                destruct1.names[0].name],
+                destruct1.names[0].name
+            ],
             aAndB[0]);
-
+        assert.deepEqual(
+            [
+                destruct1.names[1].TYPE,
+                destruct1.names[1].name
+            ],
+            aAndB[1]);
+        assert.deepEqual(
+            [
+                destruct2.names[0].TYPE,
+                destruct2.names[0].name
+            ],
+            aAndB[0]);
         assert.deepEqual(
             [
                 destruct2.names[1].names[0].TYPE,
                 destruct2.names[1].names[0].name
+            ],
+            aAndB[1]);
+        assert.strictEqual(typeof destruct3.names[0].key, "string");
+        assert.strictEqual(destruct3.names[0].key, "a");
+        assert.strictEqual(typeof destruct3.names[1].key, "string");
+        assert.strictEqual(destruct3.names[1].key, "b");
+        assert.deepEqual(
+            [
+                destruct4.names[0].TYPE,
+                destruct4.names[0].name
+            ],
+            aAndB[0]);
+        assert.deepEqual(
+            [
+                destruct4.names[1].names[0].TYPE,
+                destruct4.names[1].names[0].name
             ],
             aAndB[1]);
 
@@ -61,6 +98,12 @@ describe("Function", function() {
             aAndB);
         assert.deepEqual(
             get_args(destr_fun2.args_as_names()),
+            aAndB);
+        assert.deepEqual(
+            get_args(destr_fun3.args_as_names()),
+            aAndB);
+        assert.deepEqual(
+            get_args(destr_fun4.args_as_names()),
             aAndB);
 
         // Making sure we don't accidentally accept things which

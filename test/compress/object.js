@@ -89,6 +89,9 @@ getter_setter: {
 
 getter_setter_mangler: {
     mangle = {}
+    beautify = {
+        ecma: 6
+    }
     input: {
         function f(get,set) {
             return {
@@ -102,7 +105,18 @@ getter_setter_mangler: {
             };
         }
     }
-    expect_exact: "function f(t,e){return{get:t,set:e,get g(){},set s(t){},c,a:1,m(){}}}"
+    expect_exact: "function f(n,t){return{get:n,set:t,get g(){},set s(n){},c,a:1,m(){}}}"
+}
+
+use_shorthand_opportunity: {
+    beautify = {
+        ecma: 6
+    }
+    input: {
+        var foo = 123;
+        var obj = {foo: foo};
+    }
+    expect_exact: "var foo=123;var obj={foo};"
 }
 
 computed_property_names: {
@@ -467,4 +481,13 @@ methods_and_getters_with_keep_quoted_props_enabled: {
         }
     }
     expect_exact: 'var obj={a(){},"b"(){},get c(){return"c"},get"d"(){return"d"},set e(a){doSomething(a)},set f(a){doSomething(b)}};'
+}
+
+allow_assignments_to_property_values: {
+    input: {
+        var foo = {123: foo = 123} = {foo: "456"};
+    }
+    expect: {
+        var foo = {123: foo = 123} = {foo: "456"};
+    }
 }

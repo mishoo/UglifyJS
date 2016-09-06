@@ -6,7 +6,8 @@ destructuring_arrays: {
         {let [aa, [bb, cc]] = dd;}
         var [aa, bb] = cc;
         var [aa, [bb, cc]] = dd;
-        var [,[,,,,,],,,zz,] = xx;
+        var [,[,,,,,],,,zz,] = xx; // Trailing comma
+        var [,,zzz,,] = xxx; // Trailing comma after hole
     }
     expect: {
         {const [aa, bb] = cc;}
@@ -15,8 +16,18 @@ destructuring_arrays: {
         {let [aa, [bb, cc]] = dd;}
         var [aa, bb] = cc;
         var [aa, [bb, cc]] = dd;
-        var [,[,,,,,],,,zz,] = xx;
+        var [,[,,,,,],,,zz] = xx;
+        var [,,zzz,,] = xxx;
     }
+}
+
+destructuring_arrays_holes: {
+    input: {
+        var [,,,,] = a;
+        var [,,b,] = c;
+        var [d,,]  = e;
+    }
+    expect_exact: "var[,,,,]=a;var[,,b]=c;var[d,,]=e;"
 }
 
 destructuring_objects: {
@@ -82,6 +93,9 @@ destructuring_vardef_in_loops: {
 }
 
 destructuring_expressions: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         ({a, b});
         [{a}];

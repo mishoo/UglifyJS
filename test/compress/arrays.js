@@ -1,3 +1,5 @@
+// NOTE trailing comma doesn't contribute to length of an array
+// That also means the array changes length if previous element is a hole too and got cut off
 holes_and_undefined: {
     input: {
         w = [1,,];

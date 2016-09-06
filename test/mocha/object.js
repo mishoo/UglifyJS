@@ -124,4 +124,8 @@ describe("Object", function() {
             assert.throws(testCase(test), fail(test), errorMessage(test));
         }
     });
+    it("Should be able to use shorthand properties", function() {
+        var ast = Uglify.parse("var foo = 123\nvar obj = {foo: foo}");
+        assert.strictEqual(ast.print_to_string({ecma: 6}), "var foo=123;var obj={foo};");
+    })
 });

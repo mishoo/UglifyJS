@@ -22,4 +22,43 @@ describe("Arrow functions", function() {
             assert.throws(test(tests[i]), error);
         }
     });
+    it("Should not accept holes in object binding patterns, while still allowing a trailing elision", function() {
+        var tests = [
+            "f = ({, , ...x} = [1, 2]) => {};"
+        ];
+        var test = function(code) {
+            return function() {
+                uglify.parse(code, {fromString: true});
+            }
+        }
+        var error = function(e) {
+            return e instanceof uglify.JS_Parse_Error &&
+                e.message === "SyntaxError: Unexpected token: punc (,)";
+        }
+
+        for (var i = 0; i < tests.length; i++) {
+            assert.throws(test(tests[i]), error);
+        }
+    });
+    it("Should not accept newlines before arrow token", function() {
+        var tests = [
+            "f = foo\n=> 'foo';",
+            "f = (foo, bar)\n=> 'foo';",
+            "f = ()\n=> 'foo';",
+            "foo((bar)\n=>'baz';);"
+        ];
+        var test = function(code) {
+            return function() {
+                uglify.parse(code, {fromString: true});
+            }
+        }
+        var error = function(e) {
+            return e instanceof uglify.JS_Parse_Error &&
+                e.message === "SyntaxError: Unexpected newline before arrow (=>)";
+        }
+
+        for (var i = 0; i < tests.length; i++) {
+            assert.throws(test(tests[i]), error);
+        }
+    });
 });
