@@ -120,7 +120,6 @@ yield_as_identifier_outside_strict_mode: {
         function foo(...yield){}
         try { new Error("") } catch (yield) {}
         var yield = "foo";
-        class yield {}
     }
     expect: {
         import yield from "bar";
@@ -137,7 +136,6 @@ yield_as_identifier_outside_strict_mode: {
         function foo(...yield){}
         try { new Error("") } catch (yield) {}
         var yield = "foo";
-        class yield {}
     }
 }
 
