@@ -348,6 +348,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `collapse_vars` -- default `false`. Collapse single-use `var` and `const`
   definitions when possible.
 
+- `reduce_vars` -- default `false`. Improve optimization on variables assigned
+  with and used as constant values.
+
 - `warnings` -- display warnings when dropping unreachable code or unused
   declarations etc.
 
