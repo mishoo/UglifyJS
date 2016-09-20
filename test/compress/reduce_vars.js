@@ -40,7 +40,7 @@ reduce_vars: {
         var A = 1;
         (function() {
             console.log(-3);
-            console.log(A - 5);
+            console.log(-4);
         })();
         (function f1() {
             var a = 2;
@@ -55,7 +55,7 @@ reduce_vars: {
         (function() {
             return "yes";
         })();
-        console.log(A + 1);
+        console.log(2);
     }
 }
 
@@ -75,6 +75,13 @@ modified: {
         }
 
         function f1() {
+            var a = 1, b = 2;
+            --b;
+            console.log(a + 1);
+            console.log(b + 1);
+        }
+
+        function f2() {
             var a = 1, b = 2, c = 3;
             b = c;
             console.log(a + b);
@@ -83,7 +90,16 @@ modified: {
             console.log(a + b + c);
         }
 
-        function f2() {
+        function f3() {
+            var a = 1, b = 2, c = 3;
+            b *= c;
+            console.log(a + b);
+            console.log(b + c);
+            console.log(a + c);
+            console.log(a + b + c);
+        }
+
+        function f4() {
             var a = 1, b = 2, c = 3;
             if (a) {
                 b = c;
@@ -97,6 +113,12 @@ modified: {
             console.log(a + c);
             console.log(a + b + c);
         }
+
+        function f5(a) {
+            B = a;
+            console.log(A ? 'yes' : 'no');
+            console.log(B ? 'yes' : 'no');
+        }
     }
     expect: {
         function f0() {
@@ -107,6 +129,13 @@ modified: {
         }
 
         function f1() {
+            var b = 2;
+            --b;
+            console.log(2);
+            console.log(b + 1);
+        }
+
+        function f2() {
             var a = 1, b = 2, c = 3;
             b = c;
             console.log(a + b);
@@ -115,7 +144,16 @@ modified: {
             console.log(a + b + c);
         }
 
-        function f2() {
+        function f3() {
+            var a = 1, b = 2, c = 3;
+            b *= c;
+            console.log(a + b);
+            console.log(b + c);
+            console.log(4);
+            console.log(a + b + c);
+        }
+
+        function f4() {
             var a = 1, b = 2, c = 3;
             b = c;
             console.log(a + b);
@@ -123,5 +161,11 @@ modified: {
             console.log(a + c);
             console.log(a + b + c);
         }
-    }
+
+        function f5(a) {
+            B = a;
+            console.log(A ? 'yes' : 'no');
+            console.log(B ? 'yes' : 'no');
+        }
+   }
 }
