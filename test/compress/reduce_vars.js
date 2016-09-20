@@ -109,7 +109,7 @@ modified: {
             console.log(a + b);
             console.log(b + c);
             // TODO: as "modified" is determined in "figure_out_scope",
-            // even "passes" would improve this any further
+            // even "passes" wouldn't improve this any further
             console.log(a + c);
             console.log(a + b + c);
         }
