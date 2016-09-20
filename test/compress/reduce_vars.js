@@ -58,3 +58,70 @@ reduce_vars: {
         console.log(A + 1);
     }
 }
+
+modified: {
+    options = {
+        conditionals  : true,
+        evaluate      : true,
+        reduce_vars   : true,
+        unused        : true
+    }
+    input: {
+        function f0() {
+            var a = 1, b = 2;
+            b++;
+            console.log(a + 1);
+            console.log(b + 1);
+        }
+
+        function f1() {
+            var a = 1, b = 2, c = 3;
+            b = c;
+            console.log(a + b);
+            console.log(b + c);
+            console.log(a + c);
+            console.log(a + b + c);
+        }
+
+        function f2() {
+            var a = 1, b = 2, c = 3;
+            if (a) {
+                b = c;
+            } else {
+                c = b;
+            }
+            console.log(a + b);
+            console.log(b + c);
+            // TODO: as "modified" is determined in "figure_out_scope",
+            // even "passes" would improve this any further
+            console.log(a + c);
+            console.log(a + b + c);
+        }
+    }
+    expect: {
+        function f0() {
+            var b = 2;
+            b++;
+            console.log(2);
+            console.log(b + 1);
+        }
+
+        function f1() {
+            var a = 1, b = 2, c = 3;
+            b = c;
+            console.log(a + b);
+            console.log(b + c);
+            console.log(4);
+            console.log(a + b + c);
+        }
+
+        function f2() {
+            var a = 1, b = 2, c = 3;
+            b = c;
+            console.log(a + b);
+            console.log(b + c);
+            console.log(a + c);
+            console.log(a + b + c);
+        }
+    }
+}
