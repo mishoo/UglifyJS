@@ -329,3 +329,15 @@ check_escaped_chars: {
     }
     expect_exact: "var foo=`       `;";
 }
+
+escape_dollar_curly: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        console.log(`\$\{ beep \}`)
+        console.log(`${1-0}\${2-0}$\{3-0}${4-0}`)
+        console.log(`$${""}{not an expression}`)
+    }
+    expect_exact: "console.log(`\\${ beep }`);console.log(`1\\${2-0}\\${3-0}4`);console.log(`\\${not an expression}`);"
+}
