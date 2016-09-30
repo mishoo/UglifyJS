@@ -76,6 +76,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
     .describe("dump-spidermonkey-ast", "Dump SpiderMonkey AST to stdout.")
+    .describe("wrap-iife", "Wrap IIFEs in parenthesis. Note: this disables the negate_iife compression option")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -130,6 +131,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("bare-returns")
     .boolean("keep-fnames")
     .boolean("reserve-domprops")
+    .boolean("wrap-iife")
 
     .wrap(80)
 
@@ -245,6 +247,11 @@ OUTPUT_OPTIONS.screw_ie8 = screw_ie8;
 if (ARGS.keep_fnames) {
     if (COMPRESS) COMPRESS.keep_fnames = true;
     if (MANGLE) MANGLE.keep_fnames = true;
+}
+
+if (ARGS.wrap_iife) {
+    if (COMPRESS) COMPRESS.negate_iife = false;
+    OUTPUT_OPTIONS.wrap_iife = true;
 }
 
 if (BEAUTIFY)
