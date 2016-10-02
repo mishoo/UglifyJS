@@ -76,6 +76,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
     .describe("dump-spidermonkey-ast", "Dump SpiderMonkey AST to stdout.")
+    .describe("dump-ast", "Dump the AST instead of generating output")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -130,6 +131,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("bare-returns")
     .boolean("keep-fnames")
     .boolean("reserve-domprops")
+    .boolean("dump-ast")
 
     .wrap(80)
 
@@ -461,7 +463,8 @@ async.eachLimit(files, 1, function (file, cb) {
         print(JSON.stringify(TOPLEVEL.to_mozilla_ast(), null, 2));
     } else {
         time_it("generate", function(){
-            TOPLEVEL.print(output);
+            if (ARGS.dump_ast) output.print(TOPLEVEL.dump());
+            else TOPLEVEL.print(output);
         });
 
         output = output.get();
