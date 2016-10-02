@@ -23,3 +23,25 @@ typeof_evaluation: {
         h='undefined';
     }
 }
+
+typeof_in_boolean_context: {
+    options = {
+        booleans     : true,
+        evaluate     : true,
+        conditionals : true,
+    };
+    input: {
+        function f1(x) { return typeof x ? "yes" : "no"; }
+        function f2() { return typeof g()? "Yes" : "No"; }
+        typeof 0 ? foo() : bar();
+        !typeof console.log(1);
+        var a = !typeof console.log(2);
+    }
+    expect: {
+        function f1(x) { return "yes"; }
+        function f2() { return g(), "Yes"; }
+        foo();
+        !(console.log(1), !0);
+        var a = !(console.log(2), !0);
+    }
+}
