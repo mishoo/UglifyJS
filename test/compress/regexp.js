@@ -15,7 +15,7 @@ regexp: {
     expect_exact: 'function f(){return/[\\x00\\x0d\x1f a\u0fff\ud800\ufffe\\uffff]/}'
 }
 
-regexp_ascii_only: {
+regexp_ascii_only_true: {
     options = {}
     beautify = {
         ascii_only       : true,
