@@ -12,7 +12,7 @@ regexp: {
             return /[\x00\x0d\x1f \x61\u0fff\ud800\ufffe\uffff]/;
         }
     }
-    expect_exact: 'function f(){return/[\\x00\\x0d\x1f a\u0fff\ud800\ufffe\\uffff]/}'
+    expect_exact: 'function f(){return/[\\x00\\x0d\x1f a\u0fff\ud800\ufffe\uffff]/}'
 }
 
 regexp_ascii_only_true: {
