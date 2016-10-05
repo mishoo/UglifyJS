@@ -11,7 +11,7 @@ describe("mangle_properties 'debug' option ", function() {
 			debug: true
 		});
 		
-		let stream = Uglify.OutputStream();
+		var stream = Uglify.OutputStream();
 		ast.print(stream);
 		var result = stream.toString();
 		
@@ -33,7 +33,7 @@ describe("mangle_properties 'debug' option ", function() {
 			debug: true
 		});
 		
-		let stream = Uglify.OutputStream();
+		var stream = Uglify.OutputStream();
 		ast.print(stream);
 		var result = stream.toString();
 		
