@@ -286,20 +286,20 @@ single call to UglifyJS.
 
 #### Debugging property name mangling
 
-You can also pass `--debug-mangling` in order to mangle property names
+You can also pass `--mangle-debug` in order to mangle property names
 without completely obscuring them. For example the property `o.foo`
-would mangle to `o._$foo$_` with this option. This allows property mangling
+would mangle to `o._$foo$123_` with this option. This allows property mangling
 of a large codebase while still being able to debug the code and identify
 where mangling is breaking things.
 
 Note that by default a random number is added to the name per invocation,
-e.g. `o._foo$123$_` where `123` is a random number. This is used to ensure
-that mangling is still non-deterministic and that independently mangled
-scripts are still broken if they access the same properties. If you provide a
-name cache (either with `--name-cache` or the `cache` option in the API) then
-the random number is removed, producing just `o._$foo$_`. This ensures that
-if you correctly share a cache when mangling separate scripts, then they will
-work together.
+e.g. the `123` in `_$foo$123_` is random. This is because normal property
+mangling is non-deterministic. It makes sure that if you mangle two scripts
+separately without sharing a cache, they will be broken. It also makes sure
+that if you accidentally attempt to use a mangled key name in storage, then
+the storage reads will be broken between builds. This allows you to fix these
+issues with readable keys, and then turning off this option should continue to
+work with unreadable names.
 
 ## Compressor options
 
@@ -760,7 +760,7 @@ Other options:
 
  - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
  - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
- - `debug` – Mangle names with the original name still present (maps to the `--debug-mangling` CLI arguments option)
+ - `debug` – Mangle names with the original name still present (maps to the `--mangle-debug` CLI arguments option)
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!

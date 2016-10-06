@@ -76,7 +76,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
     .describe("dump-spidermonkey-ast", "Dump SpiderMonkey AST to stdout.")
-    .describe("debug-mangling", "Use debug mode for diagnosing property mangling errors.")
+    .describe("mangle-debug", "Use debug mode for diagnosing property mangling errors.")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -131,7 +131,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("bare-returns")
     .boolean("keep-fnames")
     .boolean("reserve-domprops")
-    .boolean("debug-mangling")
+    .boolean("mangle-debug")
 
     .wrap(80)
 
@@ -428,7 +428,7 @@ async.eachLimit(files, 1, function (file, cb) {
             only_cache    : !ARGS.mangle_props,
             regex         : regex,
             ignore_quoted : ARGS.mangle_props == 2,
-            debug         : ARGS.debug_mangling
+            debug         : ARGS.mangle_debug
         });
         writeNameCache("props", cache);
     })();
