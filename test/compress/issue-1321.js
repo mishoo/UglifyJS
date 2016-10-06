@@ -34,3 +34,21 @@ issue_1321_debug: {
         console.log(x.a, x["_$foo$_"]);
     }
 }
+
+issue_1321_with_quoted: {
+    mangle_props = {
+        ignore_quoted: false
+    }
+    input: {
+        var x = {};
+        x.foo = 1;
+        x["a"] = 2 * x.foo;
+        console.log(x.foo, x["a"]);
+    }
+    expect: {
+        var x = {};
+        x.a = 1;
+        x["b"] = 2 * x.a;
+        console.log(x.a, x["b"]);
+    }
+}
