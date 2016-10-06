@@ -288,18 +288,16 @@ single call to UglifyJS.
 
 You can also pass `--mangle-debug` in order to mangle property names
 without completely obscuring them. For example the property `o.foo`
-would mangle to `o._$foo$123_` with this option. This allows property mangling
+would mangle to `o._$foo$_` with this option. This allows property mangling
 of a large codebase while still being able to debug the code and identify
 where mangling is breaking things.
 
-Note that by default a random number is added to the name per invocation,
-e.g. the `123` in `_$foo$123_` is random. This is because normal property
-mangling is non-deterministic. It makes sure that if you mangle two scripts
-separately without sharing a cache, they will be broken. It also makes sure
-that if you accidentally attempt to use a mangled key name in storage, then
-the storage reads will be broken between builds. This allows you to fix these
-issues with readable keys, and then turning off this option should continue to
-work with unreadable names.
+You can also pass a custom suffix using `--mangle-debug=XYZ`. This would then
+mangle `o.foo` to `o._$foo$XYZ_`. You can change this each time you compile a
+script to identify how a property got mangled. One technique is to pass a
+random number on every compile to simulate mangling changing with different
+inputs (e.g. as you update the input script with new properties), and to help
+identify mistakes like writing mangled keys to storage.
 
 ## Compressor options
 
@@ -760,7 +758,7 @@ Other options:
 
  - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
  - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
- - `debug` – Mangle names with the original name still present (maps to the `--mangle-debug` CLI arguments option)
+ - `debug` – Mangle names with the original name still present (maps to the `--mangle-debug` CLI arguments option). Defaults to `false`. Pass an empty string to enable, or a non-empty string to set the suffix.
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!

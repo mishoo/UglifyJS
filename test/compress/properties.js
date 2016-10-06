@@ -143,6 +143,84 @@ mangle_unquoted_properties: {
     }
 }
 
+mangle_debug: {
+    mangle_props = {
+        debug: ""
+    };
+    input: {
+        a.foo = "bar";
+        x = { baz: "ban" };
+    }
+    expect: {
+        a._$foo$_ = "bar";
+        x = { _$baz$_: "ban" };
+    }
+}
+
+mangle_debug_suffix: {
+    mangle_props = {
+        debug: "XYZ"
+    };
+    input: {
+        a.foo = "bar";
+        x = { baz: "ban" };
+    }
+    expect: {
+        a._$foo$XYZ_ = "bar";
+        x = { _$baz$XYZ_: "ban" };
+    }
+}
+
+mangle_debug_suffix_ignore_quoted: {
+    options = {
+        properties: false
+    }
+    mangle_props = {
+        ignore_quoted: true,
+        debug: "XYZ",
+        reserved: []
+    }
+    beautify = {
+        beautify: false,
+        quote_style: 3,
+        keep_quoted_props: true,
+    }
+    input: {
+        a.top = 1;
+        function f1() {
+            a["foo"] = "bar";
+            a.color = "red";
+            a.stuff = 2;
+            x = {"bar": 10, size: 7};
+            a.size = 9;
+        }
+        function f2() {
+            a.foo = "bar";
+            a['color'] = "red";
+            x = {bar: 10, size: 7};
+            a.size = 9;
+            a.stuff = 3;
+        }
+    }
+    expect: {
+        a._$top$XYZ_ = 1;
+        function f1() {
+            a["foo"] = "bar";
+            a.color = "red";
+            a._$stuff$XYZ_ = 2;
+            x = {"bar": 10, _$size$XYZ_: 7};
+            a._$size$XYZ_ = 9;
+        }
+        function f2() {
+            a.foo = "bar";
+            a['color'] = "red";
+            x = {bar: 10, _$size$XYZ_: 7};
+            a._$size$XYZ_ = 9;
+            a._$stuff$XYZ_ = 3;
+        }
+    }
+}
+
 first_256_chars_as_properties: {
     beautify = {
         ascii_only: true,
