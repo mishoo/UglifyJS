@@ -157,6 +157,20 @@ mangle_debug: {
     }
 }
 
+mangle_debug_true: {
+    mangle_props = {
+        debug: true
+    };
+    input: {
+        a.foo = "bar";
+        x = { baz: "ban" };
+    }
+    expect: {
+        a._$foo$_ = "bar";
+        x = { _$baz$_: "ban" };
+    }
+}
+
 mangle_debug_suffix: {
     mangle_props = {
         debug: "XYZ"
