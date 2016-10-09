@@ -75,4 +75,23 @@ describe("minify", function() {
                 'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
         });
     });
+
+    describe("sourceMapInline", function() {
+        it("should append source map to output js when sourceMapInline is enabled", function() {
+            var result = Uglify.minify('var a = function(foo) { return foo; };', {
+                fromString: true,
+                sourceMapInline: true
+            });
+            var code = result.code;
+            assert.strictEqual(code, "var a=function(n){return n};\n" +
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIj8iXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsR0FBSUEsR0FBSSxTQUFTQyxHQUFPLE1BQU9BIn0=");
+        });
+        it("should not append source map to output js when sourceMapInline is not enabled", function() {
+            var result = Uglify.minify('var a = function(foo) { return foo; };', {
+                fromString: true
+            });
+            var code = result.code;
+            assert.strictEqual(code, "var a=function(n){return n};");
+        });
+    });
 });
