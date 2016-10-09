@@ -62,6 +62,7 @@ The available options are:
   --source-map-include-sources  Pass this flag if you want to include the
                                 content of source files in the source map as
                                 sourcesContent property.
+  --source-map-inline           Write base64-encoded source map to the end of js output.
   --in-source-map               Input source map, useful if you're compressing
                                 JS that was generated from some other original
                                 code.
@@ -641,7 +642,9 @@ var result = UglifyJS.minify({"file1.js": "var a = function () {};"}, {
 
 Note that the source map is not saved in a file, it's just returned in
 `result.map`.  The value passed for `outSourceMap` is only used to set the
-`file` attribute in the source map (see [the spec][sm-spec]).
+`file` attribute in the source map (see [the spec][sm-spec]). You can set 
+option `sourceMapInline` to be `true` and source map will be appended to 
+code.
 
 You can also specify sourceRoot property to be included in source map:
 ```javascript
