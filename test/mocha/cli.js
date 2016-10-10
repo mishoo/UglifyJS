@@ -49,4 +49,29 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should append source map to output when using --source-map-inline", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1323/sample.js --source-map-inline';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.doesNotThrow(function (){
+               var validate_source_map = /\/\/# sourceMappingURL=data:.*base64,(.*)\s*$/;
+               var base64 = stdout.match(validate_source_map)[1];
+
+               var buf = new Buffer(base64, 'base64');
+               var map = JSON.parse(buf.toString());
+               done();
+           });
+       });
+    });
+    it("should not append source map to output when not using --source-map-inline", function (done) {
+        var command = uglifyjscmd + ' test/input/issue-1323/sample.js';
+
+        exec(command, function (err, stdout) {
+            var validate_source_map = /\/\/# sourceMappingURL=data:.*base64,(.*)\s*$/;
+            assert.strictEqual(false, validate_source_map.test(stdout));
+            done();
+        });
+    });
 });
