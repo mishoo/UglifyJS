@@ -143,6 +143,52 @@ mangle_unquoted_properties: {
     }
 }
 
+mangle_global_properties: {
+    mangle_props = {
+        treat_as_global: ["window"],
+        reserved: ["console", "log"]
+    }
+    input: {
+        window.foo = {};
+        foo.bar = 1;
+        external.baz = 2;
+        console.log(external);
+    }
+    expect: {
+        window.g_a = {};
+        g_a.b = 1;
+        g_d.c = 2;
+        console.log(g_d);
+    }
+}
+
+mangle_global_properties_not_local: {
+    options = {
+    }
+    mangle_props = {
+        treat_as_global: ["self"],
+        reserved: ["console", "log"]
+    }
+    input: {
+        self.foo = {};
+        function test()
+        {
+            var self = this;
+            console.log(self.bar);
+        };
+        console.log(typeof bar);
+    }
+    expect: {
+        self.g_a = {};
+        function test()
+        {
+            var self = this;
+            console.log(self.b);
+        };
+        console.log(typeof g_b);
+    }
+}
+
 first_256_chars_as_properties: {
     beautify = {
         ascii_only: true,
