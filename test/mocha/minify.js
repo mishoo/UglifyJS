@@ -83,23 +83,15 @@ describe("minify", function() {
                 sourceMapInline: true
             });
             var code = result.code;
-
-            assert.doesNotThrow(function() {
-                var validate_source_map = /\/\/# sourceMappingURL=data:.*base64,(.*)\s*$/;
-                var base64 = code.match(validate_source_map)[1];
-
-                var buf = new Buffer(base64, 'base64');
-                var map = JSON.parse(buf.toString());
-            })
+            assert.strictEqual(code, "var a=function(n){return n};\n" +
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIj8iXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsR0FBSUEsR0FBSSxTQUFTQyxHQUFPLE1BQU9BIn0=");
         });
         it("should not append source map to output js when sourceMapInline is not enabled", function() {
             var result = Uglify.minify('var a = function(foo) { return foo; };', {
                 fromString: true
             });
-
             var code = result.code;
-            var validate_source_map = /\/\/# sourceMappingURL=data:.*base64,(.*)\s*$/;
-            assert.strictEqual(false, validate_source_map.test(code));
+            assert.strictEqual(code, "var a=function(n){return n};");
         });
     });
 });
