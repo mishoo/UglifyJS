@@ -47,7 +47,7 @@ Use -c with no argument to use the default compression options.")
 By default this works like Google Closure, keeping JSDoc-style comments that contain \"@license\" or \"@preserve\". \
 You can optionally pass one of the following arguments to this flag:\n\
 - \"all\" to keep all comments\n\
-- a valid JS regexp (needs to start with a slash) to keep only comments that match.\n\
+- a valid JS RegExp like `/foo/`or `/^!/` to keep only matching comments.\n\
 \
 Note that currently not *all* comments can be kept when compression is on, \
 because of dead code removal or cascading statements into sequences.")
