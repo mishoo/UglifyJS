@@ -57,4 +57,9 @@ describe("comment filters", function() {
 
         assert.strictEqual(ast.print_to_string({comments: f}), "#!Random comment\n//test1\n/*test2*/\n");
     });
+
+    it("Should never be able to filter comment5 when using 'some' as filter", function() {
+        var ast = UglifyJS.parse("#!foo\n//foo\n/*@preserve*/\n/* please hide me */");
+        assert.strictEqual(ast.print_to_string({comments: "some"}), "#!foo\n/*@preserve*/\n");
+    });
 });

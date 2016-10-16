@@ -97,8 +97,8 @@ The available options are:
                                 "@preserve". You can optionally pass one of the
                                 following arguments to this flag:
                                 - "all" to keep all comments
-                                - a valid JS regexp (needs to start with a
-                                slash) to keep only comments that match.
+                                - a valid JS RegExp like `/foo/` or `/^!/` to
+                                keep only matching comments.
                                 Note that currently not *all* comments can be
                                 kept when compression is on, because of dead
                                 code removal or cascading statements into
@@ -852,10 +852,11 @@ which we care about here are `source_map` and `comments`.
 #### Keeping comments in the output
 
 In order to keep certain comments in the output you need to pass the
-`comments` option.  Pass a RegExp, boolean or a function.  Stringified options
+`comments` option.  Pass a RegExp (as string starting and closing with `/`
+or pass a RegExp object), a boolean or a function.  Stringified options
 `all` and `some` can be passed too, where `some` behaves like it's cli
 equivalent `--comments` without passing a value. If you pass a RegExp,
-only those comments whose body matches the regexp will be kept.  Note that body
+only those comments whose body matches the RegExp will be kept.  Note that body
 means without the initial `//` or `/*`.  If you pass a function, it will be
 called for every comment in the tree and will receive two arguments: the
 node that the comment is attached to, and the comment token itself.
