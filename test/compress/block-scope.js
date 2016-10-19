@@ -130,3 +130,45 @@ regression_block_scope_resolves: {
         }());
     }
 }
+
+switch_block_scope_mangler: {
+    mangle = {}
+    input: {
+        var fn = function(code) {
+            switch (code) {
+                case 1:
+                    let apple = code + 1;
+                    let dog = code + 4;
+                    console.log(apple, dog);
+                    break;
+                case 2:
+                    let banana = code + 2;
+                    console.log(banana);
+                    break;
+                default:
+                    let cat = code + 3;
+                    console.log(cat);
+            }
+        };
+    }
+    expect: {
+        var fn = function(o) {
+            switch (o) {
+              case 1:
+                let e = o + 1
+                let c = o + 4;
+                console.log(e, c);
+                break;
+
+              case 2:
+                let l = o + 2;
+                console.log(l);
+                break;
+
+              default:
+                let a = o + 3;
+                console.log(a);
+            }
+        };
+    }
+}
