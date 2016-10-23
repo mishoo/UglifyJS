@@ -44,6 +44,7 @@ exports.minify = function(files, options) {
         sourceRoot       : null,
         inSourceMap      : null,
         sourceMapUrl     : null,
+        sourceMapInline  : false,
         fromString       : false,
         warnings         : false,
         mangle           : {},
@@ -117,7 +118,7 @@ exports.minify = function(files, options) {
     if (typeof options.inSourceMap == "string") {
         inMap = JSON.parse(fs.readFileSync(options.inSourceMap, "utf8"));
     }
-    if (options.outSourceMap) {
+    if (options.outSourceMap || options.sourceMapInline) {
         output.source_map = UglifyJS.SourceMap({
             file: options.outSourceMap,
             orig: inMap,
@@ -138,14 +139,17 @@ exports.minify = function(files, options) {
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
 
-    var mappingUrlPrefix = "\n//# sourceMappingURL=";
-    if (options.outSourceMap && typeof options.outSourceMap === "string" && options.sourceMapUrl !== false) {
-        stream += mappingUrlPrefix + (typeof options.sourceMapUrl === "string" ? options.sourceMapUrl : options.outSourceMap);
-    }
 
     var source_map = output.source_map;
     if (source_map) {
         source_map = source_map + "";
+    }
+
+    var mappingUrlPrefix = "\n//# sourceMappingURL=";
+    if (options.sourceMapInline) {
+        stream += mappingUrlPrefix + "data:application/json;charset=utf-8;base64," + new Buffer(source_map).toString("base64");
+    } else if (options.outSourceMap && typeof options.outSourceMap === "string" && options.sourceMapUrl !== false) {
+        stream += mappingUrlPrefix + (typeof options.sourceMapUrl === "string" ? options.sourceMapUrl : options.outSourceMap);
     }
 
     return {

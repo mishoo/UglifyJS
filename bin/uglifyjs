@@ -23,6 +23,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map", "Specify an output file where to generate source map.")
     .describe("source-map-root", "The path to the original source to be included in the source map.")
     .describe("source-map-url", "The path to the source map to be added in //# sourceMappingURL.  Defaults to the value passed with --source-map.")
+    .describe("source-map-inline", "Write base64-encoded source map to the end of js output.  Disabled by default")
     .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Do not support Internet Explorer 6-8 quirks. This flag is enabled by default.")
@@ -46,7 +47,7 @@ Use -c with no argument to use the default compression options.")
 By default this works like Google Closure, keeping JSDoc-style comments that contain \"@license\" or \"@preserve\". \
 You can optionally pass one of the following arguments to this flag:\n\
 - \"all\" to keep all comments\n\
-- a valid JS regexp (needs to start with a slash) to keep only comments that match.\n\
+- a valid JS RegExp like `/foo/`or `/^!/` to keep only matching comments.\n\
 \
 Note that currently not *all* comments can be kept when compression is on, \
 because of dead code removal or cascading statements into sequences.")
@@ -76,6 +77,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
     .describe("dump-spidermonkey-ast", "Dump SpiderMonkey AST to stdout.")
+    .describe("wrap-iife", "Wrap IIFEs in parenthesis. Note: this disables the negate_iife compression option")
 
     .alias("p", "prefix")
     .alias("o", "output")
@@ -112,6 +114,7 @@ You need to pass an argument to this option to specify the name that your module
     .array("pure-funcs")
 
     .boolean("expr")
+    .boolean("source-map-inline")
     .boolean("source-map-include-sources")
     .boolean("screw-ie8")
     .boolean("support-ie8")
@@ -130,6 +133,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("bare-returns")
     .boolean("keep-fnames")
     .boolean("reserve-domprops")
+    .boolean("wrap-iife")
 
     .wrap(80)
 
@@ -247,28 +251,18 @@ if (ARGS.keep_fnames) {
     if (MANGLE) MANGLE.keep_fnames = true;
 }
 
+if (ARGS.wrap_iife) {
+    if (COMPRESS) COMPRESS.negate_iife = false;
+    OUTPUT_OPTIONS.wrap_iife = true;
+}
+
 if (BEAUTIFY)
     UglifyJS.merge(OUTPUT_OPTIONS, BEAUTIFY);
 
-if (ARGS.comments != null) {
-    if (/^\/.*\/[a-zA-Z]*$/.test(ARGS.comments)) {
-        try {
-            OUTPUT_OPTIONS.comments = extractRegex(ARGS.comments);
-        } catch (e) {
-            print_error("ERROR: Invalid --comments: " + e.message);
-        }
-    } else if (ARGS.comments == "all") {
-        OUTPUT_OPTIONS.comments = true;
-    } else {
-        OUTPUT_OPTIONS.comments = function(node, comment) {
-            var text = comment.value;
-            var type = comment.type;
-            if (type == "comment2") {
-                // multiline comment
-                return /@preserve|@license|@cc_on/i.test(text);
-            }
-        }
-    }
+if (ARGS.comments === "") {
+    OUTPUT_OPTIONS.comments = "some";
+} else {
+    OUTPUT_OPTIONS.comments = ARGS.comments;
 }
 
 var files = ARGS._.slice();
@@ -317,7 +311,7 @@ var TOPLEVEL = null;
 var P_RELATIVE = ARGS.p && ARGS.p == "relative";
 var SOURCES_CONTENT = {};
 
-var SOURCE_MAP = ARGS.source_map ? UglifyJS.SourceMap({
+var SOURCE_MAP = (ARGS.source_map || ARGS.source_map_inline) ? UglifyJS.SourceMap({
     file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
     root: ARGS.source_map_root,
     orig: ORIG_MAP,
@@ -482,13 +476,18 @@ async.eachLimit(files, 1, function (file, cb) {
         output = output.get();
 
         if (SOURCE_MAP) {
-            fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
-            var source_map_url = ARGS.source_map_url || (
-                P_RELATIVE
-                    ? path.relative(path.dirname(OUTPUT_FILE), ARGS.source_map)
-                    : ARGS.source_map
-            );
-            output += "\n//# sourceMappingURL=" + source_map_url;
+            if (ARGS.source_map_inline) {
+                var base64_string = new Buffer(SOURCE_MAP.toString()).toString('base64');
+                output += "\n//# sourceMappingURL=data:application/json;charset=utf-8;base64," + base64_string;
+            } else {
+                fs.writeFileSync(ARGS.source_map, SOURCE_MAP, "utf8");
+                var source_map_url = ARGS.source_map_url || (
+                    P_RELATIVE
+                        ? path.relative(path.dirname(OUTPUT_FILE), ARGS.source_map)
+                        : ARGS.source_map
+                );
+                output += "\n//# sourceMappingURL=" + source_map_url;
+            }
         }
 
         if (OUTPUT_FILE) {

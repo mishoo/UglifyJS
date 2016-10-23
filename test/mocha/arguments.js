@@ -19,4 +19,12 @@ describe("arguments", function() {
             value // Select function as scope
         );
     });
+
+    it("Should recognize when a function uses arguments", function() {
+        var ast = UglifyJS.parse("function a(){function b(){function c(){}; return arguments[0];}}");
+        ast.figure_out_scope();
+        assert.strictEqual(ast.body[0].uses_arguments, false);
+        assert.strictEqual(ast.body[0].body[0].uses_arguments, true);
+        assert.strictEqual(ast.body[0].body[0].body[0].uses_arguments, false);
+    });
 });
