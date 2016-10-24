@@ -491,3 +491,14 @@ allow_assignments_to_property_values: {
         var foo = {123: foo = 123} = {foo: "456"};
     }
 }
+
+variable_as_computed_property: {
+    input: {
+        function getLine(header) {
+            return {
+                [header]: {}
+            };
+        }
+    }
+    expect_exact: "function getLine(header){return{[header]:{}}}"
+}
