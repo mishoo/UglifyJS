@@ -98,6 +98,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("beautify")
     .string("m")
     .string("mangle")
+    .string("mangle-props-debug")
     .string("c")
     .string("compress")
     .string("d")
@@ -419,7 +420,8 @@ async.eachLimit(files, 1, function (file, cb) {
             cache         : cache,
             only_cache    : !ARGS.mangle_props,
             regex         : regex,
-            ignore_quoted : ARGS.mangle_props == 2
+            ignore_quoted : ARGS.mangle_props == 2,
+            debug         : typeof ARGS.mangle_props_debug === "undefined" ? false : ARGS.mangle_props_debug
         });
         writeNameCache("props", cache);
     })();
