@@ -285,6 +285,21 @@ of mangled property names.
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
 
+#### Debugging property name mangling
+
+You can also pass `--mangle-props-debug` in order to mangle property names
+without completely obscuring them. For example the property `o.foo`
+would mangle to `o._$foo$_` with this option. This allows property mangling
+of a large codebase while still being able to debug the code and identify
+where mangling is breaking things.
+
+You can also pass a custom suffix using `--mangle-props-debug=XYZ`. This would then
+mangle `o.foo` to `o._$foo$XYZ_`. You can change this each time you compile a
+script to identify how a property got mangled. One technique is to pass a
+random number on every compile to simulate mangling changing with different
+inputs (e.g. as you update the input script with new properties), and to help
+identify mistakes like writing mangled keys to storage.
+
 ## Compressor options
 
 You need to pass `--compress` (`-c`) to enable the compressor.  Optionally
@@ -749,6 +764,7 @@ Other options:
 
  - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
  - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
+ - `debug` – Mangle names with the original name still present (maps to the `--mangle-props-debug` CLI arguments option). Defaults to `false`. Pass an empty string to enable, or a non-empty string to set the suffix.
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
