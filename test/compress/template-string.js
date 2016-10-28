@@ -341,3 +341,39 @@ escape_dollar_curly: {
     }
     expect_exact: "console.log(`\\${ beep }`);console.log(`1\\${2-0}\\${3-0}4`);console.log(`\\${not an expression}`);"
 }
+
+template_starting_with_newline: {
+    options = {
+        dead_code: true
+    }
+    input: {
+        function foo(e) {
+            return `
+this is a template string!`;
+        };
+    } expect_exact: "function foo(e){return`\nthis is a template string!`}"
+}
+
+template_with_newline: {
+    options = {
+        dead_code: true
+    }
+    input: {
+        function foo(e) {
+            return `yep,
+this is a template string!`;
+        };
+    } expect_exact: "function foo(e){return`yep,\nthis is a template string!`}"
+}
+
+template_ending_with_newline: {
+    options = {
+        dead_code: true
+    }
+    input: {
+        function foo(e) {
+            return `this is a template string!
+`;
+        };
+    } expect_exact: "function foo(e){return`this is a template string!\n`}"
+}
