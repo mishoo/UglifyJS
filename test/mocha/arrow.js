@@ -61,4 +61,23 @@ describe("Arrow functions", function() {
             assert.throws(test(tests[i]), error);
         }
     });
+    it("Should not accept arrow functions in the middle or end of an expression", function() {
+        var tests = [
+            "typeof x => 0",
+            "0 + x => 0"
+        ];
+        var test = function(code) {
+            return function() {
+                uglify.parse(code, {fromString: true});
+            }
+        }
+        var error = function(e) {
+            return e instanceof uglify.JS_Parse_Error &&
+                e.message === "SyntaxError: Unexpected token: arrow (=>)";
+        }
+
+        for (var i = 0; i < tests.length; i++) {
+            assert.throws(test(tests[i]), error);
+        }
+    });
 });
