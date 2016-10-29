@@ -636,15 +636,22 @@ To generate a source map with the fromString option, you can also use an object:
 ```javascript
 var result = UglifyJS.minify({"file1.js": "var a = function () {};"}, {
   outSourceMap: "out.js.map",
+  outFileName: "out.js",
   fromString: true
 });
 ```
 
 Note that the source map is not saved in a file, it's just returned in
-`result.map`.  The value passed for `outSourceMap` is only used to set the
-`file` attribute in the source map (see [the spec][sm-spec]). You can set 
-option `sourceMapInline` to be `true` and source map will be appended to 
-code.
+`result.map`.  The value passed for `outSourceMap` is only used to set
+`//# sourceMappingURL=out.js.map` in `result.code`. The value of
+`outFileName` is only used to set `file` attribute in source map file.
+
+The `file` attribute in the source map (see [the spec][sm-spec]) will
+use `outFileName` firstly, if it's falsy, then will be deduced from
+`outSourceMap` (by removing `'.map'`).
+
+You can set option `sourceMapInline` to be `true` and source map will
+be appended to code.
 
 You can also specify sourceRoot property to be included in source map:
 ```javascript
