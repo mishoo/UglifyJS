@@ -63,13 +63,14 @@ describe("minify", function() {
     describe("inSourceMap", function() {
         it("Should read the given string filename correctly when sourceMapIncludeSources is enabled (#1236)", function() {
             var result = Uglify.minify('./test/input/issue-1236/simple.js', {
-                outSourceMap: "simple.js.min.map",
+                outSourceMap: "simple.min.js.map",
                 inSourceMap: "./test/input/issue-1236/simple.js.map",
                 sourceMapIncludeSources: true
             });
 
             var map = JSON.parse(result.map);
 
+            assert.equal(map.file, 'simple.min.js');
             assert.equal(map.sourcesContent.length, 1);
             assert.equal(map.sourcesContent[0],
                 'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
