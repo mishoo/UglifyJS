@@ -41,6 +41,7 @@ exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
         spidermonkey     : false,
         outSourceMap     : null,
+        outFileName      : null,
         sourceRoot       : null,
         inSourceMap      : null,
         sourceMapUrl     : null,
@@ -120,7 +121,8 @@ exports.minify = function(files, options) {
     }
     if (options.outSourceMap || options.sourceMapInline) {
         output.source_map = UglifyJS.SourceMap({
-            file: options.outSourceMap,
+            // prefer outFileName, otherwise use outSourceMap without .map suffix
+            file: options.outFileName || (typeof options.outSourceMap === 'string' ? options.outSourceMap.replace(/\.map$/i, '') : null),
             orig: inMap,
             root: options.sourceRoot
         });
