@@ -104,3 +104,99 @@ destructuring_expressions: {
     expect_exact: "({a,b});[{a}];f({x});"
 }
 
+destructuring_remove_unused_1: {
+    options = {
+        unused: true
+    }
+    input: {
+        function a() {
+            var unused = "foo";
+            var a = [1];
+            var [b] = a;
+            f(b);
+        }
+        function b() {
+            var unused = "foo";
+            var a = {b: 1};
+            var {b} = a;
+            f(b);
+        }
+        function c() {
+            var unused = "foo";
+            var a = [[1]];
+            var [[b]] = a;
+            f(b);
+        }
+        function d() {
+            var unused = "foo";
+            var a = {b: {b:1}};
+            var {b:{b}} = a;
+            f(b);
+        }
+        function e() {
+            var unused = "foo";
+            var a = [1, 2, 3, 4, 5];
+            var [b, ...c] = a;
+            f(b, c);
+        }
+    }
+    expect: {
+        function a() {
+            var a = [1];
+            var [b] = a;
+            f(b);
+        }
+        function b() {
+            var a = {b: 1};
+            var {b} = a;
+            f(b);
+        }
+        function c() {
+            var a = [[1]];
+            var [[b]] = a;
+            f(b);
+        }
+        function d() {
+            var a = {b: {b:1}};
+            var {b:{b}} = a;
+            f(b);
+        }
+        function e() {
+            var a = [1, 2, 3, 4, 5];
+            var [b, ...c] = a;
+            f(b, c);
+        }
+    }
+}
+
+destructuring_remove_unused_2: {
+    options = {
+        unused: true
+    }
+    input: {
+        function a() {
+            var unused = "foo";
+            var a = [,,1];
+            var [b] = a;
+            f(b);
+        }
+        function b() {
+            var unused = "foo";
+            var a = [{a: [1]}];
+            var [{b: a}] = a;
+            f(b);
+        }
+    }
+    expect: {
+        function a() {
+            var a = [,,1];
+            var [b] = a;
+            f(b);
+        }
+        function b() {
+            var a = [{a: [1]}];
+            var [{b: a}] = a;
+            f(b);
+        }
+    }
+}
