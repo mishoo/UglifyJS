@@ -69,7 +69,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("noerr", "Don't throw an error for unknown options in -c, -b or -m.")
     .describe("bare-returns", "Allow return outside of functions.  Useful when minifying CommonJS modules.")
     .describe("keep-fnames", "Do not mangle/drop function names.  Useful for code relying on Function.prototype.name.")
-    .describe("keep-fparens", "Do not drop parenthesises around function definitions. Useful for marking a function to be compiled eagerly by browser.")
+    .describe("keep-fparens", "Do not drop parentheses around function definitions. Useful for marking a function to be compiled eagerly by browser.")
     .describe("quotes", "Quote style (0 - auto, 1 - single, 2 - double, 3 - original)")
     .describe("reserved-file", "File containing reserved names")
     .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
