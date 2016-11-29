@@ -2,7 +2,7 @@ var UglifyJS = require('../../');
 var assert = require("assert");
 
 describe("comment filters", function() {
-    it("Should be able to filter comments by passing regex", function() {
+    it("Should be able to filter comments by passing regexp", function() {
         var ast = UglifyJS.parse("/*!test1*/\n/*test2*/\n//!test3\n//test4\n<!--test5\n<!--!test6\n-->test7\n-->!test8");
         assert.strictEqual(ast.print_to_string({comments: /^!/}), "/*!test1*/\n//!test3\n//!test6\n//!test8\n");
     });
@@ -61,5 +61,15 @@ describe("comment filters", function() {
     it("Should never be able to filter comment5 when using 'some' as filter", function() {
         var ast = UglifyJS.parse("#!foo\n//foo\n/*@preserve*/\n/* please hide me */");
         assert.strictEqual(ast.print_to_string({comments: "some"}), "#!foo\n/*@preserve*/\n");
+    });
+
+    it("Should have no problem on multiple calls", function() {
+        const options = {
+            comments: /ok/
+        };
+
+        assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
+        assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
+        assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
     });
 });

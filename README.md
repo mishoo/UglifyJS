@@ -285,6 +285,21 @@ of mangled property names.
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
 
+#### Debugging property name mangling
+
+You can also pass `--mangle-props-debug` in order to mangle property names
+without completely obscuring them. For example the property `o.foo`
+would mangle to `o._$foo$_` with this option. This allows property mangling
+of a large codebase while still being able to debug the code and identify
+where mangling is breaking things.
+
+You can also pass a custom suffix using `--mangle-props-debug=XYZ`. This would then
+mangle `o.foo` to `o._$foo$XYZ_`. You can change this each time you compile a
+script to identify how a property got mangled. One technique is to pass a
+random number on every compile to simulate mangling changing with different
+inputs (e.g. as you update the input script with new properties), and to help
+identify mistakes like writing mangled keys to storage.
+
 ## Compressor options
 
 You need to pass `--compress` (`-c`) to enable the compressor.  Optionally
@@ -639,15 +654,22 @@ To generate a source map with the fromString option, you can also use an object:
 ```javascript
 var result = UglifyJS.minify({"file1.js": "var a = function () {};"}, {
   outSourceMap: "out.js.map",
+  outFileName: "out.js",
   fromString: true
 });
 ```
 
 Note that the source map is not saved in a file, it's just returned in
-`result.map`.  The value passed for `outSourceMap` is only used to set the
-`file` attribute in the source map (see [the spec][sm-spec]). You can set 
-option `sourceMapInline` to be `true` and source map will be appended to 
-code.
+`result.map`.  The value passed for `outSourceMap` is only used to set
+`//# sourceMappingURL=out.js.map` in `result.code`. The value of
+`outFileName` is only used to set `file` attribute in source map file.
+
+The `file` attribute in the source map (see [the spec][sm-spec]) will
+use `outFileName` firstly, if it's falsy, then will be deduced from
+`outSourceMap` (by removing `'.map'`).
+
+You can set option `sourceMapInline` to be `true` and source map will
+be appended to code.
 
 You can also specify sourceRoot property to be included in source map:
 ```javascript
@@ -752,6 +774,7 @@ Other options:
 
  - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
  - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
+ - `debug` – Mangle names with the original name still present (maps to the `--mangle-props-debug` CLI arguments option). Defaults to `false`. Pass an empty string to enable, or a non-empty string to set the suffix.
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!

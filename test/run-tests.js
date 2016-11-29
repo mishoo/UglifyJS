@@ -117,7 +117,7 @@ function run_compress_tests() {
                 input = U.mangle_properties(input, test.mangle_props);
             }
             var output = cmp.compress(input);
-            output.figure_out_scope();
+            output.figure_out_scope(test.mangle);
             if (test.mangle) {
                 output.compute_char_frequency(test.mangle);
                 output.mangle_names(test.mangle);
