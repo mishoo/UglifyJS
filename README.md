@@ -285,6 +285,17 @@ of mangled property names.
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
 
+#### Mangling unquoted names (`--mangle-props=unquoted` or `--mangle-props=2`)
+
+Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
+so that it is not mangled throughout the entire script even when used in an
+unquoted style (`o.foo`). Example:
+
+```
+$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props=2 -mc
+var o={"foo":1,a:3};o.foo+=o.a,console.log(o.foo);
+```
+
 #### Debugging property name mangling
 
 You can also pass `--mangle-props-debug` in order to mangle property names
