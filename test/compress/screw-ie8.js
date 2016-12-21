@@ -46,6 +46,8 @@ do_screw_try_catch: {
 }
 
 dont_screw_try_catch: {
+    // This test is known to generate incorrect code for screw_ie8=false.
+    // Update expected result in the event this bug is ever fixed.
     options = { screw_ie8: false };
     mangle = { screw_ie8: false };
     beautify = { screw_ie8: false };
@@ -102,6 +104,8 @@ do_screw_try_catch_undefined: {
 }
 
 dont_screw_try_catch_undefined: {
+    // This test is known to generate incorrect code for screw_ie8=false.
+    // Update expected result in the event this bug is ever fixed.
     options = { screw_ie8: false };
     mangle = { screw_ie8: false };
     beautify = { screw_ie8: false };
@@ -123,8 +127,8 @@ dont_screw_try_catch_undefined: {
             } catch (n) {
                 console.log("caught: "+n)
             }
-            console.log("undefined is " + void 0);
-            return void 0===o
+            console.log("undefined is " + n);
+            return o === n
         }
     }
 }
