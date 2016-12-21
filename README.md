@@ -67,10 +67,13 @@ The available options are:
                                 JS that was generated from some other original
                                 code.
   --screw-ie8                   Use this flag if you don't wish to support
-                                Internet Explorer 6-8 quirks.
+                                Internet Explorer 6/7/8.
                                 By default UglifyJS will not try to be IE-proof.
-  --support-ie8                 Use this flag to support Internet Explorer 6-8 quirks.
-                                Note: may break standards compliant `catch` identifiers.
+  --support-ie8                 Use this flag to support Internet Explorer 6/7/8.
+                                Equivalent to setting `screw_ie8: false` in `minify()`
+                                for `compress`, `mangle` and `output` options.
+                                Note: `--support-ie8` may generate incorrect code
+                                for `try`/`catch` in ES5 compliant browsers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear

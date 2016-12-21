@@ -94,7 +94,7 @@ exports.minify = function(files, options) {
     if (options.compress) {
         var compress = { warnings: options.warnings };
         UglifyJS.merge(compress, options.compress);
-        toplevel.figure_out_scope();
+        toplevel.figure_out_scope(options.mangle);
         var sq = UglifyJS.Compressor(compress);
         toplevel = sq.compress(toplevel);
     }

@@ -70,12 +70,12 @@ function test_directory(dir) {
     return path.resolve(tests_dir, dir);
 }
 
-function as_toplevel(input) {
+function as_toplevel(input, mangle_options) {
     if (input instanceof U.AST_BlockStatement) input = input.body;
     else if (input instanceof U.AST_Statement) input = [ input ];
     else throw new Error("Unsupported input syntax");
     var toplevel = new U.AST_Toplevel({ body: input });
-    toplevel.figure_out_scope();
+    toplevel.figure_out_scope(mangle_options);
     return toplevel;
 }
 
@@ -103,11 +103,11 @@ function run_compress_tests() {
             var output_options = test.beautify || {};
             var expect;
             if (test.expect) {
-                expect = make_code(as_toplevel(test.expect), output_options);
+                expect = make_code(as_toplevel(test.expect, test.mangle), output_options);
             } else {
                 expect = test.expect_exact;
             }
-            var input = as_toplevel(test.input);
+            var input = as_toplevel(test.input, test.mangle);
             var input_code = make_code(test.input, {
                 beautify: true,
                 quote_style: 3,
