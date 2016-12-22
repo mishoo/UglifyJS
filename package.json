@@ -29,7 +29,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "async": "~0.2.6",
+    "async": "~2.1.4",
     "source-map": "~0.5.1",
     "uglify-to-browserify": "~1.0.0",
     "yargs": "~3.10.0"
