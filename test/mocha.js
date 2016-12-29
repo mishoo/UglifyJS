@@ -1,6 +1,7 @@
 var Mocha = require('mocha'),
     fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    exit = require('exit');
 
 // Instantiate a Mocha instance.
 var mocha = new Mocha({});
@@ -22,7 +23,7 @@ module.exports = function() {
     mocha.run(function(failures) {
         if (failures !== 0) {
             process.on('exit', function () {
-                process.exit(failures);
+                exit(failures);
             });
         }
     });

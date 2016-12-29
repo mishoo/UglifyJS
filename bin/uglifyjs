@@ -9,6 +9,7 @@ var yargs = require("yargs");
 var fs = require("fs");
 var path = require("path");
 var async = require("async");
+var exit = require("exit");
 var acorn;
 var screw_ie8 = true;
 var ARGS = yargs
@@ -152,18 +153,18 @@ if (ARGS.noerr) {
 if (ARGS.version || ARGS.V) {
     var json = require("../package.json");
     print(json.name + ' ' + json.version);
-    process.exit(0);
+    exit(0);
 }
 
 if (ARGS.ast_help) {
     var desc = UglifyJS.describe_ast();
     print(typeof desc == "string" ? desc : JSON.stringify(desc, null, 2));
-    process.exit(0);
+    exit(0);
 }
 
 if (ARGS.h || ARGS.help) {
     print(yargs.help());
-    process.exit(0);
+    exit(0);
 }
 
 if (ARGS.acorn) {
@@ -298,12 +299,12 @@ if (files.length == 0) {
 
 if (files.indexOf("-") >= 0 && ARGS.source_map) {
     print_error("ERROR: Source map doesn't work with input from STDIN");
-    process.exit(1);
+    exit(1);
 }
 
 if (files.filter(function(el){ return el == "-" }).length > 1) {
     print_error("ERROR: Can read a single file from STDIN (two or more dashes specified)");
-    process.exit(1);
+    exit(1);
 }
 
 var STATS = {};
@@ -328,7 +329,7 @@ try {
         print_error(ex.msg);
         print_error("Supported options:");
         print_error(sys.inspect(ex.defs));
-        process.exit(1);
+        exit(1);
     }
 }
 
@@ -336,7 +337,7 @@ async.eachLimit(files, 1, function (file, cb) {
     read_whole_file(file, function (err, code) {
         if (err) {
             print_error("ERROR: can't read file: " + file);
-            process.exit(1);
+            exit(1);
         }
         if (ARGS.p != null) {
             if (P_RELATIVE) {
@@ -375,7 +376,7 @@ async.eachLimit(files, 1, function (file, cb) {
                         print_error("Parse error at " + file + ":" + ex.line + "," + ex.col);
                         print_error(ex.message);
                         print_error(ex.stack);
-                        process.exit(1);
+                        exit(1);
                     }
                     throw ex;
                 }
@@ -412,7 +413,7 @@ async.eachLimit(files, 1, function (file, cb) {
           regex = ARGS.mangle_regex ? extractRegex(ARGS.mangle_regex) : null;
         } catch (e) {
             print_error("ERROR: Invalid --mangle-regex: " + e.message);
-            process.exit(1);
+            exit(1);
         }
 
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
@@ -534,7 +535,7 @@ function getOptions(flag, constants) {
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
                 print_error("Error parsing arguments for flag `" + flag + "': " + x);
-                process.exit(1);
+                exit(1);
             }
         }
         ast.walk(new UglifyJS.TreeWalker(function(node){
@@ -554,7 +555,7 @@ function getOptions(flag, constants) {
             }
             print_error(node.TYPE)
             print_error("Error parsing arguments for flag `" + flag + "': " + x);
-            process.exit(1);
+            exit(1);
         }));
     }
     return ret;
