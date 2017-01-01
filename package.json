@@ -1,5 +1,5 @@
 {
-  "name": "uglify-js",
+  "name": "uglify-js-harmony",
   "description": "JavaScript parser, mangler/compressor and beautifier toolkit",
   "homepage": "http://lisperator.net/uglifyjs",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
