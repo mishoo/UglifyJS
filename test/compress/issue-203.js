@@ -13,7 +13,11 @@ compress_new_function: {
 
 compress_new_function_with_destruct: {
     options = {
-        unsafe: true
+        unsafe: true,
+        ecma: 6
+    }
+    beautify = {
+        ecma: 6
     }
     input: {
         new Function("aa, [bb]", 'return aa;');

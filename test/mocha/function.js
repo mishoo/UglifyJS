@@ -47,64 +47,83 @@ describe("Function", function() {
         assert.equal(destruct3.is_array, false);
         assert.equal(destruct4.is_array, true);
 
-        var aAndB = [
-            ['SymbolFunarg', 'a'],
-            ['SymbolFunarg', 'b']
-        ];
-
+        // destruct 1
         assert.deepEqual(
             [
                 destruct1.names[0].TYPE,
-                destruct1.names[0].name
+                destruct1.names[0].key,
+                destruct1.names[0].value.name
             ],
-            aAndB[0]);
+            ['ObjectKeyVal', 'a', 'a']
+        );
         assert.deepEqual(
             [
                 destruct1.names[1].TYPE,
-                destruct1.names[1].name
+                destruct1.names[1].key,
+                destruct1.names[1].value.name
             ],
-            aAndB[1]);
+            ['ObjectKeyVal', 'b', 'b']
+        );
+
+        // destruct 2
         assert.deepEqual(
             [
                 destruct2.names[0].TYPE,
                 destruct2.names[0].name
             ],
-            aAndB[0]);
+            ['SymbolFunarg', 'a']
+        );
         assert.deepEqual(
             [
                 destruct2.names[1].names[0].TYPE,
                 destruct2.names[1].names[0].name
             ],
-            aAndB[1]);
+            ['SymbolFunarg', 'b']
+        );
+
+        // destruct 3
         assert.strictEqual(typeof destruct3.names[0].key, "string");
         assert.strictEqual(destruct3.names[0].key, "a");
+        assert.strictEqual(destruct3.names[0].value.TYPE, "SymbolFunarg");
+        assert.strictEqual(destruct3.names[0].value.name, "a");
         assert.strictEqual(typeof destruct3.names[1].key, "string");
         assert.strictEqual(destruct3.names[1].key, "b");
+        assert.strictEqual(destruct3.names[1].value.TYPE, "SymbolFunarg");
+        assert.strictEqual(destruct3.names[1].value.name, "b");
+
+        // destruct 4
         assert.deepEqual(
             [
                 destruct4.names[0].TYPE,
                 destruct4.names[0].name
             ],
-            aAndB[0]);
+            ['SymbolFunarg', 'a']
+        );
+        assert.strictEqual(destruct4.names[1].TYPE, "Destructuring");
         assert.deepEqual(
             [
                 destruct4.names[1].names[0].TYPE,
                 destruct4.names[1].names[0].name
             ],
-            aAndB[1]);
+            ['SymbolFunarg', 'b']
+        );
 
         assert.deepEqual(
             get_args(destr_fun1.args_as_names()),
-            aAndB);
+            [['SymbolFunarg', 'a'], ['SymbolFunarg', 'b']]
+        );
         assert.deepEqual(
             get_args(destr_fun2.args_as_names()),
-            aAndB);
+            [['SymbolFunarg', 'a'], ['SymbolFunarg', 'b']]
+        );
         assert.deepEqual(
             get_args(destr_fun3.args_as_names()),
-            aAndB);
+            [['SymbolFunarg', 'a'], ['SymbolFunarg', 'b']]
+        );
         assert.deepEqual(
             get_args(destr_fun4.args_as_names()),
-            aAndB);
+            [['SymbolFunarg', 'a'], ['SymbolFunarg', 'b']]
+        );
 
         // Making sure we don't accidentally accept things which
         // Aren't argument destructurings

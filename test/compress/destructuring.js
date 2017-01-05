@@ -50,6 +50,9 @@ destructuring_objects: {
 }
 
 destructuring_objects_trailing_elision: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         var {cc,} = foo;
     }
@@ -57,6 +60,9 @@ destructuring_objects_trailing_elision: {
 }
 
 nested_destructuring_objects: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         const [{a},b] = c;
         let [{a},b] = c;
@@ -66,6 +72,9 @@ nested_destructuring_objects: {
 }
 
 destructuring_constdef_in_loops: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         for (const [x,y] in pairs);
         for (const [a] = 0;;);
@@ -75,6 +84,9 @@ destructuring_constdef_in_loops: {
 }
 
 destructuring_letdef_in_loops: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         for (let [x,y] in pairs);
         for (let [a] = 0;;);
@@ -84,6 +96,9 @@ destructuring_letdef_in_loops: {
 }
 
 destructuring_vardef_in_loops: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         for (var [x,y] in pairs);
         for (var [a] = 0;;);
@@ -198,5 +213,41 @@ destructuring_remove_unused_2: {
             var [{b: a}] = a;
             f(b);
         }
+    }
+}
+
+object_destructuring_may_need_parentheses: {
+    beautify = {
+        ecma: 6
+    }
+    input: {
+        ({a, b} = {a: 1, b: 2});
+    }
+    expect_exact: "({a,b}={a:1,b:2});"
+}
+
+destructuring_with_undefined_as_default_assignment: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        [foo = undefined] = bar;
+        [foo = void 0] = bar;
+    }
+    expect: {
+        [foo] = bar;
+        [foo] = bar;
+    }
+}
+
+destructuring_dont_evaluate_with_undefined_as_default_assignment: {
+    options = {
+        evaluate: false
+    }
+    input: {
+        [foo = undefined] = bar;
+    }
+    expect: {
+        [foo = void 0] = bar;
     }
 }

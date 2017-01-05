@@ -119,6 +119,9 @@ destructuring_arguments_2: {
 }
 
 destructuring_arguments_3: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         function fn3({x: {y: {z: {} = 42}}}) {}
         const { cover = (function () {}), xCover = (0, function() {})  } = {};
@@ -129,6 +132,9 @@ destructuring_arguments_3: {
 }
 
 default_arguments: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         function x(a = 6) { }
         function x(a = (6 + 5)) { }
@@ -138,6 +144,9 @@ default_arguments: {
 }
 
 default_values_in_destructurings: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         function x({a=(4), b}) {}
         function x([b, c=(12)]) {}
