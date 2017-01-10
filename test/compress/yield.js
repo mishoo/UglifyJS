@@ -164,3 +164,29 @@ empty_generator_as_parameter_without_side_effects: {
     }
     expect_exact: "var GeneratorPrototype=Object.getPrototypeOf(Object.getPrototypeOf(function*(){}()));evaluate(GeneratorPrototype);"
 }
+
+yield_dot: {
+    options = {
+    }
+    input: {
+        function* foo(){
+            yield x.foo;
+            (yield x).foo;
+            yield (yield obj.foo()).bar();
+        }
+    }
+    expect_exact: "function*foo(){yield x.foo;(yield x).foo;yield(yield obj.foo()).bar()}"
+}
+
+yield_sub: {
+    options = {
+    }
+    input: {
+        function* foo(){
+            yield x['foo'];
+            (yield x)['foo'];
+            yield (yield obj.foo())['bar']();
+        }
+    }
+    expect_exact: 'function*foo(){yield x["foo"];(yield x)["foo"];yield(yield obj.foo())["bar"]()}'
+}
