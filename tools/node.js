@@ -160,6 +160,83 @@ exports.minify = function(files, options) {
     };
 };
 
+// UglifyJS.beautifyJSON(files, options) { return beautifiedString; };
+// files = a (single or array of) file names, JSON strings, or JSON Objects.
+// options = UglifyJS minify options.
+// returns a beautified string of the passed JSON information.
+//
+// NEW OPTIONS:
+//     fromObject:true allows passing a JSON object or an array of JSON objects.
+//     replacer:function(key, oldValue){ return newValue; }
+//     replacer:["Array", "of", "kept", "properties", "all", "others", "discarded"]
+//
+// UNSUPPORTED: (Source Maps):true, compress:true, quote_keys:false.
+//
+// WARNING: All input is run through JSON.stringify() which will change some invalid
+//     values (like NaN and infinity) and error on others (like incorrect syntax).
+exports.beautifyJSON = function(files, options) {
+    
+
+    // 1. updating options with standard beautify settings and overrides:
+    options = UglifyJS.defaults(options, {
+        fromString   : false,
+        fromObject   : false,
+        warnings     : false,
+        compress     : false,
+        output       : { beautify : true, quote_keys : true }
+    });
+
+    // 2. override unsupported options that have compatibility errors:
+    options.outSourceMap      = null;
+    options.sourceRoot        = null;
+    options.inSourceMap       = null;
+    options.compress          = false;
+    if (typeof options.output === "undefined" || options.output === null) {
+        options.output        = {};
+    }
+    options.output.quote_keys = true;
+
+    // 3. reading files, parsing, and (if needed) bundling in to array: (Arrays are legal JavaScript code)
+    var isArray;
+    if (Object.prototype.toString.call(files) === "[object Array]") {
+        isArray = true;
+    } else {
+        isArray = false;
+        files = [ files ];
+    }
+
+    var code;
+    if (options.fromObject) {
+        code = files;
+    } else if (options.fromString) {
+        code = [];
+        files.forEach(function(file, i){
+            code[i] = JSON.parse(file);
+        });
+    } else /* if (options.fromFile) */ {
+        code = [];
+        files.forEach(function(file, i){
+            code[i] = JSON.parse( fs.readFileSync(file,"utf8") );
+        });
+    }
+    options.fromString = true;
+
+    // 4. filturing (replacer), changing incorrect values, and stringifying:
+    code = JSON.stringify(code, options.replacer);
+
+    // 5. beautifying:
+    code = UglifyJS.minify(code, options).code;
+
+    // 6. removing trailing semicolon and (if needed) unbundling out of array:
+    if (isArray) {
+        code = code.substr(0, code.length - 1);
+    } else {
+        code = code.substr(2, code.length - 5);
+    }
+
+    return code;
+};
+
 // exports.describe_ast = function() {
 //     function doitem(ctor) {
 //         var sub = {};
