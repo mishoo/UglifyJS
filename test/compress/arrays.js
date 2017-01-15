@@ -72,3 +72,52 @@ constant_join_2: {
         var f = "strstr" + variable + "foobarmoo" + foo;
     }
 }
+
+for_loop: {
+    options = {
+        unsafe      : true,
+        evaluate    : true,
+        reduce_vars : true
+    };
+    input: {
+        function f0() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++) {
+                console.log(a[i]);
+            }
+        }
+
+        function f1() {
+            var a = [1, 2, 3];
+            for (var i = 0, len = a.length; i < len; i++) {
+                console.log(a[i]);
+            }
+        }
+
+        function f2() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++) {
+                a[i]++;
+            }
+        }
+    }
+    expect: {
+        function f0() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < 3; i++)
+                console.log(a[i]);
+        }
+
+        function f1() {
+            var a = [1, 2, 3];
+            for (var i = 0, len = 3; i < len; i++)
+                console.log(a[i]);
+        }
+
+        function f2() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++)
+                a[i]++;
+        }
+    }
+}
