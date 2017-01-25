@@ -126,3 +126,12 @@ arrow_binding_pattern_strict: {
     }
     expect_exact: 'var foo=([,])=>"foo";'
 }
+
+arrow_with_regexp: {
+    input: {
+        num => /\d{11,14}/.test( num )
+    }
+    expect: {
+        num => /\d{11,14}/.test( num )
+    }
+}
