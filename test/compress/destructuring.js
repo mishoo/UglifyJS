@@ -151,8 +151,12 @@ destructuring_remove_unused_1: {
         function e() {
             var unused = "foo";
             var a = [1, 2, 3, 4, 5];
+            var x = [[1, 2, 3]];
+            var y = {h: 1};
             var [b, ...c] = a;
-            f(b, c);
+            var [...[e, f]] = x;
+            var [...{g: h}] = y;
+            f(b, c, e, f, g);
         }
     }
     expect: {
@@ -178,8 +182,12 @@ destructuring_remove_unused_1: {
         }
         function e() {
             var a = [1, 2, 3, 4, 5];
+            var x = [[1, 2, 3]];
+            var y = {h: 1};
             var [b, ...c] = a;
-            f(b, c);
+            var [...[e, f]] = x;
+            var [...{g: h}] = y;
+            f(b, c, e, f, g);
         }
     }
 }
