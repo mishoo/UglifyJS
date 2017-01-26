@@ -136,30 +136,30 @@ modified: {
         }
 
         function f2() {
-            var a = 1, b = 2, c = 3;
+            var b = 2, c = 3;
             b = c;
-            console.log(a + b);
-            console.log(b + c);
+            console.log(1 + b);
+            console.log(b + 3);
             console.log(4);
-            console.log(a + b + c);
+            console.log(1 + b + 3);
         }
 
         function f3() {
-            var a = 1, b = 2, c = 3;
+            var b = 2, c = 3;
             b *= c;
-            console.log(a + b);
-            console.log(b + c);
+            console.log(1 + b);
+            console.log(b + 3);
             console.log(4);
-            console.log(a + b + c);
+            console.log(1 + b + 3);
         }
 
         function f4() {
-            var a = 1, b = 2, c = 3;
+            var b = 2, c = 3;
             b = c;
-            console.log(a + b);
+            console.log(1 + b);
             console.log(b + c);
-            console.log(a + c);
-            console.log(a + b + c);
+            console.log(1 + c);
+            console.log(1 + b + c);
         }
 
         function f5(a) {
