@@ -76,6 +76,7 @@ constant_join_2: {
 for_loop: {
     options = {
         unsafe      : true,
+        unused      : true,
         evaluate    : true,
         reduce_vars : true
     };
@@ -110,7 +111,7 @@ for_loop: {
 
         function f1() {
             var a = [1, 2, 3];
-            for (var i = 0, len = 3; i < len; i++)
+            for (var i = 0; i < 3; i++)
                 console.log(a[i]);
         }
 
