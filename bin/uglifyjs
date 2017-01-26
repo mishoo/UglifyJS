@@ -26,8 +26,8 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map-inline", "Write base64-encoded source map to the end of js output.  Disabled by default")
     .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
-    .describe("screw-ie8", "Do not support Internet Explorer 6-8 quirks. This flag is enabled by default.")
-    .describe("support-ie8", "Support non-standard Internet Explorer 6-8 javascript. Note: may break standards compliant `catch` identifiers.")
+    .describe("screw-ie8", "Do not support Internet Explorer 6/7/8. This flag is enabled by default.")
+    .describe("support-ie8", "Support non-standard Internet Explorer 6/7/8 javascript. Note: may generate incorrect code for try/catch in ES5 compliant browsers.")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
@@ -428,10 +428,11 @@ async.eachLimit(files, 1, function (file, cb) {
 
     var SCOPE_IS_NEEDED = COMPRESS || MANGLE || ARGS.lint
     var TL_CACHE = readNameCache("vars");
+    if (MANGLE) MANGLE.cache = TL_CACHE;
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: screw_ie8, cache: TL_CACHE });
+            TOPLEVEL.figure_out_scope(MANGLE || { screw_ie8: screw_ie8, cache: TL_CACHE });
             if (ARGS.lint) {
                 TOPLEVEL.scope_warnings();
             }
@@ -446,7 +447,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope({ screw_ie8: screw_ie8, cache: TL_CACHE });
+            TOPLEVEL.figure_out_scope(MANGLE || { screw_ie8: screw_ie8, cache: TL_CACHE });
             if (MANGLE && !TL_CACHE) {
                 TOPLEVEL.compute_char_frequency(MANGLE);
             }
@@ -454,7 +455,6 @@ async.eachLimit(files, 1, function (file, cb) {
     }
 
     if (MANGLE) time_it("mangle", function(){
-        MANGLE.cache = TL_CACHE;
         TOPLEVEL.mangle_names(MANGLE);
     });
 

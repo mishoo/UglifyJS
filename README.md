@@ -67,10 +67,13 @@ The available options are:
                                 JS that was generated from some other original
                                 code.
   --screw-ie8                   Use this flag if you don't wish to support
-                                Internet Explorer 6-8 quirks.
+                                Internet Explorer 6/7/8.
                                 By default UglifyJS will not try to be IE-proof.
-  --support-ie8                 Use this flag to support Internet Explorer 6-8 quirks.
-                                Note: may break standards compliant `catch` identifiers.
+  --support-ie8                 Use this flag to support Internet Explorer 6/7/8.
+                                Equivalent to setting `screw_ie8: false` in `minify()`
+                                for `compress`, `mangle` and `output` options.
+                                Note: `--support-ie8` may generate incorrect code
+                                for `try`/`catch` in ES5 compliant browsers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear
@@ -284,6 +287,17 @@ of mangled property names.
 
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
+
+#### Mangling unquoted names (`--mangle-props=unquoted` or `--mangle-props=2`)
+
+Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
+so that it is not mangled throughout the entire script even when used in an
+unquoted style (`o.foo`). Example:
+
+```
+$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props=2 -mc
+var o={"foo":1,a:3};o.foo+=o.a,console.log(o.foo);
+```
 
 #### Debugging property name mangling
 

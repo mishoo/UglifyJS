@@ -147,3 +147,53 @@ spread_with_logical_expression_at_middle: {
         var a = [1, 1, ...[2, 3, 5], 8]
     }
 }
+
+for_loop: {
+    options = {
+        unsafe      : true,
+        unused      : true,
+        evaluate    : true,
+        reduce_vars : true
+    };
+    input: {
+        function f0() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++) {
+                console.log(a[i]);
+            }
+        }
+
+        function f1() {
+            var a = [1, 2, 3];
+            for (var i = 0, len = a.length; i < len; i++) {
+                console.log(a[i]);
+            }
+        }
+
+        function f2() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++) {
+                a[i]++;
+            }
+        }
+    }
+    expect: {
+        function f0() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < 3; i++)
+                console.log(a[i]);
+        }
+
+        function f1() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < 3; i++)
+                console.log(a[i]);
+        }
+
+        function f2() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++)
+                a[i]++;
+        }
+    }
+}

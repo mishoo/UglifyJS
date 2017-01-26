@@ -70,4 +70,34 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should work with --keep-fnames (mangle only)", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
+           done();
+       });
+    });
+    it("Should work with --keep-fnames (mangle & compress)", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(5==f(g)());\n");
+           done();
+       });
+    });
+    it("Should work with keep_fnames under mangler options", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js -m keep_fnames=true';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
+           done();
+       });
+    });
 });

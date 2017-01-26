@@ -54,7 +54,56 @@ dot_properties_es5: {
     }
 }
 
-evaluate_length: {
+sub_properties: {
+    options = {
+        evaluate: true,
+        properties: true
+    };
+    input: {
+        a[0] = 0;
+        a["0"] = 1;
+        a[3.14] = 2;
+        a["3" + ".14"] = 3;
+        a["i" + "f"] = 4;
+        a["foo" + " bar"] = 5;
+        a[0 / 0] = 6;
+        a[null] = 7;
+        a[undefined] = 8;
+    }
+    expect: {
+        a[0] = 0;
+        a[0] = 1;
+        a[3.14] = 2;
+        a[3.14] = 3;
+        a.if = 4;
+        a["foo bar"] = 5;
+        a[NaN] = 6;
+        a[null] = 7;
+        a[void 0] = 8;
+    }
+}
+
+evaluate_array_length: {
+    options = {
+        properties: true,
+        unsafe: true,
+        evaluate: true
+    };
+    input: {
+        a = [1, 2, 3].length;
+        a = [1, 2, 3].join()["len" + "gth"];
+        a = [1, 2, b].length;
+        a = [1, 2, 3].join(b).length;
+    }
+    expect: {
+        a = 3;
+        a = 5;
+        a = [1, 2, b].length;
+        a = [1, 2, 3].join(b).length;
+    }
+}
+
+evaluate_string_length: {
     options = {
         properties: true,
         unsafe: true,

@@ -136,30 +136,30 @@ modified: {
         }
 
         function f2() {
-            var a = 1, b = 2, c = 3;
+            var b = 2, c = 3;
             b = c;
-            console.log(a + b);
-            console.log(b + c);
+            console.log(1 + b);
+            console.log(b + 3);
             console.log(4);
-            console.log(a + b + c);
+            console.log(1 + b + 3);
         }
 
         function f3() {
-            var a = 1, b = 2, c = 3;
+            var b = 2, c = 3;
             b *= c;
-            console.log(a + b);
-            console.log(b + c);
+            console.log(1 + b);
+            console.log(b + 3);
             console.log(4);
-            console.log(a + b + c);
+            console.log(1 + b + 3);
         }
 
         function f4() {
-            var a = 1, b = 2, c = 3;
+            var b = 2, c = 3;
             b = c;
-            console.log(a + b);
+            console.log(1 + b);
             console.log(b + c);
-            console.log(a + c);
-            console.log(a + b + c);
+            console.log(1 + c);
+            console.log(1 + b + c);
         }
 
         function f5(a) {
@@ -168,4 +168,185 @@ modified: {
             console.log(B ? 'yes' : 'no');
         }
    }
+}
+
+unsafe_evaluate: {
+    options = {
+        evaluate     : true,
+        reduce_vars  : true,
+        unsafe       : true,
+        unused       : true
+    }
+    input: {
+        function f0(){
+            var a = {
+                b:1
+            };
+            console.log(a.b + 3);
+        }
+
+        function f1(){
+            var a = {
+                b:{
+                    c:1
+                },
+                d:2
+            };
+            console.log(a.b + 3, a.d + 4, a.b.c + 5, a.d.c + 6);
+        }
+    }
+    expect: {
+        function f0(){
+            console.log(4);
+        }
+
+        function f1(){
+            var a = {
+                b:{
+                    c:1
+                },
+                d:2
+            };
+            console.log(a.b + 3, 6, 6, 2..c + 6);
+        }
+    }
+}
+
+unsafe_evaluate_object: {
+    options = {
+        evaluate     : true,
+        reduce_vars  : true,
+        unsafe       : true
+    }
+    input: {
+        function f0(){
+            var a = 1;
+            var b = {};
+            b[a] = 2;
+            console.log(a + 3);
+        }
+
+        function f1(){
+            var a = {
+                b:1
+            };
+            a.b = 2;
+            console.log(a.b + 3);
+        }
+    }
+    expect: {
+        function f0(){
+            var a = 1;
+            var b = {};
+            b[a] = 2;
+            console.log(4);
+        }
+
+        function f1(){
+            var a = {
+                b:1
+            };
+            a.b = 2;
+            console.log(a.b + 3);
+        }
+    }
+}
+
+unsafe_evaluate_array: {
+    options = {
+        evaluate     : true,
+        reduce_vars  : true,
+        unsafe       : true
+    }
+    input: {
+        function f0(){
+            var a = 1;
+            var b = [];
+            b[a] = 2;
+            console.log(a + 3);
+        }
+
+        function f1(){
+            var a = [1];
+            a[2] = 3;
+            console.log(a.length);
+        }
+
+        function f2(){
+            var a = [1];
+            a.push(2);
+            console.log(a.length);
+        }
+    }
+    expect: {
+        function f0(){
+            var a = 1;
+            var b = [];
+            b[a] = 2;
+            console.log(4);
+        }
+
+        function f1(){
+            var a = [1];
+            a[2] = 3;
+            console.log(a.length);
+        }
+
+        function f2(){
+            var a = [1];
+            a.push(2);
+            console.log(a.length);
+        }
+    }
+}
+
+unsafe_evaluate_equality: {
+    options = {
+        evaluate     : true,
+        reduce_vars  : true,
+        unsafe       : true,
+        unused       : true
+    }
+    input: {
+        function f0(){
+            var a = {};
+            console.log(a === a);
+        }
+
+        function f1(){
+            var a = [];
+            console.log(a === a);
+        }
+
+        function f2(){
+            var a = {a:1, b:2};
+            var b = a;
+            var c = a;
+            console.log(b === c);
+        }
+
+        function f3(){
+            var a = [1, 2, 3];
+            var b = a;
+            var c = a;
+            console.log(b === c);
+        }
+    }
+    expect: {
+        function f0(){
+            console.log(true);
+        }
+
+        function f1(){
+            console.log(true);
+        }
+
+        function f2(){
+            console.log(true);
+        }
+
+        function f3(){
+            console.log(true);
+        }
+    }
 }
