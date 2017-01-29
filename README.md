@@ -361,7 +361,15 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `loops` -- optimizations for `do`, `while` and `for` loops when we can
   statically determine the condition
 
-- `unused` -- drop unreferenced functions and variables
+- `unused` -- drop unreferenced functions and variables (simple direct variable
+  assignments do not count as references unless set to `"keep_assign"`)
+
+- `toplevel` -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
+  in the toplevel scope (`false` by default, `true` to drop both unreferenced
+  functions and variables)
+
+- `top_retain` -- prevent specific toplevel functions and variables from `unused`
+  removal (can be array, comma-separated, RegExp or function. Implies `toplevel`)
 
 - `hoist_funs` -- hoist function declarations
 
