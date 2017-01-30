@@ -187,3 +187,32 @@ keep_collapse_const_in_own_block_scope_2: {
         console.log(c);
     }
 }
+
+evaluate: {
+    options = {
+        loops: true,
+        dead_code: true,
+        evaluate: true,
+    };
+    input: {
+        while (true) {
+            a();
+        }
+        while (false) {
+            b();
+        }
+        do {
+            c();
+        } while (true);
+        do {
+            d();
+        } while (false);
+    }
+    expect: {
+        for(;;)
+            a();
+        for(;;)
+            c();
+        d();
+    }
+}
