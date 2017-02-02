@@ -50,8 +50,8 @@ function getProps(filename) {
         try {
             (function walk(node){
                 node.walk(new U2.TreeWalker(function(node){
-                    if (node instanceof U2.AST_Seq) {
-                        walk(node.cdr);
+                    if (node instanceof U2.AST_Sequence) {
+                        walk(node.expressions[node.expressions.length - 1]);
                         return true;
                     }
                     if (node instanceof U2.AST_String) {

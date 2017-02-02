@@ -979,12 +979,12 @@ delete_conditional_1: {
         console.log(delete (1 ? 0 / 0 : x));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((1 / 0, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((NaN, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }
@@ -1006,12 +1006,12 @@ delete_conditional_2: {
         console.log(delete (0 ? x : 0 / 0));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((Infinity, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((NaN, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }
