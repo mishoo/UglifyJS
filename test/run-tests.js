@@ -194,6 +194,9 @@ function parse_test(file) {
         if (node instanceof U.AST_LabeledStatement
             && tw.parent() instanceof U.AST_Toplevel) {
             var name = node.label.name;
+            if (name in tests) {
+                throw new Error('Duplicated test name "' + name + '" in ' + file);
+            }
             tests[name] = get_one_test(name, node.body);
             return true;
         }

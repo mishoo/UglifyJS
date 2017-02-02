@@ -34,7 +34,7 @@ negate_iife_3: {
     }
 }
 
-negate_iife_3: {
+negate_iife_4: {
     options = {
         negate_iife: true,
         sequences: true
@@ -52,7 +52,7 @@ negate_iife_3: {
     }
 }
 
-negate_iife_4: {
+negate_iife_5: {
     options = {
         negate_iife: true,
         sequences: true,
