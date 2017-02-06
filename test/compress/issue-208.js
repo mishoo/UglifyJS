@@ -1,5 +1,6 @@
 do_not_update_lhs: {
     options = {
+        evaluate: true,
         global_defs: { DEBUG: 0 }
     }
     input: {
@@ -16,6 +17,7 @@ do_not_update_lhs: {
 
 do_update_rhs: {
     options = {
+        evaluate: true,
         global_defs: { DEBUG: 0 }
     }
     input: {
@@ -26,4 +28,30 @@ do_update_rhs: {
         MY_DEBUG = 0;
         MY_DEBUG += 0;
     }
+}
+
+mixed: {
+    options = {
+        evaluate: true,
+        global_defs: { DEBUG: 0 }
+    }
+    input: {
+        DEBUG = 1;
+        DEBUG++;
+        DEBUG += 1;
+        f(DEBUG);
+        x = DEBUG;
+    }
+    expect: {
+        DEBUG = 1;
+        DEBUG++;
+        DEBUG += 1;
+        f(0);
+        x = 0;
+    }
+    expect_warnings: [
+        'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:39,8]',
+        'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:40,8]',
+        'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:41,8]',
+    ]
 }

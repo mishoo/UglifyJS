@@ -100,4 +100,24 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
+    it("Should work with --define", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1467/simple.js --define D=5 -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "console.log(5);\n");
+           done();
+       });
+    });
+    it("Should work with --define & -c unsafe", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1467/unsafe.js --define C.D=5,C.V=3 -c unsafe';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "console.log(3,5);\n");
+           done();
+       });
+    });
 });

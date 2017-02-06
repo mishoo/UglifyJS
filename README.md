@@ -450,6 +450,9 @@ UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
 warning, you can pass `warnings=false` to turn off *all* warnings.
 
+You can specify nested constants like `--define env.DEBUG=false` which requires
+`-c unsafe` in order to work.
+
 Another way of doing that is to declare your globals as constants in a
 separate file and include it into the build.  For example you can have a
 `build/defines.js` file with the following:
