@@ -446,6 +446,8 @@ if (DEBUG) {
 }
 ```
 
+You can specify nested constants in the form of `--define env.DEBUG=false`.
+
 UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
 warning, you can pass `warnings=false` to turn off *all* warnings.

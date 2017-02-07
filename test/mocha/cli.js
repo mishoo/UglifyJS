@@ -100,4 +100,34 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
+    it("Should work with --define (simple)", function (done) {
+       var command = uglifyjscmd + ' test/input/global_defs/simple.js --define D=5 -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "console.log(5);\n");
+           done();
+       });
+    });
+    it("Should work with --define (nested)", function (done) {
+       var command = uglifyjscmd + ' test/input/global_defs/nested.js --define C.D=5,C.V=3 -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "console.log(3,5);\n");
+           done();
+       });
+    });
+    it("Should work with --define (AST_Node)", function (done) {
+       var command = uglifyjscmd + ' test/input/global_defs/simple.js --define console.log=stdout.println -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "stdout.println(D);\n");
+           done();
+       });
+    });
 });
