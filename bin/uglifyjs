@@ -74,6 +74,7 @@ You need to pass an argument to this option to specify the name that your module
     .describe("reserve-domprops", "Make (most?) DOM properties reserved for --mangle-props")
     .describe("mangle-props", "Mangle property names (0 - disabled, 1 - mangle all properties, 2 - mangle unquoted properies)")
     .describe("mangle-regex", "Only mangle property names matching the regex")
+    .describe("mangle-prefix", "Prefix of the mangle properties")
     .describe("name-cache", "File to hold mangled names mappings")
     .describe("pure-funcs", "List of functions that can be safely removed if their return value is not used")
     .describe("dump-spidermonkey-ast", "Dump SpiderMonkey AST to stdout.")
@@ -110,6 +111,7 @@ You need to pass an argument to this option to specify the name that your module
     .string("p")
     .string("prefix")
     .string("name-cache")
+    .string("mangle-prefix")
 
     .array("reserved-file")
     .array("pure-funcs")
@@ -421,6 +423,7 @@ async.eachLimit(files, 1, function (file, cb) {
             only_cache    : !ARGS.mangle_props,
             regex         : regex,
             ignore_quoted : ARGS.mangle_props == 2,
+            prefix        : ARGS.mangle_prefix || "",
             debug         : typeof ARGS.mangle_props_debug === "undefined" ? false : ARGS.mangle_props_debug
         });
         writeNameCache("props", cache);
