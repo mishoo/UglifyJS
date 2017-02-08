@@ -150,6 +150,7 @@ The available options are:
                                 notation. You can override these by setting
                                 them explicitly on the command line.
   --mangle-regex                Only mangle property names matching the regex
+  --mangle-props-prefix         Prefix added to the property name after mangling
   --name-cache                  File to hold mangled names mappings
   --pure-funcs                  List of functions that can be safely removed if
                                 their return value is not used           [array]
