@@ -5,7 +5,7 @@ var assert = require("assert");
 var uglify = require("../../");
 
 describe("verify that the mangled names are legal", function () {
-    it("Should not mangle properties to names in the illegal_mangled_names param", function () {
+    it("Should not mangle properties to names in the illegalmangled param", function () {
         var js = 'a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
         var result = uglify.minify(js, {
             fromString: true,
@@ -14,7 +14,7 @@ describe("verify that the mangled names are legal", function () {
             },
             mangleProperties: {
                 ignore_quoted: true,
-                illegal_mangled_names: ["a"]
+                illegalmangled: ["a"]
             },
             output: {
                 keep_quoted_props: true,
@@ -24,7 +24,7 @@ describe("verify that the mangled names are legal", function () {
         assert.strictEqual(result.code,
             'a["foo"]="bar",a.b="red",x={"bar":10};');
     });
-    it("Should not mangle names to names in the illegal_mangled_names param", function () {
+    it("Should not mangle names to names in the illegalmangled param", function () {
         var js = 'var a; a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
         var result = uglify.minify(js, {
             fromString: true,
@@ -34,7 +34,7 @@ describe("verify that the mangled names are legal", function () {
             mangleProperties: {
                 ignore_quoted: true
             },
-            mangle: {toplevel: true, illegal_mangled_names: ["r", "a"]},
+            mangle: {toplevel: true, illegalmangled: ["r", "a"]},
             output: {
                 keep_quoted_props: true,
                 quote_style: 3
@@ -43,7 +43,7 @@ describe("verify that the mangled names are legal", function () {
         assert.strictEqual(result.code,
             'var b;b["foo"]="bar",b.a="red",x={"bar":10};');
     });
-    it("Should not fail without illegal_mangled_names param", function () {
+    it("Should not fail without illegalmangled param", function () {
         var js = 'var b; b["foo"] = "bar"; b.color = "red"; x = {"bar": 10};';
         var result = uglify.minify(js, {
             fromString: true,
