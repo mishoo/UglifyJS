@@ -87,6 +87,7 @@ The available options are:
   -b, --beautify                Beautify output/specify output options.
   -m, --mangle                  Mangle names/pass mangler options.
   -r, --reserved                Reserved names to exclude from mangling.
+  --illegalmangled              Reserved names to avoid when choosing the mangled name.
   -c, --compress                Enable compressor/pass compressor options. Pass
                                 options like -c
                                 hoist_vars=false,if_return=false. Use -c with
@@ -220,6 +221,16 @@ comma-separated list of names.  For example:
     uglifyjs ... -m -r '$,require,exports'
 
 to prevent the `require`, `exports` and `$` names from being changed.
+
+When mangling is enabled but you want to prevent certain names from being
+chosen as variable names after mangle, you can declare those names with `--illegalmangled — pass a
+comma-separated list of names.  For example:
+
+    uglifyjs ... -m -r '$,if,in,to'
+
+to prevent the `if`, `in` and `to` names from being assigned to variables.
+By default the illegal mangled list contains the javascript reserved words.
+If you don't want any limitation, you can pass '.'
 
 ### Mangling property names (`--mangle-props`)
 
