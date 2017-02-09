@@ -315,7 +315,7 @@ var SOURCES_CONTENT = {};
 var SOURCE_MAP = (ARGS.source_map || ARGS.source_map_inline) ? UglifyJS.SourceMap({
     file: P_RELATIVE ? path.relative(path.dirname(ARGS.source_map), OUTPUT_FILE) : OUTPUT_FILE,
     root: ARGS.source_map_root,
-    orig: ORIG_MAP,
+    orig: ORIG_MAP
 }) : null;
 
 OUTPUT_OPTIONS.source_map = SOURCE_MAP;
@@ -368,7 +368,7 @@ async.eachLimit(files, 1, function (file, cb) {
                         filename     : file,
                         toplevel     : TOPLEVEL,
                         expression   : ARGS.expr,
-                        bare_returns : ARGS.bare_returns,
+                        bare_returns : ARGS.bare_returns
                     });
                 } catch(ex) {
                     if (ex instanceof UglifyJS.JS_Parse_Error) {
