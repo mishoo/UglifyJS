@@ -11,6 +11,7 @@ var path = require("path");
 var async = require("async");
 var acorn;
 var screw_ie8 = true;
+var support_ie7 = false;
 var ARGS = yargs
     .usage("$0 input1.js [input2.js ...] [options]\n\
 Use a single dash to read input from the standard input.\
@@ -28,6 +29,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Do not support Internet Explorer 6/7/8. This flag is enabled by default.")
     .describe("support-ie8", "Support non-standard Internet Explorer 6/7/8 javascript. Note: may generate incorrect code for try/catch in ES5 compliant browsers.")
+    .describe("support-ie7", "Support non-standard Internet Explorer 6/7 javascript. Note: may generate incorrect code for try/catch in ES5 compliant browsers.")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
@@ -119,6 +121,7 @@ You need to pass an argument to this option to specify the name that your module
     .boolean("source-map-include-sources")
     .boolean("screw-ie8")
     .boolean("support-ie8")
+    .boolean("support-ie7")
     .boolean("export-all")
     .boolean("self")
     .boolean("v")
@@ -242,7 +245,10 @@ if (ARGS.mangle_props == 2) {
 if (ARGS.support_ie8 === true && ARGS.screw_ie8 !== true) {
     screw_ie8 = false;
 }
-
+if (ARGS.support_ie7 === true) {
+    support_ie7 = true;
+    screw_ie8 = false;
+}
 if (COMPRESS) COMPRESS.screw_ie8 = screw_ie8;
 if (MANGLE) MANGLE.screw_ie8 = screw_ie8;
 OUTPUT_OPTIONS.screw_ie8 = screw_ie8;
@@ -432,7 +438,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope(MANGLE || { screw_ie8: screw_ie8, cache: TL_CACHE });
+            TOPLEVEL.figure_out_scope(MANGLE || { screw_ie8: screw_ie8, support_ie7: support_ie7, cache: TL_CACHE });
             if (ARGS.lint) {
                 TOPLEVEL.scope_warnings();
             }
@@ -447,7 +453,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
     if (SCOPE_IS_NEEDED) {
         time_it("scope", function(){
-            TOPLEVEL.figure_out_scope(MANGLE || { screw_ie8: screw_ie8, cache: TL_CACHE });
+            TOPLEVEL.figure_out_scope(MANGLE || { screw_ie8: screw_ie8, support_ie7: support_ie7, cache: TL_CACHE });
             if (MANGLE && !TL_CACHE) {
                 TOPLEVEL.compute_char_frequency(MANGLE);
             }

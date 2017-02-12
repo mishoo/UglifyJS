@@ -74,6 +74,9 @@ The available options are:
                                 for `compress`, `mangle` and `output` options.
                                 Note: `--support-ie8` may generate incorrect code
                                 for `try`/`catch` in ES5 compliant browsers.
+  --support-ie7                 Use this flag to support Internet Explorer 6/7
+                                Note: `--support-ie7` may generate incorrect code
+                                for `try`/`catch` in ES5 compliant browsers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear
