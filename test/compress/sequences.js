@@ -169,3 +169,47 @@ for_sequences: {
         for (y = 5; false;);
     }
 }
+
+limit_1: {
+    options = {
+        sequences: 3,
+    };
+    input: {
+        a;
+        b;
+        c;
+        d;
+        e;
+        f;
+        g;
+        h;
+        i;
+        j;
+        k;
+    }
+    expect: {
+        a, b, c;
+        d, e, f;
+        g, h, i;
+        j, k;
+    }
+}
+
+limit_2: {
+    options = {
+        sequences: 3,
+    };
+    input: {
+        a, b;
+        c, d;
+        e, f;
+        g, h;
+        i, j;
+        k;
+    }
+    expect: {
+        a, b, c, d;
+        e, f, g, h;
+        i, j, k;
+    }
+}
