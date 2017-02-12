@@ -184,7 +184,7 @@ if (ARGS.reserve_domprops) {
 }
 
 if (ARGS.d) {
-    if (COMPRESS) COMPRESS.global_defs = getOptions("d");
+    if (COMPRESS) COMPRESS.global_defs = getOptions("d", true);
 }
 
 if (ARGS.pure_funcs) {
