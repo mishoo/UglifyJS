@@ -10,7 +10,7 @@ drop_console_1: {
     }
 }
 
-drop_console_1: {
+drop_console_2: {
     options = { drop_console: true };
     input: {
         console.log('foo');
