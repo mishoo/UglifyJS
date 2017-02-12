@@ -58,6 +58,44 @@ describe("minify", function() {
             assert.strictEqual(result.code,
                     'a["foo"]="bar",a.a="red",x={"bar":10};');
         });
+
+        it("Should add prefix for mangle properties (not quoted)", function() {
+            var js = 'a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
+            var result = Uglify.minify(js, {
+                fromString: true,
+                compress: {
+                    properties: false
+                },
+                mangleProperties: {
+                    ignore_quoted: true,
+                    prefix: "__"
+                },
+                output: {
+                    keep_quoted_props: true,
+                    quote_style: 3
+                }
+            });
+            assert.strictEqual(result.code, 'a["foo"]="bar",a.__a="red",x={"bar":10};');
+        });
+
+        it("Should add prefix for mangle properties (with quoted)", function() {
+            var js = 'a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
+            var result = Uglify.minify(js, {
+                fromString: true,
+                compress: {
+                    properties: false
+                },
+                mangleProperties: {
+                    ignore_quoted: false,
+                    prefix: "__"
+                },
+                output: {
+                    keep_quoted_props: true,
+                    quote_style: 3
+                }
+            });
+            assert.strictEqual(result.code, 'a["__a"]="bar",a.__b="red",x={"__c":10};');
+        });
     });
 
     describe("inSourceMap", function() {

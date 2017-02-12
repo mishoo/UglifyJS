@@ -100,4 +100,24 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
+    it("Should work with --mangle-props-prefix", function (done) {
+       var command = uglifyjscmd + ' test/input/mangle-prefix/sample.js --mangle-props --mangle-props-prefix="__"';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "var Test=function(){this.__a=123};Test.prototype.__b=function(){console.log(this.__a)};Test.prototype.__c=function(){console.log(\"other\");this.__b();this.__d()};Test.prototype.__d=function(){console.log(\"special\")};var oTest=new Test;oTest.__c();\n");
+           done();
+       });
+    });
+    it("Should work with --mangle-props-prefix and --mangle-props-regex", function (done) {
+       var command = uglifyjscmd + ' test/input/mangle-prefix/sample.js --mangle-props --mangle-regex="/^__/" --mangle-props-prefix="__"';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "var Test=function(){this.someVar=123};Test.prototype.someMethod=function(){console.log(this.someVar)};Test.prototype.someOther=function(){console.log(\"other\");this.someMethod();this.__a()};Test.prototype.__a=function(){console.log(\"special\")};var oTest=new Test;oTest.someOther();\n");
+           done();
+       });
+    });
 });
