@@ -1,5 +1,6 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
+var readFileSync = require("fs").readFileSync;
 
 describe("bin/uglifyjs", function () {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
@@ -97,6 +98,26 @@ describe("bin/uglifyjs", function () {
            if (err) throw err;
 
            assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
+           done();
+       });
+    });
+    it("Should work with `--beautify`", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1482/input.js -b';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, readFileSync("test/input/issue-1482/default.js", "utf8"));
+           done();
+       });
+    });
+    it("Should work with `--beautify bracketize`", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1482/input.js -b bracketize';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, readFileSync("test/input/issue-1482/bracketize.js", "utf8"));
            done();
        });
     });
