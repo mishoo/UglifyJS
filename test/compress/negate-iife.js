@@ -6,7 +6,7 @@ negate_iife_1: {
         (function(){ stuff() })();
     }
     expect: {
-        !function(){ stuff() }();
+        (function(){ stuff() })();
     }
 }
 
@@ -156,7 +156,7 @@ issue_1254_negate_iife_true: {
             };
         })()();
     }
-    expect_exact: '!function(){return function(){console.log("test")}}()();'
+    expect_exact: '(function(){return function(){console.log("test")}})()();'
 }
 
 issue_1254_negate_iife_nested: {
@@ -170,5 +170,17 @@ issue_1254_negate_iife_nested: {
             };
         })()()()()();
     }
-    expect_exact: '!function(){return function(){console.log("test")}}()()()()();'
+    expect_exact: '(function(){return function(){console.log("test")}})()()()()();'
+}
+
+preserve_completion_value: {
+    options = {
+        negate_iife: true,
+    }
+    input: {
+        (function () { return true; })();
+        (function () { return true; })();
+        (function () { return true; })();
+    }
+    expect_exact: '!function(){return true}();!function(){return true}();(function(){return true})();'
 }
