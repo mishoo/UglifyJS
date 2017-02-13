@@ -446,6 +446,9 @@ if (DEBUG) {
 }
 ```
 
+You can also define properties nested in other objects. For example,
+`--define 'process.env["NODE_ENV"]="production"` also works.
+
 UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
 warning, you can pass `warnings=false` to turn off *all* warnings.
@@ -481,7 +484,8 @@ uglifyJS.minify([ "input.js"], {
     compress: {
         dead_code: true,
         global_defs: {
-            DEBUG: false
+            DEBUG: false,
+            "process.platform": "uglifyjs",
         }
     }
 });
