@@ -151,4 +151,52 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
+    it("Should process inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js -cm toplevel --in-source-map inline --source-map-inline';
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, readFileSync("test/input/issue-520/output.js", "utf8"));
+            done();
+        });
+    });
+    it("Should warn for missing inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-1323/sample.js --in-source-map inline';
+
+        exec(command, function (err, stdout, stderr) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, "var bar=function(){function foo(bar){return bar}return foo}();\n");
+            assert.strictEqual(stderr, "WARN: inline source map not found\n");
+            done();
+        });
+    });
+    it("Should fail with multiple input and inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js test/input/issue-520/output.js --in-source-map inline --source-map-inline';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Inline source map only works with singular input\n");
+            done();
+        });
+    });
+    it("Should fail with acorn and inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js --in-source-map inline --source-map-inline --acorn';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Inline source map only works with built-in parser\n");
+            done();
+        });
+    });
+    it("Should fail with SpiderMonkey and inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js --in-source-map inline --source-map-inline --spidermonkey';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Inline source map only works with built-in parser\n");
+            done();
+        });
+    });
 });
