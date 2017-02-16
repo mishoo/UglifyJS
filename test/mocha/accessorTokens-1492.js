@@ -14,8 +14,10 @@ describe("Accessor tokens", function() {
 
         // test there are no nodes without tokens
         var checkWalker = new UglifyJS.TreeWalker(function(node, descend) {
-            assert(node.start !== undefined);
-            assert(node.end !== undefined);
+            if (node instanceof UglifyJS.AST_Accessor) {
+                assert.equal(node.start.pos, 12);
+                assert.equal(node.end.endpos, 46);
+            }
         });
         ast.walk(checkWalker);
     });
