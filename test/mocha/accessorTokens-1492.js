@@ -7,13 +7,26 @@ describe("Accessor tokens", function() {
         //                        01234567890123456789012345678901234567890123456789
         var ast = UglifyJS.parse("var obj = { get latest() { return undefined; } }");
 
-        // test there are no nodes without tokens
+        // test all AST_ObjectProperty tokens are set as expected
+        var checkedAST_ObjectProperty = false;
         var checkWalker = new UglifyJS.TreeWalker(function(node, descend) {
-            if (node instanceof UglifyJS.AST_Accessor) {
-                assert.equal(node.start.pos, 22);
+            if (node instanceof UglifyJS.AST_ObjectProperty) {
+                checkedAST_ObjectProperty = true;
+
+                assert.equal(node.start.pos, 12);
                 assert.equal(node.end.endpos, 46);
+
+                assert(node.key instanceof UglifyJS.AST_SymbolRef);
+                assert.equal(node.key.start.pos, 16);
+                assert.equal(node.key.end.endpos, 22);
+
+                assert(node.value instanceof UglifyJS.AST_Accessor);
+                assert.equal(node.value.start.pos, 22);
+                assert.equal(node.value.end.endpos, 46);
+
             }
         });
         ast.walk(checkWalker);
+        assert(checkedAST_ObjectProperty, "AST_ObjectProperty not found");
     });
 });
