@@ -346,6 +346,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
+- `unsafe_proto` (default: false) -- optimize expressions like
+  `Array.prototype.slice.call(a)` into `[].slice.call(a)`
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 
