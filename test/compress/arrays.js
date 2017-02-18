@@ -51,7 +51,7 @@ constant_join: {
         var c = boo() + "foo123bar" + bar();
         var c1 = "" + boo() + bar() + "foo123bar" + bar();
         var c2 = "12foobar" + baz();
-        var c3 = boo() + bar() + "foo123bar" + (bar() + "foo");
+        var c3 = boo() + bar() + "foo123bar" + bar() + "foo";
         var c4 = "12foobar" + baz();
         var c5 = [ boo() + bar() + "foo", 1, 2, 3, "bar", bar() + "foo" ].join();
         var c6 = [ "1,2,,,foo,bar", baz() ].join();
@@ -117,11 +117,11 @@ constant_join_3: {
         var d = "" + foo;
         var e = [ foo, "-", bar ].join("-");
         var f = "" + foo + bar;
-        var g = "foo" + (bar + "baz");
+        var g = "foo" + bar + "baz";
         var h = [ "-foo-", bar + "baz" ].join("-");
-        var i = "foo" + bar + (baz + "moo");
+        var i = "foo" + bar + baz + "moo";
         var j = foo + "bar" + baz;
-        var k = foo + ("bar" + baz);
+        var k = foo + "bar" + baz;
         var l = foo + (bar + "baz");
     }
 }
