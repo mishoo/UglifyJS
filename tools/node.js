@@ -115,7 +115,7 @@ exports.minify = function(files, options) {
 
     // 5. output
     var inMap = options.inSourceMap;
-    var output = {};
+    var output = { max_line_len: 32000 };
     if (typeof options.inSourceMap == "string") {
         inMap = JSON.parse(fs.readFileSync(options.inSourceMap, "utf8"));
     }
