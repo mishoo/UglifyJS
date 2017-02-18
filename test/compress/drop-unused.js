@@ -177,3 +177,382 @@ keep_fnames: {
         }
     }
 }
+
+drop_assign: {
+    options = { unused: true };
+    input: {
+        function f1() {
+            var a;
+            a = 1;
+        }
+        function f2() {
+            var a = 1;
+            a = 2;
+        }
+        function f3(a) {
+            a = 1;
+        }
+        function f4() {
+            var a;
+            return a = 1;
+        }
+        function f5() {
+            var a;
+            return function() {
+                a = 1;
+            }
+        }
+    }
+    expect: {
+        function f1() {
+            1;
+        }
+        function f2() {
+            2;
+        }
+        function f3(a) {
+            1;
+        }
+        function f4() {
+            return 1;
+        }
+        function f5() {
+            var a;
+            return function() {
+                a = 1;
+            }
+        }
+    }
+}
+
+keep_assign: {
+    options = { unused: "keep_assign" };
+    input: {
+        function f1() {
+            var a;
+            a = 1;
+        }
+        function f2() {
+            var a = 1;
+            a = 2;
+        }
+        function f3(a) {
+            a = 1;
+        }
+        function f4() {
+            var a;
+            return a = 1;
+        }
+        function f5() {
+            var a;
+            return function() {
+                a = 1;
+            }
+        }
+    }
+    expect: {
+        function f1() {
+            var a;
+            a = 1;
+        }
+        function f2() {
+            var a = 1;
+            a = 2;
+        }
+        function f3(a) {
+            a = 1;
+        }
+        function f4() {
+            var a;
+            return a = 1;
+        }
+        function f5() {
+            var a;
+            return function() {
+                a = 1;
+            }
+        }
+    }
+}
+
+drop_toplevel_funcs: {
+    options = { toplevel: "funcs", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, b = 1, c = g;
+        a = 2;
+        function g() {}
+        console.log(b = 3);
+    }
+}
+
+drop_toplevel_vars: {
+    options = { toplevel: "vars", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        2;
+        function g() {}
+        function h() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_vars_fargs: {
+    options = { keep_fargs: false, toplevel: "vars", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var c = g;
+        function f() {
+            return function() {
+                c = 2;
+            }
+        }
+        2;
+        function g() {}
+        function h() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_all: {
+    options = { toplevel: true, unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        2;
+        console.log(3);
+    }
+}
+
+drop_toplevel_retain: {
+    options = { top_retain: "f,a,o", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_retain_array: {
+    options = { top_retain: [ "f", "a", "o" ], unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_retain_regex: {
+    options = { top_retain: /^[fao]$/, unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_all_retain: {
+    options = { toplevel: true, top_retain: "f,a,o", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_funcs_retain: {
+    options = { toplevel: "funcs", top_retain: "f,a,o", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        console.log(b = 3);
+    }
+}
+
+drop_toplevel_vars_retain: {
+    options = { toplevel: "vars", top_retain: "f,a,o", unused: true };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(3);
+    }
+}
+
+drop_toplevel_keep_assign: {
+    options = { toplevel: true, unused: "keep_assign" };
+    input: {
+        var a, b = 1, c = g;
+        function f(d) {
+            return function() {
+                c = 2;
+            }
+        }
+        a = 2;
+        function g() {}
+        function h() {}
+        console.log(b = 3);
+    }
+    expect: {
+        var a, b = 1;
+        a = 2;
+        console.log(b = 3);
+    }
+}
