@@ -556,3 +556,37 @@ drop_toplevel_keep_assign: {
         console.log(b = 3);
     }
 }
+
+drop_fargs: {
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b = a;
+        }
+    }
+    expect: {
+        function f() {}
+    }
+}
+
+drop_fnames: {
+    options = {
+        keep_fnames: false,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return function g() {
+                var a = g;
+            };
+        }
+    }
+    expect: {
+        function f() {
+            return function() {};
+        }
+    }
+}
