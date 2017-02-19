@@ -590,3 +590,61 @@ drop_fnames: {
         }
     }
 }
+
+global_var: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function foo(b) {
+            a;
+            b;
+            c;
+            typeof c === "undefined";
+            c + b + a;
+            b && b.ar();
+            return b;
+        }
+    }
+    expect: {
+        var a;
+        function foo(b) {
+            c;
+            c;
+            b && b.ar();
+            return b;
+        }
+    }
+}
+
+iife: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a;
+            ~function() {}(b);
+        }
+    }
+    expect: {
+        function f() {
+            ~function() {}(b);
+        }
+    }
+}
+
+drop_value: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (1, [2, foo()], 3, {a:1, b:bar()});
+    }
+    expect: {
+        foo(), bar();
+    }
+}
