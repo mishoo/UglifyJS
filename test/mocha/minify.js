@@ -95,4 +95,19 @@ describe("minify", function() {
             assert.strictEqual(code, "var a=function(n){return n};");
         });
     });
+
+    describe("#__PURE__", function() {
+        it("should drop #__PURE__ hint after use", function() {
+            var result = Uglify.minify('//@__PURE__ comment1 #__PURE__ comment2\n foo(), bar();', {
+                fromString: true,
+                output: {
+                    comments: "all",
+                    beautify: false,
+                }
+            });
+            var code = result.code;
+            assert.strictEqual(code, "//  comment1   comment2\nbar();");
+        });
+    });
+
 });
