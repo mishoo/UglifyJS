@@ -48,4 +48,13 @@ pure_function_calls: {
         baz(), quux();
         a.b(), f.g();
     }
+    expect_warnings: [
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:17,8]",
+        "WARN: Dropping side-effect-free statement [test/compress/issue-1261.js:17,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:30,37]",
+        "WARN: Dropping unused variable iife2 [test/compress/issue-1261.js:30,16]",
+        "WARN: Dropping side-effect-free statement [test/compress/issue-1261.js:28,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:38,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:39,31]"
+    ]
 }
