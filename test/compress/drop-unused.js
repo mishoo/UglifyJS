@@ -648,3 +648,34 @@ drop_value: {
         foo(), bar();
     }
 }
+
+const_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            const b = 2;
+            return 1 + b;
+        }
+
+        function g() {
+            const b = 2;
+            b = 3;
+            return 1 + b;
+        }
+    }
+    expect: {
+        function f() {
+            return 3;
+        }
+
+        function g() {
+            const b = 2;
+            b = 3;
+            return 1 + b;
+        }
+    }
+}

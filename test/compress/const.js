@@ -12,6 +12,7 @@ issue_1191: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_vars   : true,
     }
     input: {
         function foo(rot) {
@@ -43,6 +44,7 @@ issue_1194: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_vars   : true,
     }
     input: {
         function f1() {const a = "X"; return a + a;}
@@ -70,6 +72,7 @@ issue_1396: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_vars   : true,
     }
     input: {
         function foo(a) {
@@ -140,6 +143,7 @@ regexp_literal_not_const: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_vars   : true,
     }
     input: {
         (function(){

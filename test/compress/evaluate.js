@@ -602,6 +602,7 @@ unsafe_prototype_function: {
 call_args: {
     options = {
         evaluate: true,
+        reduce_vars: true,
     }
     input: {
         const a = 1;
