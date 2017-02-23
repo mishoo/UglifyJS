@@ -228,9 +228,10 @@ if (ARGS.mangle_props === true) {
 }
 
 var OUTPUT_OPTIONS = {
-    beautify    : BEAUTIFY ? true : false,
-    preamble    : ARGS.preamble || null,
-    quote_style : ARGS.quotes != null ? ARGS.quotes : 0
+    beautify     : BEAUTIFY ? true : false,
+    max_line_len : 32000,
+    preamble     : ARGS.preamble || null,
+    quote_style  : ARGS.quotes != null ? ARGS.quotes : 0,
 };
 
 if (ARGS.mangle_props == 2) {
@@ -540,7 +541,7 @@ function getOptions(flag, constants) {
         ast.walk(new UglifyJS.TreeWalker(function(node){
             if (node instanceof UglifyJS.AST_Seq) return; // descend
             if (node instanceof UglifyJS.AST_Assign) {
-                var name = node.left.print_to_string({ beautify: false }).replace(/-/g, "_");
+                var name = node.left.print_to_string().replace(/-/g, "_");
                 var value = node.right;
                 if (constants)
                     value = new Function("return (" + value.print_to_string() + ")")();
@@ -548,7 +549,7 @@ function getOptions(flag, constants) {
                 return true;    // no descend
             }
             if (node instanceof UglifyJS.AST_Symbol || node instanceof UglifyJS.AST_Binary) {
-                var name = node.print_to_string({ beautify: false }).replace(/-/g, "_");
+                var name = node.print_to_string().replace(/-/g, "_");
                 ret[name] = true;
                 return true;    // no descend
             }

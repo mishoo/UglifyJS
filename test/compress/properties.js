@@ -539,3 +539,19 @@ first_256_hex_chars_as_properties: {
         };
     }
 }
+
+native_prototype: {
+    options = {
+        unsafe_proto: true,
+    }
+    input: {
+        Array.prototype.splice.apply(a, [1, 2, b, c]);
+        Object.prototype.hasOwnProperty.call(d, "foo");
+        String.prototype.indexOf.call(e, "bar");
+    }
+    expect: {
+        [].splice.apply(a, [1, 2, b, c]);
+        ({}).hasOwnProperty.call(d, "foo");
+        "".indexOf.call(e, "bar");
+    }
+}

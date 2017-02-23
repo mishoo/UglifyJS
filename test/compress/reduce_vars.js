@@ -108,8 +108,6 @@ modified: {
             }
             console.log(a + b);
             console.log(b + c);
-            // TODO: as "modified" is determined in "figure_out_scope",
-            // even "passes" wouldn't improve this any further
             console.log(a + c);
             console.log(a + b + c);
         }
@@ -348,5 +346,127 @@ unsafe_evaluate_equality: {
         function f3(){
             console.log(true);
         }
+    }
+}
+
+passes: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a = 1, b = 2, c = 3;
+            if (a) {
+                b = c;
+            } else {
+                c = b;
+            }
+            console.log(a + b);
+            console.log(b + c);
+            console.log(a + c);
+            console.log(a + b + c);
+        }
+    }
+    expect: {
+        function f() {
+            var b = 2, c = 3;
+            b = c;
+            console.log(1 + b);
+            console.log(b + 3);
+            console.log(4);
+            console.log(1 + b + 3);
+        }
+    }
+}
+
+iife: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        !function(a, b, c) {
+            b++;
+            console.log(a - 1, b * 1, c + 2);
+        }(1, 2, 3);
+    }
+    expect: {
+        !function(a, b, c) {
+            b++;
+            console.log(0, 1 * b, 5);
+        }(1, 2, 3);
+    }
+}
+
+iife_new: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var A = new function(a, b, c) {
+            b++;
+            console.log(a - 1, b * 1, c + 2);
+        }(1, 2, 3);
+    }
+    expect: {
+        var A = new function(a, b, c) {
+            b++;
+            console.log(0, 1 * b, 5);
+        }(1, 2, 3);
+    }
+}
+
+multi_def: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                var b = 1;
+            else
+                var b = 2
+            console.log(b + 1);
+        }
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                var b = 1;
+            else
+                var b = 2
+            console.log(b + 1);
+        }
+    }
+}
+
+multi_def_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        if (code == 16)
+            var bitsLength = 2, bitsOffset = 3, what = len;
+        else if (code == 17)
+            var bitsLength = 3, bitsOffset = 3, what = (len = 0);
+        else if (code == 18)
+            var bitsLength = 7, bitsOffset = 11, what = (len = 0);
+        var repeatLength = this.getBits(bitsLength) + bitsOffset;
+    }
+    expect: {
+        if (16 == code)
+            var bitsLength = 2, bitsOffset = 3, what = len;
+        else if (17 == code)
+            var bitsLength = 3, bitsOffset = 3, what = (len = 0);
+        else if (18 == code)
+            var bitsLength = 7, bitsOffset = 11, what = (len = 0);
+        var repeatLength = this.getBits(bitsLength) + bitsOffset;
     }
 }

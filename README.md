@@ -346,6 +346,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
+- `unsafe_proto` (default: false) -- optimize expressions like
+  `Array.prototype.slice.call(a)` into `[].slice.call(a)`
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 
@@ -361,7 +364,15 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `loops` -- optimizations for `do`, `while` and `for` loops when we can
   statically determine the condition
 
-- `unused` -- drop unreferenced functions and variables
+- `unused` -- drop unreferenced functions and variables (simple direct variable
+  assignments do not count as references unless set to `"keep_assign"`)
+
+- `toplevel` -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
+  in the toplevel scope (`false` by default, `true` to drop both unreferenced
+  functions and variables)
+
+- `top_retain` -- prevent specific toplevel functions and variables from `unused`
+  removal (can be array, comma-separated, RegExp or function. Implies `toplevel`)
 
 - `hoist_funs` -- hoist function declarations
 
@@ -446,6 +457,8 @@ if (DEBUG) {
 }
 ```
 
+You can specify nested constants in the form of `--define env.DEBUG=false`.
+
 UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
 warning, you can pass `warnings=false` to turn off *all* warnings.
@@ -456,8 +469,6 @@ separate file and include it into the build.  For example you can have a
 ```javascript
 const DEBUG = false;
 const PRODUCTION = true;
-// Alternative for environments that don't support `const`
-/** @const */ var STAGING = false;
 // etc.
 ```
 
@@ -468,7 +479,8 @@ and build your code like this:
 UglifyJS will notice the constants and, since they cannot be altered, it
 will evaluate references to them to the value itself and drop unreachable
 code as usual.  The build will contain the `const` declarations if you use
-them. If you are targeting < ES6 environments, use `/** @const */ var`.
+them. If you are targeting < ES6 environments which does not support `const`,
+using `var` with `reduce_vars` (enabled by default) should suffice.
 
 <a name="codegen-options"></a>
 
