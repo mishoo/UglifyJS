@@ -37,6 +37,7 @@ the source map and the output file.")
     .describe("b", "Beautify output/specify output options.")
     .describe("m", "Mangle names/pass mangler options.")
     .describe("r", "Reserved names to exclude from mangling.")
+    .describe("illegalmangled" , "Reserved names to avoid when choosing the mangled name.")
     .describe("c", "Enable compressor/pass compressor options. \
 Pass options like -c hoist_vars=false,if_return=false. \
 Use -c with no argument to use the default compression options.")
@@ -174,6 +175,7 @@ var COMPRESS = getOptions("c", true);
 var MANGLE = getOptions("m", true);
 var BEAUTIFY = getOptions("b", true);
 var RESERVED = null;
+var ILLEGALMANGLED = null;
 
 if (ARGS.reserved_file) ARGS.reserved_file.forEach(function(filename){
     RESERVED = UglifyJS.readReservedFile(filename, RESERVED);
@@ -193,6 +195,12 @@ if (ARGS.pure_funcs) {
 
 if (ARGS.r) {
     if (MANGLE) MANGLE.except = ARGS.r.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
+}
+if (ARGS.illegalmangled) {
+    ILLEGALMANGLED = (ARGS.illegalmangled === ".")? [] : ARGS.illegalmangled.replace(/^\s+|\s+$/g).split(/\s*,+\s*/);
+    if (MANGLE) {
+        MANGLE.illegalmangled = ILLEGALMANGLED;
+    }
 }
 
 if (RESERVED && MANGLE) {
@@ -418,6 +426,7 @@ async.eachLimit(files, 1, function (file, cb) {
 
         TOPLEVEL = UglifyJS.mangle_properties(TOPLEVEL, {
             reserved      : reserved,
+            illegalmangled: ILLEGALMANGLED,
             cache         : cache,
             only_cache    : !ARGS.mangle_props,
             regex         : regex,
