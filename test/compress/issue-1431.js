@@ -1,3 +1,32 @@
+level_zero: {
+    options = {
+        keep_fnames: true
+    }
+    mangle = {
+        keep_fnames: true
+    }
+    input: {
+        function f(x) {
+            function n(a) {
+                return a * a;
+            }
+            return function() {
+                return x;
+            };
+        }
+    }
+    expect: {
+        function f(r) {
+            function n(n) {
+                return n * n;
+            }
+            return function() {
+                return r;
+            };
+        }
+    }
+}
+
 level_one: {
     options = {
         keep_fnames: true

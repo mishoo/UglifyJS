@@ -169,3 +169,85 @@ for_sequences: {
         for (y = 5; false;);
     }
 }
+
+limit_1: {
+    options = {
+        sequences: 3,
+    };
+    input: {
+        a;
+        b;
+        c;
+        d;
+        e;
+        f;
+        g;
+        h;
+        i;
+        j;
+        k;
+    }
+    expect: {
+        a, b, c;
+        d, e, f;
+        g, h, i;
+        j, k;
+    }
+}
+
+limit_2: {
+    options = {
+        sequences: 3,
+    };
+    input: {
+        a, b;
+        c, d;
+        e, f;
+        g, h;
+        i, j;
+        k;
+    }
+    expect: {
+        a, b, c, d;
+        e, f, g, h;
+        i, j, k;
+    }
+}
+
+negate_iife_for: {
+    options = {
+        sequences: true,
+        negate_iife: true,
+    };
+    input: {
+        (function() {})();
+        for (i = 0; i < 5; i++) console.log(i);
+
+        (function() {})();
+        for (; i < 5; i++) console.log(i);
+    }
+    expect: {
+        for (!function() {}(), i = 0; i < 5; i++) console.log(i);
+        for (function() {}(); i < 5; i++) console.log(i);
+    }
+}
+
+iife: {
+    options = {
+        sequences: true,
+    };
+    input: {
+        x = 42;
+        (function a() {})();
+        !function b() {}();
+        ~function c() {}();
+        +function d() {}();
+        -function e() {}();
+        void function f() {}();
+        typeof function g() {}();
+    }
+    expect: {
+        x = 42, function a() {}(), function b() {}(), function c() {}(),
+        function d() {}(), function e() {}(), function f() {}(), function g() {}()
+    }
+}

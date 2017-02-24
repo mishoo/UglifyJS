@@ -1,10 +1,11 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
+var readFileSync = require("fs").readFileSync;
 
 describe("bin/uglifyjs", function () {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("should produce a functional build when using --self", function (done) {
-        this.timeout(5000);
+        this.timeout(15000);
 
         var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
 
@@ -99,5 +100,103 @@ describe("bin/uglifyjs", function () {
            assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
            done();
        });
+    });
+    it("Should work with --define (simple)", function (done) {
+       var command = uglifyjscmd + ' test/input/global_defs/simple.js --define D=5 -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "console.log(5);\n");
+           done();
+       });
+    });
+    it("Should work with --define (nested)", function (done) {
+       var command = uglifyjscmd + ' test/input/global_defs/nested.js --define C.D=5,C.V=3 -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "console.log(3,5);\n");
+           done();
+       });
+    });
+    it("Should work with --define (AST_Node)", function (done) {
+       var command = uglifyjscmd + ' test/input/global_defs/simple.js --define console.log=stdout.println -c';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "stdout.println(D);\n");
+           done();
+       });
+    });
+    it("Should work with `--beautify`", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1482/input.js -b';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, readFileSync("test/input/issue-1482/default.js", "utf8"));
+           done();
+       });
+    });
+    it("Should work with `--beautify bracketize`", function (done) {
+       var command = uglifyjscmd + ' test/input/issue-1482/input.js -b bracketize';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, readFileSync("test/input/issue-1482/bracketize.js", "utf8"));
+           done();
+       });
+    });
+    it("Should process inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js -cm toplevel --in-source-map inline --source-map-inline';
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, readFileSync("test/input/issue-520/output.js", "utf8"));
+            done();
+        });
+    });
+    it("Should warn for missing inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-1323/sample.js --in-source-map inline';
+
+        exec(command, function (err, stdout, stderr) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, "var bar=function(){function foo(bar){return bar}return foo}();\n");
+            assert.strictEqual(stderr, "WARN: inline source map not found\n");
+            done();
+        });
+    });
+    it("Should fail with multiple input and inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js test/input/issue-520/output.js --in-source-map inline --source-map-inline';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Inline source map only works with singular input\n");
+            done();
+        });
+    });
+    it("Should fail with acorn and inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js --in-source-map inline --source-map-inline --acorn';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Inline source map only works with built-in parser\n");
+            done();
+        });
+    });
+    it("Should fail with SpiderMonkey and inline source map", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-520/input.js --in-source-map inline --source-map-inline --spidermonkey';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Inline source map only works with built-in parser\n");
+            done();
+        });
     });
 });

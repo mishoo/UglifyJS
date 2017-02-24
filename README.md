@@ -87,10 +87,9 @@ The available options are:
   -b, --beautify                Beautify output/specify output options.
   -m, --mangle                  Mangle names/pass mangler options.
   -r, --reserved                Reserved names to exclude from mangling.
-  -c, --compress                Enable compressor/pass compressor options. Pass
-                                options like -c
-                                hoist_vars=false,if_return=false. Use -c with
-                                no argument to use the default compression
+  -c, --compress                Enable compressor/pass compressor options, e.g.
+                                `-c 'if_return=false,pure_funcs=["Math.pow","console.log"]'`
+                                Use `-c` with no argument to enable default compression
                                 options.
   -d, --define                  Global definitions
   -e, --enclose                 Embed everything in a big function, with a
@@ -151,8 +150,10 @@ The available options are:
                                 them explicitly on the command line.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
-  --pure-funcs                  List of functions that can be safely removed if
-                                their return value is not used           [array]
+  --pure-funcs                  Functions that can be safely removed if their
+                                return value is not used, e.g.
+                                `--pure-funcs Math.floor console.info`
+                                (requires `--compress`)
 ```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
@@ -346,6 +347,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
+- `unsafe_proto` (default: false) -- optimize expressions like
+  `Array.prototype.slice.call(a)` into `[].slice.call(a)`
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 
@@ -361,7 +365,15 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `loops` -- optimizations for `do`, `while` and `for` loops when we can
   statically determine the condition
 
-- `unused` -- drop unreferenced functions and variables
+- `unused` -- drop unreferenced functions and variables (simple direct variable
+  assignments do not count as references unless set to `"keep_assign"`)
+
+- `toplevel` -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
+  in the toplevel scope (`false` by default, `true` to drop both unreferenced
+  functions and variables)
+
+- `top_retain` -- prevent specific toplevel functions and variables from `unused`
+  removal (can be array, comma-separated, RegExp or function. Implies `toplevel`)
 
 - `hoist_funs` -- hoist function declarations
 
@@ -404,7 +416,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   overhead (compression will be slower).
 
 - `drop_console` -- default `false`.  Pass `true` to discard calls to
-  `console.*` functions.
+  `console.*` functions. If you wish to drop a specific function call
+  such as `console.info` and/or retain side effects from function arguments
+  after dropping the function call then use `pure_funcs` instead.
 
 - `keep_fargs` -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
@@ -446,6 +460,8 @@ if (DEBUG) {
 }
 ```
 
+You can specify nested constants in the form of `--define env.DEBUG=false`.
+
 UglifyJS will warn about the condition being always false and about dropping
 unreachable code; for now there is no option to turn off only this specific
 warning, you can pass `warnings=false` to turn off *all* warnings.
@@ -456,8 +472,6 @@ separate file and include it into the build.  For example you can have a
 ```javascript
 const DEBUG = false;
 const PRODUCTION = true;
-// Alternative for environments that don't support `const`
-/** @const */ var STAGING = false;
 // etc.
 ```
 
@@ -468,7 +482,8 @@ and build your code like this:
 UglifyJS will notice the constants and, since they cannot be altered, it
 will evaluate references to them to the value itself and drop unreachable
 code as usual.  The build will contain the `const` declarations if you use
-them. If you are targeting < ES6 environments, use `/** @const */ var`.
+them. If you are targeting < ES6 environments which does not support `const`,
+using `var` with `reduce_vars` (enabled by default) should suffice.
 
 <a name="codegen-options"></a>
 
