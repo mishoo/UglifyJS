@@ -1,4 +1,7 @@
 catch_destructuring_with_sequence: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         try {
             throw {};

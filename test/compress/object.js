@@ -170,6 +170,9 @@ shorthand_properties: {
 }
 
 concise_methods: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         x = {
             foo(a, b) {
@@ -299,6 +302,9 @@ concise_methods_and_mangle_props: {
 }
 
 concise_generators: {
+    beautify = {
+        ecma: 6
+    }
     input: {
         x = {
             *foo(a, b) {
