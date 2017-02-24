@@ -87,10 +87,9 @@ The available options are:
   -b, --beautify                Beautify output/specify output options.
   -m, --mangle                  Mangle names/pass mangler options.
   -r, --reserved                Reserved names to exclude from mangling.
-  -c, --compress                Enable compressor/pass compressor options. Pass
-                                options like -c
-                                hoist_vars=false,if_return=false. Use -c with
-                                no argument to use the default compression
+  -c, --compress                Enable compressor/pass compressor options, e.g.
+                                `-c 'if_return=false,pure_funcs=["Math.pow","console.log"]'`
+                                Use `-c` with no argument to enable default compression
                                 options.
   -d, --define                  Global definitions
   -e, --enclose                 Embed everything in a big function, with a
@@ -151,8 +150,10 @@ The available options are:
                                 them explicitly on the command line.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
-  --pure-funcs                  List of functions that can be safely removed if
-                                their return value is not used           [array]
+  --pure-funcs                  Functions that can be safely removed if their
+                                return value is not used, e.g.
+                                `--pure-funcs Math.floor console.info`
+                                (requires `--compress`)
 ```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
@@ -415,7 +416,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   overhead (compression will be slower).
 
 - `drop_console` -- default `false`.  Pass `true` to discard calls to
-  `console.*` functions.
+  `console.*` functions. If you wish to drop a specific function call
+  such as `console.info` and/or retain side effects from function arguments
+  after dropping the function call then use `pure_funcs` instead.
 
 - `keep_fargs` -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
