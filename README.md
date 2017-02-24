@@ -420,6 +420,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   such as `console.info` and/or retain side effects from function arguments
   after dropping the function call then use `pure_funcs` instead.
 
+- `drop_error` -- default `false`.  Pass `true` to discard description
+  of Error() calls.
+
 - `keep_fargs` -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
