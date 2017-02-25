@@ -615,7 +615,7 @@ call_args: {
         const a = 1;
         console.log(1);
         +function(a) {
-            return a;
+            return 1;
         }(1);
     }
 }
