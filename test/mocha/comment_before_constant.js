@@ -7,7 +7,7 @@ describe("comment before constant", function() {
     it("Should test comment before constant is retained and output after mangle.", function() {
         var result = Uglify.minify(js, {
             fromString: true,
-            compress: { collapse_vars: false },
+            compress: { collapse_vars: false, reduce_vars: false },
             mangle: {},
             output: { comments: true },
         });
@@ -17,9 +17,9 @@ describe("comment before constant", function() {
     it("Should test code works when comments disabled.", function() {
         var result = Uglify.minify(js, {
             fromString: true,
-            compress: { collapse_vars: false },
+            compress: { collapse_vars: false, reduce_vars: false },
             mangle: {},
-            output: {},
+            output: { comments: false },
         });
         assert.strictEqual(result.code, 'function f(){var n=!1;return n}');
     });

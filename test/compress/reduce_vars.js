@@ -134,8 +134,8 @@ modified: {
         }
 
         function f2() {
-            var b = 2, c = 3;
-            b = c;
+            var b = 2;
+            b = 3;
             console.log(1 + b);
             console.log(b + 3);
             console.log(4);
@@ -143,8 +143,8 @@ modified: {
         }
 
         function f3() {
-            var b = 2, c = 3;
-            b *= c;
+            var b = 2;
+            b *= 3;
             console.log(1 + b);
             console.log(b + 3);
             console.log(4);
@@ -236,7 +236,7 @@ unsafe_evaluate_object: {
         function f0(){
             var a = 1;
             var b = {};
-            b[a] = 2;
+            b[1] = 2;
             console.log(4);
         }
 
@@ -280,7 +280,7 @@ unsafe_evaluate_array: {
         function f0(){
             var a = 1;
             var b = [];
-            b[a] = 2;
+            b[1] = 2;
             console.log(4);
         }
 
@@ -373,8 +373,8 @@ passes: {
     }
     expect: {
         function f() {
-            var b = 2, c = 3;
-            b = c;
+            var b = 2;
+            b = 3;
             console.log(1 + b);
             console.log(b + 3);
             console.log(4);
