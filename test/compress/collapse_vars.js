@@ -338,8 +338,9 @@ collapse_vars_while: {
 collapse_vars_do_while: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
-        comparisons:true, evaluate:true, booleans:false, loops:false, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        comparisons:true, evaluate:true, booleans:false, loops:false, unused:"keep_assign",
+        hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true, cascade:true,
+        side_effects:true
     }
     input: {
         function f1(y) {
@@ -391,6 +392,79 @@ collapse_vars_do_while: {
             var a = 2;
             do {
                 fn(a = 7);
+                break;
+            } while (y);
+        }
+        function f4(y) {
+            var a = y / 4;
+            do
+                return a;
+            while (y);
+        }
+        function f5(y) {
+            function p(x) { console.log(x); }
+            do {
+                p(y - 3);
+            } while (--y);
+        }
+    }
+}
+
+collapse_vars_do_while_drop_assign: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:false, loops:false, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+    }
+    input: {
+        function f1(y) {
+            // The constant do-while condition `c` will be replaced.
+            var c = 9;
+            do { } while (c === 77);
+        }
+        function f2(y) {
+            // The non-constant do-while condition `c` will not be replaced.
+            var c = 5 - y;
+            do { } while (c);
+        }
+        function f3(y) {
+            // The constant `x` will be replaced in the do loop body.
+            function fn(n) { console.log(n); }
+            var a = 2, x = 7;
+            do {
+                fn(a = x);
+                break;
+            } while (y);
+        }
+        function f4(y) {
+            // The non-constant `a` will not be replaced in the do loop body.
+            var a = y / 4;
+            do {
+                return a;
+            } while (y);
+        }
+        function f5(y) {
+            function p(x) { console.log(x); }
+            do {
+                // The non-constant `a` will be replaced in p(a)
+                // because it is declared in same block.
+                var a = y - 3;
+                p(a);
+            } while (--y);
+        }
+    }
+    expect: {
+        function f1(y) {
+            do ; while (false);
+        }
+        function f2(y) {
+            var c = 5 - y;
+            do ; while (c);
+        }
+        function f3(y) {
+            function fn(n) { console.log(n); }
+            do {
+                fn(7);
                 break;
             } while (y);
         }
@@ -567,8 +641,9 @@ collapse_vars_assignment: {
 collapse_vars_lvalues: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
-        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:"keep_assign",
+        hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true, cascade:true,
+        side_effects:true
     }
     input: {
         function f0(x) { var i = ++x; return x += i; }
@@ -593,7 +668,38 @@ collapse_vars_lvalues: {
         function f7(x) { var w = e1(), v = e2(), c = v - x; return (w = x) - c; }
         function f8(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
         function f9(x) { var w = e1(); return e2() - x - (w = x); }
+    }
+}
 
+collapse_vars_lvalues_drop_assign: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+    }
+    input: {
+        function f0(x) { var i = ++x; return x += i; }
+        function f1(x) { var a = (x -= 3); return x += a; }
+        function f2(x) { var z = x, a = ++z; return z += a; }
+        function f3(x) { var a = (x -= 3), b = x + a; return b; }
+        function f4(x) { var a = (x -= 3); return x + a; }
+        function f5(x) { var w = e1(), v = e2(), c = v = --x, b = w = x; return b - c; }
+        function f6(x) { var w = e1(), v = e2(), c = v = --x, b = w = x; return c - b; }
+        function f7(x) { var w = e1(), v = e2(), c = v - x, b = w = x; return b - c; }
+        function f8(x) { var w = e1(), v = e2(), b = w = x, c = v - x; return b - c; }
+        function f9(x) { var w = e1(), v = e2(), b = w = x, c = v - x; return c - b; }
+    }
+    expect: {
+        function f0(x) { var i = ++x; return x += i; }
+        function f1(x) { var a = (x -= 3); return x += a; }
+        function f2(x) { var z = x, a = ++z; return z += a; }
+        function f3(x) { var a = (x -= 3); return x + a; }
+        function f4(x) { var a = (x -= 3); return x + a; }
+        function f5(x) { var v = (e1(), e2()), c = v = --x; return x - c; }
+        function f6(x) { e1(), e2(); return --x - x; }
+        function f7(x) { var v = (e1(), e2()), c = v - x; return x - c; }
+        function f8(x) { var v = (e1(), e2()); return x - (v - x); }
+        function f9(x) { e1(); return e2() - x - x; }
     }
 }
 

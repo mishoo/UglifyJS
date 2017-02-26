@@ -19,7 +19,7 @@ describe("String literals", function() {
 
         var error = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "SyntaxError: Unterminated string constant";
+                e.message === "Unterminated string constant";
         };
 
         for (var input in inputs) {
@@ -49,7 +49,7 @@ describe("String literals", function() {
 
         var error = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "SyntaxError: Legacy octal escape sequences are not allowed in strict mode";
+                e.message === "Legacy octal escape sequences are not allowed in strict mode";
         }
 
         for (var input in inputs) {
