@@ -718,25 +718,35 @@ in_boolean_context: {
     options = {
         booleans: true,
         evaluate: true,
+        sequences: true,
+        side_effects: true,
     }
     input: {
-        !42;
-        !"foo";
-        ![1, 2];
-        !/foo/;
-        !b(42);
-        !b("foo");
-        !b([1, 2]);
-        !b(/foo/);
+        console.log(
+            !42,
+            !"foo",
+            ![1, 2],
+            !/foo/,
+            !b(42),
+            !b("foo"),
+            !b([1, 2]),
+            !b(/foo/),
+            ![1, foo()],
+            ![1, foo(), 2]
+        );
     }
     expect: {
-        !1;
-        !1;
-        !1;
-        !1;
-        !b(42);
-        !b("foo");
-        !b([1, 2]);
-        !b(/foo/);
+        console.log(
+            !1,
+            !1,
+            !1,
+            !1,
+            !b(42),
+            !b("foo"),
+            !b([1, 2]),
+            !b(/foo/),
+            ![1, foo()],
+            (foo(), !1)
+        );
     }
 }
