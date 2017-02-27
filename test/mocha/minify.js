@@ -110,7 +110,7 @@ describe("minify", function() {
                     inSourceMap: "inline",
                     sourceMapInline: true
                 });
-            }, "multiple input and inline source map");
+            });
         });
         it("Should fail with SpiderMonkey and inline source map", function() {
             assert.throws(function() {
@@ -119,7 +119,7 @@ describe("minify", function() {
                     sourceMapInline: true,
                     spidermonkey: true
                 });
-            }, "SpiderMonkey and inline source map");
+            });
         });
     });
 
@@ -153,6 +153,32 @@ describe("minify", function() {
             });
             var code = result.code;
             assert.strictEqual(code, "//  comment1   comment2\nbar();");
+        });
+        it("should not drop #__PURE__ hint if function is retained", function() {
+            var result = Uglify.minify("var a = /*#__PURE__*/(function(){return 1})();", {
+                fromString: true,
+                output: {
+                    comments: "all",
+                    beautify: false,
+                }
+            });
+            var code = result.code;
+            assert.strictEqual(code, "var a=/*#__PURE__*/function(){return 1}();");
+        })
+    });
+
+    describe("JS_Parse_Error", function() {
+        it("should throw syntax error", function() {
+            assert.throws(function() {
+                Uglify.minify("function f(a{}", { fromString: true });
+            }, function(err) {
+                assert.ok(err instanceof Error);
+                assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token punc «{», expected punc «,»");
+                assert.strictEqual(err.filename, 0);
+                assert.strictEqual(err.line, 1);
+                assert.strictEqual(err.col, 12);
+                return true;
+            });
         });
     });
 

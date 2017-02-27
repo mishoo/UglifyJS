@@ -199,4 +199,43 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should fail with invalid syntax", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/simple.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            var lines = stderr.split(/\n/);
+            assert.strictEqual(lines[0], "Parse error at test/input/invalid/simple.js:1,12");
+            assert.strictEqual(lines[1], "function f(a{}");
+            assert.strictEqual(lines[2], "            ^");
+            assert.strictEqual(lines[3], "SyntaxError: Unexpected token punc «{», expected punc «,»");
+            done();
+        });
+    });
+    it("Should fail with correct marking of tabs", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/tab.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            var lines = stderr.split(/\n/);
+            assert.strictEqual(lines[0], "Parse error at test/input/invalid/tab.js:1,12");
+            assert.strictEqual(lines[1], "\t\tfoo(\txyz, 0abc);");
+            assert.strictEqual(lines[2], "\t\t    \t     ^");
+            assert.strictEqual(lines[3], "SyntaxError: Invalid syntax: 0abc");
+            done();
+        });
+    });
+    it("Should fail with correct marking at start of line", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/eof.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            var lines = stderr.split(/\n/);
+            assert.strictEqual(lines[0], "Parse error at test/input/invalid/eof.js:2,0");
+            assert.strictEqual(lines[1], "foo, bar(");
+            assert.strictEqual(lines[2], "         ^");
+            assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
+            done();
+        });
+    });
 });

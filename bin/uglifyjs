@@ -364,7 +364,21 @@ async.eachLimit(files, 1, function (file, cb) {
                 } catch(ex) {
                     if (ex instanceof UglifyJS.JS_Parse_Error) {
                         print_error("Parse error at " + file + ":" + ex.line + "," + ex.col);
-                        print_error(ex.message);
+                        var col = ex.col;
+                        var line = code.split(/\r?\n/)[ex.line - (col ? 1 : 2)];
+                        if (line) {
+                            if (col > 40) {
+                                line = line.slice(col - 40);
+                                col = 40;
+                            }
+                            if (col) {
+                                print_error(line.slice(0, 80));
+                                print_error(line.slice(0, col).replace(/\S/g, " ") + "^");
+                            } else {
+                                print_error(line.slice(-40));
+                                print_error(line.slice(-40).replace(/\S/g, " ") + "^");
+                            }
+                        }
                         print_error(ex.stack);
                         process.exit(1);
                     }
@@ -390,7 +404,7 @@ async.eachLimit(files, 1, function (file, cb) {
         var compressor = COMPRESS && UglifyJS.Compressor(COMPRESS);
     } catch(ex) {
         if (ex instanceof UglifyJS.DefaultsError) {
-            print_error(ex.msg);
+            print_error(ex.message);
             print_error("Supported options:");
             print_error(sys.inspect(ex.defs));
             process.exit(1);
