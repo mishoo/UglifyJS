@@ -35,7 +35,7 @@ string_plus_optimization: {
                 throw "nope";
             }
             try {
-                console.log('0' + throwing_function() ? "yes" : "no");
+                console.log((throwing_function(), "yes"));
             } catch (ex) {
                 console.log(ex);
             }

@@ -64,7 +64,8 @@ dead_code_constant_boolean_should_warn_more: {
         loops        : true,
         booleans     : true,
         conditionals : true,
-        evaluate     : true
+        evaluate     : true,
+        side_effects : true,
     };
     input: {
         while (!((foo && bar) || (x + "0"))) {

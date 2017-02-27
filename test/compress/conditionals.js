@@ -50,7 +50,8 @@ ifs_3_should_warn: {
         conditionals : true,
         dead_code    : true,
         evaluate     : true,
-        booleans     : true
+        booleans     : true,
+        side_effects : true,
     };
     input: {
         var x, y;
@@ -135,16 +136,28 @@ ifs_6: {
         comparisons: true
     };
     input: {
-        var x;
+        var x, y;
         if (!foo && !bar && !baz && !boo) {
             x = 10;
         } else {
             x = 20;
         }
+        if (y) {
+            x[foo] = 10;
+        } else {
+            x[foo] = 20;
+        }
+        if (foo) {
+            x[bar] = 10;
+        } else {
+            x[bar] = 20;
+        }
     }
     expect: {
-        var x;
+        var x, y;
         x = foo || bar || baz || boo ? 20 : 10;
+        x[foo] = y ? 10 : 20;
+        foo ? x[bar] = 10 : x[bar] = 20;
     }
 }
 
@@ -159,10 +172,16 @@ cond_1: {
         } else {
             do_something(y);
         }
+        if (some_condition()) {
+            side_effects(x);
+        } else {
+            side_effects(y);
+        }
     }
     expect: {
         var do_something;
         do_something(some_condition() ? x : y);
+        some_condition() ? side_effects(x) : side_effects(y);
     }
 }
 
@@ -213,10 +232,16 @@ cond_4: {
         } else {
             do_something();
         }
+        if (some_condition()) {
+            side_effects();
+        } else {
+            side_effects();
+        }
     }
     expect: {
         var do_something;
         some_condition(), do_something();
+        some_condition(), side_effects();
     }
 }
 
@@ -250,7 +275,8 @@ cond_5: {
 cond_7: {
     options = {
         conditionals: true,
-        evaluate    : true
+        evaluate    : true,
+        side_effects: true,
     };
     input: {
         var x, y, z, a, b;
@@ -714,6 +740,7 @@ issue_1154: {
         conditionals: true,
         evaluate    : true,
         booleans    : true,
+        side_effects: true,
     };
     input: {
         function f1(x) { return x ? -1 : -1; }
@@ -742,7 +769,7 @@ issue_1154: {
         function g2() { return g(), 2; }
         function g3() { return g(), -4; }
         function g4() { return g(), !1; }
-        function g5() { return g(), void 0; }
+        function g5() { return void g(); }
         function g6() { return g(), "number"; }
     }
 }
@@ -750,7 +777,8 @@ issue_1154: {
 no_evaluate: {
     options = {
         conditionals: true,
-        evaluate    : false
+        evaluate    : false,
+        side_effects: true,
     }
     input: {
         function f(b) {
