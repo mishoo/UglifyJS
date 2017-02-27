@@ -382,4 +382,22 @@ describe("Arrow functions", function() {
         assert(ast.body[0].definitions[0].value.argnames[0].names[0].value.names[1].expression instanceof uglify.AST_SymbolFunarg);
     });
 
+    it("Should handle arrow function with bind", function() {
+        function minify(code) {
+            return uglify.minify(code, {
+                fromString: true,
+                mangle: false
+            }).code;
+        }
+
+        assert.strictEqual(
+            minify(minify("test(((index) => { console.log(this, index); }).bind(this, 1));")),
+            "test((index=>{console.log(this,index)}).bind(this,1));"
+        );
+        assert.strictEqual(
+            minify(minify('test(((index) => { console.log(this, index); })["bind"](this, 1));')),
+            "test((index=>{console.log(this,index)}).bind(this,1));"
+        );
+    });
+
 });
