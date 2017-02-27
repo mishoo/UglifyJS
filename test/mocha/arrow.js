@@ -15,7 +15,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: expand (...)";
+                e.message === "Unexpected token: expand (...)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -33,7 +33,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: punc (,)";
+                e.message === "Unexpected token: punc (,)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -54,7 +54,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected newline before arrow (=>)";
+                e.message === "Unexpected newline before arrow (=>)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -73,7 +73,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: arrow (=>)";
+                e.message === "Unexpected token: arrow (=>)";
         }
 
         for (var i = 0; i < tests.length; i++) {

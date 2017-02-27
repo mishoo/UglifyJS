@@ -17,7 +17,7 @@ describe("Unicode", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && e.message === "SyntaxError: Unicode reference out of bounce";
+                && e.message === "Unicode reference out of bounce";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -40,7 +40,7 @@ describe("Unicode", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && e.message === "SyntaxError: Invalid hex-character pattern in string";
+                && e.message === "Invalid hex-character pattern in string";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -67,7 +67,7 @@ describe("Unicode", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && e.message === "SyntaxError: First identifier char is an invalid identifier char";
+                && e.message === "First identifier char is an invalid identifier char";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -90,7 +90,7 @@ describe("Unicode", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && e.message === "SyntaxError: Invalid escaped identifier char";
+                && e.message === "Invalid escaped identifier char";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -115,7 +115,7 @@ describe("Unicode", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && e.message === "SyntaxError: Escaped characters are not allowed in keywords";
+                && e.message === "Escaped characters are not allowed in keywords";
         }
 
         for (var i = 0; i < tests.length; i++) {

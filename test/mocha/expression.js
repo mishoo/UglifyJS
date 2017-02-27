@@ -16,7 +16,7 @@ describe("Expression", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                /^SyntaxError: Unexpected token: operator \((?:[!+~-]|void|typeof|delete)\)/.test(e.message);
+                /^Unexpected token: operator \((?:[!+~-]|void|typeof|delete)\)/.test(e.message);
         }
 
         var exec = function(test) {

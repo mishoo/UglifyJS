@@ -4,8 +4,7 @@ var uglify = require("../../");
 describe("EOF", function() {
     it("Should test code for at least throwing syntax error when incomplete", function() {
         var error = function(e) {
-            return e instanceof uglify.JS_Parse_Error &&
-                /^SyntaxError: /.test(e.message);
+            return e instanceof uglify.JS_Parse_Error;
         }
         var parse = function(test) {
             return function() {
