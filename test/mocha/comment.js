@@ -13,7 +13,7 @@ describe("Comment", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: operator (>)" &&
+                e.message === "Unexpected token: operator (>)" &&
                 e.line === 2 &&
                 e.col === 0;
         }
@@ -37,7 +37,7 @@ describe("Comment", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: operator (>)" &&
+                e.message === "Unexpected token: operator (>)" &&
                 e.line === 5 &&
                 e.col === 0;
         }

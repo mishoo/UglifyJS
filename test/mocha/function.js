@@ -177,7 +177,7 @@ describe("Function", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message.substr(0, 31) === "SyntaxError: Unexpected token: ";
+                /^Unexpected token: /.test(e.message);
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -196,7 +196,7 @@ describe("Function", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Invalid function parameter";
+                e.message === "Invalid function parameter";
         }
         for (var i = 0; i < tests.length; i++) {
             assert.throws(test(tests[i]), error);
@@ -243,7 +243,7 @@ describe("Function", function() {
         }
         var error = function (e) {
             return e instanceof uglify.JS_Parse_Error &&
-                /^SyntaxError: Parameter [a-zA-Z]+ was used already$/.test(e.message);
+                /^Parameter [a-zA-Z]+ was used already$/.test(e.message);
         }
         for (var i = 0; i < tests.length; i++) {
             assert.throws(test(tests[i]), error, tests[i]);

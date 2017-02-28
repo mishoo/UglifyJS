@@ -89,7 +89,7 @@ describe("New", function() {
     it("Should check target in new.target", function() {
         assert.throws(function() {uglify.parse("new.blah")}, function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && e.message === "SyntaxError: Unexpected token name «blah», expected name «target»";
+                && e.message === "Unexpected token name «blah», expected name «target»";
         });
     });
 });

@@ -37,6 +37,15 @@ UglifyJS.AST_Node.warn_function = function(txt) {
     console.error("WARN: %s", txt);
 };
 
+function read_source_map(code) {
+    var match = /\n\/\/# sourceMappingURL=data:application\/json(;.*?)?;base64,(.*)/.exec(code);
+    if (!match) {
+        UglifyJS.AST_Node.warn("inline source map not found");
+        return null;
+    }
+    return JSON.parse(new Buffer(match[2], "base64"));
+}
+
 exports.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
         spidermonkey     : false,
@@ -57,17 +66,28 @@ exports.minify = function(files, options) {
     });
     UglifyJS.base54.reset();
 
+    var inMap = options.inSourceMap;
+    if (typeof inMap == "string" && inMap != "inline") {
+        inMap = JSON.parse(fs.readFileSync(inMap, "utf8"));
+    }
+
     // 1. parse
     var toplevel = null,
         sourcesContent = {};
 
     if (options.spidermonkey) {
+        if (inMap == "inline") {
+            throw new Error("inline source map only works with built-in parser");
+        }
         toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
     } else {
         function addFile(file, fileUrl) {
             var code = options.fromString
                 ? file
                 : fs.readFileSync(file, "utf8");
+            if (inMap == "inline") {
+                inMap = read_source_map(code);
+            }
             sourcesContent[fileUrl] = code;
             toplevel = UglifyJS.parse(code, {
                 filename: fileUrl,
@@ -75,7 +95,12 @@ exports.minify = function(files, options) {
                 bare_returns: options.parse ? options.parse.bare_returns : undefined
             });
         }
-        if (!options.fromString) files = UglifyJS.simple_glob(files);
+        if (!options.fromString) {
+            files = UglifyJS.simple_glob(files);
+            if (inMap == "inline" && files.length > 1) {
+                throw new Error("inline source map only works with singular input");
+            }
+        }
         [].concat(files).forEach(function (files, i) {
             if (typeof files === 'string') {
                 addFile(files, options.fromString ? i : files);
@@ -114,11 +139,7 @@ exports.minify = function(files, options) {
     }
 
     // 5. output
-    var inMap = options.inSourceMap;
-    var output = {};
-    if (typeof options.inSourceMap == "string") {
-        inMap = JSON.parse(fs.readFileSync(options.inSourceMap, "utf8"));
-    }
+    var output = { max_line_len: 32000 };
     if (options.outSourceMap || options.sourceMapInline) {
         output.source_map = UglifyJS.SourceMap({
             // prefer outFileName, otherwise use outSourceMap without .map suffix

@@ -13,7 +13,8 @@ const_declaration: {
 
 const_pragma: {
     options = {
-        evaluate: true
+        evaluate: true,
+        reduce_vars: true,
     };
 
     input: {
@@ -27,7 +28,8 @@ const_pragma: {
 // for completeness' sake
 not_const: {
     options = {
-        evaluate: true
+        evaluate: true,
+        reduce_vars: true,
     };
 
     input: {

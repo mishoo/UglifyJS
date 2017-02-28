@@ -29,6 +29,7 @@ typeof_in_boolean_context: {
         booleans     : true,
         evaluate     : true,
         conditionals : true,
+        side_effects : true,
     };
     input: {
         function f1(x) { return typeof x ? "yes" : "no"; }
@@ -36,12 +37,14 @@ typeof_in_boolean_context: {
         typeof 0 ? foo() : bar();
         !typeof console.log(1);
         var a = !typeof console.log(2);
+        if (typeof (1 + foo()));
     }
     expect: {
         function f1(x) { return "yes"; }
         function f2() { return g(), "Yes"; }
         foo();
-        !(console.log(1), !0);
+        console.log(1);
         var a = !(console.log(2), !0);
+        foo();
     }
 }

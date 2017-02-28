@@ -1,5 +1,6 @@
 var Uglify = require('../../');
 var assert = require("assert");
+var readFileSync = require("fs").readFileSync;
 
 describe("minify", function() {
     it("Should test basic sanity of minify with default options", function() {
@@ -75,6 +76,51 @@ describe("minify", function() {
             assert.equal(map.sourcesContent[0],
                 'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
         });
+        it("Should process inline source map", function() {
+            var code = Uglify.minify("./test/input/issue-520/input.js", {
+                inSourceMap: "inline",
+                sourceMapInline: true
+            }).code + "\n";
+            assert.strictEqual(code, readFileSync("test/input/issue-520/output.js", "utf8"));
+        });
+        it("Should warn for missing inline source map", function() {
+            var warn_function = Uglify.AST_Node.warn_function;
+            var warnings = [];
+            Uglify.AST_Node.warn_function = function(txt) {
+                warnings.push(txt);
+            };
+            try {
+                var result = Uglify.minify("./test/input/issue-1323/sample.js", {
+                    inSourceMap: "inline",
+                    mangle: false,
+                });
+                assert.strictEqual(result.code, "var bar=function(){function foo(bar){return bar}return foo}();");
+                assert.strictEqual(warnings.length, 1);
+                assert.strictEqual(warnings[0], "inline source map not found");
+            } finally {
+                Uglify.AST_Node.warn_function = warn_function;
+            }
+        });
+        it("Should fail with multiple input and inline source map", function() {
+            assert.throws(function() {
+                Uglify.minify([
+                    "./test/input/issue-520/input.js",
+                    "./test/input/issue-520/output.js"
+                ], {
+                    inSourceMap: "inline",
+                    sourceMapInline: true
+                });
+            });
+        });
+        it("Should fail with SpiderMonkey and inline source map", function() {
+            assert.throws(function() {
+                Uglify.minify("./test/input/issue-520/input.js", {
+                    inSourceMap: "inline",
+                    sourceMapInline: true,
+                    spidermonkey: true
+                });
+            });
+        });
     });
 
     describe("sourceMapInline", function() {
@@ -95,4 +141,45 @@ describe("minify", function() {
             assert.strictEqual(code, "var a=function(n){return n};");
         });
     });
+
+    describe("#__PURE__", function() {
+        it("should drop #__PURE__ hint after use", function() {
+            var result = Uglify.minify('//@__PURE__ comment1 #__PURE__ comment2\n foo(), bar();', {
+                fromString: true,
+                output: {
+                    comments: "all",
+                    beautify: false,
+                }
+            });
+            var code = result.code;
+            assert.strictEqual(code, "//  comment1   comment2\nbar();");
+        });
+        it("should not drop #__PURE__ hint if function is retained", function() {
+            var result = Uglify.minify("var a = /*#__PURE__*/(function(){return 1})();", {
+                fromString: true,
+                output: {
+                    comments: "all",
+                    beautify: false,
+                }
+            });
+            var code = result.code;
+            assert.strictEqual(code, "var a=/*#__PURE__*/function(){return 1}();");
+        })
+    });
+
+    describe("JS_Parse_Error", function() {
+        it("should throw syntax error", function() {
+            assert.throws(function() {
+                Uglify.minify("function f(a{}", { fromString: true });
+            }, function(err) {
+                assert.ok(err instanceof Error);
+                assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token punc «{», expected punc «,»");
+                assert.strictEqual(err.filename, 0);
+                assert.strictEqual(err.line, 1);
+                assert.strictEqual(err.col, 12);
+                return true;
+            });
+        });
+    });
+
 });

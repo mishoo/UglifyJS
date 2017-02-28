@@ -692,3 +692,61 @@ unsafe_prototype_function: {
         var h = "" + ({toString: 0});
     }
 }
+
+call_args: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        const a = 1;
+        console.log(a);
+        +function(a) {
+            return a;
+        }(a);
+    }
+    expect: {
+        const a = 1;
+        console.log(1);
+        +function(a) {
+            return 1;
+        }(1);
+    }
+}
+
+in_boolean_context: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(
+            !42,
+            !"foo",
+            ![1, 2],
+            !/foo/,
+            !b(42),
+            !b("foo"),
+            !b([1, 2]),
+            !b(/foo/),
+            ![1, foo()],
+            ![1, foo(), 2]
+        );
+    }
+    expect: {
+        console.log(
+            !1,
+            !1,
+            !1,
+            !1,
+            !b(42),
+            !b("foo"),
+            !b([1, 2]),
+            !b(/foo/),
+            ![1, foo()],
+            (foo(), !1)
+        );
+    }
+}

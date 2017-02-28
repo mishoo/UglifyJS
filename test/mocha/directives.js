@@ -178,7 +178,7 @@ describe("Directives", function() {
                 throw new Error("Expected parser to fail");
             } catch (e) {
                 assert.strictEqual(e instanceof uglify.JS_Parse_Error, true);
-                assert.strictEqual(e.message, "SyntaxError: Unexpected token: punc (])");
+                assert.strictEqual(e.message, "Unexpected token: punc (])");
             }
 
             test_directive(tokenizer, tests[i]);

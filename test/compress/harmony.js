@@ -200,7 +200,7 @@ export_statement: {
 }
 
 import_statement_mangling: {
-    mangle = { };
+    mangle = { toplevel: true };
     input: {
         import Foo from "foo";
         import Bar, {Food} from "lel";

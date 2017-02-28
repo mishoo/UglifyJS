@@ -23,7 +23,7 @@ describe("Template string", function() {
 
         var fail = function(e) {
             return e instanceof uglify.JS_Parse_Error
-                && /^SyntaxError: Unexpected token: /.test(e.message);
+                && /^Unexpected token: /.test(e.message);
         };
 
         for (var i = 0; i < tests.length; i++) {

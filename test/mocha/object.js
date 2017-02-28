@@ -107,9 +107,9 @@ describe("Object", function() {
         var fail = function(data) {
             return function (e) {
                 return e instanceof Uglify.JS_Parse_Error && (
-                    e.message === "SyntaxError: Unexpected token: operator (" + data.operator + ")" ||
-                    (e.message === "SyntaxError: Unterminated regular expression" && data.operator[0] === "/") ||
-                    (e.message === "SyntaxError: Unexpected token: punc (()" && data.operator === "*")
+                    e.message === "Unexpected token: operator (" + data.operator + ")" ||
+                    (e.message === "Unterminated regular expression" && data.operator[0] === "/") ||
+                    (e.message === "Unexpected token: punc (()" && data.operator === "*")
                 );
             };
         };

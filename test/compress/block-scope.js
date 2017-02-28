@@ -89,6 +89,9 @@ remove_unused_in_global_block: {
     }
     expect: {
         var w;
+        let ex;
+        const why;
+        class Zed {};
         var wut;
         console.log(x, y, Zee);
     }

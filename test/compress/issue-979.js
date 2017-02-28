@@ -82,7 +82,7 @@ issue979_test_negated_is_best: {
             1!=a||2!=b||foo();
         }
         function f7() {
-            return 1!=a&&2!=b?bar():void foo();
+            if(1!=a&&2!=b)return bar();foo()
         }
     }
 }

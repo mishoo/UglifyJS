@@ -15,7 +15,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: expand (...)";
+                e.message === "Unexpected token: expand (...)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -33,7 +33,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: punc (,)";
+                e.message === "Unexpected token: punc (,)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -54,7 +54,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected newline before arrow (=>)";
+                e.message === "Unexpected newline before arrow (=>)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -73,7 +73,7 @@ describe("Arrow functions", function() {
         }
         var error = function(e) {
             return e instanceof uglify.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: arrow (=>)";
+                e.message === "Unexpected token: arrow (=>)";
         }
 
         for (var i = 0; i < tests.length; i++) {
@@ -380,6 +380,24 @@ describe("Arrow functions", function() {
         assert(ast.body[0].definitions[0].value.argnames[0].names[0].value.names[0] instanceof uglify.AST_SymbolFunarg);
         assert(ast.body[0].definitions[0].value.argnames[0].names[0].value.names[1] instanceof uglify.AST_Expansion);
         assert(ast.body[0].definitions[0].value.argnames[0].names[0].value.names[1].expression instanceof uglify.AST_SymbolFunarg);
+    });
+
+    it("Should handle arrow function with bind", function() {
+        function minify(code) {
+            return uglify.minify(code, {
+                fromString: true,
+                mangle: false
+            }).code;
+        }
+
+        assert.strictEqual(
+            minify(minify("test(((index) => { console.log(this, index); }).bind(this, 1));")),
+            "test((index=>{console.log(this,index)}).bind(this,1));"
+        );
+        assert.strictEqual(
+            minify(minify('test(((index) => { console.log(this, index); })["bind"](this, 1));')),
+            "test((index=>{console.log(this,index)}).bind(this,1));"
+        );
     });
 
 });

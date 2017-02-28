@@ -15,7 +15,7 @@ describe("Yield", function() {
         }
         var expect = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "SyntaxError: Yield cannot be used as label inside generators";
+                e.message === "Yield cannot be used as label inside generators";
         }
         assert.throws(test, expect);
     });
@@ -27,7 +27,7 @@ describe("Yield", function() {
         }
         var expect = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: punc (;)";
+                e.message === "Unexpected token: punc (;)";
         }
         assert.throws(test, expect);
     });
@@ -39,7 +39,7 @@ describe("Yield", function() {
         }
         var expect = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "SyntaxError: Unexpected token: operator (*)";
+                e.message === "Unexpected token: operator (*)";
         }
         assert.throws(test, expect);
     });
@@ -90,7 +90,7 @@ describe("Yield", function() {
 
         var fail = function(e) {
             return e instanceof UglifyJS.JS_Parse_Error &&
-                /SyntaxError: Unexpected yield identifier (?:as parameter )?inside strict mode/.test(e.message);
+                /^Unexpected yield identifier (?:as parameter )?inside strict mode/.test(e.message);
         }
 
         var test = function(input) {

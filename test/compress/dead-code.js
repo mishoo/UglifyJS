@@ -64,7 +64,8 @@ dead_code_constant_boolean_should_warn_more: {
         loops        : true,
         booleans     : true,
         conditionals : true,
-        evaluate     : true
+        evaluate     : true,
+        side_effects : true,
     };
     input: {
         while (!((foo && bar) || (x + "0"))) {
@@ -116,7 +117,8 @@ dead_code_const_declaration: {
         loops        : true,
         booleans     : true,
         conditionals : true,
-        evaluate     : true
+        evaluate     : true,
+        reduce_vars  : true,
     };
     input: {
         var unused;
@@ -141,7 +143,8 @@ dead_code_const_annotation: {
         loops        : true,
         booleans     : true,
         conditionals : true,
-        evaluate     : true
+        evaluate     : true,
+        reduce_vars  : true,
     };
     input: {
         var unused;
@@ -189,7 +192,8 @@ dead_code_const_annotation_complex_scope: {
         loops        : true,
         booleans     : true,
         conditionals : true,
-        evaluate     : true
+        evaluate     : true,
+        reduce_vars  : true,
     };
     input: {
         var unused_var;
@@ -223,6 +227,5 @@ dead_code_const_annotation_complex_scope: {
         var beef = 'good';
         var meat = 'beef';
         var pork = 'bad';
-        'good' === pork && console.log('reached, not const');
     }
 }
