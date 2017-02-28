@@ -57,7 +57,7 @@ describe("bin/uglifyjs", function () {
            if (err) throw err;
 
            assert.strictEqual(stdout, "var bar=function(){function foo(bar){return bar}return foo}();\n" +
-               "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxHQUFJQSxLQUFPLFdBQ1AsUUFBU0MsS0FBS0QsS0FDVixNQUFPQSxLQUdYLE1BQU9DIn0=\n");
+               "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxHQUFJQSxLQUFNLFdBQ04sUUFBU0MsS0FBS0QsS0FDVixNQUFPQSxLQUdYLE1BQU9DIn0=\n");
            done();
        });
     });
