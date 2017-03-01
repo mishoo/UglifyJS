@@ -431,6 +431,32 @@ unsafe_object_repeated: {
     }
 }
 
+unsafe_object_accessor: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f() {
+            var a = {
+                get b() {},
+                set b() {}
+            };
+            return {a:a};
+        }
+    }
+    expect: {
+        function f() {
+            var a = {
+                get b() {},
+                set b() {}
+            };
+            return {a:a};
+        }
+    }
+}
+
 unsafe_function: {
     options = {
         evaluate  : true,

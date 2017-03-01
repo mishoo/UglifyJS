@@ -624,7 +624,7 @@ function uglify(ast, options, mangle) {
 
   // Compression
   uAST.figure_out_scope();
-  uAST = uAST.transform(UglifyJS.Compressor(options));
+  uAST = UglifyJS.Compressor(options).compress(uAST);
 
   // Mangling (optional)
   if (mangle) {
@@ -868,7 +868,7 @@ toplevel.figure_out_scope()
 Like this:
 ```javascript
 var compressor = UglifyJS.Compressor(options);
-var compressed_ast = toplevel.transform(compressor);
+var compressed_ast = compressor.compress(toplevel);
 ```
 
 The `options` can be missing.  Available options are discussed above in
