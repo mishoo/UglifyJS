@@ -632,7 +632,7 @@ iife: {
     }
     expect: {
         function f() {
-            ~function() {}(b);
+            b;
         }
     }
 }
