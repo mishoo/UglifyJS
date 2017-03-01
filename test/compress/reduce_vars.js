@@ -470,3 +470,122 @@ multi_def_2: {
         var repeatLength = this.getBits(bitsLength) + bitsOffset;
     }
 }
+
+use_before_var: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(t);
+        var t = 1;
+    }
+    expect: {
+        console.log(t);
+        var t = 1;
+    }
+}
+
+inner_var_if: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(){
+            return 0;
+        }
+        if (f())
+            var t = 1;
+        if (!t)
+            console.log(t);
+    }
+    expect: {
+        function f(){
+            return 0;
+        }
+        if (f())
+            var t = 1;
+        if (!t)
+            console.log(t);
+    }
+}
+
+inner_var_label: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(){
+            return 1;
+        }
+        l: {
+            if (f()) break l;
+            var t = 1;
+        }
+        console.log(t);
+    }
+    expect: {
+        function f(){
+            return 1;
+        }
+        l: {
+            if (f()) break l;
+            var t = 1;
+        }
+        console.log(t);
+    }
+}
+
+inner_var_for: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 1;
+        x(a, b, d);
+        for (var b = 2, c = 3; x(a, b, c, d); x(a, b, c, d)) {
+            var d = 4, e = 5;
+            x(a, b, c, d, e);
+        }
+        x(a, b, c, d, e)
+    }
+    expect: {
+        var a = 1;
+        x(1, b, d);
+        for (var b = 2, c = 3; x(1, b, 3, d); x(1, b, 3, d)) {
+            var d = 4, e = 5;
+            x(1, b, 3, d, e);
+        }
+        x(1, b, 3, d, e);
+    }
+}
+
+inner_var_for_in: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 1, b = 2;
+        for (b in (function() {
+            return x(a, b, c);
+        })()) {
+            var c = 3, d = 4;
+            x(a, b, c, d);
+        }
+        x(a, b, c, d);
+    }
+    expect: {
+        var a = 1, b = 2;
+        for (b in (function() {
+            return x(1, b, c);
+        })()) {
+            var c = 3, d = 4;
+            x(1, b, c, d);
+        }
+        x(1, b, c, d);
+    }
+}
