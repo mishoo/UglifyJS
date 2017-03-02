@@ -646,6 +646,29 @@ call_args: {
     }
 }
 
+call_args_drop_param: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        const a = 1;
+        console.log(a);
+        +function(a) {
+            return a;
+        }(a, b);
+    }
+    expect: {
+        const a = 1;
+        console.log(1);
+        +function() {
+            return 1;
+        }(b);
+    }
+}
+
 in_boolean_context: {
     options = {
         booleans: true,
