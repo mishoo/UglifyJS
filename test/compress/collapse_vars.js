@@ -1141,7 +1141,7 @@ collapse_vars_constants: {
         function f3(x) {
             var b = x.prop;
             sideeffect1();
-            return b + (function() { return -9; })();
+            return b + -9;
         }
     }
 }
