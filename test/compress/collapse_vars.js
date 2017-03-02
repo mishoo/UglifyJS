@@ -1315,3 +1315,17 @@ collapse_vars_regexp: {
         })();
     }
 }
+
+issue_1537: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var k = '';
+        for (k in {prop: 'val'}){}
+    }
+    expect: {
+        var k = '';
+        for (k in {prop: 'val'});
+    }
+}
