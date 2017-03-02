@@ -337,6 +337,32 @@ unsafe_object_repeated: {
     }
 }
 
+unsafe_object_accessor: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f() {
+            var a = {
+                get b() {},
+                set b() {}
+            };
+            return {a:a};
+        }
+    }
+    expect: {
+        function f() {
+            var a = {
+                get b() {},
+                set b() {}
+            };
+            return {a:a};
+        }
+    }
+}
+
 unsafe_function: {
     options = {
         evaluate  : true,
@@ -617,6 +643,29 @@ call_args: {
         +function(a) {
             return 1;
         }(1);
+    }
+}
+
+call_args_drop_param: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        const a = 1;
+        console.log(a);
+        +function(a) {
+            return a;
+        }(a, b);
+    }
+    expect: {
+        const a = 1;
+        console.log(1);
+        +function() {
+            return 1;
+        }(b);
     }
 }
 

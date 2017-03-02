@@ -6,3 +6,71 @@ non_ascii_function_identifier_name: {
     }
     expect_exact: "function fooλ(δλ){}function λ(δλ){}(function λ(δλ){})();"
 }
+
+iifes_returning_constants_keep_fargs_true: {
+    options = {
+        keep_fargs    : true,
+        side_effects  : true,
+        evaluate      : true,
+        unused        : true,
+        dead_code     : true,
+        conditionals  : true,
+        comparisons   : true,
+        booleans      : true,
+        if_return     : true,
+        join_vars     : true,
+        reduce_vars   : true,
+        cascade       : true,
+    }
+    input: {
+        (function(){ return -1.23; }());
+        console.log( function foo(){ return "okay"; }() );
+        console.log( function foo(x, y, z){ return 123; }() );
+        console.log( function(x, y, z){ return z; }() );
+        console.log( function(x, y, z){ if (x) return y; return z; }(1, 2, 3) );
+        console.log( function(x, y){ return x * y; }(2, 3) );
+        console.log( function(x, y){ return x * y; }(2, 3, a(), b()) );
+    }
+    expect: {
+        console.log("okay");
+        console.log(123);
+        console.log(void 0);
+        console.log(function(x,y,z){return 2}(1,2,3));
+        console.log(function(x,y){return 6}(2,3));
+        console.log(function(x, y){return 6}(2,3,a(),b()));
+    }
+}
+
+iifes_returning_constants_keep_fargs_false: {
+    options = {
+        keep_fargs    : false,
+        side_effects  : true,
+        evaluate      : true,
+        unused        : true,
+        dead_code     : true,
+        conditionals  : true,
+        comparisons   : true,
+        booleans      : true,
+        if_return     : true,
+        join_vars     : true,
+        reduce_vars   : true,
+        cascade       : true,
+    }
+    input: {
+        (function(){ return -1.23; }());
+        console.log( function foo(){ return "okay"; }() );
+        console.log( function foo(x, y, z){ return 123; }() );
+        console.log( function(x, y, z){ return z; }() );
+        console.log( function(x, y, z){ if (x) return y; return z; }(1, 2, 3) );
+        console.log( function(x, y){ return x * y; }(2, 3) );
+        console.log( function(x, y){ return x * y; }(2, 3, a(), b()) );
+    }
+    expect: {
+        console.log("okay");
+        console.log(123);
+        console.log(void 0);
+        console.log(2);
+        console.log(6);
+        console.log(function(){return 6}(a(),b()));
+    }
+}
