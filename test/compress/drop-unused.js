@@ -679,3 +679,24 @@ const_assign: {
         }
     }
 }
+
+issue_1539: {
+    options = {
+        cascade: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a, b;
+            a = b = 42;
+            return a;
+        }
+    }
+    expect: {
+        function f() {
+            return 42;
+        }
+    }
+}
