@@ -563,7 +563,7 @@ inner_var_for: {
     }
 }
 
-inner_var_for_in: {
+inner_var_for_in_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -587,5 +587,56 @@ inner_var_for_in: {
             x(1, b, c, d);
         }
         x(1, b, c, d);
+    }
+}
+
+inner_var_for_in_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        for (var long_name in {})
+            console.log(long_name);
+    }
+    expect: {
+        for (var long_name in {})
+            console.log(long_name);
+    }
+}
+
+issue_1533_1: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        var id = "";
+        for (id in {break: "me"})
+            console.log(id);
+    }
+    expect: {
+        var id = "";
+        for (id in {break: "me"})
+            console.log(id);
+    }
+}
+
+issue_1533_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var id = "";
+        for (var id in {break: "me"})
+            console.log(id);
+        console.log(id);
+    }
+    expect: {
+        var id = "";
+        for (var id in {break: "me"})
+            console.log(id);
+        console.log(id);
     }
 }

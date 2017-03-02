@@ -155,7 +155,7 @@ describe("minify", function() {
             assert.strictEqual(code, "//  comment1   comment2\nbar();");
         });
         it("should not drop #__PURE__ hint if function is retained", function() {
-            var result = Uglify.minify("var a = /*#__PURE__*/(function(){return 1})();", {
+            var result = Uglify.minify("var a = /*#__PURE__*/(function(){ foo(); })();", {
                 fromString: true,
                 output: {
                     comments: "all",
@@ -163,7 +163,7 @@ describe("minify", function() {
                 }
             });
             var code = result.code;
-            assert.strictEqual(code, "var a=/*#__PURE__*/function(){return 1}();");
+            assert.strictEqual(code, "var a=/*#__PURE__*/function(){foo()}();");
         })
     });
 

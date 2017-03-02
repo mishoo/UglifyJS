@@ -38,10 +38,10 @@ negate_iife_3: {
         conditionals: true
     };
     input: {
-        (function(){ return true })() ? console.log(true) : console.log(false);
+        (function(){ return t })() ? console.log(true) : console.log(false);
     }
     expect: {
-        !function(){ return true }() ? console.log(false) : console.log(true);
+        !function(){ return t }() ? console.log(false) : console.log(true);
     }
 }
 
@@ -51,10 +51,10 @@ negate_iife_3_off: {
         conditionals: true,
     };
     input: {
-        (function(){ return true })() ? console.log(true) : console.log(false);
+        (function(){ return t })() ? console.log(true) : console.log(false);
     }
     expect: {
-        !function(){ return true }() ? console.log(false) : console.log(true);
+        !function(){ return t }() ? console.log(false) : console.log(true);
     }
 }
 
@@ -65,13 +65,13 @@ negate_iife_4: {
         sequences: true
     };
     input: {
-        (function(){ return true })() ? console.log(true) : console.log(false);
+        (function(){ return t })() ? console.log(true) : console.log(false);
         (function(){
             console.log("something");
         })();
     }
     expect: {
-        !function(){ return true }() ? console.log(false) : console.log(true), function(){
+        !function(){ return t }() ? console.log(false) : console.log(true), function(){
             console.log("something");
         }();
     }
@@ -86,7 +86,7 @@ sequence_off: {
     };
     input: {
         function f() {
-            (function(){ return true })() ? console.log(true) : console.log(false);
+            (function(){ return t })() ? console.log(true) : console.log(false);
             (function(){
                 console.log("something");
             })();
@@ -95,19 +95,19 @@ sequence_off: {
             (function(){
                 console.log("something");
             })();
-            (function(){ return true })() ? console.log(true) : console.log(false);
+            (function(){ return t })() ? console.log(true) : console.log(false);
         }
     }
     expect: {
         function f() {
-            !function(){ return true }() ? console.log(false) : console.log(true), function(){
+            !function(){ return t }() ? console.log(false) : console.log(true), function(){
                 console.log("something");
             }();
         }
         function g() {
             (function(){
                 console.log("something");
-            })(), function(){ return true }() ? console.log(true) : console.log(false);
+            })(), function(){ return t }() ? console.log(true) : console.log(false);
         }
     }
 }
@@ -119,7 +119,7 @@ negate_iife_5: {
         conditionals: true,
     };
     input: {
-        if ((function(){ return true })()) {
+        if ((function(){ return t })()) {
             foo(true);
         } else {
             bar(false);
@@ -129,7 +129,7 @@ negate_iife_5: {
         })();
     }
     expect: {
-        !function(){ return true }() ? bar(false) : foo(true), function(){
+        !function(){ return t }() ? bar(false) : foo(true), function(){
             console.log("something");
         }();
     }
@@ -142,7 +142,7 @@ negate_iife_5_off: {
         conditionals: true,
     };
     input: {
-        if ((function(){ return true })()) {
+        if ((function(){ return t })()) {
             foo(true);
         } else {
             bar(false);
@@ -152,7 +152,7 @@ negate_iife_5_off: {
         })();
     }
     expect: {
-        !function(){ return true }() ? bar(false) : foo(true), function(){
+        !function(){ return t }() ? bar(false) : foo(true), function(){
             console.log("something");
         }();
     }

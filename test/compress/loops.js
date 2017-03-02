@@ -213,6 +213,30 @@ evaluate: {
             a();
         for(;;)
             c();
-        d();
+        // rule disabled due to issue_1532
+        do d(); while (false);
+    }
+}
+
+issue_1532: {
+    options = {
+        evaluate: true,
+        loops: true,
+    }
+    input: {
+        function f(x, y) {
+            do {
+                if (x) break;
+                foo();
+            } while (false);
+        }
+    }
+    expect: {
+        function f(x, y) {
+            do {
+                if (x) break;
+                foo();
+            } while (false);
+        }
     }
 }
