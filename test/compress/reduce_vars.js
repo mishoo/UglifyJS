@@ -589,3 +589,39 @@ inner_var_for_in: {
         x(1, b, c, d);
     }
 }
+
+issue_1533_1: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        var id = "";
+        for (id in {break: "me"})
+            console.log(id);
+    }
+    expect: {
+        var id = "";
+        for (id in {break: "me"})
+            console.log(id);
+    }
+}
+
+issue_1533_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var id = "";
+        for (var id in {break: "me"})
+            console.log(id);
+        console.log(id);
+    }
+    expect: {
+        var id = "";
+        for (var id in {break: "me"})
+            console.log(id);
+        console.log(id);
+    }
+}
