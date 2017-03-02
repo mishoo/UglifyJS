@@ -251,3 +251,45 @@ destructuring_dont_evaluate_with_undefined_as_default_assignment: {
         [foo = void 0] = bar;
     }
 }
+
+reduce_vars: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        {const [aa, [bb, cc]] = dd;}
+        {let [aa, [bb, cc]] = dd;}
+        var [aa, [bb, cc]] = dd;
+        [aa, [bb, cc]] = dd;
+        {const {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        {let {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        var {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};
+        ({aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}});
+        const [{a},b] = c;
+        let [{a},b] = c;
+        var [{a},b] = c;
+        [{a},b] = c;
+        for (const [x,y] in pairs);
+        for (let [x,y] in pairs);
+        for (var [x,y] in pairs);
+        for ([x,y] in pairs);
+    }
+    expect: {
+        {const [aa, [bb, cc]] = dd;}
+        {let [aa, [bb, cc]] = dd;}
+        var [aa, [bb, cc]] = dd;
+        [aa, [bb, cc]] = dd;
+        {const {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        {let {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};}
+        var {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};
+        ({aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}});
+        const [{a},b] = c;
+        let [{a},b] = c;
+        var [{a},b] = c;
+        [{a},b] = c;
+        for (const [x,y] in pairs);
+        for (let [x,y] in pairs);
+        for (var [x,y] in pairs);
+        for ([x,y] in pairs);
+    }
+}

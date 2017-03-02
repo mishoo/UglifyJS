@@ -1141,7 +1141,7 @@ collapse_vars_constants: {
         function f3(x) {
             var b = x.prop;
             sideeffect1();
-            return b + (function() { return -9; })();
+            return b + -9;
         }
     }
 }
@@ -1313,5 +1313,33 @@ collapse_vars_regexp: {
             while (result = rx.exec('acdabcdeabbb'))
                 console.log(result[0]);
         })();
+    }
+}
+
+issue_1537: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var k = '';
+        for (k in {prop: 'val'}){}
+    }
+    expect: {
+        var k = '';
+        for (k in {prop: 'val'});
+    }
+}
+
+issue_1537_for_of: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var k = '';
+        for (k of {prop: 'val'}){}
+    }
+    expect: {
+        var k = '';
+        for (k of {prop: 'val'});
     }
 }
