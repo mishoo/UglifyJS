@@ -69,3 +69,12 @@ html_comment_in_string_literal: {
     }
     expect_exact: 'function f(){return"\\x3c!--HTML--\\x3ecomment in\\x3c!--string literal--\\x3e"}';
 }
+
+html_comment_after_multiline_comment: {
+    input: {
+        var foo; /*
+*/-->   var bar;
+        var foobar;
+    }
+    expect_exact: "var foo;var foobar;"
+}

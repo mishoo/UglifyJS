@@ -31,7 +31,8 @@ describe("Comment", function() {
             "/*Some comment 2\r\n\r\n\r\n*/\r\n>\n\n\n\n\n\n",
             "/*Some comment 3\r\r\r*/\r>\n\n\n\n\n\n",
             "/*Some comment 4\u2028\u2028\u2028*/\u2028>\n\n\n\n\n\n",
-            "/*Some comment 5\u2029\u2029\u2029*/\u2029>\n\n\n\n\n\n"
+            "/*Some comment 5\u2029\u2029\u2029*/\u2029>\n\n\n\n\n\n",
+            "/*Some comment 6\udbff\udfff\udbff\udfff\n\n\n*/\n>\n\n\n\n\n"
         ];
 
         var fail = function(e) {
@@ -43,7 +44,7 @@ describe("Comment", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.throws(function() {
-                uglify.parse(tests[i], {fromString: true})
+                uglify.parse(tests[i], {fromString: true});
             }, fail, tests[i]);
         }
     });
