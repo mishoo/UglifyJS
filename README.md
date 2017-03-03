@@ -350,6 +350,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
+- `unsafe_math` (default: false) -- optimize numerical expressions like
+  `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
+
 - `unsafe_proto` (default: false) -- optimize expressions like
   `Array.prototype.slice.call(a)` into `[].slice.call(a)`
 
