@@ -132,3 +132,37 @@ dont_screw_try_catch_undefined: {
         }
     }
 }
+
+reduce_vars: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        screw_ie8: false,
+        unused: true,
+    }
+    mangle = {
+        screw_ie8: false,
+    }
+    input: {
+        function f() {
+            var a;
+            try {
+                x();
+            } catch (a) {
+                y();
+            }
+            alert(a);
+        }
+    }
+    expect: {
+        function f() {
+            var t;
+            try {
+                x();
+            } catch (t) {
+                y();
+            }
+            alert(t);
+        }
+    }
+}

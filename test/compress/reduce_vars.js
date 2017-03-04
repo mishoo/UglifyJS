@@ -605,6 +605,29 @@ inner_var_for_in_2: {
     }
 }
 
+inner_var_catch: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        try {
+            a();
+        } catch (e) {
+            var b = 1;
+        }
+        console.log(b);
+    }
+    expect: {
+        try {
+            a();
+        } catch (e) {
+            var b = 1;
+        }
+        console.log(b);
+    }
+}
+
 issue_1533_1: {
     options = {
         collapse_vars: true,
