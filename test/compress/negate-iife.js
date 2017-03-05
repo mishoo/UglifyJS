@@ -32,11 +32,52 @@ negate_iife_2: {
     }
 }
 
+negate_iife_2_side_effects: {
+    options = {
+        negate_iife: true,
+        side_effects: true,
+    }
+    input: {
+        (function(){ return {} })().x = 10; // should not transform this one
+    }
+    expect: {
+        (function(){ return {} })().x = 10;
+    }
+}
+
 negate_iife_3: {
     options = {
         negate_iife: true,
         conditionals: true
     };
+    input: {
+        (function(){ return t })() ? console.log(true) : console.log(false);
+    }
+    expect: {
+        !function(){ return t }() ? console.log(false) : console.log(true);
+    }
+}
+
+negate_iife_3_evaluate: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        negate_iife: true,
+    }
+    input: {
+        (function(){ return true })() ? console.log(true) : console.log(false);
+    }
+    expect: {
+        console.log(true);
+    }
+}
+
+negate_iife_3_side_effects: {
+    options = {
+        conditionals: true,
+        negate_iife: true,
+        side_effects: true,
+    }
     input: {
         (function(){ return t })() ? console.log(true) : console.log(false);
     }
@@ -55,6 +96,20 @@ negate_iife_3_off: {
     }
     expect: {
         !function(){ return t }() ? console.log(false) : console.log(true);
+    }
+}
+
+negate_iife_3_off_evaluate: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        negate_iife: false,
+    }
+    input: {
+        (function(){ return true })() ? console.log(true) : console.log(false);
+    }
+    expect: {
+        console.log(true);
     }
 }
 
@@ -318,5 +373,37 @@ issue_1288: {
         y ? function() {}() : function(z) {
             return z;
         }(0);
+    }
+}
+
+issue_1288_side_effects: {
+    options = {
+        conditionals: true,
+        negate_iife: true,
+        side_effects: true,
+    }
+    input: {
+        if (w) ;
+        else {
+            (function f() {})();
+        }
+        if (!x) {
+            (function() {
+                x = {};
+            })();
+        }
+        if (y)
+            (function() {})();
+        else
+            (function(z) {
+                return z;
+            })(0);
+    }
+    expect: {
+        w;
+        x || function() {
+            x = {};
+        }();
+        y;
     }
 }
