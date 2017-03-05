@@ -251,3 +251,36 @@ iife: {
         function d() {}(), function e() {}(), function f() {}(), function g() {}();
     }
 }
+
+unsafe_undefined: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        function f(undefined) {
+            if (a)
+                return b;
+            if (c)
+                return d;
+        }
+        function g(undefined) {
+            if (a)
+                return b;
+            if (c)
+                return d;
+            e();
+        }
+    }
+    expect: {
+        function f(undefined) {
+            return a ? b : c ? d : undefined;
+        }
+        function g(undefined) {
+            return a ? b : c ? d : void e();
+        }
+    }
+}
