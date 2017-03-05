@@ -8,7 +8,6 @@ var sys = require("util");
 var yargs = require("yargs");
 var fs = require("fs");
 var path = require("path");
-var async = require("async");
 var acorn;
 var screw_ie8 = true;
 var ARGS = yargs
@@ -27,7 +26,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Do not support Internet Explorer 6/7/8. This flag is enabled by default.")
-    .describe("support-ie8", "Support non-standard Internet Explorer 6/7/8 javascript. Note: may generate incorrect code for try/catch in ES5 compliant browsers.")
+    .describe("support-ie8", "Support non-standard Internet Explorer 6/7/8 javascript.")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \
@@ -319,8 +318,11 @@ var STATS = {};
 var TOPLEVEL = null;
 var P_RELATIVE = ARGS.p && ARGS.p == "relative";
 var SOURCES_CONTENT = {};
+var index = 0;
 
-async.eachLimit(files, 1, function (file, cb) {
+!function cb() {
+    if (index == files.length) return done();
+    var file = files[index++];
     read_whole_file(file, function (err, code) {
         if (err) {
             print_error("ERROR: can't read file: " + file);
@@ -388,7 +390,9 @@ async.eachLimit(files, 1, function (file, cb) {
         });
         cb();
     });
-}, function () {
+}();
+
+function done() {
     var OUTPUT_FILE = ARGS.o;
 
     var SOURCE_MAP = (ARGS.source_map || ARGS.source_map_inline) ? UglifyJS.SourceMap({
@@ -537,7 +541,7 @@ async.eachLimit(files, 1, function (file, cb) {
             }));
         }
     }
-});
+}
 
 /* -----[ functions ]----- */
 

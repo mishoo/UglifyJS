@@ -17,6 +17,26 @@ dont_screw: {
     expect_exact: 'f("\\x0B");';
 }
 
+do_screw_constants: {
+    options = {
+        screw_ie8: true,
+    }
+    input: {
+        f(undefined, Infinity);
+    }
+    expect_exact: "f(void 0,1/0);"
+}
+
+dont_screw_constants: {
+    options = {
+        screw_ie8: false,
+    }
+    input: {
+        f(undefined, Infinity);
+    }
+    expect_exact: "f(undefined,Infinity);"
+}
+
 do_screw_try_catch: {
     options = { screw_ie8: true };
     mangle = { screw_ie8: true };
@@ -46,8 +66,6 @@ do_screw_try_catch: {
 }
 
 dont_screw_try_catch: {
-    // This test is known to generate incorrect code for screw_ie8=false.
-    // Update expected result in the event this bug is ever fixed.
     options = { screw_ie8: false };
     mangle = { screw_ie8: false };
     beautify = { screw_ie8: false };
@@ -64,11 +82,11 @@ dont_screw_try_catch: {
     }
     expect: {
         bad = function(n){
-            return function(n){
+            return function(t){
                 try{
-                    t()
-                } catch(t) {
-                    n(t)
+                    n()
+                } catch(n) {
+                    t(n)
                 }
             }
         };
@@ -104,8 +122,6 @@ do_screw_try_catch_undefined: {
 }
 
 dont_screw_try_catch_undefined: {
-    // This test is known to generate incorrect code for screw_ie8=false.
-    // Update expected result in the event this bug is ever fixed.
     options = { screw_ie8: false };
     mangle = { screw_ie8: false };
     beautify = { screw_ie8: false };
@@ -121,14 +137,48 @@ dont_screw_try_catch_undefined: {
         };
     }
     expect: {
-        function a(o){
+        function a(n){
             try{
                 throw "Stuff"
-            } catch (n) {
-                console.log("caught: "+n)
+            } catch (undefined) {
+                console.log("caught: " + undefined)
             }
-            console.log("undefined is " + n);
-            return o === n
+            console.log("undefined is " + undefined);
+            return n === undefined
+        }
+    }
+}
+
+reduce_vars: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        screw_ie8: false,
+        unused: true,
+    }
+    mangle = {
+        screw_ie8: false,
+    }
+    input: {
+        function f() {
+            var a;
+            try {
+                x();
+            } catch (a) {
+                y();
+            }
+            alert(a);
+        }
+    }
+    expect: {
+        function f() {
+            var t;
+            try {
+                x();
+            } catch (t) {
+                y();
+            }
+            alert(t);
         }
     }
 }

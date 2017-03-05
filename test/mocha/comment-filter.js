@@ -72,4 +72,12 @@ describe("comment filters", function() {
         assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
         assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
     });
+
+    it("Should handle shebang and preamble correctly", function() {
+        var code = UglifyJS.minify("#!/usr/bin/node\nvar x = 10;", {
+            fromString: true,
+            output: { preamble: "/* Build */" }
+        }).code;
+        assert.strictEqual(code, "#!/usr/bin/node\n/* Build */\nvar x=10;");
+    })
 });
