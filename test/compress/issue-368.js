@@ -21,6 +21,16 @@ collapse: {
             var a;
             a = b(a / 2);
             if (a < 0) {
+                a++;
+                ++c;
+                return c / 2;
+            }
+        }
+        function f4(c) {
+            var a;
+            a = b(a / 2);
+            if (a < 0) {
+                a++;
                 c++;
                 return c / 2;
             }
@@ -35,7 +45,11 @@ collapse: {
         }
         function f3(c) {
             var a;
-            if ((a = b(a / 2)) < 0) return c++ / 2;
+            if ((a = b(a / 2)) < 0) return a++, ++c / 2;
+        }
+        function f4(c) {
+            var a;
+            if ((a = b(a / 2)) < 0) return a++, ++c / 2;
         }
     }
 }
