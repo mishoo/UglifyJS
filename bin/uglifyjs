@@ -26,7 +26,7 @@ mangling you need to use `-c` and `-m`.\
     .describe("source-map-include-sources", "Pass this flag if you want to include the content of source files in the source map as sourcesContent property.")
     .describe("in-source-map", "Input source map, useful if you're compressing JS that was generated from some other original code.")
     .describe("screw-ie8", "Do not support Internet Explorer 6/7/8. This flag is enabled by default.")
-    .describe("support-ie8", "Support non-standard Internet Explorer 6/7/8 javascript. Note: may generate incorrect code for try/catch in ES5 compliant browsers.")
+    .describe("support-ie8", "Support non-standard Internet Explorer 6/7/8 javascript.")
     .describe("expr", "Parse a single expression, rather than a program (for parsing JSON)")
     .describe("p", "Skip prefix for original filenames that appear in source maps. \
 For example -p 3 will drop 3 directories from file names and ensure they are relative paths. \

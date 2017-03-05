@@ -75,8 +75,6 @@ The available options are:
   --support-ie8                 Use this flag to support Internet Explorer 6/7/8.
                                 Equivalent to setting `screw_ie8: false` in `minify()`
                                 for `compress`, `mangle` and `output` options.
-                                Note: `--support-ie8` may generate incorrect code
-                                for `try`/`catch` in ES5 compliant browsers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear
