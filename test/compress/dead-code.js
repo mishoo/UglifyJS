@@ -123,6 +123,7 @@ dead_code_const_annotation: {
         conditionals : true,
         evaluate     : true,
         reduce_vars  : true,
+        toplevel     : true,
     };
     input: {
         var unused;
@@ -172,6 +173,7 @@ dead_code_const_annotation_complex_scope: {
         conditionals : true,
         evaluate     : true,
         reduce_vars  : true,
+        toplevel     : true,
     };
     input: {
         var unused_var;
