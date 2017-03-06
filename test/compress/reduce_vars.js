@@ -744,12 +744,11 @@ toplevel_on_loops_1: {
         while (x);
     }
     expect: {
-        function bar() {
-            console.log("bar:", --x);
-        }
         var x = 3;
         do
-            bar();
+            (function() {
+                console.log("bar:", --x);
+            })();
         while (x);
     }
 }
@@ -800,10 +799,9 @@ toplevel_on_loops_2: {
         while (x);
     }
     expect: {
-        function bar() {
+        for (;;) (function() {
             console.log("bar:");
-        }
-        for (;;) bar();
+        })();
     }
 }
 
@@ -867,5 +865,231 @@ toplevel_off_loops_3: {
     expect: {
         var x = 3;
         for (;x;) bar();
+    }
+}
+
+defun_reference: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            function g() {
+                x();
+                return a;
+            }
+            var a = h();
+            var b = 2;
+            return a + b;
+            function h() {
+                y();
+                return b;
+            }
+        }
+    }
+    expect: {
+        function f() {
+            function g() {
+                x();
+                return a;
+            }
+            var a = h();
+            var b = 2;
+            return a + b;
+            function h() {
+                y();
+                return b;
+            }
+        }
+    }
+}
+
+defun_inline_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return g(2) + h();
+            function g(b) {
+                return b;
+            }
+            function h() {
+                return h();
+            }
+        }
+    }
+    expect: {
+        function f() {
+            return function(b) {
+                return b;
+            }(2) + h();
+            function h() {
+                return h();
+            }
+        }
+    }
+}
+
+defun_inline_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g(b) {
+                return b;
+            }
+            function h() {
+                return h();
+            }
+            return g(2) + h();
+        }
+    }
+    expect: {
+        function f() {
+            function h() {
+                return h();
+            }
+            return function(b) {
+                return b;
+            }(2) + h();
+        }
+    }
+}
+
+defun_inline_3: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return g(2);
+            function g(b) {
+                return b;
+            }
+        }
+    }
+    expect: {
+        function f() {
+            return 2;
+        }
+    }
+}
+
+defun_call: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return g() + h(1) - h(g(), 2, 3);
+            function g() {
+                return 4;
+            }
+            function h(a) {
+                return a;
+            }
+        }
+    }
+    expect: {
+        function f() {
+            return 4 + h(1) - h(4);
+            function h(a) {
+                return a;
+            }
+        }
+    }
+}
+
+defun_redefine: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g() {
+                return 1;
+            }
+            function h() {
+                return 2;
+            }
+            g = function() {
+                return 3;
+            };
+            return g() + h();
+        }
+    }
+    expect:  {
+        function f() {
+            function g() {
+                return 1;
+            }
+            g = function() {
+                return 3;
+            };
+            return g() + 2;
+        }
+    }
+}
+
+func_inline: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var g = function() {
+                return 1;
+            };
+            console.log(g() + h());
+            var h = function() {
+                return 2;
+            };
+        }
+    }
+    expect: {
+        function f() {
+            console.log(1 + h());
+            var h = function() {
+                return 2;
+            };
+        }
+    }
+}
+
+func_modified: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            function a() { return 1; }
+            function b() { return 2; }
+            function c() { return 3; }
+            b.inject = [];
+            c = function() { return 4; };
+            return a() + b() + c();
+        }
+    }
+    expect: {
+        function f(a) {
+            function b() { return 2; }
+            function c() { return 3; }
+            b.inject = [];
+            c = function() { return 4; };
+            return 1 + 2 + c();
+        }
     }
 }
