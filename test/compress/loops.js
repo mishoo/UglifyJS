@@ -240,3 +240,159 @@ issue_1532: {
         }
     }
 }
+
+issue_186: {
+    beautify = {
+        beautify: false,
+        screw_ie8: true,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x=3;if(foo())do do alert(x);while(--x)while(x)else bar();'
+}
+
+issue_186_ie8: {
+    beautify = {
+        beautify: false,
+        screw_ie8: false,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x=3;if(foo())do do alert(x);while(--x)while(x)else bar();'
+}
+
+issue_186_beautify: {
+    beautify = {
+        beautify: true,
+        screw_ie8: true,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x = 3;\n\nif (foo()) do do alert(x); while (--x); while (x); else bar();'
+}
+
+issue_186_beautify_ie8: {
+    beautify = {
+        beautify: true,
+        screw_ie8: false,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x = 3;\n\nif (foo()) do do alert(x); while (--x) while (x) else bar();'
+}
+
+issue_186_bracketize: {
+    beautify = {
+        beautify: false,
+        bracketize: true,
+        screw_ie8: true,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x=3;if(foo()){do{do{alert(x)}while(--x)}while(x)}else{bar()}'
+}
+
+issue_186_bracketize_ie8: {
+    beautify = {
+        beautify: false,
+        bracketize: true,
+        screw_ie8: false,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x=3;if(foo()){do{do{alert(x)}while(--x)}while(x)}else{bar()}'
+}
+
+issue_186_beautify_bracketize: {
+    beautify = {
+        beautify: true,
+        bracketize: true,
+        screw_ie8: true,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x = 3;\n\nif (foo()) {\n    do {\n        do {\n            alert(x);\n        } while (--x);\n    } while (x);\n} else {\n    bar();\n}'
+}
+
+issue_186_beautify_bracketize_ie8: {
+    beautify = {
+        beautify: true,
+        bracketize: true,
+        screw_ie8: false,
+    }
+    input: {
+        var x = 3;
+        if (foo())
+            do
+                do
+                    alert(x);
+                while (--x);
+            while (x);
+        else
+            bar();
+    }
+    expect_exact: 'var x = 3;\n\nif (foo()) {\n    do {\n        do {\n            alert(x);\n        } while (--x)\n    } while (x)\n} else {\n    bar();\n}'
+}
