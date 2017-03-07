@@ -1093,3 +1093,32 @@ func_modified: {
         }
     }
 }
+
+defun_label: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function f(a) {
+                L: {
+                    if (a) break L;
+                    return 1;
+                }
+            }
+            console.log(f(2));
+        }();
+    }
+    expect: {
+        !function() {
+            console.log(function(a) {
+                L: {
+                    if (a) break L;
+                    return 1;
+                }
+            }(2));
+        }();
+    }
+}
