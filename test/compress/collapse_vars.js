@@ -344,9 +344,9 @@ collapse_vars_do_while: {
     }
     input: {
         function f1(y) {
-            // The constant do-while condition `c` will be replaced.
+            // The constant do-while condition `c` will not be replaced.
             var c = 9;
-            do { } while (c === 77);
+            do {} while (c === 77);
         }
         function f2(y) {
             // The non-constant do-while condition `c` will not be replaced.
@@ -381,7 +381,8 @@ collapse_vars_do_while: {
     }
     expect: {
         function f1(y) {
-            do ; while (false);
+            var c = 9;
+            do ; while (77 === c);
         }
         function f2(y) {
             var c = 5 - y;
@@ -418,9 +419,9 @@ collapse_vars_do_while_drop_assign: {
     }
     input: {
         function f1(y) {
-            // The constant do-while condition `c` will be replaced.
+            // The constant do-while condition `c` will be not replaced.
             var c = 9;
-            do { } while (c === 77);
+            do {} while (c === 77);
         }
         function f2(y) {
             // The non-constant do-while condition `c` will not be replaced.
@@ -455,7 +456,8 @@ collapse_vars_do_while_drop_assign: {
     }
     expect: {
         function f1(y) {
-            do ; while (false);
+            var c = 9;
+            do ; while (77 === c);
         }
         function f2(y) {
             var c = 5 - y;
@@ -1309,8 +1311,8 @@ collapse_vars_regexp: {
             };
         }
         (function(){
-            var result, rx = /ab*/g;
-            while (result = rx.exec('acdabcdeabbb'))
+            var result, s = "acdabcdeabbb", rx = /ab*/g;
+            while (result = rx.exec(s))
                 console.log(result[0]);
         })();
     }
@@ -1419,5 +1421,37 @@ issue_1537_destructuring_for_of: {
         (function() {
             for ([[x], y] of a);
         })();
+    }
+}
+
+issue_1562: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var v = 1, B = 2;
+        for (v in objs) f(B);
+
+        var x = 3, C = 10;
+        while(x + 2) bar(C);
+
+        var y = 4, D = 20;
+        do bar(D); while(y + 2);
+
+        var z = 5, E = 30;
+        for (; f(z + 2) ;) bar(E);
+    }
+    expect: {
+        var v = 1;
+        for (v in objs) f(2);
+
+        var x = 3;
+        while(x + 2) bar(10);
+
+        var y = 4;
+        do bar(20); while(y + 2);
+
+        var z = 5;
+        for (; f(z + 2) ;) bar(30);
     }
 }
