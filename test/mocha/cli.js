@@ -82,7 +82,7 @@ describe("bin/uglifyjs", function () {
        });
     });
     it("Should work with --keep-fnames (mangle & compress)", function (done) {
-       var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c';
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c unused=false';
 
        exec(command, function (err, stdout) {
            if (err) throw err;
