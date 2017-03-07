@@ -24,26 +24,57 @@ var results = {};
 var remaining = 2 * urls.length;
 function done() {
     if (!--remaining) {
+        var failures = [];
         urls.forEach(function(url) {
+            var info = results[url];
             console.log();
             console.log(url);
-            console.log(results[url].time);
-            console.log("SHA1:", results[url].sha1);
+            console.log(info.log);
+            var elapsed = 0;
+            info.log.replace(/: ([0-9]+\.[0-9]{3})s/g, function(match, time) {
+                elapsed += parseFloat(time);
+            });
+            console.log("Run-time:", elapsed.toFixed(3), "s");
+            console.log("Original:", info.input, "bytes");
+            console.log("Uglified:", info.output, "bytes");
+            console.log("SHA1 sum:", info.sha1);
+            if (info.code) {
+                failures.push(url);
+            }
         });
+        if (failures.length) {
+            console.error("Benchmark failed:");
+            failures.forEach(function(url) {
+                console.error(url);
+            });
+            process.exit(1);
+        }
     }
 }
 urls.forEach(function(url) {
-    results[url] = { time: "" };
+    results[url] = {
+        input: 0,
+        output: 0,
+        log: ""
+    };
     require(url.slice(0, url.indexOf(":"))).get(url, function(res) {
         var uglifyjs = fork("bin/uglifyjs", args, { silent: true });
-        res.pipe(uglifyjs.stdin);
-        uglifyjs.stdout.pipe(createHash("sha1")).on("data", function(data) {
+        res.on("data", function(data) {
+            results[url].input += data.length;
+        }).pipe(uglifyjs.stdin);
+        uglifyjs.stdout.on("data", function(data) {
+            results[url].output += data.length;
+        }).pipe(createHash("sha1")).on("data", function(data) {
             results[url].sha1 = data.toString("hex");
             done();
         });
         uglifyjs.stderr.setEncoding("utf8");
         uglifyjs.stderr.on("data", function(data) {
-            results[url].time += data;
-        }).on("end", done)
+            results[url].log += data;
+        });
+        uglifyjs.on("exit", function(code) {
+            results[url].code = code;
+            done();
+        });
     });
 });
