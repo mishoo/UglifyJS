@@ -700,3 +700,28 @@ issue_1539: {
         }
     }
 }
+
+vardef_value: {
+    options = {
+        keep_fnames: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g(){
+                return x();
+            }
+            var a = g();
+            return a(42);
+        }
+    }
+    expect: {
+        function f() {
+            var a = function(){
+                return x();
+            }();
+            return a(42);
+        }
+    }
+}
