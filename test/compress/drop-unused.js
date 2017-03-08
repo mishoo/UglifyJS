@@ -725,3 +725,39 @@ vardef_value: {
         }
     }
 }
+
+assign_binding: {
+    options = {
+        cascade: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a;
+            a = f.g, a();
+        }
+    }
+    expect: {
+        function f() {
+            (0, f.g)();
+        }
+    }
+}
+
+assign_chain: {
+    options = {
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a, b;
+            x = a = y = b = 42;
+        }
+    }
+    expect: {
+        function f() {
+            x = y = 42;
+        }
+    }
+}
