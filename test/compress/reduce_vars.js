@@ -1122,3 +1122,25 @@ defun_label: {
         }();
     }
 }
+
+double_reference: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var g = function g() {
+                g();
+            };
+            g();
+        }
+    }
+    expect: {
+        function f() {
+            (function g() {
+                g();
+            })();
+        }
+    }
+}
