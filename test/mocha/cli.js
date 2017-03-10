@@ -247,7 +247,7 @@ describe("bin/uglifyjs", function () {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/loop-no-body.js:2,0");
             assert.strictEqual(lines[1], "for (var i = 0; i < 1; i++) ");
             assert.strictEqual(lines[2], "                            ^");
-            assert.strictEqual(lines[3], "SyntaxError: Expected expression");
+            assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
             done();
         });
     });
