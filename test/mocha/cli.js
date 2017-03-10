@@ -238,4 +238,17 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should fail with a missing loop body", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/loop-no-body.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            var lines = stderr.split(/\n/);
+            assert.strictEqual(lines[0], "Parse error at test/input/invalid/loop-no-body.js:2,0");
+            assert.strictEqual(lines[1], "for (var i = 0; i < 1; i++) ");
+            assert.strictEqual(lines[2], "                            ^");
+            assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
+            done();
+        });
+    });
 });

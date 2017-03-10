@@ -182,3 +182,39 @@ reduce_vars: {
         }
     }
 }
+
+issue_1586_1: {
+    options = {
+        screw_ie8: false,
+    }
+    mangle = {
+        screw_ie8: false,
+    }
+    input: {
+        function f() {
+            try {
+            } catch (err) {
+                console.log(err.message);
+            }
+        }
+    }
+    expect_exact: "function f(){try{}catch(c){console.log(c.message)}}"
+}
+
+issue_1586_2: {
+    options = {
+        screw_ie8: true,
+    }
+    mangle = {
+        screw_ie8: true,
+    }
+    input: {
+        function f() {
+            try {
+            } catch (err) {
+                console.log(err.message);
+            }
+        }
+    }
+    expect_exact: "function f(){try{}catch(c){console.log(c.message)}}"
+}

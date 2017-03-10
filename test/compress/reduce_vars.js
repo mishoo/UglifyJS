@@ -1144,3 +1144,111 @@ double_reference: {
         }
     }
 }
+
+iife_arguments_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(x) {
+            console.log(x() === arguments[0]);
+        })(function f() {
+            return f;
+        });
+    }
+    expect: {
+        (function(x) {
+            console.log(x() === arguments[0]);
+        })(function f() {
+            return f;
+        });
+    }
+}
+
+iife_arguments_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var x = function f() {
+                return f;
+            };
+            console.log(x() === arguments[0]);
+        })();
+    }
+    expect: {
+        (function() {
+            console.log(function f() {
+                return f;
+            }() === arguments[0]);
+        })();
+    }
+}
+
+iife_eval_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(x) {
+            console.log(x() === eval("x"));
+        })(function f() {
+            return f;
+        });
+    }
+    expect: {
+        (function(x) {
+            console.log(x() === eval("x"));
+        })(function f() {
+            return f;
+        });
+    }
+}
+
+iife_eval_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var x = function f() {
+                return f;
+            };
+            console.log(x() === eval("x"));
+        })();
+    }
+    expect: {
+        (function() {
+            var x = function f() {
+                return f;
+            };
+            console.log(x() === eval("x"));
+        })();
+    }
+}
+
+iife_func_side_effects: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b, c) {
+            return b();
+        })(x(), function() {
+            return y();
+        }, z());
+    }
+    expect: {
+        (function(a, b, c) {
+            return function() {
+                return y();
+            }();
+        })(x(), 0, z());
+    }
+}
