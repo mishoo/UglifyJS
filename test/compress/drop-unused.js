@@ -842,3 +842,33 @@ assign_chain: {
         }
     }
 }
+
+issue_1583: {
+    options = {
+        keep_fargs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function m(t) {
+            (function(e) {
+                t = e();
+            })(function() {
+                return (function(a) {
+                    return a;
+                })(function(a) {});
+            });
+        }
+    }
+    expect: {
+        function m(t) {
+            (function(e) {
+                t = (function() {
+                    return (function(a) {
+                        return a;
+                    })(function(a) {});
+                })();
+            })();
+        }
+    }
+}
