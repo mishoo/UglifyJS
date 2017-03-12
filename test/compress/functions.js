@@ -37,7 +37,7 @@ iifes_returning_constants_keep_fargs_true: {
         console.log(void 0);
         console.log(2);
         console.log(6);
-        console.log((0, a(), b(), 6));
+        console.log((a(), b(), 6));
     }
 }
 

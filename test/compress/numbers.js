@@ -39,6 +39,7 @@ comparisons: {
 evaluate_1: {
     options = {
         evaluate: true,
+        passes: 2,
         unsafe_math: false,
     }
     input: {
@@ -78,6 +79,7 @@ evaluate_1: {
 evaluate_2: {
     options = {
         evaluate: true,
+        passes: 2,
         unsafe_math: true,
     }
     input: {
@@ -98,7 +100,7 @@ evaluate_2: {
         console.log(
             x + 1 + 2,
             2 * x,
-            3 + +x,
+            +x + 3,
             1 + x + 2 + 3,
             3 | x,
             6 + x--,
@@ -120,7 +122,7 @@ evaluate_3: {
         console.log(1 + Number(x) + 2);
     }
     expect: {
-        console.log(3 + +x);
+        console.log(+x + 3);
     }
 }
 

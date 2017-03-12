@@ -4,7 +4,7 @@ var uglify = require("../../");
 
 describe("spidermonkey export/import sanity test", function() {
     it("should produce a functional build when using --self with spidermonkey", function (done) {
-        this.timeout(20000);
+        this.timeout(60000);
 
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
         var command = uglifyjs + " --self -cm --wrap SpiderUglify --dump-spidermonkey-ast | " +

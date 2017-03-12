@@ -50,10 +50,71 @@ condition_evaluate: {
     }
 }
 
+if_else_empty_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        if ({} ? a : b); else {}
+    }
+    expect: {
+        !{} ? b : a;
+    }
+}
+
+if_else_empty_2: {
+    options = {
+        conditionals: true,
+        passes: 2,
+    }
+    input: {
+        if ({} ? a : b); else {}
+    }
+    expect: {
+        !{} ? b : a;
+    }
+}
+
+label_if_break_1: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        L: if (true) {
+            a;
+            break L;
+        }
+    }
+    expect: {
+        a;
+    }
+}
+
+label_if_break_2: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        passes: 2
+    }
+    input: {
+        L: if (true) {
+            a;
+            break L;
+        }
+    }
+    expect: {
+        a;
+    }
+}
+
 while_if_break: {
     options = {
         conditionals: true,
         loops: true,
+        passes: 2,
         sequences: true,
     }
     input: {
