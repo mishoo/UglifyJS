@@ -286,3 +286,37 @@ fat_arrow_as_param: {
     }
     expect_exact: "foo(x=>x);foo(x=>x,y=>y);foo(x=>(x,x));foo(x=>(x,x),y=>(y,y));"
 }
+
+default_assign: {
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        function f(a, b = 3) {
+            console.log(a);
+        }
+    }
+    expect: {
+        function f(a) {
+            console.log(a);
+        }
+    }
+}
+
+expansion: {
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        function f(a, ...b) {
+            console.log(a);
+        }
+    }
+    expect: {
+        function f(a) {
+            console.log(a);
+        }
+    }
+}
