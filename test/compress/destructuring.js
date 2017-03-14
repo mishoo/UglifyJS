@@ -293,3 +293,17 @@ reduce_vars: {
         for ([x,y] in pairs);
     }
 }
+
+unused: {
+    options = {
+        unused: true,
+    }
+    input: {
+        let { foo: [, , ...a] } = { foo: [1, 2, 3, 4], bar: 5 };
+        console.log(a);
+    }
+    expect: {
+        let { foo: [, , ...a] } = { foo: [1, 2, 3, 4], bar: 5 };
+        console.log(a);
+    }
+}
