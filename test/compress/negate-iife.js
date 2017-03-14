@@ -381,6 +381,7 @@ issue_1288_side_effects: {
         conditionals: true,
         negate_iife: true,
         side_effects: true,
+        passes: 2,
     }
     input: {
         if (w) ;

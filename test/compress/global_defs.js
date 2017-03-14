@@ -141,7 +141,7 @@ mixed: {
     }
     expect_warnings: [
         'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:126,22]',
-        'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:127,22]',
         'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:129,8]',
+        'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:127,22]',
     ]
 }

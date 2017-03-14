@@ -270,19 +270,14 @@ collapse_vars_if: {
     }
     expect: {
         function f1() {
-            sideeffect();
-            return "x" != "Bar" + (g1 + g2) / 4 ? g9 : g5;
+            return sideeffect(), "x" != "Bar" + (g1 + g2) / 4 ? g9 : g5;
         }
         function f2() {
             var x = g1 + g2;
-            sideeffect();
-            return "x" != "Bar" + x / 4 ? g9 : g5;
+            return sideeffect(), "x" != "Bar" + x / 4 ? g9 : g5;
         }
         function f3(x) {
-            if (x) {
-                return 1;
-            }
-            return 2;
+            return x ? 1 : 2;
         }
     }
 }
@@ -551,13 +546,11 @@ collapse_vars_switch: {
     }
     expect: {
         function f1() {
-            sideeffect();
-            switch ("Bar" + (g1 + g2) / 4) { case 0: return g9 }
+            switch (sideeffect(), "Bar" + (g1 + g2) / 4) { case 0: return g9 }
         }
         function f2() {
             var x = g1 + g2;
-            sideeffect();
-            switch ("Bar" + x / 4) { case 0: return g9 }
+            switch (sideeffect(), "Bar" + x / 4) { case 0: return g9 }
         }
         function f3(x) {
             // verify no extraneous semicolon in case block before return
@@ -698,10 +691,10 @@ collapse_vars_lvalues_drop_assign: {
         function f3(x) { var a = (x -= 3); return x + a; }
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var v = (e1(), e2()), c = v = --x; return x - c; }
-        function f6(x) { e1(), e2(); return --x - x; }
-        function f7(x) { var v = (e1(), e2()), c = v - x; return x - c; }
-        function f8(x) { var v = (e1(), e2()); return x - (v - x); }
-        function f9(x) { e1(); return e2() - x - x; }
+        function f6(x) { return e1(), e2(), --x - x; }
+        function f7(x) { return x - (e1(), e2() - x); }
+        function f8(x) { return x - (e1(), e2() - x); }
+        function f9(x) { return e1(), e2() - x - x; }
     }
 }
 
@@ -1142,8 +1135,7 @@ collapse_vars_constants: {
         }
         function f3(x) {
             var b = x.prop;
-            sideeffect1();
-            return b + -9;
+            return sideeffect1(), b + -9;
         }
     }
 }
@@ -1193,10 +1185,10 @@ collapse_vars_short_circuit: {
         function f14(x,y) { var a = foo(), b = bar(); return (b - a) || (x - y); }
     }
     expect: {
-        function f0(x) { foo(); return bar() || x; }
-        function f1(x) { foo(); return bar() && x; }
+        function f0(x) { return foo(), bar() || x; }
+        function f1(x) { return foo(), bar() && x; }
         function f2(x) { var a = foo(), b = bar(); return x && a && b; }
-        function f3(x) { var a = foo(); bar(); return a && x; }
+        function f3(x) { var a = foo(); return bar(), a && x; }
         function f4(x) { var a = foo(), b = bar(); return a && x && b; }
         function f5(x) { var a = foo(), b = bar(); return x || a || b; }
         function f6(x) { var a = foo(), b = bar(); return a || x || b; }

@@ -52,6 +52,7 @@ ifs_3_should_warn: {
         evaluate     : true,
         booleans     : true,
         side_effects : true,
+        passes       : 3,
     };
     input: {
         var x, y;
@@ -98,6 +99,7 @@ ifs_5: {
         if_return: true,
         conditionals: true,
         comparisons: true,
+        passes: 2,
     };
     input: {
         function f() {
@@ -187,7 +189,8 @@ cond_1: {
 
 cond_2: {
     options = {
-        conditionals: true
+        conditionals: true,
+        passes: 2,
     };
     input: {
         var x, FooBar;
@@ -276,6 +279,7 @@ cond_7: {
     options = {
         conditionals: true,
         evaluate    : true,
+        passes      : 3,
         side_effects: true,
     };
     input: {
@@ -338,7 +342,8 @@ cond_7: {
 cond_7_1: {
     options = {
         conditionals: true,
-        evaluate    : true
+        evaluate    : true,
+        passes      : 2,
     };
     input: {
         var x;
@@ -359,7 +364,8 @@ cond_8: {
     options = {
         conditionals: true,
         evaluate    : true,
-        booleans    : false
+        booleans    : false,
+        passes      : 2,
     };
     input: {
         var a;
@@ -443,7 +449,8 @@ cond_8b: {
     options = {
         conditionals: true,
         evaluate    : true,
-        booleans    : true
+        booleans    : true,
+        passes      : 2,
     };
     input: {
         var a;
@@ -526,7 +533,8 @@ cond_8c: {
     options = {
         conditionals: true,
         evaluate    : false,
-        booleans    : false
+        booleans    : false,
+        passes      : 2,
     };
     input: {
         var a;

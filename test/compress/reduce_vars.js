@@ -53,9 +53,7 @@ reduce_vars: {
             console.log(-3);
             eval("console.log(a);");
         })(eval);
-        (function() {
-            return "yes";
-        })();
+        "yes";
         console.log(2);
     }
 }
