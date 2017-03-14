@@ -214,6 +214,23 @@ function parse_test(file) {
         }));
     }
 
+    function read_string(stat) {
+        if (stat.TYPE === "SimpleStatement") {
+            var body = stat.body;
+            out: switch(body.TYPE) {
+              case "String":
+                return body.value;
+              case "Array":
+                return body.elements.map(function(element) {
+                    if (element.TYPE !== "String")
+                        throw new Error("Should be array of strings");
+                    return element.value;
+                }).join("\n");
+            }
+        }
+        throw new Error("Should be string or array of strings");
+    }
+
     function get_one_test(name, block) {
         var test = { name: name, options: {} };
         var tw = new U.TreeWalker(function(node, descend){
@@ -240,12 +257,7 @@ function parse_test(file) {
                     else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
                 }
                 if (node.label.name === "expect_exact") {
-                    if (!(stat.TYPE === "SimpleStatement" && stat.body.TYPE === "String")) {
-                        throw new Error(
-                            "The value of the expect_exact clause should be a string, " +
-                            "like `expect_exact: \"some.exact.javascript;\"`");
-                    }
-                    test[node.label.name] = stat.body.start.value
+                    test[node.label.name] = read_string(stat);
                 } else {
                     test[node.label.name] = stat;
                 }
