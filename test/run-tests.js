@@ -6,28 +6,28 @@ var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
+var execFile = require("child_process").execFile;
 
 var tests_dir = path.dirname(module.filename);
-var failures = 0;
-var failed_files = {};
 
-run_compress_tests();
-if (failures) {
-    console.error("\n!!! Failed " + failures + " test cases.");
-    console.error("!!! " + Object.keys(failed_files).join(", "));
-    process.exit(1);
-}
+run_compress_tests(function(failures, failed_files) {
+    if (failures) {
+        console.error("\n!!! Failed " + failures + " test cases.");
+        console.error("!!! " + Object.keys(failed_files).join(", "));
+        process.exit(1);
+    }
 
-var mocha_tests = require("./mocha.js");
-mocha_tests();
+    var mocha_tests = require("./mocha.js");
+    mocha_tests();
 
-var run_sourcemaps_tests = require('./sourcemaps');
-run_sourcemaps_tests();
+    var run_sourcemaps_tests = require('./sourcemaps');
+    run_sourcemaps_tests();
 
-var run_ast_conversion_tests = require("./mozilla-ast");
+    var run_ast_conversion_tests = require("./mozilla-ast");
 
-run_ast_conversion_tests({
-    iterations: 1000
+    run_ast_conversion_tests({
+        iterations: 1000
+    });
 });
 
 /* -----[ utils ]----- */
@@ -79,13 +79,20 @@ function as_toplevel(input, mangle_options) {
     return toplevel;
 }
 
-function run_compress_tests() {
+function run_compress_tests(done) {
+    var failures = 0;
+    var failed_files = {};
     var dir = test_directory("compress");
     log_directory("compress");
     var files = find_test_files(dir);
-    function test_file(file) {
+    !function test_file() {
+        var file = files.shift();
+        if (!file) return done(failures, failed_files);
         log_start_file(file);
-        function test_case(test) {
+        var tests = parse_test(path.resolve(dir, file));
+        !function test_case() {
+            var test = tests.shift();
+            if (!test) return test_file();
             log_test(test.name);
             U.base54.reset();
             var options = U.defaults(test.options, {
@@ -165,16 +172,32 @@ function run_compress_tests() {
                         failed_files[file] = 1;
                     }
                 }
+                if (test.expect_stdout) {
+                    return execFile(process.argv[0], ["-e", output], function(ex, stdout, stderr) {
+                        if (ex || stderr) {
+                            log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
+                                input: input_code,
+                                output: output,
+                                error: stderr || ex.toString(),
+                            });
+                            failures++;
+                            failed_files[file] = 1;
+                        } else if (test.expect_stdout != stdout.replace(/\n$/, "")) {
+                            log("!!! failed\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected_warnings}\n---ACTUAL STDOUT---\n{actual_warnings}\n\n", {
+                                input: input_code,
+                                expected_warnings: test.expect_stdout,
+                                actual_warnings: stdout,
+                            });
+                            failures++;
+                            failed_files[file] = 1;
+                        }
+                        test_case();
+                    });
+                }
             }
-        }
-        var tests = parse_test(path.resolve(dir, file));
-        for (var i in tests) if (tests.hasOwnProperty(i)) {
-            test_case(tests[i]);
-        }
-    }
-    files.forEach(function(file){
-        test_file(file);
-    });
+            test_case();
+        }();
+    }();
 }
 
 function parse_test(file) {
@@ -189,7 +212,7 @@ function parse_test(file) {
         console.log(e);
         throw e;
     }
-    var tests = {};
+    var tests = Object.create(null);
     var tw = new U.TreeWalker(function(node, descend){
         if (node instanceof U.AST_LabeledStatement
             && tw.parent() instanceof U.AST_Toplevel) {
@@ -203,7 +226,9 @@ function parse_test(file) {
         if (!(node instanceof U.AST_Toplevel)) croak(node);
     });
     ast.walk(tw);
-    return tests;
+    return Object.keys(tests).map(function(name) {
+        return tests[name];
+    });
 
     function croak(node) {
         throw new Error(tmpl("Can't understand test file {file} [{line},{col}]\n{code}", {
@@ -243,12 +268,13 @@ function parse_test(file) {
                 return true;
             }
             if (node instanceof U.AST_LabeledStatement) {
+                var label = node.label;
                 assert.ok(
-                    ["input", "expect", "expect_exact", "expect_warnings"].indexOf(node.label.name) >= 0,
+                    ["input", "expect", "expect_exact", "expect_warnings", "expect_stdout"].indexOf(label.name) >= 0,
                     tmpl("Unsupported label {name} [{line},{col}]", {
-                        name: node.label.name,
-                        line: node.label.start.line,
-                        col: node.label.start.col
+                        name: label.name,
+                        line: label.start.line,
+                        col: label.start.col
                     })
                 );
                 var stat = node.body;
@@ -256,10 +282,10 @@ function parse_test(file) {
                     if (stat.body.length == 1) stat = stat.body[0];
                     else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
                 }
-                if (node.label.name === "expect_exact") {
-                    test[node.label.name] = read_string(stat);
+                if (label.name === "expect_exact" || label.name === "expect_stdout") {
+                    test[label.name] = read_string(stat);
                 } else {
-                    test[node.label.name] = stat;
+                    test[label.name] = stat;
                 }
                 return true;
             }
