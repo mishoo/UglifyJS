@@ -6,7 +6,7 @@ var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
-var execFile = require("child_process").execFile;
+var vm = require("vm");
 
 var tests_dir = path.dirname(module.filename);
 
@@ -173,15 +173,9 @@ function run_compress_tests(done) {
                     }
                 }
                 if (test.expect_stdout) {
-                    return execFile(process.argv[0], ["-e", input_code], function(ex, stdout, stderr) {
-                        if (ex || stderr) {
-                            log("!!! Execution of input failed\n---INPUT---\n{input}\n--ERROR--\n{error}\n\n", {
-                                input: input_code,
-                                error: stderr || ex.toString(),
-                            });
-                            failures++;
-                            failed_files[file] = 1;
-                        } else if (test.expect_stdout != stdout) {
+                    try {
+                        var stdout = run_code(input_code);
+                        if (test.expect_stdout != stdout) {
                             log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
                                 input: input_code,
                                 expected: test.expect_stdout,
@@ -190,16 +184,9 @@ function run_compress_tests(done) {
                             failures++;
                             failed_files[file] = 1;
                         } else {
-                            return execFile(process.argv[0], ["-e", output], function(ex, stdout, stderr) {
-                                if (ex || stderr) {
-                                    log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
-                                        input: input_code,
-                                        output: output,
-                                        error: stderr || ex.toString(),
-                                    });
-                                    failures++;
-                                    failed_files[file] = 1;
-                                } else if (test.expect_stdout != stdout) {
+                            try {
+                                stdout = run_code(output);
+                                if (test.expect_stdout != stdout) {
                                     log("!!! failed\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
                                         input: input_code,
                                         expected: test.expect_stdout,
@@ -208,11 +195,24 @@ function run_compress_tests(done) {
                                     failures++;
                                     failed_files[file] = 1;
                                 }
-                                test_case();
-                            });
+                            } catch (ex) {
+                                log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
+                                    input: input_code,
+                                    output: output,
+                                    error: ex.toString(),
+                                });
+                                failures++;
+                                failed_files[file] = 1;
+                            }
                         }
-                        test_case();
-                    });
+                    } catch (ex) {
+                        log("!!! Execution of input failed\n---INPUT---\n{input}\n--ERROR--\n{error}\n\n", {
+                            input: input_code,
+                            error: ex.toString(),
+                        });
+                        failures++;
+                        failed_files[file] = 1;
+                    }
                 }
             }
             test_case();
@@ -328,4 +328,18 @@ function evaluate(code) {
     if (code instanceof U.AST_Node)
         code = make_code(code, { beautify: true });
     return new Function("return(" + code + ")")();
+}
+
+function run_code(code) {
+    var stdout = "";
+    var tmp = process.stdout.write;
+    process.stdout.write = function(chunk) {
+        stdout += chunk;
+    };
+    try {
+        new vm.Script(code).runInNewContext({ console: console }, { timeout: 5000 });
+        return stdout;
+    } finally {
+        process.stdout.write = tmp;
+    }
 }
