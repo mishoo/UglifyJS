@@ -6,6 +6,7 @@ var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
+var vm = require("vm");
 
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
@@ -165,6 +166,51 @@ function run_compress_tests() {
                         failed_files[file] = 1;
                     }
                 }
+                if (test.expect_stdout) {
+                    try {
+                        var stdout = run_code(input_code);
+                        if (test.expect_stdout === true) {
+                            test.expect_stdout = stdout;
+                        }
+                        if (test.expect_stdout != stdout) {
+                            log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
+                                input: input_code,
+                                expected: test.expect_stdout,
+                                actual: stdout,
+                            });
+                            failures++;
+                            failed_files[file] = 1;
+                        } else {
+                            try {
+                                stdout = run_code(output);
+                                if (test.expect_stdout != stdout) {
+                                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
+                                        input: input_code,
+                                        expected: test.expect_stdout,
+                                        actual: stdout,
+                                    });
+                                    failures++;
+                                    failed_files[file] = 1;
+                                }
+                            } catch (ex) {
+                                log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
+                                    input: input_code,
+                                    output: output,
+                                    error: ex.toString(),
+                                });
+                                failures++;
+                                failed_files[file] = 1;
+                            }
+                        }
+                    } catch (ex) {
+                        log("!!! Execution of input failed\n---INPUT---\n{input}\n--ERROR--\n{error}\n\n", {
+                            input: input_code,
+                            error: ex.toString(),
+                        });
+                        failures++;
+                        failed_files[file] = 1;
+                    }
+                }
             }
         }
         var tests = parse_test(path.resolve(dir, file));
@@ -215,9 +261,9 @@ function parse_test(file) {
     }
 
     function read_string(stat) {
-        if (stat.TYPE === "SimpleStatement") {
+        if (stat.TYPE == "SimpleStatement") {
             var body = stat.body;
-            out: switch(body.TYPE) {
+            switch(body.TYPE) {
               case "String":
                 return body.value;
               case "Array":
@@ -243,12 +289,13 @@ function parse_test(file) {
                 return true;
             }
             if (node instanceof U.AST_LabeledStatement) {
+                var label = node.label;
                 assert.ok(
-                    ["input", "expect", "expect_exact", "expect_warnings"].indexOf(node.label.name) >= 0,
+                    ["input", "expect", "expect_exact", "expect_warnings", "expect_stdout"].indexOf(label.name) >= 0,
                     tmpl("Unsupported label {name} [{line},{col}]", {
-                        name: node.label.name,
-                        line: node.label.start.line,
-                        col: node.label.start.col
+                        name: label.name,
+                        line: label.start.line,
+                        col: label.start.col
                     })
                 );
                 var stat = node.body;
@@ -256,10 +303,16 @@ function parse_test(file) {
                     if (stat.body.length == 1) stat = stat.body[0];
                     else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
                 }
-                if (node.label.name === "expect_exact") {
-                    test[node.label.name] = read_string(stat);
+                if (label.name == "expect_exact") {
+                    test[label.name] = read_string(stat);
+                } else if (label.name == "expect_stdout") {
+                    if (stat.TYPE == "SimpleStatement" && stat.body instanceof U.AST_Boolean) {
+                        test[label.name] = stat.body.value;
+                    } else {
+                        test[label.name] = read_string(stat) + "\n";
+                    }
                 } else {
-                    test[node.label.name] = stat;
+                    test[label.name] = stat;
                 }
                 return true;
             }
@@ -280,4 +333,18 @@ function evaluate(code) {
     if (code instanceof U.AST_Node)
         code = make_code(code, { beautify: true });
     return new Function("return(" + code + ")")();
+}
+
+function run_code(code) {
+    var stdout = "";
+    var original_write = process.stdout.write;
+    process.stdout.write = function(chunk) {
+        stdout += chunk;
+    };
+    try {
+        new vm.Script(code).runInNewContext({ console: console }, { timeout: 5000 });
+        return stdout;
+    } finally {
+        process.stdout.write = original_write;
+    }
 }
