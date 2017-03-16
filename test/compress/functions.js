@@ -35,9 +35,9 @@ iifes_returning_constants_keep_fargs_true: {
         console.log("okay");
         console.log(123);
         console.log(void 0);
-        console.log(function(x,y,z){return 2}(1,2,3));
-        console.log(function(x,y){return 6}(2,3));
-        console.log(function(x, y){return 6}(2,3,a(),b()));
+        console.log(2);
+        console.log(6);
+        console.log((a(), b(), 6));
     }
 }
 
@@ -71,6 +71,23 @@ iifes_returning_constants_keep_fargs_false: {
         console.log(void 0);
         console.log(2);
         console.log(6);
-        console.log(function(){return 6}(a(),b()));
+        console.log((a(), b(), 6));
+    }
+}
+
+issue_485_crashing_1530: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        (function(a) {
+            if (true) return;
+            var b = 42;
+        })(this);
+    }
+    expect: {
+        this, void 0;
     }
 }

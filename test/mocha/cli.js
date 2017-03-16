@@ -82,7 +82,7 @@ describe("bin/uglifyjs", function () {
        });
     });
     it("Should work with --keep-fnames (mangle & compress)", function (done) {
-       var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c';
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c unused=false';
 
        exec(command, function (err, stdout) {
            if (err) throw err;
@@ -152,7 +152,7 @@ describe("bin/uglifyjs", function () {
        });
     });
     it("Should process inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-520/input.js -cm toplevel --in-source-map inline --source-map-inline';
+        var command = uglifyjscmd + ' test/input/issue-520/input.js -mc toplevel --in-source-map inline --source-map-inline';
 
         exec(command, function (err, stdout) {
             if (err) throw err;
@@ -234,6 +234,19 @@ describe("bin/uglifyjs", function () {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/eof.js:2,0");
             assert.strictEqual(lines[1], "foo, bar(");
             assert.strictEqual(lines[2], "         ^");
+            assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
+            done();
+        });
+    });
+    it("Should fail with a missing loop body", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/loop-no-body.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            var lines = stderr.split(/\n/);
+            assert.strictEqual(lines[0], "Parse error at test/input/invalid/loop-no-body.js:2,0");
+            assert.strictEqual(lines[1], "for (var i = 0; i < 1; i++) ");
+            assert.strictEqual(lines[2], "                            ^");
             assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
             done();
         });

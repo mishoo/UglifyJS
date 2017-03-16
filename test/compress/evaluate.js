@@ -640,9 +640,7 @@ call_args: {
     expect: {
         const a = 1;
         console.log(1);
-        +function(a) {
-            return 1;
-        }(1);
+        +(1, 1);
     }
 }
 
@@ -663,9 +661,7 @@ call_args_drop_param: {
     expect: {
         const a = 1;
         console.log(1);
-        +function() {
-            return 1;
-        }(b);
+        +(b, 1);
     }
 }
 

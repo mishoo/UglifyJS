@@ -2,6 +2,7 @@
 
 unsafe_undefined: {
     options = {
+        conditionals: true,
         if_return: true,
         unsafe: true
     }
@@ -19,12 +20,7 @@ unsafe_undefined: {
     expect: {
         function f(n) {
             return function() {
-                if (a)
-                    return b;
-                if (c)
-                    return d;
-                else
-                    return n;
+                return a ? b : c ? d : n;
             };
         }
     }
@@ -32,6 +28,7 @@ unsafe_undefined: {
 
 keep_fnames: {
     options = {
+        conditionals: true,
         if_return: true,
         unsafe: true
     }
@@ -57,12 +54,7 @@ keep_fnames: {
                 function n(n) {
                     return n * n;
                 }
-                if (a)
-                    return b;
-                if (c)
-                    return d;
-                else
-                    return r;
+                return a ? b : c ? d : r;
             };
         }
     }

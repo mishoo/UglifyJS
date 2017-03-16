@@ -75,8 +75,6 @@ The available options are:
   --support-ie8                 Use this flag to support Internet Explorer 6/7/8.
                                 Equivalent to setting `screw_ie8: false` in `minify()`
                                 for `compress`, `mangle` and `output` options.
-                                Note: `--support-ie8` may generate incorrect code
-                                for `try`/`catch` in ES5 compliant browsers.
   --expr                        Parse a single expression, rather than a
                                 program (for parsing JSON)
   -p, --prefix                  Skip prefix for original filenames that appear
@@ -350,6 +348,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
+- `unsafe_math` (default: false) -- optimize numerical expressions like
+  `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
+
 - `unsafe_proto` (default: false) -- optimize expressions like
   `Array.prototype.slice.call(a)` into `[].slice.call(a)`
 
@@ -390,11 +391,11 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 
-- `collapse_vars` -- default `false`. Collapse single-use `var` and `const`
-  definitions when possible.
+- `collapse_vars` -- Collapse single-use `var` and `const` definitions
+  when possible.
 
-- `reduce_vars` -- default `false`. Improve optimization on variables assigned
-  with and used as constant values.
+- `reduce_vars` -- Improve optimization on variables assigned with and
+  used as constant values.
 
 - `warnings` -- display warnings when dropping unreachable code or unused
   declarations etc.
@@ -425,6 +426,10 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 
 - `drop_error` -- default `false`.  Pass `true` to discard description
   of Error() calls.
+
+- `expression` -- default `false`.  Pass `true` to preserve completion values
+  from terminal statements without `return`, e.g. in bookmarklets.
+
 
 - `keep_fargs` -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
