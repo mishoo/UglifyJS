@@ -50,6 +50,7 @@ this_binding_conditionals: {
 this_binding_collapse_vars: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     };
     input: {
         var c = a; c();
