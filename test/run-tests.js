@@ -9,25 +9,26 @@ var assert = require("assert");
 var vm = require("vm");
 
 var tests_dir = path.dirname(module.filename);
+var failures = 0;
+var failed_files = {};
 
-run_compress_tests(function(failures, failed_files) {
-    if (failures) {
-        console.error("\n!!! Failed " + failures + " test cases.");
-        console.error("!!! " + Object.keys(failed_files).join(", "));
-        process.exit(1);
-    }
+run_compress_tests();
+if (failures) {
+    console.error("\n!!! Failed " + failures + " test cases.");
+    console.error("!!! " + Object.keys(failed_files).join(", "));
+    process.exit(1);
+}
 
-    var mocha_tests = require("./mocha.js");
-    mocha_tests();
+var mocha_tests = require("./mocha.js");
+mocha_tests();
 
-    var run_sourcemaps_tests = require('./sourcemaps');
-    run_sourcemaps_tests();
+var run_sourcemaps_tests = require('./sourcemaps');
+run_sourcemaps_tests();
 
-    var run_ast_conversion_tests = require("./mozilla-ast");
+var run_ast_conversion_tests = require("./mozilla-ast");
 
-    run_ast_conversion_tests({
-        iterations: 1000
-    });
+run_ast_conversion_tests({
+    iterations: 1000
 });
 
 /* -----[ utils ]----- */
@@ -79,20 +80,13 @@ function as_toplevel(input, mangle_options) {
     return toplevel;
 }
 
-function run_compress_tests(done) {
-    var failures = 0;
-    var failed_files = {};
+function run_compress_tests() {
     var dir = test_directory("compress");
     log_directory("compress");
     var files = find_test_files(dir);
-    !function test_file() {
-        var file = files.shift();
-        if (!file) return done(failures, failed_files);
+    function test_file(file) {
         log_start_file(file);
-        var tests = parse_test(path.resolve(dir, file));
-        !function test_case() {
-            var test = tests.shift();
-            if (!test) return test_file();
+        function test_case(test) {
             log_test(test.name);
             U.base54.reset();
             var options = U.defaults(test.options, {
@@ -215,9 +209,15 @@ function run_compress_tests(done) {
                     }
                 }
             }
-            test_case();
-        }();
-    }();
+        }
+        var tests = parse_test(path.resolve(dir, file));
+        for (var i in tests) if (tests.hasOwnProperty(i)) {
+            test_case(tests[i]);
+        }
+    }
+    files.forEach(function(file){
+        test_file(file);
+    });
 }
 
 function parse_test(file) {
@@ -232,7 +232,7 @@ function parse_test(file) {
         console.log(e);
         throw e;
     }
-    var tests = Object.create(null);
+    var tests = {};
     var tw = new U.TreeWalker(function(node, descend){
         if (node instanceof U.AST_LabeledStatement
             && tw.parent() instanceof U.AST_Toplevel) {
@@ -246,9 +246,7 @@ function parse_test(file) {
         if (!(node instanceof U.AST_Toplevel)) croak(node);
     });
     ast.walk(tw);
-    return Object.keys(tests).map(function(name) {
-        return tests[name];
-    });
+    return tests;
 
     function croak(node) {
         throw new Error(tmpl("Can't understand test file {file} [{line},{col}]\n{code}", {
