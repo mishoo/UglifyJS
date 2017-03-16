@@ -173,23 +173,43 @@ function run_compress_tests(done) {
                     }
                 }
                 if (test.expect_stdout) {
-                    return execFile(process.argv[0], ["-e", output], function(ex, stdout, stderr) {
+                    return execFile(process.argv[0], ["-e", input_code], function(ex, stdout, stderr) {
                         if (ex || stderr) {
-                            log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
+                            log("!!! Execution of input failed\n---INPUT---\n{input}\n--ERROR--\n{error}\n\n", {
                                 input: input_code,
-                                output: output,
                                 error: stderr || ex.toString(),
                             });
                             failures++;
                             failed_files[file] = 1;
-                        } else if (test.expect_stdout != stdout.replace(/\n$/, "")) {
-                            log("!!! failed\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected_warnings}\n---ACTUAL STDOUT---\n{actual_warnings}\n\n", {
+                        } else if (test.expect_stdout != stdout) {
+                            log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
                                 input: input_code,
-                                expected_warnings: test.expect_stdout,
-                                actual_warnings: stdout,
+                                expected: test.expect_stdout,
+                                actual: stdout,
                             });
                             failures++;
                             failed_files[file] = 1;
+                        } else {
+                            return execFile(process.argv[0], ["-e", output], function(ex, stdout, stderr) {
+                                if (ex || stderr) {
+                                    log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
+                                        input: input_code,
+                                        output: output,
+                                        error: stderr || ex.toString(),
+                                    });
+                                    failures++;
+                                    failed_files[file] = 1;
+                                } else if (test.expect_stdout != stdout) {
+                                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
+                                        input: input_code,
+                                        expected: test.expect_stdout,
+                                        actual: stdout,
+                                    });
+                                    failures++;
+                                    failed_files[file] = 1;
+                                }
+                                test_case();
+                            });
                         }
                         test_case();
                     });
@@ -282,8 +302,10 @@ function parse_test(file) {
                     if (stat.body.length == 1) stat = stat.body[0];
                     else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
                 }
-                if (label.name === "expect_exact" || label.name === "expect_stdout") {
+                if (label.name == "expect_exact") {
                     test[label.name] = read_string(stat);
+                } else if (label.name == "expect_stdout") {
+                    test[label.name] = read_string(stat) + "\n";
                 } else {
                     test[label.name] = stat;
                 }
