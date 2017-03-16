@@ -169,6 +169,9 @@ function run_compress_tests() {
                 if (test.expect_stdout) {
                     try {
                         var stdout = run_code(input_code);
+                        if (test.expect_stdout === true) {
+                            test.expect_stdout = stdout;
+                        }
                         if (test.expect_stdout != stdout) {
                             log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
                                 input: input_code,
@@ -258,9 +261,9 @@ function parse_test(file) {
     }
 
     function read_string(stat) {
-        if (stat.TYPE === "SimpleStatement") {
+        if (stat.TYPE == "SimpleStatement") {
             var body = stat.body;
-            out: switch(body.TYPE) {
+            switch(body.TYPE) {
               case "String":
                 return body.value;
               case "Array":
@@ -303,7 +306,11 @@ function parse_test(file) {
                 if (label.name == "expect_exact") {
                     test[label.name] = read_string(stat);
                 } else if (label.name == "expect_stdout") {
-                    test[label.name] = read_string(stat) + "\n";
+                    if (stat.TYPE == "SimpleStatement" && stat.body instanceof U.AST_Boolean) {
+                        test[label.name] = stat.body.value;
+                    } else {
+                        test[label.name] = read_string(stat) + "\n";
+                    }
                 } else {
                     test[label.name] = stat;
                 }
