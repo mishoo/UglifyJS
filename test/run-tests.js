@@ -330,7 +330,7 @@ function evaluate(code) {
 
 function run_code(code) {
     var stdout = "";
-    var tmp = process.stdout.write;
+    var original_write = process.stdout.write;
     process.stdout.write = function(chunk) {
         stdout += chunk;
     };
@@ -338,6 +338,6 @@ function run_code(code) {
         new vm.Script(code).runInNewContext({ console: console }, { timeout: 5000 });
         return stdout;
     } finally {
-        process.stdout.write = tmp;
+        process.stdout.write = original_write;
     }
 }
