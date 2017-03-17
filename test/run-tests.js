@@ -167,48 +167,33 @@ function run_compress_tests() {
                     }
                 }
                 if (test.expect_stdout) {
-                    try {
-                        var stdout = run_code(input_code);
-                        if (test.expect_stdout === true) {
-                            test.expect_stdout = stdout;
-                        }
-                        if (test.expect_stdout != stdout) {
-                            log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
+                    var stdout = run_code(input_code);
+                    if (test.expect_stdout === true) {
+                        test.expect_stdout = stdout;
+                    }
+                    if (!same_stdout(test.expect_stdout, stdout)) {
+                        log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                            input: input_code,
+                            expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
+                            expected: test.expect_stdout,
+                            actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                            actual: stdout,
+                        });
+                        failures++;
+                        failed_files[file] = 1;
+                    } else {
+                        stdout = run_code(output);
+                        if (!same_stdout(test.expect_stdout, stdout)) {
+                            log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
                                 input: input_code,
+                                expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
                                 expected: test.expect_stdout,
+                                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
                                 actual: stdout,
                             });
                             failures++;
                             failed_files[file] = 1;
-                        } else {
-                            try {
-                                stdout = run_code(output);
-                                if (test.expect_stdout != stdout) {
-                                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED STDOUT---\n{expected}\n---ACTUAL STDOUT---\n{actual}\n\n", {
-                                        input: input_code,
-                                        expected: test.expect_stdout,
-                                        actual: stdout,
-                                    });
-                                    failures++;
-                                    failed_files[file] = 1;
-                                }
-                            } catch (ex) {
-                                log("!!! Execution of output failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--ERROR--\n{error}\n\n", {
-                                    input: input_code,
-                                    output: output,
-                                    error: ex.toString(),
-                                });
-                                failures++;
-                                failed_files[file] = 1;
-                            }
                         }
-                    } catch (ex) {
-                        log("!!! Execution of input failed\n---INPUT---\n{input}\n--ERROR--\n{error}\n\n", {
-                            input: input_code,
-                            error: ex.toString(),
-                        });
-                        failures++;
-                        failed_files[file] = 1;
                     }
                 }
             }
@@ -344,7 +329,13 @@ function run_code(code) {
     try {
         new vm.Script(code).runInNewContext({ console: console }, { timeout: 5000 });
         return stdout;
+    } catch (ex) {
+        return ex;
     } finally {
         process.stdout.write = original_write;
     }
+}
+
+function same_stdout(expected, actual) {
+    return typeof expected == typeof actual && expected.toString() == actual.toString();
 }
