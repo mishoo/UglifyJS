@@ -157,16 +157,20 @@ computed_property_names_evaluated_2: {
 
 shorthand_properties: {
     mangle = true;
-    input: (function() {
-        var prop = 1;
-        const value = {prop};
-        return value;
-    })();
-    expect: (function() {
-        var n = 1;
-        const r = {prop:n};
-        return r;
-    })();
+    input: {
+        (function() {
+            var prop = 1;
+            const value = {prop};
+            return value;
+        })();
+    }
+    expect: {
+        (function() {
+            var n = 1;
+            const r = {prop:n};
+            return r;
+        })();
+    }
 }
 
 concise_methods: {
@@ -233,9 +237,7 @@ concise_methods_with_computed_property2: {
         };
         doSomething(foo[[1]]());
     }
-    expect_exact: {
-        'var foo={[[1]](){return"success"}};doSomething(foo[[1]]());'
-    }
+    expect_exact: 'var foo={[[1]](){return"success"}};doSomething(foo[[1]]());'
 }
 
 concise_methods_with_various_property_names: {

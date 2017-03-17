@@ -397,7 +397,7 @@ describe("Directives", function() {
             if (node instanceof uglify.AST_Symbol && node.name === "_check_") {
                 checked = true;
                 for (var j = 0; j < tests[i].directives.length; j++) {
-                    assert.equal(checkWalker.has_directive(tests[i].directives[j]), true,
+                    assert.ok(checkWalker.has_directive(tests[i].directives[j]),
                         "Did not found directive '" + tests[i].directives[j] +  "' in test " + tests[i].input)
                 }
                 for (var k = 0; k < tests[i].non_directives.length; k++) {

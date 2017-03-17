@@ -78,6 +78,7 @@ describe("minify", function() {
         });
         it("Should process inline source map", function() {
             var code = Uglify.minify("./test/input/issue-520/input.js", {
+                compress: { toplevel: true },
                 inSourceMap: "inline",
                 sourceMapInline: true
             }).code + "\n";
