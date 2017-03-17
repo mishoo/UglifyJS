@@ -320,3 +320,14 @@ expansion: {
         }
     }
 }
+
+issue_1613: {
+  mangle = { toplevel: true };
+  input: {
+    const name = 1;
+    const foo = {
+      name
+    };
+  }
+  expect_exact: "const n=1;const c={name:n};"
+}
