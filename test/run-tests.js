@@ -72,10 +72,15 @@ function test_directory(dir) {
 }
 
 function as_toplevel(input, mangle_options) {
-    if (input instanceof U.AST_BlockStatement) input = input.body;
-    else if (input instanceof U.AST_Statement) input = [ input ];
-    else throw new Error("Unsupported input syntax");
-    var toplevel = new U.AST_Toplevel({ body: input });
+    if (!(input instanceof U.AST_BlockStatement))
+        throw new Error("Unsupported input syntax");
+    for (var i = 0; i < input.body.length; i++) {
+        var stat = input.body[i];
+        if (stat instanceof U.AST_SimpleStatement && stat.body instanceof U.AST_String)
+            input.body[i] = new U.AST_Directive(stat.body);
+        else break;
+    }
+    var toplevel = new U.AST_Toplevel(input);
     toplevel.figure_out_scope(mangle_options);
     return toplevel;
 }
@@ -299,10 +304,6 @@ function parse_test(file) {
                     })
                 );
                 var stat = node.body;
-                if (stat instanceof U.AST_BlockStatement) {
-                    if (stat.body.length == 1) stat = stat.body[0];
-                    else if (stat.body.length == 0) stat = new U.AST_EmptyStatement();
-                }
                 if (label.name == "expect_exact") {
                     test[label.name] = read_string(stat);
                 } else if (label.name == "expect_stdout") {
