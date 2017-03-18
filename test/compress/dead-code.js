@@ -87,6 +87,7 @@ dead_code_constant_boolean_should_warn_more: {
         var x = 10, y;
         var moo;
     }
+    expect_stdout: true
 }
 
 dead_code_const_declaration: {
@@ -113,6 +114,7 @@ dead_code_const_declaration: {
         var moo;
         function bar() {}
     }
+    expect_stdout: true
 }
 
 dead_code_const_annotation: {
@@ -140,6 +142,7 @@ dead_code_const_annotation: {
         var moo;
         function bar() {}
     }
+    expect_stdout: true
 }
 
 dead_code_const_annotation_regex: {
@@ -163,6 +166,7 @@ dead_code_const_annotation_regex: {
         var CONST_FOO_ANN = !1;
         CONST_FOO_ANN && console.log('reachable');
     }
+    expect_stdout: true
 }
 
 dead_code_const_annotation_complex_scope: {
@@ -208,4 +212,5 @@ dead_code_const_annotation_complex_scope: {
         var meat = 'beef';
         var pork = 'bad';
     }
+    expect_stdout: true
 }

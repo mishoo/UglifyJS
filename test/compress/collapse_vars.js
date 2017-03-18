@@ -823,6 +823,7 @@ collapse_vars_repeated: {
             console.log(e + "!");
         })("!");
     }
+    expect_stdout: true
 }
 
 collapse_vars_closures: {
@@ -1109,6 +1110,7 @@ collapse_vars_eval_and_with: {
             return function() { with (o) console.log(a) };
         })()();
     }
+    expect_stdout: true
 }
 
 collapse_vars_constants: {
@@ -1168,6 +1170,7 @@ collapse_vars_arguments: {
             (function(){console.log(arguments);})(7, 1);
         })();
     }
+    expect_stdout: true
 }
 
 collapse_vars_short_circuit: {
@@ -1317,6 +1320,7 @@ collapse_vars_regexp: {
                 console.log(result[0]);
         })();
     }
+    expect_stdout: true
 }
 
 issue_1537: {

@@ -29,4 +29,5 @@ dont_mangle_arguments: {
         })(5,6,7);
     }
     expect_exact: "(function(){var arguments=arguments,o=9;console.log(o,arguments)})(5,6,7);"
+    expect_stdout: true
 }

@@ -86,6 +86,7 @@ make_sequences_4: {
         switch (x = 5, y) {}
         with (x = 5, obj);
     }
+    expect_stdout: true
 }
 
 lift_sequences_1: {
@@ -250,6 +251,7 @@ negate_iife_for: {
         for (!function() {}(), i = 0; i < 5; i++) console.log(i);
         for (function() {}(); i < 5; i++) console.log(i);
     }
+    expect_stdout: true
 }
 
 iife: {

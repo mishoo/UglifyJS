@@ -14,6 +14,7 @@ issue_1321_no_debug: {
         x["a"] = 2 * x.b;
         console.log(x.b, x["a"]);
     }
+    expect_stdout: true
 }
 
 issue_1321_debug: {
@@ -33,6 +34,7 @@ issue_1321_debug: {
         x["_$foo$_"] = 2 * x.a;
         console.log(x.a, x["_$foo$_"]);
     }
+    expect_stdout: true
 }
 
 issue_1321_with_quoted: {
@@ -51,4 +53,5 @@ issue_1321_with_quoted: {
         x["b"] = 2 * x.a;
         console.log(x.a, x["b"]);
     }
+    expect_stdout: true
 }

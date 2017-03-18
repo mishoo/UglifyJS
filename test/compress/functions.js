@@ -39,6 +39,7 @@ iifes_returning_constants_keep_fargs_true: {
         console.log(6);
         console.log((a(), b(), 6));
     }
+    expect_stdout: true
 }
 
 iifes_returning_constants_keep_fargs_false: {
@@ -73,6 +74,7 @@ iifes_returning_constants_keep_fargs_false: {
         console.log(6);
         console.log((a(), b(), 6));
     }
+    expect_stdout: true
 }
 
 issue_485_crashing_1530: {
