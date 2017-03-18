@@ -760,3 +760,22 @@ unsafe_charAt_bad_index: {
     }
     expect_stdout: true
 }
+
+unsafe_charAt_noop: {
+    options = {
+        evaluate  : true,
+        unsafe    : true
+    }
+    input: {
+        console.log(
+            s.charAt(0),
+            "string".charAt(x)
+        );
+    }
+    expect: {
+        console.log(
+            s.charAt(0),
+            "string".charAt(x)
+        );
+    }
+}
