@@ -103,15 +103,18 @@ lift_sequences_1: {
 lift_sequences_2: {
     options = { sequences: true, evaluate: true };
     input: {
-        var foo, bar;
+        var foo = 1, bar;
         foo.x = (foo = {}, 10);
         bar = (bar = {}, 10);
+        console.log(foo, bar);
     }
     expect: {
-        var foo, bar;
+        var foo = 1, bar;
         foo.x = (foo = {}, 10),
-        bar = {}, bar = 10;
+        bar = {}, bar = 10,
+        console.log(foo, bar);
     }
+    expect_stdout: true
 }
 
 lift_sequences_3: {
@@ -136,6 +139,23 @@ lift_sequences_4: {
         var x, foo, bar, baz;
         x = baz;
     }
+}
+
+lift_sequences_5: {
+    options = {
+        sequences: true,
+    }
+    input: {
+        var a = 2, b;
+        a *= (b, a = 4, 3);
+        console.log(a);
+    }
+    expect: {
+        var a = 2, b;
+        b, a *= (a = 4, 3),
+        console.log(a);
+    }
+    expect_stdout: "6"
 }
 
 for_sequences: {
