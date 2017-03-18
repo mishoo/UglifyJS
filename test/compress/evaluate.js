@@ -200,6 +200,7 @@ negative_zero: {
             1 / (-0)
         );
     }
+    expect_stdout: true
 }
 
 positive_zero: {
@@ -220,6 +221,7 @@ positive_zero: {
             1 / (0)
         );
     }
+    expect_stdout: true
 }
 
 unsafe_constant: {
@@ -411,6 +413,7 @@ unsafe_integer_key: {
             1["1"] + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_integer_key_complex: {
@@ -438,6 +441,7 @@ unsafe_integer_key_complex: {
             2
         );
     }
+    expect_stdout: true
 }
 
 unsafe_float_key: {
@@ -465,6 +469,7 @@ unsafe_float_key: {
             1["3.14"] + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_float_key_complex: {
@@ -492,6 +497,7 @@ unsafe_float_key_complex: {
             2
         );
     }
+    expect_stdout: true
 }
 
 unsafe_array: {
@@ -554,6 +560,7 @@ unsafe_string: {
             "11"
         );
     }
+    expect_stdout: true
 }
 
 unsafe_array_bad_index: {
@@ -575,6 +582,7 @@ unsafe_array_bad_index: {
             [1, 2, 3, 4][3.14] + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_string_bad_index: {
@@ -596,6 +604,7 @@ unsafe_string_bad_index: {
             "1234"[3.14] + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_prototype_function: {
@@ -700,4 +709,54 @@ in_boolean_context: {
             (foo(), !1)
         );
     }
+}
+
+unsafe_charAt: {
+    options = {
+        evaluate  : true,
+        unsafe    : true
+    }
+    input: {
+        console.log(
+            "1234" + 1,
+            "1234".charAt(0) + 1,
+            "1234".charAt(6 - 5) + 1,
+            ("12" + "34").charAt(0) + 1,
+            ("12" + "34").charAt(6 - 5) + 1,
+            [1, 2, 3, 4].join("").charAt(0) + 1
+        );
+    }
+    expect: {
+        console.log(
+            "12341",
+            "11",
+            "21",
+            "11",
+            "21",
+            "11"
+        );
+    }
+    expect_stdout: true
+}
+
+unsafe_charAt_bad_index: {
+    options = {
+        evaluate  : true,
+        unsafe    : true
+    }
+    input: {
+        console.log(
+            "1234".charAt() + 1,
+            "1234".charAt("a") + 1,
+            "1234".charAt(3.14) + 1
+        );
+    }
+    expect: {
+        console.log(
+            "11",
+            "11",
+            "41"
+        );
+    }
+    expect_stdout: true
 }
