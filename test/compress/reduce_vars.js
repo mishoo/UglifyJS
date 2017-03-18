@@ -1327,3 +1327,27 @@ issue_1595_4: {
         })(3, 4, 5);
     }
 }
+
+issue_1606: {
+    options = {
+        evaluate: true,
+        hoist_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            var a;
+            function g(){};
+            var b = 2;
+            x(b);
+        }
+    }
+    expect: {
+        function f() {
+            var a, b;
+            function g(){};
+            b = 2;
+            x(b);
+        }
+    }
+}

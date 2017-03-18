@@ -1152,7 +1152,8 @@ collapse_vars_arguments: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        toplevel:true
     }
     input: {
         var outer = function() {
@@ -1321,6 +1322,7 @@ collapse_vars_regexp: {
 issue_1537: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var k = '';
@@ -1335,6 +1337,7 @@ issue_1537: {
 issue_1537_for_of: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var k = '';
@@ -1349,6 +1352,7 @@ issue_1537_for_of: {
 issue_1537_destructuring_1: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var x = 1, y = 2;
@@ -1363,6 +1367,7 @@ issue_1537_destructuring_1: {
 issue_1537_destructuring_2: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var x = foo();
@@ -1377,6 +1382,7 @@ issue_1537_destructuring_2: {
 issue_1537_destructuring_3: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var x = Math.random();
@@ -1391,6 +1397,7 @@ issue_1537_destructuring_3: {
 issue_1537_destructuring_for_in: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var x = 1, y = 2;
@@ -1409,6 +1416,7 @@ issue_1537_destructuring_for_in: {
 issue_1537_destructuring_for_of: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var x = 1, y = 2;
@@ -1427,6 +1435,7 @@ issue_1537_destructuring_for_of: {
 issue_1562: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var v = 1, B = 2;
@@ -1453,5 +1462,48 @@ issue_1562: {
 
         var z = 5;
         for (; f(z + 2) ;) bar(30);
+    }
+}
+
+issue_1605_1: {
+    options = {
+        collapse_vars: true,
+        toplevel: false,
+    }
+    input: {
+        function foo(x) {
+            var y = x;
+            return y;
+        }
+        var o = new Object;
+        o.p = 1;
+    }
+    expect: {
+        function foo(x) {
+            return x;
+        }
+        var o = new Object;
+        o.p = 1;
+    }
+}
+
+issue_1605_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: "vars",
+    }
+    input: {
+        function foo(x) {
+            var y = x;
+            return y;
+        }
+        var o = new Object;
+        o.p = 1;
+    }
+    expect: {
+        function foo(x) {
+            return x;
+        }
+        (new Object).p = 1;
     }
 }

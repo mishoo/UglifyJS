@@ -152,7 +152,7 @@ describe("bin/uglifyjs", function () {
        });
     });
     it("Should process inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-520/input.js -cm toplevel --in-source-map inline --source-map-inline';
+        var command = uglifyjscmd + ' test/input/issue-520/input.js -mc toplevel --in-source-map inline --source-map-inline';
 
         exec(command, function (err, stdout) {
             if (err) throw err;
