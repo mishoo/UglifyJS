@@ -43,6 +43,7 @@ collapse_vars_side_effects_1: {
                 z = i += 4;
             log(x, z, y, i);
         }
+        f1(), f2(), f3(), f4();
     }
     expect: {
         function f1() {
@@ -73,7 +74,9 @@ collapse_vars_side_effects_1: {
                 y = i += 3;
             log(x, i += 4, y, i);
         }
+        f1(), f2(), f3(), f4();
     }
+    expect_stdout: true
 }
 
 collapse_vars_side_effects_2: {
