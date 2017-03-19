@@ -70,6 +70,7 @@ negate_iife_3_evaluate: {
     expect: {
         console.log(true);
     }
+    expect_stdout: true
 }
 
 negate_iife_3_side_effects: {
@@ -111,6 +112,7 @@ negate_iife_3_off_evaluate: {
     expect: {
         console.log(true);
     }
+    expect_stdout: true
 }
 
 negate_iife_4: {
@@ -243,6 +245,7 @@ negate_iife_nested: {
             }(7);
         }).f();
     }
+    expect_stdout: true
 }
 
 negate_iife_nested_off: {
@@ -275,6 +278,7 @@ negate_iife_nested_off: {
             })(7);
         }).f();
     }
+    expect_stdout: true
 }
 
 negate_iife_issue_1073: {
@@ -299,6 +303,7 @@ negate_iife_issue_1073: {
             };
         }(7))();
     }
+    expect_stdout: true
 }
 
 issue_1254_negate_iife_false: {
@@ -313,6 +318,7 @@ issue_1254_negate_iife_false: {
         })()();
     }
     expect_exact: '(function(){return function(){console.log("test")}})()();'
+    expect_stdout: true
 }
 
 issue_1254_negate_iife_true: {
@@ -327,6 +333,7 @@ issue_1254_negate_iife_true: {
         })()();
     }
     expect_exact: '!function(){return function(){console.log("test")}}()();'
+    expect_stdout: true
 }
 
 issue_1254_negate_iife_nested: {
@@ -341,6 +348,7 @@ issue_1254_negate_iife_nested: {
         })()()()()();
     }
     expect_exact: '!function(){return function(){console.log("test")}}()()()()();'
+    expect_stdout: true
 }
 
 issue_1288: {

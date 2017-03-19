@@ -245,6 +245,7 @@ unsafe_constant: {
             (void 0).a
         );
     }
+    expect_stdout: true
 }
 
 unsafe_object: {
@@ -268,6 +269,7 @@ unsafe_object: {
             1..b + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_object_nested: {
@@ -291,6 +293,7 @@ unsafe_object_nested: {
             2
         );
     }
+    expect_stdout: true
 }
 
 unsafe_object_complex: {
@@ -314,6 +317,7 @@ unsafe_object_complex: {
             2
         );
     }
+    expect_stdout: true
 }
 
 unsafe_object_repeated: {
@@ -337,6 +341,7 @@ unsafe_object_repeated: {
             1..b + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_object_accessor: {
@@ -386,6 +391,7 @@ unsafe_function: {
             ({a:{b:1},b:function(){}}).a.b + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_integer_key: {
@@ -533,6 +539,7 @@ unsafe_array: {
             (void 0)[1] + 1
         );
     }
+    expect_stdout: true
 }
 
 unsafe_string: {
@@ -651,6 +658,7 @@ call_args: {
         console.log(1);
         +(1, 1);
     }
+    expect_stdout: true
 }
 
 call_args_drop_param: {
@@ -672,6 +680,7 @@ call_args_drop_param: {
         console.log(1);
         +(b, 1);
     }
+    expect_stdout: true
 }
 
 in_boolean_context: {
@@ -709,6 +718,7 @@ in_boolean_context: {
             (foo(), !1)
         );
     }
+    expect_stdout: true
 }
 
 unsafe_charAt: {

@@ -166,6 +166,7 @@ keep_collapse_const_in_own_block_scope: {
             console.log(i);
         console.log(c);
     }
+    expect_stdout: true
 }
 
 keep_collapse_const_in_own_block_scope_2: {
@@ -186,6 +187,7 @@ keep_collapse_const_in_own_block_scope_2: {
             console.log(i);
         console.log(c);
     }
+    expect_stdout: true
 }
 
 evaluate: {

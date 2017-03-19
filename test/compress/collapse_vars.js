@@ -43,6 +43,7 @@ collapse_vars_side_effects_1: {
                 z = i += 4;
             log(x, z, y, i);
         }
+        f1(), f2(), f3(), f4();
     }
     expect: {
         function f1() {
@@ -73,7 +74,9 @@ collapse_vars_side_effects_1: {
                 y = i += 3;
             log(x, i += 4, y, i);
         }
+        f1(), f2(), f3(), f4();
     }
+    expect_stdout: true
 }
 
 collapse_vars_side_effects_2: {
@@ -823,6 +826,7 @@ collapse_vars_repeated: {
             console.log(e + "!");
         })("!");
     }
+    expect_stdout: true
 }
 
 collapse_vars_closures: {
@@ -1109,6 +1113,7 @@ collapse_vars_eval_and_with: {
             return function() { with (o) console.log(a) };
         })()();
     }
+    expect_stdout: true
 }
 
 collapse_vars_constants: {
@@ -1168,6 +1173,7 @@ collapse_vars_arguments: {
             (function(){console.log(arguments);})(7, 1);
         })();
     }
+    expect_stdout: true
 }
 
 collapse_vars_short_circuit: {
@@ -1317,6 +1323,7 @@ collapse_vars_regexp: {
                 console.log(result[0]);
         })();
     }
+    expect_stdout: true
 }
 
 issue_1537: {
