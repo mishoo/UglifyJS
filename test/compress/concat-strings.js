@@ -51,6 +51,7 @@ concat_2: {
             "1" + "2" + "3"
         );
     }
+    expect_stdout: true
 }
 
 concat_3: {
@@ -79,6 +80,7 @@ concat_3: {
             1 + 2 + "3" + "4" + "5"
         );
     }
+    expect_stdout: true
 }
 
 concat_4: {
@@ -107,6 +109,7 @@ concat_4: {
             1 + "2" + "3" + "4" + "5"
         );
     }
+    expect_stdout: true
 }
 
 concat_5: {
@@ -135,6 +138,7 @@ concat_5: {
             "1" + 2 + "3" + "4" + "5"
         );
     }
+    expect_stdout: true
 }
 
 concat_6: {
@@ -163,6 +167,7 @@ concat_6: {
             "1" + "2" + "3" + "4" + "5"
         );
     }
+    expect_stdout: true
 }
 
 concat_7: {
@@ -188,6 +193,7 @@ concat_7: {
             x += "foo"
         );
     }
+    expect_stdout: true
 }
 
 concat_8: {
@@ -213,4 +219,5 @@ concat_8: {
             x += "foo"
         );
     }
+    expect_stdout: true
 }

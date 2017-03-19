@@ -13,6 +13,7 @@ booleans_evaluate: {
         console.log(!0, !0);
         console.log(!1, !1);
     }
+    expect_stdout: true
 }
 
 booleans_global_defs: {
@@ -29,6 +30,7 @@ booleans_global_defs: {
     expect: {
         console.log(!0);
     }
+    expect_stdout: true
 }
 
 condition_evaluate: {

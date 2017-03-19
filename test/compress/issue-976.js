@@ -42,6 +42,7 @@ eval_collapse_vars: {
             eval("console.log(a);");
         })(eval);
     }
+    expect_stdout: true
 }
 
 eval_unused: {

@@ -48,6 +48,7 @@ dead_code_const_annotation_regex: {
         var CONST_FOO_ANN = !1;
         if (CONST_FOO_ANN) console.log('reachable');
     }
+    expect_stdout: true
 }
 
 drop_console_2: {
@@ -225,6 +226,7 @@ issue_1254_negate_iife_true: {
         })()();
     }
     expect_exact: '(function(){return function(){console.log("test")}})()();'
+    expect_stdout: true
 }
 
 issue_1254_negate_iife_nested: {
@@ -240,6 +242,7 @@ issue_1254_negate_iife_nested: {
         })()()()()();
     }
     expect_exact: '(function(){return function(){console.log("test")}})()()()()();'
+    expect_stdout: true
 }
 
 conditional: {

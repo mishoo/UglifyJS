@@ -11,6 +11,17 @@ var vm = require("vm");
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
 var failed_files = {};
+var same_stdout = ~process.version.lastIndexOf("v0.12.", 0) ? function(expected, actual) {
+    if (typeof expected != typeof actual) return false;
+    if (typeof expected != "string") {
+        if (expected.name != actual.name) return false;
+        expected = expected.message.slice(expected.message.lastIndexOf("\n") + 1);
+        actual = actual.message.slice(actual.message.lastIndexOf("\n") + 1);
+    }
+    return expected == actual;
+} : function(expected, actual) {
+    return typeof expected == typeof actual && expected.toString() == actual.toString();
+};
 
 run_compress_tests();
 if (failures) {
@@ -172,7 +183,7 @@ function run_compress_tests() {
                     }
                 }
                 if (test.expect_stdout) {
-                    var stdout = run_code(input_code);
+                    var stdout = run_code(make_code(input, output_options));
                     if (test.expect_stdout === true) {
                         test.expect_stdout = stdout;
                     }
@@ -335,8 +346,4 @@ function run_code(code) {
     } finally {
         process.stdout.write = original_write;
     }
-}
-
-function same_stdout(expected, actual) {
-    return typeof expected == typeof actual && expected.toString() == actual.toString();
 }

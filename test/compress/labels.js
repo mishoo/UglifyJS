@@ -9,6 +9,7 @@ labels_1: {
     expect: {
         foo || console.log("bar");
     }
+    expect_stdout: true
 }
 
 labels_2: {
@@ -40,6 +41,7 @@ labels_3: {
         for (var i = 0; i < 5; ++i)
             i < 3 || console.log(i);
     }
+    expect_stdout: true
 }
 
 labels_4: {
@@ -54,6 +56,7 @@ labels_4: {
         for (var i = 0; i < 5; ++i)
             i < 3 || console.log(i);
     }
+    expect_stdout: true
 }
 
 labels_5: {

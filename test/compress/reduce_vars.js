@@ -58,6 +58,7 @@ reduce_vars: {
         })();
         console.log(2);
     }
+    expect_stdout: true
 }
 
 modified: {
@@ -166,7 +167,7 @@ modified: {
             console.log(A ? 'yes' : 'no');
             console.log(B ? 'yes' : 'no');
         }
-   }
+    }
 }
 
 unsafe_evaluate: {
@@ -401,6 +402,7 @@ iife: {
             console.log(0, 1 * b, 5);
         }(1, 2, 3);
     }
+    expect_stdout: true
 }
 
 iife_new: {
@@ -420,6 +422,7 @@ iife_new: {
             console.log(0, 1 * b, 5);
         }(1, 2, 3);
     }
+    expect_stdout: true
 }
 
 multi_def: {
@@ -707,6 +710,7 @@ toplevel_on: {
     expect: {
         console.log(3);
     }
+    expect_stdout: true
 }
 
 toplevel_off: {
@@ -724,6 +728,7 @@ toplevel_off: {
         var x = 3;
         console.log(x);
     }
+    expect_stdout: true
 }
 
 toplevel_on_loops_1: {
@@ -751,6 +756,7 @@ toplevel_on_loops_1: {
             })();
         while (x);
     }
+    expect_stdout: true
 }
 
 toplevel_off_loops_1: {
@@ -779,6 +785,7 @@ toplevel_off_loops_1: {
             bar();
         while (x);
     }
+    expect_stdout: true
 }
 
 toplevel_on_loops_2: {
@@ -1121,6 +1128,7 @@ defun_label: {
             }(2));
         }();
     }
+    expect_stdout: true
 }
 
 double_reference: {
@@ -1164,6 +1172,7 @@ iife_arguments_1: {
             return f;
         });
     }
+    expect_stdout: true
 }
 
 iife_arguments_2: {
@@ -1186,6 +1195,7 @@ iife_arguments_2: {
             }() === arguments[0]);
         })();
     }
+    expect_stdout: true
 }
 
 iife_eval_1: {
@@ -1207,6 +1217,7 @@ iife_eval_1: {
             return f;
         });
     }
+    expect_stdout: true
 }
 
 iife_eval_2: {
@@ -1230,6 +1241,7 @@ iife_eval_2: {
             console.log(x() === eval("x"));
         })();
     }
+    expect_stdout: true
 }
 
 iife_func_side_effects: {
@@ -1326,6 +1338,7 @@ issue_1595_4: {
             if (a) iife(a - 1, b, c);
         })(3, 4, 5);
     }
+    expect_stdout: true
 }
 
 issue_1606: {
