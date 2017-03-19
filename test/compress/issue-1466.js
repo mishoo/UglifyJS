@@ -13,9 +13,9 @@ same_variable_in_multiple_for_loop: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         for (let i = 0; i < 3; i++) {
             let a = 100;
@@ -38,6 +38,7 @@ same_variable_in_multiple_for_loop: {
             }
         }
     }
+    expect_stdout: true
 }
 
 same_variable_in_multiple_forOf: {
@@ -55,9 +56,9 @@ same_variable_in_multiple_forOf: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         var test = [ "a", "b", "c" ];
         for (let tmp of test) {
@@ -75,10 +76,11 @@ same_variable_in_multiple_forOf: {
             console.log(o);
             let e;
             e = [ "e", "f", "g" ];
-            for (let o of e) 
+            for (let o of e)
                 console.log(o);
         }
     }
+    expect_stdout: true
 }
 
 same_variable_in_multiple_forIn: {
@@ -96,9 +98,9 @@ same_variable_in_multiple_forIn: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         var test = [ "a", "b", "c" ];
         for (let tmp in test) {
@@ -120,6 +122,7 @@ same_variable_in_multiple_forIn: {
                 console.log(o);
         }
     }
+    expect_stdout: true
 }
 
 different_variable_in_multiple_for_loop: {
@@ -137,9 +140,9 @@ different_variable_in_multiple_for_loop: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         for (let i = 0; i < 3; i++) {
             let a = 100;
@@ -162,6 +165,7 @@ different_variable_in_multiple_for_loop: {
             }
         }
     }
+    expect_stdout: true
 }
 
 different_variable_in_multiple_forOf: {
@@ -179,9 +183,9 @@ different_variable_in_multiple_forOf: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         var test = [ "a", "b", "c" ];
         for (let tmp of test) {
@@ -203,6 +207,7 @@ different_variable_in_multiple_forOf: {
                 console.log(o);
         }
     }
+    expect_stdout: true
 }
 
 different_variable_in_multiple_forIn: {
@@ -220,9 +225,9 @@ different_variable_in_multiple_forIn: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         var test = [ "a", "b", "c" ];
         for (let tmp in test) {
@@ -244,6 +249,7 @@ different_variable_in_multiple_forIn: {
                 console.log(o);
         }
     }
+    expect_stdout: true
 }
 
 more_variable_in_multiple_for: {
@@ -261,9 +267,9 @@ more_variable_in_multiple_for: {
         join_vars: true,
         cascade: true,
         side_effects: true,
-        collapse_vars: true
-    };
-    mangle = {};
+        collapse_vars: true,
+    }
+    mangle = {}
     input: {
         for (let a = 9, i = 0; i < 20; i += a) {
             let b = a++ + i;
@@ -281,5 +287,5 @@ more_variable_in_multiple_for: {
                 console.log(o, c, e, l, f);
         }
     }
+    expect_stdout: true
 }
-
