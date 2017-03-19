@@ -128,6 +128,7 @@ do_screw_try_catch_undefined: {
             return void 0===o
         }
     }
+    expect_stdout: true
 }
 
 dont_screw_try_catch_undefined: {
@@ -156,6 +157,7 @@ dont_screw_try_catch_undefined: {
             return n === undefined
         }
     }
+    expect_stdout: true
 }
 
 reduce_vars: {
@@ -208,6 +210,7 @@ issue_1586_1: {
         }
     }
     expect_exact: "function f(){try{}catch(c){console.log(c.message)}}"
+    expect_stdout: true
 }
 
 issue_1586_2: {
@@ -226,4 +229,5 @@ issue_1586_2: {
         }
     }
     expect_exact: "function f(){try{}catch(c){console.log(c.message)}}"
+    expect_stdout: true
 }

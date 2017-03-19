@@ -162,4 +162,5 @@ regexp_literal_not_const: {
             while (result = REGEXP_LITERAL.exec("acdabcdeabbb")) console.log(result[0]);
         })();
     }
+    expect_stdout: true
 }

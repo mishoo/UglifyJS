@@ -46,4 +46,5 @@ string_plus_optimization: {
         }
         foo();
     }
+    expect_stdout: true
 }
