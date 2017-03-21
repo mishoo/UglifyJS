@@ -386,7 +386,7 @@ var index = 0;
                     }
                     throw ex;
                 }
-            };
+            }
         });
         cb();
     });
