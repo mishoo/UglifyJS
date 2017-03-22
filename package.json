@@ -30,7 +30,6 @@
   ],
   "dependencies": {
     "source-map": "~0.5.1",
-    "uglify-to-browserify": "~1.0.0",
     "yargs": "~3.10.0"
   },
   "devDependencies": {
@@ -40,13 +39,15 @@
     "estraverse": "~1.5.1",
     "mocha": "~2.3.4"
   },
+  "optionalDependencies": {
+    "uglify-to-browserify": "~1.0.0"
+  },
   "browserify": {
     "transform": [
       "uglify-to-browserify"
     ]
   },
   "scripts": {
-    "shrinkwrap": "rm ./npm-shrinkwrap.json; rm -rf ./node_modules; npm i && npm shrinkwrap && npm outdated",
     "test": "node test/run-tests.js"
   },
   "keywords": ["uglify", "uglify-js", "minify", "minifier"]

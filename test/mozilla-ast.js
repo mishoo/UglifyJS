@@ -5,7 +5,7 @@ var UglifyJS = require(".."),
     escodegen = require("escodegen"),
     esfuzz = require("esfuzz"),
     estraverse = require("estraverse"),
-    prefix = Array(20).join("\b") + "    ";
+    prefix = "\r    ";
 
 // Normalizes input AST for UglifyJS in order to get correct comparison.
 
@@ -62,7 +62,7 @@ module.exports = function(options) {
         var ast1 = normalizeInput(esfuzz.generate({
             maxDepth: options.maxDepth
         }));
-        
+
         var ast2 =
             UglifyJS
             .AST_Node
