@@ -114,7 +114,7 @@ function run_compress_tests() {
                 U.AST_Node.warn_function = function(text) {
                     warnings_emitted.push("WARN: " + text);
                 };
-                options.warnings = true;
+                if (!options.warnings) options.warnings = true;
             }
             var cmp = new U.Compressor(options, true);
             var output_options = test.beautify || {};
