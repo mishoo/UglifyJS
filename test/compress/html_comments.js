@@ -47,22 +47,6 @@ html_comment_in_greater_than_or_equal: {
     expect_exact: "function f(a,b){return a-- >=b}";
 }
 
-html_comment_in_right_shift_assign: {
-    input: {
-        // Note: illegal javascript
-        function f(a, b) { return a-- >>= b; }
-    }
-    expect_exact: "function f(a,b){return a-- >>=b}";
-}
-
-html_comment_in_zero_fill_right_shift_assign: {
-    input: {
-        // Note: illegal javascript
-        function f(a, b) { return a-- >>>= b; }
-    }
-    expect_exact: "function f(a,b){return a-- >>>=b}";
-}
-
 html_comment_in_string_literal: {
     input: {
         function f() { return "<!--HTML-->comment in<!--string literal-->"; }

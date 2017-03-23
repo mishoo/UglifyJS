@@ -1514,3 +1514,110 @@ issue_1605_2: {
         (new Object).p = 1;
     }
 }
+
+issue_1631_1: {
+    options = {
+        cascade: true,
+        collapse_vars: true,
+        hoist_funs: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        var pc = 0;
+        function f(x) {
+            pc = 200;
+            return 100;
+        }
+        function x() {
+            var t = f();
+            pc += t;
+            return pc;
+        }
+        console.log(x());
+    }
+    expect: {
+        function f(x) {
+            return pc = 200, 100;
+        }
+        function x() {
+            var t = f();
+            return pc += t;
+        }
+        var pc = 0;
+        console.log(x());
+    }
+    expect_stdout: "300"
+}
+
+issue_1631_2: {
+    options = {
+        cascade: true,
+        collapse_vars: true,
+        hoist_funs: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 0, b = 1;
+        function f() {
+            a = 2;
+            return 4;
+        }
+        function g() {
+            var t = f();
+            b = a + t;
+            return b;
+        }
+        console.log(g());
+    }
+    expect: {
+        function f() {
+            return a = 2, 4;
+        }
+        function g() {
+            var t = f();
+            return b = a + t;
+        }
+        var a = 0, b = 1;
+        console.log(g());
+    }
+    expect_stdout: "6"
+}
+
+issue_1631_3: {
+    options = {
+        cascade: true,
+        collapse_vars: true,
+        hoist_funs: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function g() {
+            var a = 0, b = 1;
+            function f() {
+                a = 2;
+                return 4;
+            }
+            var t = f();
+            b = a + t;
+            return b;
+        }
+        console.log(g());
+    }
+    expect: {
+        function g() {
+            function f() {
+                return a = 2, 4;
+            }
+            var a = 0, b = 1, t = f();
+            return b = a + t;
+        }
+        console.log(g());
+    }
+    expect_stdout: "6"
+}

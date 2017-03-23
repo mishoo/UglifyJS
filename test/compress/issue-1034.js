@@ -39,7 +39,7 @@ non_hoisted_function_after_return_2a: {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
         if_return: true, join_vars: true, cascade: true, side_effects: true,
-        collapse_vars: false, passes: 2
+        collapse_vars: false, passes: 2, warnings: "verbose"
     }
     input: {
         function foo(x) {
@@ -75,7 +75,7 @@ non_hoisted_function_after_return_2a: {
         "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:53,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:56,12]",
         "WARN: Dropping unused variable b [test/compress/issue-1034.js:51,20]",
-        "WARN: Dropping unused variable c [test/compress/issue-1034.js:53,16]"
+        "WARN: Dropping unused variable c [test/compress/issue-1034.js:53,16]",
     ]
 }
 
@@ -114,8 +114,5 @@ non_hoisted_function_after_return_2b: {
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:97,12]",
         "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:97,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:101,12]",
-        "WARN: Dropping unused variable b [test/compress/issue-1034.js:95,20]",
-        "WARN: Dropping unused variable c [test/compress/issue-1034.js:97,16]"
     ]
 }
-
