@@ -62,10 +62,10 @@ describe("Directives", function() {
     it("Should know which strings are directive and which ones are not", function() {
         var test_directive = function(tokenizer, test) {
             test.directives.map(function(directive) {
-                assert.strictEqual(tokenizer.has_directive(directive), true, directive + " in " + test.input);
+                assert.strictEqual(tokenizer.has_directive(directive), true, "Didn't found directive `" + directive + "` at the end of `" + test.input + '`');
             });
             test.non_directives.map(function(fake_directive) {
-                assert.strictEqual(tokenizer.has_directive(fake_directive), false, fake_directive + " in " + test.input);
+                assert.strictEqual(tokenizer.has_directive(fake_directive), false, "Unexpectedly found directive `" + fake_directive + "` at the end of `" + test.input + '`');
             });
         }
 
@@ -156,6 +156,16 @@ describe("Directives", function() {
                 input: '"use strict";try{"use asm";',
                 directives: ["use strict"],
                 non_directives: ["use\nstrict", "use \nstrict", "use asm"]
+            },
+            {
+                input: 'class foo {',
+                directives: ["use strict"],
+                non_directives: ["use\nstrict", "use asm"]
+            },
+            {
+                input: 'class foo {}',
+                directives: [],
+                non_directives: ["use strict", "use asm", "use\nstrict"]
             }
         ];
 
@@ -365,6 +375,46 @@ describe("Directives", function() {
                 tests[i][1],
                 tests[i][0]
             );
+        }
+    });
+    it("Should be detect implicit usages of strict mode from tree walker", function() {
+        var tests = [
+            {
+                input: 'class foo {bar(){_check_}}',
+                directives: ["use strict"],
+                non_directives: ["use bar"]
+            },
+            {
+                input: 'class foo {bar(){}}_check_',
+                directives: [],
+                non_directives: ["use strict", "use bar"]
+            }
+        ];
+
+        var i = 0;
+        var checked;
+        var checkWalker = new uglify.TreeWalker(function(node, descend) {
+            if (node instanceof uglify.AST_Symbol && node.name === "_check_") {
+                checked = true;
+                for (var j = 0; j < tests[i].directives.length; j++) {
+                    assert.ok(checkWalker.has_directive(tests[i].directives[j]),
+                        "Did not found directive '" + tests[i].directives[j] +  "' in test " + tests[i].input)
+                }
+                for (var k = 0; k < tests[i].non_directives.length; k++) {
+                    assert.equal(checkWalker.has_directive(tests[i].non_directives[k]), undefined,
+                        "Found directive '" + tests[i].non_directives[k] +  "' in test " + tests[i].input)
+                }
+            }
+        });
+
+        for (; i < tests.length; i++) {
+            // Do tests - iterate the ast in each test - check only when _check_ occurs - fail when no _check_ has been found
+            checked = false;
+            var ast = uglify.parse(tests[i].input);
+            ast.walk(checkWalker);
+            if (!checked) {
+                throw "No _check_ symbol found in " + tests[i].input;
+            }
         }
     });
 });

@@ -71,7 +71,7 @@ describe("Getters and setters", function() {
         var fail = function(data) {
             return function (e) {
                 return e instanceof UglifyJS.JS_Parse_Error &&
-                    e.message === "Invalid getter/setter name: " + data.operator;
+                    /^Unexpected token: /.test(e.message);
             };
         };
 

@@ -558,6 +558,9 @@ can pass additional arguments that control the code output:
   - `3` -- always use the original quotes
 - `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
   quotes from property names in object literals.
+- `ecma` (default `5`) -- set output printing mode.  This will only change the
+  output in direct control of the beautifier.  Non-compatible features in the
+  abstract syntax tree will still be outputted as is.
 
 ### Keeping copyright notices or other comments
 

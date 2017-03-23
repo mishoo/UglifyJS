@@ -16,8 +16,8 @@ describe("Accessor tokens", function() {
                 assert.equal(node.start.pos, 12);
                 assert.equal(node.end.endpos, 46);
 
-                assert(node.key instanceof UglifyJS.AST_SymbolRef);
-                assert.equal(node.key.start.pos, 16);
+                assert(node.key instanceof UglifyJS.AST_SymbolMethod);
+                assert.equal(node.key.start.pos, 12);
                 assert.equal(node.key.end.endpos, 22);
 
                 assert(node.value instanceof UglifyJS.AST_Accessor);

@@ -1,3 +1,5 @@
+// NOTE trailing comma doesn't contribute to length of an array
+// That also means the array changes length if previous element is a hole too and got cut off
 holes_and_undefined: {
     input: {
         w = [1,,];
@@ -88,6 +90,79 @@ constant_join_2: {
                   "foo+1+2+3+bar",
                   "baz", "x", "y" ].join("really-long-separator");
         var f = "strstr" + variable + "foobarmoo" + foo;
+    }
+}
+
+spread_with_variable_as_last_element: {
+    input: {
+        var values = [4, 5, 6];
+        var a = [1, 2, 3, ...values];
+    }
+    expect: {
+        var values = [4, 5, 6];
+        var a = [1, 2, 3, ...values];
+    }
+}
+
+spread_with_variable_in_middle: {
+    input: {
+        var values = [4, 5, 6];
+        var a = [1, 2, 3, ...values, 7,,,];
+    }
+    expect: {
+        var values = [4, 5, 6];
+        var a = [1, 2, 3, ...values, 7,,,];
+    }
+}
+
+spread_with_variable_at_front: {
+    input: {
+        var values = [1, 2, 3];
+        var a = [...values, 4, 5, 6];
+    }
+    expect: {
+        var values = [1, 2, 3];
+        var a = [...values, 4, 5, 6];
+    }
+}
+
+spread_with_variable_at_front_after_elisions: {
+    input: {
+        var values = [1, 2, 3];
+        var a = [,,,...values, 4, 5, 6];
+    }
+    expect: {
+        var values = [1, 2, 3];
+        var a = [,,,...values, 4, 5, 6];
+    }
+}
+
+spread_with_array_at_end: {
+    input: {
+        var a = [1, 2, ...[4, 5, 6]];
+    }
+    expect: {
+        var a = [1, 2, ...[4, 5, 6]];
+    }
+}
+
+spread_with_logical_expression_at_end: {
+    options = { evaluate: true }
+    input: {
+        var a = [1, 2, 3, ...[2+2]]
+    }
+    expect: {
+        var a = [1, 2, 3, ...[4]]
+    }
+}
+
+spread_with_logical_expression_at_middle: {
+    options = { evaluate: true }
+    input: {
+        var a = [1, 1, ...[1+1, 1+2, 2+3], 8]
+    }
+    expect: {
+        var a = [1, 1, ...[2, 3, 5], 8]
     }
 }
 

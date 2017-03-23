@@ -1329,6 +1329,7 @@ collapse_vars_regexp: {
 issue_1537: {
     options = {
         collapse_vars: true,
+        toplevel: true,
     }
     input: {
         var k = '';
@@ -1337,6 +1338,104 @@ issue_1537: {
     expect: {
         var k = '';
         for (k in {prop: 'val'});
+    }
+}
+
+issue_1537_for_of: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var k = '';
+        for (k of {prop: 'val'}){}
+    }
+    expect: {
+        var k = '';
+        for (k of {prop: 'val'});
+    }
+}
+
+issue_1537_destructuring_1: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var x = 1, y = 2;
+        [x] = [y];
+    }
+    expect: {
+        var x = 1;
+        [x] = [2];
+    }
+}
+
+issue_1537_destructuring_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var x = foo();
+        [x] = [1];
+    }
+    expect: {
+        var x = foo();
+        [x] = [1];
+    }
+}
+
+issue_1537_destructuring_3: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var x = Math.random();
+        ({p: x = 9} = {v: 1});
+    }
+    expect: {
+        var x = Math.random();
+        ({p: x = 9} = {v: 1});
+    }
+}
+
+issue_1537_destructuring_for_in: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var x = 1, y = 2;
+        (function() {
+            for ([[x], y] in a);
+        })();
+    }
+    expect: {
+        var x = 1, y = 2;
+        (function() {
+            for ([[x], y] in a);
+        })();
+    }
+}
+
+issue_1537_destructuring_for_of: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var x = 1, y = 2;
+        (function() {
+            for ([[x], y] of a);
+        })();
+    }
+    expect: {
+        var x = 1, y = 2;
+        (function() {
+            for ([[x], y] of a);
+        })();
     }
 }
 
