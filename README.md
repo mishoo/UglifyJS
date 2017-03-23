@@ -10,8 +10,10 @@ There's also an
 [in-browser online demo](http://lisperator.net/uglifyjs/#demo) (for Firefox,
 Chrome and probably Safari).
 
-Note: release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
+#### Note:
+- release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
 ES2015+ (ES6+) code then please use the [harmony](#harmony) development branch.
+- Node 7 has a known performance regression and runs `uglify-js` twice as slow.
 
 Install
 -------
