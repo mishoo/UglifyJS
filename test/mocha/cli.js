@@ -251,4 +251,59 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should support hyphen as shorthand", function(done) {
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js -m keep-fnames=true';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
+           done();
+       });
+    });
+    it("Should throw syntax error (5--)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/assign_1.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/assign_1.js:1,18",
+               "console.log(1 || 5--);",
+               "                  ^",
+               "SyntaxError: Invalid use of -- operator"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (Math.random() /= 2)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/assign_2.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/assign_2.js:1,32",
+               "console.log(2 || (Math.random() /= 2));",
+               "                                ^",
+               "SyntaxError: Invalid assignment"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (++this)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/assign_3.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/assign_3.js:1,23",
+               "console.log(3 || ++this);",
+               "                       ^",
+               "SyntaxError: Invalid use of ++ operator"
+           ].join("\n"));
+           done();
+       });
+    });
 });
