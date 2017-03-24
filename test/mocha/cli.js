@@ -251,4 +251,14 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should support hyphens as shorthands", function(done) {
+       var command = uglifyjscmd + ' test/input/issue-1431/sample.js -m keep-fnames=true';
+
+       exec(command, function (err, stdout) {
+           if (err) throw err;
+
+           assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
+           done();
+       });
+    })
 });
