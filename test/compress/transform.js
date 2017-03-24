@@ -30,7 +30,6 @@ booleans_global_defs: {
     expect: {
         console.log(!0);
     }
-    expect_stdout: true
 }
 
 condition_evaluate: {
