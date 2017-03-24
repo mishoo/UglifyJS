@@ -791,3 +791,17 @@ issue_1583: {
         }
     }
 }
+
+issue_1656: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        for(var a=0;;);
+    }
+    expect_exact: "for (;;) ;"
+}
