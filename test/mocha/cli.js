@@ -298,9 +298,9 @@ describe("bin/uglifyjs", function () {
            assert.ok(err);
            assert.strictEqual(stdout, "");
            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
-               "Parse error at test/input/invalid/assign_3.js:1,23",
+               "Parse error at test/input/invalid/assign_3.js:1,18",
                "console.log(3 || ++this);",
-               "                       ^",
+               "                  ^",
                "SyntaxError: Invalid use of ++ operator"
            ].join("\n"));
            done();
