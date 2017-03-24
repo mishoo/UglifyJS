@@ -440,3 +440,21 @@ issue_186_beautify_bracketize_ie8: {
         '}',
     ]
 }
+
+issue_1648: {
+    options = {
+        join_vars: true,
+        loops: true,
+        passes: 2,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            x();
+            var b = 1;
+            while (1);
+        }
+    }
+    expect_exact: "function f(){for(x();1;);}"
+}
