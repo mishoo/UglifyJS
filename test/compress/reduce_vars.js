@@ -1364,3 +1364,183 @@ issue_1606: {
         }
     }
 }
+
+issue_1670_1: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              default:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            void 0 === a ? console.log("PASS") : console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              default:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_3: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              case 1:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            void 0 === a ? console.log("PASS") : console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_4: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              case 1:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_5: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            switch (1) {
+              case a:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+                break;
+            }
+        })(1);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+    }
+    expect_stdout: "1"
+}
+
+issue_1670_6: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            switch (1) {
+              case a = 1:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+                break;
+            }
+        })(1);
+    }
+    expect: {
+        (function(a) {
+            switch (1) {
+              case a = 1:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+            }
+        })(1);
+    }
+    expect_stdout: "1"
+}
