@@ -125,3 +125,35 @@ side_effects_label: {
     }
     expect_stdout: "PASS"
 }
+
+side_effects_switch: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g() {
+                switch (0) {
+                  default:
+                  case console.log("PASS"):
+                }
+            }
+            g();
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            (function() {
+                switch (0) {
+                  default:
+                  case console.log("PASS"):
+                }
+            })();
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
