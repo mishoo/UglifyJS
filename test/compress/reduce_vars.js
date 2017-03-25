@@ -1392,7 +1392,7 @@ issue_1670_1: {
             void 0 === a ? console.log("PASS") : console.log("FAIL");
         })();
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
 }
 
 issue_1670_2: {
@@ -1421,7 +1421,7 @@ issue_1670_2: {
             console.log("PASS");
         })();
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
 }
 
 issue_1670_3: {
@@ -1451,7 +1451,7 @@ issue_1670_3: {
             void 0 === a ? console.log("PASS") : console.log("FAIL");
         })();
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
 }
 
 issue_1670_4: {
@@ -1480,5 +1480,67 @@ issue_1670_4: {
             console.log("PASS");
         })();
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
+}
+
+issue_1670_5: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            switch (1) {
+              case a:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+                break;
+            }
+        })(1);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+    }
+    expect_stdout: "1"
+}
+
+issue_1670_6: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            switch (1) {
+              case a = 1:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+                break;
+            }
+        })(1);
+    }
+    expect: {
+        (function(a) {
+            switch (1) {
+              case a = 1:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+            }
+        })(1);
+    }
+    expect_stdout: "1"
 }
