@@ -48,3 +48,15 @@ typeof_in_boolean_context: {
         foo();
     }
 }
+
+issue_1668: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        if (typeof bar);
+    }
+    expect: {
+        if (!0);
+    }
+}
