@@ -258,3 +258,35 @@ keep_default: {
         }
     }
 }
+
+issue_1663: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        function f() {
+            switch (1) {
+              case 1:
+                b = a++;
+                return ++b;
+              default:
+                var b;
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        function f() {
+            b = a++;
+            return ++b;
+            var b;
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
