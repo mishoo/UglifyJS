@@ -23,6 +23,7 @@ constant_switch_2: {
     }
     expect: {
         foo();
+        2;
         bar();
     }
 }
@@ -117,6 +118,7 @@ constant_switch_6: {
             x();
             if (foo) break OUT;
             y();
+            2;
             bar();
         }
     }
@@ -155,6 +157,7 @@ constant_switch_7: {
                 console.log(x);
             }
             y();
+            2;
             bar();
         }
     }
@@ -203,6 +206,7 @@ constant_switch_9: {
             x();
             for (;;) if (foo) break OUT;
             y();
+            2;
             bar();
             def();
         }
@@ -281,12 +285,152 @@ issue_1663: {
     expect: {
         var a = 100, b = 10;
         function f() {
+            var b;
             b = a++;
             return ++b;
-            var b;
         }
         f();
         console.log(a, b);
     }
     expect_stdout: true
+}
+
+drop_case: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case 'bar': baz(); break;
+          case 'moo':
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case 'bar': baz();
+        }
+    }
+}
+
+keep_case: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case 'bar': baz(); break;
+          case moo:
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case 'bar': baz(); break;
+          case moo:
+        }
+    }
+}
+
+issue_376: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        switch (true) {
+          case boolCondition:
+            console.log(1);
+            break;
+          case false:
+            console.log(2);
+            break;
+        }
+    }
+    expect: {
+        switch (true) {
+          case boolCondition:
+            console.log(1);
+        }
+    }
+}
+
+issue_441_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case bar:
+            qux();
+            break;
+          case baz:
+            qux();
+            break;
+          default:
+            qux();
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case bar:
+          case baz:
+          default:
+            qux();
+        }
+    }
+}
+
+issue_441_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case bar:
+            // TODO: Fold into the case below
+            qux();
+            break;
+          case fall:
+          case baz:
+            qux();
+            break;
+          default:
+            qux();
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case bar:
+            qux();
+            break;
+          case fall:
+          case baz:
+          default:
+            qux();
+        }
+    }
+}
+
+issue_1674: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        switch (0) {
+          default:
+            console.log("FAIL");
+            break;
+          case 0:
+            console.log("PASS");
+            break;
+        }
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
 }
