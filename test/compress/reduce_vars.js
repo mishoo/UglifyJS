@@ -1364,3 +1364,121 @@ issue_1606: {
         }
     }
 }
+
+issue_1670_1: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              default:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            void 0 === a ? console.log("PASS") : console.log("FAIL");
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_1670_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              default:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_1670_3: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              case 1:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            void 0 === a ? console.log("PASS") : console.log("FAIL");
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_1670_4: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              case 1:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: true
+}
