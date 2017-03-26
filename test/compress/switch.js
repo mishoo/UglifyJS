@@ -478,7 +478,7 @@ issue_1679: {
     expect_stdout: true
 }
 
-issue_1680: {
+issue_1680_1: {
     options = {
         dead_code: true,
         evaluate: true,
@@ -517,4 +517,39 @@ issue_1680: {
         "2",
         "5",
     ]
+}
+
+issue_1680_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        switch (b) {
+          case a--:
+            break;
+          case b:
+            var c;
+            break;
+          case a:
+            break;
+          case a--:
+            break;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        switch (b) {
+          case a--:
+          case a:
+            break;
+          case b:
+            var c;
+            break;
+          case a--:
+        }
+        console.log(a, b);
+    }
+    expect_stdout: true
 }
