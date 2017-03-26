@@ -894,7 +894,8 @@ collapse_vars_unary: {
     }
     expect: {
         function f0(o, p) {
-            delete o[p];
+            var x = o[p];
+            delete x;
         }
         function f1(n) {
             return n > +!!n

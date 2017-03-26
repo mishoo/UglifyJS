@@ -1544,3 +1544,30 @@ issue_1670_6: {
     }
     expect_stdout: "1"
 }
+
+unary_delete: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var b = 10;
+        function f() {
+            var a;
+            if (delete a) b--;
+        }
+        f();
+        console.log(b);
+    }
+    expect: {
+        var b = 10;
+        function f() {
+            var a;
+            if (delete a) b--;
+        }
+        f();
+        console.log(b);
+    }
+    expect_stdout: true
+}
