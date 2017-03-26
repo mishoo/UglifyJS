@@ -201,7 +201,6 @@ function createStatement(recurmax, canThrow, canBreak, canContinue) {
     case 6:
       return createExpression(recurmax) + ';';
     case 7:
-      return ';'; // TODO: disabled until some switch issues are resolved
       // note: case args are actual expressions
       // note: default does not _need_ to be last
       return 'switch (' + createExpression(recurmax) + ') { ' + createSwitchParts(recurmax, 4) + '}';
