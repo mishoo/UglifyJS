@@ -933,3 +933,32 @@ issue_1645_2: {
     }
     expect_stdout: true
 }
+
+condition_symbol_matches_consequent: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function foo(x, y) {
+            return x ? x : y;
+        }
+        function bar() {
+            return g ? g : h;
+        }
+        var g = 4;
+        var h = 5;
+        console.log(foo(3, null), foo(0, 7), foo(true, false), bar());
+    }
+    expect: {
+        function foo(x, y) {
+            return x || y;
+        }
+        function bar() {
+            return g || h;
+        }
+        var g = 4;
+        var h = 5;
+        console.log(foo(3, null), foo(0, 7), foo(true, false), bar());
+    }
+    expect_stdout: "3 7 true 4"
+}
