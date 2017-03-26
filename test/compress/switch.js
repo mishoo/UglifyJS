@@ -553,3 +553,29 @@ issue_1680_2: {
     }
     expect_stdout: true
 }
+
+issue_1690_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (console.log("PASS")) {}
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1690_2: {
+    options = {
+        dead_code: false,
+    }
+    input: {
+        switch (console.log("PASS")) {}
+    }
+    expect: {
+        switch (console.log("PASS")) {}
+    }
+    expect_stdout: "PASS"
+}
