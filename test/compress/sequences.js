@@ -306,3 +306,27 @@ unsafe_undefined: {
         }
     }
 }
+
+issue_1685: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        function f() {
+            var a = (a--, delete a && --b);
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        function f() {
+            var a = (a--, delete a && --b);
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
