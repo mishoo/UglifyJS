@@ -121,6 +121,8 @@ var TYPEOF_OUTCOMES = [
   'symbol',
   'crap' ];
 
+var FUNC_TOSTRING = 'Function.prototype.toString=function(){return"function(){}"};';
+
 function run_code(code) {
     var stdout = "";
     var original_write = process.stdout.write;
@@ -128,7 +130,15 @@ function run_code(code) {
         stdout += chunk;
     };
     try {
-        new vm.Script(code).runInNewContext({ console: console }, { timeout: 5000 });
+        new vm.Script(FUNC_TOSTRING + code).runInNewContext({
+            console: {
+                log: function() {
+                    return console.log.apply(console, [].map.call(arguments, function(arg) {
+                        return typeof arg == "function" ? "[Function]" : arg;
+                    }));
+                }
+            }
+        }, { timeout: 5000 });
         return stdout;
     } catch (ex) {
         return ex;
