@@ -330,3 +330,113 @@ issue_1685: {
     }
     expect_stdout: true
 }
+
+func_def_1: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            return f = 0, !!f;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            return !!(f = 0);
+        }
+        console.log(f());
+    }
+    expect_stdout: "false"
+}
+
+func_def_2: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function f() {
+            return f = 0, !!f;
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            return f = 0, !!f;
+        }());
+    }
+    expect_stdout: "true"
+}
+
+func_def_3: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            function g() {}
+            return g = 0, !!g;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            function g() {}
+            return !!(g = 0);
+        }
+        console.log(f());
+    }
+    expect_stdout: "false"
+}
+
+func_def_4: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            function g() {
+                return g = 0, !!g;
+            }
+            return g();
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            function g() {
+                return !!(g = 0);
+            }
+            return g();
+        }
+        console.log(f());
+    }
+    expect_stdout: "false"
+}
+
+func_def_5: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            return function g(){
+                return g = 0, !!g;
+            }();
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            return function g(){
+                return g = 0, !!g;
+            }();
+        }
+        console.log(f());
+    }
+    expect_stdout: "true"
+}
