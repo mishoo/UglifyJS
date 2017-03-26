@@ -23,7 +23,6 @@ constant_switch_2: {
     }
     expect: {
         foo();
-        2;
         bar();
     }
 }
@@ -118,7 +117,6 @@ constant_switch_6: {
             x();
             if (foo) break OUT;
             y();
-            2;
             bar();
         }
     }
@@ -157,7 +155,6 @@ constant_switch_7: {
                 console.log(x);
             }
             y();
-            2;
             bar();
         }
     }
@@ -206,7 +203,6 @@ constant_switch_9: {
             x();
             for (;;) if (foo) break OUT;
             y();
-            2;
             bar();
             def();
         }
@@ -477,6 +473,82 @@ issue_1679: {
             }
         }
         f();
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
+
+issue_1680_1: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        function f(x) {
+            console.log(x);
+            return x + 1;
+        }
+        switch (2) {
+          case f(0):
+          case f(1):
+            f(2);
+          case 2:
+          case f(3):
+          case f(4):
+            f(5);
+        }
+    }
+    expect: {
+        function f(x) {
+            console.log(x);
+            return x + 1;
+        }
+        switch (2) {
+          case f(0):
+          case f(1):
+            f(2);
+          case 2:
+            f(5);
+        }
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "2",
+        "5",
+    ]
+}
+
+issue_1680_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        switch (b) {
+          case a--:
+            break;
+          case b:
+            var c;
+            break;
+          case a:
+            break;
+          case a--:
+            break;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        switch (b) {
+          case a--:
+            break;
+          case b:
+            var c;
+            break;
+          case a:
+          case a--:
+        }
         console.log(a, b);
     }
     expect_stdout: true
