@@ -434,3 +434,50 @@ issue_1674: {
     }
     expect_stdout: "PASS"
 }
+
+issue_1679: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        function f() {
+            switch (--b) {
+              default:
+              case !function x() {}:
+                break;
+              case b--:
+                switch (0) {
+                  default:
+                  case a--:
+                }
+                break;
+              case (a++):
+                break;
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        function f() {
+            switch (--b) {
+              default:
+              case !function x() {}:
+                break;
+              case b--:
+                switch (0) {
+                  default:
+                  case a--:
+                }
+                break;
+              case (a++):
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
