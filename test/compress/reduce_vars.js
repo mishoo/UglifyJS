@@ -1823,3 +1823,34 @@ redefine_farg_3: {
     }
     expect_stdout: "object number undefined"
 }
+
+delay_def: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return a;
+            var a;
+        }
+        function g() {
+            return a;
+            var a = 1;
+        }
+        console.log(f(), g());
+    }
+    expect: {
+        function f() {
+            return a;
+            var a;
+        }
+        function g() {
+            return a;
+            var a = 1;
+        }
+        console.log(f(), g());
+    }
+    expect_stdout: true
+}
