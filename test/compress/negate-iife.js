@@ -353,8 +353,9 @@ issue_1254_negate_iife_nested: {
 
 issue_1288: {
     options = {
-        negate_iife: true,
         conditionals: true,
+        negate_iife: true,
+        side_effects: false,
     };
     input: {
         if (w) ;
@@ -374,11 +375,11 @@ issue_1288: {
             })(0);
     }
     expect: {
-        w || function f() {}();
-        x || function() {
+        w || !function f() {}();
+        x || !function() {
             x = {};
         }();
-        y ? function() {}() : function(z) {
+        y ? !function() {}() : !function(z) {
             return z;
         }(0);
     }

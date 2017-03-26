@@ -579,3 +579,17 @@ issue_1690_2: {
     }
     expect_stdout: "PASS"
 }
+
+if_switch_typeof: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        side_effects: true,
+    }
+    input: {
+        if (a) switch(typeof b) {}
+    }
+    expect: {
+        a;
+    }
+}
