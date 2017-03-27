@@ -593,3 +593,24 @@ if_switch_typeof: {
         a;
     }
 }
+
+issue_1698: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var a = 1;
+        !function() {
+            switch (a++) {}
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function() {
+            switch (a++) {}
+        }();
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
