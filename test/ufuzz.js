@@ -121,7 +121,20 @@ var TYPEOF_OUTCOMES = [
   'symbol',
   'crap' ];
 
-var FUNC_TOSTRING = 'Function.prototype.toString=function(){return"function(){}"};';
+var FUNC_TOSTRING = [
+    "Function.prototype.toString = function() {",
+    "    var ids = [];",
+    "    return function() {",
+    "        var i = ids.indexOf(this);",
+    "        if (i < 0) {",
+    "            i = ids.length;",
+    "            ids.push(this);",
+    "        }",
+    '        return "[Function: __func_" + i + "__]";',
+    "    }",
+    "}();",
+    ""
+].join("\n");
 
 function run_code(code) {
     var stdout = "";
