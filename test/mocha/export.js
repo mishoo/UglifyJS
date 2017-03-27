@@ -23,7 +23,6 @@ describe("Export", function() {
         };
 
         for (var i = 0; i < inputs.length; i++) {
-            //console.log(inputs[i][0]);
             var ast = test(inputs[i][0]);
             var names = inputs[i][1];
             var filename = inputs[i][2];
@@ -35,7 +34,5 @@ describe("Export", function() {
             assert.deepEqual(actualNames, names);
             assert.equal(st.module_name.value, filename)
         }
-
-
     })
 });
