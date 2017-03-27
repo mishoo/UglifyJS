@@ -614,3 +614,69 @@ issue_1698: {
     }
     expect_stdout: "2"
 }
+
+issue_1705_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = 0;
+        switch (a) {
+          default:
+            console.log("FAIL");
+          case 0:
+            break;
+        }
+    }
+    expect: {
+        var a = 0;
+        switch (a) {
+          default:
+            console.log("FAIL");
+          case 0:
+        }
+    }
+    expect_stdout: true
+}
+
+issue_1705_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        switch (a) {
+          default:
+            console.log("FAIL");
+          case 0:
+            break;
+        }
+    }
+    expect: {
+    }
+    expect_stdout: true
+}
+
+issue_1705_3: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (a) {
+          case 0:
+            break;
+          default:
+            break;
+        }
+    }
+    expect: {
+        a;
+    }
+    expect_stdout: true
+}
