@@ -13,7 +13,7 @@ describe("For statement", function() {
                 // one reference should be in the AST_Defun scope - search for it
                 var foundDefun = false;
                 node.name.thedef.references.forEach(function (r) {
-                    if (r instanceof uglify.AST_Defun) foundDefun = true;
+                    if (r.scope instanceof uglify.AST_Defun) foundDefun = true;
                 });
 
                 assert(foundDefun, "Symbol not referenced in the AST_Defun scope");
