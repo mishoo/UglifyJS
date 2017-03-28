@@ -176,7 +176,7 @@ describe("Directives", function() {
     });
 
     it("Should test EXPECT_DIRECTIVE RegExp", function() {
-        var tests = [
+        [
             ["", true],
             ["'test';", true],
             ["'test';;", true],
@@ -185,11 +185,12 @@ describe("Directives", function() {
             ["'tests';   \n\t", true],
             ["'tests';\n\n", true],
             ["\n\n\"use strict\";\n\n", true]
-        ];
-
-        for (var i = 0; i < tests.length; i++) {
-            assert.strictEqual(uglify.EXPECT_DIRECTIVE.test(tests[i][0]), tests[i][1], tests[i][0]);
-        }
+        ].forEach(function(test) {
+            var out = uglify.OutputStream();
+            out.print(test[0]);
+            out.print_string("", null, true);
+            assert.strictEqual(out.get() === test[0] + ';""', test[1], test[0]);
+        });
     });
 
     it("Should only print 2 semicolons spread over 2 lines in beautify mode", function() {
