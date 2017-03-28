@@ -805,3 +805,42 @@ issue_1656: {
     }
     expect_exact: "for (;;) ;"
 }
+
+issue_1709: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(
+            function x() {
+                var x = 1;
+                return x;
+            }(),
+            function y() {
+                const y = 2;
+                return y;
+            }(),
+            function z() {
+                function z() {}
+                return z;
+            }()
+        );
+    }
+    expect: {
+        console.log(
+            function() {
+                var x = 1;
+                return x;
+            }(),
+            function() {
+                const y = 2;
+                return y;
+            }(),
+            function() {
+                function z() {}
+                return z;
+            }()
+        );
+    }
+    expect_stdout: true
+}
