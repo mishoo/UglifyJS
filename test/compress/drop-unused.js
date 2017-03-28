@@ -931,3 +931,30 @@ issue_1715_3: {
     }
     expect_stdout: "1"
 }
+
+issue_1715_4: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        !function a() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
