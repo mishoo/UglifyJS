@@ -872,3 +872,143 @@ issue_1583: {
         }
     }
 }
+
+issue_1656: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        for(var a=0;;);
+    }
+    expect_exact: "for (;;) ;"
+}
+
+issue_1709: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(
+            function x() {
+                var x = 1;
+                return x;
+            }(),
+            function y() {
+                const y = 2;
+                return y;
+            }(),
+            function z() {
+                function z() {}
+                return z;
+            }()
+        );
+    }
+    expect: {
+        console.log(
+            function() {
+                var x = 1;
+                return x;
+            }(),
+            function() {
+                const y = 2;
+                return y;
+            }(),
+            function() {
+                function z() {}
+                return z;
+            }()
+        );
+    }
+    expect_stdout: true
+}
+
+issue_1715_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_1715_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a = 2;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_1715_3: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a = 2 + x();
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a = x();
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}

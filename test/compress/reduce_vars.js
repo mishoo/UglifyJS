@@ -425,7 +425,7 @@ iife_new: {
     expect_stdout: true
 }
 
-multi_def: {
+multi_def_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -435,7 +435,7 @@ multi_def: {
             if (a)
                 var b = 1;
             else
-                var b = 2
+                var b = 2;
             console.log(b + 1);
         }
     }
@@ -444,7 +444,7 @@ multi_def: {
             if (a)
                 var b = 1;
             else
-                var b = 2
+                var b = 2;
             console.log(b + 1);
         }
     }
@@ -475,6 +475,33 @@ multi_def_2: {
             else if (18 == code)
                 var bitsLength = 7, bitsOffset = 11, what = (len = 0);
             var repeatLength = this.getBits(bitsLength) + bitsOffset;
+        }
+    }
+}
+
+multi_def_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            var b = 2;
+            if (a)
+                var b;
+            else
+                var b;
+            console.log(b + 1);
+        }
+    }
+    expect: {
+        function f(a) {
+            var b = 2;
+            if (a)
+                var b;
+            else
+                var b;
+            console.log(3);
         }
     }
 }
@@ -1363,4 +1390,467 @@ issue_1606: {
             x(b);
         }
     }
+}
+
+issue_1670_1: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              default:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            void 0 === a ? console.log("PASS") : console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              default:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_3: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              case 1:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            void 0 === a ? console.log("PASS") : console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_4: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        dead_code: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            switch (1) {
+              case 0:
+                var a = true;
+                break;
+              case 1:
+                if (typeof a === "undefined") console.log("PASS");
+                else console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1670_5: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            switch (1) {
+              case a:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+                break;
+            }
+        })(1);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+    }
+    expect_stdout: "1"
+}
+
+issue_1670_6: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            switch (1) {
+              case a = 1:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+                break;
+            }
+        })(1);
+    }
+    expect: {
+        (function(a) {
+            switch (1) {
+              case a = 1:
+                console.log(a);
+                break;
+              default:
+                console.log(2);
+            }
+        })(1);
+    }
+    expect_stdout: "1"
+}
+
+unary_delete: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var b = 10;
+        function f() {
+            var a;
+            if (delete a) b--;
+        }
+        f();
+        console.log(b);
+    }
+    expect: {
+        var b = 10;
+        function f() {
+            var a;
+            if (delete a) b--;
+        }
+        f();
+        console.log(b);
+    }
+    expect_stdout: true
+}
+
+redefine_arguments_1: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var arguments;
+            return typeof arguments;
+        }
+        function g() {
+            var arguments = 42;
+            return typeof arguments;
+        }
+        function h(x) {
+            var arguments = x;
+            return typeof arguments;
+        }
+        console.log(f(), g(), h());
+    }
+    expect: {
+        function f() {
+            var arguments;
+            return typeof arguments;
+        }
+        function g() {
+            return"number";
+        }
+        function h(x) {
+            var arguments = x;
+            return typeof arguments;
+        }
+        console.log(f(), g(), h());
+    }
+    expect_stdout: "object number undefined"
+}
+
+redefine_arguments_2: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var arguments;
+            return typeof arguments;
+        }
+        function g() {
+            var arguments = 42;
+            return typeof arguments;
+        }
+        function h(x) {
+            var arguments = x;
+            return typeof arguments;
+        }
+        console.log(f(), g(), h());
+    }
+    expect: {
+        console.log(function() {
+            var arguments;
+            return typeof arguments;
+        }(), function() {
+            return"number";
+        }(), function(x) {
+            var arguments = x;
+            return typeof arguments;
+        }());
+    }
+    expect_stdout: "object number undefined"
+}
+
+redefine_arguments_3: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var arguments;
+            return typeof arguments;
+        }
+        function g() {
+            var arguments = 42;
+            return typeof arguments;
+        }
+        function h(x) {
+            var arguments = x;
+            return typeof arguments;
+        }
+        console.log(f(), g(), h());
+    }
+    expect: {
+        console.log(function() {
+            var arguments;
+            return typeof arguments;
+        }(), "number", "undefined");
+    }
+    expect_stdout: "object number undefined"
+}
+
+redefine_farg_1: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var a;
+            return typeof a;
+        }
+        function g(a) {
+            var a = 42;
+            return typeof a;
+        }
+        function h(a, b) {
+            var a = b;
+            return typeof a;
+        }
+        console.log(f([]), g([]), h([]));
+    }
+    expect: {
+        function f(a) {
+            var a;
+            return typeof a;
+        }
+        function g() {
+            return"number";
+        }
+        function h(a, b) {
+            var a = b;
+            return typeof a;
+        }
+        console.log(f([]), g([]), h([]));
+    }
+    expect_stdout: "object number undefined"
+}
+
+redefine_farg_2: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var a;
+            return typeof a;
+        }
+        function g(a) {
+            var a = 42;
+            return typeof a;
+        }
+        function h(a, b) {
+            var a = b;
+            return typeof a;
+        }
+        console.log(f([]), g([]), h([]));
+    }
+    expect: {
+        console.log(function(a) {
+            var a;
+            return typeof a;
+        }([]), function() {
+            return "number";
+        }(),function(a, b) {
+            var a = b;
+            return typeof a;
+        }([]));
+    }
+    expect_stdout: "object number undefined"
+}
+
+redefine_farg_3: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var a;
+            return typeof a;
+        }
+        function g(a) {
+            var a = 42;
+            return typeof a;
+        }
+        function h(a, b) {
+            var a = b;
+            return typeof a;
+        }
+        console.log(f([]), g([]), h([]));
+    }
+    expect: {
+        console.log(function(a) {
+            var a;
+            return typeof a;
+        }([]), "number", function(a) {
+            var a = void 0;
+            return typeof a;
+        }([]));
+    }
+    expect_stdout: "object number undefined"
+}
+
+delay_def: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return a;
+            var a;
+        }
+        function g() {
+            return a;
+            var a = 1;
+        }
+        console.log(f(), g());
+    }
+    expect: {
+        function f() {
+            return a;
+            var a;
+        }
+        function g() {
+            return a;
+            var a = 1;
+        }
+        console.log(f(), g());
+    }
+    expect_stdout: true
 }

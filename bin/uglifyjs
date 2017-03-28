@@ -561,7 +561,7 @@ function getOptions(flag, constants) {
 
         var ast;
         try {
-            ast = UglifyJS.parse(x, { expression: true });
+            ast = UglifyJS.parse(x, { cli: true, expression: true });
         } catch(ex) {
             if (ex instanceof UglifyJS.JS_Parse_Error) {
                 print_error("Error parsing arguments for flag `" + flag + "': " + x);

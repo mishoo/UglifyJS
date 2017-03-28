@@ -893,3 +893,72 @@ equality_conditionals_true: {
     }
     expect_stdout: true
 }
+
+issue_1645_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        (b = a) ? a++ + (b += a) ? b += a : b += a : b ^= a;
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        (b = a) ? (a++ + (b += a), b += a) : b ^= a;
+        console.log(a,b);
+    }
+    expect_stdout: true
+}
+
+issue_1645_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a = 0;
+        function f() {
+            return a++;
+        }
+        f() ? a += 2 : a += 4;
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        function f(){
+            return a++;
+        }
+        f() ? a += 2 : a += 4;
+        console.log(a);
+    }
+    expect_stdout: true
+}
+
+condition_symbol_matches_consequent: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function foo(x, y) {
+            return x ? x : y;
+        }
+        function bar() {
+            return g ? g : h;
+        }
+        var g = 4;
+        var h = 5;
+        console.log(foo(3, null), foo(0, 7), foo(true, false), bar());
+    }
+    expect: {
+        function foo(x, y) {
+            return x || y;
+        }
+        function bar() {
+            return g || h;
+        }
+        var g = 4;
+        var h = 5;
+        console.log(foo(3, null), foo(0, 7), foo(true, false), bar());
+    }
+    expect_stdout: "3 7 true 4"
+}
