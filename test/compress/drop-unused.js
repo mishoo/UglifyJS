@@ -844,3 +844,90 @@ issue_1709: {
     }
     expect_stdout: true
 }
+
+issue_1715_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_1715_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a = 2;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a;
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_1715_3: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a = 2 + x();
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            a++;
+            try {} catch (a) {
+                var a = x();
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
