@@ -680,3 +680,44 @@ issue_1705_3: {
     }
     expect_stdout: true
 }
+
+beautify: {
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        switch (a) {
+          case 0:
+          case 1:
+            break;
+          case 2:
+          default:
+        }
+        switch (b) {
+          case 3:
+            foo();
+            bar();
+          default:
+            break;
+        }
+    }
+    expect_exact: [
+        "switch (a) {",
+        "  case 0:",
+        "  case 1:",
+        "    break;",
+        "",
+        "  case 2:",
+        "  default:",
+        "}",
+        "",
+        "switch (b) {",
+        "  case 3:",
+        "    foo();",
+        "    bar();",
+        "",
+        "  default:",
+        "    break;",
+        "}",
+    ]
+}
