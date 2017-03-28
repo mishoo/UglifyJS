@@ -173,3 +173,175 @@ mangle_catch_var_ie8_toplevel: {
     expect_exact: 'var o="FAIL";try{throw 1}catch(r){var o="PASS"}console.log(o);'
     expect_stdout: "PASS"
 }
+
+mangle_catch_redef_1: {
+    options = {
+        screw_ie8: true,
+        toplevel: false,
+    }
+    mangle = {
+        screw_ie8: true,
+        toplevel: false,
+    }
+    input: {
+        var a = "PASS";
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'var a="PASS";try{throw"FAIL1"}catch(a){var a="FAIL2"}console.log(a);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_1_ie8: {
+    options = {
+        screw_ie8: false,
+        toplevel: false,
+    }
+    mangle = {
+        screw_ie8: false,
+        toplevel: false,
+    }
+    input: {
+        var a = "PASS";
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'var a="PASS";try{throw"FAIL1"}catch(a){var a="FAIL2"}console.log(a);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_1_toplevel: {
+    options = {
+        screw_ie8: true,
+        toplevel: true,
+    }
+    mangle = {
+        screw_ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'var o="PASS";try{throw"FAIL1"}catch(o){var o="FAIL2"}console.log(o);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_1_ie8_toplevel: {
+    options = {
+        screw_ie8: false,
+        toplevel: true,
+    }
+    mangle = {
+        screw_ie8: false,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'var o="PASS";try{throw"FAIL1"}catch(o){var o="FAIL2"}console.log(o);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_2: {
+    options = {
+        screw_ie8: true,
+        toplevel: false,
+    }
+    mangle = {
+        screw_ie8: true,
+        toplevel: false,
+    }
+    input: {
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'try{throw"FAIL1"}catch(a){var a="FAIL2"}console.log(a);'
+    expect_stdout: "undefined"
+}
+
+mangle_catch_redef_2_ie8: {
+    options = {
+        screw_ie8: false,
+        toplevel: false,
+    }
+    mangle = {
+        screw_ie8: false,
+        toplevel: false,
+    }
+    input: {
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'try{throw"FAIL1"}catch(a){var a="FAIL2"}console.log(a);'
+    expect_stdout: "undefined"
+}
+
+mangle_catch_redef_2_toplevel: {
+    options = {
+        screw_ie8: true,
+        toplevel: true,
+    }
+    mangle = {
+        screw_ie8: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'try{throw"FAIL1"}catch(o){var o="FAIL2"}console.log(o);'
+    expect_stdout: "undefined"
+}
+
+mangle_catch_redef_2_ie8_toplevel: {
+    options = {
+        screw_ie8: false,
+        toplevel: true,
+    }
+    mangle = {
+        screw_ie8: false,
+        toplevel: true,
+    }
+    input: {
+        try {
+            throw "FAIL1";
+        } catch (a) {
+            var a = "FAIL2";
+        }
+        console.log(a);
+    }
+    expect_exact: 'try{throw"FAIL1"}catch(o){var o="FAIL2"}console.log(o);'
+    expect_stdout: "undefined"
+}
