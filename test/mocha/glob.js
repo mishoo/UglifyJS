@@ -5,7 +5,7 @@ var path = require("path");
 describe("minify() with input file globs", function() {
     it("minify() with one input file glob string.", function() {
         var result = Uglify.minify("test/input/issue-1242/foo.*");
-        assert.strictEqual(result.code, 'function foo(o){var n=2*o;print("Foo:",n)}var print=console.log.bind(console);');
+        assert.strictEqual(result.code, 'function foo(o){print("Foo:",2*o)}var print=console.log.bind(console);');
     });
     it("minify() with an array of one input file glob.", function() {
         var result = Uglify.minify([
@@ -20,7 +20,7 @@ describe("minify() with input file globs", function() {
         ], {
             compress: { toplevel: true }
         });
-        assert.strictEqual(result.code, 'var print=console.log.bind(console),a=function(n){return 3*n}(3),b=function(n){return n/2}(12);print("qux",a,b),function(n){var o=2*n;print("Foo:",o)}(11);');
+        assert.strictEqual(result.code, 'var print=console.log.bind(console),a=function(n){return 3*n}(3),b=function(n){return n/2}(12);print("qux",a,b),function(n){print("Foo:",2*n)}(11);');
     });
     it("should throw with non-matching glob string", function() {
         var glob = "test/input/issue-1242/blah.*";

@@ -883,3 +883,16 @@ unsafe_charAt_noop: {
         );
     }
 }
+
+issue_1649: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(-1 + -1);
+    }
+    expect: {
+        console.log(-2);
+    }
+    expect_stdout: "-2";
+}

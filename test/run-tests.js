@@ -105,6 +105,23 @@ function run_compress_tests() {
         function test_case(test) {
             log_test(test.name);
             U.base54.reset();
+            var output_options = test.beautify || {};
+            var expect;
+            if (test.expect) {
+                expect = make_code(as_toplevel(test.expect, test.mangle), output_options);
+            } else {
+                expect = test.expect_exact;
+            }
+            var input = as_toplevel(test.input, test.mangle);
+            var input_code = make_code(input, output_options);
+            var input_formatted = make_code(test.input, {
+                beautify: true,
+                quote_style: 3,
+                keep_quoted_props: true
+            });
+            if (test.mangle_props) {
+                input = U.mangle_properties(input, test.mangle_props);
+            }
             var options = U.defaults(test.options, {
                 warnings: false
             });
@@ -117,22 +134,6 @@ function run_compress_tests() {
                 if (!options.warnings) options.warnings = true;
             }
             var cmp = new U.Compressor(options, true);
-            var output_options = test.beautify || {};
-            var expect;
-            if (test.expect) {
-                expect = make_code(as_toplevel(test.expect, test.mangle), output_options);
-            } else {
-                expect = test.expect_exact;
-            }
-            var input = as_toplevel(test.input, test.mangle);
-            var input_code = make_code(test.input, {
-                beautify: true,
-                quote_style: 3,
-                keep_quoted_props: true
-            });
-            if (test.mangle_props) {
-                input = U.mangle_properties(input, test.mangle_props);
-            }
             var output = cmp.compress(input);
             output.figure_out_scope(test.mangle);
             if (test.mangle) {
@@ -142,7 +143,7 @@ function run_compress_tests() {
             output = make_code(output, output_options);
             if (expect != output) {
                 log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
-                    input: input_code,
+                    input: input_formatted,
                     output: output,
                     expected: expect
                 });
@@ -155,7 +156,7 @@ function run_compress_tests() {
                     var reparsed_ast = U.parse(output);
                 } catch (ex) {
                     log("!!! Test matched expected result but cannot parse output\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--REPARSE ERROR--\n{error}\n\n", {
-                        input: input_code,
+                        input: input_formatted,
                         output: output,
                         error: ex.toString(),
                     });
@@ -174,7 +175,7 @@ function run_compress_tests() {
                     var actual_warnings = JSON.stringify(warnings_emitted);
                     if (expected_warnings != actual_warnings) {
                         log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
-                            input: input_code,
+                            input: input_formatted,
                             expected_warnings: expected_warnings,
                             actual_warnings: actual_warnings,
                         });
@@ -183,13 +184,13 @@ function run_compress_tests() {
                     }
                 }
                 if (test.expect_stdout) {
-                    var stdout = run_code(make_code(input, output_options));
+                    var stdout = run_code(input_code);
                     if (test.expect_stdout === true) {
                         test.expect_stdout = stdout;
                     }
                     if (!same_stdout(test.expect_stdout, stdout)) {
                         log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                            input: input_code,
+                            input: input_formatted,
                             expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
                             expected: test.expect_stdout,
                             actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
@@ -201,7 +202,7 @@ function run_compress_tests() {
                         stdout = run_code(output);
                         if (!same_stdout(test.expect_stdout, stdout)) {
                             log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                                input: input_code,
+                                input: input_formatted,
                                 expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
                                 expected: test.expect_stdout,
                                 actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",

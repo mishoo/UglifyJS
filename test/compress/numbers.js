@@ -153,3 +153,18 @@ evaluate_4: {
         );
     }
 }
+
+issue_1710: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        var x = {};
+        console.log((x += 1) + -x);
+    }
+    expect: {
+        var x = {};
+        console.log((x += 1) + -x);
+    }
+    expect_stdout: true
+}

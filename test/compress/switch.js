@@ -258,3 +258,425 @@ keep_default: {
         }
     }
 }
+
+issue_1663: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        function f() {
+            switch (1) {
+              case 1:
+                b = a++;
+                return ++b;
+              default:
+                var b;
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        function f() {
+            var b;
+            b = a++;
+            return ++b;
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
+
+drop_case: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case 'bar': baz(); break;
+          case 'moo':
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case 'bar': baz();
+        }
+    }
+}
+
+keep_case: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case 'bar': baz(); break;
+          case moo:
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case 'bar': baz(); break;
+          case moo:
+        }
+    }
+}
+
+issue_376: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        switch (true) {
+          case boolCondition:
+            console.log(1);
+            break;
+          case false:
+            console.log(2);
+            break;
+        }
+    }
+    expect: {
+        switch (true) {
+          case boolCondition:
+            console.log(1);
+        }
+    }
+}
+
+issue_441_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case bar:
+            qux();
+            break;
+          case baz:
+            qux();
+            break;
+          default:
+            qux();
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case bar:
+          case baz:
+          default:
+            qux();
+        }
+    }
+}
+
+issue_441_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (foo) {
+          case bar:
+            // TODO: Fold into the case below
+            qux();
+            break;
+          case fall:
+          case baz:
+            qux();
+            break;
+          default:
+            qux();
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case bar:
+            qux();
+            break;
+          case fall:
+          case baz:
+          default:
+            qux();
+        }
+    }
+}
+
+issue_1674: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        switch (0) {
+          default:
+            console.log("FAIL");
+            break;
+          case 0:
+            console.log("PASS");
+            break;
+        }
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1679: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        function f() {
+            switch (--b) {
+              default:
+              case !function x() {}:
+                break;
+              case b--:
+                switch (0) {
+                  default:
+                  case a--:
+                }
+                break;
+              case (a++):
+                break;
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        function f() {
+            switch (--b) {
+              default:
+              case !function x() {}:
+                break;
+              case b--:
+                switch (0) {
+                  default:
+                  case a--:
+                }
+                break;
+              case (a++):
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
+
+issue_1680_1: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        function f(x) {
+            console.log(x);
+            return x + 1;
+        }
+        switch (2) {
+          case f(0):
+          case f(1):
+            f(2);
+          case 2:
+          case f(3):
+          case f(4):
+            f(5);
+        }
+    }
+    expect: {
+        function f(x) {
+            console.log(x);
+            return x + 1;
+        }
+        switch (2) {
+          case f(0):
+          case f(1):
+            f(2);
+          case 2:
+            f(5);
+        }
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "2",
+        "5",
+    ]
+}
+
+issue_1680_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        switch (b) {
+          case a--:
+            break;
+          case b:
+            var c;
+            break;
+          case a:
+            break;
+          case a--:
+            break;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        switch (b) {
+          case a--:
+            break;
+          case b:
+            var c;
+            break;
+          case a:
+          case a--:
+        }
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
+
+issue_1690_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (console.log("PASS")) {}
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1690_2: {
+    options = {
+        dead_code: false,
+    }
+    input: {
+        switch (console.log("PASS")) {}
+    }
+    expect: {
+        switch (console.log("PASS")) {}
+    }
+    expect_stdout: "PASS"
+}
+
+if_switch_typeof: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        side_effects: true,
+    }
+    input: {
+        if (a) switch(typeof b) {}
+    }
+    expect: {
+        a;
+    }
+}
+
+issue_1698: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var a = 1;
+        !function() {
+            switch (a++) {}
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function() {
+            switch (a++) {}
+        }();
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
+
+issue_1705_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = 0;
+        switch (a) {
+          default:
+            console.log("FAIL");
+          case 0:
+            break;
+        }
+    }
+    expect: {
+        var a = 0;
+        switch (a) {
+          default:
+            console.log("FAIL");
+          case 0:
+        }
+    }
+    expect_stdout: true
+}
+
+issue_1705_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        switch (a) {
+          default:
+            console.log("FAIL");
+          case 0:
+            break;
+        }
+    }
+    expect: {
+    }
+    expect_stdout: true
+}
+
+issue_1705_3: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        switch (a) {
+          case 0:
+            break;
+          default:
+            break;
+        }
+    }
+    expect: {
+        a;
+    }
+    expect_stdout: true
+}
