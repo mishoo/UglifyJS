@@ -107,3 +107,27 @@ beautify_on_2: {
     }
     expect_exact: "console.log(null.toString(), (void 0).toString());"
 }
+
+issue_1724: {
+    input: {
+        var a = 0;
+        ++a % Infinity | Infinity ? a++ : 0;
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        ++a % (1/0) | 1/0 ? a++ : 0;
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
+
+issue_1725: {
+    input: {
+        ([].length === 0) % Infinity ? console.log("PASS") : console.log("FAIL");
+    }
+    expect: {
+        (0 === [].length) % (1/0) ? console.log("PASS") : console.log("FAIL");
+    }
+    expect_stdout: "PASS"
+}
