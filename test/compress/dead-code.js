@@ -234,7 +234,10 @@ try_catch_finally: {
                 console.log("PASS");
             }
         }();
-        console.log(a);
+        try {
+            console.log(a);
+        } finally {
+        }
     }
     expect: {
         var a = 1;
@@ -243,7 +246,10 @@ try_catch_finally: {
             a = 3;
             console.log("PASS");
         }();
-        console.log(a);
+        try {
+            console.log(a);
+        } finally {
+        }
     }
     expect_stdout: [
         "PASS",

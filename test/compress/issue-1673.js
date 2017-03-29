@@ -70,7 +70,7 @@ side_effects_finally: {
         function f() {
             function g() {
                 try {
-                    if (f);
+                    x();
                 } catch (e) {
                 } finally {
                     console.log("PASS");
@@ -84,7 +84,8 @@ side_effects_finally: {
         function f() {
             (function() {
                 try {
-                    if (f);
+                    x();
+                } catch (e) {
                 } finally {
                     console.log("PASS");
                 }
