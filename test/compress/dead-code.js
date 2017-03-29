@@ -214,3 +214,39 @@ dead_code_const_annotation_complex_scope: {
     }
     expect_stdout: true
 }
+
+try_catch_finally: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        var a = 1;
+        !function() {
+            try {
+                if (false) throw x;
+            } catch (a) {
+                var a = 2;
+                console.log("FAIL");
+            } finally {
+                a = 3;
+                console.log("PASS");
+            }
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function() {
+            var a;
+            a = 3;
+            console.log("PASS");
+        }();
+        console.log(a);
+    }
+    expect_stdout: [
+        "PASS",
+        "1",
+    ]
+}
