@@ -52,7 +52,7 @@ and: {
         a = 7;
 
         a = false;
-        a = NaN;
+        a = 0/0;
         a = 0;
         a = void 0;
         a = null;
@@ -67,7 +67,7 @@ and: {
         a = 6 << condition   && -4.5;
 
         a = condition        && false;
-        a = console.log("b") && NaN;
+        a = console.log("b") && 0/0;
         a = console.log("c") && 0;
         a = 2 * condition    && void 0;
         a = condition + 3    && null;
@@ -149,7 +149,7 @@ or: {
         a = 6 << condition   || -4.5;
 
         a = condition        || false;
-        a = console.log("b") || NaN;
+        a = console.log("b") || 0/0;
         a = console.log("c") || 0;
         a = 2 * condition    || void 0;
         a = condition + 3    || null;
@@ -196,8 +196,8 @@ negative_zero: {
         console.log(
             -0,
             0,
-            1 / (-0),
-            1 / (-0)
+            -1/0,
+            -1/0
         );
     }
     expect_stdout: true
@@ -217,8 +217,8 @@ positive_zero: {
         console.log(
             0,
             -0,
-            1 / (0),
-            1 / (0)
+            1/0,
+            1/0
         );
     }
     expect_stdout: true
@@ -533,7 +533,7 @@ unsafe_array: {
             [1, 2, 3, a][0] + 1,
             2,
             3,
-            NaN,
+            0/0,
             "1,21",
             5,
             (void 0)[1] + 1
