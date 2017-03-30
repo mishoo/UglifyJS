@@ -168,3 +168,37 @@ issue_1710: {
     }
     expect_stdout: true
 }
+
+unary_binary_parenthesis: {
+    input: {
+        var v = [ 0, 1, NaN, Infinity, null, undefined, true, false, "", "foo", /foo/ ];
+        v.forEach(function(x) {
+            v.forEach(function(y) {
+                console.log(
+                    +(x*y),
+                    +(x/y),
+                    +(x%y),
+                    -(x*y),
+                    -(x/y),
+                    -(x%y)
+                );
+            });
+        });
+    }
+    expect: {
+        var v = [ 0, 1, 0/0, 1/0, null, void 0, true, false, "", "foo", /foo/ ];
+        v.forEach(function(x) {
+            v.forEach(function(y) {
+                console.log(
+                    +x*y,
+                    +x/y,
+                    +x%y,
+                    -x*y,
+                    -x/y,
+                    -x%y
+                );
+            });
+        });
+    }
+    expect_stdout: true
+}
