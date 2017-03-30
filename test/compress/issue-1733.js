@@ -39,3 +39,59 @@ function_iife_catch_ie8: {
     expect_exact: "function f(o){!function(){try{throw 0}catch(o){var c=1;console.log(o,c)}}()}f();"
     expect_stdout: "0 1"
 }
+
+function_catch_catch: {
+    mangle = {
+        screw_ie8: true,
+    }
+    input: {
+        var o = 0;
+        function f() {
+            try {
+                throw 1;
+            } catch (c) {
+                try {
+                    throw 2;
+                } catch (o) {
+                    var o = 3;
+                    console.log(o);
+                }
+            }
+            console.log(o);
+        }
+        f();
+    }
+    expect_exact: "var o=0;function f(){try{throw 1}catch(c){try{throw 2}catch(o){var o=3;console.log(o)}}console.log(o)}f();"
+    expect_stdout: [
+        "3",
+        "undefined",
+    ]
+}
+
+function_catch_catch_ie8: {
+    mangle = {
+        screw_ie8: false,
+    }
+    input: {
+        var o = 0;
+        function f() {
+            try {
+                throw 1;
+            } catch (c) {
+                try {
+                    throw 2;
+                } catch (o) {
+                    var o = 3;
+                    console.log(o);
+                }
+            }
+            console.log(o);
+        }
+        f();
+    }
+    expect_exact: "var o=0;function f(){try{throw 1}catch(c){try{throw 2}catch(o){var o=3;console.log(o)}}console.log(o)}f();"
+    expect_stdout: [
+        "3",
+        "undefined",
+    ]
+}
