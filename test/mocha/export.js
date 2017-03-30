@@ -7,6 +7,8 @@ describe("Export", function() {
         var inputs = [
             ['export * from "a.js"', ['*'], "a.js"],
             ['export {A} from "a.js"', ['A'], "a.js"],
+            ['export {A as X} from "a.js"', ['X'], "a.js"],
+            ['export {A as Foo, B} from "a.js"', ['Foo', 'B'], "a.js"],
             ['export {A, B} from "a.js"', ['A', 'B'], "a.js"],
         ];
 
