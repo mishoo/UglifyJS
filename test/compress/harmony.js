@@ -204,8 +204,9 @@ export_module_statement: {
         export * from "a.js";
         export {A} from "a.js";
         export {A, B} from "a.js";
+        export {C};
     }
-    expect_exact: 'export*from"a.js";export{A}from"a.js";export{A,B}from"a.js";'
+    expect_exact: 'export*from"a.js";export{A}from"a.js";export{A,B}from"a.js";export{C};'
 }
 
 import_statement_mangling: {
