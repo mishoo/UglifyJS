@@ -183,9 +183,16 @@ import_statement: {
         import { Bar, Baz } from 'lel';
         import Bar, { Foo } from 'lel';
         import { Bar as kex, Baz as food } from 'lel';
-        import * from 'lel';
     }
-    expect_exact: 'import"mod-name";import Foo from"bar";import{Bar,Baz}from"lel";import Bar,{Foo}from"lel";import{Bar as kex,Baz as food}from"lel";import*from"lel";'
+    expect_exact: 'import"mod-name";import Foo from"bar";import{Bar,Baz}from"lel";import Bar,{Foo}from"lel";import{Bar as kex,Baz as food}from"lel";'
+}
+
+import_all_statement: {
+    input: {
+    import * from 'lel';
+    import * as Lel from 'lel';
+    }
+    expect_exact: 'import*from"lel";import*as Lel from"lel";'
 }
 
 export_statement: {
