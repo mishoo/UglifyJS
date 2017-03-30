@@ -199,6 +199,15 @@ export_statement: {
     expect_exact: "export default 1;export var foo=4;export let foo=6;export const foo=6;export function foo(){};export class foo{};"
 }
 
+export_module_statement: {
+    input: {
+        export * from "a.js";
+        export {A} from "a.js";
+        export {A, B} from "a.js";
+    }
+    expect_exact: 'export*from"a.js";export{A}from"a.js";export{A,B}from"a.js";'
+}
+
 import_statement_mangling: {
     mangle = { toplevel: true };
     input: {
