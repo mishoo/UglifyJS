@@ -204,13 +204,13 @@ issue_1586_1: {
     input: {
         function f() {
             try {
+                x();
             } catch (err) {
                 console.log(err.message);
             }
         }
     }
-    expect_exact: "function f(){try{}catch(c){console.log(c.message)}}"
-    expect_stdout: true
+    expect_exact: "function f(){try{x()}catch(c){console.log(c.message)}}"
 }
 
 issue_1586_2: {
@@ -223,11 +223,11 @@ issue_1586_2: {
     input: {
         function f() {
             try {
+                x();
             } catch (err) {
                 console.log(err.message);
             }
         }
     }
-    expect_exact: "function f(){try{}catch(c){console.log(c.message)}}"
-    expect_stdout: true
+    expect_exact: "function f(){try{x()}catch(c){console.log(c.message)}}"
 }

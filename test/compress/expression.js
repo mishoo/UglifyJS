@@ -21,12 +21,13 @@ pow_with_number_constants: {
         var f = 2 ** -Infinity;
     }
     expect: {
-        var a = 5 ** NaN;
+        // TODO: may need parentheses
+        var a = 5 ** 0/0;
         var b = 42 ** +0;
         var c = 42 ** -0;
-        var d = NaN ** 1;
-        var e = 2 ** (1/0);
-        var f = 2 ** -(1/0);
+        var d = 0/0 ** 1;
+        var e = 2 ** 1/0;
+        var f = 2 ** -1/0;
     }
 }
 
