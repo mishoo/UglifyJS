@@ -195,11 +195,12 @@ assorted_Infinity_NaN_undefined_in_with_scope: {
         sequences:     false,
     }
     input: {
+        var f = console.log;
         var o = {
             undefined : 3,
             NaN       : 4,
             Infinity  : 5,
-        }
+        };
         if (o) {
             f(undefined, void 0);
             f(NaN, 0/0);
@@ -216,25 +217,25 @@ assorted_Infinity_NaN_undefined_in_with_scope: {
         }
     }
     expect: {
-        var o = {
+        var f = console.log, o = {
             undefined : 3,
             NaN       : 4,
             Infinity  : 5
-        }
+        };
         if (o) {
             f(void 0, void 0);
-            f(NaN, NaN);
+            f(0/0, 0/0);
             f(1/0, 1/0);
-            f(-(1/0), -(1/0));
-            f(NaN, NaN);
+            f(-1/0, -1/0);
+            f(0/0, 0/0);
         }
         with (o) {
             f(undefined, void 0);
             f(NaN, 0/0);
             f(Infinity, 1/0);
-            f(-Infinity, -(1/0));
+            f(-Infinity, -1/0);
             f(9 + undefined, 9 + void 0);
         }
     }
+    expect_stdout: true
 }
-

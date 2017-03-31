@@ -77,7 +77,7 @@ sub_properties: {
         a[3.14] = 3;
         a.if = 4;
         a["foo bar"] = 5;
-        a[NaN] = 6;
+        a[0/0] = 6;
         a[null] = 7;
         a[void 0] = 8;
     }

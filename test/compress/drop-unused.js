@@ -934,7 +934,9 @@ issue_1715_1: {
         var a = 1;
         function f() {
             a++;
-            try {} catch (a) {
+            try {
+                x();
+            } catch (a) {
                 var a;
             }
         }
@@ -945,7 +947,9 @@ issue_1715_1: {
         var a = 1;
         function f() {
             a++;
-            try {} catch (a) {
+            try {
+                x();
+            } catch (a) {
                 var a;
             }
         }
@@ -963,7 +967,9 @@ issue_1715_2: {
         var a = 1;
         function f() {
             a++;
-            try {} catch (a) {
+            try {
+                x();
+            } catch (a) {
                 var a = 2;
             }
         }
@@ -974,7 +980,9 @@ issue_1715_2: {
         var a = 1;
         function f() {
             a++;
-            try {} catch (a) {
+            try {
+                x();
+            } catch (a) {
                 var a;
             }
         }
@@ -992,7 +1000,9 @@ issue_1715_3: {
         var a = 1;
         function f() {
             a++;
-            try {} catch (a) {
+            try {
+                console;
+            } catch (a) {
                 var a = 2 + x();
             }
         }
@@ -1003,11 +1013,44 @@ issue_1715_3: {
         var a = 1;
         function f() {
             a++;
-            try {} catch (a) {
+            try {
+                console;
+            } catch (a) {
                 var a = x();
             }
         }
         f();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_1715_4: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        !function a() {
+            a++;
+            try {
+                x();
+            } catch (a) {
+                var a;
+            }
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function() {
+            a++;
+            try {
+                x();
+            } catch (a) {
+                var a;
+            }
+        }();
         console.log(a);
     }
     expect_stdout: "1"
