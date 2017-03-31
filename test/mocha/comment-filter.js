@@ -79,5 +79,13 @@ describe("comment filters", function() {
             output: { preamble: "/* Build */" }
         }).code;
         assert.strictEqual(code, "#!/usr/bin/node\n/* Build */\nvar x=10;");
-    })
+    });
+
+    it("Should handle preamble without shebang correctly", function() {
+        var code = UglifyJS.minify("var x = 10;", {
+            fromString: true,
+            output: { preamble: "/* Build */" }
+        }).code;
+        assert.strictEqual(code, "/* Build */\nvar x=10;");
+    });
 });
