@@ -189,8 +189,8 @@ import_statement: {
 
 import_all_statement: {
     input: {
-    import * from 'lel';
-    import * as Lel from 'lel';
+        import * from 'lel';
+        import * as Lel from 'lel';
     }
     expect_exact: 'import*from"lel";import*as Lel from"lel";'
 }
