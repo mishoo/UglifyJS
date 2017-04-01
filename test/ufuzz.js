@@ -288,7 +288,7 @@ var loops = 0;
 var funcs = 0;
 
 function rng(max) {
-    var r = randomBytes(2).readUInt16LE(0) / 0xFFFF;
+    var r = randomBytes(2).readUInt16LE(0) / 65536;
     return Math.floor(max * r);
 }
 
@@ -563,7 +563,7 @@ function _createSimpleBinaryExpr(recurmax, noComma) {
     // intentionally generate more hardcore ops
     if (--recurmax < 0) return createValue();
     var r = rng(30);
-    if (r === 0) return '(c = c + 1, ' + _createSimpleBinaryExpr(recurmax, noComma) + ')'
+    if (r === 0) return '(c = c + 1, ' + _createSimpleBinaryExpr(recurmax, noComma) + ')';
     var s = _createSimpleBinaryExpr(recurmax, noComma) + createBinaryOp(noComma) + _createSimpleBinaryExpr(recurmax, noComma);
     if (r === 1) {
         // try to get a generated name reachable from current scope. default to just `a`
