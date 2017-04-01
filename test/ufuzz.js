@@ -16,7 +16,7 @@ var UglifyJS = require("..");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 
-var MAX_GENERATED_TOPLEVELS_PER_RUN = 3;
+var MAX_GENERATED_TOPLEVELS_PER_RUN = 1;
 var MAX_GENERATION_RECURSION_DEPTH = 12;
 var INTERVAL_COUNT = 100;
 
@@ -288,22 +288,13 @@ var loops = 0;
 var funcs = 0;
 
 function rng(max) {
-    var r = parseInt(randomBytes(4).toString("hex"), 16) / 0xFFFFFFFF;
+    var r = randomBytes(2).readUInt16LE(0) / 65536;
     return Math.floor(max * r);
 }
 
-function createTopLevelCodes(n) {
-    var s = '';
-    while (n-- > 0) {
-        s += createTopLevelCode() + '\n\n//$$$$$$$$$$$$$$\n\n';
-    }
-    return s;
-}
-
 function createTopLevelCode() {
-    var r = rng(3);
-    if (r > 0) return createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0);
-    return createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0);
+    if (rng(2) === 0) return createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0);
+    return createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0);
 }
 
 function createFunctions(n, recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
@@ -323,7 +314,7 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     var name = (inGlobal || rng(5) > 0) ? 'f' + func : createVarName(MANDATORY, noDecl);
     if (name === 'a' || name === 'b' || name === 'c') name = 'f' + func; // quick hack to prevent assignment to func names of being called
     var s = '';
-    if (rng(5) === 1) {
+    if (rng(5) === 0) {
         // functions with functions. lower the recursion to prevent a mess.
         s = 'function ' + name + '(' + createVarName(MANDATORY) + '){' + createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth) + '}\n';
     } else {
@@ -523,7 +514,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         VAR_NAMES.length = nameLenBefore;
         return s;
       case 9:
-        return createTypeofExpr();
+        return createTypeofExpr(recurmax, stmtDepth, canThrow);
       case 10:
         // you could statically infer that this is just `Math`, regardless of the other expression
         // I don't think Uglify does this at this time...
@@ -572,7 +563,7 @@ function _createSimpleBinaryExpr(recurmax, noComma) {
     // intentionally generate more hardcore ops
     if (--recurmax < 0) return createValue();
     var r = rng(30);
-    if (r === 0) return '(c = c + 1, ' + _createSimpleBinaryExpr(recurmax, noComma) + ')'
+    if (r === 0) return '(c = c + 1, ' + _createSimpleBinaryExpr(recurmax, noComma) + ')';
     var s = _createSimpleBinaryExpr(recurmax, noComma) + createBinaryOp(noComma) + _createSimpleBinaryExpr(recurmax, noComma);
     if (r === 1) {
         // try to get a generated name reachable from current scope. default to just `a`
@@ -582,7 +573,7 @@ function _createSimpleBinaryExpr(recurmax, noComma) {
     return s;
 }
 
-function createTypeofExpr() {
+function createTypeofExpr(recurmax, stmtDepth, canThrow) {
     switch (rng(8)) {
       case 0:
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE) + ' === "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '"';
@@ -594,10 +585,8 @@ function createTypeofExpr() {
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE) + ' != "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '"';
       case 4:
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE);
-      case 5:
-      case 6:
-      case 7:
-        return '(typeof ' + createExpression(3, COMMA_OK, 2, true) + ')';
+      default:
+        return '(typeof ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')';
     }
 }
 
@@ -748,7 +737,7 @@ for (var round = 1; round <= num_iterations; round++) {
 
     original_code = [
         "var a = 100, b = 10, c = 0;",
-        createTopLevelCodes(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1),
+        createTopLevelCode(),
         "console.log(null, a, b, c);" // preceding `null` makes for a cleaner output (empty string still shows up etc)
     ].join("\n");
 
