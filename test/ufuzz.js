@@ -13,6 +13,7 @@
 });
 
 var minify = require("..").minify;
+var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 
 var MAX_GENERATED_TOPLEVELS_PER_RUN = 3;
@@ -252,8 +253,7 @@ var VAR_NAMES = [
     'decodeURIComponent',
     'encodeURI',
     'encodeURIComponent',
-    'Object',
-    'let' ]; // maybe omit this, it's more a parser problem than minifier
+    'Object'];
 var INITIAL_NAMES_LEN = VAR_NAMES.length;
 
 var TYPEOF_OUTCOMES = [
@@ -271,7 +271,8 @@ var loops = 0;
 var funcs = 0;
 
 function rng(max) {
-    return Math.floor(max * Math.random());
+    var r = parseInt(randomBytes(4).toString("hex"), 16) / 0xFFFFFFFF;
+    return Math.floor(max * r);
 }
 
 function createTopLevelCodes(n) {
