@@ -16,7 +16,7 @@ var UglifyJS = require("..");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 
-var MAX_GENERATED_TOPLEVELS_PER_RUN = 3;
+var MAX_GENERATED_TOPLEVELS_PER_RUN = 1;
 var MAX_GENERATION_RECURSION_DEPTH = 12;
 var INTERVAL_COUNT = 100;
 
@@ -288,22 +288,13 @@ var loops = 0;
 var funcs = 0;
 
 function rng(max) {
-    var r = parseInt(randomBytes(4).toString("hex"), 16) / 0xFFFFFFFF;
+    var r = randomBytes(2).readUInt16LE(0) / 0xFFFF;
     return Math.floor(max * r);
 }
 
-function createTopLevelCodes(n) {
-    var s = '';
-    while (n-- > 0) {
-        s += createTopLevelCode() + '\n\n//$$$$$$$$$$$$$$\n\n';
-    }
-    return s;
-}
-
 function createTopLevelCode() {
-    var r = rng(3);
-    if (r > 0) return createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0);
-    return createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0);
+    if (rng(2) === 0) return createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0);
+    return createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0);
 }
 
 function createFunctions(n, recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
@@ -323,7 +314,7 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     var name = (inGlobal || rng(5) > 0) ? 'f' + func : createVarName(MANDATORY, noDecl);
     if (name === 'a' || name === 'b' || name === 'c') name = 'f' + func; // quick hack to prevent assignment to func names of being called
     var s = '';
-    if (rng(5) === 1) {
+    if (rng(5) === 0) {
         // functions with functions. lower the recursion to prevent a mess.
         s = 'function ' + name + '(' + createVarName(MANDATORY) + '){' + createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth) + '}\n';
     } else {
@@ -748,7 +739,7 @@ for (var round = 1; round <= num_iterations; round++) {
 
     original_code = [
         "var a = 100, b = 10, c = 0;",
-        createTopLevelCodes(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1),
+        createTopLevelCode(),
         "console.log(null, a, b, c);" // preceding `null` makes for a cleaner output (empty string still shows up etc)
     ].join("\n");
 
