@@ -514,7 +514,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         VAR_NAMES.length = nameLenBefore;
         return s;
       case 9:
-        return createTypeofExpr();
+        return createTypeofExpr(recurmax, stmtDepth, canThrow);
       case 10:
         // you could statically infer that this is just `Math`, regardless of the other expression
         // I don't think Uglify does this at this time...
@@ -573,7 +573,7 @@ function _createSimpleBinaryExpr(recurmax, noComma) {
     return s;
 }
 
-function createTypeofExpr() {
+function createTypeofExpr(recurmax, stmtDepth, canThrow) {
     switch (rng(8)) {
       case 0:
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE) + ' === "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '"';
@@ -585,10 +585,8 @@ function createTypeofExpr() {
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE) + ' != "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '"';
       case 4:
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE);
-      case 5:
-      case 6:
-      case 7:
-        return '(typeof ' + createExpression(3, COMMA_OK, 2, true) + ')';
+      default:
+        return '(typeof ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')';
     }
 }
 
