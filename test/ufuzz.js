@@ -12,7 +12,7 @@
         stream._handle.setBlocking(true);
 });
 
-var minify = require("..").minify;
+var UglifyJS = require("..");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 
@@ -116,7 +116,6 @@ for (var i = 2; i < process.argv.length; ++i) {
         console.log('<number>: generate this many cases (if used must be first arg)');
         console.log('-v: print every generated test case');
         console.log('-V: print every 100th generated test case');
-        console.log('-b: also run beautifier');
         console.log('-t <int>: generate this many toplevels per run (more take longer)');
         console.log('-r <int>: maximum recursion depth for generator (higher takes longer)');
         console.log('-s1 <statement name>: force the first level statement to be this one (see list below)');
@@ -606,7 +605,7 @@ function createVarName(maybe, dontStore) {
 
 function try_beautify(code, result) {
     try {
-        var beautified = minify(code, {
+        var beautified = UglifyJS.minify(code, {
             fromString: true,
             compress: false,
             mangle: false,
@@ -628,7 +627,55 @@ function try_beautify(code, result) {
     console.log(code);
 }
 
-function log() {
+function infer_options(ctor) {
+    try {
+        ctor({ 0: 0 });
+    } catch (e) {
+        return e.defs;
+    }
+}
+
+var default_options = {
+    compress: infer_options(UglifyJS.Compressor),
+    mangle: {
+        "cache": null,
+        "eval": false,
+        "keep_fnames": false,
+        "screw_ie8": true,
+        "toplevel": false,
+    },
+    output: infer_options(UglifyJS.OutputStream),
+};
+
+function log_suspects(minify_options, component) {
+    var options = component in minify_options ? minify_options[component] : true;
+    if (!options) return;
+    options = UglifyJS.defaults(options, default_options[component]);
+    var suspects = Object.keys(default_options[component]).filter(function(name) {
+        if (options[name]) {
+            var m = JSON.parse(JSON.stringify(minify_options));
+            var o = JSON.parse(JSON.stringify(options));
+            o[name] = false;
+            m[component] = o;
+            try {
+                var r = sandbox.run_code(UglifyJS.minify(original_code, m).code);
+                return sandbox.same_stdout(original_result, r);
+            } catch (e) {
+                console.log("Error testing options." + component + "." + name);
+                console.log(e);
+            }
+        }
+    });
+    if (suspects.length > 0) {
+        console.log("Suspicious", component, "options:");
+        suspects.forEach(function(name) {
+            console.log("  " + name);
+        });
+        console.log();
+    }
+}
+
+function log(options) {
     if (!ok) console.log('\n\n\n\n\n\n!!!!!!!!!!\n\n\n');
     console.log("//=============================================================");
     if (!ok) console.log("// !!!!!! Failed... round", round);
@@ -650,9 +697,22 @@ function log() {
         console.log("// !!! uglify failed !!!");
         console.log(uglify_code.stack);
     }
-    if (!ok) console.log("!!!!!! Failed... round", round);
+    console.log("minify(options):");
+    options = JSON.parse(options);
+    console.log(options);
+    console.log();
+    if (!ok) {
+        Object.keys(default_options).forEach(log_suspects.bind(null, options));
+        console.log("!!!!!! Failed... round", round);
+    }
 }
 
+var minify_options = require("./ufuzz.json").map(function(options) {
+    options.fromString = true;
+    return JSON.stringify(options);
+});
+var original_code, original_result;
+var uglify_code, uglify_result, ok;
 for (var round = 0; round < num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
 
@@ -660,27 +720,26 @@ for (var round = 0; round < num_iterations; round++) {
     loops = 0;
     funcs = 0;
 
-    var original_code = [
+    original_code = [
         "var a = 100, b = 10, c = 0;",
         createTopLevelCodes(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1),
         "console.log(null, a, b, c);" // preceding `null` makes for a cleaner output (empty string still shows up etc)
     ].join("\n");
 
-    var uglify_code;
-    try {
-        uglify_code = minify(original_code, {
-            fromString: true,
-        }).code;
-    } catch (e) {
-        uglify_code = e;
-    }
+    minify_options.forEach(function(options) {
+        try {
+            uglify_code = UglifyJS.minify(original_code, JSON.parse(options)).code;
+        } catch (e) {
+            uglify_code = e;
+        }
 
-    var ok = typeof uglify_code == "string";
-    if (ok) {
-        var original_result = sandbox.run_code(original_code);
-        var uglify_result = sandbox.run_code(uglify_code);
-        ok = sandbox.same_stdout(original_result, uglify_result);
-    }
-    if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log();
-    if (!ok) process.exit(1);
+        ok = typeof uglify_code == "string";
+        if (ok) {
+            original_result = sandbox.run_code(original_code);
+            uglify_result = sandbox.run_code(uglify_code);
+            ok = sandbox.same_stdout(original_result, uglify_result);
+        }
+        if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
+        if (!ok && isFinite(num_iterations)) process.exit(1);
+    });
 }
