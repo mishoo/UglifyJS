@@ -737,7 +737,7 @@ var minify_options = require("./ufuzz.json").map(function(options) {
 });
 var original_code, original_result;
 var uglify_code, uglify_result, ok;
-for (var round = 0; round < num_iterations; round++) {
+for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
 
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
