@@ -27,7 +27,6 @@
             "keep_fargs": false,
             "passes": 3,
             "pure_getters": true,
-            "unsafe": true,
             "warnings": false
         }
     }

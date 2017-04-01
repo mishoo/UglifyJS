@@ -110,6 +110,8 @@ for (var i = 2; i < process.argv.length; ++i) {
             STMTS_TO_USE = STMTS_TO_USE.filter(function(id){ return id !== omit; })
         });
         break;
+      case '--help':
+      case '-h':
       case '-?':
         console.log('** UglifyJS fuzzer help **');
         console.log('Valid options (optional):');
@@ -128,7 +130,7 @@ for (var i = 2; i < process.argv.length; ++i) {
         return 0;
       default:
         // first arg may be a number.
-        if (i > 2 || !parseInt(process.argv[i], 10)) throw new Error('Unknown argument[' + process.argv[i] + ']; see -? for help');
+        if (i > 2 || !parseInt(process.argv[i], 10)) throw new Error('Unknown argument[' + process.argv[i] + ']; see -h for help');
     }
 }
 
@@ -737,7 +739,7 @@ var minify_options = require("./ufuzz.json").map(function(options) {
 });
 var original_code, original_result;
 var uglify_code, uglify_result, ok;
-for (var round = 0; round < num_iterations; round++) {
+for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
 
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
