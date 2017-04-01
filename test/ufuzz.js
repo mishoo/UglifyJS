@@ -136,14 +136,24 @@ for (var i = 2; i < process.argv.length; ++i) {
 var VALUES = [
     'true',
     'false',
-    '22',
+    ' /[a2][^e]+$/ ',
+    '(-1)',
+    '(-2)',
+    '(-3)',
+    '(-4)',
+    '(-5)',
     '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '22',
     '-0', // 0/-0 !== 0
     '23..toString()',
     '24 .toString()',
     '25. ',
     '0x26.toString()',
-    '(-1)',
     'NaN',
     'undefined',
     'Infinity',
@@ -153,7 +163,12 @@ var VALUES = [
     '([,0].length === 2)', // an array with elisions... this is always true
     '({})', // wrapped the object causes too many syntax errors in statements
     '"foo"',
-    '"bar"' ];
+    '"bar"',
+    '"undefined"',
+    '"object"',
+    '"number"',
+    '"function"',
+];
 
 var BINARY_OPS_NO_COMMA = [
     ' + ', // spaces needed to disambiguate with ++ cases (could otherwise cause syntax errors)
@@ -257,6 +272,7 @@ var VAR_NAMES = [
 var INITIAL_NAMES_LEN = VAR_NAMES.length;
 
 var TYPEOF_OUTCOMES = [
+    'function',
     'undefined',
     'string',
     'number',
@@ -466,7 +482,7 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
 }
 function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
-    switch (rng(13)) {
+    switch (rng(15)) {
       case 0:
         return createUnaryOp() + (rng(2) === 1 ? 'a' : 'b');
       case 1:
@@ -540,6 +556,10 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         }
       case 12:
         return createNestedBinaryExpr(recurmax, noComma);
+      case 13:
+        return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || a || 3).toString() ";
+      case 14:
+        return " /[abc4]/.test(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
     }
 }
 
@@ -562,7 +582,7 @@ function _createSimpleBinaryExpr(recurmax, noComma) {
 }
 
 function createTypeofExpr() {
-    switch (rng(5)) {
+    switch (rng(8)) {
       case 0:
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE) + ' === "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '"';
       case 1:
@@ -573,6 +593,10 @@ function createTypeofExpr() {
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE) + ' != "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '"';
       case 4:
         return 'typeof ' + createVarName(MANDATORY, DONT_STORE);
+      case 5:
+      case 6:
+      case 7:
+        return '(typeof ' + createExpression(3, COMMA_OK, 2, true) + ')';
     }
 }
 
