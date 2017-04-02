@@ -29,7 +29,7 @@ exports.run_code = function(code) {
                     }));
                 }
             }
-        }, { timeout: 30000 });
+        }, { timeout: 5000 });
         return stdout;
     } catch (ex) {
         return ex;
