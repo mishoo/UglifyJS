@@ -802,3 +802,58 @@ issue_1649: {
     }
     expect_stdout: "-2";
 }
+
+issue_1760_1: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (NaN) {
+                a = +"foo";
+            }
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (NaN) {
+                a = 0 / 0;
+            }
+            console.log(a);
+        }();
+    }
+    expect_stdout: "NaN"
+}
+
+issue_1760_2: {
+    options = {
+        evaluate: true,
+        keep_infinity: true,
+    }
+    input: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (Infinity) {
+                a = 123456789 / 0;
+            }
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (Infinity) {
+                a = 1 / 0;
+            }
+            console.log(a);
+        }();
+    }
+    expect_stdout: "Infinity"
+}
