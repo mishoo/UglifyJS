@@ -2,6 +2,7 @@ case_1: {
     options = {
         dead_code: true,
         evaluate: true,
+        switches: true,
     }
     input: {
         var a = 0, b = 1;
