@@ -6,6 +6,21 @@
     },
     {
         "compress": {
+            "toplevel": true,
+            "warnings": false
+        },
+        "mangle": {
+            "toplevel": true
+        }
+    },
+    {
+        "compress": {
+            "warnings": false
+        },
+        "mangleProperties": {}
+    },
+    {
+        "compress": {
             "warnings": false
         },
         "mangle": false
@@ -20,6 +35,23 @@
         "output": {
             "beautify": true,
             "bracketize": true
+        }
+    },
+    {
+        "compress": {
+            "passes": 3,
+            "properties": false,
+            "toplevel": true,
+            "warnings": false
+        },
+        "mangle": {
+            "toplevel": true
+        },
+        "mangleProperties": {
+            "ignore_quoted": true
+        },
+        "output": {
+            "keep_quoted_props": true
         }
     },
     {
