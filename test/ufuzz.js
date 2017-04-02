@@ -474,7 +474,7 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
 }
 function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
-    switch (rng(15)) {
+    switch (rng(20)) {
       case 0:
         return createUnaryOp() + (rng(2) === 1 ? 'a' : 'b');
       case 1:
@@ -552,7 +552,65 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || a || 3).toString() ";
       case 14:
         return " /[abc4]/.test(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
+      case 15:
+        return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) +
+            ") || " + rng(10) + ").toString()[" +
+            createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "] ";
+      case 16:
+        return createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow);
+      case 17:
+        return createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow);
+      case 18:
+        return '(' + createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
+            createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]) ";
+      case 19:
+        return '(' + createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
+            createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]) ";
     }
+}
+
+function createArrayLiteral(recurmax, noComma, stmtDepth, canThrow) {
+    var arr = "[";
+    for (var i = 0, N = rng(4); i <= N; ++i) {
+        // in rare cases produce an array hole element
+        var element = rng(20) ? createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) : "";
+        arr += element + ", ";
+    }
+    return arr + "]";
+}
+
+var KEYS = [
+    "length",
+    "foo",
+    "bar",
+    "a",
+    "b",
+    "c",
+    "x",
+    "''",
+    "' '",
+    "'-2'",
+    "'-1'",
+    "0",
+    "1",
+    "2.5",
+    "3",
+    "4",
+    "undefined",
+    "null",
+    "NaN",
+    "Infinity",
+    "in",
+    "var",
+];
+
+function createObjectLiteral(recurmax, noComma, stmtDepth, canThrow) {
+    var obj = "({";
+    for (var i = 0, N = rng(3); i <= N; ++i) {
+        var key = KEYS[rng(KEYS.length)];
+        obj += key + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "), ";
+    }
+    return obj + "})";
 }
 
 function createNestedBinaryExpr(recurmax, noComma) {
