@@ -456,7 +456,7 @@ issue_1758: {
             }();
         }());
     }
-    expect:{
+    expect: {
         console.log(function(c) {
             var undefined = 42;
             return function() {
