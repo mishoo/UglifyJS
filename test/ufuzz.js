@@ -474,25 +474,31 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
 }
 function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
-    switch (rng(21)) {
+    switch (rng(31)) {
       case 0:
-        return createUnaryOp() + (rng(2) === 1 ? 'a' : 'b');
       case 1:
-        return 'a' + (rng(2) == 1 ? '++' : '--');
+        return createUnaryOp() + (rng(2) === 1 ? 'a' : 'b');
       case 2:
+      case 3:
+        return 'a' + (rng(2) == 1 ? '++' : '--');
+      case 4:
+      case 5:
         // parens needed because assignments aren't valid unless they're the left-most op(s) in an expression
         return '(b ' + createAssignment() + ' a)';
-      case 3:
-        return rng(2) + ' === 1 ? a : b';
-      case 4:
-        return createNestedBinaryExpr(recurmax, noComma) + createBinaryOp(noComma) + createExpression(recurmax, noComma, stmtDepth, canThrow);
-      case 5:
-        return createValue();
       case 6:
-        return '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')';
       case 7:
-        return createExpression(recurmax, noComma, stmtDepth, canThrow) + '?' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':' + createExpression(recurmax, noComma, stmtDepth, canThrow);
+        return rng(2) + ' === 1 ? a : b';
       case 8:
+      case 9:
+        return createNestedBinaryExpr(recurmax, noComma) + createBinaryOp(noComma) + createExpression(recurmax, noComma, stmtDepth, canThrow);
+      case 10:
+      case 11:
+        return createValue();
+      case 12:
+        return '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')';
+      case 13:
+        return createExpression(recurmax, noComma, stmtDepth, canThrow) + '?' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':' + createExpression(recurmax, noComma, stmtDepth, canThrow);
+      case 14:
         var nameLenBefore = VAR_NAMES.length;
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
         if (name === 'c') name = 'a';
@@ -513,9 +519,10 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         }
         VAR_NAMES.length = nameLenBefore;
         return s;
-      case 9:
+      case 15:
+      case 16:
         return createTypeofExpr(recurmax, stmtDepth, canThrow);
-      case 10:
+      case 17:
         // you could statically infer that this is just `Math`, regardless of the other expression
         // I don't think Uglify does this at this time...
         return ''+
@@ -523,7 +530,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             (rng(2) === 1 ? createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '\n' : '') +
             'return Math;\n' +
             '}';
-      case 11:
+      case 18:
+      case 19:
         // more like a parser test but perhaps comment nodes mess up the analysis?
         // note: parens not needed for post-fix (since that's the default when ambiguous)
         // for prefix ops we need parens to prevent accidental syntax errors.
@@ -546,27 +554,31 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
           default:
             return '(--/* ignore */b)';
         }
-      case 12:
+      case 20:
+      case 21:
         return createNestedBinaryExpr(recurmax, noComma);
-      case 13:
+      case 22:
         return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || a || 3).toString() ";
-      case 14:
+      case 23:
         return " /[abc4]/.test(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
-      case 15:
+      case 24:
         return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) +
             ") || " + rng(10) + ").toString()[" +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "] ";
-      case 16:
+      case 25:
         return createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow);
-      case 17:
+      case 26:
         return createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow);
-      case 18:
+      case 27:
         return '(' + createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]) ";
-      case 19:
+      case 28:
         return '(' + createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]) ";
-      case 20:
+      case 29:
+        return '(' + createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '.' +
+            SAFE_KEYS[rng(SAFE_KEYS.length)] + ") ";
+      case 30:
         return '(' + createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '.' +
             SAFE_KEYS[rng(SAFE_KEYS.length)] + ") ";
     }
