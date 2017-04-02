@@ -52,7 +52,7 @@ and: {
         a = 7;
 
         a = false;
-        a = 0/0;
+        a = NaN;
         a = 0;
         a = void 0;
         a = null;
@@ -67,7 +67,7 @@ and: {
         a = 6 << condition   && -4.5;
 
         a = condition        && false;
-        a = console.log("b") && 0/0;
+        a = console.log("b") && NaN;
         a = console.log("c") && 0;
         a = 2 * condition    && void 0;
         a = condition + 3    && null;
@@ -149,7 +149,7 @@ or: {
         a = 6 << condition   || -4.5;
 
         a = condition        || false;
-        a = console.log("b") || 0/0;
+        a = console.log("b") || NaN;
         a = console.log("c") || 0;
         a = 2 * condition    || void 0;
         a = condition + 3    || null;
@@ -302,13 +302,13 @@ pow_with_number_constants: {
         var m = 3 ** -10;  // Result will be 0.000016935087808430286, which is too long
     }
     expect: {
-        var a = 0/0;
+        var a = NaN;
         var b = 1;
         var c = 1;
-        var d = 0/0;
+        var d = NaN;
         var e = 1/0;
         var f = 0;
-        var g = 0/0;
+        var g = NaN;
         var h = 1/0;
         var i = -1/0;
         var j = .125;
@@ -627,7 +627,7 @@ unsafe_array: {
             [1, 2, 3, a][0] + 1,
             2,
             3,
-            0/0,
+            NaN,
             "1,21",
             5,
             (void 0)[1] + 1
@@ -895,4 +895,59 @@ issue_1649: {
         console.log(-2);
     }
     expect_stdout: "-2";
+}
+
+issue_1760_1: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (NaN) {
+                a = +"foo";
+            }
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (NaN) {
+                a = 0 / 0;
+            }
+            console.log(a);
+        }();
+    }
+    expect_stdout: "NaN"
+}
+
+issue_1760_2: {
+    options = {
+        evaluate: true,
+        keep_infinity: true,
+    }
+    input: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (Infinity) {
+                a = 123456789 / 0;
+            }
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function(a) {
+            try {
+                throw 0;
+            } catch (Infinity) {
+                a = 1 / 0;
+            }
+            console.log(a);
+        }();
+    }
+    expect_stdout: "Infinity"
 }

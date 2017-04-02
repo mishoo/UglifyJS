@@ -193,6 +193,7 @@ assorted_Infinity_NaN_undefined_in_with_scope: {
         cascade:       true,
         side_effects:  true,
         sequences:     false,
+        keep_infinity: false,
     }
     input: {
         var f = console.log;
@@ -224,10 +225,73 @@ assorted_Infinity_NaN_undefined_in_with_scope: {
         };
         if (o) {
             f(void 0, void 0);
-            f(0/0, 0/0);
+            f(NaN, NaN);
             f(1/0, 1/0);
             f(-1/0, -1/0);
-            f(0/0, 0/0);
+            f(NaN, NaN);
+        }
+        with (o) {
+            f(undefined, void 0);
+            f(NaN, 0/0);
+            f(Infinity, 1/0);
+            f(-Infinity, -1/0);
+            f(9 + undefined, 9 + void 0);
+        }
+    }
+    expect_stdout: true
+}
+
+assorted_Infinity_NaN_undefined_in_with_scope_keep_infinity: {
+    options = {
+        unused:        true,
+        evaluate:      true,
+        dead_code:     true,
+        conditionals:  true,
+        comparisons:   true,
+        booleans:      true,
+        hoist_funs:    true,
+        keep_fargs:    true,
+        if_return:     true,
+        join_vars:     true,
+        cascade:       true,
+        side_effects:  true,
+        sequences:     false,
+        keep_infinity: true,
+    }
+    input: {
+        var f = console.log;
+        var o = {
+            undefined : 3,
+            NaN       : 4,
+            Infinity  : 5,
+        };
+        if (o) {
+            f(undefined, void 0);
+            f(NaN, 0/0);
+            f(Infinity, 1/0);
+            f(-Infinity, -(1/0));
+            f(2 + 7 + undefined, 2 + 7 + void 0);
+        }
+        with (o) {
+            f(undefined, void 0);
+            f(NaN, 0/0);
+            f(Infinity, 1/0);
+            f(-Infinity, -(1/0));
+            f(2 + 7 + undefined, 2 + 7 + void 0);
+        }
+    }
+    expect: {
+        var f = console.log, o = {
+            undefined : 3,
+            NaN       : 4,
+            Infinity  : 5
+        };
+        if (o) {
+            f(void 0, void 0);
+            f(NaN, NaN);
+            f(Infinity, 1/0);
+            f(-Infinity, -1/0);
+            f(NaN, NaN);
         }
         with (o) {
             f(undefined, void 0);

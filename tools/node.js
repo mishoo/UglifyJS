@@ -46,21 +46,21 @@ function read_source_map(code) {
 
 UglifyJS.minify = function(files, options) {
     options = UglifyJS.defaults(options, {
-        spidermonkey     : false,
-        outSourceMap     : null,
-        outFileName      : null,
-        sourceRoot       : null,
-        inSourceMap      : null,
-        sourceMapUrl     : null,
-        sourceMapInline  : false,
+        compress         : {},
         fromString       : false,
-        warnings         : false,
+        inSourceMap      : null,
         mangle           : {},
         mangleProperties : false,
         nameCache        : null,
+        outFileName      : null,
         output           : null,
-        compress         : {},
-        parse            : {}
+        outSourceMap     : null,
+        parse            : {},
+        sourceMapInline  : false,
+        sourceMapUrl     : null,
+        sourceRoot       : null,
+        spidermonkey     : false,
+        warnings         : false,
     });
     UglifyJS.base54.reset();
 

@@ -840,8 +840,8 @@ equality_conditionals_false: {
         f(0, true, 0),
         f(1, 2, 3),
         f(1, null, 3),
-        f(0/0),
-        f(0/0, "foo");
+        f(NaN),
+        f(NaN, "foo");
     }
     expect_stdout: true
 }
@@ -888,8 +888,8 @@ equality_conditionals_true: {
         f(0, true, 0),
         f(1, 2, 3),
         f(1, null, 3),
-        f(0/0),
-        f(0/0, "foo");
+        f(NaN),
+        f(NaN, "foo");
     }
     expect_stdout: true
 }
