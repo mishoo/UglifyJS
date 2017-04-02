@@ -1,5 +1,9 @@
 constant_switch_1: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         switch (1+1) {
           case 1: foo(); break;
@@ -13,7 +17,11 @@ constant_switch_1: {
 }
 
 constant_switch_2: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         switch (1) {
           case 1: foo();
@@ -28,7 +36,11 @@ constant_switch_2: {
 }
 
 constant_switch_3: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         switch (10) {
           case 1: foo();
@@ -44,7 +56,11 @@ constant_switch_3: {
 }
 
 constant_switch_4: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         switch (2) {
           case 1:
@@ -65,7 +81,11 @@ constant_switch_4: {
 }
 
 constant_switch_5: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         switch (1) {
           case 1:
@@ -94,7 +114,11 @@ constant_switch_5: {
 }
 
 constant_switch_6: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         OUT: {
             foo();
@@ -123,7 +147,11 @@ constant_switch_6: {
 }
 
 constant_switch_7: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         OUT: {
             foo();
@@ -161,7 +189,11 @@ constant_switch_7: {
 }
 
 constant_switch_8: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         OUT: switch (1) {
           case 1:
@@ -185,7 +217,11 @@ constant_switch_8: {
 }
 
 constant_switch_9: {
-    options = { dead_code: true, evaluate: true };
+    options = {
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         OUT: switch (1) {
           case 1:
@@ -263,6 +299,7 @@ issue_1663: {
     options = {
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         var a = 100, b = 10;
@@ -414,6 +451,7 @@ issue_1674: {
     options = {
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         switch (0) {
@@ -720,4 +758,25 @@ beautify: {
         "    break;",
         "}",
     ]
+}
+
+issue_1758: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = 1, b = 2;
+        switch (a--) {
+          default:
+            b++;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 1, b = 2;
+        a--;
+        b++;
+        console.log(a, b);
+    }
+    expect_stdout: "0 3"
 }
