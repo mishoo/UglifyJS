@@ -474,7 +474,7 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
 }
 function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
-    switch (rng(20)) {
+    switch (rng(21)) {
       case 0:
         return createUnaryOp() + (rng(2) === 1 ? 'a' : 'b');
       case 1:
@@ -566,6 +566,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case 19:
         return '(' + createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]) ";
+      case 20:
+        return '(' + createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '.' +
+            SAFE_KEYS[rng(SAFE_KEYS.length)] + ") ";
     }
 }
 
@@ -579,7 +582,7 @@ function createArrayLiteral(recurmax, noComma, stmtDepth, canThrow) {
     return arr + "]";
 }
 
-var KEYS = [
+var SAFE_KEYS = [
     "length",
     "foo",
     "bar",
@@ -587,6 +590,14 @@ var KEYS = [
     "b",
     "c",
     "x",
+    "undefined",
+    "null",
+    "NaN",
+    "Infinity",
+    "in",
+    "var",
+];
+var KEYS = [
     "''",
     "' '",
     "'-2'",
@@ -596,13 +607,7 @@ var KEYS = [
     "2.5",
     "3",
     "4",
-    "undefined",
-    "null",
-    "NaN",
-    "Infinity",
-    "in",
-    "var",
-];
+].concat(SAFE_KEYS);
 
 function createObjectLiteral(recurmax, noComma, stmtDepth, canThrow) {
     var obj = "({";
