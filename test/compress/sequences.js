@@ -440,3 +440,29 @@ func_def_5: {
     }
     expect_stdout: "true"
 }
+
+issue_1758: {
+    options = {
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function(c) {
+            var undefined = 42;
+            return function() {
+                c--;
+                c--, c.toString();
+                return;
+            }();
+        }());
+    }
+    expect:{
+        console.log(function(c) {
+            var undefined = 42;
+            return function() {
+                return c--, c--, c.toString(), void 0;
+            }();
+        }());
+    }
+    expect_stdout: "undefined"
+}
