@@ -587,7 +587,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
 function createArrayLiteral(recurmax, noComma, stmtDepth, canThrow) {
     recurmax--;
     var arr = "[";
-    for (var i = 0, N = rng(5); i <= N; ++i) {
+    for (var i = rng(6); --i >= 0;) {
         // in rare cases produce an array hole element
         var element = rng(20) ? createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) : "";
         arr += element + ", ";
@@ -620,7 +620,7 @@ var KEYS = [
 function createObjectLiteral(recurmax, noComma, stmtDepth, canThrow) {
     recurmax--;
     var obj = "({";
-    for (var i = 0, N = rng(5); i <= N; ++i) {
+    for (var i = rng(6); --i >= 0;) {
         var key = KEYS[rng(KEYS.length)];
         obj += key + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "), ";
     }
