@@ -135,6 +135,7 @@ for (var i = 2; i < process.argv.length; ++i) {
 }
 
 var VALUES = [
+    '""',
     'true',
     'false',
     ' /[a2][^e]+$/ ',
