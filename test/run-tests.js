@@ -4,22 +4,11 @@ var U = require("../tools/node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
-var vm = require("vm");
+var sandbox = require("./sandbox");
 
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
 var failed_files = {};
-var same_stdout = ~process.version.lastIndexOf("v0.12.", 0) ? function(expected, actual) {
-    if (typeof expected != typeof actual) return false;
-    if (typeof expected != "string") {
-        if (expected.name != actual.name) return false;
-        expected = expected.message.slice(expected.message.lastIndexOf("\n") + 1);
-        actual = actual.message.slice(actual.message.lastIndexOf("\n") + 1);
-    }
-    return expected == actual;
-} : function(expected, actual) {
-    return typeof expected == typeof actual && expected.toString() == actual.toString();
-};
 
 run_compress_tests();
 if (failures) {
@@ -182,11 +171,11 @@ function run_compress_tests() {
                     }
                 }
                 if (test.expect_stdout) {
-                    var stdout = run_code(input_code);
+                    var stdout = sandbox.run_code(input_code);
                     if (test.expect_stdout === true) {
                         test.expect_stdout = stdout;
                     }
-                    if (!same_stdout(test.expect_stdout, stdout)) {
+                    if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
                         log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
                             input: input_formatted,
                             expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
@@ -197,8 +186,8 @@ function run_compress_tests() {
                         failures++;
                         failed_files[file] = 1;
                     } else {
-                        stdout = run_code(output);
-                        if (!same_stdout(test.expect_stdout, stdout)) {
+                        stdout = sandbox.run_code(output);
+                        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
                             log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
                                 input: input_formatted,
                                 expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
@@ -329,20 +318,4 @@ function evaluate(code) {
     if (code instanceof U.AST_Node)
         code = make_code(code, { beautify: true });
     return new Function("return(" + code + ")")();
-}
-
-function run_code(code) {
-    var stdout = "";
-    var original_write = process.stdout.write;
-    process.stdout.write = function(chunk) {
-        stdout += chunk;
-    };
-    try {
-        new vm.Script(code).runInNewContext({ console: console }, { timeout: 5000 });
-        return stdout;
-    } catch (ex) {
-        return ex;
-    } finally {
-        process.stdout.write = original_write;
-    }
 }

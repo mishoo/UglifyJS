@@ -6,7 +6,7 @@ NaN_and_Infinity_must_have_parens: {
     }
     expect: {
         (1/0).toString();
-        (0/0).toString();
+        NaN.toString();
     }
 }
 
@@ -21,6 +21,36 @@ NaN_and_Infinity_should_not_be_replaced_when_they_are_redefined: {
         var Infinity, NaN;
         Infinity.toString();
         NaN.toString();
+    }
+}
+
+NaN_and_Infinity_must_have_parens_evaluate: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        (123456789 / 0).toString();
+        (+"foo").toString();
+    }
+    expect: {
+        (1/0).toString();
+        NaN.toString();
+    }
+}
+
+NaN_and_Infinity_should_not_be_replaced_when_they_are_redefined_evaluate: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        var Infinity, NaN;
+        (123456789 / 0).toString();
+        (+"foo").toString();
+    }
+    expect: {
+        var Infinity, NaN;
+        (1/0).toString();
+        (0/0).toString();
     }
 }
 

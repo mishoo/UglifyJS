@@ -443,6 +443,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   integer argument larger than 1 to further reduce code size in some cases.
   Note: raising the number of passes will increase uglify compress time.
 
+- `keep_infinity` -- default `false`. Pass `true` to prevent `Infinity` from
+  being compressed into `1/0`, which may cause performance issues on Chrome.
+
 ### The `unsafe` option
 
 It enables some transformations that *might* break code logic in certain
