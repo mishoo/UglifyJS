@@ -1400,6 +1400,7 @@ issue_1670_1: {
         dead_code: true,
         reduce_vars: true,
         side_effects: true,
+        switches: true,
         unused: true,
     }
     input: {
@@ -1431,6 +1432,7 @@ issue_1670_2: {
         passes: 2,
         reduce_vars: true,
         side_effects: true,
+        switches: true,
         unused: true,
     }
     input: {
@@ -1461,6 +1463,7 @@ issue_1670_3: {
         dead_code: true,
         reduce_vars: true,
         side_effects: true,
+        switches: true,
         unused: true,
     }
     input: {
@@ -1492,6 +1495,7 @@ issue_1670_4: {
         passes: 2,
         reduce_vars: true,
         side_effects: true,
+        switches: true,
         unused: true,
     }
     input: {
@@ -1521,6 +1525,7 @@ issue_1670_5: {
         keep_fargs: false,
         reduce_vars: true,
         side_effects: true,
+        switches: true,
         unused: true,
     }
     input: {
@@ -1550,6 +1555,7 @@ issue_1670_6: {
         keep_fargs: false,
         reduce_vars: true,
         side_effects: true,
+        switches: true,
         unused: true,
     }
     input: {

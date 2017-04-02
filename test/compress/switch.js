@@ -3,6 +3,7 @@ constant_switch_1: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         switch (1+1) {
@@ -21,6 +22,7 @@ constant_switch_2: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         switch (1) {
@@ -40,6 +42,7 @@ constant_switch_3: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         switch (10) {
@@ -60,6 +63,7 @@ constant_switch_4: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         switch (2) {
@@ -85,6 +89,7 @@ constant_switch_5: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         switch (1) {
@@ -118,6 +123,7 @@ constant_switch_6: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         OUT: {
@@ -151,6 +157,7 @@ constant_switch_7: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         OUT: {
@@ -193,6 +200,7 @@ constant_switch_8: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         OUT: switch (1) {
@@ -221,6 +229,7 @@ constant_switch_9: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         OUT: switch (1) {
@@ -246,7 +255,10 @@ constant_switch_9: {
 }
 
 drop_default_1: {
-    options = { dead_code: true };
+    options = {
+        dead_code: true,
+        switches: true,
+    }
     input: {
         switch (foo) {
           case 'bar': baz();
@@ -261,7 +273,10 @@ drop_default_1: {
 }
 
 drop_default_2: {
-    options = { dead_code: true };
+    options = {
+        dead_code: true,
+        switches: true,
+    }
     input: {
         switch (foo) {
           case 'bar': baz(); break;
@@ -277,7 +292,10 @@ drop_default_2: {
 }
 
 keep_default: {
-    options = { dead_code: true };
+    options = {
+        dead_code: true,
+        switches: true,
+    }
     input: {
         switch (foo) {
           case 'bar': baz();
@@ -300,6 +318,7 @@ issue_1663: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         var a = 100, b = 10;
@@ -331,6 +350,7 @@ issue_1663: {
 drop_case: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         switch (foo) {
@@ -349,6 +369,7 @@ drop_case: {
 keep_case: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         switch (foo) {
@@ -369,6 +390,7 @@ issue_376: {
     options = {
         dead_code: true,
         evaluate: true,
+        switches: true,
     }
     input: {
         switch (true) {
@@ -391,6 +413,7 @@ issue_376: {
 issue_441_1: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         switch (foo) {
@@ -418,6 +441,7 @@ issue_441_1: {
 issue_441_2: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         switch (foo) {
@@ -452,6 +476,7 @@ issue_1674: {
         dead_code: true,
         evaluate: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         switch (0) {
@@ -473,6 +498,7 @@ issue_1679: {
     options = {
         dead_code: true,
         evaluate: true,
+        switches: true,
     }
     input: {
         var a = 100, b = 10;
@@ -520,6 +546,7 @@ issue_1680_1: {
     options = {
         dead_code: true,
         evaluate: true,
+        switches: true,
     }
     input: {
         function f(x) {
@@ -560,6 +587,7 @@ issue_1680_1: {
 issue_1680_2: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         var a = 100, b = 10;
@@ -595,6 +623,7 @@ issue_1680_2: {
 issue_1690_1: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         switch (console.log("PASS")) {}
@@ -608,6 +637,7 @@ issue_1690_1: {
 issue_1690_2: {
     options = {
         dead_code: false,
+        switches: true,
     }
     input: {
         switch (console.log("PASS")) {}
@@ -623,6 +653,7 @@ if_switch_typeof: {
         conditionals: true,
         dead_code: true,
         side_effects: true,
+        switches: true,
     }
     input: {
         if (a) switch(typeof b) {}
@@ -635,6 +666,7 @@ if_switch_typeof: {
 issue_1698: {
     options = {
         side_effects: true,
+        switches: true,
     }
     input: {
         var a = 1;
@@ -656,6 +688,7 @@ issue_1698: {
 issue_1705_1: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         var a = 0;
@@ -684,6 +717,7 @@ issue_1705_2: {
         reduce_vars: true,
         sequences: true,
         side_effects: true,
+        switches: true,
         toplevel: true,
         unused: true,
     }
@@ -704,6 +738,7 @@ issue_1705_2: {
 issue_1705_3: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         switch (a) {
@@ -763,6 +798,7 @@ beautify: {
 issue_1758: {
     options = {
         dead_code: true,
+        switches: true,
     }
     input: {
         var a = 1, b = 2;
