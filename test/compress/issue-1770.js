@@ -6,7 +6,7 @@ mangle_props: {
             NaN: 2,
             Infinity: 3,
             "-Infinity": 4,
-            "-0": 5,
+            null: 5,
         };
         console.log(
             obj[void 0],
@@ -21,9 +21,8 @@ mangle_props: {
             obj[-1/0],
             obj[-Infinity],
             obj["-Infinity"],
-            obj[-0],
-            obj[-""],
-            obj["-0"]
+            obj[null],
+            obj["null"]
         );
     }
     expect: {
@@ -32,7 +31,7 @@ mangle_props: {
             NaN: 2,
             Infinity: 3,
             "-Infinity": 4,
-            a: 5,
+            null: 5,
         };
         console.log(
             obj[void 0],
@@ -47,12 +46,62 @@ mangle_props: {
             obj[-1/0],
             obj[-1/0],
             obj["-Infinity"],
-            obj[-0],
-            obj[-""],
-            obj["a"]
+            obj[null],
+            obj["null"]
         );
     }
-    expect_stdout: "1 1 1 2 2 2 3 3 3 4 4 4 undefined undefined 5"
+    expect_stdout: "1 1 1 2 2 2 3 3 3 4 4 4 5 5"
+}
+
+numeric_literal: {
+    beautify = {
+        beautify: true,
+    }
+    mangle_props = {}
+    input: {
+        var obj = {
+            0: 0,
+            "-0": 1,
+            42: 2,
+            "42": 3,
+            0x25: 4,
+            "0x25": 5,
+            1E42: 6,
+            "1E42": 7,
+            "1e+42": 8,
+        };
+        console.log(obj[-0], obj[-""], obj["-0"]);
+        console.log(obj[42], obj["42"]);
+        console.log(obj[0x25], obj["0x25"], obj[37], obj["37"]);
+        console.log(obj[1E42], obj["1E42"], obj["1e+42"]);
+    }
+    expect_exact: [
+        'var obj = {',
+        '    0: 0,',
+        '    "-0": 1,',
+        '    42: 2,',
+        '    "42": 3,',
+        '    37: 4,',
+        '    a: 5,',
+        '    1e42: 6,',
+        '    b: 7,',
+        '    "1e+42": 8',
+        '};',
+        '',
+        'console.log(obj[-0], obj[-""], obj["-0"]);',
+        '',
+        'console.log(obj[42], obj["42"]);',
+        '',
+        'console.log(obj[37], obj["a"], obj[37], obj["37"]);',
+        '',
+        'console.log(obj[1e42], obj["b"], obj["1e+42"]);',
+    ]
+    expect_stdout: [
+        "0 0 1",
+        "3 3",
+        "4 5 4 4",
+        "8 7 8",
+    ]
 }
 
 identifier: {
@@ -156,35 +205,35 @@ identifier: {
             D: 30,
             F: 31,
             G: 32,
-            H: 33,
-            I: 34,
-            J: 35,
-            K: 36,
-            L: 37,
-            M: 38,
-            N: 39,
-            O: 40,
-            P: 41,
-            Q: 42,
-            R: 43,
-            S: 44,
-            T: 45,
-            U: 46,
-            V: 47,
-            W: 48,
-            X: 49,
-            Y: 50,
-            Z: 51,
-            $: 52,
-            _: 53,
-            aa: 54,
-            ba: 55,
-            ca: 56,
-            da: 57,
-            ea: 58,
-            fa: 59,
-            ga: 60,
-            ha: 61
+            false: 33,
+            null: 34,
+            true: 35,
+            H: 36,
+            I: 37,
+            J: 38,
+            K: 39,
+            L: 40,
+            M: 41,
+            N: 42,
+            O: 43,
+            P: 44,
+            Q: 45,
+            R: 46,
+            S: 47,
+            T: 48,
+            U: 49,
+            V: 50,
+            W: 51,
+            X: 52,
+            Y: 53,
+            Z: 54,
+            $: 55,
+            _: 56,
+            aa: 57,
+            ba: 58,
+            ca: 59,
+            da: 60,
+            ea: 61,
         };
     }
 }
