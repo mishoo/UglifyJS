@@ -12,7 +12,6 @@ var FUNC_TOSTRING = [
     '        return "[Function: __func_" + i + "__]";',
     "    }",
     "}();",
-    ""
 ].join("\n");
 exports.run_code = function(code) {
     var stdout = "";
@@ -21,7 +20,12 @@ exports.run_code = function(code) {
         stdout += chunk;
     };
     try {
-        new vm.Script(FUNC_TOSTRING + code).runInNewContext({
+        vm.runInNewContext([
+            "!function() {",
+            FUNC_TOSTRING,
+            code,
+            "}();",
+        ].join("\n"), {
             console: {
                 log: function() {
                     return console.log.apply(console, [].map.call(arguments, function(arg) {
