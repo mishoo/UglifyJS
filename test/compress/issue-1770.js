@@ -57,6 +57,7 @@ numeric_literal: {
     mangle_props = {}
     input: {
         var obj = {
+            0: 0,
             "-0": 1,
             42: 2,
             "42": 3,
@@ -83,6 +84,7 @@ numeric_literal: {
     }
     expect: {
         var obj = {
+            0: 0,
             "-0": 1,
             42: 2,
             "42": 3,
@@ -107,7 +109,7 @@ numeric_literal: {
             obj["1e+42"]
         );
     }
-    expect_stdout: "undefined undefined 1 3 3 4 5 4 4 8 7 8"
+    expect_stdout: "0 0 1 3 3 4 5 4 4 8 7 8"
 }
 
 identifier: {
