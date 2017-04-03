@@ -314,11 +314,13 @@ default_assign: {
         function f(a, b = 3) {
             console.log(a);
         }
+        g = ([[] = 123]) => {};
     }
     expect: {
         function f(a) {
             console.log(a);
         }
+        g = ([[] = 123]) => {};
     }
 }
 
