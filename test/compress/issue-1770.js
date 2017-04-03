@@ -6,10 +6,7 @@ mangle_props: {
             NaN: 2,
             Infinity: 3,
             "-Infinity": 4,
-            "-0": 5,
-            null: 6,
-            0x25: 7,
-            1e100: 8,
+            null: 5,
         };
         console.log(
             obj[void 0],
@@ -24,18 +21,8 @@ mangle_props: {
             obj[-1/0],
             obj[-Infinity],
             obj["-Infinity"],
-            obj[-0],
-            obj[-""],
-            obj["-0"],
             obj[null],
-            obj["null"],
-            obj[0x25],
-            obj["0x25"],
-            obj[37],
-            obj["37"],
-            obj[1e100],
-            obj["1e100"],
-            obj["1e+100"]
+            obj["null"]
         );
     }
     expect: {
@@ -44,10 +31,7 @@ mangle_props: {
             NaN: 2,
             Infinity: 3,
             "-Infinity": 4,
-            "-0": 5,
-            null: 6,
-            37: 7,
-            1e100: 8,
+            null: 5,
         };
         console.log(
             obj[void 0],
@@ -62,21 +46,68 @@ mangle_props: {
             obj[-1/0],
             obj[-1/0],
             obj["-Infinity"],
+            obj[null],
+            obj["null"]
+        );
+    }
+    expect_stdout: "1 1 1 2 2 2 3 3 3 4 4 4 5 5"
+}
+
+numeric_literal: {
+    mangle_props = {}
+    input: {
+        var obj = {
+            "-0": 1,
+            42: 2,
+            "42": 3,
+            0x25: 4,
+            "0x25": 5,
+            1E42: 6,
+            "1E42": 7,
+            "1e+42": 8,
+        };
+        console.log(
             obj[-0],
             obj[-""],
             obj["-0"],
-            obj[null],
-            obj["null"],
+            obj[42],
+            obj["42"],
+            obj[0x25],
+            obj["0x25"],
+            obj[37],
+            obj["37"],
+            obj[1E42],
+            obj["1E42"],
+            obj["1e+42"]
+        );
+    }
+    expect: {
+        var obj = {
+            "-0": 1,
+            42: 2,
+            "42": 3,
+            37: 4,
+            a: 5,
+            1E42: 6,
+            b: 7,
+            "1e+42": 8,
+        };
+        console.log(
+            obj[-0],
+            obj[-""],
+            obj["-0"],
+            obj[42],
+            obj["42"],
             obj[37],
             obj["a"],
             obj[37],
             obj["37"],
-            obj[1e100],
+            obj[1E42],
             obj["b"],
-            obj["1e+100"]
+            obj["1e+42"]
         );
     }
-    expect_stdout: "1 1 1 2 2 2 3 3 3 4 4 4 undefined undefined 5 6 6 7 undefined 7 7 8 undefined 8"
+    expect_stdout: "undefined undefined 1 3 3 4 5 4 4 8 7 8"
 }
 
 identifier: {
