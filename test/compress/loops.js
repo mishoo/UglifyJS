@@ -215,8 +215,7 @@ evaluate: {
             a();
         for(;;)
             c();
-        // rule disabled due to issue_1532
-        do d(); while (false);
+        d();
     }
 }
 
@@ -457,4 +456,27 @@ issue_1648: {
         }
     }
     expect_exact: "function f(){for(x();1;);}"
+}
+
+do_switch: {
+    options = {
+        evaluate: true,
+        loops: true,
+    }
+    input: {
+        do {
+            switch (a) {
+              case b:
+                continue;
+            }
+        } while (false);
+    }
+    expect: {
+        do {
+            switch (a) {
+              case b:
+                continue;
+            }
+        } while (false);
+    }
 }
