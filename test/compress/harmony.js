@@ -152,6 +152,13 @@ class_methods_and_getters_with_keep_quoted_props_enabled: {
     expect_exact: 'class clss{a(){}"b"(){}get c(){return"c"}get"d"(){return"d"}set e(a){doSomething(a)}set\'f\'(a){doSomething(b)}static g(){}static"h"(){}}'
 }
 
+classes_with_expression_as_expand: {
+    input: {
+        class D extends (calls++, C) {}
+    }
+    expect_exact: "class D extends(calls++,C){}"
+}
+
 new_target: {
     input: {
         new.target;
