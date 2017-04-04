@@ -215,8 +215,7 @@ evaluate: {
             a();
         for(;;)
             c();
-        // rule disabled due to issue_1532
-        do d(); while (false);
+        d();
     }
 }
 
