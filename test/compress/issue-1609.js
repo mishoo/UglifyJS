@@ -45,11 +45,10 @@ chained_evaluation_2: {
     }
     expect: {
         (function() {
-            var a = "long piece of string";
             (function() {
-                var c;
-                c = f(a);
-                c.bar = a;
+                var c, b = "long piece of string";
+                c = f(b);
+                c.bar = b;
             })();
         })();
     }
