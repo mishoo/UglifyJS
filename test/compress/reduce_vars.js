@@ -1916,3 +1916,25 @@ side_effects_assign: {
     }
     expect_stdout: "undefined"
 }
+
+pure_getters: {
+    options = {
+        pure_getters: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            var a = (a.b, 2);
+        } catch (e) {}
+        console.log(a);
+    }
+    expect: {
+        try {
+            var a = (a.b, 2);
+        } catch (e) {}
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
