@@ -1938,3 +1938,28 @@ pure_getters: {
     }
     expect_stdout: "undefined"
 }
+
+catch_var: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        try {
+            throw {};
+        } catch (e) {
+            var e;
+            console.log(!!e);
+        }
+    }
+    expect: {
+        try {
+            throw {};
+        } catch (e) {
+            var e;
+            console.log(!!e);
+        }
+    }
+    expect_stdout: "true"
+}
