@@ -1866,3 +1866,34 @@ delay_def: {
     }
     expect_stdout: true
 }
+
+booleans: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            if (a != 0);
+            switch (a) {
+              case 0:
+                return "FAIL";
+              case false:
+                return "PASS";
+            }
+        }(false));
+    }
+    expect: {
+        console.log(function(a) {
+            if (!1);
+            switch (!1) {
+              case 0:
+                return "FAIL";
+              case !1:
+                return "PASS";
+            }
+        }(!1));
+    }
+    expect_stdout: "PASS"
+}
