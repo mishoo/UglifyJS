@@ -1897,3 +1897,22 @@ booleans: {
     }
     expect_stdout: "PASS"
 }
+
+side_effects_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = typeof void (a && a.in == 1, 0);
+        console.log(a);
+    }
+    expect: {
+        var a = typeof void (a && a.in);
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
