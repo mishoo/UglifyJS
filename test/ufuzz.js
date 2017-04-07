@@ -345,9 +345,9 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
 
     VAR_NAMES.length = namesLenBefore;
 
-    if (noDecl) s = 'var' + createVarName(MANDATORY) + ' = ' + s + '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ');';
+    if (noDecl) s = 'var ' + createVarName(MANDATORY) + ' = ' + s + '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ');';
     // avoid "function statements" (decl inside statements)
-    else if (inGlobal || rng(10) > 0) s += 'var' + createVarName(MANDATORY) + ' = ' + name + '(' + createArgs() + ');';
+    else if (inGlobal || rng(10) > 0) s += 'var ' + createVarName(MANDATORY) + ' = ' + name + '(' + createArgs() + ');';
 
 
     return s;
