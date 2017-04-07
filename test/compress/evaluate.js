@@ -857,3 +857,33 @@ issue_1760_2: {
     }
     expect_stdout: "Infinity"
 }
+
+delete_expr: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(delete undefined);
+        console.log(delete void 0);
+        console.log(delete Infinity);
+        console.log(delete (1 / 0));
+        console.log(delete NaN);
+        console.log(delete (0 / 0));
+    }
+    expect: {
+        console.log(delete undefined);
+        console.log(delete void 0);
+        console.log(delete Infinity);
+        console.log(delete (1 / 0));
+        console.log(delete NaN);
+        console.log(delete (0 / 0));
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "false",
+        "true",
+        "false",
+        "true",
+    ]
+}
