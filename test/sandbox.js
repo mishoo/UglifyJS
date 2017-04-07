@@ -29,7 +29,7 @@ exports.run_code = function(code) {
             console: {
                 log: function() {
                     return console.log.apply(console, [].map.call(arguments, function(arg) {
-                        return typeof arg == "function" ? arg.toString() : arg;
+                        return typeof arg == "function" || arg && /Error$/.test(arg.name) ? arg.toString() : arg;
                     }));
                 }
             }

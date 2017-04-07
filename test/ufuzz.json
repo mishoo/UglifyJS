@@ -1,5 +1,22 @@
 [
     {
+        "compress": false,
+        "mangle": false,
+        "output": {
+            "beautify": true,
+            "bracketize": true
+        }
+    },
+    {
+        "compress": false
+    },
+    {
+        "compress": {
+            "warnings": false
+        },
+        "mangle": false
+    },
+    {
         "compress": {
             "warnings": false
         }
@@ -11,24 +28,6 @@
         },
         "mangle": {
             "toplevel": true
-        }
-    },
-    {
-        "compress": {
-            "warnings": false
-        },
-        "mangle": false
-    },
-    {
-        "compress": false,
-        "mangle": true
-    },
-    {
-        "compress": false,
-        "mangle": false,
-        "output": {
-            "beautify": true,
-            "bracketize": true
         }
     },
     {
