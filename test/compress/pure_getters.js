@@ -106,3 +106,16 @@ unsafe_reduce_vars: {
         (void 0).prop;
     }
 }
+
+chained: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        a.b.c;
+    }
+    expect: {
+        a.b.c;
+    }
+}
