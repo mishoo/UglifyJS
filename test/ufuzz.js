@@ -311,6 +311,22 @@ function createFunctions(n, recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     return s;
 }
 
+function createParams() {
+    var params = [];
+    for (var n = rng(4); --n >= 0;) {
+        params.push(createVarName(MANDATORY));
+    }
+    return params.join(', ');
+}
+
+function createArgs() {
+    var args = [];
+    for (var n = rng(4); --n >= 0;) {
+        args.push(createValue());
+    }
+    return args.join(', ');
+}
+
 function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ';'; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
@@ -321,17 +337,17 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     var s = '';
     if (rng(5) === 0) {
         // functions with functions. lower the recursion to prevent a mess.
-        s = 'function ' + name + '(' + createVarName(MANDATORY) + '){' + createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth) + '}\n';
+        s = 'function ' + name + '(' + createParams() + '){' + createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth) + '}\n';
     } else {
         // functions with statements
-        s = 'function ' + name + '(' + createVarName(MANDATORY) + '){' + createStatements(3, recurmax, canThrow, CANNOT_THROW, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}\n';
+        s = 'function ' + name + '(' + createParams() + '){' + createStatements(3, recurmax, canThrow, CANNOT_THROW, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}\n';
     }
 
     VAR_NAMES.length = namesLenBefore;
 
-    if (noDecl) s = '!' + s + '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')';
+    if (noDecl) s = 'var' + createVarName(MANDATORY) + ' = ' + s + '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ');';
     // avoid "function statements" (decl inside statements)
-    else if (inGlobal || rng(10) > 0) s += name + '();'
+    else if (inGlobal || rng(10) > 0) s += 'var' + createVarName(MANDATORY) + ' = ' + name + '(' + createArgs() + ');';
 
 
     return s;
@@ -403,7 +419,8 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             if (canBreak && rng(5) === 0) return 'break;';
             if (canContinue && rng(5) === 0) return 'continue;';
             if (cannotReturn) return createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
-            return '/*3*/return;';
+            if (rng(3) == 0) return '/*3*/return;';
+            return '/*4*/return ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
           case 2:
             // must wrap in curlies to prevent orphaned `else` statement
             if (canThrow && rng(5) === 0) return '{ throw ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + '}';
@@ -530,13 +547,12 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createTypeofExpr(recurmax, stmtDepth, canThrow);
       case p++:
-        // you could statically infer that this is just `Math`, regardless of the other expression
-        // I don't think Uglify does this at this time...
-        return ''+
-            'new function(){ \n' +
-            (rng(2) === 1 ? createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '\n' : '') +
-            'return Math;\n' +
-            '}';
+        return [
+            'new function() {',
+            rng(2) ? '' : createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
+            'return ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
+            '}'
+        ].join('\n');
       case p++:
       case p++:
         // more like a parser test but perhaps comment nodes mess up the analysis?
