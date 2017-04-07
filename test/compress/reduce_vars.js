@@ -1919,7 +1919,7 @@ side_effects_assign: {
 
 pure_getters_1: {
     options = {
-        pure_getters: true,
+        pure_getters: "strict",
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -1941,7 +1941,7 @@ pure_getters_1: {
 
 pure_getters_2: {
     options = {
-        pure_getters: true,
+        pure_getters: "strict",
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -1953,6 +1953,21 @@ pure_getters_2: {
     expect: {
         var a;
         var a = a && a.b;
+    }
+}
+
+pure_getters_3: {
+    options = {
+        pure_getters: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        var a = a && a.b;
+    }
+    expect: {
     }
 }
 
