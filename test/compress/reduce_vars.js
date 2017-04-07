@@ -1917,7 +1917,7 @@ side_effects_assign: {
     expect_stdout: "undefined"
 }
 
-pure_getters: {
+pure_getters_1: {
     options = {
         pure_getters: true,
         reduce_vars: true,
@@ -1937,4 +1937,46 @@ pure_getters: {
         console.log(a);
     }
     expect_stdout: "undefined"
+}
+
+pure_getters_2: {
+    options = {
+        pure_getters: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        var a = a && a.b;
+    }
+    expect: {
+        var a;
+        var a = a && a.b;
+    }
+}
+
+catch_var: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        try {
+            throw {};
+        } catch (e) {
+            var e;
+            console.log(!!e);
+        }
+    }
+    expect: {
+        try {
+            throw {};
+        } catch (e) {
+            var e;
+            console.log(!!e);
+        }
+    }
+    expect_stdout: "true"
 }
