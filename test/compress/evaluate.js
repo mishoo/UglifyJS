@@ -878,12 +878,5 @@ delete_expr: {
         console.log(delete NaN);
         console.log(delete (0 / 0));
     }
-    expect_stdout: [
-        "false",
-        "true",
-        "false",
-        "true",
-        "false",
-        "true",
-    ]
+    expect_stdout: true
 }
