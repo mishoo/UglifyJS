@@ -974,3 +974,58 @@ issue_1715_4: {
     }
     expect_stdout: "1"
 }
+
+delete_assign_1: {
+    options = {
+        booleans: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(delete (a = undefined));
+        console.log(delete (a = void 0));
+        console.log(delete (a = Infinity));
+        console.log(delete (a = 1 / 0));
+        console.log(delete (a = NaN));
+        console.log(delete (a = 0 / 0));
+    }
+    expect: {
+        console.log((void 0, !0));
+        console.log((void 0, !0));
+        console.log((1 / 0, !0));
+        console.log((1 / 0, !0));
+        console.log((NaN, !0));
+        console.log((0 / 0, !0));
+    }
+    expect_stdout: true
+}
+
+delete_assign_2: {
+    options = {
+        booleans: true,
+        keep_infinity: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(delete (a = undefined));
+        console.log(delete (a = void 0));
+        console.log(delete (a = Infinity));
+        console.log(delete (a = 1 / 0));
+        console.log(delete (a = NaN));
+        console.log(delete (a = 0 / 0));
+    }
+    expect: {
+        console.log((void 0, !0));
+        console.log((void 0, !0));
+        console.log((Infinity, !0));
+        console.log((1 / 0, !0));
+        console.log((NaN, !0));
+        console.log((0 / 0, !0));
+    }
+    expect_stdout: true
+}

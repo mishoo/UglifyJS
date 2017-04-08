@@ -858,8 +858,9 @@ issue_1760_2: {
     expect_stdout: "Infinity"
 }
 
-delete_expr: {
+delete_expr_1: {
     options = {
+        booleans: true,
         evaluate: true,
     }
     input: {
@@ -872,11 +873,87 @@ delete_expr: {
     }
     expect: {
         console.log(delete undefined);
+        console.log((void 0, !0));
+        console.log(delete Infinity);
+        console.log((1 / 0, !0));
+        console.log(delete NaN);
+        console.log((0 / 0, !0));
+    }
+    expect_stdout: true
+}
+
+delete_expr_2: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        keep_infinity: true,
+    }
+    input: {
+        console.log(delete undefined);
         console.log(delete void 0);
         console.log(delete Infinity);
         console.log(delete (1 / 0));
         console.log(delete NaN);
         console.log(delete (0 / 0));
+    }
+    expect: {
+        console.log(delete undefined);
+        console.log((void 0, !0));
+        console.log(delete Infinity);
+        console.log((1 / 0, !0));
+        console.log(delete NaN);
+        console.log((0 / 0, !0));
+    }
+    expect_stdout: true
+}
+
+delete_binary_1: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(delete (true && undefined));
+        console.log(delete (true && void 0));
+        console.log(delete (true && Infinity));
+        console.log(delete (true && (1 / 0)));
+        console.log(delete (true && NaN));
+        console.log(delete (true && (0 / 0)));
+    }
+    expect: {
+        console.log((void 0, !0));
+        console.log((void 0, !0));
+        console.log((1 / 0, !0));
+        console.log((1 / 0, !0));
+        console.log((NaN, !0));
+        console.log((NaN, !0));
+    }
+    expect_stdout: true
+}
+
+delete_binary_2: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        keep_infinity: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(delete (false || undefined));
+        console.log(delete (false || void 0));
+        console.log(delete (false || Infinity));
+        console.log(delete (false || (1 / 0)));
+        console.log(delete (false || NaN));
+        console.log(delete (false || (0 / 0)));
+    }
+    expect: {
+        console.log((void 0, !0));
+        console.log((void 0, !0));
+        console.log((Infinity, !0));
+        console.log((1 / 0, !0));
+        console.log((NaN, !0));
+        console.log((NaN, !0));
     }
     expect_stdout: true
 }
