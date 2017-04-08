@@ -71,6 +71,7 @@ var STMT_COUNT_FROM_GLOBAL = true; // count statement depth from nearest functio
 var num_iterations = +process.argv[2] || 1/0;
 var verbose = false; // log every generated test
 var verbose_interval = false; // log every 100 generated tests
+var verbose_error = false;
 for (var i = 2; i < process.argv.length; ++i) {
     switch (process.argv[i]) {
       case '-v':
@@ -78,6 +79,9 @@ for (var i = 2; i < process.argv.length; ++i) {
         break;
       case '-V':
         verbose_interval = true;
+        break;
+      case '-E':
+        verbose_error = true;
         break;
       case '-t':
         MAX_GENERATED_TOPLEVELS_PER_RUN = +process.argv[++i];
@@ -118,6 +122,7 @@ for (var i = 2; i < process.argv.length; ++i) {
         console.log('<number>: generate this many cases (if used must be first arg)');
         console.log('-v: print every generated test case');
         console.log('-V: print every 100th generated test case');
+        console.log('-E: print generated test case with runtime error');
         console.log('-t <int>: generate this many toplevels per run (more take longer)');
         console.log('-r <int>: maximum recursion depth for generator (higher takes longer)');
         console.log('-s1 <statement name>: force the first level statement to be this one (see list below)');
@@ -414,24 +419,27 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             return 'var ' + n1 + ' = ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ', ' + n2 + ' = ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
         }
       case STMT_RETURN_ETC:
-        switch (rng(3)) {
+        switch (rng(8)) {
+          case 0:
           case 1:
+          case 2:
+          case 3:
             if (canBreak && rng(5) === 0) return 'break;';
             if (canContinue && rng(5) === 0) return 'continue;';
             if (cannotReturn) return createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
             if (rng(3) == 0) return '/*3*/return;';
-            return '/*4*/return ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
-          case 2:
-            // must wrap in curlies to prevent orphaned `else` statement
-            if (canThrow && rng(5) === 0) return '{ throw ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + '}';
-            if (cannotReturn) return createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
-            return '{ /*1*/ return ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + '}';
-          default:
+            return 'return ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
+          case 4:
             // this is actually more like a parser test, but perhaps it hits some dead code elimination traps
             // must wrap in curlies to prevent orphaned `else` statement
             // note: you can't `throw` without an expression so don't put a `throw` option in this case
             if (cannotReturn) return createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
             return '{ /*2*/ return\n' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + '}';
+          default:
+            // must wrap in curlies to prevent orphaned `else` statement
+            if (canThrow && rng(5) === 0) return '{ throw ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + '}';
+            if (cannotReturn) return createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
+            return '{ return ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + '}';
         }
       case STMT_FUNC_EXPR:
         // "In non-strict mode code, functions can only be declared at top level, inside a block, or ..."
@@ -894,6 +902,20 @@ for (var round = 1; round <= num_iterations; round++) {
             ok = sandbox.same_stdout(original_result, uglify_result);
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
-        if (!ok && isFinite(num_iterations)) process.exit(1);
+        else if (verbose_error && typeof original_result != "string") {
+            console.log("//=============================================================");
+            console.log("// original code");
+            try_beautify(original_code, original_result);
+            console.log();
+            console.log();
+            console.log("original result:");
+            console.log(original_result);
+            console.log();
+        }
+        if (!ok && isFinite(num_iterations)) {
+            console.log();
+            process.exit(1);
+        }
     });
 }
+console.log();
