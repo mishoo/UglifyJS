@@ -957,3 +957,29 @@ delete_binary_2: {
     }
     expect_stdout: true
 }
+
+Infinity_NaN_undefined_LHS: {
+    options = {}
+    input: {
+        Infinity = Infinity;
+        ++Infinity;
+        Infinity--;
+        NaN *= NaN;
+        ++NaN;
+        NaN--;
+        undefined |= undefined;
+        ++undefined;
+        undefined--;
+    }
+    expect: {
+        Infinity = 1 / 0;
+        ++Infinity;
+        Infinity--;
+        NaN *= NaN;
+        ++NaN;
+        NaN--;
+        undefined |= void 0;
+        ++undefined;
+        undefined--;
+    }
+}
