@@ -145,3 +145,18 @@ mixed: {
         'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:129,8]',
     ]
 }
+
+issue_1801: {
+    options = {
+        booleans: true,
+        global_defs: {
+            "CONFIG.FOO.BAR": true,
+        },
+    }
+    input: {
+        console.log(CONFIG.FOO.BAR);
+    }
+    expect: {
+        console.log(!0);
+    }
+}
