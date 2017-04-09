@@ -1,20 +1,5 @@
 [
     {
-        "compress": {
-            "warnings": false
-        }
-    },
-    {
-        "compress": {
-            "warnings": false
-        },
-        "mangle": false
-    },
-    {
-        "compress": false,
-        "mangle": true
-    },
-    {
         "compress": false,
         "mangle": false,
         "output": {
@@ -23,10 +8,32 @@
         }
     },
     {
+        "compress": false
+    },
+    {
+        "compress": {
+            "warnings": false
+        },
+        "mangle": false
+    },
+    {
+        "compress": {
+            "warnings": false
+        }
+    },
+    {
+        "compress": {
+            "toplevel": true,
+            "warnings": false
+        },
+        "mangle": {
+            "toplevel": true
+        }
+    },
+    {
         "compress": {
             "keep_fargs": false,
             "passes": 3,
-            "pure_getters": true,
             "warnings": false
         }
     }

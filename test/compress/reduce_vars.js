@@ -1866,3 +1866,132 @@ delay_def: {
     }
     expect_stdout: true
 }
+
+booleans: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            if (a != 0);
+            switch (a) {
+              case 0:
+                return "FAIL";
+              case false:
+                return "PASS";
+            }
+        }(false));
+    }
+    expect: {
+        console.log(function(a) {
+            if (!1);
+            switch (!1) {
+              case 0:
+                return "FAIL";
+              case !1:
+                return "PASS";
+            }
+        }(!1));
+    }
+    expect_stdout: "PASS"
+}
+
+side_effects_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = typeof void (a && a.in == 1, 0);
+        console.log(a);
+    }
+    expect: {
+        var a = typeof void (a && a.in);
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
+
+pure_getters_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            var a = (a.b, 2);
+        } catch (e) {}
+        console.log(a);
+    }
+    expect: {
+        try {
+            var a = (a.b, 2);
+        } catch (e) {}
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
+
+pure_getters_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        var a = a && a.b;
+    }
+    expect: {
+        var a;
+        var a = a && a.b;
+    }
+}
+
+pure_getters_3: {
+    options = {
+        pure_getters: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        var a = a && a.b;
+    }
+    expect: {
+    }
+}
+
+catch_var: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        try {
+            throw {};
+        } catch (e) {
+            var e;
+            console.log(!!e);
+        }
+    }
+    expect: {
+        try {
+            throw {};
+        } catch (e) {
+            var e;
+            console.log(!!e);
+        }
+    }
+    expect_stdout: "true"
+}

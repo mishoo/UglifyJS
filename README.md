@@ -411,6 +411,8 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `pure_getters` -- the default is `false`.  If you pass `true` for
   this, UglifyJS will assume that object property access
   (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
+  Specify `"strict"` to treat `foo.bar` as side-effect-free only when
+  `foo` is certain to not throw, i.e. not `null` or `undefined`.
 
 - `pure_funcs` -- default `null`.  You can pass an array of names and
   UglifyJS will assume that those functions do not produce side

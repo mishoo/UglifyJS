@@ -1672,6 +1672,7 @@ var_side_effects_3: {
     options = {
         collapse_vars: true,
         pure_getters: true,
+        unsafe: true,
     }
     input: {
         var print = console.log.bind(console);
