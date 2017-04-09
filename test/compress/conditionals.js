@@ -962,3 +962,56 @@ condition_symbol_matches_consequent: {
     }
     expect_stdout: "3 7 true 4"
 }
+
+delete_conditional_1: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(delete (1 ? undefined : x));
+        console.log(delete (1 ? void 0 : x));
+        console.log(delete (1 ? Infinity : x));
+        console.log(delete (1 ? 1 / 0 : x));
+        console.log(delete (1 ? NaN : x));
+        console.log(delete (1 ? 0 / 0 : x));
+    }
+    expect: {
+        console.log((void 0, !0));
+        console.log((void 0, !0));
+        console.log((1 / 0, !0));
+        console.log((1 / 0, !0));
+        console.log((NaN, !0));
+        console.log((NaN, !0));
+    }
+    expect_stdout: true
+}
+
+delete_conditional_2: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        keep_infinity: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(delete (0 ? x : undefined));
+        console.log(delete (0 ? x : void 0));
+        console.log(delete (0 ? x : Infinity));
+        console.log(delete (0 ? x : 1 / 0));
+        console.log(delete (0 ? x : NaN));
+        console.log(delete (0 ? x : 0 / 0));
+    }
+    expect: {
+        console.log((void 0, !0));
+        console.log((void 0, !0));
+        console.log((Infinity, !0));
+        console.log((1 / 0, !0));
+        console.log((NaN, !0));
+        console.log((NaN, !0));
+    }
+    expect_stdout: true
+}
