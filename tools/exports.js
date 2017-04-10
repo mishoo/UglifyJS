@@ -17,3 +17,6 @@ exports["string_template"] = string_template;
 exports["tokenizer"] = tokenizer;
 exports["is_identifier"] = is_identifier;
 exports["SymbolDef"] = SymbolDef;
+exports["minify"] = minify;
+exports["readNameCache"] = readNameCache;
+exports["writeNameCache"] = writeNameCache;
