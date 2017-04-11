@@ -501,6 +501,19 @@ code as usual.  The build will contain the `const` declarations if you use
 them. If you are targeting < ES6 environments which does not support `const`,
 using `var` with `reduce_vars` (enabled by default) should suffice.
 
+You can also define variables via the API (if UglifyJS is being called
+from a JavaScript file, for instance).  Just supply the values to 
+`UglifyJS.Compressor`:
+
+```javascript
+var compressor = UglifyJS.Compressor({
+	global_defs: {
+		DEBUG: false,
+		PRODUCTION: true
+	}
+});
+```
+
 <a name="codegen-options"></a>
 
 #### Conditional compilation, API
