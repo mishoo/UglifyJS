@@ -569,7 +569,7 @@ function getOptions(flag, constants) {
             }
         }
         ast.walk(new UglifyJS.TreeWalker(function(node){
-            if (node instanceof UglifyJS.AST_Seq) return; // descend
+            if (node instanceof UglifyJS.AST_Sequence) return; // descend
             if (node instanceof UglifyJS.AST_Assign) {
                 var name = node.left.print_to_string().replace(/-/g, "_");
                 var value = node.right;
@@ -583,7 +583,7 @@ function getOptions(flag, constants) {
                 ret[name] = true;
                 return true;    // no descend
             }
-            print_error(node.TYPE)
+            print_error(node.TYPE);
             print_error("Error parsing arguments for flag `" + flag + "': " + x);
             process.exit(1);
         }));
