@@ -2,10 +2,14 @@ var Uglify = require('../../');
 var assert = require("assert");
 var readFileSync = require("fs").readFileSync;
 
+function read(path) {
+    return readFileSync(path, "utf8");
+}
+
 describe("minify", function() {
     it("Should test basic sanity of minify with default options", function() {
         var js = 'function foo(bar) { if (bar) return 3; else return 7; var u = not_called(); }';
-        var result = Uglify.minify(js, {fromString: true});
+        var result = Uglify.minify(js);
         assert.strictEqual(result.code, 'function foo(n){return n?3:7}');
     });
 
@@ -13,7 +17,7 @@ describe("minify", function() {
         it("Should preserve quotes in object literals", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
             var result = Uglify.minify(js, {
-                fromString: true, output: {
+                output: {
                     keep_quoted_props: true
                 }});
             assert.strictEqual(result.code, 'var foo={"x":1,y:2,"z":3};');
@@ -22,7 +26,7 @@ describe("minify", function() {
         it("Should preserve quote styles when quote_style is 3", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
             var result = Uglify.minify(js, {
-                fromString: true, output: {
+                output: {
                     keep_quoted_props: true,
                     quote_style: 3
                 }});
@@ -32,7 +36,7 @@ describe("minify", function() {
         it("Should not preserve quotes in object literals when disabled", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
             var result = Uglify.minify(js, {
-                fromString: true, output: {
+                output: {
                     keep_quoted_props: false,
                     quote_style: 3
                 }});
@@ -44,12 +48,13 @@ describe("minify", function() {
         it("Shouldn't mangle quoted properties", function() {
             var js = 'a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
             var result = Uglify.minify(js, {
-                fromString: true,
                 compress: {
                     properties: false
                 },
-                mangleProperties: {
-                    ignore_quoted: true
+                mangle: {
+                    properties: {
+                        ignore_quoted: true
+                    }
                 },
                 output: {
                     keep_quoted_props: true,
@@ -63,10 +68,12 @@ describe("minify", function() {
 
     describe("inSourceMap", function() {
         it("Should read the given string filename correctly when sourceMapIncludeSources is enabled (#1236)", function() {
-            var result = Uglify.minify('./test/input/issue-1236/simple.js', {
-                outSourceMap: "simple.min.js.map",
-                inSourceMap: "./test/input/issue-1236/simple.js.map",
-                sourceMapIncludeSources: true
+            var result = Uglify.minify(read("./test/input/issue-1236/simple.js"), {
+                sourceMap: {
+                    content: read("./test/input/issue-1236/simple.js.map"),
+                    filename: "simple.min.js",
+                    includeSources: true
+                }
             });
 
             var map = JSON.parse(result.map);
@@ -77,10 +84,12 @@ describe("minify", function() {
                 'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
         });
         it("Should process inline source map", function() {
-            var code = Uglify.minify("./test/input/issue-520/input.js", {
+            var code = Uglify.minify(read("./test/input/issue-520/input.js"), {
                 compress: { toplevel: true },
-                inSourceMap: "inline",
-                sourceMapInline: true
+                sourceMap: {
+                    content: "inline",
+                    url: "inline"
+                }
             }).code + "\n";
             assert.strictEqual(code, readFileSync("test/input/issue-520/output.js", "utf8"));
         });
@@ -91,9 +100,11 @@ describe("minify", function() {
                 warnings.push(txt);
             };
             try {
-                var result = Uglify.minify("./test/input/issue-1323/sample.js", {
-                    inSourceMap: "inline",
+                var result = Uglify.minify(read("./test/input/issue-1323/sample.js"), {
                     mangle: false,
+                    sourceMap: {
+                        content: "inline"
+                    }
                 });
                 assert.strictEqual(result.code, "var bar=function(){function foo(bar){return bar}return foo}();");
                 assert.strictEqual(warnings.length, 1);
@@ -105,20 +116,13 @@ describe("minify", function() {
         it("Should fail with multiple input and inline source map", function() {
             assert.throws(function() {
                 Uglify.minify([
-                    "./test/input/issue-520/input.js",
-                    "./test/input/issue-520/output.js"
+                    read("./test/input/issue-520/input.js"),
+                    read("./test/input/issue-520/output.js")
                 ], {
-                    inSourceMap: "inline",
-                    sourceMapInline: true
-                });
-            });
-        });
-        it("Should fail with SpiderMonkey and inline source map", function() {
-            assert.throws(function() {
-                Uglify.minify("./test/input/issue-520/input.js", {
-                    inSourceMap: "inline",
-                    sourceMapInline: true,
-                    spidermonkey: true
+                    sourceMap: {
+                        content: "inline",
+                        url: "inline"
+                    }
                 });
             });
         });
@@ -127,17 +131,16 @@ describe("minify", function() {
     describe("sourceMapInline", function() {
         it("should append source map to output js when sourceMapInline is enabled", function() {
             var result = Uglify.minify('var a = function(foo) { return foo; };', {
-                fromString: true,
-                sourceMapInline: true
+                sourceMap: {
+                    url: "inline"
+                }
             });
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};\n" +
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIj8iXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsR0FBSUEsR0FBSSxTQUFTQyxHQUFPLE1BQU9BIn0=");
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsR0FBSUEsR0FBSSxTQUFTQyxHQUFPLE1BQU9BIn0=");
         });
         it("should not append source map to output js when sourceMapInline is not enabled", function() {
-            var result = Uglify.minify('var a = function(foo) { return foo; };', {
-                fromString: true
-            });
+            var result = Uglify.minify('var a = function(foo) { return foo; };');
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};");
         });
@@ -146,7 +149,6 @@ describe("minify", function() {
     describe("#__PURE__", function() {
         it("should drop #__PURE__ hint after use", function() {
             var result = Uglify.minify('//@__PURE__ comment1 #__PURE__ comment2\n foo(), bar();', {
-                fromString: true,
                 output: {
                     comments: "all",
                     beautify: false,
@@ -157,7 +159,6 @@ describe("minify", function() {
         });
         it("should not drop #__PURE__ hint if function is retained", function() {
             var result = Uglify.minify("var a = /*#__PURE__*/(function(){ foo(); })();", {
-                fromString: true,
                 output: {
                     comments: "all",
                     beautify: false,
@@ -171,11 +172,11 @@ describe("minify", function() {
     describe("JS_Parse_Error", function() {
         it("should throw syntax error", function() {
             assert.throws(function() {
-                Uglify.minify("function f(a{}", { fromString: true });
+                Uglify.minify("function f(a{}");
             }, function(err) {
                 assert.ok(err instanceof Error);
                 assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token punc «{», expected punc «,»");
-                assert.strictEqual(err.filename, 0);
+                assert.strictEqual(err.filename, "0");
                 assert.strictEqual(err.line, 1);
                 assert.strictEqual(err.col, 12);
                 return true;
@@ -191,5 +192,4 @@ describe("minify", function() {
             assert.strictEqual(ast.print_to_string(), "function f(a){for(var i=0;i<a;i++)console.log(i)}");
         });
     })
-
 });

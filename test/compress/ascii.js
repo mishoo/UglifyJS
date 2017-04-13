@@ -2,7 +2,7 @@ ascii_only_true: {
     options = {}
     beautify = {
         ascii_only : true,
-        screw_ie8  : true,
+        ie8        : false,
         beautify   : false,
     }
     input: {
@@ -20,7 +20,7 @@ ascii_only_false: {
     options = {}
     beautify = {
         ascii_only : false,
-        screw_ie8  : true,
+        ie8        : false,
         beautify   : false,
     }
     input: {
@@ -33,4 +33,3 @@ ascii_only_false: {
     }
     expect_exact: 'function f(){return"\\x000\\x001\\x007\\08\\0"+"\\0\x01\x02\x03\x04\x05\x06\x07\\b\\t\\n\\v\\f\\r\x0e\x0f"+"\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"+\' !"# ... }~\x7f\x80\x81 ... \xfe\xff\u0fff\uffff\'}'
 }
-

@@ -1,58 +1,80 @@
-var Uglify = require('../../');
 var assert = require("assert");
+var exec = require("child_process").exec;
 var path = require("path");
+var readFileSync = require("fs").readFileSync;
 
-describe("minify() with input file globs", function() {
-    it("minify() with one input file glob string.", function() {
-        var result = Uglify.minify("test/input/issue-1242/foo.*");
-        assert.strictEqual(result.code, 'function foo(o){print("Foo:",2*o)}var print=console.log.bind(console);');
-    });
-    it("minify() with an array of one input file glob.", function() {
-        var result = Uglify.minify([
-            "test/input/issue-1242/b*.es5",
-        ]);
-        assert.strictEqual(result.code, 'function bar(n){return 3*n}function baz(n){return n/2}');
-    });
-    it("minify() with an array of multiple input file globs.", function() {
-        var result = Uglify.minify([
-            "test/input/issue-1242/???.es5",
-            "test/input/issue-1242/*.js",
-        ], {
-            compress: { toplevel: true }
+describe("bin/uglifyjs with input file globs", function() {
+    var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
+    it("bin/uglifyjs with one input file extension glob.", function(done) {
+        var command = uglifyjscmd + ' "test/input/issue-1242/foo.*" -cm';
+
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'function foo(o){print("Foo:",2*o)}var print=console.log.bind(console);\n');
+            done();
         });
-        assert.strictEqual(result.code, 'var print=console.log.bind(console),a=function(n){return 3*n}(3),b=function(n){return n/2}(12);print("qux",a,b),function(n){print("Foo:",2*n)}(11);');
     });
-    it("should throw with non-matching glob string", function() {
-        var glob = "test/input/issue-1242/blah.*";
-        assert.strictEqual(Uglify.simple_glob(glob).length, 1);
-        assert.strictEqual(Uglify.simple_glob(glob)[0], glob);
-        assert.throws(function() {
-            Uglify.minify(glob);
-        }, "should throw file not found");
+    it("bin/uglifyjs with one input file name glob.", function(done) {
+        var command = uglifyjscmd + ' "test/input/issue-1242/b*.es5" -cm';
+
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'function bar(n){return 3*n}function baz(n){return n/2}\n');
+            done();
+        });
     });
-    it('"?" in glob string should not match "/"', function() {
-        var glob = "test/input?issue-1242/foo.*";
-        assert.strictEqual(Uglify.simple_glob(glob).length, 1);
-        assert.strictEqual(Uglify.simple_glob(glob)[0], glob);
-        assert.throws(function() {
-            Uglify.minify(glob);
-        }, "should throw file not found");
+    it("bin/uglifyjs with multiple input file globs.", function(done) {
+        var command = uglifyjscmd + ' "test/input/issue-1242/???.es5" "test/input/issue-1242/*.js" -mc toplevel';
+
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'var print=console.log.bind(console),a=function(n){return 3*n}(3),b=function(n){return n/2}(12);print("qux",a,b),function(n){print("Foo:",2*n)}(11);\n');
+            done();
+        });
     });
-    it("should handle special characters in glob string", function() {
-        var result = Uglify.minify("test/input/issue-1632/^{*}[???](*)+$.??");
-        assert.strictEqual(result.code, "console.log(x);");
+    it("should throw with non-matching glob string", function(done) {
+        var command = uglifyjscmd + ' "test/input/issue-1242/blah.*"';
+
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.ok(/^ERROR: ENOENT/.test(stderr));
+            done();
+        });
     });
-    it("should handle array of glob strings - matching and otherwise", function() {
+    it('"?" in glob string should not match "/"', function(done) {
+        var command = uglifyjscmd + ' "test/input?issue-1242/foo.*"';
+
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.ok(/^ERROR: ENOENT/.test(stderr));
+            done();
+        });
+    });
+    it("should handle special characters in glob string", function(done) {
+        var command = uglifyjscmd + ' "test/input/issue-1632/^{*}[???](*)+$.??" -cm';
+
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, "console.log(x);\n");
+            done();
+        });
+    });
+    it("should handle array of glob strings - matching and otherwise", function(done) {
         var dir = "test/input/issue-1242";
-        var matches = Uglify.simple_glob([
+        var command = uglifyjscmd + ' "' + [
             path.join(dir, "b*.es5"),
             path.join(dir, "z*.es5"),
-            path.join(dir, "*.js"),
-        ]);
-        assert.strictEqual(matches.length, 4);
-        assert.strictEqual(matches[0], path.join(dir, "bar.es5"));
-        assert.strictEqual(matches[1], path.join(dir, "baz.es5"));
-        assert.strictEqual(matches[2], path.join(dir, "z*.es5"));
-        assert.strictEqual(matches[3], path.join(dir, "qux.js"));
+            path.join(dir, "*.js")
+        ].join('" "') + '"';
+
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.ok(/^ERROR: ENOENT.*?z\*\.es5/.test(stderr));
+            done();
+        });
     });
 });

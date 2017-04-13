@@ -7,8 +7,8 @@ describe("spidermonkey export/import sanity test", function() {
         this.timeout(20000);
 
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
-        var command = uglifyjs + " --self -cm --wrap SpiderUglify --dump-spidermonkey-ast | " +
-            uglifyjs + " --spidermonkey -cm";
+        var command = uglifyjs + " --self -cm --wrap SpiderUglify -o spidermonkey | " +
+            uglifyjs + " -p spidermonkey -cm";
 
         exec(command, function (err, stdout) {
             if (err) throw err;

@@ -6,43 +6,41 @@ describe("Input file as map", function() {
         var jsMap = {
             '/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'
         };
-        var result = Uglify.minify(jsMap, {fromString: true, outSourceMap: true});
+        var result = Uglify.minify(jsMap, {sourceMap: true});
 
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
         assert.deepEqual(map.sources, ['/scripts/foo.js']);
         assert.strictEqual(map.file, undefined);
 
-        result = Uglify.minify(jsMap, {fromString: true, outFileName: 'out.js'});
-        assert.strictEqual(result.map, null);
+        result = Uglify.minify(jsMap);
+        assert.strictEqual(result.map, undefined);
 
-        result = Uglify.minify(jsMap, {fromString: true, outFileName: 'out.js', outSourceMap: true});
+        result = Uglify.minify(jsMap, {sourceMap: {filename: 'out.js'}});
         map = JSON.parse(result.map);
         assert.strictEqual(map.file, 'out.js');
     });
 
-    it("Should accept array of objects and strings", function() {
+    it("Should accept array of strings", function() {
         var jsSeq = [
-            {'/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'},
+            'var foo = {"x": 1, y: 2, \'z\': 3};',
             'var bar = 15;'
         ];
-        var result = Uglify.minify(jsSeq, {fromString: true, outSourceMap: true});
+        var result = Uglify.minify(jsSeq, {sourceMap: true});
 
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3},bar=15;');
-        assert.strictEqual(map.sources[0], '/scripts/foo.js');
+        assert.deepEqual(map.sources, ['0', '1']);
     });
 
     it("Should correctly include source", function() {
-        var jsSeq = [
-            {'/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'},
-            'var bar = 15;'
-        ];
-        var result = Uglify.minify(jsSeq, {fromString: true, outSourceMap: true, sourceMapIncludeSources: true});
+        var jsMap = {
+            '/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'
+        };
+        var result = Uglify.minify(jsMap, {sourceMap: {includeSources: true}});
 
         var map = JSON.parse(result.map);
-        assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3},bar=15;');
-        assert.deepEqual(map.sourcesContent, ['var foo = {"x": 1, y: 2, \'z\': 3};', 'var bar = 15;']);
+        assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
+        assert.deepEqual(map.sourcesContent, ['var foo = {"x": 1, y: 2, \'z\': 3};']);
     });
-
 });

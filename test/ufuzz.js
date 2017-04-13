@@ -768,7 +768,6 @@ function createVarName(maybe, dontStore) {
 function try_beautify(code, result) {
     try {
         var beautified = UglifyJS.minify(code, {
-            fromString: true,
             compress: false,
             mangle: false,
             output: {
@@ -802,8 +801,8 @@ var default_options = {
     mangle: {
         "cache": null,
         "eval": false,
+        "ie8": false,
         "keep_fnames": false,
-        "screw_ie8": true,
         "toplevel": false,
     },
     output: infer_options(UglifyJS.OutputStream),
@@ -869,10 +868,7 @@ function log(options) {
     }
 }
 
-var minify_options = require("./ufuzz.json").map(function(options) {
-    options.fromString = true;
-    return JSON.stringify(options);
-});
+var minify_options = require("./ufuzz.json").map(JSON.stringify);
 var original_code, original_result;
 var uglify_code, uglify_result, ok;
 for (var round = 1; round <= num_iterations; round++) {

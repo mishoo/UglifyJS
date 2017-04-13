@@ -3,9 +3,8 @@ var assert = require("assert");
 
 describe("line-endings", function() {
     var options = {
-        fromString: true,
-        mangle: false,
         compress: false,
+        mangle: false,
         output: {
             beautify: false,
             comments: /^!/,

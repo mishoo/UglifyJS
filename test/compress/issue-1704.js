@@ -1,10 +1,10 @@
 mangle_catch: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     input: {
@@ -22,11 +22,11 @@ mangle_catch: {
 
 mangle_catch_ie8: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     input: {
@@ -44,11 +44,11 @@ mangle_catch_ie8: {
 
 mangle_catch_var: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     input: {
@@ -66,11 +66,11 @@ mangle_catch_var: {
 
 mangle_catch_var_ie8: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     input: {
@@ -88,11 +88,11 @@ mangle_catch_var_ie8: {
 
 mangle_catch_toplevel: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     input: {
@@ -110,11 +110,11 @@ mangle_catch_toplevel: {
 
 mangle_catch_ie8_toplevel: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     input: {
@@ -132,11 +132,11 @@ mangle_catch_ie8_toplevel: {
 
 mangle_catch_var_toplevel: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     input: {
@@ -154,11 +154,11 @@ mangle_catch_var_toplevel: {
 
 mangle_catch_var_ie8_toplevel: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     input: {
@@ -176,11 +176,11 @@ mangle_catch_var_ie8_toplevel: {
 
 mangle_catch_redef_1: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     input: {
@@ -198,11 +198,11 @@ mangle_catch_redef_1: {
 
 mangle_catch_redef_1_ie8: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     input: {
@@ -220,11 +220,11 @@ mangle_catch_redef_1_ie8: {
 
 mangle_catch_redef_1_toplevel: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     input: {
@@ -242,11 +242,11 @@ mangle_catch_redef_1_toplevel: {
 
 mangle_catch_redef_1_ie8_toplevel: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     input: {
@@ -264,11 +264,11 @@ mangle_catch_redef_1_ie8_toplevel: {
 
 mangle_catch_redef_2: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: false,
     }
     input: {
@@ -285,11 +285,11 @@ mangle_catch_redef_2: {
 
 mangle_catch_redef_2_ie8: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: false,
     }
     input: {
@@ -306,11 +306,11 @@ mangle_catch_redef_2_ie8: {
 
 mangle_catch_redef_2_toplevel: {
     options = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
         toplevel: true,
     }
     input: {
@@ -327,11 +327,11 @@ mangle_catch_redef_2_toplevel: {
 
 mangle_catch_redef_2_ie8_toplevel: {
     options = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
         toplevel: true,
     }
     input: {

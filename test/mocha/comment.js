@@ -20,7 +20,7 @@ describe("Comment", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.throws(function() {
-                uglify.parse(tests[i], {fromString: true})
+                uglify.parse(tests[i]);
             }, fail, tests[i]);
         }
     });
@@ -43,7 +43,7 @@ describe("Comment", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.throws(function() {
-                uglify.parse(tests[i], {fromString: true})
+                uglify.parse(tests[i]);
             }, fail, tests[i]);
         }
     });

@@ -20,7 +20,7 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
-    it("Should be able to filter comments correctly with `--comment all`", function (done) {
+    it("Should be able to filter comments correctly with `--comments all`", function (done) {
         var command = uglifyjscmd + ' test/input/comments/filter.js --comments all';
 
         exec(command, function (err, stdout) {
@@ -50,8 +50,8 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
-    it("Should append source map to output when using --source-map-inline", function (done) {
-       var command = uglifyjscmd + ' test/input/issue-1323/sample.js --source-map-inline';
+    it("Should append source map to output when using --source-map url=inline", function (done) {
+       var command = uglifyjscmd + " test/input/issue-1323/sample.js --source-map url=inline";
 
        exec(command, function (err, stdout) {
            if (err) throw err;
@@ -61,7 +61,7 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
-    it("should not append source map to output when not using --source-map-inline", function (done) {
+    it("should not append source map to output when not using --source-map url=inline", function (done) {
         var command = uglifyjscmd + ' test/input/issue-1323/sample.js';
 
         exec(command, function (err, stdout) {
@@ -152,7 +152,7 @@ describe("bin/uglifyjs", function () {
        });
     });
     it("Should process inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-520/input.js -mc toplevel --in-source-map inline --source-map-inline';
+        var command = uglifyjscmd + " test/input/issue-520/input.js -mc toplevel --source-map content=inline,url=inline";
 
         exec(command, function (err, stdout) {
             if (err) throw err;
@@ -162,40 +162,44 @@ describe("bin/uglifyjs", function () {
         });
     });
     it("Should warn for missing inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1323/sample.js --in-source-map inline';
+        var command = uglifyjscmd + " test/input/issue-1323/sample.js --source-map content=inline,url=inline";
 
         exec(command, function (err, stdout, stderr) {
             if (err) throw err;
 
-            assert.strictEqual(stdout, "var bar=function(){function foo(bar){return bar}return foo}();\n");
+            assert.strictEqual(stdout, [
+                "var bar=function(){function foo(bar){return bar}return foo}();",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxHQUFJQSxLQUFNLFdBQ04sUUFBU0MsS0FBS0QsS0FDVixNQUFPQSxLQUdYLE1BQU9DIn0=",
+                "",
+            ].join("\n"));
             assert.strictEqual(stderr, "WARN: inline source map not found\n");
             done();
         });
     });
     it("Should fail with multiple input and inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-520/input.js test/input/issue-520/output.js --in-source-map inline --source-map-inline';
+        var command = uglifyjscmd + " test/input/issue-520/input.js test/input/issue-520/output.js --source-map content=inline,url=inline";
 
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
-            assert.strictEqual(stderr, "ERROR: Inline source map only works with singular input\n");
+            assert.strictEqual(stderr, "ERROR: inline source map only works with singular input\n");
             done();
         });
     });
     it("Should fail with acorn and inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-520/input.js --in-source-map inline --source-map-inline --acorn';
+        var command = uglifyjscmd + " test/input/issue-520/input.js --source-map content=inline,url=inline -p acorn";
 
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
-            assert.strictEqual(stderr, "ERROR: Inline source map only works with built-in parser\n");
+            assert.strictEqual(stderr, "ERROR: inline source map only works with built-in parser\n");
             done();
         });
     });
     it("Should fail with SpiderMonkey and inline source map", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-520/input.js --in-source-map inline --source-map-inline --spidermonkey';
+        var command = uglifyjscmd + " test/input/issue-520/input.js --source-map content=inline,url=inline -p spidermonkey";
 
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
-            assert.strictEqual(stderr, "ERROR: Inline source map only works with built-in parser\n");
+            assert.strictEqual(stderr, "ERROR: inline source map only works with built-in parser\n");
             done();
         });
     });
@@ -208,7 +212,7 @@ describe("bin/uglifyjs", function () {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/simple.js:1,12");
             assert.strictEqual(lines[1], "function f(a{}");
             assert.strictEqual(lines[2], "            ^");
-            assert.strictEqual(lines[3], "SyntaxError: Unexpected token punc «{», expected punc «,»");
+            assert.strictEqual(lines[3], "ERROR: Unexpected token punc «{», expected punc «,»");
             done();
         });
     });
@@ -221,7 +225,7 @@ describe("bin/uglifyjs", function () {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/tab.js:1,12");
             assert.strictEqual(lines[1], "\t\tfoo(\txyz, 0abc);");
             assert.strictEqual(lines[2], "\t\t    \t     ^");
-            assert.strictEqual(lines[3], "SyntaxError: Invalid syntax: 0abc");
+            assert.strictEqual(lines[3], "ERROR: Invalid syntax: 0abc");
             done();
         });
     });
@@ -234,7 +238,7 @@ describe("bin/uglifyjs", function () {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/eof.js:2,0");
             assert.strictEqual(lines[1], "foo, bar(");
             assert.strictEqual(lines[2], "         ^");
-            assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
+            assert.strictEqual(lines[3], "ERROR: Unexpected token: eof (undefined)");
             done();
         });
     });
@@ -247,19 +251,9 @@ describe("bin/uglifyjs", function () {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/loop-no-body.js:2,0");
             assert.strictEqual(lines[1], "for (var i = 0; i < 1; i++) ");
             assert.strictEqual(lines[2], "                            ^");
-            assert.strictEqual(lines[3], "SyntaxError: Unexpected token: eof (undefined)");
+            assert.strictEqual(lines[3], "ERROR: Unexpected token: eof (undefined)");
             done();
         });
-    });
-    it("Should support hyphen as shorthand", function(done) {
-       var command = uglifyjscmd + ' test/input/issue-1431/sample.js -m keep-fnames=true';
-
-       exec(command, function (err, stdout) {
-           if (err) throw err;
-
-           assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
-           done();
-       });
     });
     it("Should throw syntax error (5--)", function(done) {
        var command = uglifyjscmd + ' test/input/invalid/assign_1.js';
@@ -271,7 +265,7 @@ describe("bin/uglifyjs", function () {
                "Parse error at test/input/invalid/assign_1.js:1,18",
                "console.log(1 || 5--);",
                "                  ^",
-               "SyntaxError: Invalid use of -- operator"
+               "ERROR: Invalid use of -- operator"
            ].join("\n"));
            done();
        });
@@ -286,7 +280,7 @@ describe("bin/uglifyjs", function () {
                "Parse error at test/input/invalid/assign_2.js:1,32",
                "console.log(2 || (Math.random() /= 2));",
                "                                ^",
-               "SyntaxError: Invalid assignment"
+               "ERROR: Invalid assignment"
            ].join("\n"));
            done();
        });
@@ -301,7 +295,7 @@ describe("bin/uglifyjs", function () {
                "Parse error at test/input/invalid/assign_3.js:1,18",
                "console.log(3 || ++this);",
                "                  ^",
-               "SyntaxError: Invalid use of ++ operator"
+               "ERROR: Invalid use of ++ operator"
            ].join("\n"));
            done();
        });

@@ -11,6 +11,7 @@ exports["base54"] = base54;
 exports["defaults"] = defaults;
 exports["mangle_properties"] = mangle_properties;
 exports["merge"] = merge;
+exports["minify"] = minify;
 exports["parse"] = parse;
 exports["push_uniq"] = push_uniq;
 exports["string_template"] = string_template;
