@@ -142,7 +142,6 @@ The available options are:
 ```
 TODOs:
 ```
-  --lint                        Display some scope warnings
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
