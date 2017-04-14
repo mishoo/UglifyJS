@@ -105,14 +105,14 @@ if (program.self) {
     run();
 } else {
     var chunks = [];
-    process.stdin.setEncoding('utf-8');
-    process.stdin.on('data', function (chunk) {
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", function (chunk) {
         chunks.push(chunk);
-    }).on('end', function () {
+    }).on("end", function () {
         files = [ chunks.join("") ];
         run();
     });
-    process.openStdin();
+    process.stdin.resume();
 }
 
 function convert_ast(fn) {
