@@ -18,14 +18,15 @@ program._name = info.name;
 program.version(info.version);
 program.parseArgv = program.parse;
 program.parse = undefined;
-program.option("-p --parse <options>", "Specify parser options.", parseJS("parse", true));
-program.option("-c --compress [options]", "Enable compressor/specify compressor options.", parseJS("compress", true));
-program.option("-m --mangle [options]", "Mangle names/specify mangler options.", parseJS("mangle", true));
-program.option("-b --beautify [options]", "Beautify output/specify output options.", parseJS("beautify", true));
-program.option("-o --output <file>", "Output file (default STDOUT).");
+program.option("-p, --parse <options>", "Specify parser options.", parseJS("parse", true));
+program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parseJS("compress", true));
+program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parseJS("mangle", true));
+program.option("--mangle-props [options]", "Mangle properties/specify mangler options.", parseJS("mangle-props", true));
+program.option("-b, --beautify [options]", "Beautify output/specify output options.", parseJS("beautify", true));
+program.option("-o, --output <file>", "Output file (default STDOUT).");
 program.option("--comments [filter]", "Preserve copyright comments in the output.");
 program.option("--config-file <file>", "Read minify() options from JSON file.");
-program.option("-d --define <expr>[=value]", "Global definitions.", parseJS("define"));
+program.option("-d, --define <expr>[=value]", "Global definitions.", parseJS("define"));
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
 program.option("--self", "Build UglifyJS2 as a library (implies --wrap UglifyJS)");
@@ -72,6 +73,10 @@ if (program.define) {
 }
 if (program.keepFnames) {
     options.keep_fnames = true;
+}
+if (program.mangleProps) {
+    if (typeof options.mangle != "object") options.mangle = {};
+    options.mangle.properties = program.mangleProps;
 }
 if (program.parse) {
     if (program.parse.acorn || program.parse.spidermonkey) {

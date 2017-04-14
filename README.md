@@ -57,9 +57,9 @@ a double dash to prevent input files being used as option arguments:
 The available options are:
 
 ```
-    -h, --help                  output usage information
-    -V, --version               output the version number
-    -p --parse <options>        Specify parser options:
+    -h, --help                  Print usage information.
+    -V, --version               Print version number.
+    -p, --parse <options>       Specify parser options:
                                 `acorn`  Use Acorn for parsing.
                                 `bare_returns`  Allow return outside of functions.
                                                 Useful when minifying CommonJS
@@ -70,12 +70,16 @@ The available options are:
                                               a program (for parsing JSON).
                                 `spidermonkey`  Assume input files are SpiderMonkey
                                                 AST format (as JSON).
-    -c --compress [options]     Enable compressor/specify compressor options:
+    -c, --compress [options]    Enable compressor/specify compressor options:
                                 `pure_funcs`  List of functions that can be safely
                                               removed when their return values are
                                               not used.
-    -m --mangle [options]       Mangle names/specify mangler options.
-    -b --beautify [options]     Beautify output/specify output options:
+    -m, --mangle [options]      Mangle names/specify mangler options.
+    --mangle-props [options]    Mangle properties/specify mangler options:
+                                `debug`  Add debug prefix and suffix.
+                                `ignore_quoted`  Only mangle unquoted properies.
+                                `regex`  Only mangle matched property names.
+    -b, --beautify [options]    Beautify output/specify output options:
                                 `beautify`  Enabled with `--beautify` by default.
                                 `preamble`  Preamble to prepend to the output. You
                                             can use this to insert a comment, for
@@ -90,7 +94,7 @@ The available options are:
                                 `wrap_iife`  Wrap IIFEs in parenthesis. Note: you may
                                              want to disable `negate_iife` under
                                              compressor options.
-    -o --output <file>          Output file (default STDOUT). Specify "spidermonkey"
+    -o, --output <file>         Output file (default STDOUT). Specify "spidermonkey"
                                 to dump SpiderMonkey AST format (as JSON) to STDOUT.
     --comments [filter]         Preserve copyright comments in the output. By
                                 default this works like Google Closure, keeping
@@ -105,9 +109,9 @@ The available options are:
                                 code removal or cascading statements into
                                 sequences.
     --config-file <file>        Read `minify()` options from JSON file.
-    -d --define <expr>[=value]  Global definitions.
+    -d, --define <expr>[=value] Global definitions.
     --ie8                       Support non-standard Internet Explorer 8.
-                                Equivalent to setting `screw_ie8: false` in `minify()`
+                                Equivalent to setting `ie8: true` in `minify()`
                                 for `compress`, `mangle` and `output` options.
                                 By default UglifyJS will not try to be IE-proof.
     --keep-fnames               Do not mangle/drop function names.  Useful for
