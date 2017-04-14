@@ -70,9 +70,26 @@ The available options are:
                                               a program (for parsing JSON).
                                 `spidermonkey`  Assume input files are SpiderMonkey
                                                 AST format (as JSON).
-    -c --compress [options]     Enable compressor/specify compressor options.
+    -c --compress [options]     Enable compressor/specify compressor options:
+                                `pure_funcs`  List of functions that can be safely
+                                              removed when their return values are
+                                              not used.
     -m --mangle [options]       Mangle names/specify mangler options.
-    -b --beautify [options]     Beautify output/specify output options.
+    -b --beautify [options]     Beautify output/specify output options:
+                                `beautify`  Enabled with `--beautify` by default.
+                                `preamble`  Preamble to prepend to the output. You
+                                            can use this to insert a comment, for
+                                            example for licensing information.
+                                            This will not be parsed, but the source
+                                            map will adjust for its presence.
+                                `quote_style`  Quote style:
+                                               0 - auto
+                                               1 - single
+                                               2 - double
+                                               3 - original
+                                `wrap_iife`  Wrap IIFEs in parenthesis. Note: you may
+                                             want to disable `negate_iife` under
+                                             compressor options.
     -o --output <file>          Output file (default STDOUT). Specify "spidermonkey"
                                 to dump SpiderMonkey AST format (as JSON) to STDOUT.
     --comments [filter]         Preserve copyright comments in the output. By
@@ -121,11 +138,6 @@ The available options are:
 TODOs:
 ```
   -r, --reserved                Reserved names to exclude from mangling.
-  --preamble                    Preamble to prepend to the output.  You can use
-                                this to insert a comment, for example for
-                                licensing information.  This will not be
-                                parsed, but the source map will adjust for its
-                                presence.
   --lint                        Display some scope warnings
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
@@ -142,10 +154,6 @@ TODOs:
                                 them explicitly on the command line.
   --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
-  --pure-funcs                  Functions that can be safely removed if their
-                                return value is not used, e.g.
-                                `--pure-funcs Math.floor console.info`
-                                (requires `--compress`)
 ```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
