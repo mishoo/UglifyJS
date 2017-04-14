@@ -118,6 +118,7 @@ The available options are:
                                 code relying on Function.prototype.name.
     --self                      Build UglifyJS2 as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
+                                `base`  Path to compute relative paths from input files.
                                 `content`  Input source map, useful if you're compressing
                                            JS that was generated from some other original
                                            code. Specify "inline" if the source map is
@@ -146,17 +147,6 @@ TODOs:
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
-  --mangle-props                Mangle property names (default `0`). Set to
-                                `true` or `1` to mangle all property names. Set
-                                to `unquoted` or `2` to only mangle unquoted
-                                property names. Mode `2` also enables the
-                                `keep_quoted_props` beautifier option to
-                                preserve the quotes around property names and
-                                disables the `properties` compressor option to
-                                prevent rewriting quoted properties with dot
-                                notation. You can override these by setting
-                                them explicitly on the command line.
-  --mangle-regex                Only mangle property names matching the regex
   --name-cache                  File to hold mangled names mappings
 ```
 
@@ -167,23 +157,19 @@ goes to STDOUT.
 
 UglifyJS2 can generate a source map file, which is highly useful for
 debugging your compressed JavaScript.  To get a source map, pass
-`--source-map output.js.map` (full path to the file where you want the
-source map dumped).
+`--source-map --output output.js` (source map will be written out to
+`output.js.map`).
 
-Additionally you might need `--source-map-root` to pass the URL where the
-original files can be found.  In case you are passing full paths to input
-files to UglifyJS, you can use `--prefix` (`-p`) to specify the number of
-directories to drop from the path prefix when declaring files in the source
-map.
+Additionally you might need `--source-map root=<URL>` to pass the URL where
+the original files can be found.  Use `--source-map url=<URL>` to specify
+the URL where the source map can be found.
 
 For example:
 
     uglifyjs /home/doe/work/foo/src/js/file1.js \
              /home/doe/work/foo/src/js/file2.js \
-             -o foo.min.js \
-             --source-map foo.min.js.map \
-             --source-map-root http://foo.com/src \
-             -p 5 -c -m
+             -o foo.min.js -c -m \
+             --source-map base="/home/doe/work/foo/src",root="http://foo.com/src"
 
 The above will compress and mangle `file1.js` and `file2.js`, will drop the
 output in `foo.min.js` and the source map in `foo.min.js.map`.  The source
@@ -273,8 +259,8 @@ cover most standard JS and DOM properties defined in various browsers.  Pass
 `--reserve-domprops` to read that in.
 
 You can also use a regular expression to define which property names should be
-mangled.  For example, `--mangle-regex="/^_/"` will only mangle property names
-that start with an underscore.
+mangled.  For example, `--mangle-props regex=/^_/` will only mangle property
+names that start with an underscore.
 
 When you compress multiple files using this option, in order for them to
 work together in the end we need to ensure somehow that one property gets
@@ -294,26 +280,26 @@ of mangled property names.
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
 
-#### Mangling unquoted names (`--mangle-props=unquoted` or `--mangle-props=2`)
+#### Mangling unquoted names (`--mangle-props ignore_quoted`)
 
 Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
 so that it is not mangled throughout the entire script even when used in an
 unquoted style (`o.foo`). Example:
 
 ```
-$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props=2 -mc
-var o={"foo":1,a:3};o.foo+=o.a,console.log(o.foo);
+$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props ignore_quoted -mc
+var o={foo:1,a:3};o.foo+=o.a,console.log(o.foo);
 ```
 
 #### Debugging property name mangling
 
-You can also pass `--mangle-props-debug` in order to mangle property names
+You can also pass `--mangle-props debug` in order to mangle property names
 without completely obscuring them. For example the property `o.foo`
 would mangle to `o._$foo$_` with this option. This allows property mangling
 of a large codebase while still being able to debug the code and identify
 where mangling is breaking things.
 
-You can also pass a custom suffix using `--mangle-props-debug=XYZ`. This would then
+You can also pass a custom suffix using `--mangle-props debug=XYZ`. This would then
 mangle `o.foo` to `o._$foo$XYZ_`. You can change this each time you compile a
 script to identify how a property got mangled. One technique is to pass a
 random number on every compile to simulate mangling changing with different
@@ -674,7 +660,7 @@ Example:
 var result = UglifyJS.minify("/path/to/file.js");
 console.log(result.code); // minified output
 // if you need to pass code instead of file name
-var result = UglifyJS.minify("var b = function () {};", {fromString: true});
+var result = UglifyJS.minify("var b = function() {};", {fromString: true});
 ```
 
 You can also compress multiple files:
@@ -694,7 +680,7 @@ console.log(result.map);
 
 To generate a source map with the fromString option, you can also use an object:
 ```javascript
-var result = UglifyJS.minify({"file1.js": "var a = function () {};"}, {
+var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
   outSourceMap: "out.js.map",
   outFileName: "out.js",
   fromString: true

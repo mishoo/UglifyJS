@@ -85,6 +85,18 @@ if (program.parse) {
         options.parse = program.parse;
     }
 }
+var convert_path = function(name) {
+    return name;
+};
+if (program.sourceMap && "base" in program.sourceMap) {
+    convert_path = function() {
+        var base = program.sourceMap.base;
+        delete options.sourceMap.base;
+        return function(name) {
+            return path.relative(base, name);
+        };
+    }();
+}
 if (program.verbose && options.compress) {
     if (typeof options.compress != "object") options.compress = {};
     options.compress.warnings = "verbose";
@@ -94,21 +106,21 @@ if (program.self) {
         console.error("WARN: Ignoring input files since --self was passed");
     }
     if (!options.wrap) options.wrap = "UglifyJS";
-    simple_glob(UglifyJS.FILES).forEach(function(path) {
-        files[path] = readFile(path);
+    simple_glob(UglifyJS.FILES).forEach(function(name) {
+        files[convert_path(name)] = readFile(name);
     });
     run();
 } else if (program.args.length) {
-    simple_glob(program.args).forEach(function(path) {
-        files[path] = readFile(path);
+    simple_glob(program.args).forEach(function(name) {
+        files[convert_path(name)] = readFile(name);
     });
     run();
 } else {
     var chunks = [];
     process.stdin.setEncoding("utf8");
-    process.stdin.on("data", function (chunk) {
+    process.stdin.on("data", function(chunk) {
         chunks.push(chunk);
-    }).on("end", function () {
+    }).on("end", function() {
         files = [ chunks.join("") ];
         run();
     });
