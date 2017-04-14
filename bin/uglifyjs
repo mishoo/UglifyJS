@@ -246,10 +246,10 @@ function parseJS(flag, constants) {
                     var value = node.right;
                     if (!constants) {
                         options[name] = value;
-                    } else if (value instanceof UglifyJS.AST_Constant) {
-                        options[name] = value.getValue();
+                    } else if (value instanceof UglifyJS.AST_Array) {
+                        options[name] = value.elements.map(to_string);
                     } else {
-                        options[name] = value.print_to_string();
+                        options[name] = to_string(value);
                     }
                     return true;
                 }
@@ -259,6 +259,10 @@ function parseJS(flag, constants) {
                     return true;
                 }
                 if (!(node instanceof UglifyJS.AST_Sequence)) throw node;
+
+                function to_string(value) {
+                    return value instanceof UglifyJS.AST_Constant ? value.getValue() : value.print_to_string();
+                }
             }));
         } catch(ex) {
             fatal("Error parsing arguments for '" + flag + "': " + value);

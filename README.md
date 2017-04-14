@@ -142,7 +142,6 @@ The available options are:
 ```
 TODOs:
 ```
-  -r, --reserved                Reserved names to exclude from mangling.
   --lint                        Display some scope warnings
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
@@ -206,10 +205,10 @@ To enable the mangler you need to pass `--mangle` (`-m`).  The following
   (disabled by default).
 
 When mangling is enabled but you want to prevent certain names from being
-mangled, you can declare those names with `--reserved` (`-r`) — pass a
+mangled, you can declare those names with `--mangle except` — pass a
 comma-separated list of names.  For example:
 
-    uglifyjs ... -m -r '$,require,exports'
+    uglifyjs ... -m except=[$,require,exports]
 
 to prevent the `require`, `exports` and `$` names from being changed.
 
