@@ -983,6 +983,16 @@ The `source_map_options` (optional) can contain the following properties:
   [compressor]: http://lisperator.net/uglifyjs/compress
   [parser]: http://lisperator.net/uglifyjs/parser
 
+#### Access to the file system
+
+`UglifyJS.readFile` and `UglifyJS.writeFile` can be overwritten. This is already
+already done for the nodejs api.
+
+- `UglifyJS.readFile` must be a function. The first parameter will be the file name.
+  The return value is expected to be a utf-8 string.
+- `UglifyJS.writeFile` must be a function. The first parameter will be the file
+  to be written. The second parameter will have the content of that file.
+
 #### Harmony
 
 If you wish to use the experimental [harmony](https://github.com/mishoo/UglifyJS2/commits/harmony)
