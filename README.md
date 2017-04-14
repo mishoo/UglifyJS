@@ -133,7 +133,8 @@ The available options are:
                                        `//# sourceMappingURL`.
     --stats                     Display operations run time on STDERR.
     --toplevel                  Compress and/or mangle variables in toplevel scope.
-    --verbose                   Print informational/diagnostic messages.
+    --verbose                   Print diagnostic messages.
+    --warn                      Print warning messages.
     --wrap <name>               Embed everything in a big function, making the
                                 “exports” and “global” variables available. You
                                 need to pass an argument to this option to
@@ -742,9 +743,6 @@ var result = UglifyJS.minify([ "file1.js" ], {
 Other options:
 
 - `warnings` (default `false`) — pass `true` to display compressor warnings.
-
-- `fromString` (default `false`) — if you pass `true` then you can pass
-  JavaScript source code, rather than file names.
 
 - `mangle` (default `true`) — pass `false` to skip mangling names, or pass
   an object to specify mangling options (see below).

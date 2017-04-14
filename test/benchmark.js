@@ -7,7 +7,7 @@ var createHash = require("crypto").createHash;
 var fork = require("child_process").fork;
 var args = process.argv.slice(2);
 if (!args.length) {
-    args.push("-mc", "warnings=false");
+    args.push("-mc");
 }
 args.push("--stats");
 var urls = [

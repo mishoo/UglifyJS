@@ -33,7 +33,8 @@ program.option("--self", "Build UglifyJS2 as a library (implies --wrap UglifyJS)
 program.option("--source-map [options]", "Enable source map/specify source map options.", parseSourceMap());
 program.option("--stats", "Display operations run time on STDERR.")
 program.option("--toplevel", "Compress and/or mangle variables in toplevel scope.");
-program.option("--verbose", "Print informational/diagnostic messages.");
+program.option("--verbose", "Print diagnostic messages.");
+program.option("--warn", "Print warning messages.");
 program.option("--wrap <name>", "Embed everything as a function with “exports” corresponding to “name” globally.");
 program.arguments("[files...]").parseArgv(process.argv);
 if (program.configFile) {
@@ -99,6 +100,8 @@ if (program.sourceMap && "base" in program.sourceMap) {
 }
 if (program.verbose) {
     options.warnings = "verbose";
+} else if (program.warn) {
+    options.warnings = true;
 }
 if (program.self) {
     if (program.args.length) {
