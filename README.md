@@ -111,6 +111,7 @@ The available options are:
                                        `//# sourceMappingURL`.
     --stats                     Display operations run time on STDERR.
     --toplevel                  Compress and/or mangle variables in toplevel scope.
+    --verbose                   Print informational/diagnostic messages.
     --wrap <name>               Embed everything in a big function, making the
                                 “exports” and “global” variables available. You
                                 need to pass an argument to this option to
@@ -126,7 +127,6 @@ TODOs:
                                 parsed, but the source map will adjust for its
                                 presence.
   --lint                        Display some scope warnings
-  -v, --verbose                 Verbose
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
