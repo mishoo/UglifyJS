@@ -57,48 +57,25 @@ a double dash to prevent input files being used as option arguments:
 The available options are:
 
 ```
-  --source-map                  Specify an output file where to generate source
-                                map.
-  --source-map-root             The path to the original source to be included
-                                in the source map.
-  --source-map-url              The path to the source map to be added in //#
-                                sourceMappingURL.  Defaults to the value passed
-                                with --source-map.
-  --source-map-include-sources  Pass this flag if you want to include the
-                                content of source files in the source map as
-                                sourcesContent property.
-  --source-map-inline           Write base64-encoded source map to the end of js output.
-  --in-source-map               Input source map, useful if you're compressing
-                                JS that was generated from some other original
-                                code. Specify "inline" if the source map is included
-                                inline with the sources.
-  --screw-ie8                   Use this flag if you don't wish to support
-                                Internet Explorer 6/7/8.
-                                By default UglifyJS will not try to be IE-proof.
-  --support-ie8                 Use this flag to support Internet Explorer 6/7/8.
-                                Equivalent to setting `screw_ie8: false` in `minify()`
-                                for `compress`, `mangle` and `output` options.
-  --expr                        Parse a single expression, rather than a
-                                program (for parsing JSON)
-  -p, --prefix                  Skip prefix for original filenames that appear
-                                in source maps. For example -p 3 will drop 3
-                                directories from file names and ensure they are
-                                relative paths. You can also specify -p
-                                relative, which will make UglifyJS figure out
-                                itself the relative paths between original
-                                sources, the source map and the output file.
-  -o, --output                  Output file (default STDOUT).
-  -b, --beautify                Beautify output/specify output options.
-  -m, --mangle                  Mangle names/pass mangler options.
-  -r, --reserved                Reserved names to exclude from mangling.
-  -c, --compress                Enable compressor/pass compressor options, e.g.
-                                `-c 'if_return=false,pure_funcs=["Math.pow","console.log"]'`
-                                Use `-c` with no argument to enable default compression
-                                options.
-  -d, --define                  Global definitions
-  -e, --enclose                 Embed everything in a big function, with a
-                                configurable parameter/argument list.
-  --comments                    Preserve copyright comments in the output. By
+    -h, --help                  output usage information
+    -V, --version               output the version number
+    -p --parse <options>        Specify parser options:
+                                `acorn`  Use Acorn for parsing.
+                                `bare_returns`  Allow return outside of functions.
+                                                Useful when minifying CommonJS
+                                                modules and Userscripts that may
+                                                be anonymous function wrapped (IIFE)
+                                                by the .user.js engine `caller`.
+                                `expression`  Parse a single expression, rather than
+                                              a program (for parsing JSON).
+                                `spidermonkey`  Assume input files are SpiderMonkey
+                                                AST format (as JSON).
+    -c --compress [options]     Enable compressor/specify compressor options.
+    -m --mangle [options]       Mangle names/specify mangler options.
+    -b --beautify [options]     Beautify output/specify output options.
+    -o --output <file>          Output file (default STDOUT). Specify "spidermonkey"
+                                to dump SpiderMonkey AST format (as JSON) to STDOUT.
+    --comments [filter]         Preserve copyright comments in the output. By
                                 default this works like Google Closure, keeping
                                 JSDoc-style comments that contain "@license" or
                                 "@preserve". You can optionally pass one of the
@@ -110,35 +87,46 @@ The available options are:
                                 kept when compression is on, because of dead
                                 code removal or cascading statements into
                                 sequences.
+    --config-file <file>        Read `minify()` options from JSON file.
+    -d --define <expr>[=value]  Global definitions.
+    --ie8                       Support non-standard Internet Explorer 8.
+                                Equivalent to setting `screw_ie8: false` in `minify()`
+                                for `compress`, `mangle` and `output` options.
+                                By default UglifyJS will not try to be IE-proof.
+    --keep-fnames               Do not mangle/drop function names.  Useful for
+                                code relying on Function.prototype.name.
+    --self                      Build UglifyJS2 as a library (implies --wrap UglifyJS)
+    --source-map [options]      Enable source map/specify source map options:
+                                `content`  Input source map, useful if you're compressing
+                                           JS that was generated from some other original
+                                           code. Specify "inline" if the source map is
+                                           included within the sources.
+                                `filename`  Name and/or location of the output source.
+                                `includeSources`  Pass this flag if you want to include
+                                                  the content of source files in the
+                                                  source map as sourcesContent property.
+                                `root`  Path to the original source to be included in
+                                        the source map.
+                                `url`  If specified, path to the source map to append in
+                                       `//# sourceMappingURL`.
+    --stats                     Display operations run time on STDERR.
+    --toplevel                  Compress and/or mangle variables in toplevel scope.
+    --wrap <name>               Embed everything in a big function, making the
+                                “exports” and “global” variables available. You
+                                need to pass an argument to this option to
+                                specify the name that your module will take
+                                when included in, say, a browser.
+```
+TODOs:
+```
+  -r, --reserved                Reserved names to exclude from mangling.
   --preamble                    Preamble to prepend to the output.  You can use
                                 this to insert a comment, for example for
                                 licensing information.  This will not be
                                 parsed, but the source map will adjust for its
                                 presence.
-  --stats                       Display operations run time on STDERR.
-  --acorn                       Use Acorn for parsing.
-  --spidermonkey                Assume input files are SpiderMonkey AST format
-                                (as JSON).
-  --self                        Build itself (UglifyJS2) as a library (implies
-                                --wrap=UglifyJS --export-all)
-  --wrap                        Embed everything in a big function, making the
-                                “exports” and “global” variables available. You
-                                need to pass an argument to this option to
-                                specify the name that your module will take
-                                when included in, say, a browser.
-  --export-all                  Only used when --wrap, this tells UglifyJS to
-                                add code to automatically export all globals.
   --lint                        Display some scope warnings
   -v, --verbose                 Verbose
-  -V, --version                 Print version number and exit.
-  --noerr                       Don't throw an error for unknown options in -c,
-                                -b or -m.
-  --bare-returns                Allow return outside of functions.  Useful when
-                                minifying CommonJS modules and Userscripts that
-                                may be anonymous function wrapped (IIFE) by the
-                                .user.js engine `caller`.
-  --keep-fnames                 Do not mangle/drop function names.  Useful for
-                                code relying on Function.prototype.name.
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
