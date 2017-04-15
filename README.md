@@ -856,7 +856,7 @@ which we care about here are `source_map` and `comments`.
 In order to keep certain comments in the output you need to pass the
 `comments` option.  Pass a RegExp (as string starting and closing with `/`
 or pass a RegExp object), a boolean or a function.  Stringified options
-`all` and `some` can be passed too, where `some` behaves like it's cli
+`all` and `some` can be passed too, where `some` behaves like it's CLI
 equivalent `--comments` without passing a value. If you pass a RegExp,
 only those comments whose body matches the RegExp will be kept.  Note that body
 means without the initial `//` or `/*`.  If you pass a function, it will be

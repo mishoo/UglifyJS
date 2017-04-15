@@ -2,7 +2,7 @@
 // derived from https://github.com/qfox/uglyfuzzer by Peter van der Zee
 "use strict";
 
-// check both cli and file modes of nodejs (!). See #1695 for details. and the various settings of uglify.
+// check both CLI and file modes of nodejs (!). See #1695 for details. and the various settings of uglify.
 // bin/uglifyjs s.js -c && bin/uglifyjs s.js -c passes=3 && bin/uglifyjs s.js -c passes=3 -m
 // cat s.js | node && node s.js && bin/uglifyjs s.js -c | node && bin/uglifyjs s.js -c passes=3 | node && bin/uglifyjs s.js -c passes=3 -m | node
 
