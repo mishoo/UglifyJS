@@ -80,6 +80,7 @@ if (program.mangleProps) {
     if (program.mangleProps.domprops) {
         delete program.mangleProps.domprops;
     } else {
+        if (typeof program.mangleProps != "object") program.mangleProps = {};
         if (!Array.isArray(program.mangleProps.reserved)) program.mangleProps.reserved = [];
         require("../tools/domprops").forEach(function(name) {
             UglifyJS.push_uniq(program.mangleProps.reserved, name);
