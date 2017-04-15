@@ -77,6 +77,14 @@ if (program.keepFnames) {
     options.keep_fnames = true;
 }
 if (program.mangleProps) {
+    if (program.mangleProps.domprops) {
+        delete program.mangleProps.domprops;
+    } else {
+        if (!Array.isArray(program.mangleProps.reserved)) program.mangleProps.reserved = [];
+        require("../tools/domprops").forEach(function(name) {
+            UglifyJS.push_uniq(program.mangleProps.reserved, name);
+        });
+    }
     if (typeof options.mangle != "object") options.mangle = {};
     options.mangle.properties = program.mangleProps;
 }

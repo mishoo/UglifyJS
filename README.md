@@ -76,7 +76,11 @@ The available options are:
                                               not used.
     -m, --mangle [options]      Mangle names/specify mangler options.
     --mangle-props [options]    Mangle properties/specify mangler options:
+                                `builtins`  Mangle property names that overlaps
+                                            with standard JavaScript globals.
                                 `debug`  Add debug prefix and suffix.
+                                `domprops`  Mangle property names that overlaps
+                                            with DOM properties.
                                 `ignore_quoted`  Only mangle unquoted properies.
                                 `regex`  Only mangle matched property names.
     -b, --beautify [options]    Beautify output/specify output options:
@@ -141,12 +145,6 @@ The available options are:
                                 need to pass an argument to this option to
                                 specify the name that your module will take
                                 when included in, say, a browser.
-```
-TODOs:
-```
-  --reserved-file               File containing reserved names
-  --reserve-domprops            Make (most?) DOM properties reserved for
-                                --mangle-props
 ```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
