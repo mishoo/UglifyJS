@@ -74,7 +74,8 @@ The available options are:
                                 `pure_funcs`  List of functions that can be safely
                                               removed when their return values are
                                               not used.
-    -m, --mangle [options]      Mangle names/specify mangler options.
+    -m, --mangle [options]      Mangle names/specify mangler options:
+                                `reserved`  List of names that should not be mangled.
     --mangle-props [options]    Mangle properties/specify mangler options:
                                 `builtins`  Mangle property names that overlaps
                                             with standard JavaScript globals.
@@ -83,6 +84,7 @@ The available options are:
                                             with DOM properties.
                                 `ignore_quoted`  Only mangle unquoted properies.
                                 `regex`  Only mangle matched property names.
+                                `reserved`  List of names that should not be mangled.
     -b, --beautify [options]    Beautify output/specify output options:
                                 `beautify`  Enabled with `--beautify` by default.
                                 `preamble`  Preamble to prepend to the output. You
@@ -203,10 +205,10 @@ To enable the mangler you need to pass `--mangle` (`-m`).  The following
   (disabled by default).
 
 When mangling is enabled but you want to prevent certain names from being
-mangled, you can declare those names with `--mangle except` — pass a
+mangled, you can declare those names with `--mangle reserved` — pass a
 comma-separated list of names.  For example:
 
-    uglifyjs ... -m except=[$,require,exports]
+    uglifyjs ... -m reserved=[$,require,exports]
 
 to prevent the `require`, `exports` and `$` names from being changed.
 
@@ -716,7 +718,7 @@ Other options:
 
 ##### mangle
 
- - `except` - pass an array of identifiers that should be excluded from mangling
+ - `reserved` - pass an array of identifiers that should be excluded from mangling
 
  - `toplevel` — mangle names declared in the toplevel scope (disabled by
   default).
@@ -741,7 +743,7 @@ Other options:
   UglifyJS.minify("tst.js").code;
   // 'function funcName(a,n){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: { except: ['firstLongName'] } }).code;
+  UglifyJS.minify("tst.js", { mangle: { reserved: ['firstLongName'] } }).code;
   // 'function funcName(firstLongName,a){}var globalVar;'
 
   UglifyJS.minify("tst.js", { mangle: { toplevel: true } }).code;
