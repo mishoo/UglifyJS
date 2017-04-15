@@ -4,12 +4,6 @@ UglifyJS 2
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
-This page documents the command line utility.  For
-[API and internals documentation see my website](http://lisperator.net/uglifyjs/).
-There's also an
-[in-browser online demo](http://lisperator.net/uglifyjs/#demo) (for Firefox,
-Chrome and probably Safari).
-
 #### Note:
 - release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
 ES2015+ (ES6+) code then please use the [harmony](#harmony) development branch.
@@ -469,8 +463,6 @@ code as usual.  The build will contain the `const` declarations if you use
 them. If you are targeting < ES6 environments which does not support `const`,
 using `var` with `reduce_vars` (enabled by default) should suffice.
 
-<a name="codegen-options"></a>
-
 #### Conditional compilation, API
 You can also use conditional compilation via the programmatic API. With the difference that the
 property name is `global_defs` and is a compressor property:
@@ -707,14 +699,14 @@ Other options:
   mangle property options.
 
 - `output` (default `null`) — pass an object if you wish to specify
-  additional [output options][codegen].  The defaults are optimized
+  additional [output options](#beautifier-options).  The defaults are optimized
   for best compression.
 
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
-  Pass an object to specify custom [compressor options][compressor].
+  Pass an object to specify custom [compressor options](#compressor-options).
 
 - `parse` (default {}) — pass an object if you wish to specify some
-  additional [parser options][parser]. (not all options available... see below)
+  additional [parser options](#the-parser).
 
 ##### mangle
 
@@ -750,11 +742,12 @@ Other options:
   // 'function n(n,a){}var a;'
   ```
 
-##### mangleProperties options
+##### mangle.properties options
 
- - `regex` — Pass a RegExp to only mangle certain names (maps to the `--mangle-regex` CLI arguments option)
- - `ignore_quoted` – Only mangle unquoted property names (maps to the `--mangle-props 2` CLI arguments option)
- - `debug` – Mangle names with the original name still present (maps to the `--mangle-props-debug` CLI arguments option). Defaults to `false`. Pass an empty string to enable, or a non-empty string to set the suffix.
+ - `regex` — Pass a RegExp to only mangle certain names
+ - `ignore_quoted` – Only mangle unquoted property names
+ - `debug` – Mangle names with the original name still present. Defaults to `false`.
+   Pass an empty string to enable, or a non-empty string to set the suffix.
 
 We could add more options to `UglifyJS.minify` — if you need additional
 functionality please suggest!
@@ -916,10 +909,7 @@ The `source_map_options` (optional) can contain the following properties:
 
   [acorn]: https://github.com/ternjs/acorn
   [source-map]: https://github.com/mozilla/source-map
-  [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
-  [codegen]: http://lisperator.net/uglifyjs/codegen
-  [compressor]: http://lisperator.net/uglifyjs/compress
-  [parser]: http://lisperator.net/uglifyjs/parser
+  [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k
 
 #### Harmony
 
