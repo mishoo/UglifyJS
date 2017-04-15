@@ -76,7 +76,7 @@ The available options are:
                                 `debug`  Add debug prefix and suffix.
                                 `domprops`  Mangle property names that overlaps
                                             with DOM properties.
-                                `ignore_quoted`  Only mangle unquoted properies.
+                                `keep_quoted`  Only mangle unquoted properies.
                                 `regex`  Only mangle matched property names.
                                 `reserved`  List of names that should not be mangled.
     -b, --beautify [options]    Beautify output/specify output options:
@@ -256,14 +256,14 @@ of mangled property names.
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
 
-#### Mangling unquoted names (`--mangle-props ignore_quoted`)
+#### Mangling unquoted names (`--mangle-props keep_quoted`)
 
 Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
 so that it is not mangled throughout the entire script even when used in an
 unquoted style (`o.foo`). Example:
 
 ```
-$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props ignore_quoted -mc
+$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props keep_quoted -mc
 var o={foo:1,a:3};o.foo+=o.a,console.log(o.foo);
 ```
 
@@ -745,8 +745,8 @@ Other options:
 ##### mangle.properties options
 
  - `regex` — Pass a RegExp to only mangle certain names
- - `ignore_quoted` – Only mangle unquoted property names
- - `debug` – Mangle names with the original name still present. Defaults to `false`.
+ - `keep_quoted` — Only mangle unquoted property names
+ - `debug` — Mangle names with the original name still present. Defaults to `false`.
    Pass an empty string to enable, or a non-empty string to set the suffix.
 
 We could add more options to `UglifyJS.minify` — if you need additional

@@ -1,6 +1,6 @@
 issue_1321_no_debug: {
     mangle_props = {
-        ignore_quoted: true
+        keep_quoted: true
     }
     input: {
         var x = {};
@@ -19,7 +19,7 @@ issue_1321_no_debug: {
 
 issue_1321_debug: {
     mangle_props = {
-        ignore_quoted: true,
+        keep_quoted: true,
         debug: ""
     }
     input: {
@@ -39,7 +39,7 @@ issue_1321_debug: {
 
 issue_1321_with_quoted: {
     mangle_props = {
-        ignore_quoted: false
+        keep_quoted: false
     }
     input: {
         var x = {};

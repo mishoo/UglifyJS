@@ -53,7 +53,7 @@ describe("minify", function() {
                 },
                 mangle: {
                     properties: {
-                        ignore_quoted: true
+                        keep_quoted: true
                     }
                 },
                 output: {

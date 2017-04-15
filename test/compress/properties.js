@@ -125,7 +125,7 @@ evaluate_string_length: {
 
 mangle_properties: {
     mangle_props = {
-        ignore_quoted: false
+        keep_quoted: false
     };
     input: {
         a["foo"] = "bar";
@@ -148,7 +148,7 @@ mangle_unquoted_properties: {
         properties: false
     }
     mangle_props = {
-        ignore_quoted: true
+        keep_quoted: true
     }
     beautify = {
         beautify: false,
@@ -233,12 +233,12 @@ mangle_debug_suffix: {
     }
 }
 
-mangle_debug_suffix_ignore_quoted: {
+mangle_debug_suffix_keep_quoted: {
     options = {
         properties: false
     }
     mangle_props = {
-        ignore_quoted: true,
+        keep_quoted: true,
         debug: "XYZ",
         reserved: []
     }
