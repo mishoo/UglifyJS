@@ -1996,6 +1996,117 @@ catch_var: {
     expect_stdout: "true"
 }
 
+var_assign_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a;
+            a = 2;
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            console.log(2);
+        }();
+    }
+    expect_stdout: "2"
+}
+
+var_assign_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a;
+            if (a = 2) console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            if (2) console.log(2);
+        }();
+    }
+    expect_stdout: "2"
+}
+
+var_assign_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a;
+            while (a = 2);
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a;
+            while (a = 2);
+            console.log(a);
+        }();
+    }
+}
+
+var_assign_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function a() {
+            a = 2;
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function a() {
+            a = 2,
+            console.log(a);
+        }();
+    }
+}
+
+immutable: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = "test";
+            console.log(a.indexOf("e"));
+        }();
+    }
+    expect: {
+        !function() {
+            console.log("test".indexOf("e"));
+        }();
+    }
+    expect_stdout: "1"
+}
+
 issue_1814_1: {
     options = {
         evaluate: true,
