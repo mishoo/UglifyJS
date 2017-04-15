@@ -231,29 +231,12 @@ console.log(x.something());
 In the above code, `foo`, `bar`, `baz`, `moo` and `boo` will be replaced
 with single characters, while `something()` will be left as is.
 
-In order for this to be of any use, we should avoid mangling standard JS
-names.  For instance, if your code would contain `x.length = 10`, then
-`length` becomes a candidate for mangling and it will be mangled throughout
-the code, regardless if it's being used as part of your own objects or
-accessing an array's length.  To avoid that, you can use `--reserved-file`
-to pass a filename that should contain the names to be excluded from
-mangling.  This file can be used both for excluding variable names and
-property names.  It could look like this, for example:
-
-```js
-{
-  "vars": [ "define", "require", ... ],
-  "props": [ "length", "prototype", ... ]
-}
-```
-
-`--reserved-file` can be an array of file names (either a single
-comma-separated argument, or you can pass multiple `--reserved-file`
-arguments) — in this case it will exclude names from all those files.
+In order for this to be of any use, we avoid mangling standard JS names by
+default (`--mangle-props builtins` to override).
 
 A default exclusion file is provided in `tools/domprops.json` which should
 cover most standard JS and DOM properties defined in various browsers.  Pass
-`--reserve-domprops` to read that in.
+`--mangle-props domprops` to disable this feature.
 
 You can also use a regular expression to define which property names should be
 mangled.  For example, `--mangle-props regex=/^_/` will only mangle property
@@ -261,9 +244,9 @@ names that start with an underscore.
 
 When you compress multiple files using this option, in order for them to
 work together in the end we need to ensure somehow that one property gets
-mangled to the same name in all of them.  For this, pass `--name-cache
-filename.json` and UglifyJS will maintain these mappings in a file which can
-then be reused.  It should be initially empty.  Example:
+mangled to the same name in all of them.  For this, pass `--name-cache filename.json`
+and UglifyJS will maintain these mappings in a file which can then be reused.
+It should be initially empty.  Example:
 
 ```
 rm -f /tmp/cache.json  # start fresh
@@ -587,16 +570,16 @@ SpiderMonkey AST.  It has a small CLI utility that parses one file and dumps
 the AST in JSON on the standard output.  To use UglifyJS to mangle and
 compress that:
 
-    acorn file.js | uglifyjs --spidermonkey -m -c
+    acorn file.js | uglifyjs -p spidermonkey -m -c
 
-The `--spidermonkey` option tells UglifyJS that all input files are not
+The `-p spidermonkey` option tells UglifyJS that all input files are not
 JavaScript, but JS code described in SpiderMonkey AST in JSON.  Therefore we
 don't use our own parser in this case, but just transform that AST into our
 internal AST.
 
 ### Use Acorn for parsing
 
-More for fun, I added the `--acorn` option which will use Acorn to do all
+More for fun, I added the `-p acorn` option which will use Acorn to do all
 the parsing.  If you pass this option, UglifyJS will `require("acorn")`.
 
 Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
@@ -654,89 +637,62 @@ There's a single toplevel function which combines all the steps.  If you
 don't need additional customization, you might want to go with `minify`.
 Example:
 ```javascript
-var result = UglifyJS.minify("/path/to/file.js");
+var result = UglifyJS.minify("var b = function() {};");
 console.log(result.code); // minified output
-// if you need to pass code instead of file name
-var result = UglifyJS.minify("var b = function() {};", {fromString: true});
 ```
 
 You can also compress multiple files:
 ```javascript
-var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ]);
+var result = UglifyJS.minify({
+  "file1.js": "var a = function() {};",
+  "file2.js": "var b = function() {};"
+});
 console.log(result.code);
 ```
 
 To generate a source map:
 ```javascript
-var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
-	outSourceMap: "out.js.map"
+var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
+  sourceMap: {
+    filename: "out.js",
+    url: "out.js.map"
+  }
 });
 console.log(result.code); // minified output
-console.log(result.map);
-```
-
-To generate a source map with the fromString option, you can also use an object:
-```javascript
-var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
-  outSourceMap: "out.js.map",
-  outFileName: "out.js",
-  fromString: true
-});
+console.log(result.map);  // source map
 ```
 
 Note that the source map is not saved in a file, it's just returned in
-`result.map`.  The value passed for `outSourceMap` is only used to set
+`result.map`.  The value passed for `sourceMap.url` is only used to set
 `//# sourceMappingURL=out.js.map` in `result.code`. The value of
-`outFileName` is only used to set `file` attribute in source map file.
+`filename` is only used to set `file` attribute (see [the spec][sm-spec])
+in source map file.
 
-The `file` attribute in the source map (see [the spec][sm-spec]) will
-use `outFileName` firstly, if it's falsy, then will be deduced from
-`outSourceMap` (by removing `'.map'`).
-
-You can set option `sourceMapInline` to be `true` and source map will
+You can set option `sourceMap.url` to be `"inline"` and source map will
 be appended to code.
 
 You can also specify sourceRoot property to be included in source map:
 ```javascript
-var result = UglifyJS.minify([ "file1.js", "file2.js", "file3.js" ], {
-	outSourceMap: "out.js.map",
-	sourceRoot: "http://example.com/src"
+var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
+	sourceMap: {
+    root: "http://example.com/src",
+    url: "out.js.map"
 });
 ```
 
 If you're compressing compiled JavaScript and have a source map for it, you
-can use the `inSourceMap` argument:
+can use `sourceMap.content`:
 ```javascript
-var result = UglifyJS.minify("compiled.js", {
-	inSourceMap: "compiled.js.map",
-	outSourceMap: "minified.js.map"
+var result = UglifyJS.minify({"compiled.js": "compiled code"}, {
+	sourceMap: {
+    content: "content from compiled.js.map",
+	  url: "minified.js.map"
+  }
 });
 // same as before, it returns `code` and `map`
 ```
 
-If your input source map is not in a file, you can pass it in as an object
-using the `inSourceMap` argument:
-
-```javascript
-var result = UglifyJS.minify("compiled.js", {
-	inSourceMap: JSON.parse(my_source_map_string),
-	outSourceMap: "minified.js.map"
-});
-```
-
-The `inSourceMap` is only used if you also request `outSourceMap` (it makes
-no sense otherwise).
-
-To set the source map url, use the `sourceMapUrl` option.
-If you're using the X-SourceMap header instead, you can just set the `sourceMapUrl` option to false.
-Defaults to outSourceMap:
-
-```javascript
-var result = UglifyJS.minify([ "file1.js" ], {
-  outSourceMap: "out.js.map",
-  sourceMapUrl: "localhost/out.js.map"
-});
-```
+If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.url`.
 
 Other options:
 
