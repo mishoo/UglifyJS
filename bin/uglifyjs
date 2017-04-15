@@ -18,19 +18,20 @@ program._name = info.name;
 program.version(info.version);
 program.parseArgv = program.parse;
 program.parse = undefined;
-program.option("-p, --parse <options>", "Specify parser options.", parseJS("parse", true));
-program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parseJS("compress", true));
-program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parseJS("mangle", true));
-program.option("--mangle-props [options]", "Mangle properties/specify mangler options.", parseJS("mangle-props", true));
-program.option("-b, --beautify [options]", "Beautify output/specify output options.", parseJS("beautify", true));
+program.option("-p, --parse <options>", "Specify parser options.", parse_js("parse", true));
+program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parse_js("compress", true));
+program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parse_js("mangle", true));
+program.option("--mangle-props [options]", "Mangle properties/specify mangler options.", parse_js("mangle-props", true));
+program.option("-b, --beautify [options]", "Beautify output/specify output options.", parse_js("beautify", true));
 program.option("-o, --output <file>", "Output file (default STDOUT).");
 program.option("--comments [filter]", "Preserve copyright comments in the output.");
 program.option("--config-file <file>", "Read minify() options from JSON file.");
-program.option("-d, --define <expr>[=value]", "Global definitions.", parseJS("define"));
+program.option("-d, --define <expr>[=value]", "Global definitions.", parse_js("define"));
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
+program.option("--name-cache <file>", "File to hold mangled name mappings.");
 program.option("--self", "Build UglifyJS2 as a library (implies --wrap UglifyJS)");
-program.option("--source-map [options]", "Enable source map/specify source map options.", parseSourceMap());
+program.option("--source-map [options]", "Enable source map/specify source map options.", parse_source_map());
 program.option("--stats", "Display operations run time on STDERR.")
 program.option("--toplevel", "Compress and/or mangle variables in toplevel scope.");
 program.option("--verbose", "Print diagnostic messages.");
@@ -38,7 +39,7 @@ program.option("--warn", "Print warning messages.");
 program.option("--wrap <name>", "Embed everything as a function with “exports” corresponding to “name” globally.");
 program.arguments("[files...]").parseArgv(process.argv);
 if (program.configFile) {
-    options = JSON.parse(readFile(program.configFile));
+    options = JSON.parse(read_file(program.configFile));
 }
 if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     fatal("ERROR: cannot write source map to STDOUT");
@@ -79,6 +80,18 @@ if (program.mangleProps) {
     if (typeof options.mangle != "object") options.mangle = {};
     options.mangle.properties = program.mangleProps;
 }
+var cache;
+if (program.nameCache) {
+    cache = JSON.parse(read_file(program.nameCache, "{}"));
+    if (options.mangle) {
+        if (typeof options.mangle != "object") options.mangle = {};
+        options.mangle.cache = to_cache("vars");
+        if (options.mangle.properties) {
+            if (typeof options.mangle.properties != "object") options.mangle.properties = {};
+            options.mangle.properties.cache = to_cache("props");
+        }
+    }
+}
 if (program.parse) {
     if (program.parse.acorn || program.parse.spidermonkey) {
         if (program.sourceMap) fatal("ERROR: inline source map only works with built-in parser");
@@ -109,12 +122,12 @@ if (program.self) {
     }
     if (!options.wrap) options.wrap = "UglifyJS";
     simple_glob(UglifyJS.FILES).forEach(function(name) {
-        files[convert_path(name)] = readFile(name);
+        files[convert_path(name)] = read_file(name);
     });
     run();
 } else if (program.args.length) {
     simple_glob(program.args).forEach(function(name) {
-        files[convert_path(name)] = readFile(name);
+        files[convert_path(name)] = read_file(name);
     });
     run();
 } else {
@@ -189,6 +202,11 @@ function run() {
     } else {
         console.log(result.code);
     }
+    if (program.nameCache) {
+        fs.writeFileSync(program.nameCache, JSON.stringify(cache, function(key, value) {
+            return value instanceof UglifyJS.Dictionary ? value.toObject() : value;
+        }));
+    }
     if (program.stats) console.error("Elapsed:", Date.now() - program.stats);
 }
 
@@ -228,15 +246,16 @@ function simple_glob(glob) {
     return [ glob ];
 }
 
-function readFile(path) {
+function read_file(path, default_value) {
     try {
         return fs.readFileSync(path, "utf8");
     } catch (ex) {
+        if (ex.code == "ENOENT" && default_value != null) return default_value;
         fatal("ERROR: " + ex.message);
     }
 }
 
-function parseJS(flag, constants) {
+function parse_js(flag, constants) {
     return function(value, options) {
         options = options || {};
         try {
@@ -273,15 +292,27 @@ function parseJS(flag, constants) {
     }
 }
 
-function parseSourceMap() {
-    var parse = parseJS("sourceMap", true);
+function parse_source_map() {
+    var parse = parse_js("sourceMap", true);
     return function(value, options) {
         var hasContent = options && options.sourceMap && "content" in options.sourceMap;
         var settings = parse(value, options);
         if (!hasContent && settings.content && settings.content != "inline") {
             console.error("INFO: Using input source map:", settings.content);
-            settings.content = readFile(settings.content);
+            settings.content = read_file(settings.content);
         }
         return settings;
     }
+}
+
+function to_cache(key) {
+    if (cache[key]) {
+        cache[key].props = UglifyJS.Dictionary.fromObject(cache[key].props);
+    } else {
+        cache[key] = {
+            cname: -1,
+            props: new UglifyJS.Dictionary()
+        };
+    }
+    return cache[key];
 }

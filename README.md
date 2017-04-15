@@ -116,6 +116,7 @@ The available options are:
                                 By default UglifyJS will not try to be IE-proof.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
+    --name-cache                File to hold mangled name mappings.
     --self                      Build UglifyJS2 as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
                                 `base`  Path to compute relative paths from input files.
@@ -146,7 +147,6 @@ TODOs:
   --reserved-file               File containing reserved names
   --reserve-domprops            Make (most?) DOM properties reserved for
                                 --mangle-props
-  --name-cache                  File to hold mangled names mappings
 ```
 
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
