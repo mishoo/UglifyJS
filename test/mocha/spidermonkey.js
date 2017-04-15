@@ -3,14 +3,14 @@ var exec = require("child_process").exec;
 var uglify = require("../../");
 
 describe("spidermonkey export/import sanity test", function() {
-    it("should produce a functional build when using --self with spidermonkey", function (done) {
+    it("should produce a functional build when using --self with spidermonkey", function(done) {
         this.timeout(20000);
 
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
-        var command = uglifyjs + " --self -cm --wrap SpiderUglify --dump-spidermonkey-ast | " +
-            uglifyjs + " --spidermonkey -cm";
+        var command = uglifyjs + " --self -cm --wrap SpiderUglify -o spidermonkey | " +
+            uglifyjs + " -p spidermonkey -cm";
 
-        exec(command, function (err, stdout) {
+        exec(command, function(err, stdout) {
             if (err) throw err;
 
             eval(stdout);

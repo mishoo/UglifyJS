@@ -1,9 +1,9 @@
 do_screw: {
     options = {
-        screw_ie8: true,
+        ie8: false,
     }
     beautify = {
-        screw_ie8: true,
+        ie8: false,
         ascii_only: true,
     }
     input: {
@@ -14,10 +14,10 @@ do_screw: {
 
 dont_screw: {
     options = {
-        screw_ie8: false,
+        ie8: true,
     }
     beautify = {
-        screw_ie8: false,
+        ie8: true,
         ascii_only: true,
     }
     input: {
@@ -28,7 +28,7 @@ dont_screw: {
 
 do_screw_constants: {
     options = {
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         f(undefined, Infinity);
@@ -38,7 +38,7 @@ do_screw_constants: {
 
 dont_screw_constants: {
     options = {
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         f(undefined, Infinity);
@@ -47,9 +47,15 @@ dont_screw_constants: {
 }
 
 do_screw_try_catch: {
-    options = { screw_ie8: true };
-    mangle = { screw_ie8: true };
-    beautify = { screw_ie8: true };
+    options = {
+        ie8: false,
+    }
+    mangle = {
+        ie8: false,
+    }
+    beautify = {
+        ie8: false,
+    }
     input: {
         good = function(e){
             return function(error){
@@ -75,9 +81,15 @@ do_screw_try_catch: {
 }
 
 dont_screw_try_catch: {
-    options = { screw_ie8: false };
-    mangle = { screw_ie8: false };
-    beautify = { screw_ie8: false };
+    options = {
+        ie8: true,
+    }
+    mangle = {
+        ie8: true,
+    }
+    beautify = {
+        ie8: true,
+    }
     input: {
         bad = function(e){
             return function(error){
@@ -103,9 +115,15 @@ dont_screw_try_catch: {
 }
 
 do_screw_try_catch_undefined: {
-    options = { screw_ie8: true };
-    mangle = { screw_ie8: true };
-    beautify = { screw_ie8: true };
+    options = {
+        ie8: false,
+    }
+    mangle = {
+        ie8: false,
+    }
+    beautify = {
+        ie8: false,
+    }
     input: {
         function a(b){
             try {
@@ -132,9 +150,15 @@ do_screw_try_catch_undefined: {
 }
 
 dont_screw_try_catch_undefined: {
-    options = { screw_ie8: false };
-    mangle = { screw_ie8: false };
-    beautify = { screw_ie8: false };
+    options = {
+        ie8: true,
+    }
+    mangle = {
+        ie8: true,
+    }
+    beautify = {
+        ie8: true,
+    }
     input: {
         function a(b){
             try {
@@ -164,11 +188,11 @@ reduce_vars: {
     options = {
         evaluate: true,
         reduce_vars: true,
-        screw_ie8: false,
+        ie8: true,
         unused: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         function f() {
@@ -196,10 +220,10 @@ reduce_vars: {
 
 issue_1586_1: {
     options = {
-        screw_ie8: false,
+        ie8: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         function f() {
@@ -215,10 +239,10 @@ issue_1586_1: {
 
 issue_1586_2: {
     options = {
-        screw_ie8: true,
+        ie8: false,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         function f() {

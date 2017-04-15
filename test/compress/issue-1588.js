@@ -1,9 +1,9 @@
 screw_ie8: {
     options = {
-        screw_ie8: true,
+        ie8: false,
     }
     mangle = {
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         try { throw "foo"; } catch (x) { console.log(x); }
@@ -16,10 +16,10 @@ screw_ie8: {
 
 support_ie8: {
     options = {
-        screw_ie8: false,
+        ie8: true,
     }
     mangle = {
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         try { throw "foo"; } catch (x) { console.log(x); }

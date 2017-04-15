@@ -12,7 +12,7 @@ if (typeof phantom == "undefined") {
     });
     var args = process.argv.slice(2);
     if (!args.length) {
-        args.push("-mc", "warnings=false");
+        args.push("-mc");
     }
     args.push("--stats");
     var child_process = require("child_process");

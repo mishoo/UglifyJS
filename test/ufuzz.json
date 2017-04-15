@@ -11,20 +11,12 @@
         "compress": false
     },
     {
-        "compress": {
-            "warnings": false
-        },
         "mangle": false
     },
+    {},
     {
         "compress": {
-            "warnings": false
-        }
-    },
-    {
-        "compress": {
-            "toplevel": true,
-            "warnings": false
+            "toplevel": true
         },
         "mangle": {
             "toplevel": true
@@ -33,8 +25,7 @@
     {
         "compress": {
             "keep_fargs": false,
-            "passes": 3,
-            "warnings": false
+            "passes": 3
         }
     }
 ]

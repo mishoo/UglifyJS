@@ -197,7 +197,7 @@ describe("Directives", function() {
         assert.strictEqual(
             uglify.minify(
                 '"use strict";\'use strict\';"use strict";"use strict";;\'use strict\';console.log(\'use strict\');',
-                {fromString: true, output: {beautify: true, quote_style: 3}, compress: false}
+                {output: {beautify: true, quote_style: 3}, compress: false}
             ).code,
             '"use strict";\n\n\'use strict\';\n\n"use strict";\n\n"use strict";\n\n;\'use strict\';\n\nconsole.log(\'use strict\');'
         );
@@ -225,7 +225,7 @@ describe("Directives", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
-                uglify.minify(tests[i][0], {fromString: true, quote_style: 3, compress: false, mangle: false}).code,
+                uglify.minify(tests[i][0], {compress: false, mangle: false}).code,
                 tests[i][1],
                 tests[i][0]
             );
@@ -234,7 +234,7 @@ describe("Directives", function() {
 
     it("Should add double semicolon when relying on automatic semicolon insertion", function() {
         var code = uglify.minify('"use strict";"use\\x20strict";',
-            {fromString: true, output: {semicolons: false}, compress: false}
+            {output: {semicolons: false}, compress: false}
         ).code;
         assert.strictEqual(code, '"use strict";;"use strict"\n');
     });
@@ -340,7 +340,7 @@ describe("Directives", function() {
         ];
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
-                uglify.minify(tests[i][0], {fromString: true, output:{quote_style: tests[i][1]}, compress: false}).code,
+                uglify.minify(tests[i][0], {output:{quote_style: tests[i][1]}, compress: false}).code,
                 tests[i][2],
                 tests[i][0] + " using mode " + tests[i][1]
             );
@@ -362,7 +362,7 @@ describe("Directives", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
-                uglify.minify(tests[i][0], {fromString: true, compress: {collapse_vars: true, side_effects: true}}).code,
+                uglify.minify(tests[i][0], {compress: {collapse_vars: true, side_effects: true}}).code,
                 tests[i][1],
                 tests[i][0]
             );

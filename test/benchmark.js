@@ -7,7 +7,7 @@ var createHash = require("crypto").createHash;
 var fork = require("child_process").fork;
 var args = process.argv.slice(2);
 if (!args.length) {
-    args.push("-mc", "warnings=false");
+    args.push("-mc");
 }
 args.push("--stats");
 var urls = [
@@ -29,11 +29,11 @@ function done() {
             var info = results[url];
             console.log();
             console.log(url);
-            console.log(info.log);
             var elapsed = 0;
-            info.log.replace(/: ([0-9]+\.[0-9]{3})s/g, function(match, time) {
-                elapsed += parseFloat(time);
-            });
+            console.log(info.log.replace(/Elapsed: ([0-9]+)\s*/g, function(match, time) {
+                elapsed += 1e-3 * parseInt(time);
+                return "";
+            }));
             console.log("Run-time:", elapsed.toFixed(3), "s");
             console.log("Original:", info.input, "bytes");
             console.log("Uglified:", info.output, "bytes");

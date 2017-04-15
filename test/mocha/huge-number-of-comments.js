@@ -8,12 +8,7 @@ describe("Huge number of comments.", function() {
         for (i = 1; i <= 5000; ++i) { js += "// " + i + "\n"; }
         for (; i <= 10000; ++i) { js += "/* " + i + " */ /**/"; }
         js += "x; }";
-        var result = Uglify.minify(js, {
-            fromString: true,
-            mangle: false,
-            compress: {}
-        });
+        var result = Uglify.minify(js, { mangle: false });
         assert.strictEqual(result.code, "function lots_of_comments(x){return 7-x}");
     });
 });
-

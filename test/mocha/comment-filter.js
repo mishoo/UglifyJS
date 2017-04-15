@@ -75,7 +75,6 @@ describe("comment filters", function() {
 
     it("Should handle shebang and preamble correctly", function() {
         var code = UglifyJS.minify("#!/usr/bin/node\nvar x = 10;", {
-            fromString: true,
             output: { preamble: "/* Build */" }
         }).code;
         assert.strictEqual(code, "#!/usr/bin/node\n/* Build */\nvar x=10;");
@@ -83,7 +82,6 @@ describe("comment filters", function() {
 
     it("Should handle preamble without shebang correctly", function() {
         var code = UglifyJS.minify("var x = 10;", {
-            fromString: true,
             output: { preamble: "/* Build */" }
         }).code;
         assert.strictEqual(code, "/* Build */\nvar x=10;");
