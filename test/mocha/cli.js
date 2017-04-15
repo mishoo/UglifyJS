@@ -2,6 +2,10 @@ var assert = require("assert");
 var exec = require("child_process").exec;
 var readFileSync = require("fs").readFileSync;
 
+function read(path) {
+    return readFileSync(path, "utf8");
+}
+
 describe("bin/uglifyjs", function () {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("should produce a functional build when using --self", function (done) {
@@ -137,7 +141,7 @@ describe("bin/uglifyjs", function () {
        exec(command, function (err, stdout) {
            if (err) throw err;
 
-           assert.strictEqual(stdout, readFileSync("test/input/issue-1482/default.js", "utf8"));
+           assert.strictEqual(stdout, read("test/input/issue-1482/default.js"));
            done();
        });
     });
@@ -147,7 +151,7 @@ describe("bin/uglifyjs", function () {
        exec(command, function (err, stdout) {
            if (err) throw err;
 
-           assert.strictEqual(stdout, readFileSync("test/input/issue-1482/bracketize.js", "utf8"));
+           assert.strictEqual(stdout, read("test/input/issue-1482/bracketize.js"));
            done();
        });
     });
@@ -157,7 +161,7 @@ describe("bin/uglifyjs", function () {
         exec(command, function (err, stdout) {
             if (err) throw err;
 
-            assert.strictEqual(stdout, readFileSync("test/input/issue-520/output.js", "utf8"));
+            assert.strictEqual(stdout, read("test/input/issue-520/output.js"));
             done();
         });
     });
@@ -299,5 +303,30 @@ describe("bin/uglifyjs", function () {
            ].join("\n"));
            done();
        });
+    });
+    it("Should handle literal string as source map input", function(done) {
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-1236/simple.js",
+            "--source-map",
+            'content="' + read_map() + '",url=inline'
+        ].join(" ");
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, [
+                '"use strict";var foo=function foo(x){return"foo "+x};console.log(foo("bar"));',
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbImZvbyIsIngiLCJjb25zb2xlIiwibG9nIl0sIm1hcHBpbmdzIjoiWUFBQSxJQUFJQSxLQUFNLFFBQU5BLEtBQU1DLEdBQUEsTUFBSyxPQUFTQSxFQUN4QkMsU0FBUUMsSUFBSUgsSUFBSSJ9",
+                ""
+            ].join("\n"));
+            done();
+        });
+
+        function read_map() {
+            var map = JSON.parse(read("./test/input/issue-1236/simple.js.map"));
+            delete map.sourcesContent;
+            return JSON.stringify(map).replace(/"/g, '\\"');
+        }
     });
 });

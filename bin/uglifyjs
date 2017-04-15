@@ -111,7 +111,7 @@ if (program.parse) {
 var convert_path = function(name) {
     return name;
 };
-if (program.sourceMap && "base" in program.sourceMap) {
+if (typeof program.sourceMap == "object" && "base" in program.sourceMap) {
     convert_path = function() {
         var base = program.sourceMap.base;
         delete options.sourceMap.base;
@@ -291,7 +291,9 @@ function parse_js(flag, constants) {
                 if (!(node instanceof UglifyJS.AST_Sequence)) throw node;
 
                 function to_string(value) {
-                    return value instanceof UglifyJS.AST_Constant ? value.getValue() : value.print_to_string();
+                    return value instanceof UglifyJS.AST_Constant ? value.getValue() : value.print_to_string({
+                        quote_keys: true
+                    });
                 }
             }));
         } catch(ex) {
@@ -308,7 +310,7 @@ function parse_source_map() {
         var settings = parse(value, options);
         if (!hasContent && settings.content && settings.content != "inline") {
             console.error("INFO: Using input source map:", settings.content);
-            settings.content = read_file(settings.content);
+            settings.content = read_file(settings.content, settings.content);
         }
         return settings;
     }
