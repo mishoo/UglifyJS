@@ -35,11 +35,11 @@ f7: {
         console.log(a, b);
     }
     expect_exact: [
-        "var a = 100, b = 10;",
+        "var b = 10;",
         "",
         "!function() {",
-        "    for (;b = a, !1; ) ;",
-        "}(), console.log(a, b);",
+        "    for (;b = 100, !1; ) ;",
+        "}(), console.log(100, b);",
     ]
     expect_stdout: true
 }
