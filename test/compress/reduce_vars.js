@@ -2087,6 +2087,35 @@ var_assign_4: {
     }
 }
 
+var_assign_5: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a;
+            !function(b) {
+                a = 2;
+                console.log(a, b);
+            }(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a;
+            !function(b) {
+                a = 2,
+                console.log(a, b);
+            }(a);
+        }();
+    }
+    expect_stdout: "2 undefined"
+}
+
 immutable: {
     options = {
         evaluate: true,
