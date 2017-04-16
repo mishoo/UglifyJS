@@ -1639,7 +1639,7 @@ redefine_arguments_1: {
             return typeof arguments;
         }
         function g() {
-            return"number";
+            return "number";
         }
         function h(x) {
             var arguments = x;
@@ -1951,7 +1951,6 @@ pure_getters_2: {
         var a = a && a.b;
     }
     expect: {
-        var a;
         var a = a && a.b;
     }
 }
