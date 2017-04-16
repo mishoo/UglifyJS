@@ -1995,3 +1995,55 @@ catch_var: {
     }
     expect_stdout: "true"
 }
+
+issue_1814_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        const a = 42;
+        !function() {
+            var b = a;
+            !function(a) {
+                console.log(a++, b);
+            }(0);
+        }();
+    }
+    expect: {
+        const a = 42;
+        !function() {
+            !function(a) {
+                console.log(a++, 42);
+            }(0);
+        }();
+    }
+    expect_stdout: "0 42"
+}
+
+issue_1814_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        const a = "32";
+        !function() {
+            var b = a + 1;
+            !function(a) {
+                console.log(a++, b);
+            }(0);
+        }();
+    }
+    expect: {
+        const a = "32";
+        !function() {
+            !function(a) {
+                console.log(a++, "321");
+            }(0);
+        }();
+    }
+    expect_stdout: "0 '321'"
+}
