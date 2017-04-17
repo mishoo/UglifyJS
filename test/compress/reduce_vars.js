@@ -2240,3 +2240,26 @@ boolean_binary_assign: {
     }
     expect_stdout: "undefined"
 }
+
+cond_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a;
+            void 0 ? (a = 1) : 0;
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a;
+            void 0 ? (a = 1) : 0;
+            console.log(a);
+        }();
+    }
+    expect_stdout: "undefined"
+}
