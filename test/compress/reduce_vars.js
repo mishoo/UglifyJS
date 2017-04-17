@@ -2047,3 +2047,34 @@ issue_1814_2: {
     }
     expect_stdout: "0 '321'"
 }
+
+try_abort: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            try {
+                var a = 1;
+                throw "";
+                var b = 2;
+            } catch (e) {
+            }
+            console.log(a, b);
+        }();
+    }
+    expect: {
+        !function() {
+            try {
+                var a = 1;
+                throw "";
+                var b = 2;
+            } catch (e) {
+            }
+            console.log(a, b);
+        }();
+    }
+    expect_stdout: "1 undefined"
+}
