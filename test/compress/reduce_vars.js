@@ -2258,3 +2258,34 @@ cond_assign: {
     }
     expect_stdout: "undefined"
 }
+
+iife_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = 1, b = 0;
+            !function() {
+                b++;
+                return;
+                a = 2;
+            }();
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a = 1, b = 0;
+            !function() {
+                b++;
+                return;
+                a = 2;
+            }();
+            console.log(a);
+        }();
+    }
+    expect_stdout: "1"
+}
