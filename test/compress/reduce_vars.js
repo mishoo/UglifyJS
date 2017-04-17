@@ -66,7 +66,7 @@ modified: {
         conditionals  : true,
         evaluate      : true,
         reduce_vars   : true,
-        unused        : true
+        unused        : true,
     }
     input: {
         function f0() {
@@ -136,12 +136,11 @@ modified: {
         }
 
         function f2() {
-            var b = 2;
-            b = 3;
-            console.log(1 + b);
-            console.log(b + 3);
+            3;
             console.log(4);
-            console.log(1 + b + 3);
+            console.log(6);
+            console.log(4);
+            console.log(7);
         }
 
         function f3() {
@@ -375,12 +374,11 @@ passes: {
     }
     expect: {
         function f() {
-            var b = 2;
-            b = 3;
-            console.log(1 + b);
-            console.log(b + 3);
+            3;
             console.log(4);
-            console.log(1 + b + 3);
+            console.log(6);
+            console.log(4);
+            console.log(7);
         }
     }
 }
@@ -1828,10 +1826,7 @@ redefine_farg_3: {
         console.log(function(a) {
             var a;
             return typeof a;
-        }([]), "number", function(a) {
-            var a = void 0;
-            return typeof a;
-        }([]));
+        }([]), "number", "undefined");
     }
     expect_stdout: "object number undefined"
 }
