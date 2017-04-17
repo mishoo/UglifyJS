@@ -571,7 +571,7 @@ inner_var_label: {
     }
 }
 
-inner_var_for: {
+inner_var_for_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -598,6 +598,29 @@ inner_var_for: {
             x(1, b, 3, d, e);
         }
     }
+}
+
+inner_var_for_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = 1;
+            for (var b = 1; --b;) var a = 2;
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            a = 1;
+            for (var b = 1; --b;) var a = 2;
+            console.log(a);
+        }();
+    }
+    expect_stdout: "1"
 }
 
 inner_var_for_in_1: {
