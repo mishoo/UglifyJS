@@ -2110,6 +2110,27 @@ var_assign_5: {
     expect_stdout: "2 undefined"
 }
 
+var_assign_6: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = function(){}(a = 1);
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a = function(){}(a = 1);
+            console.log(a);
+        }();
+    }
+    expect_stdout: "undefined"
+}
+
 immutable: {
     options = {
         evaluate: true,
