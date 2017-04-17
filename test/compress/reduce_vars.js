@@ -2218,3 +2218,26 @@ try_abort: {
     }
     expect_stdout: "1 undefined"
 }
+
+boolean_binary_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a;
+            void 0 && (a = 1);
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a;
+            void 0;
+            console.log(a);
+        }();
+    }
+    expect_stdout: "undefined"
+}
