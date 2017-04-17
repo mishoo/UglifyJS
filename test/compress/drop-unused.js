@@ -1029,3 +1029,30 @@ delete_assign_2: {
     }
     expect_stdout: true
 }
+
+drop_var: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(a, b);
+        var a = 1, b = 2;
+        console.log(a, b);
+        var a = 3;
+        console.log(a, b);
+    }
+    expect: {
+        console.log(a, b);
+        var a = 1, b = 2;
+        console.log(a, b);
+        a = 3;
+        console.log(a, b);
+    }
+    expect_stdout: [
+        "undefined undefined",
+        "1 2",
+        "3 2",
+    ]
+}
