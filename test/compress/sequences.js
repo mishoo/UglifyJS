@@ -688,3 +688,25 @@ side_effects_cascade_3: {
         }
     }
 }
+
+issue_27: {
+    options = {
+        cascade: true,
+        passes: 2,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(jQuery) {
+            var $;
+            $ = jQuery;
+            $("body").addClass("foo");
+        })(jQuery);
+    }
+    expect: {
+        (function(jQuery) {
+            jQuery("body").addClass("foo");
+        })(jQuery);
+    }
+}
