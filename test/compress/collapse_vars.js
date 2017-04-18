@@ -1654,3 +1654,26 @@ iife_2: {
         }(bar());
     }
 }
+
+var_defs: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+    }
+    input: {
+        var f1 = function(x, y) {
+            var a, b, r = x + y, q = r * r, z = q - r, a = z, b = 7;
+            console.log(a + b);
+        };
+        f1("1", 0);
+    }
+    expect: {
+        var f1 = function(x, y) {
+            var r = x + y, a = r * r - r, b = 7;
+            console.log(a + b);
+        };
+        f1("1", 0);
+    }
+    expect_stdout: "97"
+}
