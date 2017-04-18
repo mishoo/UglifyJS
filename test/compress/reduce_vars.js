@@ -66,7 +66,7 @@ modified: {
         conditionals  : true,
         evaluate      : true,
         reduce_vars   : true,
-        unused        : true
+        unused        : true,
     }
     input: {
         function f0() {
@@ -136,12 +136,11 @@ modified: {
         }
 
         function f2() {
-            var b = 2;
-            b = 3;
-            console.log(1 + b);
-            console.log(b + 3);
+            3;
             console.log(4);
-            console.log(1 + b + 3);
+            console.log(6);
+            console.log(4);
+            console.log(7);
         }
 
         function f3() {
@@ -375,12 +374,11 @@ passes: {
     }
     expect: {
         function f() {
-            var b = 2;
-            b = 3;
-            console.log(1 + b);
-            console.log(b + 3);
+            3;
             console.log(4);
-            console.log(1 + b + 3);
+            console.log(6);
+            console.log(4);
+            console.log(7);
         }
     }
 }
@@ -573,7 +571,7 @@ inner_var_label: {
     }
 }
 
-inner_var_for: {
+inner_var_for_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -600,6 +598,29 @@ inner_var_for: {
             x(1, b, 3, d, e);
         }
     }
+}
+
+inner_var_for_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = 1;
+            for (var b = 1; --b;) var a = 2;
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            a = 1;
+            for (var b = 1; --b;) var a = 2;
+            console.log(a);
+        }();
+    }
+    expect_stdout: "1"
 }
 
 inner_var_for_in_1: {
@@ -1828,10 +1849,7 @@ redefine_farg_3: {
         console.log(function(a) {
             var a;
             return typeof a;
-        }([]), "number", function(a) {
-            var a = void 0;
-            return typeof a;
-        }([]));
+        }([]), "number", "undefined");
     }
     expect_stdout: "object number undefined"
 }
@@ -2115,6 +2133,27 @@ var_assign_5: {
     expect_stdout: "2 undefined"
 }
 
+var_assign_6: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = function(){}(a = 1);
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a = function(){}(a = 1);
+            console.log(a);
+        }();
+    }
+    expect_stdout: "undefined"
+}
+
 immutable: {
     options = {
         evaluate: true,
@@ -2262,4 +2301,35 @@ cond_assign: {
         }();
     }
     expect_stdout: "undefined"
+}
+
+iife_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = 1, b = 0;
+            !function() {
+                b++;
+                return;
+                a = 2;
+            }();
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a = 1, b = 0;
+            !function() {
+                b++;
+                return;
+                a = 2;
+            }();
+            console.log(a);
+        }();
+    }
+    expect_stdout: "1"
 }

@@ -1592,3 +1592,25 @@ var_side_effects_3: {
     }
     expect_stdout: true
 }
+
+reduce_vars_assign: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        !function() {
+            var a = 1;
+            a = [].length,
+            console.log(a);
+        }();
+    }
+    expect: {
+        !function() {
+            var a = 1;
+            a = [].length,
+            console.log(a);
+        }();
+    }
+    expect_stdout: "0"
+}
