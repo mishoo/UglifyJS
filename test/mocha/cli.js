@@ -349,6 +349,21 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
+    it("Should throw syntax error (a./();)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/dot_3.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/dot_3.js:1,2",
+               "a./();",
+               "  ^",
+               "ERROR: Unexpected token: operator (/)"
+           ].join("\n"));
+           done();
+       });
+    });
     it("Should throw syntax error ({%: 1})", function(done) {
        var command = uglifyjscmd + ' test/input/invalid/object.js';
 
