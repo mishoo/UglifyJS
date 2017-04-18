@@ -1666,11 +1666,14 @@ var_defs: {
             var a, b, r = x + y, q = r * r, z = q - r, a = z, b = 7;
             console.log(a + b);
         };
+        f1("1", 0);
     }
     expect: {
         var f1 = function(x, y) {
             var r = x + y, a = r * r - r, b = 7;
             console.log(a + b);
         };
+        f1("1", 0);
     }
+    expect_stdout: "97"
 }
