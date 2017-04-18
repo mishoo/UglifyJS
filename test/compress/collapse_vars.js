@@ -1614,3 +1614,43 @@ reduce_vars_assign: {
     }
     expect_stdout: "0"
 }
+
+iife_1: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var log = function(x) {
+            console.log(x);
+        }, foo = bar();
+        log(foo);
+    }
+    expect: {
+        (function(x) {
+            console.log(x);
+        })(bar());
+    }
+}
+
+iife_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: false,
+        toplevel: true,
+        unused: false,
+    }
+    input: {
+        var foo = bar();
+        !function(x) {
+            console.log(x);
+        }(foo);
+    }
+    expect: {
+        !function(x) {
+            console.log(x);
+        }(bar());
+    }
+}
