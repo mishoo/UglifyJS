@@ -367,19 +367,19 @@ var index = 0;
                     if (ex instanceof UglifyJS.JS_Parse_Error) {
                         print_error("Parse error at " + file + ":" + ex.line + "," + ex.col);
                         var col = ex.col;
-                        var line = code.split(/\r?\n/)[ex.line - (col ? 1 : 2)];
+                        var lines = code.split(/\r?\n/);
+                        var line = lines[ex.line - 1];
+                        if (!line && !col) {
+                            line = lines[ex.line - 2];
+                            col = line.length;
+                        }
                         if (line) {
                             if (col > 40) {
                                 line = line.slice(col - 40);
                                 col = 40;
                             }
-                            if (col) {
-                                print_error(line.slice(0, 80));
-                                print_error(line.slice(0, col).replace(/\S/g, " ") + "^");
-                            } else {
-                                print_error(line.slice(-40));
-                                print_error(line.slice(-40).replace(/\S/g, " ") + "^");
-                            }
+                            print_error(line.slice(0, 80));
+                            print_error(line.slice(0, col).replace(/\S/g, " ") + "^");
                         }
                         print_error(ex.stack);
                         process.exit(1);
