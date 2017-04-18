@@ -282,10 +282,7 @@ collapse_vars_if: {
             return "x" != "Bar" + x / 4 ? g9 : g5;
         }
         function f3(x) {
-            if (x) {
-                return 1;
-            }
-            return 2;
+            return x ? 1 : 2;
         }
     }
 }
