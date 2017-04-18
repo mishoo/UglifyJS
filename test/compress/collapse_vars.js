@@ -2,7 +2,7 @@ collapse_vars_side_effects_1: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1() {
@@ -151,7 +151,7 @@ collapse_vars_issue_721: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         define(["require", "exports", 'handlebars'], function (require, exports, hb) {
@@ -217,7 +217,7 @@ collapse_vars_properties: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1(obj) {
@@ -244,7 +244,7 @@ collapse_vars_if: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1() {
@@ -294,7 +294,7 @@ collapse_vars_while: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:false, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1(y) {
@@ -393,9 +393,9 @@ collapse_vars_do_while: {
         }
         function f3(y) {
             function fn(n) { console.log(n); }
-            var a = 2;
+            var a = 2, x = 7;
             do {
-                fn(a = 7);
+                fn(a = x);
                 break;
             } while (y);
         }
@@ -468,8 +468,9 @@ collapse_vars_do_while_drop_assign: {
         }
         function f3(y) {
             function fn(n) { console.log(n); }
+            var x = 7;
             do {
-                fn(7);
+                fn(x);
                 break;
             } while (y);
         }
@@ -670,7 +671,7 @@ collapse_vars_lvalues: {
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var w = e1(), v = e2(), c = v = --x; return (w = x) - c; }
         function f6(x) { var w = e1(), v = e2(); return (v = --x) - (w = x); }
-        function f7(x) { var w = e1(), v = e2(), c = v - x; return (w = x) - c; }
+        function f7(x) { var w = e1(), c = e2() - x; return (w = x) - c; }
         function f8(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
         function f9(x) { var w = e1(); return e2() - x - (w = x); }
     }
@@ -702,7 +703,7 @@ collapse_vars_lvalues_drop_assign: {
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var v = (e1(), e2()), c = v = --x; return x - c; }
         function f6(x) { e1(), e2(); return --x - x; }
-        function f7(x) { var v = (e1(), e2()), c = v - x; return x - c; }
+        function f7(x) { var c = (e1(), e2() - x); return x - c; }
         function f8(x) { var v = (e1(), e2()); return x - (v - x); }
         function f9(x) { e1(); return e2() - x - x; }
     }
@@ -712,7 +713,7 @@ collapse_vars_misc1: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f0(o, a, h) {
@@ -789,7 +790,7 @@ collapse_vars_repeated: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1() {
@@ -812,19 +813,17 @@ collapse_vars_repeated: {
     }
     expect: {
         function f1() {
-            return -3
+            return -3;
         }
         function f2(x) {
-            return x
+            return x;
         }
         (function(x){
-             var a = "GOOD" + x, e = "BAD", e = a;
-             console.log(e + "!");
-        })("!"),
+             console.log("GOOD!!");
+        })(),
         (function(x){
-            var a = "GOOD" + x, e = "BAD" + x, e = a;
-            console.log(e + "!");
-        })("!");
+             console.log("GOOD!!");
+        })();
     }
     expect_stdout: true
 }
@@ -833,7 +832,7 @@ collapse_vars_closures: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function constant_vars_can_be_replaced_in_any_scope() {
@@ -923,7 +922,7 @@ collapse_vars_try: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1() {
@@ -1121,7 +1120,7 @@ collapse_vars_constants: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, reduce_vars:true
     }
     input: {
         function f1(x) {
@@ -1159,7 +1158,7 @@ collapse_vars_arguments: {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
         keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
-        toplevel:true
+        toplevel:true, reduce_vars:true
     }
     input: {
         var outer = function() {
@@ -1286,6 +1285,7 @@ collapse_vars_regexp: {
         join_vars:     true,
         cascade:       true,
         side_effects:  true,
+        reduce_vars:   true,
     }
     input: {
         function f1() {
@@ -1319,8 +1319,8 @@ collapse_vars_regexp: {
             };
         }
         (function(){
-            var result, s = "acdabcdeabbb", rx = /ab*/g;
-            while (result = rx.exec(s))
+            var result, rx = /ab*/g;
+            while (result = rx.exec("acdabcdeabbb"))
                 console.log(result[0]);
         })();
     }
@@ -1344,7 +1344,10 @@ issue_1537: {
 issue_1562: {
     options = {
         collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
         toplevel: true,
+        unused: true,
     }
     input: {
         var v = 1, B = 2;
@@ -1363,14 +1366,11 @@ issue_1562: {
         var v = 1;
         for (v in objs) f(2);
 
-        var x = 3;
-        while(x + 2) bar(10);
+        while(5) bar(10);
 
-        var y = 4;
-        do bar(20); while(y + 2);
+        do bar(20); while(6);
 
-        var z = 5;
-        for (; f(z + 2) ;) bar(30);
+        for (; f(7) ;) bar(30);
     }
 }
 
@@ -1613,4 +1613,44 @@ reduce_vars_assign: {
         }();
     }
     expect_stdout: "0"
+}
+
+iife_1: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var log = function(x) {
+            console.log(x);
+        }, foo = bar();
+        log(foo);
+    }
+    expect: {
+        (function(x) {
+            console.log(x);
+        })(bar());
+    }
+}
+
+iife_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: false,
+        toplevel: true,
+        unused: false,
+    }
+    input: {
+        var foo = bar();
+        !function(x) {
+            console.log(x);
+        }(foo);
+    }
+    expect: {
+        !function(x) {
+            console.log(x);
+        }(bar());
+    }
 }
