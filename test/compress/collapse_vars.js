@@ -667,7 +667,7 @@ collapse_vars_lvalues: {
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var w = e1(), v = e2(), c = v = --x; return (w = x) - c; }
         function f6(x) { var w = e1(), v = e2(); return (v = --x) - (w = x); }
-        function f7(x) { var w = e1(), v = e2(), c = v - x; return (w = x) - c; }
+        function f7(x) { var w = e1(), c = e2() - x; return (w = x) - c; }
         function f8(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
         function f9(x) { var w = e1(); return e2() - x - (w = x); }
     }
@@ -699,7 +699,7 @@ collapse_vars_lvalues_drop_assign: {
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var v = (e1(), e2()), c = v = --x; return x - c; }
         function f6(x) { e1(), e2(); return --x - x; }
-        function f7(x) { var v = (e1(), e2()), c = v - x; return x - c; }
+        function f7(x) { var c = (e1(), e2() - x); return x - c; }
         function f8(x) { var v = (e1(), e2()); return x - (v - x); }
         function f9(x) { e1(); return e2() - x - x; }
     }
