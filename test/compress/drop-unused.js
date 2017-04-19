@@ -935,7 +935,8 @@ issue_1715_3: {
             try {
                 console;
             } catch (a) {
-                var a = x();
+                var a;
+                x();
             }
         }
         f();

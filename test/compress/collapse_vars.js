@@ -701,10 +701,10 @@ collapse_vars_lvalues_drop_assign: {
         function f2(x) { var z = x, a = ++z; return z += a; }
         function f3(x) { var a = (x -= 3); return x + a; }
         function f4(x) { var a = (x -= 3); return x + a; }
-        function f5(x) { var v = (e1(), e2()), c = v = --x; return x - c; }
+        function f5(x) { e1(); var v = e2(), c = v = --x; return x - c; }
         function f6(x) { e1(), e2(); return --x - x; }
-        function f7(x) { var c = (e1(), e2() - x); return x - c; }
-        function f8(x) { var v = (e1(), e2()); return x - (v - x); }
+        function f7(x) { e1(); var c = e2() - x; return x - c; }
+        function f8(x) { e1(); var v = e2(); return x - (v - x); }
         function f9(x) { e1(); return e2() - x - x; }
     }
 }
