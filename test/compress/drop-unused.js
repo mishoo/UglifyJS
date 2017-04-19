@@ -1056,3 +1056,38 @@ drop_var: {
         "3 2",
     ]
 }
+
+issue_1830_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        !function() {
+            L: for (var b = console.log(1); !1;) continue L;
+        }();
+    }
+    expect: {
+        !function() {
+            L: for (console.log(1); !1;) continue L;
+        }();
+    }
+    expect_stdout: "1"
+}
+
+issue_1830_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        !function() {
+            L: for (var a = 1, b = console.log(a); --a;) continue L;
+        }();
+    }
+    expect: {
+        !function() {
+            var a = 1;
+            L: for (console.log(a); --a;) continue L;
+        }();
+    }
+    expect_stdout: "1"
+}
