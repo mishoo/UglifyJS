@@ -594,7 +594,7 @@ There is a single toplevel function, `minify(files, options)`, which will
 performs all the steps in a configurable manner.
 Example:
 ```javascript
-var result = UglifyJS.minify("var b = function() {};", { fromString: true });
+var result = UglifyJS.minify("var b = function() {};");
 console.log(result.code); // minified output
 ```
 
