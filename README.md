@@ -594,7 +594,7 @@ There is a single toplevel function, `minify(files, options)`, which will
 performs all the steps in a configurable manner.
 Example:
 ```javascript
-var result = UglifyJS.minify("var b = function() {};");
+var result = UglifyJS.minify("var b = function() {};", { fromString: true });
 console.log(result.code); // minified output
 ```
 
@@ -631,9 +631,10 @@ be appended to code.
 You can also specify sourceRoot property to be included in source map:
 ```javascript
 var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
-	sourceMap: {
+  sourceMap: {
     root: "http://example.com/src",
     url: "out.js.map"
+  }
 });
 ```
 
@@ -641,9 +642,9 @@ If you're compressing compiled JavaScript and have a source map for it, you
 can use `sourceMap.content`:
 ```javascript
 var result = UglifyJS.minify({"compiled.js": "compiled code"}, {
-	sourceMap: {
+  sourceMap: {
     content: "content from compiled.js.map",
-	  url: "minified.js.map"
+    url: "minified.js.map"
   }
 });
 // same as before, it returns `code` and `map`
