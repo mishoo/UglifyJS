@@ -53,9 +53,7 @@ reduce_vars: {
             console.log(-3);
             eval("console.log(a);");
         })(eval);
-        (function() {
-            return "yes";
-        })();
+        "yes";
         console.log(2);
     }
     expect_stdout: true
@@ -1699,9 +1697,7 @@ redefine_arguments_2: {
         console.log(function() {
             var arguments;
             return typeof arguments;
-        }(), function() {
-            return"number";
-        }(), function(x) {
+        }(), "number", function(x) {
             var arguments = x;
             return typeof arguments;
         }());
@@ -1810,9 +1806,7 @@ redefine_farg_2: {
         console.log(function(a) {
             var a;
             return typeof a;
-        }([]), function() {
-            return "number";
-        }(),function(a, b) {
+        }([]), "number",function(a, b) {
             var a = b;
             return typeof a;
         }([]));
