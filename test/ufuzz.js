@@ -345,6 +345,10 @@ function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotRe
     return s;
 }
 
+function enableLoopControl(flag) {
+    return Array.isArray(flag) && flag.indexOf("") < 0 ? flag.concat("") : flag;
+}
+
 function createLabel(canBreak, canContinue) {
     var label;
     if (rng(10) < 3) {
@@ -361,6 +365,9 @@ function createLabel(canBreak, canContinue) {
             canContinue = canContinue ? [ "" ] : [];
         }
         canContinue.push(label);
+    } else {
+        canBreak = enableLoopControl(canBreak);
+        canContinue = enableLoopControl(canContinue);
     }
     return {
         break: canBreak,
@@ -490,20 +497,22 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
 function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
     var hadDefault = false;
     var s = '';
+    canBreak = enableLoopControl(canBreak);
+    if (!canBreak) canBreak = CAN_BREAK;
     while (n-- > 0) {
         //hadDefault = n > 0; // disables weird `default` clause positioning (use when handling destabilizes)
         if (hadDefault || rng(5) > 0) {
             s += '' +
                 'case ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':\n' +
-                createStatements(rng(3) + 1, recurmax, canThrow, canBreak || CAN_BREAK, canContinue, cannotReturn, stmtDepth) +
+                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) +
                 '\n' +
-                (rng(10) > 0 ? ' break;' : '/* fall-through */') +
+                (rng(10) > 0 ? ' break' + getLabel(canBreak) + ';' : '/* fall-through */') +
                 '\n';
         } else {
             hadDefault = true;
             s += '' +
                 'default:\n' +
-                createStatements(rng(3) + 1, recurmax, canThrow, canBreak || CAN_BREAK, canContinue, cannotReturn, stmtDepth) +
+                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) +
                 '\n';
         }
     }
