@@ -407,7 +407,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         var label = createLabel(canBreak, canContinue);
         var optElementVar = '';
         if (rng(5) > 1) {
-            optElementVar = 'var ' + createVarName(MANDATORY) + ' = expr' + loop + '[key' + loop + ']; ';
+            optElementVar = 'c = 1 + c; var ' + createVarName(MANDATORY) + ' = expr' + loop + '[key' + loop + ']; ';
         }
         return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth) + '}}';
       case STMT_SEMI:
