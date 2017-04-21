@@ -118,3 +118,17 @@ label_do: {
         } while (0);
     }
 }
+
+label_while: {
+    options = {
+        evaluate: true,
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        function f() {
+            L: while (0) continue L;
+        }
+    }
+    expect_exact: "function f(){L:;}"
+}
