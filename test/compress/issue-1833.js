@@ -101,3 +101,20 @@ iife_while: {
         }();
     }
 }
+
+label_do: {
+    options = {
+        evaluate: true,
+        loops: true,
+    }
+    input: {
+        L: do {
+            continue L;
+        } while (0);
+    }
+    expect: {
+        L: do {
+            continue L;
+        } while (0);
+    }
+}
