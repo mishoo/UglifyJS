@@ -273,6 +273,7 @@ var TYPEOF_OUTCOMES = [
 
 var loops = 0;
 var funcs = 0;
+var labels = 10000;
 
 function rng(max) {
     var r = randomBytes(2).readUInt16LE(0) / 65536;
@@ -347,12 +348,11 @@ function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotRe
 function createLabel(canBreak, canContinue) {
     var label;
     if (rng(10) < 3) {
+        label = ++labels;
         if (Array.isArray(canBreak)) {
             canBreak = canBreak.slice();
-            label = canBreak[canBreak.length - 1] + 1;
         } else {
             canBreak = canBreak ? [ "" ] : [];
-            label = 10000;
         }
         canBreak.push(label);
         if (Array.isArray(canContinue)) {
@@ -361,9 +361,6 @@ function createLabel(canBreak, canContinue) {
             canContinue = canContinue ? [ "" ] : [];
         }
         canContinue.push(label);
-    } else {
-        if (!canBreak) canBreak = CAN_BREAK;
-        if (!canContinue) canContinue = CAN_CONTINUE;
     }
     return {
         break: canBreak,
@@ -399,20 +396,20 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return 'if (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + (rng(2) === 1 ? ' else ' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) : '');
       case STMT_DO_WHILE:
         var label = createLabel(canBreak, canContinue);
-        return '{var brake' + loop + ' = 5; ' + label.target + 'do {' + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth) + '} while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0);}';
+        return '{var brake' + loop + ' = 5; ' + label.target + 'do {' + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth) + '} while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0);}';
       case STMT_WHILE:
         var label = createLabel(canBreak, canContinue);
-        return '{var brake' + loop + ' = 5; ' + label.target + 'while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0)' + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth) + '}';
+        return '{var brake' + loop + ' = 5; ' + label.target + 'while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0)' + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth) + '}';
       case STMT_FOR_LOOP:
         var label = createLabel(canBreak, canContinue);
-        return label.target + 'for (var brake' + loop + ' = 5; (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && brake' + loop + ' > 0; --brake' + loop + ')' + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth);
+        return label.target + 'for (var brake' + loop + ' = 5; (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && brake' + loop + ' > 0; --brake' + loop + ')' + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth);
       case STMT_FOR_IN:
         var label = createLabel(canBreak, canContinue);
         var optElementVar = '';
         if (rng(5) > 1) {
             optElementVar = 'c = 1 + c; var ' + createVarName(MANDATORY) + ' = expr' + loop + '[key' + loop + ']; ';
         }
-        return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth) + '}}';
+        return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth) + '}}';
       case STMT_SEMI:
         return ';';
       case STMT_EXPR:
