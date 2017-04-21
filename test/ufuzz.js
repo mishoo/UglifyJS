@@ -352,7 +352,7 @@ function createLabel(canBreak, canContinue) {
             label = canBreak[canBreak.length - 1] + 1;
         } else {
             canBreak = canBreak ? [ "" ] : [];
-            label = 1;
+            label = 10000;
         }
         canBreak.push(label);
         if (Array.isArray(canContinue)) {
@@ -370,6 +370,7 @@ function createLabel(canBreak, canContinue) {
 }
 
 function getLabel(label) {
+    if (!Array.isArray(label)) return "";
     label = label[rng(label.length)];
     return label && " L" + label;
 }
@@ -408,7 +409,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         if (rng(5) > 1) {
             optElementVar = 'var ' + createVarName(MANDATORY) + ' = expr' + loop + '[key' + loop + ']; ';
         }
-        return label.target + ' for (var key' + loop + ' in ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') {' + optElementVar + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth) + '}';
+        return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, label.break, label.continue, cannotReturn, stmtDepth) + '}}';
       case STMT_SEMI:
         return ';';
       case STMT_EXPR:
