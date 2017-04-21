@@ -361,10 +361,13 @@ function createLabel(canBreak, canContinue) {
             canContinue = canContinue ? [ "" ] : [];
         }
         canContinue.push(label);
+    } else {
+        if (!canBreak) canBreak = CAN_BREAK;
+        if (!canContinue) canContinue = CAN_CONTINUE;
     }
     return {
-        break: CAN_BREAK && canBreak,
-        continue: CAN_CONTINUE && canContinue,
+        break: canBreak,
+        continue: canContinue,
         target: label ? "L" + label + ": " : ""
     };
 }
