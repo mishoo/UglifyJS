@@ -1,12 +1,13 @@
-UglifyJS
-========
+UglifyJS 3
+==========
 [![Build Status](https://travis-ci.org/mishoo/UglifyJS2.svg)](https://travis-ci.org/mishoo/UglifyJS2)
 
 UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
 
 #### Note:
-- `uglify-js 3.x` is incompatible with the [`2.x` branch](https://github.com/mishoo/UglifyJS2/tree/v2.x).
-- release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
+- **`uglify-js@3.x` has a new API and CLI and is not backwards compatible with [`uglify-js@2.x`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
+- **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
+- Release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
 ES2015+ (ES6+) code then please use the [harmony](#harmony) development branch.
 - Node 7 has a known performance regression and runs `uglify-js` twice as slow.
 
