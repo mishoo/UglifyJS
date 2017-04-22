@@ -450,7 +450,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         }
         return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '}}';
       case STMT_SEMI:
-        return ';';
+        return use_strict && rng(20) === 0 ? '"use strict";' : ';';
       case STMT_EXPR:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';';
       case STMT_SWITCH:
