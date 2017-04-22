@@ -21,8 +21,8 @@ exports.run_code = function(code) {
     };
     try {
         vm.runInNewContext([
-            "!function() {",
             FUNC_TOSTRING,
+            "!function() {",
             code,
             "}();",
         ].join("\n"), {
