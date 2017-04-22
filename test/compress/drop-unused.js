@@ -1092,3 +1092,25 @@ issue_1830_2: {
     }
     expect_stdout: "1"
 }
+
+issue_1838: {
+    options = {
+        join_vars: true,
+        loops: true,
+        unused: true,
+    }
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        function f() {
+            var b = a;
+            while (c);
+        }
+    }
+    expect_exact: [
+        "function f() {",
+        "    for (a; c; ) ;",
+        "}",
+    ]
+}
