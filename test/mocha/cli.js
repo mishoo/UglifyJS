@@ -379,6 +379,111 @@ describe("bin/uglifyjs", function () {
            done();
        });
     });
+    it("Should throw syntax error (const a)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/const.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/const.js:7,11",
+               "    const a;",
+               "           ^",
+               "ERROR: Missing initializer in const declaration"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (delete x)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/delete.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/delete.js:7,11",
+               "    delete x;",
+               "           ^",
+               "ERROR: Calling delete on expression not allowed in strict mode"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (function g(arguments))", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/function_1.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/function_1.js:4,11",
+               "function g(arguments) {",
+               "           ^",
+               "ERROR: Unexpected arguments in strict mode"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (function eval())", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/function_2.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/function_2.js:4,9",
+               "function eval() {",
+               "         ^",
+               "ERROR: Unexpected eval in strict mode"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (iife arguments())", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/function_3.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/function_3.js:4,10",
+               "!function arguments() {",
+               "          ^",
+               "ERROR: Unexpected arguments in strict mode"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (catch(eval))", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/try.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/try.js:7,18",
+               "    try {} catch (eval) {}",
+               "                  ^",
+               "ERROR: Unexpected eval in strict mode"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (var eval)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/var.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/var.js:7,8",
+               "    var eval;",
+               "        ^",
+               "ERROR: Unexpected eval in strict mode"
+           ].join("\n"));
+           done();
+       });
+    });
     it("Should handle literal string as source map input", function(done) {
         var command = [
             uglifyjscmd,
