@@ -345,8 +345,8 @@ function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotRe
     return s;
 }
 
-function enableLoopControl(flag) {
-    return Array.isArray(flag) && flag.indexOf("") < 0 ? flag.concat("") : flag;
+function enableLoopControl(flag, defaultValue) {
+    return Array.isArray(flag) && flag.indexOf("") < 0 ? flag.concat("") : flag || defaultValue;
 }
 
 function createLabel(canBreak, canContinue) {
@@ -365,9 +365,6 @@ function createLabel(canBreak, canContinue) {
             canContinue = canContinue ? [ "" ] : [];
         }
         canContinue.push(label);
-    } else {
-        canBreak = enableLoopControl(canBreak);
-        canContinue = enableLoopControl(canContinue);
     }
     return {
         break: canBreak,
@@ -403,20 +400,28 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return 'if (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + (rng(2) === 1 ? ' else ' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) : '');
       case STMT_DO_WHILE:
         var label = createLabel(canBreak, canContinue);
-        return '{var brake' + loop + ' = 5; ' + label.target + 'do {' + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth) + '} while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0);}';
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        return '{var brake' + loop + ' = 5; ' + label.target + 'do {' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '} while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0);}';
       case STMT_WHILE:
         var label = createLabel(canBreak, canContinue);
-        return '{var brake' + loop + ' = 5; ' + label.target + 'while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0)' + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth) + '}';
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        return '{var brake' + loop + ' = 5; ' + label.target + 'while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0)' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '}';
       case STMT_FOR_LOOP:
         var label = createLabel(canBreak, canContinue);
-        return label.target + 'for (var brake' + loop + ' = 5; (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && brake' + loop + ' > 0; --brake' + loop + ')' + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth);
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        return label.target + 'for (var brake' + loop + ' = 5; (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && brake' + loop + ' > 0; --brake' + loop + ')' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
       case STMT_FOR_IN:
         var label = createLabel(canBreak, canContinue);
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
         var optElementVar = '';
         if (rng(5) > 1) {
             optElementVar = 'c = 1 + c; var ' + createVarName(MANDATORY) + ' = expr' + loop + '[key' + loop + ']; ';
         }
-        return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, label.break || CAN_BREAK, label.continue || CAN_CONTINUE, cannotReturn, stmtDepth) + '}}';
+        return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '}}';
       case STMT_SEMI:
         return ';';
       case STMT_EXPR:
@@ -496,27 +501,27 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
 
 function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
     var hadDefault = false;
-    var s = '';
-    canBreak = enableLoopControl(canBreak);
-    if (!canBreak) canBreak = CAN_BREAK;
+    var s = [''];
+    canBreak = enableLoopControl(canBreak, CAN_BREAK);
     while (n-- > 0) {
         //hadDefault = n > 0; // disables weird `default` clause positioning (use when handling destabilizes)
         if (hadDefault || rng(5) > 0) {
-            s += '' +
-                'case ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':\n' +
-                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) +
-                '\n' +
-                (rng(10) > 0 ? ' break' + getLabel(canBreak) + ';' : '/* fall-through */') +
-                '\n';
+            s.push(
+                'case ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':',
+                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                rng(10) > 0 ? ' break;' : '/* fall-through */',
+                ''
+            );
         } else {
             hadDefault = true;
-            s += '' +
-                'default:\n' +
-                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) +
-                '\n';
+            s.push(
+                'default:',
+                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                ''
+            );
         }
     }
-    return s;
+    return s.join('\n');
 }
 
 function createExpression(recurmax, noComma, stmtDepth, canThrow) {
