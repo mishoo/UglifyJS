@@ -631,7 +631,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
           default:
             s.push(
-                'new function ' + name + '(){',
+                (rng(4) == 0 ? '' : 'new ') + 'function ' + name + '(){',
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 '}'
