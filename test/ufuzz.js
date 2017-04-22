@@ -591,36 +591,58 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createExpression(recurmax, noComma, stmtDepth, canThrow) + '?' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':' + createExpression(recurmax, noComma, stmtDepth, canThrow);
       case p++:
+      case p++:
         var nameLenBefore = VAR_NAMES.length;
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
-        if (name === 'c') name = 'a';
-        var s = '';
-        switch(rng(4)) {
+        if (name == 'c') name = 'a';
+        var s = [];
+        switch (rng(5)) {
           case 0:
-            s = '(function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '})()';
+            s.push(
+                '(function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '})()'
+            );
             break;
           case 1:
-            s = '+function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}()';
+            s.push(
+                '+function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}()'
+            );
             break;
           case 2:
-            s = '!function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}()';
+            s.push(
+                '!function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}()'
+            );
+            break;
+          case 3:
+            s.push(
+                'void function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}()'
+            );
             break;
           default:
-            s = 'void function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}()';
+            s.push(
+                'new function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}'
+            );
             break;
         }
         VAR_NAMES.length = nameLenBefore;
-        return s;
+        return s.join('\n');
       case p++:
       case p++:
         return createTypeofExpr(recurmax, stmtDepth, canThrow);
-      case p++:
-        return [
-            'new function() {',
-            rng(2) ? '' : createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
-            'return ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
-            '}'
-        ].join('\n');
       case p++:
       case p++:
         // more like a parser test but perhaps comment nodes mess up the analysis?
