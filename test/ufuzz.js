@@ -513,7 +513,6 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             // we have to do go through some trouble here to prevent leaking it
             var nameLenBefore = VAR_NAMES.length;
             var catchName = createVarName(MANDATORY);
-            if (catchName == 'this') catchName = 'a';
             var freshCatchName = VAR_NAMES.length !== nameLenBefore;
             s += ' catch (' + catchName + ') { ' + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + ' }';
             if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1); // remove catch name
@@ -633,7 +632,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
           default:
             if (rng(4) == 0) s.push('function ' + name + '(){');
             else {
-                VAR_NAMES.push('this');
+                if (VAR_NAMES.indexOf('this') < 0) VAR_NAMES.push('this');
                 s.push('new function ' + name + '(){');
             }
             s.push(
@@ -844,6 +843,7 @@ function getVarName() {
 function createVarName(maybe, dontStore) {
     if (!maybe || rng(2)) {
         var name = VAR_NAMES[rng(VAR_NAMES.length)];
+        if (name == 'this') name = 'a';
         var suffix = rng(3);
         if (suffix) {
             name += '_' + suffix;
