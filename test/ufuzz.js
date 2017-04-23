@@ -630,8 +630,12 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             );
             break;
           default:
+            if (rng(4) == 0) s.push('function ' + name + '(){');
+            else {
+                VAR_NAMES.push('this');
+                s.push('new function ' + name + '(){');
+            }
             s.push(
-                (rng(4) == 0 ? '' : 'new ') + 'function ' + name + '(){',
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 '}'
@@ -764,22 +768,24 @@ function _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
 function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
     // intentionally generate more hardcore ops
     if (--recurmax < 0) return createValue();
+    var assignee, expr;
     switch (rng(30)) {
       case 0:
         return '(c = c + 1, ' + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
       case 1:
         return '(' + createUnarySafePrefix() + '(' + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + '))';
       case 2:
-        var assignee = getVarName();
+        assignee = getVarName();
+        if (assignee == 'this') assignee = 'a';
         return '(' + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
       case 3:
-        var assignee = getVarName();
-        var expr = '(' + assignee + '[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow)
+        assignee = getVarName();
+        expr = '(' + assignee + '[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow)
             + ']' + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
         return canThrow && rng(10) == 0 ? expr : '(' + assignee + ' && ' + expr + ')';
       case 4:
-        var assignee = getVarName();
-        var expr = '(' + assignee + '.' + getDotKey() + createAssignment()
+        assignee = getVarName();
+        expr = '(' + assignee + '.' + getDotKey() + createAssignment()
             + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
         return canThrow && rng(10) == 0 ? expr : '(' + assignee + ' && ' + expr + ')';
       default:
