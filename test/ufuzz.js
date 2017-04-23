@@ -513,7 +513,6 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             // we have to do go through some trouble here to prevent leaking it
             var nameLenBefore = VAR_NAMES.length;
             var catchName = createVarName(MANDATORY);
-            if (catchName == 'this') catchName = 'a';
             var freshCatchName = VAR_NAMES.length !== nameLenBefore;
             s += ' catch (' + catchName + ') { ' + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + ' }';
             if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1); // remove catch name
@@ -631,13 +630,16 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             );
             break;
           default:
-            if (rng(4) == 0) s.push('function ' + name + '(){');
-            else {
-                VAR_NAMES.push('this');
-                s.push('new function ' + name + '(){');
+            var instantiate = rng(4) ? 'new ' : '';
+            s.push(
+                instantiate + 'function ' + name + '(){',
+                strictMode()
+            );
+            if (instantiate) for (var i = rng(4); --i >= 0;) {
+                if (rng(2)) s.push('this.' + getDotKey() + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
+                else  s.push('this[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']' + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
             }
             s.push(
-                strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 '}'
             );
@@ -777,7 +779,6 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
         return '(' + createUnarySafePrefix() + '(' + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + '))';
       case 2:
         assignee = getVarName();
-        if (assignee == 'this') assignee = 'a';
         return '(' + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
       case 3:
         assignee = getVarName();
