@@ -505,7 +505,28 @@ collapse_vars_seq: {
     expect: {
         var f1 = function(x, y) {
             var a, b, r = x + y;
-            return a = r * r - r, b = 7, a + b
+            return a = r * r - r, b = 7, a + b;
+        };
+    }
+}
+
+collapse_vars_seq_assignments: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, assignments:true
+    }
+    input: {
+        var f1 = function(x, y) {
+            var a, b, r = x + y, q = r * r, z = q - r;
+            a = z, b = 7;
+            return a + b;
+        };
+    }
+    expect: {
+        var f1 = function(x, y) {
+            var r = x + y, b = 7;
+            return r * r - r + b;
         };
     }
 }
@@ -526,7 +547,28 @@ collapse_vars_throw: {
     expect: {
         var f1 = function(x, y) {
             var a, b, r = x + y;
-            throw a = r * r - r, b = 7, a + b
+            throw a = r * r - r, b = 7, a + b;
+        };
+    }
+}
+
+collapse_vars_throw_assignments: {
+    options = {
+        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, assignments:true
+    }
+    input: {
+        var f1 = function(x, y) {
+            var a, b, r = x + y, q = r * r, z = q - r;
+            a = z, b = 7;
+            throw a + b;
+        };
+    }
+    expect: {
+        var f1 = function(x,y) {
+            var r = x + y, b = 7;
+            throw r * r - r + b;
         };
     }
 }
@@ -1676,4 +1718,46 @@ var_defs: {
         f1("1", 0);
     }
     expect_stdout: "97"
+}
+
+assign_to_var: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a;
+            a = x;
+            return a;
+        }
+    }
+    expect: {
+        function f() {
+            return x;
+        }
+    }
+}
+
+issue_27: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(jQuery) {
+            var $;
+            $ = jQuery;
+            $("body").addClass("foo");
+        })(jQuery);
+    }
+    expect: {
+        (function(jQuery) {
+            jQuery("body").addClass("foo");
+        })(jQuery);
+    }
 }
