@@ -1,9 +1,25 @@
 var vm = require("vm");
 
+function safe_log(arg) {
+    if (arg) switch (typeof arg) {
+      case "function":
+        return arg.toString();
+      case "object":
+        if (/Error$/.test(arg.name)) return arg.toString();
+        arg.constructor.toString();
+        for (var key in arg) {
+            arg[key] = safe_log(arg[key]);
+        }
+    }
+    return arg;
+}
+
 var FUNC_TOSTRING = [
     "Function.prototype.toString = Function.prototype.valueOf = function() {",
     "    var id = 0;",
     "    return function() {",
+    '        if (this === Array) return "[Function: Array]";',
+    '        if (this === Object) return "[Function: Object]";',
     "        var i = this.name;",
     '        if (typeof i != "number") {',
     "            i = ++id;",
@@ -32,16 +48,7 @@ exports.run_code = function(code) {
         ].join("\n"), {
             console: {
                 log: function() {
-                    return console.log.apply(console, [].map.call(arguments, function(arg) {
-                        if (arg) switch (typeof arg) {
-                          case "function":
-                            return arg.toString();
-                          case "object":
-                            if (/Error$/.test(arg.name)) return arg.toString();
-                            if (typeof arg.constructor == "function") arg.constructor.toString();
-                        }
-                        return arg;
-                    }));
+                    return console.log.apply(console, [].map.call(arguments, safe_log));
                 }
             }
         }, { timeout: 5000 });

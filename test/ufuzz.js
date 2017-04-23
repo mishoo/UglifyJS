@@ -513,6 +513,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             // we have to do go through some trouble here to prevent leaking it
             var nameLenBefore = VAR_NAMES.length;
             var catchName = createVarName(MANDATORY);
+            if (catchName == 'this') catchName = 'a';
             var freshCatchName = VAR_NAMES.length !== nameLenBefore;
             s += ' catch (' + catchName + ') { ' + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + ' }';
             if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1); // remove catch name
