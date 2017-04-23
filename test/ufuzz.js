@@ -630,13 +630,16 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             );
             break;
           default:
-            if (rng(4) == 0) s.push('function ' + name + '(){');
-            else {
-                if (VAR_NAMES.indexOf('this') < 0) VAR_NAMES.push('this');
-                s.push('new function ' + name + '(){');
+            var instantiate = rng(4) ? 'new ' : '';
+            s.push(
+                instantiate + 'function ' + name + '(){',
+                strictMode()
+            );
+            if (instantiate) for (var i = rng(4); --i >= 0;) {
+                if (rng(2)) s.push('this.' + getDotKey() + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
+                else  s.push('this[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']' + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
             }
             s.push(
-                strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 '}'
             );
@@ -776,7 +779,6 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
         return '(' + createUnarySafePrefix() + '(' + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + '))';
       case 2:
         assignee = getVarName();
-        if (assignee == 'this') assignee = 'a';
         return '(' + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
       case 3:
         assignee = getVarName();
@@ -843,7 +845,6 @@ function getVarName() {
 function createVarName(maybe, dontStore) {
     if (!maybe || rng(2)) {
         var name = VAR_NAMES[rng(VAR_NAMES.length)];
-        if (name == 'this') name = 'a';
         var suffix = rng(3);
         if (suffix) {
             name += '_' + suffix;
