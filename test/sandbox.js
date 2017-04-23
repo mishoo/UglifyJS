@@ -2,14 +2,18 @@ var vm = require("vm");
 
 var FUNC_TOSTRING = [
     "Function.prototype.toString = Function.prototype.valueOf = function() {",
-    "    var ids = [];",
+    "    var id = 0;",
     "    return function() {",
-    "        var i = ids.indexOf(this);",
-    "        if (i < 0) {",
-    "            i = ids.length;",
-    "            ids.push(this);",
+    "        var i = this.name;",
+    '        if (typeof i != "number") {',
+    "            i = ++id;",
+    '            Object.defineProperty(this, "name", {',
+    "                get: function() {",
+    "                    return i;",
+    "                }",
+    "            });",
     "        }",
-    '        return "[Function: __func_" + i + "__]";',
+    '        return "[Function: " + i + "]";',
     "    }",
     "}();",
 ].join("\n");
@@ -29,7 +33,14 @@ exports.run_code = function(code) {
             console: {
                 log: function() {
                     return console.log.apply(console, [].map.call(arguments, function(arg) {
-                        return typeof arg == "function" || arg && /Error$/.test(arg.name) ? arg.toString() : arg;
+                        if (arg) switch (typeof arg) {
+                          case "function":
+                            return arg.toString();
+                          case "object":
+                            if (/Error$/.test(arg.name)) return arg.toString();
+                            if (typeof arg.constructor == "function") arg.constructor.toString();
+                        }
+                        return arg;
                     }));
                 }
             }
