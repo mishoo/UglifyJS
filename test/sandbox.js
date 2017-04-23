@@ -1,15 +1,35 @@
 var vm = require("vm");
 
+function safe_log(arg) {
+    if (arg) switch (typeof arg) {
+      case "function":
+        return arg.toString();
+      case "object":
+        if (/Error$/.test(arg.name)) return arg.toString();
+        arg.constructor.toString();
+        for (var key in arg) {
+            arg[key] = safe_log(arg[key]);
+        }
+    }
+    return arg;
+}
+
 var FUNC_TOSTRING = [
     "Function.prototype.toString = Function.prototype.valueOf = function() {",
-    "    var ids = [];",
+    "    var id = 0;",
     "    return function() {",
-    "        var i = ids.indexOf(this);",
-    "        if (i < 0) {",
-    "            i = ids.length;",
-    "            ids.push(this);",
+    '        if (this === Array) return "[Function: Array]";',
+    '        if (this === Object) return "[Function: Object]";',
+    "        var i = this.name;",
+    '        if (typeof i != "number") {',
+    "            i = ++id;",
+    '            Object.defineProperty(this, "name", {',
+    "                get: function() {",
+    "                    return i;",
+    "                }",
+    "            });",
     "        }",
-    '        return "[Function: __func_" + i + "__]";',
+    '        return "[Function: " + i + "]";',
     "    }",
     "}();",
 ].join("\n");
@@ -21,16 +41,14 @@ exports.run_code = function(code) {
     };
     try {
         vm.runInNewContext([
-            "!function() {",
             FUNC_TOSTRING,
+            "!function() {",
             code,
             "}();",
         ].join("\n"), {
             console: {
                 log: function() {
-                    return console.log.apply(console, [].map.call(arguments, function(arg) {
-                        return typeof arg == "function" || arg && /Error$/.test(arg.name) ? arg.toString() : arg;
-                    }));
+                    return console.log.apply(console, [].map.call(arguments, safe_log));
                 }
             }
         }, { timeout: 5000 });
