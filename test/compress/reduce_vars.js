@@ -2327,3 +2327,58 @@ iife_assign: {
     }
     expect_stdout: "1"
 }
+
+assign_to_var: {
+    options = {
+        assignments: true,
+        join_vars: true,
+        loops: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(b) {
+            var a;
+            for (a = x; b;) return a;
+        }
+    }
+    expect: {
+        function f(b) {
+            for (var a = x; b;) return a;
+        }
+    }
+}
+
+issue_315: {
+    options = {
+        assignments: true,
+        evaluate: true,
+        join_vars: true,
+        keep_fargs: false,
+        loops: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(s) {
+            var w, _i, _len, _ref, _results;
+            _ref = s.trim().split(" ");
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                w = _ref[_i];
+                _results.push(w.toLowerCase());
+            }
+            return _results;
+        }("test"));
+    }
+    expect: {
+        console.log(function() {
+            for (var _ref = "test".trim().split(" "), _results = [], _i = 0, _len = _ref.length; _i < _len; _i++) {
+                var w = _ref[_i];
+                _results.push(w.toLowerCase());
+            }
+            return _results;
+        }());
+    }
+    expect_stdout: true
+}
