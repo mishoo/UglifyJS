@@ -424,3 +424,61 @@ issue_1898: {
         new Foo().bar();
     }
 }
+
+issue_1753: {
+    mangle = { safari10: true };
+    input: {
+        class SomeClass {
+            constructor(props) {
+                let pickedSets = [];
+                for (let i = 0; i < 6; i++) {
+                    pickedSets.push({
+                        mainDrawNumbers: [],
+                        extraDrawNumbers: []
+                    });
+                }
+            }
+        }
+    }
+    expect: {
+        class SomeClass {
+            constructor(r) {
+                let a = [];
+                for (let s = 0; s < 6; s++)
+                    a.push({
+                        mainDrawNumbers: [],
+                        extraDrawNumbers: []
+                    });
+            }
+        }
+    }
+}
+
+issue_1753_disable: {
+    mangle = { safari10: false }
+    input: {
+        class SomeClass {
+            constructor(props) {
+                let pickedSets = [];
+                for (let i = 0; i < 6; i++) {
+                    pickedSets.push({
+                        mainDrawNumbers: [],
+                        extraDrawNumbers: []
+                    });
+                }
+            }
+        }
+    }
+    expect: {
+        class SomeClass {
+            constructor(r) {
+                let a = [];
+                for (let r = 0; r < 6; r++)
+                    a.push({
+                        mainDrawNumbers: [],
+                        extraDrawNumbers: []
+                    });
+            }
+        }
+    }
+}
