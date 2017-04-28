@@ -370,3 +370,25 @@ issue_1613: {
   }
   expect_exact: "const n=1;const c={name:n};"
 }
+
+format_methods: {
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        class A extends B {constructor(a){x()} static s(b,c){y()} run(d,e,f){z()}}
+    }
+    expect_exact: [
+        "class A extends B {",
+        "    constructor(a) {",
+        "        x();",
+        "    }",
+        "    static s(b, c) {",
+        "        y();",
+        "    }",
+        "    run(d, e, f) {",
+        "        z();",
+        "    }",
+        "}",
+    ]
+}
