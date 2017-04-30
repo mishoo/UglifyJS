@@ -45,7 +45,7 @@ template_strings_without_ascii_only: {
         bar
         ↂωↂ`
     }
-    expect_exact: "var foo=`foo\n        bar\n        ↂωↂ`;"
+    expect_exact: "var foo=`foo\\n        bar\\n        ↂωↂ`;"
 }
 
 template_string_with_constant_expression: {
@@ -351,7 +351,8 @@ template_starting_with_newline: {
             return `
 this is a template string!`;
         };
-    } expect_exact: "function foo(e){return`\nthis is a template string!`}"
+    }
+    expect_exact: "function foo(e){return`\\nthis is a template string!`}"
 }
 
 template_with_newline: {
@@ -363,7 +364,8 @@ template_with_newline: {
             return `yep,
 this is a template string!`;
         };
-    } expect_exact: "function foo(e){return`yep,\nthis is a template string!`}"
+    }
+    expect_exact: "function foo(e){return`yep,\\nthis is a template string!`}"
 }
 
 template_ending_with_newline: {
@@ -375,5 +377,26 @@ template_ending_with_newline: {
             return `this is a template string!
 `;
         };
-    } expect_exact: "function foo(e){return`this is a template string!\n`}"
+    }
+    expect_exact: "function foo(e){return`this is a template string!\\n`}"
+}
+
+issue_1856: {
+    beautify = {
+        ascii_only: false,
+    }
+    input: {
+        console.log(`\\n\\r\\u2028\\u2029\n\r\u2028\u2029`);
+    }
+    expect_exact: "console.log(`\\\\n\\\\r\\\\u2028\\\\u2029\\n\\r\\u2028\\u2029`);"
+}
+
+issue_1856_ascii_only: {
+    beautify = {
+        ascii_only: true,
+    }
+    input: {
+        console.log(`\\n\\r\\u2028\\u2029\n\r\u2028\u2029`);
+    }
+    expect_exact: "console.log(`\\\\n\\\\r\\\\u2028\\\\u2029\\n\\r\\u2028\\u2029`);"
 }
