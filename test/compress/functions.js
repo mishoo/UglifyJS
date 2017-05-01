@@ -145,3 +145,25 @@ issue_1841_2: {
     }
     expect_exact: "42"
 }
+
+function_returning_constant_literal: {
+    options = {
+        reduce_vars: true,
+        unsafe: true,
+        toplevel: true,
+        evaluate: true,
+        cascade: true,
+        unused: true,
+    }
+    input: {
+        function greeter() {
+            return { message: 'Hello there' };
+        }
+        var greeting = greeter();
+        console.log(greeting.message);
+    }
+    expect: {
+        console.log("Hello there");
+    }
+    expect_stdout: "Hello there"
+}
