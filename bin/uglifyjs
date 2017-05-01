@@ -205,6 +205,10 @@ function run() {
                 console.error(line.slice(0, col).replace(/\S/g, " ") + "^");
             }
         }
+        if (ex.defs) {
+            console.error("Supported options:");
+            console.error(ex.defs);
+        }
         fatal("ERROR: " + ex.message);
     }
     if (program.output == "spidermonkey") {
