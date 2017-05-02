@@ -2059,3 +2059,21 @@ double_def: {
         (a = a && y)();
     }
 }
+
+toplevel_single_reference: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        for (var b in x) {
+            var a = b;
+            b(a);
+        }
+    }
+    expect: {
+        var a;
+        for (var b in x)
+            b(a = b);
+    }
+}
