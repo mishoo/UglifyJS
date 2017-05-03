@@ -2114,3 +2114,35 @@ unused_orig: {
     }
     expect_stdout: "3 1"
 }
+
+issue_315: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(s) {
+            var w, _i, _len, _ref, _results;
+            _ref = s.trim().split(" ");
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                w = _ref[_i];
+                _results.push(w.toLowerCase());
+            }
+            return _results;
+        }("test"));
+    }
+    expect: {
+        console.log(function() {
+            var w, _i, _len, _ref, _results;
+            for (_results = [], _i = 0, _len = (_ref = "test".trim().split(" ")).length; _i < _len ; _i++)
+                w = _ref[_i], _results.push(w.toLowerCase());
+            return _results;
+        }());
+    }
+    expect_stdout: true
+}
