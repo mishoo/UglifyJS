@@ -2077,3 +2077,40 @@ toplevel_single_reference: {
             b(a = b);
     }
 }
+
+unused_orig: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        console.log(function(b) {
+            var a;
+            var c = b;
+            for (var d in c) {
+                var a = c[0];
+                return --b + a;
+            }
+            try {
+            } catch (e) {
+                --b + a;
+            }
+            a && a.NaN;
+        }([2]), a);
+    }
+    expect: {
+        var a = 1;
+        console.log(function(b) {
+            var c = b;
+            for (var d in c) {
+                var a = c[0];
+                return --b + a;
+            }
+            a && a.NaN;
+        }([2]), a);
+    }
+    expect_stdout: "3 1"
+}
