@@ -1114,3 +1114,36 @@ issue_1838: {
         "}",
     ]
 }
+
+var_catch_toplevel: {
+    options = {
+        conditionals: true,
+        negate_iife: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            a--;
+            try {
+                a++;
+            } catch(a) {
+                if (a) var a;
+                var a = 10;
+            }
+        }
+        f();
+    }
+    expect: {
+        !function() {
+            a--;
+            try {
+                a++;
+            } catch(a) {
+                var a;
+            }
+        }();
+    }
+}
