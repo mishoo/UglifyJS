@@ -2146,3 +2146,24 @@ issue_315: {
     }
     expect_stdout: true
 }
+
+lvalues_def: {
+    options = {
+        collapse_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 0, b = 1;
+        var a = b++, b = +function() {}();
+        a && a[a++];
+        console.log(a, b);
+    }
+    expect: {
+        var a = 0, b = 1;
+        var a = b++, b = +void 0;
+        a && a[a++];
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
