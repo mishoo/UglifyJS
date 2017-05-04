@@ -2167,3 +2167,22 @@ lvalues_def: {
     }
     expect_stdout: true
 }
+
+compound_assignment: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        a = 1;
+        a += a + 2;
+        console.log(a);
+    }
+    expect: {
+        var a;
+        a = 1;
+        a += a + 2;
+        console.log(a);
+    }
+    expect_stdout: "4"
+}
