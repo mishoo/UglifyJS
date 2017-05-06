@@ -93,3 +93,57 @@ issue_485_crashing_1530: {
         this, void 0;
     }
 }
+
+issue_1841_1: {
+    options = {
+        keep_fargs: false,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var b = 10;
+        !function(arg) {
+            for (var key in "hi")
+                var n = arg.baz, n = [ b = 42 ];
+        }(--b);
+        console.log(b);
+    }
+    expect: {
+        var b = 10;
+        !function() {
+            for (var key in "hi") {
+                b = 42;
+            }
+        }(--b);
+        console.log(b);
+    }
+    expect_exact: "42"
+}
+
+issue_1841_2: {
+    options = {
+        keep_fargs: false,
+        pure_getters: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var b = 10;
+        !function(arg) {
+            for (var key in "hi")
+                var n = arg.baz, n = [ b = 42 ];
+        }(--b);
+        console.log(b);
+    }
+    expect: {
+        var b = 10;
+        !function(arg) {
+            for (var key in "hi") {
+                arg.baz, b = 42;
+            }
+        }(--b);
+        console.log(b);
+    }
+    expect_exact: "42"
+}

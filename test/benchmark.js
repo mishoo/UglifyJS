@@ -11,8 +11,8 @@ if (!args.length) {
 }
 args.push("--stats");
 var urls = [
-    "https://code.jquery.com/jquery-3.1.1.js",
-    "https://code.angularjs.org/1.6.1/angular.js",
+    "https://code.jquery.com/jquery-3.2.1.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js",
     "https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.9.0/math.js",
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js",
     "https://unpkg.com/react@15.3.2/dist/react.js",

@@ -2,7 +2,7 @@
 // derived from https://github.com/qfox/uglyfuzzer by Peter van der Zee
 "use strict";
 
-// check both cli and file modes of nodejs (!). See #1695 for details. and the various settings of uglify.
+// check both CLI and file modes of nodejs (!). See #1695 for details. and the various settings of uglify.
 // bin/uglifyjs s.js -c && bin/uglifyjs s.js -c passes=3 && bin/uglifyjs s.js -c passes=3 -m
 // cat s.js | node && node s.js && bin/uglifyjs s.js -c | node && bin/uglifyjs s.js -c passes=3 | node && bin/uglifyjs s.js -c passes=3 -m | node
 
@@ -20,49 +20,26 @@ var MAX_GENERATED_TOPLEVELS_PER_RUN = 1;
 var MAX_GENERATION_RECURSION_DEPTH = 12;
 var INTERVAL_COUNT = 100;
 
-var STMT_BLOCK = 0;
-var STMT_IF_ELSE = 1;
-var STMT_DO_WHILE = 2;
-var STMT_WHILE = 3;
-var STMT_FOR_LOOP = 4;
-var STMT_SEMI = 5;
-var STMT_EXPR = 6;
-var STMT_SWITCH = 7;
-var STMT_VAR = 8;
-var STMT_RETURN_ETC = 9;
-var STMT_FUNC_EXPR = 10;
-var STMT_TRY = 11;
-var STMT_C = 12;
-var STMTS_TO_USE = [
-    STMT_BLOCK,
-    STMT_IF_ELSE,
-    STMT_DO_WHILE,
-    STMT_WHILE,
-    STMT_FOR_LOOP,
-    STMT_SEMI,
-    STMT_EXPR,
-    STMT_SWITCH,
-    STMT_VAR,
-    STMT_RETURN_ETC,
-    STMT_FUNC_EXPR,
-    STMT_TRY,
-    STMT_C,
-];
-var STMT_ARG_TO_ID = {
-    block: STMT_BLOCK,
-    ifelse: STMT_IF_ELSE,
-    dowhile: STMT_DO_WHILE,
-    while: STMT_WHILE,
-    forloop: STMT_FOR_LOOP,
-    semi: STMT_SEMI,
-    expr: STMT_EXPR,
-    switch: STMT_SWITCH,
-    var: STMT_VAR,
-    stop: STMT_RETURN_ETC,
-    funcexpr: STMT_FUNC_EXPR,
-    try: STMT_TRY,
-    c: STMT_C,
-};
+var STMT_ARG_TO_ID = Object.create(null);
+var STMTS_TO_USE = [];
+function STMT_(name) {
+    return STMT_ARG_TO_ID[name] = STMTS_TO_USE.push(STMTS_TO_USE.length) - 1;
+}
+
+var STMT_BLOCK = STMT_("block");
+var STMT_IF_ELSE = STMT_("ifelse");
+var STMT_DO_WHILE = STMT_("dowhile");
+var STMT_WHILE = STMT_("while");
+var STMT_FOR_LOOP = STMT_("forloop");
+var STMT_FOR_IN = STMT_("forin");
+var STMT_SEMI = STMT_("semi");
+var STMT_EXPR = STMT_("expr");
+var STMT_SWITCH = STMT_("switch");
+var STMT_VAR = STMT_("var");
+var STMT_RETURN_ETC = STMT_("stop");
+var STMT_FUNC_EXPR = STMT_("funcexpr");
+var STMT_TRY = STMT_("try");
+var STMT_C = STMT_("c");
 
 var STMT_FIRST_LEVEL_OVERRIDE = -1;
 var STMT_SECOND_LEVEL_OVERRIDE = -1;
@@ -72,6 +49,7 @@ var num_iterations = +process.argv[2] || 1/0;
 var verbose = false; // log every generated test
 var verbose_interval = false; // log every 100 generated tests
 var verbose_error = false;
+var use_strict = false;
 for (var i = 2; i < process.argv.length; ++i) {
     switch (process.argv[i]) {
       case '-v':
@@ -101,6 +79,9 @@ for (var i = 2; i < process.argv.length; ++i) {
         STMT_SECOND_LEVEL_OVERRIDE = STMT_ARG_TO_ID[name];
         if (!(STMT_SECOND_LEVEL_OVERRIDE >= 0)) throw new Error('Unknown statement name; use -? to get a list');
         break;
+      case '--use-strict':
+        use_strict = true;
+        break;
       case '--stmt-depth-from-func':
         STMT_COUNT_FROM_GLOBAL = false;
         break;
@@ -127,6 +108,7 @@ for (var i = 2; i < process.argv.length; ++i) {
         console.log('-r <int>: maximum recursion depth for generator (higher takes longer)');
         console.log('-s1 <statement name>: force the first level statement to be this one (see list below)');
         console.log('-s2 <statement name>: force the second level statement to be this one (see list below)');
+        console.log('--use-strict: generate "use strict"');
         console.log('--stmt-depth-from-func: reset statement depth counter at each function, counts from global otherwise');
         console.log('--only-stmt <statement names>: a comma delimited white list of statements that may be generated');
         console.log('--without-stmt <statement names>: a comma delimited black list of statements never to generate');
@@ -296,15 +278,26 @@ var TYPEOF_OUTCOMES = [
 
 var loops = 0;
 var funcs = 0;
+var labels = 10000;
 
 function rng(max) {
     var r = randomBytes(2).readUInt16LE(0) / 65536;
     return Math.floor(max * r);
 }
 
+function strictMode() {
+    return use_strict && rng(4) == 0 ? '"use strict";' : '';
+}
+
 function createTopLevelCode() {
-    if (rng(2) === 0) return createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0);
-    return createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0);
+    return [
+        strictMode(),
+        'var a = 100, b = 10, c = 0;',
+        rng(2) == 0
+        ? createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0)
+        : createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0),
+        'console.log(null, a, b, c);' // preceding `null` makes for a cleaner output (empty string still shows up etc)
+    ].join('\n');
 }
 
 function createFunctions(n, recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
@@ -342,10 +335,22 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     var s = '';
     if (rng(5) === 0) {
         // functions with functions. lower the recursion to prevent a mess.
-        s = 'function ' + name + '(' + createParams() + '){' + createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth) + '}\n';
+        s = [
+            'function ' + name + '(' + createParams() + '){',
+            strictMode(),
+            createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth),
+            '}',
+            ''
+        ].join('\n');
     } else {
         // functions with statements
-        s = 'function ' + name + '(' + createParams() + '){' + createStatements(3, recurmax, canThrow, CANNOT_THROW, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}\n';
+        s = [
+            'function ' + name + '(' + createParams() + '){',
+            strictMode(),
+            createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+            '}',
+            ''
+        ].join('\n');
     }
 
     VAR_NAMES.length = namesLenBefore;
@@ -367,6 +372,40 @@ function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotRe
     return s;
 }
 
+function enableLoopControl(flag, defaultValue) {
+    return Array.isArray(flag) && flag.indexOf("") < 0 ? flag.concat("") : flag || defaultValue;
+}
+
+function createLabel(canBreak, canContinue) {
+    var label;
+    if (rng(10) < 3) {
+        label = ++labels;
+        if (Array.isArray(canBreak)) {
+            canBreak = canBreak.slice();
+        } else {
+            canBreak = canBreak ? [ "" ] : [];
+        }
+        canBreak.push(label);
+        if (Array.isArray(canContinue)) {
+            canContinue = canContinue.slice();
+        } else {
+            canContinue = canContinue ? [ "" ] : [];
+        }
+        canContinue.push(label);
+    }
+    return {
+        break: canBreak,
+        continue: canContinue,
+        target: label ? "L" + label + ": " : ""
+    };
+}
+
+function getLabel(label) {
+    if (!Array.isArray(label)) return "";
+    label = label[rng(label.length)];
+    return label && " L" + label;
+}
+
 function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
     ++stmtDepth;
     var loop = ++loops;
@@ -382,17 +421,36 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
 
     switch (target) {
       case STMT_BLOCK:
-        return '{' + createStatements(rng(5) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '}';
+        var label = createLabel(canBreak);
+        return label.target + '{' + createStatements(rng(5) + 1, recurmax, canThrow, label.break, canContinue, cannotReturn, stmtDepth) + '}';
       case STMT_IF_ELSE:
         return 'if (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ')' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + (rng(2) === 1 ? ' else ' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) : '');
       case STMT_DO_WHILE:
-        return '{var brake' + loop + ' = 5; do {' + createStatement(recurmax, canThrow, CAN_BREAK, CAN_CONTINUE, cannotReturn, stmtDepth) + '} while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0);}';
+        var label = createLabel(canBreak, canContinue);
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        return '{var brake' + loop + ' = 5; ' + label.target + 'do {' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '} while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0);}';
       case STMT_WHILE:
-        return '{var brake' + loop + ' = 5; while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0)' + createStatement(recurmax, canThrow, CAN_BREAK, CAN_CONTINUE, cannotReturn, stmtDepth) + '}';
+        var label = createLabel(canBreak, canContinue);
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        return '{var brake' + loop + ' = 5; ' + label.target + 'while ((' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && --brake' + loop + ' > 0)' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '}';
       case STMT_FOR_LOOP:
-        return 'for (var brake' + loop + ' = 5; (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && brake' + loop + ' > 0; --brake' + loop + ')' + createStatement(recurmax, canThrow, CAN_BREAK, CAN_CONTINUE, cannotReturn, stmtDepth);
+        var label = createLabel(canBreak, canContinue);
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        return label.target + 'for (var brake' + loop + ' = 5; (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ') && brake' + loop + ' > 0; --brake' + loop + ')' + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
+      case STMT_FOR_IN:
+        var label = createLabel(canBreak, canContinue);
+        canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
+        canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
+        var optElementVar = '';
+        if (rng(5) > 1) {
+            optElementVar = 'c = 1 + c; var ' + createVarName(MANDATORY) + ' = expr' + loop + '[key' + loop + ']; ';
+        }
+        return '{var expr' + loop + ' = ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '; ' + label.target + ' for (var key' + loop + ' in expr' + loop + ') {' + optElementVar + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + '}}';
       case STMT_SEMI:
-        return ';';
+        return use_strict && rng(20) === 0 ? '"use strict";' : ';';
       case STMT_EXPR:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';';
       case STMT_SWITCH:
@@ -424,8 +482,8 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
           case 1:
           case 2:
           case 3:
-            if (canBreak && rng(5) === 0) return 'break;';
-            if (canContinue && rng(5) === 0) return 'continue;';
+            if (canBreak && rng(5) === 0) return 'break' + getLabel(canBreak) + ';';
+            if (canContinue && rng(5) === 0) return 'continue' + getLabel(canContinue) + ';';
             if (cannotReturn) return createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
             if (rng(3) == 0) return '/*3*/return;';
             return 'return ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
@@ -470,25 +528,27 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
 
 function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
     var hadDefault = false;
-    var s = '';
+    var s = [''];
+    canBreak = enableLoopControl(canBreak, CAN_BREAK);
     while (n-- > 0) {
         //hadDefault = n > 0; // disables weird `default` clause positioning (use when handling destabilizes)
         if (hadDefault || rng(5) > 0) {
-            s += '' +
-                'case ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':\n' +
-                createStatements(rng(3) + 1, recurmax, canThrow, CAN_BREAK, canContinue, cannotReturn, stmtDepth) +
-                '\n' +
-                (rng(10) > 0 ? ' break;' : '/* fall-through */') +
-                '\n';
+            s.push(
+                'case ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':',
+                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                rng(10) > 0 ? ' break;' : '/* fall-through */',
+                ''
+            );
         } else {
             hadDefault = true;
-            s += '' +
-                'default:\n' +
-                createStatements(rng(3) + 1, recurmax, canThrow, CAN_BREAK, canContinue, cannotReturn, stmtDepth) +
-                '\n';
+            s.push(
+                'default:',
+                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                ''
+            );
         }
     }
-    return s;
+    return s.join('\n');
 }
 
 function createExpression(recurmax, noComma, stmtDepth, canThrow) {
@@ -531,36 +591,65 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createExpression(recurmax, noComma, stmtDepth, canThrow) + '?' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ':' + createExpression(recurmax, noComma, stmtDepth, canThrow);
       case p++:
+      case p++:
         var nameLenBefore = VAR_NAMES.length;
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
-        if (name === 'c') name = 'a';
-        var s = '';
-        switch(rng(4)) {
+        if (name == 'c') name = 'a';
+        var s = [];
+        switch (rng(5)) {
           case 0:
-            s = '(function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '})()';
+            s.push(
+                '(function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '})()'
+            );
             break;
           case 1:
-            s = '+function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}()';
+            s.push(
+                '+function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}()'
+            );
             break;
           case 2:
-            s = '!function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}()';
+            s.push(
+                '!function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}()'
+            );
+            break;
+          case 3:
+            s.push(
+                'void function ' + name + '(){',
+                strictMode(),
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}()'
+            );
             break;
           default:
-            s = 'void function ' + name + '(){' + createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth) + '}()';
+            var instantiate = rng(4) ? 'new ' : '';
+            s.push(
+                instantiate + 'function ' + name + '(){',
+                strictMode()
+            );
+            if (instantiate) for (var i = rng(4); --i >= 0;) {
+                if (rng(2)) s.push('this.' + getDotKey() + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
+                else  s.push('this[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']' + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
+            }
+            s.push(
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                '}'
+            );
             break;
         }
         VAR_NAMES.length = nameLenBefore;
-        return s;
+        return s.join('\n');
       case p++:
       case p++:
         return createTypeofExpr(recurmax, stmtDepth, canThrow);
-      case p++:
-        return [
-            'new function() {',
-            rng(2) ? '' : createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
-            'return ' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
-            '}'
-        ].join('\n');
       case p++:
       case p++:
         // more like a parser test but perhaps comment nodes mess up the analysis?
@@ -682,22 +771,23 @@ function _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
 function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
     // intentionally generate more hardcore ops
     if (--recurmax < 0) return createValue();
+    var assignee, expr;
     switch (rng(30)) {
       case 0:
         return '(c = c + 1, ' + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
       case 1:
         return '(' + createUnarySafePrefix() + '(' + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + '))';
       case 2:
-        var assignee = getVarName();
+        assignee = getVarName();
         return '(' + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
       case 3:
-        var assignee = getVarName();
-        var expr = '(' + assignee + '[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow)
+        assignee = getVarName();
+        expr = '(' + assignee + '[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow)
             + ']' + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
         return canThrow && rng(10) == 0 ? expr : '(' + assignee + ' && ' + expr + ')';
       case 4:
-        var assignee = getVarName();
-        var expr = '(' + assignee + '.' + getDotKey() + createAssignment()
+        assignee = getVarName();
+        expr = '(' + assignee + '.' + getDotKey() + createAssignment()
             + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
         return canThrow && rng(10) == 0 ? expr : '(' + assignee + ' && ' + expr + ')';
       default:
@@ -802,8 +892,8 @@ var default_options = {
     mangle: {
         "cache": null,
         "eval": false,
+        "ie8": false,
         "keep_fnames": false,
-        "screw_ie8": true,
         "toplevel": false,
     },
     output: infer_options(UglifyJS.OutputStream),
@@ -858,17 +948,27 @@ function log(options) {
     } else {
         console.log("// !!! uglify failed !!!");
         console.log(uglify_code.stack);
+        if (typeof original_result != "string") {
+            console.log();
+            console.log();
+            console.log("original stacktrace:");
+            console.log(original_result.stack);
+        }
     }
     console.log("minify(options):");
     options = JSON.parse(options);
     console.log(options);
     console.log();
-    if (!ok) {
+    if (!ok && typeof uglify_code == "string") {
         Object.keys(default_options).forEach(log_suspects.bind(null, options));
         console.log("!!!!!! Failed... round", round);
     }
 }
 
+var fallback_options = [ JSON.stringify({
+    compress: false,
+    mangle: false
+}) ];
 var minify_options = require("./ufuzz.json").map(function(options) {
     options.fromString = true;
     return JSON.stringify(options);
@@ -882,13 +982,9 @@ for (var round = 1; round <= num_iterations; round++) {
     loops = 0;
     funcs = 0;
 
-    original_code = [
-        "var a = 100, b = 10, c = 0;",
-        createTopLevelCode(),
-        "console.log(null, a, b, c);" // preceding `null` makes for a cleaner output (empty string still shows up etc)
-    ].join("\n");
-
-    minify_options.forEach(function(options) {
+    original_code = createTopLevelCode();
+    original_result = sandbox.run_code(original_code);
+    (typeof original_result != "string" ? fallback_options : minify_options).forEach(function(options) {
         try {
             uglify_code = UglifyJS.minify(original_code, JSON.parse(options)).code;
         } catch (e) {
@@ -897,9 +993,10 @@ for (var round = 1; round <= num_iterations; round++) {
 
         ok = typeof uglify_code == "string";
         if (ok) {
-            original_result = sandbox.run_code(original_code);
             uglify_result = sandbox.run_code(uglify_code);
             ok = sandbox.same_stdout(original_result, uglify_result);
+        } else if (typeof original_result != "string") {
+            ok = uglify_code.name == original_result.name;
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
         else if (verbose_error && typeof original_result != "string") {
