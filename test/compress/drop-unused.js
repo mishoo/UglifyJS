@@ -1016,7 +1016,8 @@ issue_1715_3: {
             try {
                 console;
             } catch (a) {
-                var a = x();
+                var a;
+                x();
             }
         }
         f();
@@ -1109,4 +1110,121 @@ delete_assign_2: {
         console.log((0 / 0, !0));
     }
     expect_stdout: true
+}
+
+drop_var: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(a, b);
+        var a = 1, b = 2;
+        console.log(a, b);
+        var a = 3;
+        console.log(a, b);
+    }
+    expect: {
+        console.log(a, b);
+        var a = 1, b = 2;
+        console.log(a, b);
+        a = 3;
+        console.log(a, b);
+    }
+    expect_stdout: [
+        "undefined undefined",
+        "1 2",
+        "3 2",
+    ]
+}
+
+issue_1830_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        !function() {
+            L: for (var b = console.log(1); !1;) continue L;
+        }();
+    }
+    expect: {
+        !function() {
+            L: for (console.log(1); !1;) continue L;
+        }();
+    }
+    expect_stdout: "1"
+}
+
+issue_1830_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        !function() {
+            L: for (var a = 1, b = console.log(a); --a;) continue L;
+        }();
+    }
+    expect: {
+        !function() {
+            var a = 1;
+            L: for (console.log(a); --a;) continue L;
+        }();
+    }
+    expect_stdout: "1"
+}
+
+issue_1838: {
+    options = {
+        join_vars: true,
+        loops: true,
+        unused: true,
+    }
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        function f() {
+            var b = a;
+            while (c);
+        }
+    }
+    expect_exact: [
+        "function f() {",
+        "    for (a; c; ) ;",
+        "}",
+    ]
+}
+
+var_catch_toplevel: {
+    options = {
+        conditionals: true,
+        negate_iife: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            a--;
+            try {
+                a++;
+            } catch(a) {
+                if (a) var a;
+                var a = 10;
+            }
+        }
+        f();
+    }
+    expect: {
+        !function() {
+            a--;
+            try {
+                a++;
+            } catch(a) {
+                var a;
+            }
+        }();
+    }
 }

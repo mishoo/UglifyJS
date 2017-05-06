@@ -11,7 +11,7 @@ describe("let", function() {
             s += "var v" + i + "=0;";
         }
         s += '}';
-        var result = Uglify.minify(s, {fromString: true, compress: false});
+        var result = Uglify.minify(s, {compress: false});
 
         // Verify that select keywords and reserved keywords not produced
         assert.strictEqual(result.code.indexOf("var let="), -1);

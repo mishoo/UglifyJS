@@ -10,10 +10,6 @@ unary_prefix: {
             return x;
         }());
     }
-    expect: {
-        console.log(function() {
-            return -2 / 3;
-        }());
-    }
+    expect_exact: "console.log(-2/3);"
     expect_stdout: true
 }

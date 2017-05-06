@@ -460,7 +460,7 @@ issue_1758: {
         console.log(function(c) {
             var undefined = 42;
             return function() {
-                return c--, c--, c.toString(), void 0;
+                return c--, c--, void c.toString();
             }();
         }());
     }
@@ -481,12 +481,12 @@ delete_seq_1: {
         console.log(delete (1, 0 / 0));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((1 / 0, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((0 / 0, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }
@@ -505,12 +505,12 @@ delete_seq_2: {
         console.log(delete (1, 2, 0 / 0));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((1 / 0, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((0 / 0, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }
@@ -530,12 +530,12 @@ delete_seq_3: {
         console.log(delete (1, 2, 0 / 0));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((Infinity, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((0 / 0, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }
@@ -606,7 +606,107 @@ delete_seq_6: {
     }
     expect: {
         var a;
-        console.log((a, !0));
+        console.log(!0);
     }
     expect_stdout: true
+}
+
+side_effects: {
+    options = {
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        0, a(), 1, b(), 2, c(), 3;
+    }
+    expect: {
+        a(), b(), c();
+    }
+}
+
+side_effects_cascade_1: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a, b) {
+            a -= 42;
+            if (a < 0) a = 0;
+            b.a = a;
+        }
+    }
+    expect: {
+        function f(a, b) {
+            (a -= 42) < 0 && (a = 0), b.a = a;
+        }
+    }
+}
+
+side_effects_cascade_2: {
+    options = {
+        cascade: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a, b) {
+            b = a,
+            !a + (b += a) || (b += a),
+            b = a,
+            b;
+        }
+    }
+    expect: {
+        function f(a, b) {
+            b = a,
+            !a + (b += a) || (b += a),
+            b = a;
+        }
+    }
+}
+
+side_effects_cascade_3: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a, b) {
+            "foo" ^ (b += a),
+            b ? false : (b = a) ? -1 : (b -= a) - (b ^= a),
+            a-- || !a,
+            a;
+        }
+    }
+    expect: {
+        function f(a, b) {
+            !(b += a) && ((b = a) || (b -= a, b ^= a)),
+            --a;
+        }
+    }
+}
+
+issue_27: {
+    options = {
+        cascade: true,
+        passes: 2,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(jQuery) {
+            var $;
+            $ = jQuery;
+            $("body").addClass("foo");
+        })(jQuery);
+    }
+    expect: {
+        (function(jQuery) {
+            jQuery("body").addClass("foo");
+        })(jQuery);
+    }
 }

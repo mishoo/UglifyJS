@@ -1,6 +1,6 @@
 function_iife_catch: {
     mangle = {
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         function f(n) {
@@ -21,7 +21,7 @@ function_iife_catch: {
 
 function_iife_catch_ie8: {
     mangle = {
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         function f(n) {
@@ -42,7 +42,7 @@ function_iife_catch_ie8: {
 
 function_catch_catch: {
     mangle = {
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         var o = 0;
@@ -70,7 +70,7 @@ function_catch_catch: {
 
 function_catch_catch_ie8: {
     mangle = {
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         var o = 0;

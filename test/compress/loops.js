@@ -245,7 +245,7 @@ issue_1532: {
 issue_186: {
     beautify = {
         beautify: false,
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         var x = 3;
@@ -264,7 +264,7 @@ issue_186: {
 issue_186_ie8: {
     beautify = {
         beautify: false,
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         var x = 3;
@@ -283,7 +283,7 @@ issue_186_ie8: {
 issue_186_beautify: {
     beautify = {
         beautify: true,
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         var x = 3;
@@ -310,7 +310,7 @@ issue_186_beautify: {
 issue_186_beautify_ie8: {
     beautify = {
         beautify: true,
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         var x = 3;
@@ -340,7 +340,7 @@ issue_186_bracketize: {
     beautify = {
         beautify: false,
         bracketize: true,
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         var x = 3;
@@ -360,7 +360,7 @@ issue_186_bracketize_ie8: {
     beautify = {
         beautify: false,
         bracketize: true,
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         var x = 3;
@@ -380,7 +380,7 @@ issue_186_beautify_bracketize: {
     beautify = {
         beautify: true,
         bracketize: true,
-        screw_ie8: true,
+        ie8: false,
     }
     input: {
         var x = 3;
@@ -412,7 +412,7 @@ issue_186_beautify_bracketize_ie8: {
     beautify = {
         beautify: true,
         bracketize: true,
-        screw_ie8: false,
+        ie8: true,
     }
     input: {
         var x = 3;

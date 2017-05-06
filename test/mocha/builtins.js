@@ -7,7 +7,7 @@ describe("builtins", function() {
             "    return [Object,Array,Function,Number,String,Boolean,Error,Math,Date,RegExp,Symbol,Map,Promise,Proxy,Reflect,Set,WeakMap,WeakSet,Float32Array,something];\n" +
             "};";
 
-        var result = UglifyJS.minify(test, {fromString: true, parse: {bare_returns: true}}).code;
+        var result = UglifyJS.minify(test, {parse: {bare_returns: true}}).code;
 
         assert.strictEqual(result.indexOf("something"), -1);
 

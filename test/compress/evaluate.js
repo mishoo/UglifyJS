@@ -1016,12 +1016,12 @@ delete_binary_1: {
         console.log(delete (true && (0 / 0)));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((1 / 0, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((NaN, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }
@@ -1042,12 +1042,12 @@ delete_binary_2: {
         console.log(delete (false || (0 / 0)));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((Infinity, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((NaN, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
     expect_stdout: true
 }

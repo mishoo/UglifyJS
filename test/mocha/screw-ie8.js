@@ -13,9 +13,7 @@ describe("screw-ie8", function () {
                     }\
                     console.log('undefined is ' + undefined);\
                     return b === undefined;\
-                };", {
-                    fromString: true
-                }
+                };"
             ).code,
             'function a(o){try{throw"Stuff"}catch(o){console.log("caught: "+o)}return console.log("undefined is "+void 0),void 0===o}'
         );

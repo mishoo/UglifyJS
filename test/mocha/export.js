@@ -13,7 +13,7 @@ describe("Export", function() {
         ];
 
         var test = function(code) {
-            return uglify.parse(code, {fromString: true});
+            return uglify.parse(code);
         };
 
         var extractNames = function(symbols) {

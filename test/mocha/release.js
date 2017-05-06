@@ -42,8 +42,8 @@ describe("test/jetstream.js", function() {
         run("npm", ["install", "phantomjs-prebuilt@2.1.14"], done);
     });
     [
-        "-mc warnings=false",
-        "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto,warnings=false",
+        "-mc",
+        "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
     ].forEach(function(options) {
         it("Should pass with options " + options, function(done) {
             var args = options.split(/ /);

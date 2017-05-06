@@ -172,7 +172,7 @@ describe("Function", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function(e) {
@@ -191,7 +191,7 @@ describe("Function", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function(e) {
@@ -209,7 +209,7 @@ describe("Function", function() {
         ];
         var test = function(code) {
             return function () {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function (e) {
@@ -238,7 +238,7 @@ describe("Function", function() {
         ];
         var test = function(code) {
             return function () {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function (e) {
