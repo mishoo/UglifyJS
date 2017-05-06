@@ -2101,8 +2101,8 @@ issue_1865: {
         unsafe: true,
     }
     input: {
-        function f(a) {
-            a.b = false;
+        function f(some) {
+            some.thing = false;
         }
         console.log(function() {
             var some = { thing: true };
@@ -2111,8 +2111,8 @@ issue_1865: {
         }());
     }
     expect: {
-        function f(a) {
-            a.b = false;
+        function f(some) {
+            some.thing = false;
         }
         console.log(function() {
             var some = { thing: true };
