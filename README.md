@@ -42,8 +42,7 @@ in sequence and apply any compression options.  The files are parsed in the
 same global scope, that is, a reference from a file to some
 variable/function declared in another file will be matched properly.
 
-If you want to read from STDIN instead, pass a single dash instead of input
-files.
+If no input file is specified, UglifyJS will read from STDIN.
 
 If you wish to pass your options before the input files, separate the two with
 a double dash to prevent input files being used as option arguments:
