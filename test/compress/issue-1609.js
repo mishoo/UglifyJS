@@ -18,9 +18,7 @@ chained_evaluation_1: {
     expect: {
         (function() {
             (function() {
-                var c;
-                c = f(1);
-                c.bar = 1;
+                f(1).bar = 1;
             })();
         })();
     }
@@ -46,9 +44,8 @@ chained_evaluation_2: {
     expect: {
         (function() {
             (function() {
-                var c, b = "long piece of string";
-                c = f(b);
-                c.bar = b;
+                var b = "long piece of string";
+                f(b).bar = b;
             })();
         })();
     }

@@ -159,7 +159,7 @@ negate_iife_4: {
         })();
     }
     expect: {
-        (function(){ return t })() ? console.log(true) : console.log(false), function(){
+        !function(){ return t }() ? console.log(false) : console.log(true), function(){
             console.log("something");
         }();
     }
@@ -183,7 +183,7 @@ negate_iife_5: {
         })();
     }
     expect: {
-        (function(){ return t })() ? foo(true) : bar(false), function(){
+        !function(){ return t }() ? bar(false) : foo(true), function(){
             console.log("something");
         }();
     }
@@ -207,7 +207,7 @@ negate_iife_5_off: {
         })();
     }
     expect: {
-        (function(){ return t })() ? foo(true) : bar(false), function(){
+        !function(){ return t }() ? bar(false) : foo(true), function(){
             console.log("something");
         }();
     }

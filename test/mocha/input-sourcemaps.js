@@ -25,9 +25,9 @@ describe("input sourcemaps", function() {
         transpilemap = sourceMap || getMap();
 
         var result = Uglify.minify(transpiled, {
-            fromString: true,
-            inSourceMap: transpilemap,
-            outSourceMap: true
+            sourceMap: {
+                content: transpilemap
+            }
         });
 
         map = new SourceMapConsumer(result.map);

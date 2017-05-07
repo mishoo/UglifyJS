@@ -4,7 +4,7 @@ var assert = require("assert");
 describe("Yield", function() {
     it("Should not delete statements after yield", function() {
         var js = 'function *foo(bar) { yield 1; yield 2; return 3; }';
-        var result = UglifyJS.minify(js, {fromString: true});
+        var result = UglifyJS.minify(js);
         assert.strictEqual(result.code, 'function*foo(e){return yield 1,yield 2,3}');
     });
 
@@ -46,21 +46,21 @@ describe("Yield", function() {
 
     it("Should be able to compress its expression", function() {
         assert.strictEqual(
-            UglifyJS.minify("function *f() { yield 3-4; }", {fromString: true, compress: true}).code,
+            UglifyJS.minify("function *f() { yield 3-4; }", {compress: true}).code,
             "function*f(){yield-1}"
         );
     });
 
     it("Should keep undefined after yield without compression if found in ast", function() {
         assert.strictEqual(
-            UglifyJS.minify("function *f() { yield undefined; yield; yield* undefined; yield void 0}", {fromString: true, compress: false}).code,
+            UglifyJS.minify("function *f() { yield undefined; yield; yield* undefined; yield void 0}", {compress: false}).code,
             "function*f(){yield undefined;yield;yield*undefined;yield void 0}"
         );
     });
 
     it("Should be able to drop undefined after yield if necessary with compression", function() {
         assert.strictEqual(
-            UglifyJS.minify("function *f() { yield undefined; yield; yield* undefined; yield void 0}", {fromString: true, compress: true}).code,
+            UglifyJS.minify("function *f() { yield undefined; yield; yield* undefined; yield void 0}", {compress: true}).code,
             "function*f(){yield,yield,yield*void 0,yield}"
         );
     });

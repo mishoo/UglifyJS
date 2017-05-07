@@ -10,7 +10,7 @@ describe("Arrow functions", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function(e) {
@@ -28,7 +28,7 @@ describe("Arrow functions", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function(e) {
@@ -49,7 +49,7 @@ describe("Arrow functions", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function(e) {
@@ -68,7 +68,7 @@ describe("Arrow functions", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code, {fromString: true});
+                uglify.parse(code);
             }
         }
         var error = function(e) {
@@ -385,7 +385,6 @@ describe("Arrow functions", function() {
     it("Should handle arrow function with bind", function() {
         function minify(code) {
             return uglify.minify(code, {
-                fromString: true,
                 mangle: false
             }).code;
         }

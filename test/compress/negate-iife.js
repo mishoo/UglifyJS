@@ -25,11 +25,9 @@ negate_iife_2: {
         negate_iife: true
     };
     input: {
-        (function(){ return {} })().x = 10; // should not transform this one
-    }
-    expect: {
         (function(){ return {} })().x = 10;
     }
+    expect_exact: "({}).x=10;"
 }
 
 negate_iife_2_side_effects: {
@@ -38,11 +36,9 @@ negate_iife_2_side_effects: {
         side_effects: true,
     }
     input: {
-        (function(){ return {} })().x = 10; // should not transform this one
-    }
-    expect: {
         (function(){ return {} })().x = 10;
     }
+    expect_exact: "({}).x=10;"
 }
 
 negate_iife_3: {

@@ -131,7 +131,7 @@ describe("Unicode", function() {
 
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(uglify.minify(tests[i][0], {
-                fromString: true, output: { ascii_only: true, ecma: 6}
+                output: { ascii_only: true, ecma: 6 }
             }).code, tests[i][1]);
         }
     });

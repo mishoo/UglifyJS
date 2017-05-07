@@ -34,7 +34,6 @@ describe("New", function() {
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
                 uglify.minify(tests[i], {
-                    fromString: true,
                     output: {beautify: true},
                     compress: false,
                     mangle: false
@@ -76,7 +75,6 @@ describe("New", function() {
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
                 uglify.minify(tests[i], {
-                    fromString: true,
                     output: {beautify: false},
                     compress: false,
                     mangle: false
