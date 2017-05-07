@@ -1,6 +1,6 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("spidermonkey export/import sanity test", function() {
     it("should produce a functional build when using --self with spidermonkey", function(done) {
@@ -15,18 +15,7 @@ describe("spidermonkey export/import sanity test", function() {
 
             eval(stdout);
             assert.strictEqual(typeof SpiderUglify, "object");
-
-            var ast = SpiderUglify.parse("foo([true,,2+3]);");
-            assert.strictEqual(true, ast instanceof SpiderUglify.AST_Node);
-
-            ast.figure_out_scope();
-            ast = SpiderUglify.Compressor({}).compress(ast);
-            assert.strictEqual(true, ast instanceof SpiderUglify.AST_Node);
-
-            var stream = SpiderUglify.OutputStream({});
-            ast.print(stream);
-            var code = stream.toString();
-            assert.strictEqual(code, "foo([!0,,5]);");
+            assert.strictEqual(SpiderUglify.minify("foo([true,,2+3]);").code, "foo([!0,,5]);");
 
             done();
         });

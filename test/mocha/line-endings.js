@@ -1,4 +1,4 @@
-var Uglify = require('../../');
+var Uglify = require("../node");
 var assert = require("assert");
 
 describe("line-endings", function() {

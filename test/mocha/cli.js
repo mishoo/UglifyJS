@@ -19,7 +19,7 @@ describe("bin/uglifyjs", function () {
             eval(stdout);
 
             assert.strictEqual(typeof WrappedUglifyJS, 'object');
-            assert.strictEqual(true, WrappedUglifyJS.parse('foo;') instanceof WrappedUglifyJS.AST_Node);
+            assert.strictEqual(WrappedUglifyJS.minify("foo([true,,2+3]);").code, "foo([!0,,5]);");
 
             done();
         });

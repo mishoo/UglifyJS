@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("With", function() {
     it("Should throw syntaxError when using with statement in strict mode", function() {

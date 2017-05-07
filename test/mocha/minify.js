@@ -183,13 +183,4 @@ describe("minify", function() {
             });
         });
     });
-
-    describe("Compressor", function() {
-        it("should be backward compatible with ast.transform(compressor)", function() {
-            var ast = Uglify.parse("function f(a){for(var i=0;i<a;i++)console.log(i)}");
-            ast.figure_out_scope();
-            ast = ast.transform(Uglify.Compressor());
-            assert.strictEqual(ast.print_to_string(), "function f(a){for(var i=0;i<a;i++)console.log(i)}");
-        });
-    })
 });
