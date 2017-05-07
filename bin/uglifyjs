@@ -107,6 +107,12 @@ if (program.nameCache) {
         }
     }
 }
+if (program.output == "ast") {
+    options.output = {
+        ast: true,
+        code: false
+    };
+}
 if (program.parse) {
     if (program.parse.acorn || program.parse.spidermonkey) {
         if (program.sourceMap) fatal("ERROR: inline source map only works with built-in parser");
@@ -211,7 +217,23 @@ function run() {
         }
         fatal("ERROR: " + ex.message);
     }
-    if (program.output == "spidermonkey") {
+    if (program.output == "ast") {
+        console.log(JSON.stringify(result.ast, function(key, value) {
+            if (skip_key(key)) return;
+            if (value instanceof UglifyJS.AST_Token) return;
+            if (value instanceof UglifyJS.Dictionary) return;
+            if (value instanceof UglifyJS.AST_Node) {
+                var result = {
+                    _class: "AST_" + value.TYPE
+                };
+                value.CTOR.PROPS.forEach(function(prop) {
+                    result[prop] = value[prop];
+                });
+                return result;
+            }
+            return value;
+        }, 2));
+    } else if (program.output == "spidermonkey") {
         console.log(JSON.stringify(UglifyJS.minify(result.code, {
             compress: false,
             mangle: false,
@@ -351,4 +373,17 @@ function to_cache(key) {
         };
     }
     return cache[key];
+}
+
+function skip_key(key) {
+    switch (key) {
+      case "cname":
+      case "enclosed":
+      case "parent_scope":
+      case "scope":
+      case "thedef":
+      case "uses_eval":
+      case "uses_with":
+        return true;
+    }
 }
