@@ -15,6 +15,7 @@ var path = require("path");
 var program = require("commander");
 var UglifyJS = require("../tools/node");
 
+var skip_keys = [ "cname", "enclosed", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
 var files = {};
 var options = {
     compress: false,
@@ -106,6 +107,12 @@ if (program.nameCache) {
             options.mangle.properties.cache = to_cache("props");
         }
     }
+}
+if (program.output == "ast") {
+    options.output = {
+        ast: true,
+        code: false
+    };
 }
 if (program.parse) {
     if (program.parse.acorn || program.parse.spidermonkey) {
@@ -211,7 +218,23 @@ function run() {
         }
         fatal("ERROR: " + ex.message);
     }
-    if (program.output == "spidermonkey") {
+    if (program.output == "ast") {
+        console.log(JSON.stringify(result.ast, function(key, value) {
+            if (skip_key(key)) return;
+            if (value instanceof UglifyJS.AST_Token) return;
+            if (value instanceof UglifyJS.Dictionary) return;
+            if (value instanceof UglifyJS.AST_Node) {
+                var result = {
+                    _class: "AST_" + value.TYPE
+                };
+                value.CTOR.PROPS.forEach(function(prop) {
+                    result[prop] = value[prop];
+                });
+                return result;
+            }
+            return value;
+        }, 2));
+    } else if (program.output == "spidermonkey") {
         console.log(JSON.stringify(UglifyJS.minify(result.code, {
             compress: false,
             mangle: false,
@@ -237,8 +260,8 @@ function run() {
 }
 
 function fatal(message) {
-  console.error(message);
-  process.exit(1);
+    console.error(message);
+    process.exit(1);
 }
 
 // A file glob function that only supports "*" and "?" wildcards in the basename.
@@ -351,4 +374,8 @@ function to_cache(key) {
         };
     }
     return cache[key];
+}
+
+function skip_key(key) {
+    return skip_keys.indexOf(key) >= 0;
 }

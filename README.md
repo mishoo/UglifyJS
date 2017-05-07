@@ -95,8 +95,9 @@ The available options are:
                                 `wrap_iife`  Wrap IIFEs in parenthesis. Note: you may
                                              want to disable `negate_iife` under
                                              compressor options.
-    -o, --output <file>         Output file (default STDOUT). Specify "spidermonkey"
-                                to dump SpiderMonkey AST format (as JSON) to STDOUT.
+    -o, --output <file>         Output file path (default STDOUT). Specify `ast` or
+                                `spidermonkey` to write UglifyJS or SpiderMonkey AST
+                                as JSON to STDOUT respectively.
     --comments [filter]         Preserve copyright comments in the output. By
                                 default this works like Google Closure, keeping
                                 JSDoc-style comments that contain "@license" or
