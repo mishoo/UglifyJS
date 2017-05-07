@@ -172,7 +172,7 @@ function run() {
     UglifyJS.AST_Node.warn_function = function(msg) {
         console.error("WARN:", msg);
     };
-    if (program.stats)  program.stats = Date.now();
+    if (program.stats) program.stats = Date.now();
     try {
         if (program.parse) {
             if (program.parse.acorn) {
@@ -192,8 +192,12 @@ function run() {
                 });
             }
         }
-        var result = UglifyJS.minify(files, options);
     } catch (ex) {
+        fatal("ERROR: " + ex.message);
+    }
+    var result = UglifyJS.minify(files, options);
+    if (result.error) {
+        var ex = result.error;
         if (ex.name == "SyntaxError") {
             console.error("Parse error at " + ex.filename + ":" + ex.line + "," + ex.col);
             var col = ex.col;
@@ -217,8 +221,7 @@ function run() {
             console.error(ex.defs);
         }
         fatal("ERROR: " + ex.message);
-    }
-    if (program.output == "ast") {
+    } else if (program.output == "ast") {
         console.log(JSON.stringify(result.ast, function(key, value) {
             if (skip_key(key)) return;
             if (value instanceof UglifyJS.AST_Token) return;
