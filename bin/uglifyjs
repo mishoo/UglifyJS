@@ -375,15 +375,7 @@ function to_cache(key) {
     return cache[key];
 }
 
+var skip_keys = [ "cname", "enclosed", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
 function skip_key(key) {
-    switch (key) {
-      case "cname":
-      case "enclosed":
-      case "parent_scope":
-      case "scope":
-      case "thedef":
-      case "uses_eval":
-      case "uses_with":
-        return true;
-    }
+    return skip_keys.indexOf(key) >= 0;
 }
