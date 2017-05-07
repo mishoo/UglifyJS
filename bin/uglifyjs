@@ -15,6 +15,7 @@ var path = require("path");
 var program = require("commander");
 var UglifyJS = require("../tools/node");
 
+var skip_keys = [ "cname", "enclosed", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
 var files = {};
 var options = {
     compress: false,
@@ -259,8 +260,8 @@ function run() {
 }
 
 function fatal(message) {
-  console.error(message);
-  process.exit(1);
+    console.error(message);
+    process.exit(1);
 }
 
 // A file glob function that only supports "*" and "?" wildcards in the basename.
@@ -375,7 +376,6 @@ function to_cache(key) {
     return cache[key];
 }
 
-var skip_keys = [ "cname", "enclosed", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
 function skip_key(key) {
     return skip_keys.indexOf(key) >= 0;
 }

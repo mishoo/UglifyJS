@@ -509,4 +509,15 @@ describe("bin/uglifyjs", function () {
             return JSON.stringify(map).replace(/"/g, '\\"');
         }
     });
+    it("Should dump AST as JSON", function(done) {
+        var command = uglifyjscmd + " test/input/global_defs/simple.js -mco ast";
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            var ast = JSON.parse(stdout);
+            assert.strictEqual(ast._class, "AST_Toplevel");
+            assert.ok(Array.isArray(ast.body));
+            done();
+        });
+    });
 });
