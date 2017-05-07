@@ -212,7 +212,14 @@ function run() {
         fatal("ERROR: " + ex.message);
     }
     if (program.output == "spidermonkey") {
-        console.log(JSON.stringify(UglifyJS.parse(result.code).to_mozilla_ast(), null, 2));
+        console.log(JSON.stringify(UglifyJS.minify(result.code, {
+            compress: false,
+            mangle: false,
+            output: {
+                ast: true,
+                code: false
+            }
+        }).ast.to_mozilla_ast(), null, 2));
     } else if (program.output) {
         fs.writeFileSync(program.output, result.code);
         if (result.map) {
@@ -278,9 +285,17 @@ function parse_js(flag, constants) {
     return function(value, options) {
         options = options || {};
         try {
-            UglifyJS.parse(value, {
-                expression: true
-            }).walk(new UglifyJS.TreeWalker(function(node) {
+            UglifyJS.minify(value, {
+                parse: {
+                    expression: true
+                },
+                compress: false,
+                mangle: false,
+                output: {
+                    ast: true,
+                    code: false
+                }
+            }).ast.walk(new UglifyJS.TreeWalker(function(node) {
                 if (node instanceof UglifyJS.AST_Assign) {
                     var name = node.left.print_to_string();
                     var value = node.right;
