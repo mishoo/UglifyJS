@@ -114,17 +114,18 @@ describe("minify", function() {
             }
         });
         it("Should fail with multiple input and inline source map", function() {
-            assert.throws(function() {
-                Uglify.minify([
-                    read("./test/input/issue-520/input.js"),
-                    read("./test/input/issue-520/output.js")
-                ], {
-                    sourceMap: {
-                        content: "inline",
-                        url: "inline"
-                    }
-                });
+            var result = Uglify.minify([
+                read("./test/input/issue-520/input.js"),
+                read("./test/input/issue-520/output.js")
+            ], {
+                sourceMap: {
+                    content: "inline",
+                    url: "inline"
+                }
             });
+            var err = result.error;
+            assert.ok(err instanceof Error);
+            assert.strictEqual(err.stack.split(/\n/)[0], "Error: inline source map only works with singular input");
         });
     });
 
@@ -170,17 +171,14 @@ describe("minify", function() {
     });
 
     describe("JS_Parse_Error", function() {
-        it("should throw syntax error", function() {
-            assert.throws(function() {
-                Uglify.minify("function f(a{}");
-            }, function(err) {
-                assert.ok(err instanceof Error);
-                assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token punc «{», expected punc «,»");
-                assert.strictEqual(err.filename, "0");
-                assert.strictEqual(err.line, 1);
-                assert.strictEqual(err.col, 12);
-                return true;
-            });
+        it("should return syntax error", function() {
+            var result = Uglify.minify("function f(a{}");
+            var err = result.error;
+            assert.ok(err instanceof Error);
+            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token punc «{», expected punc «,»");
+            assert.strictEqual(err.filename, "0");
+            assert.strictEqual(err.line, 1);
+            assert.strictEqual(err.col, 12);
         });
     });
 });
