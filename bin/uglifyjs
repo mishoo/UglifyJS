@@ -89,7 +89,7 @@ if (program.mangleProps) {
         if (typeof program.mangleProps != "object") program.mangleProps = {};
         if (!Array.isArray(program.mangleProps.reserved)) program.mangleProps.reserved = [];
         require("../tools/domprops").forEach(function(name) {
-            UglifyJS.push_uniq(program.mangleProps.reserved, name);
+            UglifyJS._push_uniq(program.mangleProps.reserved, name);
         });
     }
     if (typeof options.mangle != "object") options.mangle = {};
@@ -187,7 +187,7 @@ function run() {
         }
         var result = UglifyJS.minify(files, options);
     } catch (ex) {
-        if (ex instanceof UglifyJS.JS_Parse_Error) {
+        if (ex.name == "SyntaxError") {
             console.error("Parse error at " + ex.filename + ":" + ex.line + "," + ex.col);
             var col = ex.col;
             var lines = files[ex.filename].split(/\r?\n/);

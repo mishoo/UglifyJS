@@ -12,7 +12,7 @@
         stream._handle.setBlocking(true);
 });
 
-var UglifyJS = require("..");
+var UglifyJS = require("./node");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 

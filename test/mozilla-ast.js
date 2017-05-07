@@ -1,7 +1,7 @@
 // Testing UglifyJS <-> SpiderMonkey AST conversion
 // through generative testing.
 
-var UglifyJS = require(".."),
+var UglifyJS = require("./node"),
     escodegen = require("escodegen"),
     esfuzz = require("esfuzz"),
     estraverse = require("estraverse"),
