@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("EOF", function() {
     it("Should test code for at least throwing syntax error when incomplete", function() {

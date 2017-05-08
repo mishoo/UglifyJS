@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Number literals", function () {
     it("Should not allow legacy octal literals in strict mode", function() {

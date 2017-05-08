@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Function", function() {
     it ("Should parse binding patterns correctly", function() {

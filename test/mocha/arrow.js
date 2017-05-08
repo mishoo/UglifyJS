@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Arrow functions", function() {
     it("Should not accept spread tokens on non-last parameters or without arguments parentheses", function() {

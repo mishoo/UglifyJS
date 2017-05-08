@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Comment", function() {
     it("Should recognize eol of single line comments", function() {

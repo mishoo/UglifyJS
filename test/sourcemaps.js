@@ -1,4 +1,4 @@
-var UglifyJS = require("..");
+var UglifyJS = require("./node");
 var ok = require("assert");
 
 module.exports = function () {

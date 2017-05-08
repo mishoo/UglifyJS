@@ -18,15 +18,19 @@ var FILES = UglifyJS.FILES = [
     return require.resolve(file);
 });
 
-new Function("MOZ_SourceMap", "exports", FILES.map(function(file){
-    return fs.readFileSync(file, "utf8");
-}).join("\n\n"))(
+new Function("MOZ_SourceMap", "exports", function() {
+    var code = FILES.map(function(file) {
+        return fs.readFileSync(file, "utf8");
+    });
+    code.push("exports.describe_ast = " + describe_ast.toString());
+    return code.join("\n\n");
+}())(
     require("source-map"),
     UglifyJS
 );
 
-UglifyJS.describe_ast = function() {
-    var out = UglifyJS.OutputStream({ beautify: true });
+function describe_ast() {
+    var out = OutputStream({ beautify: true });
     function doitem(ctor) {
         out.print("AST_" + ctor.TYPE);
         var props = ctor.SELF_PROPS.filter(function(prop){
@@ -56,6 +60,6 @@ UglifyJS.describe_ast = function() {
             });
         }
     };
-    doitem(UglifyJS.AST_Node);
+    doitem(AST_Node);
     return out + "";
-};
+}

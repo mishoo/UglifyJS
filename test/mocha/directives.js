@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Directives", function() {
     it ("Should allow tokenizer to store directives state", function() {

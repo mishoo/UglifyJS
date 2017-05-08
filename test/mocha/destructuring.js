@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Destructuring", function() {
     it("Should generate similar trees for destructuring in left hand side expressions, definitions, functions and arrow functions", function() {

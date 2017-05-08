@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Try", function() {
     it("Should not allow catch with an empty parameter", function() {

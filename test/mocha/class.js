@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Class", function() {
     it("Should not accept spread on non-last parameters in methods", function() {
