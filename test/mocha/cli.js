@@ -19,7 +19,7 @@ describe("bin/uglifyjs", function () {
             eval(stdout);
 
             assert.strictEqual(typeof WrappedUglifyJS, 'object');
-            assert.strictEqual(true, WrappedUglifyJS.parse('foo;') instanceof WrappedUglifyJS.AST_Node);
+            assert.strictEqual(WrappedUglifyJS.minify("foo([true,,2+3]);").code, "foo([!0,,5]);");
 
             done();
         });
@@ -508,5 +508,16 @@ describe("bin/uglifyjs", function () {
             delete map.sourcesContent;
             return JSON.stringify(map).replace(/"/g, '\\"');
         }
+    });
+    it("Should dump AST as JSON", function(done) {
+        var command = uglifyjscmd + " test/input/global_defs/simple.js -mco ast";
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            var ast = JSON.parse(stdout);
+            assert.strictEqual(ast._class, "AST_Toplevel");
+            assert.ok(Array.isArray(ast.body));
+            done();
+        });
     });
 });

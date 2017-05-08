@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Template string", function() {
     it("Should not accept invalid sequences", function() {

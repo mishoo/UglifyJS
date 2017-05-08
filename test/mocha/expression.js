@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Expression", function() {
     it("Should not allow the first exponentiation operator to be prefixed with an unary operator", function() {

@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Unicode", function() {
     it("Should not accept invalid code ranges in unicode escape", function() {

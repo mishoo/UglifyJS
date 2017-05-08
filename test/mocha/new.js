@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("New", function() {
     it("Should add trailing parentheses for new expressions with zero arguments in beautify mode", function() {

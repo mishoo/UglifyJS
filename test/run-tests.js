@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-var U = require("../tools/node");
+var U = require("./node");
 var path = require("path");
 var fs = require("fs");
 var assert = require("assert");

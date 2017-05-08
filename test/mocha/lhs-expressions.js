@@ -1,5 +1,5 @@
 var assert = require("assert");
-var uglify = require("../../");
+var uglify = require("../node");
 
 describe("Left-hand side expressions", function () {
     it("Should parse destructuring with const/let/var correctly", function () {

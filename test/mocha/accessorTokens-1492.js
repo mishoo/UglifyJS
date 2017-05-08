@@ -1,4 +1,4 @@
-var UglifyJS = require('../../');
+var UglifyJS = require("../node");
 var assert = require("assert");
 
 describe("Accessor tokens", function() {
