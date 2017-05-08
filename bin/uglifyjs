@@ -212,7 +212,7 @@ function run() {
         fatal("ERROR: " + ex.message);
     }
     if (program.output == "spidermonkey") {
-        console.log(JSON.stringify(UglifyJS.parse(new Buffer(result.code).toString()).to_mozilla_ast(), null, 2));
+        console.log(JSON.stringify(UglifyJS.parse(result.code).to_mozilla_ast(), null, 2));
     } else if (program.output) {
         fs.writeFileSync(program.output, result.code);
         if (result.map) {

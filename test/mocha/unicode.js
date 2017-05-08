@@ -135,4 +135,11 @@ describe("Unicode", function() {
             }).code, tests[i][1]);
         }
     });
+
+    it("Should parse raw characters correctly", function() {
+        var ast = uglify.parse('console.log("\\udbff");');
+        assert.strictEqual(ast.print_to_string(), 'console.log("\udbff");');
+        ast = uglify.parse(ast.print_to_string());
+        assert.strictEqual(ast.print_to_string(), 'console.log("\udbff");');
+    });
 });
