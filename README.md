@@ -490,21 +490,21 @@ can pass additional arguments that control the code output:
   Passing `-b` will set this to true, but you might need to pass `-b` even
   when you want to generate minified code, in order to specify additional
   arguments, so you can use `-b beautify=false` to override it.
-- `indent-level` (default 4)
-- `indent-start` (default 0) -- prefix all lines by that many spaces
-- `quote-keys` (default `false`) -- pass `true` to quote all keys in literal
+- `indent_level` (default 4)
+- `indent_start` (default 0) -- prefix all lines by that many spaces
+- `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
   objects
-- `space-colon` (default `true`) -- insert a space after the colon signs
-- `ascii-only` (default `false`) -- escape Unicode characters in strings and
+- `space_colon` (default `true`) -- insert a space after the colon signs
+- `ascii_only` (default `false`) -- escape Unicode characters in strings and
   regexps (affects directives with non-ascii characters becoming invalid)
-- `inline-script` (default `false`) -- escape the slash in occurrences of
+- `inline_script` (default `false`) -- escape the slash in occurrences of
   `</script` in strings
 - `width` (default 80) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
   obey.  It refers to the width of the line text (excluding indentation).
   It doesn't work very well currently, but it does make the code generated
   by UglifyJS more readable.
-- `max-line-len` (default 32000) -- maximum line length (for uglified code)
+- `max_line_len` (default 32000) -- maximum line length (for uglified code)
 - `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
