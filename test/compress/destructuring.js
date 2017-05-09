@@ -315,3 +315,18 @@ unused: {
         console.log(a);
     }
 }
+
+issue_1886: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        let [a] = [1];
+        console.log(a);
+    }
+    expect: {
+        let [a] = [1];
+        console.log(a);
+    }
+    expect_exact: "1"
+}
