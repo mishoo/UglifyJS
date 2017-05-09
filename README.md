@@ -1,15 +1,12 @@
-UglifyJS 3
-==========
+uglify-es
+=========
 [![Build Status](https://travis-ci.org/mishoo/UglifyJS2.svg)](https://travis-ci.org/mishoo/UglifyJS2)
 
-UglifyJS is a JavaScript parser, minifier, compressor or beautifier toolkit.
+**uglify-es** is an ECMAScript 2015 parser, minifier, compressor and beautifier toolkit.
 
 #### Note:
-- **`uglify-js@3.x` has a new API and CLI and is not backwards compatible with [`uglify-js@2.x`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
-- **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
-- Release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
-ES2015+ (ES6+) code then please use the [harmony](#harmony) development branch.
-- Node 7 has a known performance regression and runs `uglify-js` twice as slow.
+- **The `uglify-es` API and CLI is compatible with `uglify-js@3.x`.**
+- **`uglify-es` is not backwards compatible with the `uglify-js@2.x` API and CLI.**
 
 Install
 -------
@@ -19,11 +16,11 @@ First make sure you have installed the latest version of [node.js](http://nodejs
 
 From NPM for use as a command line app:
 
-    npm install uglify-js -g
+    npm install uglify-es -g
 
 From NPM for programmatic use:
 
-    npm install uglify-js
+    npm install uglify-es
 
 From Git:
 
@@ -591,7 +588,7 @@ API Reference
 Assuming installation via NPM, you can load UglifyJS in your application
 like this:
 ```javascript
-var UglifyJS = require("uglify-js");
+var UglifyJS = require("uglify-es");
 ```
 
 There is a single toplevel function, `minify(files, options)`, which will
@@ -721,19 +718,3 @@ Other options:
   [acorn]: https://github.com/ternjs/acorn
   [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k
 
-#### Harmony
-
-If you wish to use the experimental [harmony](https://github.com/mishoo/UglifyJS2/commits/harmony)
-branch to minify ES2015+ (ES6+) code please use the following in your `package.json` file:
-
-```
-"uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony"
-```
-
-or to directly install the experimental harmony version of uglify:
-
-```
-npm install --save-dev uglify-js@github:mishoo/UglifyJS2#harmony
-```
-
-See [#448](https://github.com/mishoo/UglifyJS2/issues/448) for additional details.
