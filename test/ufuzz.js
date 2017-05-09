@@ -856,23 +856,21 @@ function createVarName(maybe, dontStore) {
 }
 
 function try_beautify(code, result) {
-    try {
-        var beautified = UglifyJS.minify(code, {
-            compress: false,
-            mangle: false,
-            output: {
-                beautify: true,
-                bracketize: true,
-            },
-        }).code;
-        if (sandbox.same_stdout(sandbox.run_code(beautified), result)) {
-            console.log("// (beautified)");
-            console.log(beautified);
-            return;
-        }
-    } catch (e) {
+    var beautified = UglifyJS.minify(code, {
+        compress: false,
+        mangle: false,
+        output: {
+            beautify: true,
+            bracketize: true,
+        },
+    });
+    if (beautified.error) {
         console.log("// !!! beautify failed !!!");
-        console.log(e.stack);
+        console.log(beautified.error.stack);
+    } else if (sandbox.same_stdout(sandbox.run_code(beautified.code), result)) {
+        console.log("// (beautified)");
+        console.log(beautified.code);
+        return;
     }
     console.log("//");
     console.log(code);
@@ -908,12 +906,13 @@ function log_suspects(minify_options, component) {
             var o = JSON.parse(JSON.stringify(options));
             o[name] = false;
             m[component] = o;
-            try {
-                var r = sandbox.run_code(UglifyJS.minify(original_code, m).code);
-                return sandbox.same_stdout(original_result, r);
-            } catch (e) {
+            var result = UglifyJS.minify(original_code, m);
+            if (result.error) {
                 console.log("Error testing options." + component + "." + name);
-                console.log(e);
+                console.log(result.error);
+            } else {
+                var r = sandbox.run_code(result.code);
+                return sandbox.same_stdout(original_result, r);
             }
         }
     });
@@ -981,18 +980,16 @@ for (var round = 1; round <= num_iterations; round++) {
     original_code = createTopLevelCode();
     original_result = sandbox.run_code(original_code);
     (typeof original_result != "string" ? fallback_options : minify_options).forEach(function(options) {
-        try {
-            uglify_code = UglifyJS.minify(original_code, JSON.parse(options)).code;
-        } catch (e) {
-            uglify_code = e;
-        }
-
-        ok = typeof uglify_code == "string";
-        if (ok) {
+        uglify_code = UglifyJS.minify(original_code, JSON.parse(options));
+        if (!uglify_code.error) {
+            uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code);
             ok = sandbox.same_stdout(original_result, uglify_result);
-        } else if (typeof original_result != "string") {
-            ok = uglify_code.name == original_result.name;
+        } else {
+            uglify_code = uglify_code.error;
+            if (typeof original_result != "string") {
+                ok = uglify_code.name == original_result.name;
+            }
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
         else if (verbose_error && typeof original_result != "string") {
