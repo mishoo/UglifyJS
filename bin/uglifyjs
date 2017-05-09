@@ -193,7 +193,7 @@ function run() {
             }
         }
     } catch (ex) {
-        fatal("ERROR: " + ex.message);
+        fatal(ex.stack);
     }
     var result = UglifyJS.minify(files, options);
     if (result.error) {
@@ -220,7 +220,7 @@ function run() {
             console.error("Supported options:");
             console.error(ex.defs);
         }
-        fatal("ERROR: " + ex.message);
+        fatal(ex.stack);
     } else if (program.output == "ast") {
         console.log(JSON.stringify(result.ast, function(key, value) {
             if (skip_key(key)) return;
@@ -263,7 +263,7 @@ function run() {
 }
 
 function fatal(message) {
-    console.error(message);
+    console.error(message.replace(/^\S*?Error:/, "ERROR:"));
     process.exit(1);
 }
 
@@ -303,7 +303,7 @@ function read_file(path, default_value) {
         return fs.readFileSync(path, "utf8");
     } catch (ex) {
         if (ex.code == "ENOENT" && default_value != null) return default_value;
-        fatal("ERROR: " + ex.message);
+        fatal(ex.stack);
     }
 }
 

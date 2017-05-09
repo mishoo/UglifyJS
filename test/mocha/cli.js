@@ -185,7 +185,7 @@ describe("bin/uglifyjs", function () {
 
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
-            assert.strictEqual(stderr, "ERROR: inline source map only works with singular input\n");
+            assert.strictEqual(stderr.split(/\n/)[0], "ERROR: inline source map only works with singular input");
             done();
         });
     });
