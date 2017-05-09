@@ -599,7 +599,8 @@ performs all the steps in a configurable manner.
 Example:
 ```javascript
 var result = UglifyJS.minify("var b = function() {};");
-console.log(result.code); // minified output
+console.log(result.code);  // minified output
+console.log(result.error); // runtime error
 ```
 
 You can also compress multiple files:
