@@ -392,3 +392,35 @@ format_methods: {
         "}",
     ]
 }
+
+issue_1898: {
+    options = {
+    }
+    mangle = {
+    }
+    input: {
+        class Foo {
+            bar() {
+                for (const x of [ 6, 5 ]) {
+                    for (let y of [ 4, 3 ]) {
+                        for (var z of [ 2, 1 ]) {
+                            console.log(x, y, z);
+                        }
+                    }
+                }
+            }
+        }
+        new Foo().bar();
+    }
+    expect: {
+        class Foo {
+            bar() {
+                for (const n of [ 6, 5 ])
+                    for (let r of [ 4, 3 ])
+                        for (var o of [ 2, 1 ])
+                            console.log(n, r, o);
+            }
+        }
+        new Foo().bar();
+    }
+}
