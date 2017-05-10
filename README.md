@@ -11,9 +11,8 @@ There's also an
 Chrome and probably Safari).
 
 #### Note:
-- release versions of `uglify-js` only support ECMAScript 5 (ES5). If you wish to minify
-ES2015+ (ES6+) code then please use the [harmony](#harmony) development branch.
-- Node 7 has a known performance regression and runs `uglify-js` twice as slow.
+- `uglify-js` only supports ECMAScript 5 (ES5). 
+- Those wishing to minify ES2015+ (ES6+) should use the `npm` package [**uglify-es**](https://github.com/mishoo/UglifyJS2/tree/harmony).
 
 Install
 -------
@@ -28,12 +27,6 @@ From NPM for use as a command line app:
 From NPM for programmatic use:
 
     npm install uglify-js
-
-From Git:
-
-    git clone git://github.com/mishoo/UglifyJS2.git
-    cd UglifyJS2
-    npm link .
 
 Usage
 -----
@@ -982,20 +975,3 @@ The `source_map_options` (optional) can contain the following properties:
   [codegen]: http://lisperator.net/uglifyjs/codegen
   [compressor]: http://lisperator.net/uglifyjs/compress
   [parser]: http://lisperator.net/uglifyjs/parser
-
-#### Harmony
-
-If you wish to use the experimental [harmony](https://github.com/mishoo/UglifyJS2/commits/harmony)
-branch to minify ES2015+ (ES6+) code please use the following in your `package.json` file:
-
-```
-"uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony"
-```
-
-or to directly install the experimental harmony version of uglify:
-
-```
-npm install --save-dev uglify-js@github:mishoo/UglifyJS2#harmony
-```
-
-See [#448](https://github.com/mishoo/UglifyJS2/issues/448) for additional details.
