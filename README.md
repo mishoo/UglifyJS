@@ -22,12 +22,6 @@ From NPM for programmatic use:
 
     npm install uglify-es
 
-From Git:
-
-    git clone git://github.com/mishoo/UglifyJS2.git
-    cd UglifyJS2
-    npm link .
-
 Usage
 -----
 
