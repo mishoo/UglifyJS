@@ -6,15 +6,15 @@
 
 <!-- Note: for ES6 see: https://github.com/mishoo/UglifyJS2/tree/harmony#harmony -->
 
-**`uglify-js` version (`uglifyjs -V`)**
+**Uglify version (`uglifyjs -V`)**
 
-**JavaScript input - ideally as small as possible.**
+**JavaScript input**  <!-- ideally as small as possible -->
 
 **The `uglifyjs` CLI command executed or `minify()` options used.**
 
-**JavaScript output produced and/or the error or warning.**
+**JavaScript output or error produced.**
 
 <!--
-    Note: the release version of uglify-js only supports ES5. Those wishing
-    to minify ES6 should use the experimental harmony branch.
+    Note: `uglify-js` only supports ES5. 
+    Those wishing to minify ES6 should use `uglify-es`.
 -->
