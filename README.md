@@ -182,7 +182,7 @@ CoffeeScript → compiled JS, UglifyJS can generate a map from CoffeeScript →
 compressed JS by mapping every token in the compiled JS to its original
 location.
 
-To use this feature pass `--source-map conetent="/path/to/input/source.map"`
+To use this feature pass `--source-map content="/path/to/input/source.map"`
 or `--source-map content=inline` if the source map is included inline with
 the sources.
 
