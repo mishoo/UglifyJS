@@ -2186,3 +2186,49 @@ compound_assignment: {
     }
     expect_stdout: "4"
 }
+
+reassign_const_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f() {
+            const a = 1;
+            a = 2;
+            return a;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            const a = 1;
+            a = 2;
+            return a;
+        }
+        console.log(f());
+    }
+    expect_stdout: true
+}
+
+reassign_const_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f() {
+            const a = 1;
+            ++a;
+            return a;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            const a = 1;
+            ++a;
+            return a;
+        }
+        console.log(f());
+    }
+    expect_stdout: true
+}
