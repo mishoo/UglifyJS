@@ -649,37 +649,6 @@ drop_value: {
     }
 }
 
-const_assign: {
-    options = {
-        evaluate: true,
-        reduce_vars: true,
-        unused: true,
-    }
-    input: {
-        function f() {
-            const b = 2;
-            return 1 + b;
-        }
-
-        function g() {
-            const b = 2;
-            b = 3;
-            return 1 + b;
-        }
-    }
-    expect: {
-        function f() {
-            return 3;
-        }
-
-        function g() {
-            const b = 2;
-            b = 3;
-            return 1 + b;
-        }
-    }
-}
-
 issue_1539: {
     options = {
         cascade: true,
@@ -816,10 +785,6 @@ issue_1709: {
                 var x = 1;
                 return x;
             }(),
-            function y() {
-                const y = 2;
-                return y;
-            }(),
             function z() {
                 function z() {}
                 return z;
@@ -831,10 +796,6 @@ issue_1709: {
             function() {
                 var x = 1;
                 return x;
-            }(),
-            function() {
-                const y = 2;
-                return y;
             }(),
             function() {
                 function z() {}
@@ -1146,29 +1107,4 @@ var_catch_toplevel: {
             }
         }();
     }
-}
-
-reassign_const: {
-    options = {
-        cascade: true,
-        sequences: true,
-        side_effects: true,
-        unused: true,
-    }
-    input: {
-        function f() {
-            const a = 1;
-            a = 2;
-            return a;
-        }
-        console.log(f());
-    }
-    expect: {
-        function f() {
-            const a = 1;
-            return a = 2, a;
-        }
-        console.log(f());
-    }
-    expect_stdout: true
 }
