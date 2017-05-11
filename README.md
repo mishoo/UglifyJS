@@ -11,7 +11,9 @@ There's also an
 Chrome and probably Safari).
 
 #### Note:
-- `uglify-js` only supports ECMAScript 5 (ES5). 
+- `uglify-js` only supports ECMAScript 5 (ES5).
+- Support for `const` is [present but incomplete](#support-for-const), and may not be
+  transformed properly.
 - Those wishing to minify ES2015+ (ES6+) should use the `npm` package [**uglify-es**](https://github.com/mishoo/UglifyJS2/tree/harmony).
 
 Install
@@ -975,3 +977,10 @@ The `source_map_options` (optional) can contain the following properties:
   [codegen]: http://lisperator.net/uglifyjs/codegen
   [compressor]: http://lisperator.net/uglifyjs/compress
   [parser]: http://lisperator.net/uglifyjs/parser
+
+#### Support for `const`
+
+`const` in `uglify-js@2.x` has function scope and as such behaves much like
+`var` - unlike `const` in ES2015 (ES6) which has block scope. It is recommended
+to avoid using `const` for this reason as it will have undefined behavior when
+run on an ES2015 compatible browser.
