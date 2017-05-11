@@ -146,16 +146,21 @@ debugging your compressed JavaScript.  To get a source map, pass
 `--source-map --output output.js` (source map will be written out to
 `output.js.map`).
 
-Additionally you might need `--source-map root=<URL>` to pass the URL where
-the original files can be found.  Use `--source-map url=<URL>` to specify
-the URL where the source map can be found.
+Additional options:
+
+- `--source-map filename=<NAME>` to specify the name of the source map.
+
+- `--source-map root=<URL>` to pass the URL where the original files can be found.
+  Otherwise UglifyJS assumes HTTP `X-SourceMap` is being used and will omit the
+  `//# sourceMappingURL=` directive.
+
+- `--source-map url=<URL>` to specify the URL where the source map can be found.
 
 For example:
 
-    uglifyjs /home/doe/work/foo/src/js/file1.js \
-             /home/doe/work/foo/src/js/file2.js \
+    uglifyjs js/file1.js js/file2.js \
              -o foo.min.js -c -m \
-             --source-map base="/home/doe/work/foo/src",root="http://foo.com/src"
+             --source-map root="http://foo.com/src",url=foo.min.js.map
 
 The above will compress and mangle `file1.js` and `file2.js`, will drop the
 output in `foo.min.js` and the source map in `foo.min.js.map`.  The source
@@ -174,11 +179,9 @@ CoffeeScript → compiled JS, UglifyJS can generate a map from CoffeeScript →
 compressed JS by mapping every token in the compiled JS to its original
 location.
 
-To use this feature you need to pass `--in-source-map
-/path/to/input/source.map` or `--in-source-map inline` if the source map is
-included inline with the sources. Normally the input source map should also
-point to the file containing the generated JS, so if that's correct you can
-omit input files from the command line.
+To use this feature pass `--source-map content="/path/to/input/source.map"`
+or `--source-map content=inline` if the source map is included inline with
+the sources.
 
 ## Mangler options
 
@@ -461,7 +464,7 @@ You can also use conditional compilation via the programmatic API. With the diff
 property name is `global_defs` and is a compressor property:
 
 ```js
-uglifyJS.minify([ "input.js"], {
+uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
     compress: {
         dead_code: true,
         global_defs: {
@@ -670,45 +673,47 @@ Other options:
 
 ##### mangle
 
- - `reserved` - pass an array of identifiers that should be excluded from mangling
+- `reserved` - pass an array of identifiers that should be excluded from mangling
 
- - `toplevel` — mangle names declared in the toplevel scope (disabled by
-  default).
+- `toplevel` — mangle names declared in the toplevel scope (disabled by
+default).
 
- - `eval` — mangle names visible in scopes where eval or with are used
-  (disabled by default).
+- `eval` — mangle names visible in scopes where eval or with are used
+(disabled by default).
 
- - `keep_fnames` -- default `false`.  Pass `true` to not mangle
-  function names.  Useful for code relying on `Function.prototype.name`.
-  See also: the `keep_fnames` [compress option](#compressor-options).
+- `keep_fnames` -- default `false`.  Pass `true` to not mangle
+function names.  Useful for code relying on `Function.prototype.name`.
+See also: the `keep_fnames` [compress option](#compressor-options).
 
-  Examples:
+Examples:
 
-  ```javascript
-  //tst.js
-  var globalVar;
-  function funcName(firstLongName, anotherLongName)
-  {
+```javascript
+// test.js
+var globalVar;
+function funcName(firstLongName, anotherLongName)
+{
     var myVariable = firstLongName +  anotherLongName;
-  }
+}
+```
+```javascript
+var code = fs.readFileSync("test.js", "utf8");
 
-  UglifyJS.minify("tst.js").code;
-  // 'function funcName(a,n){}var globalVar;'
+UglifyJS.minify(code).code;
+// 'function funcName(a,n){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: { reserved: ['firstLongName'] } }).code;
-  // 'function funcName(firstLongName,a){}var globalVar;'
+UglifyJS.minify(code, { mangle: { reserved: ['firstLongName'] } }).code;
+// 'function funcName(firstLongName,a){}var globalVar;'
 
-  UglifyJS.minify("tst.js", { mangle: { toplevel: true } }).code;
-  // 'function n(n,a){}var a;'
-  ```
+UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
+// 'function n(n,a){}var a;'
+```
 
 ##### mangle.properties options
 
- - `regex` — Pass a RegExp to only mangle certain names
- - `keep_quoted` — Only mangle unquoted property names
- - `debug` — Mangle names with the original name still present. Defaults to `false`.
-   Pass an empty string to enable, or a non-empty string to set the suffix.
+- `regex` — Pass a RegExp to only mangle certain names
+- `keep_quoted` — Only mangle unquoted property names
+- `debug` — Mangle names with the original name still present. Defaults to `false`.
+  Pass an empty string to enable, or a non-empty string to set the suffix.
 
-  [acorn]: https://github.com/ternjs/acorn
-  [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k
-
+[acorn]: https://github.com/ternjs/acorn
+[sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k
