@@ -610,3 +610,27 @@ delete_seq_6: {
     }
     expect_stdout: true
 }
+
+reassign_const: {
+    options = {
+        cascade: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            const a = 1;
+            a++;
+            return a;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            const a = 1;
+            return a++, a;
+        }
+        console.log(f());
+    }
+    expect_stdout: true
+}
