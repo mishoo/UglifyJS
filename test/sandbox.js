@@ -1,14 +1,14 @@
 var vm = require("vm");
 
-function safe_log(arg) {
+function safe_log(arg, level) {
     if (arg) switch (typeof arg) {
       case "function":
         return arg.toString();
       case "object":
         if (/Error$/.test(arg.name)) return arg.toString();
         arg.constructor.toString();
-        for (var key in arg) {
-            arg[key] = safe_log(arg[key]);
+        if (level--) for (var key in arg) {
+            arg[key] = safe_log(arg[key], level);
         }
     }
     return arg;
@@ -48,7 +48,9 @@ exports.run_code = function(code) {
         ].join("\n"), {
             console: {
                 log: function() {
-                    return console.log.apply(console, [].map.call(arguments, safe_log));
+                    return console.log.apply(console, [].map.call(arguments, function(arg) {
+                        return safe_log(arg, 3);
+                    }));
                 }
             }
         }, { timeout: 5000 });

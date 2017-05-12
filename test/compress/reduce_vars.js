@@ -2508,3 +2508,32 @@ issue_1922_2: {
     }
     expect_stdout: "1"
 }
+
+accessor: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        console.log({
+            get a() {
+                a = 2;
+                return a;
+            },
+            b: 1
+        }.b, a);
+    }
+    expect: {
+        var a = 1;
+        console.log({
+            get a() {
+                a = 2;
+                return a;
+            },
+            b: 1
+        }.b, a);
+    }
+    expect_stdout: "1 1"
+}
