@@ -1064,3 +1064,28 @@ issue_1830_2: {
     }
     expect_stdout: "1"
 }
+
+reassign_const: {
+    options = {
+        cascade: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            const a = 1;
+            a = 2;
+            return a;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            const a = 1;
+            return a = 2, a;
+        }
+        console.log(f());
+    }
+    expect_stdout: true
+}

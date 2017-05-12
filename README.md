@@ -443,6 +443,11 @@ to set `true`; it's effectively a shortcut for `foo=true`).
 - `keep_infinity` -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
+- `side_effects` -- default `false`. Pass `true` to potentially drop functions
+marked as "pure".  (A function is marked as "pure" via the comment annotation
+`/* @__PURE__ */` or `/* #__PURE__ */`)
+
+
 ### The `unsafe` option
 
 It enables some transformations that *might* break code logic in certain
