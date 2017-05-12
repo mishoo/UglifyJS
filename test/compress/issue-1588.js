@@ -85,15 +85,3 @@ unsafe_undefined: {
     }
     expect_stdout: true
 }
-
-runtime_error: {
-    input: {
-        const a = 1;
-        console.log(a++);
-    }
-    expect: {
-        const a = 1;
-        console.log(a++);
-    }
-    expect_stdout: true
-}

@@ -38,7 +38,7 @@ mixed: {
         }
     }
     input: {
-        const ENV = 3;
+        var ENV = 3;
         var FOO = 4;
         f(ENV * 10);
         --FOO;
@@ -49,7 +49,7 @@ mixed: {
         x = DEBUG;
     }
     expect: {
-        const ENV = 3;
+        var ENV = 3;
         var FOO = 4;
         f(10);
         --FOO;
@@ -60,7 +60,7 @@ mixed: {
         x = 0;
     }
     expect_warnings: [
-        'WARN: global_defs ENV redefined [test/compress/issue-208.js:41,14]',
+        'WARN: global_defs ENV redefined [test/compress/issue-208.js:41,12]',
         'WARN: global_defs FOO redefined [test/compress/issue-208.js:42,12]',
         'WARN: global_defs FOO redefined [test/compress/issue-208.js:44,10]',
         'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:45,8]',
