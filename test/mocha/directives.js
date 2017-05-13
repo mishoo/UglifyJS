@@ -351,18 +351,28 @@ describe("Directives", function() {
         var tests = [
             [
                 '"use strict";"use strict";"use strict";"use foo";"use strict";;"use sloppy";doSomething("foo");',
-                '"use strict";"use foo";doSomething("foo");'
+                '"use strict";"use foo";doSomething("foo");',
+                'function f(){ "use strict" }',
+                'function f(){ "use asm" }',
+                'function f(){ "use nondirective" }',
+                'function f(){ ;"use strict" }',
+                'function f(){ "use \n"; }',
             ],
             [
                  // Nothing gets optimised in the compressor because "use asm" is the first statement
                 '"use asm";"use\\x20strict";1+1;',
-                '"use asm";;"use strict";1+1;' // Yet, the parser noticed that "use strict" wasn't a directive
+                '"use asm";;"use strict";1+1;', // Yet, the parser noticed that "use strict" wasn't a directive
+                'function f(){"use strict"}',
+                'function f(){"use asm"}',
+                'function f(){"use nondirective"}',
+                'function f(){}',
+                'function f(){}',
             ]
         ];
 
         for (var i = 0; i < tests.length; i++) {
             assert.strictEqual(
-                uglify.minify(tests[i][0], {compress: {collapse_vars: true, side_effects: true}}).code,
+                uglify.minify(tests[i][0]).code,
                 tests[i][1],
                 tests[i][0]
             );
