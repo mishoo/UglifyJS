@@ -5,7 +5,7 @@ UglifyJS 3
 UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit.
 
 #### Note:
-- **`uglify-js@3.x` has a new API and CLI and is not backwards compatible with [`uglify-js@2.x`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
+- **`uglify-js@3.x` has a new simplified API and CLI that is not backwards compatible with [`uglify-js@2.x`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
 - **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
 - `uglify-js` only supports ECMAScript 5 (ES5).
 - Those wishing to minify
