@@ -8,7 +8,9 @@ function safe_log(arg, level) {
         if (/Error$/.test(arg.name)) return arg.toString();
         arg.constructor.toString();
         if (level--) for (var key in arg) {
-            arg[key] = safe_log(arg[key], level);
+            if (!Object.getOwnPropertyDescriptor(arg, key).get) {
+                arg[key] = safe_log(arg[key], level);
+            }
         }
     }
     return arg;
