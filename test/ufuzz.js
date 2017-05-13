@@ -48,7 +48,6 @@ var STMT_COUNT_FROM_GLOBAL = true; // count statement depth from nearest functio
 var num_iterations = +process.argv[2] || 1/0;
 var verbose = false; // log every generated test
 var verbose_interval = false; // log every 100 generated tests
-var verbose_error = false;
 var use_strict = false;
 for (var i = 2; i < process.argv.length; ++i) {
     switch (process.argv[i]) {
@@ -57,9 +56,6 @@ for (var i = 2; i < process.argv.length; ++i) {
         break;
       case '-V':
         verbose_interval = true;
-        break;
-      case '-E':
-        verbose_error = true;
         break;
       case '-t':
         MAX_GENERATED_TOPLEVELS_PER_RUN = +process.argv[++i];
@@ -103,7 +99,6 @@ for (var i = 2; i < process.argv.length; ++i) {
         console.log('<number>: generate this many cases (if used must be first arg)');
         console.log('-v: print every generated test case');
         console.log('-V: print every 100th generated test case');
-        console.log('-E: print generated test case with runtime error');
         console.log('-t <int>: generate this many toplevels per run (more take longer)');
         console.log('-r <int>: maximum recursion depth for generator (higher takes longer)');
         console.log('-s1 <statement name>: force the first level statement to be this one (see list below)');
@@ -192,12 +187,33 @@ var ASSIGNMENTS = [
     '=',
     '=',
     '=',
+    '=',
+    '=',
+    '=',
+    '=',
 
-    '==',
-    '!=',
-    '===',
-    '!==',
+    '=',
+    '=',
+    '=',
+    '=',
+    '=',
+    '=',
+    '=',
+    '=',
+    '=',
+    '=',
+
     '+=',
+    '+=',
+    '+=',
+    '+=',
+    '+=',
+    '+=',
+    '+=',
+    '+=',
+    '+=',
+    '+=',
+
     '-=',
     '*=',
     '/=',
@@ -207,7 +223,8 @@ var ASSIGNMENTS = [
     '<<=',
     '>>=',
     '>>>=',
-    '%=' ];
+    '%=',
+];
 
 var UNARY_SAFE = [
     '+',
@@ -359,7 +376,6 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     // avoid "function statements" (decl inside statements)
     else if (inGlobal || rng(10) > 0) s += 'var ' + createVarName(MANDATORY) + ' = ' + name + '(' + createArgs() + ');';
 
-
     return s;
 }
 
@@ -406,7 +422,7 @@ function getLabel(label) {
     return label && " L" + label;
 }
 
-function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
+function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth, target) {
     ++stmtDepth;
     var loop = ++loops;
     if (--recurmax < 0) {
@@ -414,10 +430,11 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
     }
 
     // allow to forcefully generate certain structures at first or second recursion level
-    var target = 0;
-    if (stmtDepth === 1 && STMT_FIRST_LEVEL_OVERRIDE >= 0) target = STMT_FIRST_LEVEL_OVERRIDE;
-    else if (stmtDepth === 2 && STMT_SECOND_LEVEL_OVERRIDE >= 0) target = STMT_SECOND_LEVEL_OVERRIDE;
-    else target = STMTS_TO_USE[rng(STMTS_TO_USE.length)];
+    if (target === undefined) {
+        if (stmtDepth === 1 && STMT_FIRST_LEVEL_OVERRIDE >= 0) target = STMT_FIRST_LEVEL_OVERRIDE;
+        else if (stmtDepth === 2 && STMT_SECOND_LEVEL_OVERRIDE >= 0) target = STMT_SECOND_LEVEL_OVERRIDE;
+        else target = STMTS_TO_USE[rng(STMTS_TO_USE.length)];
+    }
 
     switch (target) {
       case STMT_BLOCK:
@@ -636,7 +653,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 strictMode()
             );
             if (instantiate) for (var i = rng(4); --i >= 0;) {
-                if (rng(2)) s.push('this.' + getDotKey() + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
+                if (rng(2)) s.push('this.' + getDotKey(true) + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
                 else  s.push('this[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']' + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ';');
             }
             s.push(
@@ -689,19 +706,19 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             ") || " + rng(10) + ").toString()[" +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "] ";
       case p++:
-        return createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow);
+        return createArrayLiteral(recurmax, stmtDepth, canThrow);
       case p++:
-        return createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow);
+        return createObjectLiteral(recurmax, stmtDepth, canThrow);
       case p++:
-        return createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
+        return createArrayLiteral(recurmax, stmtDepth, canThrow) + '[' +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']';
       case p++:
-        return createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '[' +
+        return createObjectLiteral(recurmax, stmtDepth, canThrow) + '[' +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']';
       case p++:
-        return createArrayLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '.' + getDotKey();
+        return createArrayLiteral(recurmax, stmtDepth, canThrow) + '.' + getDotKey();
       case p++:
-        return createObjectLiteral(recurmax, COMMA_OK, stmtDepth, canThrow) + '.' + getDotKey();
+        return createObjectLiteral(recurmax, stmtDepth, canThrow) + '.' + getDotKey();
       case p++:
         var name = getVarName();
         return name + ' && ' + name + '[' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ']';
@@ -713,7 +730,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
 }
 
-function createArrayLiteral(recurmax, noComma, stmtDepth, canThrow) {
+function createArrayLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var arr = "[";
     for (var i = rng(6); --i >= 0;) {
@@ -746,18 +763,56 @@ var KEYS = [
     "3",
 ].concat(SAFE_KEYS);
 
-function getDotKey() {
-    return SAFE_KEYS[rng(SAFE_KEYS.length)];
+function getDotKey(assign) {
+    var key;
+    do {
+        key = SAFE_KEYS[rng(SAFE_KEYS.length)];
+    } while (assign && key == "length");
+    return key;
 }
 
-function createObjectLiteral(recurmax, noComma, stmtDepth, canThrow) {
-    recurmax--;
-    var obj = "({";
-    for (var i = rng(6); --i >= 0;) {
-        var key = KEYS[rng(KEYS.length)];
-        obj += key + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "), ";
+function createAccessor(recurmax, stmtDepth, canThrow) {
+    var namesLenBefore = VAR_NAMES.length;
+    var s;
+    var prop1 = getDotKey();
+    if (rng(2) == 0) {
+        s = [
+            'get ' + prop1 + '(){',
+            strictMode(),
+            createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+            createStatement(recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth, STMT_RETURN_ETC),
+            '},'
+        ].join('\n');
+    } else {
+        var prop2;
+        do {
+            prop2 = getDotKey();
+        } while (prop1 == prop2);
+        s = [
+            'set ' + prop1 + '(' + createVarName(MANDATORY) + '){',
+            strictMode(),
+            createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+            'this.' + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
+            '},'
+        ].join('\n');
     }
-    return obj + "})";
+    VAR_NAMES.length = namesLenBefore;
+    return s;
+}
+
+function createObjectLiteral(recurmax, stmtDepth, canThrow) {
+    recurmax--;
+    var obj = ['({'];
+    for (var i = rng(6); --i >= 0;) {
+        if (rng(20) == 0) {
+            obj.push(createAccessor(recurmax, stmtDepth, canThrow));
+        } else {
+            var key = KEYS[rng(KEYS.length)];
+            obj.push(key + ':(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + '),');
+        }
+    }
+    obj.push('})');
+    return obj.join('\n');
 }
 
 function createNestedBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
@@ -787,7 +842,7 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
         return canThrow && rng(10) == 0 ? expr : '(' + assignee + ' && ' + expr + ')';
       case 4:
         assignee = getVarName();
-        expr = '(' + assignee + '.' + getDotKey() + createAssignment()
+        expr = '(' + assignee + '.' + getDotKey(true) + createAssignment()
             + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ')';
         return canThrow && rng(10) == 0 ? expr : '(' + assignee + ' && ' + expr + ')';
       default:
@@ -999,7 +1054,7 @@ for (var round = 1; round <= num_iterations; round++) {
             ok = uglify_code.name == original_result.name;
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
-        else if (verbose_error && typeof original_result != "string") {
+        else if (typeof original_result != "string") {
             console.log("//=============================================================");
             console.log("// original code");
             try_beautify(original_code, original_result);

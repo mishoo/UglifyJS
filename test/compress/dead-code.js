@@ -256,3 +256,19 @@ try_catch_finally: {
         "1",
     ]
 }
+
+accessor: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            get a() {},
+            set a(v){
+                this.b = 2;
+            },
+            b: 1
+        });
+    }
+    expect: {}
+}
