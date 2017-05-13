@@ -436,9 +436,9 @@ to set `true`; it's effectively a shortcut for `foo=true`).
   compressor from discarding function names.  Useful for code relying on
   `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
-- `passes` -- default `1`. Number of times to run compress. Use an
-  integer argument larger than 1 to further reduce code size in some cases.
-  Note: raising the number of passes will increase uglify compress time.
+- `passes` -- default `1`. Number of times to run compress with a maximum of 3.
+  In some cases more than one pass leads to further compressed code.  Keep in
+  mind more passes will take more time.
 
 - `keep_infinity` -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
