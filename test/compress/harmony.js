@@ -203,15 +203,42 @@ import_all_statement: {
 }
 
 export_statement: {
+    options = {
+        evaluate: true,
+    }
     input: {
-        export default 1;
+        export default 1 + 2;
         export var foo = 4;
         export let foo = 6;
         export const foo = 6;
         export function foo() {};
         export class foo { };
     }
-    expect_exact: "export default 1;export var foo=4;export let foo=6;export const foo=6;export function foo(){};export class foo{};"
+    expect_exact: "export default 3;export var foo=4;export let foo=6;export const foo=6;export function foo(){};export class foo{};"
+}
+
+export_default_object_expression: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        export default {
+            foo: 1 + 2,
+            bar() { return 4; },
+            get baz() { return this.foo; },
+        };
+    }
+    expect_exact: "export default{foo:3,bar(){return 4},get baz(){return this.foo}};"
+}
+
+export_default_array: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        export default [ 1 + 2, foo ];
+    }
+    expect_exact: "export default[3,foo];"
 }
 
 export_module_statement: {
