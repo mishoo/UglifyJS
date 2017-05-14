@@ -23,12 +23,6 @@ mocha_tests();
 var run_sourcemaps_tests = require('./sourcemaps');
 run_sourcemaps_tests();
 
-var run_ast_conversion_tests = require("./mozilla-ast");
-
-run_ast_conversion_tests({
-    iterations: 1000
-});
-
 /* -----[ utils ]----- */
 
 function tmpl() {

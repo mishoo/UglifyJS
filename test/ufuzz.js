@@ -49,6 +49,8 @@ var num_iterations = +process.argv[2] || 1/0;
 var verbose = false; // log every generated test
 var verbose_interval = false; // log every 100 generated tests
 var use_strict = false;
+var catch_redef = require.main === module;
+var generate_directive = require.main === module;
 for (var i = 2; i < process.argv.length; ++i) {
     switch (process.argv[i]) {
       case '-v':
@@ -74,6 +76,12 @@ for (var i = 2; i < process.argv.length; ++i) {
         var name = process.argv[++i];
         STMT_SECOND_LEVEL_OVERRIDE = STMT_ARG_TO_ID[name];
         if (!(STMT_SECOND_LEVEL_OVERRIDE >= 0)) throw new Error('Unknown statement name; use -? to get a list');
+        break;
+      case '--no-catch-redef':
+        catch_redef = false;
+        break;
+      case '--no-directive':
+        generate_directive = false;
         break;
       case '--use-strict':
         use_strict = true;
@@ -103,6 +111,8 @@ for (var i = 2; i < process.argv.length; ++i) {
         console.log('-r <int>: maximum recursion depth for generator (higher takes longer)');
         console.log('-s1 <statement name>: force the first level statement to be this one (see list below)');
         console.log('-s2 <statement name>: force the second level statement to be this one (see list below)');
+        console.log('--no-catch-redef: do not redefine catch variables');
+        console.log('--no-directive: do not generate directives');
         console.log('--use-strict: generate "use strict"');
         console.log('--stmt-depth-from-func: reset statement depth counter at each function, counts from global otherwise');
         console.log('--only-stmt <statement names>: a comma delimited white list of statements that may be generated');
@@ -293,6 +303,7 @@ var TYPEOF_OUTCOMES = [
     'symbol',
     'crap' ];
 
+var unique_vars = [];
 var loops = 0;
 var funcs = 0;
 var labels = 10000;
@@ -307,6 +318,10 @@ function strictMode() {
 }
 
 function createTopLevelCode() {
+    VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
+    unique_vars.length = 0;
+    loops = 0;
+    funcs = 0;
     return [
         strictMode(),
         'var a = 100, b = 10, c = 0;',
@@ -342,33 +357,36 @@ function createArgs() {
     return args.join(', ');
 }
 
+function filterDirective(s) {
+    if (!generate_directive && !s[1] && /\("/.test(s[2])) s[2] = ';' + s[2];
+    return s;
+}
+
 function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ';'; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
     var func = funcs++;
     var namesLenBefore = VAR_NAMES.length;
-    var name = (inGlobal || rng(5) > 0) ? 'f' + func : createVarName(MANDATORY, noDecl);
-    if (name === 'a' || name === 'b' || name === 'c') name = 'f' + func; // quick hack to prevent assignment to func names of being called
-    var s = '';
+    var name;
+    if (inGlobal || rng(5) > 0) name = 'f' + func;
+    else {
+        unique_vars.push('a', 'b', 'c');
+        name = createVarName(MANDATORY, noDecl);
+        unique_vars.length -= 3;
+    }
+    var s = [
+        'function ' + name + '(' + createParams() + '){',
+        strictMode()
+    ];
     if (rng(5) === 0) {
         // functions with functions. lower the recursion to prevent a mess.
-        s = [
-            'function ' + name + '(' + createParams() + '){',
-            strictMode(),
-            createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth),
-            '}',
-            ''
-        ].join('\n');
+        s.push(createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth));
     } else {
         // functions with statements
-        s = [
-            'function ' + name + '(' + createParams() + '){',
-            strictMode(),
-            createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-            '}',
-            ''
-        ].join('\n');
+        s.push(createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
     }
+    s.push('}', '');
+    s = filterDirective(s).join('\n');
 
     VAR_NAMES.length = namesLenBefore;
 
@@ -477,20 +495,22 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
       case STMT_VAR:
         switch (rng(3)) {
           case 0:
+            unique_vars.push('c');
             var name = createVarName(MANDATORY);
-            if (name === 'c') name = 'a';
+            unique_vars.pop();
             return 'var ' + name + ';';
           case 1:
             // initializer can only have one expression
+            unique_vars.push('c');
             var name = createVarName(MANDATORY);
-            if (name === 'c') name = 'b';
+            unique_vars.pop();
             return 'var ' + name + ' = ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
           default:
             // initializer can only have one expression
+            unique_vars.push('c');
             var n1 = createVarName(MANDATORY);
-            if (n1 === 'c') n1 = 'b';
             var n2 = createVarName(MANDATORY);
-            if (n2 === 'c') n2 = 'b';
+            unique_vars.pop();
             return 'var ' + n1 + ' = ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ', ' + n2 + ' = ' + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ';';
         }
       case STMT_RETURN_ETC:
@@ -531,8 +551,11 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             var nameLenBefore = VAR_NAMES.length;
             var catchName = createVarName(MANDATORY);
             var freshCatchName = VAR_NAMES.length !== nameLenBefore;
+            if (!catch_redef) unique_vars.push(catchName);
             s += ' catch (' + catchName + ') { ' + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + ' }';
-            if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1); // remove catch name
+            // remove catch name
+            if (!catch_redef) unique_vars.pop();
+            if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1);
         }
         if (n !== 0) s += ' finally { ' + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + ' }';
         return s;
@@ -610,8 +633,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
         var nameLenBefore = VAR_NAMES.length;
+        unique_vars.push('c');
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
-        if (name == 'c') name = 'a';
+        unique_vars.pop();
         var s = [];
         switch (rng(5)) {
           case 0:
@@ -663,7 +687,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
         }
         VAR_NAMES.length = nameLenBefore;
-        return s.join('\n');
+        return filterDirective(s).join('\n');
       case p++:
       case p++:
         return createTypeofExpr(recurmax, stmtDepth, canThrow);
@@ -782,7 +806,7 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
             createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
             createStatement(recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth, STMT_RETURN_ETC),
             '},'
-        ].join('\n');
+        ];
     } else {
         var prop2;
         do {
@@ -794,10 +818,10 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
             createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
             'this.' + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ';',
             '},'
-        ].join('\n');
+        ];
     }
     VAR_NAMES.length = namesLenBefore;
-    return s;
+    return filterDirective(s).join('\n');
 }
 
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
@@ -899,15 +923,22 @@ function getVarName() {
 
 function createVarName(maybe, dontStore) {
     if (!maybe || rng(2)) {
-        var name = VAR_NAMES[rng(VAR_NAMES.length)];
         var suffix = rng(3);
-        if (suffix) {
-            name += '_' + suffix;
-            if (!dontStore) VAR_NAMES.push(name);
-        }
+        var name;
+        do {
+            name = VAR_NAMES[rng(VAR_NAMES.length)];
+            if (suffix) name += '_' + suffix;
+        } while (unique_vars.indexOf(name) >= 0);
+        if (suffix && !dontStore) VAR_NAMES.push(name);
         return name;
     }
     return '';
+}
+
+if (require.main !== module) {
+    exports.createTopLevelCode = createTopLevelCode;
+    exports.num_iterations = num_iterations;
+    return;
 }
 
 function try_beautify(code, result) {
@@ -1032,10 +1063,6 @@ var original_code, original_result;
 var uglify_code, uglify_result, ok;
 for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
-
-    VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
-    loops = 0;
-    funcs = 0;
 
     original_code = createTopLevelCode();
     original_result = sandbox.run_code(original_code);
