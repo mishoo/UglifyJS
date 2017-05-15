@@ -346,11 +346,6 @@ console.log(result.code);
 - `toplevel` (default `false`) - set to `true` if you wish to enable top level
   variable and function name mangling and to drop unused variables and functions.
   
-- `ast` (default `false`) - set to `true` if you wish to have the `ast` 
-  set in the minify result.
-
-- `code` (default `true`) - if set return `code` in the minify result.
-
 - `ie8` (default `false`) - set to `true` to support IE8.
 
 ## Minify option structure
@@ -378,8 +373,6 @@ console.log(result.code);
         // source map options
     },
     toplevel: false,
-    ast: false,
-    code: true,
     ie8: false,
 }
 ```
