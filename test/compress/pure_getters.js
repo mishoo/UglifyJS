@@ -119,3 +119,62 @@ chained: {
         a.b.c;
     }
 }
+
+impure_getter_1: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        ({
+            get a() {
+                console.log(1);
+            },
+            b: 1
+        }).a;
+        ({
+            get a() {
+                console.log(1);
+            },
+            b: 1
+        }).b;
+    }
+    expect: {
+        ({
+            get a() {
+                console.log(1);
+            },
+            b: 1
+        }).a;
+        ({
+            get a() {
+                console.log(1);
+            },
+            b: 1
+        }).b;
+    }
+    expect_stdout: "1"
+}
+
+impure_getter_2: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+    }
+    input: {
+        // will produce incorrect output because getter is not pure
+        ({
+            get a() {
+                console.log(1);
+            },
+            b: 1
+        }).a;
+        ({
+            get a() {
+                console.log(1);
+            },
+            b: 1
+        }).b;
+    }
+    expect: {}
+}
