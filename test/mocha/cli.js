@@ -298,10 +298,85 @@ describe("bin/uglifyjs", function () {
            assert.ok(err);
            assert.strictEqual(stdout, "");
            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
-               "Parse error at test/input/invalid/assign_3.js:1,18",
+               "Parse error at test/input/invalid/assign_3.js:1,17",
                "console.log(3 || ++this);",
-               "                  ^",
+               "                 ^",
                "SyntaxError: Invalid use of ++ operator"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (++null)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/assign_4.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/assign_4.js:1,0",
+               "++null",
+               "^",
+               "SyntaxError: Invalid use of ++ operator"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (a.=)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/dot_1.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/dot_1.js:1,2",
+               "a.=",
+               "  ^",
+               "SyntaxError: Unexpected token: operator (=)"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (%.a)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/dot_2.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/dot_2.js:1,0",
+               "%.a;",
+               "^",
+               "SyntaxError: Unexpected token: operator (%)"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error (a./();)", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/dot_3.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/dot_3.js:1,2",
+               "a./();",
+               "  ^",
+               "SyntaxError: Unexpected token: operator (/)"
+           ].join("\n"));
+           done();
+       });
+    });
+    it("Should throw syntax error ({%: 1})", function(done) {
+       var command = uglifyjscmd + ' test/input/invalid/object.js';
+
+       exec(command, function (err, stdout, stderr) {
+           assert.ok(err);
+           assert.strictEqual(stdout, "");
+           assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+               "Parse error at test/input/invalid/object.js:1,13",
+               "console.log({%: 1});",
+               "             ^",
+               "SyntaxError: Unexpected token: operator (%)"
            ].join("\n"));
            done();
        });
