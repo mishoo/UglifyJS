@@ -755,6 +755,39 @@ var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
 });
 ```
 
+### Using native Uglify AST with `minify()`
+```
+// example: parse only, produce native Uglify AST
+
+var result = UglifyJS.minify(code, {
+    parse: {},
+    compress: false,
+    mangle: false,
+    output: {
+        ast: true,
+        code: false  // optional - faster if false
+    }
+});
+
+// result.ast contains native Uglify AST
+```
+```
+// example: accept native Uglify AST input and then compress and mangle
+//          to produce both code and native AST.
+
+var result = UglifyJS.minify(ast, {
+    compress: {},
+    mangle: {},
+    output: {
+        ast: true,
+        code: true  // optional - faster if false
+    }
+});
+
+// result.ast contains native Uglify AST
+// result.code contains the minified code in string form.
+```
+
 ### ESTree / SpiderMonkey AST
 
 UglifyJS has its own abstract syntax tree format; for
