@@ -302,7 +302,7 @@ like this:
 var UglifyJS = require("uglify-js");
 ```
 
-There is a single toplevel function, `minify(files, options)`, which will
+There is a single high level minification function, `minify(files, options)`, which will
 performs all the steps in a configurable manner.
 Example:
 ```javascript
