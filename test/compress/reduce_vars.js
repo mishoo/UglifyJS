@@ -41,20 +41,20 @@ reduce_vars: {
         var A = 1;
         (function() {
             console.log(-3);
-            console.log(-4);
+            console.log(A - 5);
         })();
         (function f1() {
             var a = 2;
-            console.log(-3);
+            console.log(a - 5);
             eval("console.log(a);");
         })();
         (function f2(eval) {
             var a = 2;
-            console.log(-3);
+            console.log(a - 5);
             eval("console.log(a);");
         })(eval);
         "yes";
-        console.log(2);
+        console.log(A + 1);
     }
     expect_stdout: true
 }
@@ -1749,7 +1749,10 @@ redefine_arguments_3: {
         console.log(function() {
             var arguments;
             return typeof arguments;
-        }(), "number", "undefined");
+        }(), "number", function(x) {
+            var arguments = x;
+            return typeof arguments;
+        }());
     }
     expect_stdout: "object number undefined"
 }
@@ -2460,4 +2463,77 @@ issue_1865: {
         }());
     }
     expect_stdout: true
+}
+
+issue_1922_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            arguments[0] = 2;
+            return a;
+        }(1));
+    }
+    expect: {
+        console.log(function(a) {
+            arguments[0] = 2;
+            return a;
+        }(1));
+    }
+    expect_stdout: "2"
+}
+
+issue_1922_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a;
+            eval("a = 1");
+            return a;
+        }(1));
+    }
+    expect: {
+        console.log(function() {
+            var a;
+            eval("a = 1");
+            return a;
+        }(1));
+    }
+    expect_stdout: "1"
+}
+
+accessor: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        console.log({
+            get a() {
+                a = 2;
+                return a;
+            },
+            b: 1
+        }.b, a);
+    }
+    expect: {
+        var a = 1;
+        console.log({
+            get a() {
+                a = 2;
+                return a;
+            },
+            b: 1
+        }.b, a);
+    }
+    expect_stdout: "1 1"
 }

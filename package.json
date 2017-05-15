@@ -4,7 +4,7 @@
   "homepage": "https://github.com/mishoo/UglifyJS2/tree/harmony",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
   "license": "BSD-2-Clause",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "engines": {
     "node": ">=0.8.0"
   },
@@ -33,19 +33,8 @@
     "source-map": "~0.5.1"
   },
   "devDependencies": {
-    "acorn": "~0.6.0",
-    "escodegen": "~1.3.3",
-    "esfuzz": "~0.3.1",
-    "estraverse": "~1.5.1",
+    "acorn": "~5.0.3",
     "mocha": "~2.3.4"
-  },
-  "optionalDependencies": {
-    "uglify-to-browserify": "~1.0.0"
-  },
-  "browserify": {
-    "transform": [
-      "uglify-to-browserify"
-    ]
   },
   "scripts": {
     "test": "node test/run-tests.js"
