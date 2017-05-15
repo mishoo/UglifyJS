@@ -4,7 +4,7 @@
   "homepage": "http://lisperator.net/uglifyjs",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
   "license": "BSD-2-Clause",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "engines": {
     "node": ">=0.8.0"
   },
@@ -35,14 +35,6 @@
   "devDependencies": {
     "acorn": "~5.0.3",
     "mocha": "~2.3.4"
-  },
-  "optionalDependencies": {
-    "uglify-to-browserify": "~1.0.0"
-  },
-  "browserify": {
-    "transform": [
-      "uglify-to-browserify"
-    ]
   },
   "scripts": {
     "test": "node test/run-tests.js"
