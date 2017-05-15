@@ -42,7 +42,7 @@ a double dash to prevent input files being used as option arguments:
 
     uglifyjs --compress --mangle -- input.js
 
-Command line options:
+### Command line options
 
 ```
     -h, --help                  Print usage information.
@@ -188,7 +188,8 @@ the sources.
 ## CLI compress options
 
 You need to pass `--compress` (`-c`) to enable the compressor.  Optionally 
-you can pass a comma-separated list of [compress options](compress-options).  
+you can pass a comma-separated list of [compress options](#compress-options).
+
 Options are in the form `foo=bar`, or just `foo` (the latter implies 
 a boolean option that you want to set `true`; it's effectively a 
 shortcut for `foo=true`).
