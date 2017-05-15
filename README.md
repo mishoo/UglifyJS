@@ -187,11 +187,11 @@ the sources.
 
 ## CLI compress options
 
-You need to pass `--compress` (`-c`) to enable the compressor.  Optionally 
+You need to pass `--compress` (`-c`) to enable the compressor.  Optionally
 you can pass a comma-separated list of [compress options](#compress-options).
 
-Options are in the form `foo=bar`, or just `foo` (the latter implies 
-a boolean option that you want to set `true`; it's effectively a 
+Options are in the form `foo=bar`, or just `foo` (the latter implies
+a boolean option that you want to set `true`; it's effectively a
 shortcut for `foo=true`).
 
 Example:
@@ -224,9 +224,9 @@ separate step, different from variable name mangling.  Pass
 `--mangle-props`.  It will mangle all properties that are seen in some
 object literal, or that are assigned to.  For example:
 
-```js
+```javascript
 var x = {
-  foo: 1
+    foo: 1
 };
 
 x.bar = 2;
@@ -255,10 +255,10 @@ mangled to the same name in all of them.  For this, pass `--name-cache filename.
 and UglifyJS will maintain these mappings in a file which can then be reused.
 It should be initially empty.  Example:
 
-```
-rm -f /tmp/cache.json  # start fresh
-uglifyjs file1.js file2.js --mangle-props --name-cache /tmp/cache.json -o part1.js
-uglifyjs file3.js file4.js --mangle-props --name-cache /tmp/cache.json -o part2.js
+```bash
+$ rm -f /tmp/cache.json  # start fresh
+$ uglifyjs file1.js file2.js --mangle-props --name-cache /tmp/cache.json -o part1.js
+$ uglifyjs file3.js file4.js --mangle-props --name-cache /tmp/cache.json -o part2.js
 ```
 
 Now, `part1.js` and `part2.js` will be consistent with each other in terms
@@ -273,7 +273,7 @@ Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
 so that it is not mangled throughout the entire script even when used in an
 unquoted style (`o.foo`). Example:
 
-```
+```bash
 $ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props keep_quoted -mc
 var o={foo:1,a:3};o.foo+=o.a,console.log(o.foo);
 ```
@@ -314,8 +314,8 @@ console.log(result.error); // runtime error
 You can also compress multiple files:
 ```javascript
 var result = UglifyJS.minify({
-  "file1.js": "var a = function() {};",
-  "file2.js": "var b = function() {};"
+    "file1.js": "var a = function() {};",
+    "file2.js": "var b = function() {};"
 });
 console.log(result.code);
 ```
@@ -332,8 +332,8 @@ console.log(result.code);
 
 - `mangle` (default `true`) — pass `false` to skip mangling names, or pass
   an object to specify [mangle options](#mangle-options) (see below).
-  
-  - `mangle.properties` (default `false`) — a subcategory of the mangle option. 
+
+  - `mangle.properties` (default `false`) — a subcategory of the mangle option.
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
 - `output` (default `null`) — pass an object if you wish to specify
@@ -342,15 +342,15 @@ console.log(result.code);
 
 - `sourceMap` (default `false`) - pass an object if you wish to specify
   [source map options](#source-map-options).
- 
+
 - `toplevel` (default `false`) - set to `true` if you wish to enable top level
   variable and function name mangling and to drop unused variables and functions.
-  
+
 - `ie8` (default `false`) - set to `true` to support IE8.
 
 ## Minify option structure
 
-```
+```javascript
 {
     warnings: false,
     parse: {
@@ -361,10 +361,10 @@ console.log(result.code);
     },
     mangle: {
         // mangle options
-	
-	properties: {
-	    // mangle property options
-	}
+
+        properties: {
+            // mangle property options
+        }
     },
     output: {
         // output options
@@ -382,10 +382,10 @@ console.log(result.code);
 To generate a source map:
 ```javascript
 var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
-  sourceMap: {
-    filename: "out.js",
-    url: "out.js.map"
-  }
+    sourceMap: {
+        filename: "out.js",
+        url: "out.js.map"
+    }
 });
 console.log(result.code); // minified output
 console.log(result.map);  // source map
@@ -403,10 +403,10 @@ be appended to code.
 You can also specify sourceRoot property to be included in source map:
 ```javascript
 var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
-  sourceMap: {
-    root: "http://example.com/src",
-    url: "out.js.map"
-  }
+    sourceMap: {
+        root: "http://example.com/src",
+        url: "out.js.map"
+    }
 });
 ```
 
@@ -414,10 +414,10 @@ If you're compressing compiled JavaScript and have a source map for it, you
 can use `sourceMap.content`:
 ```javascript
 var result = UglifyJS.minify({"compiled.js": "compiled code"}, {
-  sourceMap: {
-    content: "content from compiled.js.map",
-    url: "minified.js.map"
-  }
+    sourceMap: {
+        content: "content from compiled.js.map",
+        url: "minified.js.map"
+    }
 });
 // same as before, it returns `code` and `map`
 ```
@@ -577,8 +577,7 @@ Examples:
 ```javascript
 // test.js
 var globalVar;
-function funcName(firstLongName, anotherLongName)
-{
+function funcName(firstLongName, anotherLongName) {
     var myVariable = firstLongName +  anotherLongName;
 }
 ```
@@ -664,11 +663,11 @@ Note, however, that there might be situations where comments are lost.  For
 example:
 ```javascript
 function f() {
-	/** @preserve Foo Bar */
-	function g() {
-	  // this function is never called
-	}
-	return something();
+    /** @preserve Foo Bar */
+    function g() {
+        // this function is never called
+    }
+    return something();
 }
 ```
 
@@ -703,7 +702,7 @@ scope).  For example if you pass `--define DEBUG=false` then, coupled with
 dead code removal UglifyJS will discard the following from the output:
 ```javascript
 if (DEBUG) {
-	console.log("debug stuff");
+    console.log("debug stuff");
 }
 ```
 
@@ -737,7 +736,7 @@ using `var` with `reduce_vars` (enabled by default) should suffice.
 You can also use conditional compilation via the programmatic API. With the difference that the
 property name is `global_defs` and is a compressor property:
 
-```js
+```javascript
 var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
     compress: {
         dead_code: true,
@@ -749,7 +748,7 @@ var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
 ```
 
 ### Using native Uglify AST with `minify()`
-```
+```javascript
 // example: parse only, produce native Uglify AST
 
 var result = UglifyJS.minify(code, {
@@ -764,7 +763,7 @@ var result = UglifyJS.minify(code, {
 
 // result.ast contains native Uglify AST
 ```
-```
+```javascript
 // example: accept native Uglify AST input and then compress and mangle
 //          to produce both code and native AST.
 
