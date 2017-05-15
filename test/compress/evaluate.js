@@ -645,17 +645,16 @@ call_args: {
     options = {
         evaluate: true,
         reduce_vars: true,
-        toplevel: true,
     }
     input: {
-        var a = 1;
+        const a = 1;
         console.log(a);
         +function(a) {
             return a;
         }(a);
     }
     expect: {
-        var a = 1;
+        const a = 1;
         console.log(1);
         +(1, 1);
     }
@@ -667,17 +666,17 @@ call_args_drop_param: {
         evaluate: true,
         keep_fargs: false,
         reduce_vars: true,
-        toplevel: true,
         unused: true,
     }
     input: {
-        var a = 1;
+        const a = 1;
         console.log(a);
         +function(a) {
             return a;
         }(a, b);
     }
     expect: {
+        const a = 1;
         console.log(1);
         +(b, 1);
     }

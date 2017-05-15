@@ -120,7 +120,7 @@ mixed: {
         properties: true,
     }
     input: {
-        var FOO = { BAR: 0 };
+        const FOO = { BAR: 0 };
         console.log(FOO.BAR);
         console.log(++CONFIG.DEBUG);
         console.log(++CONFIG.VALUE);
@@ -130,7 +130,7 @@ mixed: {
         console.log(CONFIG);
     }
     expect: {
-        var FOO = { BAR: 0 };
+        const FOO = { BAR: 0 };
         console.log("moo");
         console.log(++CONFIG.DEBUG);
         console.log(++CONFIG.VALUE);

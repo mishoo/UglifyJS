@@ -2190,11 +2190,10 @@ issue_1814_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
-        toplevel: true,
         unused: true,
     }
     input: {
-        var a = 42;
+        const a = 42;
         !function() {
             var b = a;
             !function(a) {
@@ -2203,6 +2202,7 @@ issue_1814_1: {
         }();
     }
     expect: {
+        const a = 42;
         !function() {
             !function(a) {
                 console.log(a++, 42);
@@ -2216,11 +2216,10 @@ issue_1814_2: {
     options = {
         evaluate: true,
         reduce_vars: true,
-        toplevel: true,
         unused: true,
     }
     input: {
-        var a = "32";
+        const a = "32";
         !function() {
             var b = a + 1;
             !function(a) {
@@ -2229,6 +2228,7 @@ issue_1814_2: {
         }();
     }
     expect: {
+        const a = "32";
         !function() {
             !function(a) {
                 console.log(a++, "321");

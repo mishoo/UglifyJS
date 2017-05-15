@@ -583,8 +583,8 @@ collapse_vars_assignment: {
             return a = a;
         }
         function f1(c) {
-            var a = 3 / c;
-            var b = 1 - a;
+            const a = 3 / c;
+            const b = 1 - a;
             return b;
         }
         function f2(c) {
@@ -724,10 +724,10 @@ collapse_vars_misc1: {
             return t;
         }
         function f1(x) { var y = 5 - x; return y; }
-        function f2(x) { var z = foo(), y = z / (5 - x); return y; }
+        function f2(x) { const z = foo(), y = z / (5 - x); return y; }
         function f3(x) { var z = foo(), y = (5 - x) / z; return y; }
         function f4(x) { var z = foo(), y = (5 - u) / z; return y; }
-        function f5(x) { var z = foo(), y = (5 - window.x) / z; return y; }
+        function f5(x) { const z = foo(), y = (5 - window.x) / z; return y; }
         function f6() { var b = window.a * window.z; return b && zap(); }
         function f7() { var b = window.a * window.z; return b + b; }
         function f8() { var b = window.a * window.z; var c = b + 5; return b + c; }
@@ -744,7 +744,7 @@ collapse_vars_misc1: {
         function f2(x) { return foo() / (5 - x) }
         function f3(x) { return (5 - x) / foo() }
         function f4(x) { var z = foo(); return (5 - u) / z }
-        function f5(x) { var z = foo(); return (5 - window.x) / z }
+        function f5(x) { const z = foo(); return (5 - window.x) / z }
         function f6() { return window.a * window.z && zap() }
         function f7() { var b = window.a * window.z; return b + b }
         function f8() { var b = window.a * window.z; return b + (b + 5) }
@@ -2185,4 +2185,50 @@ compound_assignment: {
         console.log(a);
     }
     expect_stdout: "4"
+}
+
+reassign_const_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f() {
+            const a = 1;
+            a = 2;
+            return a;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            const a = 1;
+            a = 2;
+            return a;
+        }
+        console.log(f());
+    }
+    expect_stdout: true
+}
+
+reassign_const_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f() {
+            const a = 1;
+            ++a;
+            return a;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            const a = 1;
+            ++a;
+            return a;
+        }
+        console.log(f());
+    }
+    expect_stdout: true
 }
