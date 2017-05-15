@@ -5,7 +5,7 @@ UglifyJS 3
 UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit.
 
 #### Note:
-- **`uglify-js@3.x` has a simplified API and CLI that is not backwards compatible with [`uglify-js@2.x`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
+- **`uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage) that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
 - **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
 - `uglify-js` only supports ECMAScript 5 (ES5).
 - Those wishing to minify
@@ -25,8 +25,7 @@ From NPM for programmatic use:
 
     npm install uglify-js
 
-Usage
------
+# Command line usage
 
     uglifyjs [input files] [options]
 
@@ -43,7 +42,7 @@ a double dash to prevent input files being used as option arguments:
 
     uglifyjs --compress --mangle -- input.js
 
-The available options are:
+### Command line options
 
 ```
     -h, --help                  Print usage information.
@@ -142,7 +141,7 @@ The available options are:
 Specify `--output` (`-o`) to declare the output file.  Otherwise the output
 goes to STDOUT.
 
-## Source map options
+## CLI source map options
 
 UglifyJS can generate a source map file, which is highly useful for
 debugging your compressed JavaScript.  To get a source map, pass
@@ -186,7 +185,20 @@ To use this feature pass `--source-map content="/path/to/input/source.map"`
 or `--source-map content=inline` if the source map is included inline with
 the sources.
 
-## Mangler options
+## CLI compress options
+
+You need to pass `--compress` (`-c`) to enable the compressor.  Optionally 
+you can pass a comma-separated list of [compress options](#compress-options).
+
+Options are in the form `foo=bar`, or just `foo` (the latter implies 
+a boolean option that you want to set `true`; it's effectively a 
+shortcut for `foo=true`).
+
+Example:
+
+    uglifyjs file.js -c toplevel,sequences=false
+
+## CLI mangle options
 
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
@@ -205,7 +217,7 @@ comma-separated list of names.  For example:
 
 to prevent the `require`, `exports` and `$` names from being changed.
 
-### Mangling property names (`--mangle-props`)
+### CLI mangling property names (`--mangle-props`)
 
 **Note:** this will probably break your code.  Mangling property names is a
 separate step, different from variable name mangling.  Pass
@@ -255,7 +267,7 @@ of mangled property names.
 Using the name cache is not necessary if you compress all your files in a
 single call to UglifyJS.
 
-#### Mangling unquoted names (`--mangle-props keep_quoted`)
+### Mangling unquoted names (`--mangle-props keep_quoted`)
 
 Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
 so that it is not mangled throughout the entire script even when used in an
@@ -266,7 +278,7 @@ $ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs 
 var o={foo:1,a:3};o.foo+=o.a,console.log(o.foo);
 ```
 
-#### Debugging property name mangling
+### Debugging property name mangling
 
 You can also pass `--mangle-props debug` in order to mangle property names
 without completely obscuring them. For example the property `o.foo`
@@ -281,12 +293,144 @@ random number on every compile to simulate mangling changing with different
 inputs (e.g. as you update the input script with new properties), and to help
 identify mistakes like writing mangled keys to storage.
 
-## Compressor options
 
-You need to pass `--compress` (`-c`) to enable the compressor.  Optionally
-you can pass a comma-separated list of options.  Options are in the form
-`foo=bar`, or just `foo` (the latter implies a boolean option that you want
-to set `true`; it's effectively a shortcut for `foo=true`).
+# API Reference
+
+Assuming installation via NPM, you can load UglifyJS in your application
+like this:
+```javascript
+var UglifyJS = require("uglify-js");
+```
+
+There is a single high level minification function, `minify(files, options)`, which will
+performs all the steps in a configurable manner.
+Example:
+```javascript
+var result = UglifyJS.minify("var b = function() {};");
+console.log(result.code);  // minified output
+console.log(result.error); // runtime error
+```
+
+You can also compress multiple files:
+```javascript
+var result = UglifyJS.minify({
+  "file1.js": "var a = function() {};",
+  "file2.js": "var b = function() {};"
+});
+console.log(result.code);
+```
+
+## Minify options
+
+- `warnings` (default `false`) — pass `true` to display compressor warnings.
+
+- `parse` (default `{}`) — pass an object if you wish to specify some
+  additional [parse options](#parse-options).
+
+- `compress` (default `{}`) — pass `false` to skip compressing entirely.
+  Pass an object to specify custom [compress options](#compress-options).
+
+- `mangle` (default `true`) — pass `false` to skip mangling names, or pass
+  an object to specify [mangle options](#mangle-options) (see below).
+  
+  - `mangle.properties` (default `false`) — a subcategory of the mangle option. 
+    Pass an object to specify custom [mangle property options](#mangle-properties-options).
+
+- `output` (default `null`) — pass an object if you wish to specify
+  additional [output options](#output-options).  The defaults are optimized
+  for best compression.
+
+- `sourceMap` (default `false`) - pass an object if you wish to specify
+  [source map options](#source-map-options).
+ 
+- `toplevel` (default `false`) - set to `true` if you wish to enable top level
+  variable and function name mangling and to drop unused variables and functions.
+  
+- `ie8` (default `false`) - set to `true` to support IE8.
+
+## Minify option structure
+
+```
+{
+    warnings: false,
+    parse: {
+        // parse options
+    },
+    compress: {
+        // compress options
+    },
+    mangle: {
+        // mangle options
+	
+	properties: {
+	    // mangle property options
+	}
+    },
+    output: {
+        // output options
+    },
+    sourceMap: {
+        // source map options
+    },
+    toplevel: false,
+    ie8: false,
+}
+```
+
+### Source map options
+
+To generate a source map:
+```javascript
+var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
+  sourceMap: {
+    filename: "out.js",
+    url: "out.js.map"
+  }
+});
+console.log(result.code); // minified output
+console.log(result.map);  // source map
+```
+
+Note that the source map is not saved in a file, it's just returned in
+`result.map`.  The value passed for `sourceMap.url` is only used to set
+`//# sourceMappingURL=out.js.map` in `result.code`. The value of
+`filename` is only used to set `file` attribute (see [the spec][sm-spec])
+in source map file.
+
+You can set option `sourceMap.url` to be `"inline"` and source map will
+be appended to code.
+
+You can also specify sourceRoot property to be included in source map:
+```javascript
+var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
+  sourceMap: {
+    root: "http://example.com/src",
+    url: "out.js.map"
+  }
+});
+```
+
+If you're compressing compiled JavaScript and have a source map for it, you
+can use `sourceMap.content`:
+```javascript
+var result = UglifyJS.minify({"compiled.js": "compiled code"}, {
+  sourceMap: {
+    content: "content from compiled.js.map",
+    url: "minified.js.map"
+  }
+});
+// same as before, it returns `code` and `map`
+```
+
+If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.url`.
+
+## Parse options
+
+- `bare_returns` (default `false`) -- support top level `return` statements
+- `html5_comments` (default `true`)
+- `shebang` (default `true`) -- support `#!command` as the first line
+
+## Compress options
 
 - `sequences` (default: true) -- join consecutive simple statements using the
   comma operator.  May be set to a positive integer to specify the maximum number
@@ -414,8 +558,128 @@ marked as "pure".  A function call is marked as "pure" if a comment annotation
 `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For example:
 `/*@__PURE__*/foo()`;
 
+## Mangle options
 
-### The `unsafe` option
+- `reserved` - pass an array of identifiers that should be excluded from mangling
+
+- `toplevel` — mangle names declared in the toplevel scope (disabled by
+default).
+
+- `eval` — mangle names visible in scopes where eval or with are used
+(disabled by default).
+
+- `keep_fnames` -- default `false`.  Pass `true` to not mangle
+function names.  Useful for code relying on `Function.prototype.name`.
+See also: the `keep_fnames` [compress option](#compress-options).
+
+Examples:
+
+```javascript
+// test.js
+var globalVar;
+function funcName(firstLongName, anotherLongName)
+{
+    var myVariable = firstLongName +  anotherLongName;
+}
+```
+```javascript
+var code = fs.readFileSync("test.js", "utf8");
+
+UglifyJS.minify(code).code;
+// 'function funcName(a,n){}var globalVar;'
+
+UglifyJS.minify(code, { mangle: { reserved: ['firstLongName'] } }).code;
+// 'function funcName(firstLongName,a){}var globalVar;'
+
+UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
+// 'function n(n,a){}var a;'
+```
+
+### Mangle properties options
+
+- `regex` — Pass a RegExp to only mangle certain names
+- `keep_quoted` — Only mangle unquoted property names
+- `debug` — Mangle names with the original name still present. Defaults to `false`.
+  Pass an empty string to enable, or a non-empty string to set the suffix.
+
+## Output options
+
+The code generator tries to output shortest code possible by default.  In
+case you want beautified output, pass `--beautify` (`-b`).  Optionally you
+can pass additional arguments that control the code output:
+
+- `beautify` (default `true`) -- whether to actually beautify the output.
+  Passing `-b` will set this to true, but you might need to pass `-b` even
+  when you want to generate minified code, in order to specify additional
+  arguments, so you can use `-b beautify=false` to override it.
+- `indent_level` (default 4)
+- `indent_start` (default 0) -- prefix all lines by that many spaces
+- `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
+  objects
+- `space_colon` (default `true`) -- insert a space after the colon signs
+- `ascii_only` (default `false`) -- escape Unicode characters in strings and
+  regexps (affects directives with non-ascii characters becoming invalid)
+- `inline_script` (default `false`) -- escape the slash in occurrences of
+  `</script` in strings
+- `width` (default 80) -- only takes effect when beautification is on, this
+  specifies an (orientative) line width that the beautifier will try to
+  obey.  It refers to the width of the line text (excluding indentation).
+  It doesn't work very well currently, but it does make the code generated
+  by UglifyJS more readable.
+- `max_line_len` (default 32000) -- maximum line length (for uglified code)
+- `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
+  `do`, `while` or `with` statements, even if their body is a single
+  statement.
+- `semicolons` (default `true`) -- separate statements with semicolons.  If
+  you pass `false` then whenever possible we will use a newline instead of a
+  semicolon, leading to more readable output of uglified code (size before
+  gzip could be smaller; size after gzip insignificantly larger).
+- `preamble` (default `null`) -- when passed it must be a string and
+  it will be prepended to the output literally.  The source map will
+  adjust for this text.  Can be used to insert a comment containing
+  licensing information, for example.
+- `quote_style` (default `0`) -- preferred quote style for strings (affects
+  quoted property names and directives as well):
+  - `0` -- prefers double quotes, switches to single quotes when there are
+    more double quotes in the string itself.
+  - `1` -- always use single quotes
+  - `2` -- always use double quotes
+  - `3` -- always use the original quotes
+- `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
+  quotes from property names in object literals.
+
+
+# Miscellaneous
+
+### Keeping copyright notices or other comments
+
+You can pass `--comments` to retain certain comments in the output.  By
+default it will keep JSDoc-style comments that contain "@preserve",
+"@license" or "@cc_on" (conditional compilation for IE).  You can pass
+`--comments all` to keep all the comments, or a valid JavaScript regexp to
+keep only comments that match this regexp.  For example `--comments /^!/`
+will keep comments like `/*! Copyright Notice */`.
+
+Note, however, that there might be situations where comments are lost.  For
+example:
+```javascript
+function f() {
+	/** @preserve Foo Bar */
+	function g() {
+	  // this function is never called
+	}
+	return something();
+}
+```
+
+Even though it has "@preserve", the comment will be lost because the inner
+function `g` (which is the AST node to which the comment is attached to) is
+discarded by the compressor as not referenced.
+
+The safest comments where to place copyright information (or other info that
+needs to be kept in the output) are comments attached to toplevel nodes.
+
+### The `unsafe` `compress` option
 
 It enables some transformations that *might* break code logic in certain
 contrived cases, but should be fine for most code.  You might want to try it
@@ -468,12 +732,13 @@ code as usual.  The build will contain the `const` declarations if you use
 them. If you are targeting < ES6 environments which does not support `const`,
 using `var` with `reduce_vars` (enabled by default) should suffice.
 
-#### Conditional compilation, API
+### Conditional compilation API
+
 You can also use conditional compilation via the programmatic API. With the difference that the
 property name is `global_defs` and is a compressor property:
 
 ```js
-uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
+var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
     compress: {
         dead_code: true,
         global_defs: {
@@ -483,81 +748,40 @@ uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
 });
 ```
 
-## Beautifier options
+### Using native Uglify AST with `minify()`
+```
+// example: parse only, produce native Uglify AST
 
-The code generator tries to output shortest code possible by default.  In
-case you want beautified output, pass `--beautify` (`-b`).  Optionally you
-can pass additional arguments that control the code output:
+var result = UglifyJS.minify(code, {
+    parse: {},
+    compress: false,
+    mangle: false,
+    output: {
+        ast: true,
+        code: false  // optional - faster if false
+    }
+});
 
-- `beautify` (default `true`) -- whether to actually beautify the output.
-  Passing `-b` will set this to true, but you might need to pass `-b` even
-  when you want to generate minified code, in order to specify additional
-  arguments, so you can use `-b beautify=false` to override it.
-- `indent_level` (default 4)
-- `indent_start` (default 0) -- prefix all lines by that many spaces
-- `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
-  objects
-- `space_colon` (default `true`) -- insert a space after the colon signs
-- `ascii_only` (default `false`) -- escape Unicode characters in strings and
-  regexps (affects directives with non-ascii characters becoming invalid)
-- `inline_script` (default `false`) -- escape the slash in occurrences of
-  `</script` in strings
-- `width` (default 80) -- only takes effect when beautification is on, this
-  specifies an (orientative) line width that the beautifier will try to
-  obey.  It refers to the width of the line text (excluding indentation).
-  It doesn't work very well currently, but it does make the code generated
-  by UglifyJS more readable.
-- `max_line_len` (default 32000) -- maximum line length (for uglified code)
-- `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
-  `do`, `while` or `with` statements, even if their body is a single
-  statement.
-- `semicolons` (default `true`) -- separate statements with semicolons.  If
-  you pass `false` then whenever possible we will use a newline instead of a
-  semicolon, leading to more readable output of uglified code (size before
-  gzip could be smaller; size after gzip insignificantly larger).
-- `preamble` (default `null`) -- when passed it must be a string and
-  it will be prepended to the output literally.  The source map will
-  adjust for this text.  Can be used to insert a comment containing
-  licensing information, for example.
-- `quote_style` (default `0`) -- preferred quote style for strings (affects
-  quoted property names and directives as well):
-  - `0` -- prefers double quotes, switches to single quotes when there are
-    more double quotes in the string itself.
-  - `1` -- always use single quotes
-  - `2` -- always use double quotes
-  - `3` -- always use the original quotes
-- `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
-  quotes from property names in object literals.
+// result.ast contains native Uglify AST
+```
+```
+// example: accept native Uglify AST input and then compress and mangle
+//          to produce both code and native AST.
 
-### Keeping copyright notices or other comments
+var result = UglifyJS.minify(ast, {
+    compress: {},
+    mangle: {},
+    output: {
+        ast: true,
+        code: true  // optional - faster if false
+    }
+});
 
-You can pass `--comments` to retain certain comments in the output.  By
-default it will keep JSDoc-style comments that contain "@preserve",
-"@license" or "@cc_on" (conditional compilation for IE).  You can pass
-`--comments all` to keep all the comments, or a valid JavaScript regexp to
-keep only comments that match this regexp.  For example `--comments /^!/`
-will keep comments like `/*! Copyright Notice */`.
-
-Note, however, that there might be situations where comments are lost.  For
-example:
-```javascript
-function f() {
-	/** @preserve Foo Bar */
-	function g() {
-	  // this function is never called
-	}
-	return something();
-}
+// result.ast contains native Uglify AST
+// result.code contains the minified code in string form.
 ```
 
-Even though it has "@preserve", the comment will be lost because the inner
-function `g` (which is the AST node to which the comment is attached to) is
-discarded by the compressor as not referenced.
-
-The safest comments where to place copyright information (or other info that
-needs to be kept in the output) are comments attached to toplevel nodes.
-
-## Support for the SpiderMonkey AST
+### ESTree / SpiderMonkey AST
 
 UglifyJS has its own abstract syntax tree format; for
 [practical reasons](http://lisperator.net/blog/uglifyjs-why-not-switching-to-spidermonkey-ast/)
@@ -584,142 +808,6 @@ the parsing.  If you pass this option, UglifyJS will `require("acorn")`.
 Acorn is really fast (e.g. 250ms instead of 380ms on some 650K code), but
 converting the SpiderMonkey tree that Acorn produces takes another 150ms so
 in total it's a bit more than just using UglifyJS's own parser.
-
-API Reference
--------------
-
-Assuming installation via NPM, you can load UglifyJS in your application
-like this:
-```javascript
-var UglifyJS = require("uglify-js");
-```
-
-There is a single toplevel function, `minify(files, options)`, which will
-performs all the steps in a configurable manner.
-Example:
-```javascript
-var result = UglifyJS.minify("var b = function() {};");
-console.log(result.code);  // minified output
-console.log(result.error); // runtime error
-```
-
-You can also compress multiple files:
-```javascript
-var result = UglifyJS.minify({
-  "file1.js": "var a = function() {};",
-  "file2.js": "var b = function() {};"
-});
-console.log(result.code);
-```
-
-To generate a source map:
-```javascript
-var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
-  sourceMap: {
-    filename: "out.js",
-    url: "out.js.map"
-  }
-});
-console.log(result.code); // minified output
-console.log(result.map);  // source map
-```
-
-Note that the source map is not saved in a file, it's just returned in
-`result.map`.  The value passed for `sourceMap.url` is only used to set
-`//# sourceMappingURL=out.js.map` in `result.code`. The value of
-`filename` is only used to set `file` attribute (see [the spec][sm-spec])
-in source map file.
-
-You can set option `sourceMap.url` to be `"inline"` and source map will
-be appended to code.
-
-You can also specify sourceRoot property to be included in source map:
-```javascript
-var result = UglifyJS.minify({"file1.js": "var a = function() {};"}, {
-  sourceMap: {
-    root: "http://example.com/src",
-    url: "out.js.map"
-  }
-});
-```
-
-If you're compressing compiled JavaScript and have a source map for it, you
-can use `sourceMap.content`:
-```javascript
-var result = UglifyJS.minify({"compiled.js": "compiled code"}, {
-  sourceMap: {
-    content: "content from compiled.js.map",
-    url: "minified.js.map"
-  }
-});
-// same as before, it returns `code` and `map`
-```
-
-If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.url`.
-
-Other options:
-
-- `warnings` (default `false`) — pass `true` to display compressor warnings.
-
-- `mangle` (default `true`) — pass `false` to skip mangling names, or pass
-  an object to specify mangling options (see below).
-
-- `mangleProperties` (default `false`) — pass an object to specify custom
-  mangle property options.
-
-- `output` (default `null`) — pass an object if you wish to specify
-  additional [output options](#beautifier-options).  The defaults are optimized
-  for best compression.
-
-- `compress` (default `{}`) — pass `false` to skip compressing entirely.
-  Pass an object to specify custom [compressor options](#compressor-options).
-
-- `parse` (default {}) — pass an object if you wish to specify some
-  additional [parser options](#the-parser).
-
-##### mangle
-
-- `reserved` - pass an array of identifiers that should be excluded from mangling
-
-- `toplevel` — mangle names declared in the toplevel scope (disabled by
-default).
-
-- `eval` — mangle names visible in scopes where eval or with are used
-(disabled by default).
-
-- `keep_fnames` -- default `false`.  Pass `true` to not mangle
-function names.  Useful for code relying on `Function.prototype.name`.
-See also: the `keep_fnames` [compress option](#compressor-options).
-
-Examples:
-
-```javascript
-// test.js
-var globalVar;
-function funcName(firstLongName, anotherLongName)
-{
-    var myVariable = firstLongName +  anotherLongName;
-}
-```
-```javascript
-var code = fs.readFileSync("test.js", "utf8");
-
-UglifyJS.minify(code).code;
-// 'function funcName(a,n){}var globalVar;'
-
-UglifyJS.minify(code, { mangle: { reserved: ['firstLongName'] } }).code;
-// 'function funcName(firstLongName,a){}var globalVar;'
-
-UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
-// 'function n(n,a){}var a;'
-```
-
-##### mangle.properties options
-
-- `regex` — Pass a RegExp to only mangle certain names
-- `keep_quoted` — Only mangle unquoted property names
-- `debug` — Mangle names with the original name still present. Defaults to `false`.
-  Pass an empty string to enable, or a non-empty string to set the suffix.
 
 [acorn]: https://github.com/ternjs/acorn
 [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k
