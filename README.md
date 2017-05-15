@@ -324,7 +324,7 @@ console.log(result.code);
 
 - `warnings` (default `false`) — pass `true` to display compressor warnings.
 
-- `parse` (default {}) — pass an object if you wish to specify some
+- `parse` (default `{}`) — pass an object if you wish to specify some
   additional [parse options](#parse-options).
 
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
@@ -344,7 +344,7 @@ console.log(result.code);
   [source map options](#source-map-options).
  
 - `toplevel` (default `false`) - set to `true` if you wish to enable top level
-  variable and function name mangling and to drop unused variable and functions.
+  variable and function name mangling and to drop unused variables and functions.
   
 - `ast` (default `false`) - set to `true` if you wish to have the `ast` 
   set in the minify result.
@@ -745,7 +745,7 @@ You can also use conditional compilation via the programmatic API. With the diff
 property name is `global_defs` and is a compressor property:
 
 ```js
-uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
+var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
     compress: {
         dead_code: true,
         global_defs: {
