@@ -21,8 +21,7 @@ var options = {
     compress: false,
     mangle: false
 };
-program._name = info.name;
-program.version(info.version);
+program.version(info.name + ' ' + info.version);
 program.parseArgv = program.parse;
 program.parse = undefined;
 program.option("-p, --parse <options>", "Specify parser options.", parse_js("parse", true));
