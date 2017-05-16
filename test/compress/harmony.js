@@ -241,6 +241,30 @@ export_default_array: {
     expect_exact: "export default[3,foo];"
 }
 
+export_default_anon_function: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        export default function(){
+            console.log(1 + 2);
+        }
+    }
+    expect_exact: "export default function(){console.log(3)};"
+}
+
+export_default_anon_class: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        export default class {
+            foo() { console.log(1 + 2); }
+        }
+    }
+    expect_exact: "export default class{foo(){console.log(3)}};"
+}
+
 export_module_statement: {
     input: {
         export * from "a.js";
