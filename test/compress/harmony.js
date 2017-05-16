@@ -533,3 +533,15 @@ issue_1753_disable: {
         }
     }
 }
+
+class_extends_expression: {
+    options = {
+        evaluate: true
+    }
+    input: {
+        class bin extends (a || b) {}
+        class seq extends (a, b) {}
+        class ter extends (a ? b : c) {}
+    }
+    expect_exact: "class bin extends(a||b){}class seq extends(a,b){}class ter extends(a?b:c){}"
+}
