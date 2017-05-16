@@ -780,6 +780,12 @@ var result = UglifyJS.minify(ast, {
 // result.code contains the minified code in string form.
 ```
 
+### Working with Uglify AST
+
+Transversal and transformation of the native AST can be performed through
+[`TreeWalker`](http://lisperator.net/uglifyjs/walk) and
+[`TreeTransformer`](http://lisperator.net/uglifyjs/transform) respectively.
+
 ### ESTree / SpiderMonkey AST
 
 UglifyJS has its own abstract syntax tree format; for
