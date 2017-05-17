@@ -534,14 +534,52 @@ issue_1753_disable: {
     }
 }
 
-class_extends_expression: {
+class_extends: {
     options = {
-        evaluate: true
+        evaluate: true,
     }
     input: {
-        class bin extends (a || b) {}
-        class seq extends (a, b) {}
-        class ter extends (a ? b : c) {}
+        function f() {
+            class foo extends bar {}
+            class pro extends some.prop {}
+            class arr extends stuff[1 - 1] {}
+            class bin extends (a || b) {}
+            class seq extends (a, b) {}
+            class ter extends (a ? b : c) {}
+            class uni extends (!0) {}
+        }
     }
-    expect_exact: "class bin extends(a||b){}class seq extends(a,b){}class ter extends(a?b:c){}"
+    expect_exact: "function f(){class foo extends bar{}class pro extends some.prop{}class arr extends stuff[0]{}class bin extends(a||b){}class seq extends(a,b){}class ter extends(a?b:c){}class uni extends(!0){}}"
+}
+
+class_extends_class: {
+    options = {
+    }
+    input: {
+        class anon extends class {} {}
+        class named extends class base {} {}
+    }
+    expect_exact: "class anon extends class{}{}class named extends class base{}{}"
+}
+
+class_extends_function: {
+    options = {
+    }
+    input: {
+        class anon extends function(){} {}
+        class named extends function base(){} {}
+    }
+    expect_exact: "class anon extends function(){}{}class named extends function base(){}{}"
+}
+
+class_extends_regex: {
+    options = {
+    }
+    input: {
+        function f() {
+            class rx1 extends (/rx/) {}
+            // class rx2 extends /rx/ {}  // FIXME - parse error
+        }
+    }
+    expect_exact: "function f(){class rx1 extends(/rx/){}}"
 }
