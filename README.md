@@ -645,7 +645,6 @@ can pass additional arguments that control the code output:
   semicolon, leading to more readable output of uglified code (size before
   gzip could be smaller; size after gzip insignificantly larger).
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
-- `space_colon` (default `true`) -- insert a space after the colon signs
 - `width` (default 80) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
   obey.  It refers to the width of the line text (excluding indentation).
