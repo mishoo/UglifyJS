@@ -618,8 +618,6 @@ can pass additional arguments that control the code output:
 - `comments` (default `false`) -- pass `true` or `"all"` to preserve all
   comments, `"some"` to preserve some comments, a regular expression string
   (e.g. `/^!/`) or a function.
-- `ie8` (default `false`) -- pass `true` to support non-standard Internet
-  Explorer 8
 - `indent_level` (default 4)
 - `indent_start` (default 0) -- prefix all lines by that many spaces
 - `inline_script` (default `false`) -- escape the slash in occurrences of
@@ -631,7 +629,7 @@ can pass additional arguments that control the code output:
   it will be prepended to the output literally.  The source map will
   adjust for this text.  Can be used to insert a comment containing
   licensing information, for example.
-- `preserve_line` (default `false`) -- pass `true` to preserve lines, but it 
+- `preserve_line` (default `false`) -- pass `true` to preserve lines, but it
   only works if `beautify` is set to `false`.
 - `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
   objects
@@ -647,10 +645,7 @@ can pass additional arguments that control the code output:
   semicolon, leading to more readable output of uglified code (size before
   gzip could be smaller; size after gzip insignificantly larger).
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
-- `source_map` (default `null`) -- pass a `SourceMap` object to generate.
 - `space_colon` (default `true`) -- insert a space after the colon signs
-- `unescape_regexps` (default `false`) -- pass `true` to unescape regular
-  expressions, but only when `ascii_only` is set to `false`.
 - `width` (default 80) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
   obey.  It refers to the width of the line text (excluding indentation).
