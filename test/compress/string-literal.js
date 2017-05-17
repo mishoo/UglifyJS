@@ -8,3 +8,12 @@ octal_escape_sequence: {
         var border_check = "\x20\x30\x38\x30\x00\x30\xc0\x30";
     }
 }
+
+issue_1929: {
+    input: {
+        function f(s) {
+            return s.split(/[\\/]/);
+        }
+    }
+    expect_exact: "function f(s){return s.split(/[\\\\/]/)}"
+}
