@@ -1,3 +1,4 @@
+var semver = require("semver");
 var vm = require("vm");
 
 function safe_log(arg, level) {
@@ -63,7 +64,7 @@ exports.run_code = function(code) {
         process.stdout.write = original_write;
     }
 };
-exports.same_stdout = ~process.version.lastIndexOf("v0.12.", 0) ? function(expected, actual) {
+exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
     if (typeof expected != typeof actual) return false;
     if (typeof expected != "string") {
         if (expected.name != actual.name) return false;

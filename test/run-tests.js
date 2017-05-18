@@ -5,6 +5,7 @@ var path = require("path");
 var fs = require("fs");
 var assert = require("assert");
 var sandbox = require("./sandbox");
+var semver = require("semver");
 
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
@@ -164,7 +165,8 @@ function run_compress_tests() {
                         failed_files[file] = 1;
                     }
                 }
-                if (test.expect_stdout) {
+                if (test.expect_stdout
+                    && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
                     var stdout = sandbox.run_code(input_code);
                     if (test.expect_stdout === true) {
                         test.expect_stdout = stdout;
@@ -274,7 +276,14 @@ function parse_test(file) {
             if (node instanceof U.AST_LabeledStatement) {
                 var label = node.label;
                 assert.ok(
-                    ["input", "expect", "expect_exact", "expect_warnings", "expect_stdout"].indexOf(label.name) >= 0,
+                    [
+                        "input",
+                        "expect",
+                        "expect_exact",
+                        "expect_warnings",
+                        "expect_stdout",
+                        "node_version",
+                    ].indexOf(label.name) >= 0,
                     tmpl("Unsupported label {name} [{line},{col}]", {
                         name: label.name,
                         line: label.start.line,
@@ -282,7 +291,7 @@ function parse_test(file) {
                     })
                 );
                 var stat = node.body;
-                if (label.name == "expect_exact") {
+                if (label.name == "expect_exact" || label.name == "node_version") {
                     test[label.name] = read_string(stat);
                 } else if (label.name == "expect_stdout") {
                     if (stat.TYPE == "SimpleStatement" && stat.body instanceof U.AST_Boolean) {
