@@ -1253,3 +1253,30 @@ reassign_const: {
     }
     expect_stdout: true
 }
+
+issue_1968: {
+    options = {
+        unused: true,
+    }
+    input: {
+        function f(c) {
+            var a;
+            if (c) {
+                let b;
+                return (a = 2) + (b = 3);
+            }
+        }
+        console.log(f(1));
+    }
+    expect: {
+        function f(c) {
+            if (c) {
+                let b;
+                return 2 + (b = 3);
+            }
+        }
+        console.log(f(1));
+    }
+    expect_stdout: "5"
+    node_version: ">=6"
+}
