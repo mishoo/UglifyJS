@@ -552,10 +552,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `keep_infinity` -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
-- `side_effects` -- default `false`. Pass `true` to potentially drop functions
-marked as "pure".  A function call is marked as "pure" if a comment annotation
-`/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For example:
-`/*@__PURE__*/foo()`;
+- `side_effects` -- default `true`. Pass `false` to disable potentially dropping 
+functions marked as "pure".  A function call is marked as "pure" if a comment 
+annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For 
+example: `/*@__PURE__*/foo()`;
 
 ## Mangle options
 
