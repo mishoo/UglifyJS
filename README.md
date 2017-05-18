@@ -1,6 +1,5 @@
 uglify-es
 =========
-[![Build Status](https://travis-ci.org/mishoo/UglifyJS2.svg)](https://travis-ci.org/mishoo/UglifyJS2)
 
 **uglify-es** is an ECMAScript 2015 parser, minifier, compressor and beautifier toolkit.
 
@@ -550,10 +549,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `keep_infinity` -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
-- `side_effects` -- default `false`. Pass `true` to potentially drop functions
-marked as "pure".  A function call is marked as "pure" if a comment annotation
-`/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For example:
-`/*@__PURE__*/foo()`;
+- `side_effects` -- default `true`. Pass `false` to disable potentially dropping
+functions marked as "pure".  A function call is marked as "pure" if a comment
+annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
+example: `/*@__PURE__*/foo()`;
 
 ## Mangle options
 
@@ -604,36 +603,36 @@ The code generator tries to output shortest code possible by default.  In
 case you want beautified output, pass `--beautify` (`-b`).  Optionally you
 can pass additional arguments that control the code output:
 
+- `ascii_only` (default `false`) -- escape Unicode characters in strings and
+  regexps (affects directives with non-ascii characters becoming invalid)
 - `beautify` (default `true`) -- whether to actually beautify the output.
   Passing `-b` will set this to true, but you might need to pass `-b` even
   when you want to generate minified code, in order to specify additional
   arguments, so you can use `-b beautify=false` to override it.
-- `indent_level` (default 4)
-- `indent_start` (default 0) -- prefix all lines by that many spaces
-- `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
-  objects
-- `space_colon` (default `true`) -- insert a space after the colon signs
-- `ascii_only` (default `false`) -- escape Unicode characters in strings and
-  regexps (affects directives with non-ascii characters becoming invalid)
-- `inline_script` (default `false`) -- escape the slash in occurrences of
-  `</script` in strings
-- `width` (default 80) -- only takes effect when beautification is on, this
-  specifies an (orientative) line width that the beautifier will try to
-  obey.  It refers to the width of the line text (excluding indentation).
-  It doesn't work very well currently, but it does make the code generated
-  by UglifyJS more readable.
-- `max_line_len` (default 32000) -- maximum line length (for uglified code)
 - `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
-- `semicolons` (default `true`) -- separate statements with semicolons.  If
-  you pass `false` then whenever possible we will use a newline instead of a
-  semicolon, leading to more readable output of uglified code (size before
-  gzip could be smaller; size after gzip insignificantly larger).
+- `comments` (default `false`) -- pass `true` or `"all"` to preserve all
+  comments, `"some"` to preserve some comments, a regular expression string
+  (e.g. `/^!/`) or a function.
+- `ecma` (default `5`) -- set output printing mode.  This will only change the
+  output in direct control of the beautifier.  Non-compatible features in the
+  abstract syntax tree will still be outputted as is.
+- `indent_level` (default 4)
+- `indent_start` (default 0) -- prefix all lines by that many spaces
+- `inline_script` (default `false`) -- escape the slash in occurrences of
+  `</script` in strings
+- `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
+  quotes from property names in object literals.
+- `max_line_len` (default `false`) -- maximum line length (for uglified code)
 - `preamble` (default `null`) -- when passed it must be a string and
   it will be prepended to the output literally.  The source map will
   adjust for this text.  Can be used to insert a comment containing
   licensing information, for example.
+- `preserve_line` (default `false`) -- pass `true` to preserve lines, but it
+  only works if `beautify` is set to `false`.
+- `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
+  objects
 - `quote_style` (default `0`) -- preferred quote style for strings (affects
   quoted property names and directives as well):
   - `0` -- prefers double quotes, switches to single quotes when there are
@@ -641,12 +640,19 @@ can pass additional arguments that control the code output:
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
-- `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
-  quotes from property names in object literals.
-- `ecma` (default `5`) -- set output printing mode.  This will only change the
-  output in direct control of the beautifier.  Non-compatible features in the
-  abstract syntax tree will still be outputted as is.
-
+- `semicolons` (default `true`) -- separate statements with semicolons.  If
+  you pass `false` then whenever possible we will use a newline instead of a
+  semicolon, leading to more readable output of uglified code (size before
+  gzip could be smaller; size after gzip insignificantly larger).
+- `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
+- `width` (default 80) -- only takes effect when beautification is on, this
+  specifies an (orientative) line width that the beautifier will try to
+  obey.  It refers to the width of the line text (excluding indentation).
+  It doesn't work very well currently, but it does make the code generated
+  by UglifyJS more readable.
+- `wrap_iife` (default `false`) -- pass `true` to wrap immediately invoked
+  function expressions. See
+  [#640](https://github.com/mishoo/UglifyJS2/issues/640) for more details.
 
 # Miscellaneous
 
