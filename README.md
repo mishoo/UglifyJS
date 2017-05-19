@@ -459,6 +459,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `unsafe_proto` (default: false) -- optimize expressions like
   `Array.prototype.slice.call(a)` into `[].slice.call(a)`
 
+- `unsafe_regexp` (default: false) -- enable substitutions of variables with
+  `RegExp` values the same way as if they are constants.
+
 - `conditionals` -- apply optimizations for `if`-s and conditional
   expressions
 
@@ -550,9 +553,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
 - `side_effects` -- default `true`. Pass `false` to disable potentially dropping
-functions marked as "pure".  A function call is marked as "pure" if a comment
-annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
-example: `/*@__PURE__*/foo()`;
+  functions marked as "pure".  A function call is marked as "pure" if a comment
+  annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
+  example: `/*@__PURE__*/foo();`
 
 ## Mangle options
 
