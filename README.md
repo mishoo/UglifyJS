@@ -320,7 +320,7 @@ console.log(result.code);
 ```
 
 To produce warnings:
-```
+```javascript
 var result = UglifyJS.minify("function f(){ var u; return 5; }", {
     warnings: true
 });
