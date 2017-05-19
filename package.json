@@ -4,7 +4,7 @@
   "homepage": "http://lisperator.net/uglifyjs",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
   "license": "BSD-2-Clause",
-  "version": "2.8.26",
+  "version": "2.8.27",
   "engines": {
     "node": ">=0.8.0"
   },
