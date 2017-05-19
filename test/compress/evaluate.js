@@ -990,3 +990,50 @@ Infinity_NaN_undefined_LHS: {
         "}",
     ]
 }
+
+issue_1964_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe_regexp: false,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var long_variable_name = /\s/;
+            return "a b c".split(long_variable_name)[1];
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            var long_variable_name = /\s/;
+            return "a b c".split(long_variable_name)[1];
+        }
+        console.log(f());
+    }
+    expect_stdout: "b"
+}
+
+issue_1964_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe_regexp: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var long_variable_name = /\s/;
+            return "a b c".split(long_variable_name)[1];
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            return "a b c".split(/\s/)[1];
+        }
+        console.log(f());
+    }
+    expect_stdout: "b"
+}
