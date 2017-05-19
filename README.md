@@ -307,7 +307,7 @@ Example:
 ```javascript
 var result = UglifyJS.minify("var b = function() {};");
 console.log(result.code);  // minified output
-console.log(result.error); // runtime error
+console.log(result.error); // runtime error, if present
 ```
 
 You can also compress multiple files:
@@ -334,6 +334,12 @@ An error example:
 var result = UglifyJS.minify({"foo.js" : "if (0) else console.log(1);"});
 console.log(JSON.stringify(result.error));
 // {"message":"Unexpected token: keyword (else)","filename":"foo.js","line":1,"col":7,"pos":7}
+```
+Note: unlike `uglify-js@2.x`, the `3.x` API does not throw errors. To 
+achieve a similar effect one could do the following:
+```javascript
+var result = UglifyJS.minify("if (0) else console.log(1);");
+if (result.error) throw result.error;
 ```
 
 ## Minify options
