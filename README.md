@@ -329,6 +329,13 @@ console.log(result.warnings); // [ 'Dropping unused variable u [0:1,18]' ]
 console.log(result.error);    // runtime error, not defined in this case
 ```
 
+An error example:
+```javascript
+var result = UglifyJS.minify({"foo.js" : "if (0) else console.log(1);"});
+console.log(JSON.stringify(result.error));
+// {"message":"Unexpected token: keyword (else)","filename":"foo.js","line":1,"col":7,"pos":7}
+```
+
 ## Minify options
 
 - `warnings` (default `false`) — pass `true` to return compressor warnings 
