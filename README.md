@@ -301,7 +301,7 @@ like this:
 var UglifyJS = require("uglify-js");
 ```
 
-There is a single high level minification function, **`minify(code, options)`**,
+There is a single high level function, **`minify(code, options)`**,
 which will perform all minification [phases](#minify-options) in a configurable
 manner. By default `minify()` will enable the options [`compress`](#compress-options)
 and [`mangle`](#mangle-options). Example:
