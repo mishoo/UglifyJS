@@ -539,8 +539,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 
-- `collapse_vars` -- Collapse single-use `var` and `const` definitions
-  when possible.
+- `collapse_vars` -- Collapse single-use non-constant variables - side 
+  effects permitting.
 
 - `reduce_vars` -- Improve optimization on variables assigned with and
   used as constant values.
@@ -762,8 +762,8 @@ Another way of doing that is to declare your globals as constants in a
 separate file and include it into the build.  For example you can have a
 `build/defines.js` file with the following:
 ```javascript
-const DEBUG = false;
-const PRODUCTION = true;
+var DEBUG = false;
+var PRODUCTION = true;
 // etc.
 ```
 
