@@ -307,8 +307,8 @@ Example:
 ```javascript
 var code = "function add(first, second) { return first + second; }";
 var result = UglifyJS.minify(code);
+console.log(result.error); // runtime error, or `undefined` if no error
 console.log(result.code);  // minified output: function add(n,d){return n+d}
-console.log(result.error); // runtime error or undefined if no error
 ```
 
 You can also compress multiple files:
@@ -334,12 +334,12 @@ console.log(result.code);  // console.log(function(n,o){return n+o}(3,7));
 
 To produce warnings:
 ```javascript
-var result = UglifyJS.minify("function f(){ var u; return 2 + 3; }", {
-    warnings: true
-});
-console.log(result.code);     // function f(){return 5}
+var code = "function f(){ var u; return 2 + 3; }";
+var options = { warnings: true };
+var result = UglifyJS.minify(code, options);
+console.log(result.error);    // runtime error, `undefined` in this case
 console.log(result.warnings); // [ 'Dropping unused variable u [0:1,18]' ]
-console.log(result.error);    // runtime error, undefined in this case
+console.log(result.code);     // function f(){return 5}
 ```
 
 An error example:
