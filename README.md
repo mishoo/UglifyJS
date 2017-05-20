@@ -301,9 +301,10 @@ like this:
 var UglifyJS = require("uglify-js");
 ```
 
-There is a single high level minification function, `minify(code, options)`, which will
-performs all the steps in a configurable manner.
-Example:
+There is a single high level function, **`minify(code, options)`**,
+which will perform all minification [phases](#minify-options) in a configurable
+manner. By default `minify()` will enable the options [`compress`](#compress-options)
+and [`mangle`](#mangle-options). Example:
 ```javascript
 var code = "function add(first, second) { return first + second; }";
 var result = UglifyJS.minify(code);
@@ -311,7 +312,9 @@ console.log(result.error); // runtime error, or `undefined` if no error
 console.log(result.code);  // minified output: function add(n,d){return n+d}
 ```
 
-You can also compress multiple files:
+You can `minify` more than one JavaScript file at a time by using an object
+for the first argument where the keys are file names and the values are source
+code:
 ```javascript
 var code = {
     "file1.js": "function add(first, second) { return first + second; }",
