@@ -301,32 +301,44 @@ like this:
 var UglifyJS = require("uglify-js");
 ```
 
-There is a single high level minification function, `minify(files, options)`, which will
+There is a single high level minification function, `minify(code, options)`, which will
 performs all the steps in a configurable manner.
 Example:
 ```javascript
-var result = UglifyJS.minify("var b = function() {};");
-console.log(result.code);  // minified output
-console.log(result.error); // runtime error, if present
+var result = UglifyJS.minify("function add(first, second) { return first + second; }");
+console.log(result.code);  // minified output: function add(n,d){return n+d}
+console.log(result.error); // runtime error or undefined if no error
 ```
 
 You can also compress multiple files:
 ```javascript
-var result = UglifyJS.minify({
-    "file1.js": "var a = function() {};",
-    "file2.js": "var b = function() {};"
-});
-console.log(result.code);
+var code = {
+    "file1.js": "function add(first, second) { return first + second; }",
+    "file2.js": "console.log(add(1 + 2, 3 + 4));"
+};
+var result = UglifyJS.minify(code);
+console.log(result.code);  // function add(d,n){return d+n}console.log(add(3,7));
+```
+
+The `toplevel` option:
+```javascript
+var code = {
+    "file1.js": "function add(first, second) { return first + second; }",
+    "file2.js": "console.log(add(1 + 2, 3 + 4));"
+};
+var options = { toplevel: true };
+var result = UglifyJS.minify(code, options);
+console.log(result.code);  // console.log(function(n,o){return n+o}(3,7));
 ```
 
 To produce warnings:
 ```javascript
-var result = UglifyJS.minify("function f(){ var u; return 5; }", {
+var result = UglifyJS.minify("function f(){ var u; return 2 + 3; }", {
     warnings: true
 });
 console.log(result.code);     // function f(){return 5}
 console.log(result.warnings); // [ 'Dropping unused variable u [0:1,18]' ]
-console.log(result.error);    // runtime error, not defined in this case
+console.log(result.error);    // runtime error, undefined in this case
 ```
 
 An error example:
@@ -338,7 +350,7 @@ console.log(JSON.stringify(result.error));
 Note: unlike `uglify-js@2.x`, the `3.x` API does not throw errors. To 
 achieve a similar effect one could do the following:
 ```javascript
-var result = UglifyJS.minify("if (0) else console.log(1);");
+var result = UglifyJS.minify(code, options);
 if (result.error) throw result.error;
 ```
 
