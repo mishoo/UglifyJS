@@ -384,7 +384,7 @@ if (result.error) throw result.error;
 
 - `ie8` (default `false`) - set to `true` to support IE8.
 
-## Minify option structure
+## Minify options structure
 
 ```javascript
 {
