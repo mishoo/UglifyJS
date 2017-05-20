@@ -19,7 +19,9 @@ describe("bin/uglifyjs", function () {
             eval(stdout);
 
             assert.strictEqual(typeof WrappedUglifyJS, 'object');
-            assert.strictEqual(WrappedUglifyJS.minify("foo([true,,2+3]);").code, "foo([!0,,5]);");
+            var result = WrappedUglifyJS.minify("foo([true,,2+3]);");
+            assert.strictEqual(result.error, undefined);
+            assert.strictEqual(result.code, "foo([!0,,5]);");
 
             done();
         });

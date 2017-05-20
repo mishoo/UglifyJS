@@ -15,7 +15,9 @@ describe("spidermonkey export/import sanity test", function() {
 
             eval(stdout);
             assert.strictEqual(typeof SpiderUglify, "object");
-            assert.strictEqual(SpiderUglify.minify("foo([true,,2+3]);").code, "foo([!0,,5]);");
+            var result = SpiderUglify.minify("foo([true,,2+3]);");
+            assert.strictEqual(result.error, undefined);
+            assert.strictEqual(result.code, "foo([!0,,5]);");
 
             done();
         });
