@@ -190,3 +190,12 @@ yield_sub: {
     }
     expect_exact: 'function*foo(){yield x["foo"];(yield x)["foo"];yield(yield obj.foo())["bar"]()}'
 }
+
+yield_as_ES5_property: {
+    input: {
+        "use strict";
+        console.log({yield: 42}.yield);
+    }
+    expect_exact: '"use strict";console.log({yield:42}.yield);'
+    expect_stdout: "42"
+}

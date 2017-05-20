@@ -65,9 +65,9 @@ describe("Yield", function() {
         );
     });
 
-    it("Should not allow yield to be used as symbol, identifier or property outside generators in strict mode", function() {
+    it("Should not allow yield to be used as symbol, identifier or shorthand property outside generators in strict mode", function() {
         var tests = [
-            // Fail as as_symbol
+            // Fail in as_symbol
             '"use strict"; import yield from "bar";',
             '"use strict"; yield = 123;',
             '"use strict"; yield: "123";',
@@ -79,13 +79,12 @@ describe("Yield", function() {
             '"use strict"; var yield = "foo";',
             '"use strict"; class yield {}',
 
-            // Fail as maybe_assign
+            // Fail in maybe_assign
             '"use strict"; var foo = yield;',
             '"use strict"; var foo = bar = yield',
 
-            // Fail as as_property_name
+            // Fail in as_property_name
             '"use strict"; var foo = {yield};',
-            '"use strict"; var bar = {yield: "foo"};'
         ];
 
         var fail = function(e) {
