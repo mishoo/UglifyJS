@@ -305,7 +305,8 @@ There is a single high level minification function, `minify(code, options)`, whi
 performs all the steps in a configurable manner.
 Example:
 ```javascript
-var result = UglifyJS.minify("function add(first, second) { return first + second; }");
+var code = "function add(first, second) { return first + second; }";
+var result = UglifyJS.minify(code);
 console.log(result.code);  // minified output: function add(n,d){return n+d}
 console.log(result.error); // runtime error or undefined if no error
 ```
