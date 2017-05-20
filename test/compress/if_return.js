@@ -302,3 +302,25 @@ issue_1437_conditionals: {
         }
     }
 }
+
+issue_512: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function a() {
+            if (b()) {
+                c();
+                return;
+            }
+            throw e;
+        }
+    }
+    expect: {
+        function a() {
+            if (!b()) throw e;
+            c();
+        }
+    }
+}
