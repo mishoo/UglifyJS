@@ -40,5 +40,5 @@
   "scripts": {
     "test": "node test/run-tests.js"
   },
-  "keywords": ["uglify", "uglify-js", "minify", "minifier"]
+  "keywords": ["uglify", "uglify-js", "uglify-es", "minify", "minifier", "es5", "es6", "es2015"]
 }
