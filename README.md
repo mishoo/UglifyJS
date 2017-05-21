@@ -351,7 +351,7 @@ var result = UglifyJS.minify({"foo.js" : "if (0) else console.log(1);"});
 console.log(JSON.stringify(result.error));
 // {"message":"Unexpected token: keyword (else)","filename":"foo.js","line":1,"col":7,"pos":7}
 ```
-Note: unlike `uglify-js@2.x`, the `3.x` API does not throw errors. To 
+Note: unlike `uglify-js@2.x`, the `3.x` API does not throw errors. To
 achieve a similar effect one could do the following:
 ```javascript
 var result = UglifyJS.minify(code, options);
@@ -360,7 +360,7 @@ if (result.error) throw result.error;
 
 ## Minify options
 
-- `warnings` (default `false`) — pass `true` to return compressor warnings 
+- `warnings` (default `false`) — pass `true` to return compressor warnings
   in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
 
 - `parse` (default `{}`) — pass an object if you wish to specify some
@@ -542,7 +542,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 
-- `collapse_vars` -- Collapse single-use non-constant variables - side 
+- `collapse_vars` -- Collapse single-use non-constant variables - side
   effects permitting.
 
 - `reduce_vars` -- Improve optimization on variables assigned with and
@@ -786,7 +786,7 @@ You can also use conditional compilation via the programmatic API. With the diff
 property name is `global_defs` and is a compressor property:
 
 ```javascript
-var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
+var result = UglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
     compress: {
         dead_code: true,
         global_defs: {
@@ -794,6 +794,32 @@ var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
         }
     }
 });
+```
+
+To replace an identifier with an arbitrary non-constant expression it is
+necessary to prefix the `global_defs` key with `"@"` to instruct UglifyJS
+to parse the value as an expression:
+```javascript
+UglifyJS.minify("alert('hello');", {
+    compress: {
+        global_defs: {
+            "@alert": "console.log"
+        }
+    }
+}).code;
+// returns: 'console.log("hello");'
+```
+
+Otherwise it would be replaced as string literal:
+```javascript
+UglifyJS.minify("alert('hello');", {
+    compress: {
+        global_defs: {
+            "alert": "console.log"
+        }
+    }
+}).code;
+// returns: '"console.log"("hello");'
 ```
 
 ### Using native Uglify AST with `minify()`
