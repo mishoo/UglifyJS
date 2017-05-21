@@ -181,4 +181,19 @@ describe("minify", function() {
             assert.strictEqual(err.col, 12);
         });
     });
+
+    describe("global_defs", function() {
+        it("should throw for non-trivial expressions", function() {
+            var result = Uglify.minify("alert(42);", {
+                compress: {
+                    global_defs: {
+                        "@alert": "debugger"
+                    }
+                }
+            });
+            var err = result.error;
+            assert.ok(err instanceof Error);
+            assert.strictEqual(err.stack.split(/\n/)[0], "Error: Can't handle expression: debugger");
+        });
+    });
 });

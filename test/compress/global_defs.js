@@ -160,3 +160,17 @@ issue_1801: {
         console.log(!0);
     }
 }
+
+issue_1986: {
+    options = {
+        global_defs: {
+            "@alert": "console.log",
+        },
+    }
+    input: {
+        alert(42);
+    }
+    expect: {
+        console.log(42);
+    }
+}
