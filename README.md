@@ -335,6 +335,29 @@ var result = UglifyJS.minify(code, options);
 console.log(result.code);  // console.log(function(n,o){return n+o}(3,7));
 ```
 
+An example of a combination of `minify()` options:
+```javascript
+var code = {
+    "file1.js": "function add(first, second) { return first + second; }",
+    "file2.js": "console.log(add(1 + 2, 3 + 4));"
+};
+var options = {
+    toplevel: true,
+    compress: {
+        global_defs: {
+            "@console.log": "alert"
+        },
+        passes: 2
+    },
+    output: {
+        beautify: false,
+        preamble: "/* uglified */"
+    }
+};
+var result = UglifyJS.minify(code, options);
+console.log(JSON.stringify(result.code));  // "/* uglified */\nalert(10);"
+```
+
 To produce warnings:
 ```javascript
 var code = "function f(){ var u; return 2 + 3; }";
