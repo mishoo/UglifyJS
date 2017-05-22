@@ -328,5 +328,80 @@ issue_1886: {
         let [a] = [1];
         console.log(a);
     }
-    expect_exact: "1"
+}
+
+destructuring_decl_of_numeric_key: {
+    options = {
+        evaluate: true,
+        unused: true,
+    }
+    input: {
+        let { 3: x } = { [1 + 2]: 42 };
+        console.log(x);
+    }
+    expect: {
+        let { 3: x } = { [3]: 42 };
+        console.log(x);
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
+}
+
+destructuring_decl_of_computed_key: {
+    options = {
+        evaluate: true,
+        unused: true,
+    }
+    input: {
+        let four = 4;
+        let { [7 - four]: x } = { [1 + 2]: 42 };
+        console.log(x);
+    }
+    expect: {
+        let four = 4;
+        let { [7 - four]: x } = { [3]: 42 };
+        console.log(x);
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
+}
+
+destructuring_assign_of_numeric_key: {
+    options = {
+        evaluate: true,
+        unused: true,
+    }
+    input: {
+        let x;
+        ({ 3: x } = { [1 + 2]: 42 });
+        console.log(x);
+    }
+    expect: {
+        let x;
+        ({ 3: x } = { [3]: 42 });
+        console.log(x);
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
+}
+
+destructuring_assign_of_computed_key: {
+    options = {
+        evaluate: true,
+        unused: true,
+    }
+    input: {
+        let x;
+        let four = 4;
+        ({ [(5 + 2) - four]: x } = { [1 + 2]: 42 });
+        console.log(x);
+    }
+    expect: {
+        let x;
+        let four = 4;
+        ({ [7 - four]: x } = { [3]: 42 });
+        console.log(x);
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
 }
