@@ -321,7 +321,8 @@ var code = {
     "file2.js": "console.log(add(1 + 2, 3 + 4));"
 };
 var result = UglifyJS.minify(code);
-console.log(result.code);  // function add(d,n){return d+n}console.log(add(3,7));
+console.log(result.code);
+// function add(d,n){return d+n}console.log(add(3,7));
 ```
 
 The `toplevel` option:
@@ -332,7 +333,8 @@ var code = {
 };
 var options = { toplevel: true };
 var result = UglifyJS.minify(code, options);
-console.log(result.code);  // console.log(function(n,o){return n+o}(3,7));
+console.log(result.code);
+// console.log(function(n,o){return n+o}(3,7));
 ```
 
 An example of a combination of `minify()` options:
