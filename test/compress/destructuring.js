@@ -405,3 +405,141 @@ destructuring_assign_of_computed_key: {
     expect_stdout: "42"
     node_version: ">=6"
 }
+
+mangle_destructuring_decl: {
+    options = {
+        evaluate: true,
+        unused: true,
+    }
+    mangle = {
+    }
+    input: {
+        function test(opts) {
+            let a = opts.a || { e: 7, n: 8 };
+            let { t, e, n, s =  5 + 4, o, r } = a;
+            console.log(t, e, n, s, o, r);
+        }
+        test({a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 }});
+        test({});
+    }
+    expect: {
+        function test(t) {
+            let e = t.a || { e: 7, n: 8 };
+            let {t: n,  e: o,  n: s,  s: a = 9,  o: c,  r: l} = e;
+            console.log(n, o, s, a, c, l);
+        }
+        test({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
+        test({});
+    }
+    expect_stdout: [
+        "1 2 3 4 5 6",
+        "undefined 7 8 9 undefined undefined",
+    ]
+    node_version: ">=6"
+}
+
+mangle_destructuring_assign_toplevel_true: {
+    options = {
+        toplevel: true,
+        evaluate: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    beautify = {
+        ecma: 6
+    }
+    input: {
+        function test(opts) {
+            let s, o, r;
+            let a = opts.a || { e: 7, n: 8 };
+            ({ t, e, n, s =  5 + 4, o, r } = a);
+            console.log(t, e, n, s, o, r);
+        }
+        let t, e, n;
+        test({a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 }});
+        test({});
+    }
+    expect: {
+        function n(n) {
+            let t, a, c;
+            let l = n.a || { e: 7, n: 8 };
+            ({t: o,  e,  n: s,  s: t = 9,  o: a,  r: c} = l);
+            console.log(o, e, s, t, a, c);
+        }
+        let o, e, s;
+        n({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
+        n({});
+    }
+    expect_stdout: [
+        "1 2 3 4 5 6",
+        "undefined 7 8 9 undefined undefined",
+    ]
+    node_version: ">=6"
+}
+
+mangle_destructuring_assign_toplevel_false: {
+    options = {
+        toplevel: false,
+        evaluate: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: false,
+    }
+    beautify = {
+        ecma: 6
+    }
+    input: {
+        function test(opts) {
+            let s, o, r;
+            let a = opts.a || { e: 7, n: 8 };
+            ({ t, e, n, s = 9, o, r } = a);
+            console.log(t, e, n, s, o, r);
+        }
+        let t, e, n;
+        test({a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 }});
+        test({});
+    }
+    expect: {
+        function test(o) {
+            let s, a, c;
+            let l = o.a || { e: 7, n: 8 };
+            ({t,  e,  n,  s = 9,  o: a,  r: c} = l);
+            console.log(t, e, n, s, a, c);
+        }
+        let t, e, n;
+        test({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
+        test({});
+    }
+    expect_stdout: [
+        "1 2 3 4 5 6",
+        "undefined 7 8 9 undefined undefined",
+    ]
+    node_version: ">=6"
+}
+
+mangle_destructuring_decl_array: {
+    options = {
+        evaluate: true,
+        unused: true,
+        toplevel: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    beautify = {
+        ecma: 6
+    }
+    input: {
+        var [, t, e, n, s, o = 2, r = [ 1 + 2 ]] = [ 9, 8, 7, 6 ];
+        console.log(t, e, n, s, o, r);
+    }
+    expect: {
+        var [, o,  l,  a,  c,  e = 2,  g = [ 3 ]] = [ 9, 8, 7, 6 ];
+        console.log(o, l, a, c, e, g);
+    }
+    expect_stdout: "8 7 6 undefined 2 [ 3 ]"
+    node_version: ">=6"
+}
