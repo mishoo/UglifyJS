@@ -355,7 +355,9 @@ var options = {
     }
 };
 var result = UglifyJS.minify(code, options);
-console.log(JSON.stringify(result.code));  // "/* uglified */\nalert(10);"
+console.log(result.code);
+// /* uglified */
+// alert(10);"
 ```
 
 To produce warnings:
