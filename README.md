@@ -127,7 +127,7 @@ a double dash to prevent input files being used as option arguments:
                                 `url`  If specified, path to the source map to append in
                                        `//# sourceMappingURL`.
     --stats                     Display operations run time on STDERR.
-    --toplevel                  Compress and/or mangle variables in toplevel scope.
+    --toplevel                  Compress and/or mangle variables in top level scope.
     --verbose                   Print diagnostic messages.
     --warn                      Print warning messages.
     --wrap <name>               Embed everything in a big function, making the
@@ -202,7 +202,7 @@ Example:
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
 
-- `toplevel` — mangle names declared in the toplevel scope (disabled by
+- `toplevel` — mangle names declared in the top level scope (disabled by
   default).
 
 - `eval` — mangle names visible in scopes where `eval` or `with` are used
@@ -321,7 +321,8 @@ var code = {
     "file2.js": "console.log(add(1 + 2, 3 + 4));"
 };
 var result = UglifyJS.minify(code);
-console.log(result.code);  // function add(d,n){return d+n}console.log(add(3,7));
+console.log(result.code);
+// function add(d,n){return d+n}console.log(add(3,7));
 ```
 
 The `toplevel` option:
@@ -332,7 +333,33 @@ var code = {
 };
 var options = { toplevel: true };
 var result = UglifyJS.minify(code, options);
-console.log(result.code);  // console.log(function(n,o){return n+o}(3,7));
+console.log(result.code);
+// console.log(function(n,o){return n+o}(3,7));
+```
+
+An example of a combination of `minify()` options:
+```javascript
+var code = {
+    "file1.js": "function add(first, second) { return first + second; }",
+    "file2.js": "console.log(add(1 + 2, 3 + 4));"
+};
+var options = {
+    toplevel: true,
+    compress: {
+        global_defs: {
+            "@console.log": "alert"
+        },
+        passes: 2
+    },
+    output: {
+        beautify: false,
+        preamble: "/* uglified */"
+    }
+};
+var result = UglifyJS.minify(code, options);
+console.log(result.code);
+// /* uglified */
+// alert(10);"
 ```
 
 To produce warnings:
@@ -524,7 +551,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   assignments do not count as references unless set to `"keep_assign"`)
 
 - `toplevel` -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
-  in the toplevel scope (`false` by default, `true` to drop both unreferenced
+  in the top level scope (`false` by default, `true` to drop both unreferenced
   functions and variables)
 
 - `top_retain` -- prevent specific toplevel functions and variables from `unused`
@@ -604,7 +631,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `reserved` - pass an array of identifiers that should be excluded from mangling
 
-- `toplevel` — mangle names declared in the toplevel scope (disabled by
+- `toplevel` — mangle names declared in the top level scope (disabled by
 default).
 
 - `eval` — mangle names visible in scopes where eval or with are used
