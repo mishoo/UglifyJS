@@ -1,4 +1,4 @@
-var UglifyJS = require("./node");
+var UglifyJS = require("..");
 var ok = require("assert");
 
 module.exports = function () {
@@ -26,11 +26,11 @@ module.exports = function () {
 }
 
 function source_map(js) {
-    var source_map = UglifyJS.SourceMap();
-    var stream = UglifyJS.OutputStream({ source_map: source_map });
-    var parsed = UglifyJS.parse(js);
-    parsed.print(stream);
-    return JSON.parse(source_map.toString());
+    return JSON.parse(UglifyJS.minify(js, {
+        compress: false,
+        mangle: false,
+        sourceMap: true
+    }).map);
 }
 
 // Run standalone
