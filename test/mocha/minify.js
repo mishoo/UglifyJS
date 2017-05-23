@@ -138,12 +138,24 @@ describe("minify", function() {
             });
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};\n" +
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsR0FBSUEsR0FBSSxTQUFTQyxHQUFPLE1BQU9BIn0=");
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsSUFBSUEsRUFBSSxTQUFTQyxHQUFPLE9BQU9BIn0=");
         });
         it("should not append source map to output js when sourceMapInline is not enabled", function() {
             var result = Uglify.minify('var a = function(foo) { return foo; };');
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};");
+        });
+        it("should work with max_line_len", function() {
+            var result = Uglify.minify(read("./test/input/issue-505/input.js"), {
+                output: {
+                    max_line_len: 20
+                },
+                sourceMap: {
+                    url: "inline"
+                }
+            });
+            assert.strictEqual(result.error, undefined);
+            assert.strictEqual(result.code, read("./test/input/issue-505/output.js"));
         });
     });
 
