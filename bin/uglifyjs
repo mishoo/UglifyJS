@@ -24,6 +24,7 @@ var options = {
 program.version(info.name + ' ' + info.version);
 program.parseArgv = program.parse;
 program.parse = undefined;
+if (process.argv.indexOf("ast") >= 0) program.helpInformation = UglifyJS.describe_ast;
 program.option("-p, --parse <options>", "Specify parser options.", parse_js("parse", true));
 program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parse_js("compress", true));
 program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parse_js("mangle", true));
