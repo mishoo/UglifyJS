@@ -124,7 +124,7 @@ a double dash to prevent input files being used as option arguments:
                                 `url`  If specified, path to the source map to append in
                                        `//# sourceMappingURL`.
     --stats                     Display operations run time on STDERR.
-    --toplevel                  Compress and/or mangle variables in toplevel scope.
+    --toplevel                  Compress and/or mangle variables in top level scope.
     --verbose                   Print diagnostic messages.
     --warn                      Print warning messages.
     --wrap <name>               Embed everything in a big function, making the
@@ -199,7 +199,7 @@ Example:
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
 
-- `toplevel` — mangle names declared in the toplevel scope (disabled by
+- `toplevel` — mangle names declared in the top level scope (disabled by
   default).
 
 - `eval` — mangle names visible in scopes where `eval` or `with` are used
@@ -298,9 +298,10 @@ like this:
 var UglifyJS = require("uglify-es");
 ```
 
-There is a single high level minification function, `minify(code, options)`, which will
-performs all the steps in a configurable manner.
-Example:
+There is a single high level function, **`minify(code, options)`**,
+which will perform all minification [phases](#minify-options) in a configurable
+manner. By default `minify()` will enable the options [`compress`](#compress-options)
+and [`mangle`](#mangle-options). Example:
 ```javascript
 var code = "function add(first, second) { return first + second; }";
 var result = UglifyJS.minify(code);
@@ -308,14 +309,17 @@ console.log(result.error); // runtime error, or `undefined` if no error
 console.log(result.code);  // minified output: function add(n,d){return n+d}
 ```
 
-You can also compress multiple files:
+You can `minify` more than one JavaScript file at a time by using an object
+for the first argument where the keys are file names and the values are source
+code:
 ```javascript
 var code = {
     "file1.js": "function add(first, second) { return first + second; }",
     "file2.js": "console.log(add(1 + 2, 3 + 4));"
 };
 var result = UglifyJS.minify(code);
-console.log(result.code);  // function add(d,n){return d+n}console.log(add(3,7));
+console.log(result.code);
+// function add(d,n){return d+n}console.log(add(3,7));
 ```
 
 The `toplevel` option:
@@ -326,7 +330,33 @@ var code = {
 };
 var options = { toplevel: true };
 var result = UglifyJS.minify(code, options);
-console.log(result.code);  // console.log(function(n,o){return n+o}(3,7));
+console.log(result.code);
+// console.log(function(n,o){return n+o}(3,7));
+```
+
+An example of a combination of `minify()` options:
+```javascript
+var code = {
+    "file1.js": "function add(first, second) { return first + second; }",
+    "file2.js": "console.log(add(1 + 2, 3 + 4));"
+};
+var options = {
+    toplevel: true,
+    compress: {
+        global_defs: {
+            "@console.log": "alert"
+        },
+        passes: 2
+    },
+    output: {
+        beautify: false,
+        preamble: "/* uglified */"
+    }
+};
+var result = UglifyJS.minify(code, options);
+console.log(result.code);
+// /* uglified */
+// alert(10);"
 ```
 
 To produce warnings:
@@ -345,7 +375,7 @@ var result = UglifyJS.minify({"foo.js" : "if (0) else console.log(1);"});
 console.log(JSON.stringify(result.error));
 // {"message":"Unexpected token: keyword (else)","filename":"foo.js","line":1,"col":7,"pos":7}
 ```
-Note: unlike `uglify-js@2.x`, the `3.x` API does not throw errors. To 
+Note: unlike `uglify-js@2.x`, the `3.x` API does not throw errors. To
 achieve a similar effect one could do the following:
 ```javascript
 var result = UglifyJS.minify(code, options);
@@ -354,7 +384,7 @@ if (result.error) throw result.error;
 
 ## Minify options
 
-- `warnings` (default `false`) — pass `true` to return compressor warnings 
+- `warnings` (default `false`) — pass `true` to return compressor warnings
   in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
 
 - `parse` (default `{}`) — pass an object if you wish to specify some
@@ -518,7 +548,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   assignments do not count as references unless set to `"keep_assign"`)
 
 - `toplevel` -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
-  in the toplevel scope (`false` by default, `true` to drop both unreferenced
+  in the top level scope (`false` by default, `true` to drop both unreferenced
   functions and variables)
 
 - `top_retain` -- prevent specific toplevel functions and variables from `unused`
@@ -536,7 +566,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`
   and `x = something(), x` into `x = something()`
 
-- `collapse_vars` -- Collapse single-use non-constant variables - side 
+- `collapse_vars` -- Collapse single-use non-constant variables - side
   effects permitting.
 
 - `reduce_vars` -- Improve optimization on variables assigned with and
@@ -598,7 +628,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `reserved` - pass an array of identifiers that should be excluded from mangling
 
-- `toplevel` — mangle names declared in the toplevel scope (disabled by
+- `toplevel` — mangle names declared in the top level scope (disabled by
 default).
 
 - `eval` — mangle names visible in scopes where eval or with are used
@@ -783,7 +813,7 @@ You can also use conditional compilation via the programmatic API. With the diff
 property name is `global_defs` and is a compressor property:
 
 ```javascript
-var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
+var result = UglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
     compress: {
         dead_code: true,
         global_defs: {
@@ -791,6 +821,32 @@ var result = uglifyJS.minify(fs.readFileSync("input.js", "utf8"), {
         }
     }
 });
+```
+
+To replace an identifier with an arbitrary non-constant expression it is
+necessary to prefix the `global_defs` key with `"@"` to instruct UglifyJS
+to parse the value as an expression:
+```javascript
+UglifyJS.minify("alert('hello');", {
+    compress: {
+        global_defs: {
+            "@alert": "console.log"
+        }
+    }
+}).code;
+// returns: 'console.log("hello");'
+```
+
+Otherwise it would be replaced as string literal:
+```javascript
+UglifyJS.minify("alert('hello');", {
+    compress: {
+        global_defs: {
+            "alert": "console.log"
+        }
+    }
+}).code;
+// returns: '"console.log"("hello");'
 ```
 
 ### Using native Uglify AST with `minify()`
