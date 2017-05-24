@@ -9,7 +9,7 @@ var args = process.argv.slice(2);
 if (!args.length) {
     args.push("-mc");
 }
-args.push("--stats");
+args.push("--timings");
 var urls = [
     "https://code.jquery.com/jquery-3.2.1.js",
     "https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js",
@@ -29,12 +29,7 @@ function done() {
             var info = results[url];
             console.log();
             console.log(url);
-            var elapsed = 0;
-            console.log(info.log.replace(/Elapsed: ([0-9]+)\s*/g, function(match, time) {
-                elapsed += 1e-3 * parseInt(time);
-                return "";
-            }));
-            console.log("Run-time:", elapsed.toFixed(3), "s");
+            console.log(info.log);
             console.log("Original:", info.input, "bytes");
             console.log("Uglified:", info.output, "bytes");
             console.log("SHA1 sum:", info.sha1);
