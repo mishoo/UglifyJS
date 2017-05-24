@@ -126,7 +126,7 @@ a double dash to prevent input files being used as option arguments:
                                         the source map.
                                 `url`  If specified, path to the source map to append in
                                        `//# sourceMappingURL`.
-    --stats                     Display operations run time on STDERR.
+    --timings                   Display operations run time on STDERR.
     --toplevel                  Compress and/or mangle variables in top level scope.
     --verbose                   Print diagnostic messages.
     --warn                      Print warning messages.
