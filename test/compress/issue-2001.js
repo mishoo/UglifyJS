@@ -1,5 +1,6 @@
 export_func_1: {
     options = {
+        hoist_funs: true,
         unused: true,
     }
     input: {
@@ -10,6 +11,7 @@ export_func_1: {
 
 export_func_2: {
     options = {
+        hoist_funs: true,
         side_effects: false,
         unused: true,
     }
@@ -21,6 +23,7 @@ export_func_2: {
 
 export_func_3: {
     options = {
+        hoist_funs: true,
         side_effects: true,
         unused: true,
     }
@@ -32,6 +35,7 @@ export_func_3: {
 
 export_default_func_1: {
     options = {
+        hoist_funs: true,
         unused: true,
     }
     input: {
@@ -42,6 +46,7 @@ export_default_func_1: {
 
 export_default_func_2: {
     options = {
+        hoist_funs: true,
         side_effects: false,
         unused: true,
     }
@@ -53,6 +58,7 @@ export_default_func_2: {
 
 export_default_func_3: {
     options = {
+        hoist_funs: true,
         side_effects: true,
         unused: true,
     }
