@@ -79,10 +79,13 @@ export_mangle_2: {
             return one - two;
         };
     }
-    expect_exact: "export default function foo(n,o){return n-o};"
+    expect_exact: "export default function n(r,t){return r-t};"
 }
 
 export_mangle_3: {
+    options = {
+        collapse_vars: true,
+    }
     mangle = {}
     input: {
         export class C {
@@ -92,10 +95,13 @@ export_mangle_3: {
             }
         };
     }
-    expect_exact: "export class C{go(n,r){var t=n;return n-r+t}};"
+    expect_exact: "export class C{go(n,r){return n-r+n}};"
 }
 
 export_mangle_4: {
+    options = {
+        collapse_vars: true,
+    }
     mangle = {}
     input: {
         export default class C {
@@ -105,7 +111,7 @@ export_mangle_4: {
             }
         };
     }
-    expect_exact: "export default class C{go(n,r){var t=n;return n-r+t}};"
+    expect_exact: "export default class C{go(n,r){return n-r+n}};"
 }
 
 export_mangle_5: {
@@ -118,4 +124,12 @@ export_mangle_5: {
         };
     }
     expect_exact: "export default{prop:function(n,r){return n-r}};"
+}
+
+export_mangle_6: {
+    mangle = {}
+    input: {
+        export let foo = 1;
+    }
+    expect_exact: "export let foo=1;"
 }
