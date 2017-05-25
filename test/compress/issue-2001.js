@@ -1,6 +1,7 @@
 export_func_1: {
     options = {
         hoist_funs: true,
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -13,6 +14,7 @@ export_func_2: {
     options = {
         hoist_funs: true,
         side_effects: false,
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -25,6 +27,7 @@ export_func_3: {
     options = {
         hoist_funs: true,
         side_effects: true,
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -36,6 +39,7 @@ export_func_3: {
 export_default_func_1: {
     options = {
         hoist_funs: true,
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -48,6 +52,7 @@ export_default_func_2: {
     options = {
         hoist_funs: true,
         side_effects: false,
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -60,12 +65,89 @@ export_default_func_3: {
     options = {
         hoist_funs: true,
         side_effects: true,
+        toplevel: true,
         unused: true,
     }
     input: {
         export default function f(){}(1);
     }
     expect_exact: "export default function(){};"
+}
+
+export_class_1: {
+    options = {
+        hoist_funs: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export class C {};
+    }
+    expect_exact: "export class C{};"
+}
+
+export_class_2: {
+    options = {
+        hoist_funs: true,
+        side_effects: false,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export class C {}(1);
+    }
+    expect_exact: "export class C{};1;"
+}
+
+export_class_3: {
+    options = {
+        hoist_funs: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export class C {}(1);
+    }
+    expect_exact: "export class C{};"
+}
+
+export_default_class_1: {
+    options = {
+        hoist_funs: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default class C {};
+    }
+    expect_exact: "export default class{};"
+}
+
+export_default_class_2: {
+    options = {
+        hoist_funs: true,
+        side_effects: false,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default class C {}(1);
+    }
+    expect_exact: "export default class{};1;"
+}
+
+export_default_class_3: {
+    options = {
+        hoist_funs: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default class C {}(1);
+    }
+    expect_exact: "export default class{};"
 }
 
 export_mangle_1: {
@@ -89,7 +171,7 @@ export_mangle_2: {
             return one - two;
         };
     }
-    expect_exact: "export default function n(r,t){return r-t};"
+    expect_exact: "export default function n(n,r){return n-r};"
 }
 
 export_mangle_3: {
@@ -125,7 +207,7 @@ export_mangle_4: {
             }
         };
     }
-    expect_exact: "export default class C{go(n,r){return n-r+n}};"
+    expect_exact: "export default class n{go(n,r){return n-r+n}};"
 }
 
 export_mangle_5: {
@@ -181,6 +263,19 @@ export_toplevel_2: {
     }
     expect: {
         export class B {};
-        export default class C {};
+        export default class {};
     }
+}
+
+export_default_func_ref: {
+    options = {
+        hoist_funs: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default function f(){};
+        f();
+    }
+    expect_exact: "export default function f(){};f();"
 }
