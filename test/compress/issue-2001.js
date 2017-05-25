@@ -63,7 +63,9 @@ export_default_func_3: {
 }
 
 export_mangle_1: {
-    mangle = {}
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export function foo(one, two) {
             return one - two;
@@ -73,7 +75,9 @@ export_mangle_1: {
 }
 
 export_mangle_2: {
-    mangle = {}
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default function foo(one, two) {
             return one - two;
@@ -86,7 +90,9 @@ export_mangle_3: {
     options = {
         collapse_vars: true,
     }
-    mangle = {}
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export class C {
             go(one, two) {
@@ -102,7 +108,9 @@ export_mangle_4: {
     options = {
         collapse_vars: true,
     }
-    mangle = {}
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default class C {
             go(one, two) {
@@ -115,7 +123,9 @@ export_mangle_4: {
 }
 
 export_mangle_5: {
-    mangle = {}
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default {
             prop: function(one, two) {
@@ -127,11 +137,14 @@ export_mangle_5: {
 }
 
 export_mangle_6: {
-    mangle = {}
-    input: {
-        export let foo = 1;
+    mangle = {
+        toplevel: true,
     }
-    expect_exact: "export let foo=1;"
+    input: {
+        var baz = 2;
+        export let foo = 1, bar = baz;
+    }
+    expect_exact: "var a=2;export let foo=1,bar=a;"
 }
 
 export_toplevel_1: {
