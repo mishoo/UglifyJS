@@ -133,3 +133,35 @@ export_mangle_6: {
     }
     expect_exact: "export let foo=1;"
 }
+
+export_toplevel_1: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(){}
+        export function g(){};
+        export default function h(){};
+    }
+    expect: {
+        export function g(){};
+        export default function(){};
+    }
+}
+
+export_toplevel_2: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A {}
+        export class B {};
+        export default class C {};
+    }
+    expect: {
+        export class B {};
+        export default class C {};
+    }
+}
