@@ -258,6 +258,14 @@ $ uglifyjs example.js -c -m --mangle-props regex=/_$/
 var x={o:0,_:1,calc:function(){return this._+this.o}};x.l=2,x.o=3,console.log(x.calc());
 ```
 
+Combining mangle properties options:
+```bash
+$ uglifyjs example.js -c -m --mangle-props regex=/_$/,reserved=[bar_]
+```
+```javascript
+var x={o:0,_:1,calc:function(){return this._+this.o}};x.bar_=2,x.o=3,console.log(x.calc());
+```
+
 In order for this to be of any use, we avoid mangling standard JS names by
 default (`--mangle-props builtins` to override).
 
