@@ -712,10 +712,15 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 ### Mangle properties options
 
-- `regex` — Pass a RegExp to only mangle certain names
-- `keep_quoted` — Only mangle unquoted property names
-- `debug` — Mangle names with the original name still present. Defaults to `false`.
-  Pass an empty string to enable, or a non-empty string to set the suffix.
+- `reserved` (default: `[]`) -- Do not mangle property names listed in the 
+  `reserved` array.
+- `regex` (default: `null`) -— Pass a RegExp literal to only mangle property
+  names matching the regular expression.
+- `keep_quoted` (default: `false`) -— Only mangle unquoted property names.
+- `debug` (default: `false`) -— Mangle names with the original name still present.
+  Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
+- `builtins` (default: `false`) -- Use `true` to allow the mangling of builtin 
+  DOM properties. Not recommended to override this setting.
 
 ## Output options
 
