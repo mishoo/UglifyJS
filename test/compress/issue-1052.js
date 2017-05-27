@@ -134,9 +134,8 @@ defun_hoist_funs: {
     expect: {
         function e() {
             function f() {}
-            function g() {}
             function h() {}
-            !window;
+            if (window) function g() {}
         }
     }
 }

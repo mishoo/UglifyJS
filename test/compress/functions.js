@@ -185,25 +185,25 @@ hoist_funs: {
         console.log(6, typeof f, typeof g);
     }
     expect: {
-        function f() {}
         function g() {}
         console.log(1, typeof f, typeof g);
         if (console.log(2, typeof f, typeof g))
             console.log(3, typeof f, typeof g);
         else {
             console.log(4, typeof f, typeof g);
+            function f() {}
             console.log(5, typeof f, typeof g);
         }
         console.log(6, typeof f, typeof g);
     }
     expect_stdout: [
-        "1 'function' 'function'",
-        "2 'function' 'function'",
+        "1 'undefined' 'function'",
+        "2 'undefined' 'function'",
         "4 'function' 'function'",
         "5 'function' 'function'",
         "6 'function' 'function'",
     ]
-    node_version: "<=4"
+    node_version: ">=6"
 }
 
 hoist_funs_strict: {
@@ -243,5 +243,5 @@ hoist_funs_strict: {
         "5 'function' 'function'",
         "6 'undefined' 'function'",
     ]
-    node_version: "=4"
+    node_version: ">=4"
 }

@@ -54,12 +54,12 @@ dead_code_2_should_warn: {
             x = 10;
             throw new Error("foo");
             var x;
-            function g(){};
+            var g;
         }
         f();
     }
     expect_stdout: true
-    node_version: "<=4"
+    node_version: ">=6"
 }
 
 dead_code_2_should_warn_strict: {
@@ -99,7 +99,7 @@ dead_code_2_should_warn_strict: {
         f();
     }
     expect_stdout: true
-    node_version: "=4"
+    node_version: ">=4"
 }
 
 dead_code_constant_boolean_should_warn_more: {
@@ -126,7 +126,7 @@ dead_code_constant_boolean_should_warn_more: {
     }
     expect: {
         var foo;
-        function bar() {}
+        var bar;
         // nothing for the while
         // as for the for, it should keep:
         var x = 10, y;
@@ -134,7 +134,7 @@ dead_code_constant_boolean_should_warn_more: {
         bar();
     }
     expect_stdout: true
-    node_version: "<=4"
+    node_version: ">=6"
 }
 
 dead_code_constant_boolean_should_warn_more_strict: {
@@ -217,7 +217,7 @@ dead_code_const_declaration: {
         var unused;
         const CONST_FOO = !1;
         var moo;
-        function bar() {}
+        var bar;
     }
     expect_stdout: true
 }
@@ -245,7 +245,7 @@ dead_code_const_annotation: {
         var unused;
         var CONST_FOO_ANN = !1;
         var moo;
-        function bar() {}
+        var bar;
     }
     expect_stdout: true
 }
@@ -312,7 +312,7 @@ dead_code_const_annotation_complex_scope: {
         var CONST_FOO_ANN = !1;
         var unused_var_2;
         var moo;
-        function bar() {}
+        var bar;
         var beef = 'good';
         var meat = 'beef';
         var pork = 'bad';
