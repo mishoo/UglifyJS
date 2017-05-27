@@ -167,3 +167,81 @@ function_returning_constant_literal: {
     }
     expect_stdout: "Hello there"
 }
+
+hoist_funs: {
+    options = {
+        hoist_funs: true,
+    }
+    input: {
+        console.log(1, typeof f, typeof g);
+        if (console.log(2, typeof f, typeof g))
+            console.log(3, typeof f, typeof g);
+        else {
+            console.log(4, typeof f, typeof g);
+            function f() {}
+            console.log(5, typeof f, typeof g);
+        }
+        function g() {}
+        console.log(6, typeof f, typeof g);
+    }
+    expect: {
+        function f() {}
+        function g() {}
+        console.log(1, typeof f, typeof g);
+        if (console.log(2, typeof f, typeof g))
+            console.log(3, typeof f, typeof g);
+        else {
+            console.log(4, typeof f, typeof g);
+            console.log(5, typeof f, typeof g);
+        }
+        console.log(6, typeof f, typeof g);
+    }
+    expect_stdout: [
+        "1 'function' 'function'",
+        "2 'function' 'function'",
+        "4 'function' 'function'",
+        "5 'function' 'function'",
+        "6 'function' 'function'",
+    ]
+    node_version: "<=4"
+}
+
+hoist_funs_strict: {
+    options = {
+        hoist_funs: true,
+    }
+    input: {
+        "use strict";
+        console.log(1, typeof f, typeof g);
+        if (console.log(2, typeof f, typeof g))
+            console.log(3, typeof f, typeof g);
+        else {
+            console.log(4, typeof f, typeof g);
+            function f() {}
+            console.log(5, typeof f, typeof g);
+        }
+        function g() {}
+        console.log(6, typeof f, typeof g);
+    }
+    expect: {
+        "use strict";
+        function g() {}
+        console.log(1, typeof f, typeof g);
+        if (console.log(2, typeof f, typeof g))
+            console.log(3, typeof f, typeof g);
+        else {
+            console.log(4, typeof f, typeof g);
+            function f() {}
+            console.log(5, typeof f, typeof g);
+        }
+        console.log(6, typeof f, typeof g);
+    }
+    expect_stdout: [
+        "1 'undefined' 'function'",
+        "2 'undefined' 'function'",
+        "4 'function' 'function'",
+        "5 'function' 'function'",
+        "6 'undefined' 'function'",
+    ]
+    node_version: "=4"
+}
