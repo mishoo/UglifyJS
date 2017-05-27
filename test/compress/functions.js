@@ -243,5 +243,5 @@ hoist_funs_strict: {
         "5 'function' 'function'",
         "6 'undefined' 'function'",
     ]
-    node_version: "=4"
+    node_version: ">=4"
 }
