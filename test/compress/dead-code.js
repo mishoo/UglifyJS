@@ -99,7 +99,7 @@ dead_code_2_should_warn_strict: {
         f();
     }
     expect_stdout: true
-    node_version: "=4"
+    node_version: ">=4"
 }
 
 dead_code_constant_boolean_should_warn_more: {
