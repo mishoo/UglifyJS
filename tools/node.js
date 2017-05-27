@@ -61,5 +61,5 @@ function describe_ast() {
         }
     };
     doitem(AST_Node);
-    return out + "";
+    return out + "\n";
 }

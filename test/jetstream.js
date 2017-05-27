@@ -14,7 +14,7 @@ if (typeof phantom == "undefined") {
     if (!args.length) {
         args.push("-mc");
     }
-    args.push("--stats");
+    args.push("--timings");
     var child_process = require("child_process");
     try {
         require("phantomjs-prebuilt");

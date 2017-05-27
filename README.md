@@ -123,7 +123,7 @@ a double dash to prevent input files being used as option arguments:
                                         the source map.
                                 `url`  If specified, path to the source map to append in
                                        `//# sourceMappingURL`.
-    --stats                     Display operations run time on STDERR.
+    --timings                   Display operations run time on STDERR.
     --toplevel                  Compress and/or mangle variables in top level scope.
     --verbose                   Print diagnostic messages.
     --warn                      Print warning messages.
@@ -215,24 +215,54 @@ to prevent the `require`, `exports` and `$` names from being changed.
 
 ### CLI mangling property names (`--mangle-props`)
 
-**Note:** this will probably break your code.  Mangling property names is a
-separate step, different from variable name mangling.  Pass
-`--mangle-props`.  It will mangle all properties that are seen in some
-object literal, or that are assigned to.  For example:
+**Note:** THIS WILL PROBABLY BREAK YOUR CODE.  Mangling property names
+is a separate step, different from variable name mangling.  Pass
+`--mangle-props` to enable it.  It will mangle all properties in the
+input code with the exception of built in DOM properties and properties
+in core javascript classes.  For example:
 
 ```javascript
+// example.js
 var x = {
-    foo: 1
+    baz_: 0,
+    foo_: 1,
+    calc: function() {
+        return this.foo_ + this.baz_;
+    }
 };
-
-x.bar = 2;
-x["baz"] = 3;
-x[condition ? "moo" : "boo"] = 4;
-console.log(x.something());
+x.bar_ = 2;
+x["baz_"] = 3;
+console.log(x.calc());
+```
+Mangle all properties (except for javascript `builtins`):
+```bash
+$ uglifyjs example.js -c -m --mangle-props
+```
+```javascript
+var x={o:0,_:1,l:function(){return this._+this.o}};x.t=2,x.o=3,console.log(x.l());
+```
+Mangle all properties except for `reserved` properties:
+```bash
+$ uglifyjs example.js -c -m --mangle-props reserved=[foo_,bar_]
+```
+```javascript
+var x={o:0,foo_:1,_:function(){return this.foo_+this.o}};x.bar_=2,x.o=3,console.log(x._());
+```
+Mangle all properties matching a `regex`:
+```bash
+$ uglifyjs example.js -c -m --mangle-props regex=/_$/
+```
+```javascript
+var x={o:0,_:1,calc:function(){return this._+this.o}};x.l=2,x.o=3,console.log(x.calc());
 ```
 
-In the above code, `foo`, `bar`, `baz`, `moo` and `boo` will be replaced
-with single characters, while `something()` will be left as is.
+Combining mangle properties options:
+```bash
+$ uglifyjs example.js -c -m --mangle-props regex=/_$/,reserved=[bar_]
+```
+```javascript
+var x={o:0,_:1,calc:function(){return this._+this.o}};x.bar_=2,x.o=3,console.log(x.calc());
+```
 
 In order for this to be of any use, we avoid mangling standard JS names by
 default (`--mangle-props builtins` to override).
@@ -241,7 +271,7 @@ A default exclusion file is provided in `tools/domprops.json` which should
 cover most standard JS and DOM properties defined in various browsers.  Pass
 `--mangle-props domprops` to disable this feature.
 
-You can also use a regular expression to define which property names should be
+A regular expression can be used to define which property names should be
 mangled.  For example, `--mangle-props regex=/^_/` will only mangle property
 names that start with an underscore.
 
@@ -269,9 +299,20 @@ Using quoted property name (`o["foo"]`) reserves the property name (`foo`)
 so that it is not mangled throughout the entire script even when used in an
 unquoted style (`o.foo`). Example:
 
+```javascript
+// stuff.js
+var o = {
+    "foo": 1,
+    bar: 3
+};
+o.foo += o.bar;
+console.log(o.foo);
+```
 ```bash
-$ echo 'var o={"foo":1, bar:3}; o.foo += o.bar; console.log(o.foo);' | uglifyjs --mangle-props keep_quoted -mc
-var o={foo:1,a:3};o.foo+=o.a,console.log(o.foo);
+$ uglifyjs stuff.js --mangle-props keep_quoted -c -m
+```
+```javascript
+var o={foo:1,o:3};o.foo+=o.o,console.log(o.foo);
 ```
 
 ### Debugging property name mangling
@@ -281,6 +322,13 @@ without completely obscuring them. For example the property `o.foo`
 would mangle to `o._$foo$_` with this option. This allows property mangling
 of a large codebase while still being able to debug the code and identify
 where mangling is breaking things.
+
+```bash
+$ uglifyjs stuff.js --mangle-props debug -c -m
+```
+```javascript
+var o={_$foo$_:1,_$bar$_:3};o._$foo$_+=o._$bar$_,console.log(o._$foo$_);
+```
 
 You can also pass a custom suffix using `--mangle-props debug=XYZ`. This would then
 mangle `o.foo` to `o._$foo$XYZ_`. You can change this each time you compile a
@@ -662,10 +710,15 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 ### Mangle properties options
 
-- `regex` — Pass a RegExp to only mangle certain names
-- `keep_quoted` — Only mangle unquoted property names
-- `debug` — Mangle names with the original name still present. Defaults to `false`.
-  Pass an empty string to enable, or a non-empty string to set the suffix.
+- `reserved` (default: `[]`) -- Do not mangle property names listed in the 
+  `reserved` array.
+- `regex` (default: `null`) -— Pass a RegExp literal to only mangle property
+  names matching the regular expression.
+- `keep_quoted` (default: `false`) -— Only mangle unquoted property names.
+- `debug` (default: `false`) -— Mangle names with the original name still present.
+  Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
+- `builtins` (default: `false`) -- Use `true` to allow the mangling of builtin 
+  DOM properties. Not recommended to override this setting.
 
 ## Output options
 
