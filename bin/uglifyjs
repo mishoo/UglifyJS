@@ -21,7 +21,7 @@ var options = {
     compress: false,
     mangle: false
 };
-program.version(info.name + ' ' + info.version);
+program.version(info.name + " " + info.version);
 program.parseArgv = program.parse;
 program.parse = undefined;
 if (process.argv.indexOf("ast") >= 0) program.helpInformation = UglifyJS.describe_ast;
@@ -30,8 +30,13 @@ else if (process.argv.indexOf("options") >= 0) program.helpInformation = functio
     var options = UglifyJS.default_options();
     for (var option in options) {
         text.push("--" + (option == "output" ? "beautify" : option == "sourceMap" ? "source-map" : option) + " options:");
-        Object.keys(options[option]).forEach(function(name) {
-            text.push("  " + name);
+        var defs = options[option];
+        var padding = "";
+        Object.keys(defs).map(function(name) {
+            if (padding.length < name.length) padding = Array(name.length + 1).join(" ");
+            return [ name, JSON.stringify(defs[name]) ];
+        }).forEach(function(tokens) {
+            text.push("  " + tokens[0] + padding.slice(tokens[0].length - 2) + tokens[1]);
         });
         text.push("");
     }

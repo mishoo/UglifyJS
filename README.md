@@ -45,6 +45,7 @@ a double dash to prevent input files being used as option arguments:
 
 ```
     -h, --help                  Print usage information.
+                                `--help options` for details on available options.
     -V, --version               Print version number.
     -p, --parse <options>       Specify parser options:
                                 `acorn`  Use Acorn for parsing.
@@ -713,14 +714,14 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 ### Mangle properties options
 
-- `reserved` (default: `[]`) -- Do not mangle property names listed in the 
+- `reserved` (default: `[]`) -- Do not mangle property names listed in the
   `reserved` array.
 - `regex` (default: `null`) -— Pass a RegExp literal to only mangle property
   names matching the regular expression.
 - `keep_quoted` (default: `false`) -— Only mangle unquoted property names.
 - `debug` (default: `false`) -— Mangle names with the original name still present.
   Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
-- `builtins` (default: `false`) -- Use `true` to allow the mangling of builtin 
+- `builtins` (default: `false`) -- Use `true` to allow the mangling of builtin
   DOM properties. Not recommended to override this setting.
 
 ## Output options
