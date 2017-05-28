@@ -12,7 +12,7 @@
         stream._handle.setBlocking(true);
 });
 
-var UglifyJS = require("./node");
+var UglifyJS = require("..");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 
@@ -962,32 +962,15 @@ function try_beautify(code, result) {
     console.log(code);
 }
 
-function infer_options(ctor) {
-    try {
-        ctor({ 0: 0 });
-    } catch (e) {
-        return e.defs;
-    }
-}
-
-var default_options = {
-    compress: infer_options(UglifyJS.Compressor),
-    mangle: {
-        "cache": null,
-        "eval": false,
-        "ie8": false,
-        "keep_fnames": false,
-        "toplevel": false,
-    },
-    output: infer_options(UglifyJS.OutputStream),
-};
+var default_options = UglifyJS.default_options();
 
 function log_suspects(minify_options, component) {
     var options = component in minify_options ? minify_options[component] : true;
     if (!options) return;
-    options = UglifyJS.defaults(options, default_options[component]);
-    var suspects = Object.keys(default_options[component]).filter(function(name) {
-        if (options[name]) {
+    if (typeof options != "object") options = {};
+    var defs = default_options[component];
+    var suspects = Object.keys(defs).filter(function(name) {
+        if ((name in options ? options : defs)[name]) {
             var m = JSON.parse(JSON.stringify(minify_options));
             var o = JSON.parse(JSON.stringify(options));
             o[name] = false;
