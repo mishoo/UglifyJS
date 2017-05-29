@@ -552,4 +552,13 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should print supported options on invalid option syntax", function(done) {
+        var command = uglifyjscmd + " test/input/comments/filter.js -b ascii-only";
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.ok(/^Supported options:\n\{[^}]+}\nERROR: `ascii-only` is not a supported option/.test(stderr), stderr);
+            done();
+        });
+    });
 });
