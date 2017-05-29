@@ -136,7 +136,29 @@ defun_hoist_funs: {
             function f() {}
             function g() {}
             function h() {}
-            !window;
+            if (window);
+        }
+    }
+}
+
+defun_else_if_return: {
+    options = {
+        hoist_funs: false,
+        if_return: true,
+    }
+    input: {
+        function e() {
+            function f() {}
+            if (window) function g() {}
+            else return;
+            function h() {}
+        }
+    }
+    expect: {
+        function e() {
+            function f() {}
+            if (window) function g() {}
+            function h() {}
         }
     }
 }

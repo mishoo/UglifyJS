@@ -307,6 +307,8 @@ issue_512: {
     options = {
         conditionals: true,
         if_return: true,
+        sequences: true,
+        side_effects: true,
     }
     input: {
         function a() {
