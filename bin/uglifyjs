@@ -21,10 +21,27 @@ var options = {
     compress: false,
     mangle: false
 };
-program.version(info.name + ' ' + info.version);
+program.version(info.name + " " + info.version);
 program.parseArgv = program.parse;
 program.parse = undefined;
 if (process.argv.indexOf("ast") >= 0) program.helpInformation = UglifyJS.describe_ast;
+else if (process.argv.indexOf("options") >= 0) program.helpInformation = function() {
+    var text = [];
+    var options = UglifyJS.default_options();
+    for (var option in options) {
+        text.push("--" + (option == "output" ? "beautify" : option == "sourceMap" ? "source-map" : option) + " options:");
+        var defs = options[option];
+        var padding = "";
+        Object.keys(defs).map(function(name) {
+            if (padding.length < name.length) padding = Array(name.length + 1).join(" ");
+            return [ name, JSON.stringify(defs[name]) ];
+        }).forEach(function(tokens) {
+            text.push("  " + tokens[0] + padding.slice(tokens[0].length - 2) + tokens[1]);
+        });
+        text.push("");
+    }
+    return text.join("\n");
+};
 program.option("-p, --parse <options>", "Specify parser options.", parse_js("parse", true));
 program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parse_js("compress", true));
 program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parse_js("mangle", true));
@@ -351,7 +368,7 @@ function parse_js(flag, constants) {
                 }
             }));
         } catch(ex) {
-            fatal("Error parsing arguments for '" + flag + "': " + value);
+            options[value] = null;
         }
         return options;
     }
