@@ -326,3 +326,61 @@ issue_512: {
         }
     }
 }
+
+issue_1317: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        !function(a) {
+            if (a) return;
+            let b = 1;
+            function g() {
+                return b;
+            }
+            console.log(g());
+        }();
+    }
+    expect: {
+        !function(a) {
+            if (a) return;
+            let b = 1;
+            function g() {
+                return b;
+            }
+            console.log(g());
+        }();
+    }
+    expect_stdout: "1"
+    node_version: ">=6"
+}
+
+issue_1317_strict: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        !function(a) {
+            if (a) return;
+            let b = 1;
+            function g() {
+                return b;
+            }
+            console.log(g());
+        }();
+    }
+    expect: {
+        "use strict";
+        !function(a) {
+            if (a) return;
+            let b = 1;
+            function g() {
+                return b;
+            }
+            console.log(g());
+        }();
+    }
+    expect_stdout: "1"
+    node_version: ">=4"
+}
