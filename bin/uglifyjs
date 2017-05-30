@@ -225,7 +225,7 @@ function run() {
                 col = line.length;
             }
             if (line) {
-                var limit = 78;
+                var limit = 70;
                 if (col > limit) {
                     line = line.slice(col - limit);
                     col = limit;
