@@ -543,3 +543,57 @@ mangle_destructuring_decl_array: {
     expect_stdout: "8 7 6 undefined 2 [ 3 ]"
     node_version: ">=6"
 }
+
+anon_func_with_destructuring_args: {
+    options = {
+        evaluate: true,
+        unused: true,
+        toplevel: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    beautify = {
+        ecma: 5,
+    }
+    input: {
+        (function({foo = 1 + 0, bar = 2}, [car = 3, far = 4]) {
+            console.log(foo, bar, car, far);
+        })({bar: 5 - 0}, [, 6]);
+    }
+    expect: {
+        (function({foo: foo = 1, bar: bar = 2}, [o = 3, a = 4]){
+            // FIXME: `foo` and `bar` should be mangled
+            console.log(foo, bar, o, a)
+        })({bar: 5}, [, 6]);
+    }
+    expect_stdout: "1 5 3 6"
+    node_version: ">=6"
+}
+
+arrow_func_with_destructuring_args: {
+    options = {
+        evaluate: true,
+        unused: true,
+        toplevel: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    beautify = {
+        ecma: 5,
+    }
+    input: {
+        (({foo = 1 + 0, bar = 2}, [car = 3, far = 4]) => {
+            console.log(foo, bar, car, far);
+        })({bar: 5 - 0}, [, 6]);
+    }
+    expect: {
+        (({foo: foo = 1, bar: bar = 2},[o = 3, a = 4]) => {
+            // FIXME: `foo` and `bar` should be mangled
+            console.log(foo, bar, o, a)
+        })({bar: 5}, [, 6]);
+    }
+    expect_stdout: "1 5 3 6"
+    node_version: ">=6"
+}
