@@ -583,3 +583,39 @@ class_extends_regex: {
     }
     expect_exact: "function f(){class rx1 extends(/rx/){}}"
 }
+
+issue_2028: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        (function(x) {
+            x.X = function() {
+                return X;
+            };
+            class X {
+                static hello() {
+                    console.log("hello");
+                }
+            }
+        }(a));
+        a.X().hello();
+    }
+    expect: {
+        var a = {};
+        (function(x) {
+            x.X = function() {
+                return X;
+            };
+            class X {
+                static hello() {
+                    console.log("hello");
+                }
+            }
+        }(a));
+        a.X().hello();
+    }
+    expect_stdout: "hello"
+    node_version: ">=6"
+}
