@@ -572,6 +572,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
+- `unsafe_Func` (default: false) -- compress and mangle `Function(args, code)`.
+
 - `unsafe_math` (default: false) -- optimize numerical expressions like
   `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
 
