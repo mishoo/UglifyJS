@@ -562,9 +562,8 @@ anon_func_with_destructuring_args: {
         })({bar: 5 - 0}, [, 6]);
     }
     expect: {
-        (function({foo: foo = 1, bar: bar = 2}, [o = 3, a = 4]){
-            // FIXME: `foo` and `bar` should be mangled
-            console.log(foo, bar, o, a)
+        (function({foo: o = 1, bar: n = 2}, [a = 3, b = 4]) {
+            console.log(o, n, a, b);
         })({bar: 5}, [, 6]);
     }
     expect_stdout: "1 5 3 6"
@@ -589,9 +588,8 @@ arrow_func_with_destructuring_args: {
         })({bar: 5 - 0}, [, 6]);
     }
     expect: {
-        (({foo: foo = 1, bar: bar = 2},[o = 3, a = 4]) => {
-            // FIXME: `foo` and `bar` should be mangled
-            console.log(foo, bar, o, a)
+        (({foo: o = 1, bar: n = 2}, [a = 3, b = 4]) => {
+            console.log(o, n, a, b);
         })({bar: 5}, [, 6]);
     }
     expect_stdout: "1 5 3 6"

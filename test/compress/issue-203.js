@@ -26,9 +26,7 @@ compress_new_function_with_destruct: {
     }
     expect: {
         Function("a", "[b]", "return a");
-        Function("a", "{bb}", "return a");
-        Function("[[a]]", "[{bb}]", 'return a');
+        Function("a", "{bb:b}", "return a");
+        Function("[[a]]", "[{bb:b}]", 'return a');
     }
 }
-
-
