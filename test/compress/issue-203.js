@@ -1,7 +1,8 @@
 
 compress_new_function: {
     options = {
-        unsafe: true
+        unsafe: true,
+        unsafe_Func: true,
     }
     input: {
         new Function("aa, bb", 'return aa;');
@@ -14,6 +15,7 @@ compress_new_function: {
 compress_new_function_with_destruct: {
     options = {
         unsafe: true,
+        unsafe_Func: true,
         ecma: 6
     }
     beautify = {

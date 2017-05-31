@@ -245,3 +245,25 @@ hoist_funs_strict: {
     ]
     node_version: ">=4"
 }
+
+issue_203: {
+    options = {
+        keep_fargs: false,
+        side_effects: true,
+        unsafe_Func: true,
+        unused: true,
+    }
+    input: {
+        var m = {};
+        var fn = Function("require", "module", "exports", "module.exports = 42;");
+        fn(null, m, m.exports);
+        console.log(m.exports);
+    }
+    expect: {
+        var m = {};
+        var fn = Function("a", "b", "b.exports=42");
+        fn(null, m, m.exports);
+        console.log(m.exports);
+    }
+    expect_stdout: "42"
+}
