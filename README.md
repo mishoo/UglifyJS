@@ -690,8 +690,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `eval` (default `false`). Pass `true` to mangle names visible in scopes
   where eval or with are used.
 
-- `safari10` (default `false`). Pass `true` to work around Safari 10 loop
-  scope bugs for `let` and `const` variables.
+- `safari10` (default `false`). Pass `true` to work around the 
+  Safari 10 loop scope [bug](https://bugs.webkit.org/show_bug.cgi?id=171041) 
+  for `let` and `const` variables.
 
 Examples:
 
