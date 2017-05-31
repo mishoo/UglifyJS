@@ -680,17 +680,18 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 ## Mangle options
 
-- `reserved` - pass an array of identifiers that should be excluded from mangling
+- `reserved` (default `[]`). Pass an array of identifiers that should be
+  excluded from mangling. Example: `["foo", "bar"]`.
 
-- `toplevel` — mangle names declared in the top level scope (disabled by
-default).
+- `toplevel` (default `false`). Pass `true` to mangle names declared in the
+  top level scope.
 
-- `eval` — mangle names visible in scopes where eval or with are used
-(disabled by default).
+- `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
+  Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
+  [compress option](#compress-options).
 
-- `keep_fnames` -- default `false`.  Pass `true` to not mangle
-function names.  Useful for code relying on `Function.prototype.name`.
-See also: the `keep_fnames` [compress option](#compress-options).
+- `eval` (default `false`). Pass `true` to mangle names visible in scopes
+  where `eval` or `with` are used.
 
 Examples:
 
