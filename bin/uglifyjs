@@ -225,9 +225,10 @@ function run() {
                 col = line.length;
             }
             if (line) {
-                if (col > 40) {
-                    line = line.slice(col - 40);
-                    col = 40;
+                var limit = 70;
+                if (col > limit) {
+                    line = line.slice(col - limit);
+                    col = limit;
                 }
                 console.error(line.slice(0, 80));
                 console.error(line.slice(0, col).replace(/\S/g, " ") + "^");
