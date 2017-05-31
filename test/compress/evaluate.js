@@ -780,13 +780,15 @@ unsafe_charAt_noop: {
     input: {
         console.log(
             s.charAt(0),
-            "string".charAt(x)
+            "string".charAt(x),
+            (typeof x).charAt()
         );
     }
     expect: {
         console.log(
             s.charAt(0),
-            "string".charAt(x)
+            "string".charAt(x),
+            (typeof x)[0]
         );
     }
 }
