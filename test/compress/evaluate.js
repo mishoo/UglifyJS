@@ -873,13 +873,15 @@ unsafe_charAt_noop: {
     input: {
         console.log(
             s.charAt(0),
-            "string".charAt(x)
+            "string".charAt(x),
+            (typeof x).charAt()
         );
     }
     expect: {
         console.log(
             s.charAt(0),
-            "string".charAt(x)
+            "string".charAt(x),
+            (typeof x)[0]
         );
     }
 }
@@ -1129,4 +1131,32 @@ issue_1964_2: {
         console.log(f());
     }
     expect_stdout: "b"
+}
+
+array_slice_index: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log([1,2,3].slice(1)[1]);
+    }
+    expect: {
+        console.log(3);
+    }
+    expect_stdout: "3"
+}
+
+string_charCodeAt: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log("foo".charCodeAt("bar".length));
+    }
+    expect: {
+        console.log(NaN);
+    }
+    expect_stdout: "NaN"
 }
