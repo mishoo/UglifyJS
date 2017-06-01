@@ -691,7 +691,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   where `eval` or `with` are used.
 
 - `safari10` (default `false`). Pass `true` to work around the Safari 10 loop
-  iterator [bug](https://bugs.webkit.org/show_bug.cgi?id=171041) 
+  iterator [bug](https://bugs.webkit.org/show_bug.cgi?id=171041)
   "Cannot declare a let variable twice".
 
 Examples:
