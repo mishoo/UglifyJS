@@ -555,3 +555,20 @@ native_prototype: {
         "".indexOf.call(e, "bar");
     }
 }
+
+issue_2040: {
+    input: {
+        var a = 1;
+        var b = {
+            get "a-b"() {
+                return a;
+            },
+            set "a-b"(c) {
+                a = c;
+            }
+        };
+        console.log(b["a-b"], b["a-b"] = 2, b["a-b"]);
+    }
+    expect_exact: 'var a=1;var b={get"a-b"(){return a},set"a-b"(c){a=c}};console.log(b["a-b"],b["a-b"]=2,b["a-b"]);'
+    expect_stdout: "1 2 2"
+}
