@@ -595,3 +595,47 @@ arrow_func_with_destructuring_args: {
     expect_stdout: "1 5 3 6"
     node_version: ">=6"
 }
+
+issue_2044_ecma_5: {
+    beautify = {
+        beautify: false,
+        ecma: 5,
+    }
+    input: {
+        ({x : a = 1, y = 2 + b, z = 3 - c} = obj);
+    }
+    expect_exact: "({x:a=1,y:y=2+b,z:z=3-c}=obj);"
+}
+
+issue_2044_ecma_6: {
+    beautify = {
+        beautify: false,
+        ecma: 6,
+    }
+    input: {
+        ({x : a = 1, y = 2 + b, z = 3 - c} = obj);
+    }
+    expect_exact: "({x:a=1,y=2+b,z=3-c}=obj);"
+}
+
+issue_2044_ecma_5_beautify: {
+    beautify = {
+        beautify: true,
+        ecma: 5,
+    }
+    input: {
+        ({x : a = 1, y = 2 + b, z = 3 - c} = obj);
+    }
+    expect_exact: "({x: a = 1, y: y = 2 + b, z: z = 3 - c} = obj);"
+}
+
+issue_2044_ecma_6_beautify: {
+    beautify = {
+        beautify: true,
+        ecma: 6,
+    }
+    input: {
+        ({x : a = 1, y = 2 + b, z = 3 - c} = obj);
+    }
+    expect_exact: "({x: a = 1, y = 2 + b, z = 3 - c} = obj);"
+}
