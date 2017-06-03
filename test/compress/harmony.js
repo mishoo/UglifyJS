@@ -619,3 +619,48 @@ issue_2028: {
     expect_stdout: "hello"
     node_version: ">=6"
 }
+
+class_expression_statement: {
+    options = {
+        toplevel: false,
+        side_effects: false,
+        unused: false,
+    }
+    input: {
+        (class {});
+        (class NamedClassExpr {});
+        let expr = (class AnotherClassExpr {});
+        class C {}
+    }
+    expect_exact: "(class{});(class NamedClassExpr{});let expr=class AnotherClassExpr{};class C{}"
+}
+
+class_expression_statement_unused: {
+    options = {
+        toplevel: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (class {});
+        (class NamedClassExpr {});
+        let expr = (class AnotherClassExpr {});
+        class C {}
+    }
+    expect_exact: "let expr=class{};class C{}"
+}
+
+class_expression_statement_unused_toplevel: {
+    options = {
+        toplevel: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (class {});
+        (class NamedClassExpr {});
+        let expr = (class AnotherClassExpr {});
+        class C {}
+    }
+    expect_exact: ""
+}
