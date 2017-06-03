@@ -159,6 +159,17 @@ classes_with_expression_as_expand: {
     expect_exact: "class D extends(calls++,C){}"
 }
 
+class_as_sequence_expression: {
+    options = {
+        side_effects: true
+    }
+    input: {
+        0, class {}
+        0, class A{}
+    }
+    expect_exact: "(class{});class A{};"
+}
+
 new_target: {
     input: {
         new.target;
