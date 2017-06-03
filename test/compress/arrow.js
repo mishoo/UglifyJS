@@ -135,3 +135,70 @@ arrow_with_regexp: {
         num => /\d{11,14}/.test( num )
     }
 }
+
+arrow_unused: {
+    options = {
+        toplevel: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        top => dog;
+        let fn = a => { console.log(a * a); };
+        let u = (x, y) => x - y + g;
+        (() => { console.log("0"); })();
+        !function(x) {
+            (() => { console.log("1"); })();
+            let unused = x => { console.log(x); };
+            let baz = e => e + e;
+            console.log(baz(x));
+        }(1);
+        fn(3);
+    }
+    expect: {
+        let fn = a => { console.log(a * a); };
+        let u = (x, y) => x - y + g;
+        (() => { console.log("0"); })();
+        !function(x) {
+            (() => { console.log("1"); })();
+            let baz = e => e + e;
+            console.log(baz(x));
+        }(1);
+        fn(3);
+    }
+    expect_stdout: [ "0", "1", "2", "9" ]
+    node_version: ">=6"
+}
+
+arrow_unused_toplevel: {
+    options = {
+        toplevel: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        top => dog;
+        let fn = a => { console.log(a * a); };
+        let u = (x, y) => x - y + g;
+        (() => { console.log("0"); })();
+        !function(x) {
+            (() => { console.log("1"); })();
+            let unused = x => { console.log(x); };
+            let baz = e => e + e;
+            console.log(baz(x));
+        }(1);
+        fn(3);
+    }
+    expect: {
+        let fn = a => { console.log(a * a); };
+        (() => { console.log("0"); })();
+        !function(x) {
+            (() => { console.log("1"); })();
+            let baz = e => e + e;
+            console.log(baz(x));
+        }(1);
+        fn(3);
+    }
+    expect_stdout: [ "0", "1", "2", "9" ]
+    node_version: ">=6"
+}
