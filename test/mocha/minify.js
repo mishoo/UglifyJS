@@ -106,7 +106,7 @@ describe("minify", function() {
                         content: "inline"
                     }
                 });
-                assert.strictEqual(result.code, "var bar=function(){function foo(bar){return bar}return foo}();");
+                assert.strictEqual(result.code, "var bar=function(){return function(bar){return bar}}();");
                 assert.strictEqual(warnings.length, 1);
                 assert.strictEqual(warnings[0], "inline source map not found");
             } finally {

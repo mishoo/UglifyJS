@@ -616,6 +616,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `if_return` -- optimizations for if/return and if/continue
 
+- `inline` -- embed simple functions
+
 - `join_vars` -- join consecutive `var` statements
 
 - `cascade` -- small optimization for sequences, transform `x, x` into `x`

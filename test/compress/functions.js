@@ -21,6 +21,7 @@ iifes_returning_constants_keep_fargs_true: {
         join_vars     : true,
         reduce_vars   : true,
         cascade       : true,
+        inline        : true,
     }
     input: {
         (function(){ return -1.23; }());
@@ -56,6 +57,7 @@ iifes_returning_constants_keep_fargs_false: {
         join_vars     : true,
         reduce_vars   : true,
         cascade       : true,
+        inline        : true,
     }
     input: {
         (function(){ return -1.23; }());
@@ -82,6 +84,7 @@ issue_485_crashing_1530: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        inline: true,
     }
     input: {
         (function(a) {
@@ -154,6 +157,7 @@ function_returning_constant_literal: {
         evaluate: true,
         cascade: true,
         unused: true,
+        inline: true,
     }
     input: {
         function greeter() {

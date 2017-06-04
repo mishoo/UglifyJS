@@ -644,6 +644,7 @@ unsafe_prototype_function: {
 call_args: {
     options = {
         evaluate: true,
+        inline: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -665,6 +666,7 @@ call_args: {
 call_args_drop_param: {
     options = {
         evaluate: true,
+        inline: true,
         keep_fargs: false,
         reduce_vars: true,
         toplevel: true,
