@@ -26,16 +26,18 @@ var FUNC_TOSTRING = [
     "        var i = this.name;",
     '        if (typeof i != "number") {',
     "            i = ++id;",
+].concat(Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable ? [
     '            Object.defineProperty(this, "name", {',
     "                get: function() {",
     "                    return i;",
     "                }",
     "            });",
+] : [], [
     "        }",
     '        return "[Function: " + i + "]";',
     "    }",
     "}();",
-].join("\n");
+]).join("\n");
 exports.run_code = function(code) {
     var stdout = "";
     var original_write = process.stdout.write;

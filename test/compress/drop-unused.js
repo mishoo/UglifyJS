@@ -751,12 +751,12 @@ issue_1583: {
     expect: {
         function m(t) {
             (function(e) {
-                t = (function() {
-                    return (function(a) {
-                        return a;
-                    })(function(a) {});
-                })();
-            })();
+                t = e();
+            })(function() {
+                return (function(a) {
+                    return a;
+                })(function(a) {});
+            });
         }
     }
 }
