@@ -1311,19 +1311,48 @@ iife_func_side_effects: {
         unused: true,
     }
     input: {
+        function x() {
+            console.log("x");
+        }
+        function y() {
+            console.log("y");
+        }
+        function z() {
+            console.log("z");
+        }
         (function(a, b, c) {
-            return b();
+            function y() {
+                console.log("FAIL");
+            }
+            return y + b();
         })(x(), function() {
             return y();
         }, z());
     }
     expect: {
+        function x() {
+            console.log("x");
+        }
+        function y() {
+            console.log("y");
+        }
+        function z() {
+            console.log("z");
+        }
         (function(a, b, c) {
-            return function() {
-                return y();
-            }();
-        })(x(), 0, z());
+            function y() {
+                console.log("FAIL");
+            }
+            return y + b();
+        })(x(), function() {
+            return y();
+        }, z());
     }
+    expect_stdout: [
+        "x",
+        "z",
+        "y",
+    ]
 }
 
 issue_1595_1: {
