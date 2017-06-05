@@ -12,14 +12,14 @@ if (typeof phantom == "undefined") {
     });
     var args = process.argv.slice(2);
     if (!args.length) {
-        args.push("-mc");
+        args.push("-mcb", "beautify=false,webkit");
     }
     args.push("--timings");
     var child_process = require("child_process");
     try {
         require("phantomjs-prebuilt");
     } catch(e) {
-        child_process.execSync("npm install phantomjs-prebuilt@2.1.14");
+        child_process.execSync("npm install phantomjs-prebuilt@2.1.14 --no-save");
     }
     var http = require("http");
     var server = http.createServer(function(request, response) {
