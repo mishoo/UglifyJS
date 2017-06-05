@@ -2,6 +2,7 @@ reduce_vars: {
     options = {
         conditionals  : true,
         evaluate      : true,
+        inline        : true,
         global_defs   : {
             C : 0
         },
@@ -1032,6 +1033,7 @@ defun_inline_2: {
 defun_inline_3: {
     options = {
         evaluate: true,
+        inline: true,
         passes: 2,
         reduce_vars: true,
         side_effects: true,
@@ -1054,6 +1056,7 @@ defun_inline_3: {
 
 defun_call: {
     options = {
+        inline: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1080,6 +1083,7 @@ defun_call: {
 
 defun_redefine: {
     options = {
+        inline: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1112,6 +1116,7 @@ defun_redefine: {
 
 func_inline: {
     options = {
+        inline: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1138,6 +1143,7 @@ func_inline: {
 
 func_modified: {
     options = {
+        inline: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1340,10 +1346,9 @@ iife_func_side_effects: {
             console.log("z");
         }
         (function(a, b, c) {
-            function y() {
+            return function() {
                 console.log("FAIL");
-            }
-            return y + b();
+            } + b();
         })(x(), function() {
             return y();
         }, z());
@@ -1716,6 +1721,7 @@ redefine_arguments_1: {
 redefine_arguments_2: {
     options = {
         evaluate: true,
+        inline: true,
         keep_fargs: false,
         reduce_vars: true,
         side_effects: true,
@@ -1752,6 +1758,7 @@ redefine_arguments_2: {
 redefine_arguments_3: {
     options = {
         evaluate: true,
+        inline: true,
         keep_fargs: false,
         passes: 3,
         reduce_vars: true,
@@ -1828,6 +1835,7 @@ redefine_farg_1: {
 redefine_farg_2: {
     options = {
         evaluate: true,
+        inline: true,
         keep_fargs: false,
         reduce_vars: true,
         side_effects: true,
@@ -1864,6 +1872,7 @@ redefine_farg_2: {
 redefine_farg_3: {
     options = {
         evaluate: true,
+        inline: true,
         keep_fargs: false,
         passes: 3,
         reduce_vars: true,

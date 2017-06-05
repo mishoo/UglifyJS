@@ -1,6 +1,7 @@
 unary_prefix: {
     options = {
         evaluate: true,
+        inline: true,
         reduce_vars: true,
         unused: true,
     }
