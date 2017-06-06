@@ -38,9 +38,6 @@ describe("test/benchmark.js", function() {
 
 describe("test/jetstream.js", function() {
     this.timeout(20 * 60 * 1000);
-    it("Should install phantomjs-prebuilt", function(done) {
-        run("npm", ["install", "phantomjs-prebuilt@2.1.14"], done);
-    });
     [
         "-mc",
         "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
