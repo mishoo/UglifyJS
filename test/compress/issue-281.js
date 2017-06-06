@@ -431,3 +431,53 @@ pure_annotation: {
     }
     expect_exact: ""
 }
+
+drop_fargs: {
+    options = {
+        cascade: true,
+        inline: true,
+        keep_fargs: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        !function(a_1) {
+            a++;
+        }(a++ + (a && a.var));
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function() {
+            a++;
+        }(++a && a.var);
+        console.log(a);
+    }
+    expect_stdout: "3"
+}
+
+keep_fargs: {
+    options = {
+        cascade: true,
+        inline: true,
+        keep_fargs: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        !function(a_1) {
+            a++;
+        }(a++ + (a && a.var));
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function(a_1) {
+            a++;
+        }(++a && a.var);
+        console.log(a);
+    }
+    expect_stdout: "3"
+}
