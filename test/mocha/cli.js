@@ -542,7 +542,7 @@ describe("bin/uglifyjs", function () {
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
-            assert.ok(/^Supported options:\n\{[^}]+}\nERROR: `ascii-only` is not a supported option/.test(stderr), stderr);
+            assert.ok(/^Supported options:\n[\s\S]*?\nERROR: `ascii-only` is not a supported option/.test(stderr), stderr);
             done();
         });
     });
