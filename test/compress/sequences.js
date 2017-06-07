@@ -710,3 +710,23 @@ issue_27: {
         })(jQuery);
     }
 }
+
+issue_2062: {
+    options = {
+        booleans: true,
+        cascade: true,
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 1;
+        if ([ a || a++ + a--, a++ + a--, a && a.var ]);
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        a || (a++, a--), a++, --a && a.var;
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
