@@ -1280,3 +1280,17 @@ issue_1968: {
     expect_stdout: "5"
     node_version: ">=6"
 }
+
+issue_2063: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a;
+        var a;
+    }
+    expect: {
+        var a;
+        var a;
+    }
+}
