@@ -13,6 +13,13 @@ describe("minify", function() {
         assert.strictEqual(result.code, 'function foo(n){return n?3:7}');
     });
 
+    it("Should skip inherited keys from `files`", function() {
+        var files = Object.create({ skip: this });
+        files[0] = "alert(1 + 1)";
+        var result = Uglify.minify(files);
+        assert.strictEqual(result.code, "alert(2);");
+    });
+
     describe("keep_quoted_props", function() {
         it("Should preserve quotes in object literals", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
@@ -206,6 +213,18 @@ describe("minify", function() {
             var err = result.error;
             assert.ok(err instanceof Error);
             assert.strictEqual(err.stack.split(/\n/)[0], "Error: Can't handle expression: debugger");
+        });
+        it("should skip inherited properties", function() {
+            var foo = Object.create({ skip: this });
+            foo.bar = 42;
+            var result = Uglify.minify("alert(FOO);", {
+                compress: {
+                    global_defs: {
+                        FOO: foo
+                    }
+                }
+            });
+            assert.strictEqual(result.code, "alert({bar:42});");
         });
     });
 });
