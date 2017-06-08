@@ -546,4 +546,24 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should work with --mangle reserved=[]", function (done) {
+        var command = uglifyjscmd + ' test/input/issue-505/input.js -m reserved=[callback]';
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'function test(callback){"aaaaaaaaaaaaaaaa";callback(err,data);callback(err,data)}\n');
+            done();
+        });
+    });
+    it("Should work with --mangle reserved=false", function (done) {
+        var command = uglifyjscmd + ' test/input/issue-505/input.js -m reserved=false';
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'function test(a){"aaaaaaaaaaaaaaaa";a(err,data);a(err,data)}\n');
+            done();
+        });
+    });
 });
