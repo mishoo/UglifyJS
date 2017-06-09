@@ -52,7 +52,10 @@ exports.run_code = function(code) {
             "}();",
         ].join("\n"), {
             console: {
-                log: function() {
+                log: function(msg) {
+                    if (arguments.length == 1 && typeof msg == "string") {
+                        return console.log("%s", msg);
+                    }
                     return console.log.apply(console, [].map.call(arguments, function(arg) {
                         return safe_log(arg, 3);
                     }));
