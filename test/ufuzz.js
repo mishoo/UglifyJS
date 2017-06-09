@@ -988,7 +988,7 @@ function log_suspects(minify_options, component) {
             var result = UglifyJS.minify(original_code, m);
             if (result.error) {
                 errorln("Error testing options." + component + "." + name);
-                errorln(result.error);
+                errorln(result.error.stack);
             } else {
                 var r = sandbox.run_code(result.code);
                 return sandbox.same_stdout(original_result, r);
@@ -996,7 +996,7 @@ function log_suspects(minify_options, component) {
         }
     });
     if (suspects.length > 0) {
-        errorln("Suspicious", component, "options:");
+        errorln("Suspicious " + component + " options:");
         suspects.forEach(function(name) {
             errorln("  " + name);
         });
@@ -1007,7 +1007,7 @@ function log_suspects(minify_options, component) {
 function log(options) {
     if (!ok) errorln('\n\n\n\n\n\n!!!!!!!!!!\n\n\n');
     errorln("//=============================================================");
-    if (!ok) errorln("// !!!!!! Failed... round", round);
+    if (!ok) errorln("// !!!!!! Failed... round " + round);
     errorln("// original code");
     try_beautify(original_code, original_result, errorln);
     errorln();
@@ -1019,9 +1019,9 @@ function log(options) {
         errorln();
         errorln();
         errorln("original result:");
-        errorln(original_result);
+        errorln(typeof original_result == "string" ? original_result : original_result.stack);
         errorln("uglified result:");
-        errorln(uglify_result);
+        errorln(typeof uglify_result == "string" ? uglify_result : uglify_result.stack);
     } else {
         errorln("// !!! uglify failed !!!");
         errorln(uglify_code.stack);
@@ -1034,11 +1034,11 @@ function log(options) {
     }
     errorln("minify(options):");
     options = JSON.parse(options);
-    errorln(options);
+    errorln(JSON.stringify(options, null, 2));
     errorln();
     if (!ok && typeof uglify_code == "string") {
         Object.keys(default_options).forEach(log_suspects.bind(null, options));
-        errorln("!!!!!! Failed... round", round);
+        errorln("!!!!!! Failed... round " + round);
     }
 }
 
@@ -1074,7 +1074,7 @@ for (var round = 1; round <= num_iterations; round++) {
             println();
             println();
             println("original result:");
-            println(original_result);
+            println(original_result.stack);
             println();
         }
         if (!ok && isFinite(num_iterations)) {
