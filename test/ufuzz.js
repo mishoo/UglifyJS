@@ -102,23 +102,23 @@ for (var i = 2; i < process.argv.length; ++i) {
       case '--help':
       case '-h':
       case '-?':
-        console.log('** UglifyJS fuzzer help **');
-        console.log('Valid options (optional):');
-        console.log('<number>: generate this many cases (if used must be first arg)');
-        console.log('-v: print every generated test case');
-        console.log('-V: print every 100th generated test case');
-        console.log('-t <int>: generate this many toplevels per run (more take longer)');
-        console.log('-r <int>: maximum recursion depth for generator (higher takes longer)');
-        console.log('-s1 <statement name>: force the first level statement to be this one (see list below)');
-        console.log('-s2 <statement name>: force the second level statement to be this one (see list below)');
-        console.log('--no-catch-redef: do not redefine catch variables');
-        console.log('--no-directive: do not generate directives');
-        console.log('--use-strict: generate "use strict"');
-        console.log('--stmt-depth-from-func: reset statement depth counter at each function, counts from global otherwise');
-        console.log('--only-stmt <statement names>: a comma delimited white list of statements that may be generated');
-        console.log('--without-stmt <statement names>: a comma delimited black list of statements never to generate');
-        console.log('List of accepted statement names: ' + Object.keys(STMT_ARG_TO_ID));
-        console.log('** UglifyJS fuzzer exiting **');
+        println('** UglifyJS fuzzer help **');
+        println('Valid options (optional):');
+        println('<number>: generate this many cases (if used must be first arg)');
+        println('-v: print every generated test case');
+        println('-V: print every 100th generated test case');
+        println('-t <int>: generate this many toplevels per run (more take longer)');
+        println('-r <int>: maximum recursion depth for generator (higher takes longer)');
+        println('-s1 <statement name>: force the first level statement to be this one (see list below)');
+        println('-s2 <statement name>: force the second level statement to be this one (see list below)');
+        println('--no-catch-redef: do not redefine catch variables');
+        println('--no-directive: do not generate directives');
+        println('--use-strict: generate "use strict"');
+        println('--stmt-depth-from-func: reset statement depth counter at each function, counts from global otherwise');
+        println('--only-stmt <statement names>: a comma delimited white list of statements that may be generated');
+        println('--without-stmt <statement names>: a comma delimited black list of statements never to generate');
+        println('List of accepted statement names: ' + Object.keys(STMT_ARG_TO_ID));
+        println('** UglifyJS fuzzer exiting **');
         return 0;
       default:
         // first arg may be a number.
@@ -941,7 +941,17 @@ if (require.main !== module) {
     return;
 }
 
-function try_beautify(code, result) {
+function println(msg) {
+    if (typeof msg != "undefined") process.stdout.write(msg);
+    process.stdout.write("\n");
+}
+
+function errorln(msg) {
+    if (typeof msg != "undefined") process.stderr.write(msg);
+    process.stderr.write("\n");
+}
+
+function try_beautify(code, result, printfn) {
     var beautified = UglifyJS.minify(code, {
         compress: false,
         mangle: false,
@@ -951,15 +961,15 @@ function try_beautify(code, result) {
         },
     });
     if (beautified.error) {
-        console.log("// !!! beautify failed !!!");
-        console.log(beautified.error.stack);
+        printfn("// !!! beautify failed !!!");
+        printfn(beautified.error.stack);
     } else if (sandbox.same_stdout(sandbox.run_code(beautified.code), result)) {
-        console.log("// (beautified)");
-        console.log(beautified.code);
+        printfn("// (beautified)");
+        printfn(beautified.code);
         return;
     }
-    console.log("//");
-    console.log(code);
+    printfn("//");
+    printfn(code);
 }
 
 var default_options = UglifyJS.default_options();
@@ -977,8 +987,8 @@ function log_suspects(minify_options, component) {
             m[component] = o;
             var result = UglifyJS.minify(original_code, m);
             if (result.error) {
-                console.log("Error testing options." + component + "." + name);
-                console.log(result.error);
+                errorln("Error testing options." + component + "." + name);
+                errorln(result.error);
             } else {
                 var r = sandbox.run_code(result.code);
                 return sandbox.same_stdout(original_result, r);
@@ -986,49 +996,49 @@ function log_suspects(minify_options, component) {
         }
     });
     if (suspects.length > 0) {
-        console.log("Suspicious", component, "options:");
+        errorln("Suspicious", component, "options:");
         suspects.forEach(function(name) {
-            console.log("  " + name);
+            errorln("  " + name);
         });
-        console.log();
+        errorln();
     }
 }
 
 function log(options) {
-    if (!ok) console.log('\n\n\n\n\n\n!!!!!!!!!!\n\n\n');
-    console.log("//=============================================================");
-    if (!ok) console.log("// !!!!!! Failed... round", round);
-    console.log("// original code");
-    try_beautify(original_code, original_result);
-    console.log();
-    console.log();
-    console.log("//-------------------------------------------------------------");
+    if (!ok) errorln('\n\n\n\n\n\n!!!!!!!!!!\n\n\n');
+    errorln("//=============================================================");
+    if (!ok) errorln("// !!!!!! Failed... round", round);
+    errorln("// original code");
+    try_beautify(original_code, original_result, errorln);
+    errorln();
+    errorln();
+    errorln("//-------------------------------------------------------------");
     if (typeof uglify_code == "string") {
-        console.log("// uglified code");
-        try_beautify(uglify_code, uglify_result);
-        console.log();
-        console.log();
-        console.log("original result:");
-        console.log(original_result);
-        console.log("uglified result:");
-        console.log(uglify_result);
+        errorln("// uglified code");
+        try_beautify(uglify_code, uglify_result, errorln);
+        errorln();
+        errorln();
+        errorln("original result:");
+        errorln(original_result);
+        errorln("uglified result:");
+        errorln(uglify_result);
     } else {
-        console.log("// !!! uglify failed !!!");
-        console.log(uglify_code.stack);
+        errorln("// !!! uglify failed !!!");
+        errorln(uglify_code.stack);
         if (typeof original_result != "string") {
-            console.log();
-            console.log();
-            console.log("original stacktrace:");
-            console.log(original_result.stack);
+            errorln();
+            errorln();
+            errorln("original stacktrace:");
+            errorln(original_result.stack);
         }
     }
-    console.log("minify(options):");
+    errorln("minify(options):");
     options = JSON.parse(options);
-    console.log(options);
-    console.log();
+    errorln(options);
+    errorln();
     if (!ok && typeof uglify_code == "string") {
         Object.keys(default_options).forEach(log_suspects.bind(null, options));
-        console.log("!!!!!! Failed... round", round);
+        errorln("!!!!!! Failed... round", round);
     }
 }
 
@@ -1058,19 +1068,19 @@ for (var round = 1; round <= num_iterations; round++) {
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
         else if (typeof original_result != "string") {
-            console.log("//=============================================================");
-            console.log("// original code");
-            try_beautify(original_code, original_result);
-            console.log();
-            console.log();
-            console.log("original result:");
-            console.log(original_result);
-            console.log();
+            println("//=============================================================");
+            println("// original code");
+            try_beautify(original_code, original_result, println);
+            println();
+            println();
+            println("original result:");
+            println(original_result);
+            println();
         }
         if (!ok && isFinite(num_iterations)) {
-            console.log();
+            println();
             process.exit(1);
         }
     });
 }
-console.log();
+println();
