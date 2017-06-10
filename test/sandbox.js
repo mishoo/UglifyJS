@@ -19,7 +19,7 @@ function safe_log(arg, level) {
 
 var FUNC_TOSTRING = [
     "Function.prototype.toString = Function.prototype.valueOf = function() {",
-    "    var id = 0;",
+    "    var id = 100000;",
     "    return function() {",
     '        if (this === Array) return "[Function: Array]";',
     '        if (this === Object) return "[Function: Object]";',
