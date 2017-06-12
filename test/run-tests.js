@@ -294,8 +294,24 @@ function parse_test(file) {
                 if (label.name == "expect_exact" || label.name == "node_version") {
                     test[label.name] = read_string(stat);
                 } else if (label.name == "expect_stdout") {
-                    if (stat.TYPE == "SimpleStatement" && stat.body instanceof U.AST_Boolean) {
-                        test[label.name] = stat.body.value;
+                    if (stat.TYPE == "SimpleStatement") {
+                        var body = stat.body;
+                        if (body instanceof U.AST_Boolean) {
+                            test[label.name] = body.value;
+                        } else if (body instanceof U.AST_Call) {
+                            var ctor = global[body.expression.name];
+                            assert.ok(ctor === Error || ctor.prototype instanceof Error, tmpl("Unsupported expect_stdout format [{line},{col}]", {
+                                line: label.start.line,
+                                col: label.start.col
+                            }));
+                            test[label.name] = ctor.apply(null, body.args.map(function(node) {
+                                assert.ok(node instanceof U.AST_Constant, tmpl("Unsupported expect_stdout format [{line},{col}]", {
+                                    line: label.start.line,
+                                    col: label.start.col
+                                }));
+                                return node.value;
+                            }));
+                        }
                     } else {
                         test[label.name] = read_string(stat) + "\n";
                     }
