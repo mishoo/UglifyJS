@@ -151,7 +151,7 @@ negate_iife_4: {
         })();
     }
     expect: {
-        t ? console.log(true) : console.log(false), console.log("something"), void 0;
+        t ? console.log(true) : console.log(false), void console.log("something");
     }
 }
 
@@ -174,7 +174,7 @@ negate_iife_5: {
         })();
     }
     expect: {
-        t ? foo(true) : bar(false), console.log("something"), void 0;
+        t ? foo(true) : bar(false), void console.log("something");
     }
 }
 
@@ -197,7 +197,7 @@ negate_iife_5_off: {
         })();
     }
     expect: {
-        t ? foo(true) : bar(false), console.log("something"), void 0;
+        t ? foo(true) : bar(false), void console.log("something");
     }
 }
 
@@ -214,7 +214,7 @@ issue_1254_negate_iife_true: {
             };
         })()();
     }
-    expect_exact: 'console.log("test"),void 0;'
+    expect_exact: 'void console.log("test");'
     expect_stdout: true
 }
 
@@ -231,7 +231,7 @@ issue_1254_negate_iife_nested: {
             };
         })()()()()();
     }
-    expect_exact: '(console.log("test"),void 0)()()();'
+    expect_exact: '(void console.log("test"))()()();'
 }
 
 negate_iife_issue_1073: {
@@ -382,7 +382,7 @@ wrap_iife: {
             };
         })()();
     }
-    expect_exact: 'console.log("test"),void 0;'
+    expect_exact: 'void console.log("test");'
 }
 
 wrap_iife_in_expression: {
@@ -416,7 +416,7 @@ wrap_iife_in_return_call: {
             })();
         })()();
     }
-    expect_exact: '(console.log("test"),void 0)();'
+    expect_exact: '(void console.log("test"))();'
 }
 
 pure_annotation: {
