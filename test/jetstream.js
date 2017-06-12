@@ -64,6 +64,7 @@ if (typeof phantom == "undefined") {
                     server.close();
                     if (code) throw new Error("JetStream failed!");
                     console.log("JetStream completed successfully.");
+                    process.exit(0);
                 });
             });
         }

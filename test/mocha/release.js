@@ -4,13 +4,9 @@ var spawn = require("child_process").spawn;
 if (!process.env.UGLIFYJS_TEST_ALL) return;
 
 function run(command, args, done) {
-    var id = setInterval(function() {
-        process.stdout.write("\0");
-    }, 5 * 60 * 1000);
     spawn(command, args, {
-        stdio: "ignore"
+        stdio: [ "ignore", 1, 2 ]
     }).on("exit", function(code) {
-        clearInterval(id);
         assert.strictEqual(code, 0);
         done();
     });
