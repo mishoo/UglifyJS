@@ -22,10 +22,9 @@ describe("test/benchmark.js", function() {
         "-b",
         "-b bracketize",
         "-m",
-        "-mc passes=3",
-        "-mc passes=3,toplevel",
-        "-mc passes=3,unsafe",
-        "-mc keep_fargs=false,passes=3",
+        "-mc toplevel,passes=3",
+        "-mc unsafe",
+        "-mc keep_fargs=false",
         "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
     ].forEach(function(options) {
         it("Should pass with options " + options, function(done) {
