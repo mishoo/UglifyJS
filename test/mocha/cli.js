@@ -77,6 +77,23 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("should not consider source map file content as source map file name (issue #2082)", function (done) {
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-2082/sample.js",
+            "--source-map", "content=test/input/issue-2082/sample.js.map",
+            "--source-map", "url=inline",
+        ].join(" ");
+
+        exec(command, function (err, stdout, stderr) {
+            if (err) throw err;
+
+            var stderrLines = stderr.split('\n');
+            assert.strictEqual(stderrLines[0], 'INFO: Using input source map: test/input/issue-2082/sample.js.map');
+            assert.notStrictEqual(stderrLines[1], 'INFO: Using input source map: {"version": 3,"sources": ["index.js"],"mappings": ";"}');
+            done();
+        });
+    });
     it("Should work with --keep-fnames (mangle only)", function (done) {
         var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m';
 

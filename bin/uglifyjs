@@ -371,7 +371,7 @@ function parse_js(flag, constants) {
 function parse_source_map() {
     var parse = parse_js("sourceMap", true);
     return function(value, options) {
-        var hasContent = options && options.sourceMap && "content" in options.sourceMap;
+        var hasContent = options && "content" in options;
         var settings = parse(value, options);
         if (!hasContent && settings.content && settings.content != "inline") {
             print_error("INFO: Using input source map: " + settings.content);
