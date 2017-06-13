@@ -2537,3 +2537,53 @@ accessor: {
     }
     expect_stdout: "1 1"
 }
+
+issue_2090_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var x = 1;
+            [].forEach(() => x = 2);
+            return x;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var x = 1;
+            [].forEach(() => x = 2);
+            return x;
+        }());
+    }
+    expect_stdout: "1"
+    node_version: ">=4"
+}
+
+issue_2090_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var x = 1;
+            [].forEach(() => {
+                x = 2;
+            });
+            return x;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var x = 1;
+            [].forEach(() => {
+                x = 2;
+            });
+            return x;
+        }());
+    }
+    expect_stdout: "1"
+    node_version: ">=4"
+}
