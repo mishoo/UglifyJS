@@ -23,13 +23,19 @@ if (typeof phantom == "undefined") {
     }
     args.push("--timings");
     var child_process = require("child_process");
+    var fetch = require("./fetch");
     var http = require("http");
     var server = http.createServer(function(request, response) {
         request.resume();
         var url = site + request.url;
-        http.get(url, function(res) {
-            response.writeHead(res.statusCode, {
-                "Content-Type": res.headers["content-type"]
+        fetch(url, function(err, res) {
+            if (err) throw err;
+            response.writeHead(200, {
+                "Content-Type": {
+                    css: "text/css",
+                    js: "application/javascript",
+                    png: "image/png"
+                }[url.slice(url.lastIndexOf(".") + 1)] || "text/html; charset=utf-8"
             });
             if (/\.js$/.test(url)) {
                 var stderr = "";
