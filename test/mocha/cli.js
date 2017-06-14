@@ -77,6 +77,23 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("should not consider source map file content as source map file name (issue #2082)", function (done) {
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-2082/sample.js",
+            "--source-map", "content=test/input/issue-2082/sample.js.map",
+            "--source-map", "url=inline",
+        ].join(" ");
+
+        exec(command, function (err, stdout, stderr) {
+            if (err) throw err;
+
+            var stderrLines = stderr.split('\n');
+            assert.strictEqual(stderrLines[0], 'INFO: Using input source map: test/input/issue-2082/sample.js.map');
+            assert.notStrictEqual(stderrLines[1], 'INFO: Using input source map: {"version": 3,"sources": ["index.js"],"mappings": ";"}');
+            done();
+        });
+    });
     it("Should work with --keep-fnames (mangle only)", function (done) {
         var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m';
 
@@ -557,7 +574,27 @@ describe("bin/uglifyjs", function () {
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
-            assert.ok(/^Supported options:\n\{[^}]+}\nERROR: `ascii-only` is not a supported option/.test(stderr), stderr);
+            assert.ok(/^Supported options:\n[\s\S]*?\nERROR: `ascii-only` is not a supported option/.test(stderr), stderr);
+            done();
+        });
+    });
+    it("Should work with --mangle reserved=[]", function (done) {
+        var command = uglifyjscmd + ' test/input/issue-505/input.js -m reserved=[callback]';
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'function test(callback){"aaaaaaaaaaaaaaaa";callback(err,data);callback(err,data)}\n');
+            done();
+        });
+    });
+    it("Should work with --mangle reserved=false", function (done) {
+        var command = uglifyjscmd + ' test/input/issue-505/input.js -m reserved=false';
+
+        exec(command, function (err, stdout) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, 'function test(a){"aaaaaaaaaaaaaaaa";a(err,data);a(err,data)}\n');
             done();
         });
     });

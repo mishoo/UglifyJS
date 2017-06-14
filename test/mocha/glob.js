@@ -31,7 +31,7 @@ describe("bin/uglifyjs with input file globs", function() {
         exec(command, function(err, stdout) {
             if (err) throw err;
 
-            assert.strictEqual(stdout, 'var print=console.log.bind(console),a=function(n){return 3*n}(3),b=function(n){return n/2}(12);print("qux",a,b),function(n){print("Foo:",2*n)}(11);\n');
+            assert.strictEqual(stdout, 'var print=console.log.bind(console);print("qux",9,6),print("Foo:",2*11);\n');
             done();
         });
     });

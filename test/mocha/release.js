@@ -1,16 +1,13 @@
 var assert = require("assert");
+var semver = require("semver");
 var spawn = require("child_process").spawn;
 
 if (!process.env.UGLIFYJS_TEST_ALL) return;
 
 function run(command, args, done) {
-    var id = setInterval(function() {
-        process.stdout.write("\0");
-    }, 5 * 60 * 1000);
     spawn(command, args, {
-        stdio: "ignore"
+        stdio: [ "ignore", 1, 2 ]
     }).on("exit", function(code) {
-        clearInterval(id);
         assert.strictEqual(code, 0);
         done();
     });
@@ -36,11 +33,9 @@ describe("test/benchmark.js", function() {
     });
 });
 
+if (semver.satisfies(process.version, "0.12")) return;
 describe("test/jetstream.js", function() {
     this.timeout(20 * 60 * 1000);
-    it("Should install phantomjs-prebuilt", function(done) {
-        run("npm", ["install", "phantomjs-prebuilt@2.1.14"], done);
-    });
     [
         "-mc",
         "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
@@ -48,6 +43,7 @@ describe("test/jetstream.js", function() {
         it("Should pass with options " + options, function(done) {
             var args = options.split(/ /);
             args.unshift("test/jetstream.js");
+            args.push("-b", "beautify=false,webkit");
             run(process.argv[0], args, done);
         });
     });

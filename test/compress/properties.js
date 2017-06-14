@@ -558,7 +558,75 @@ native_prototype: {
     }
 }
 
-issue_2040: {
+accessor_boolean: {
+    input: {
+        var a = 1;
+        var b = {
+            get true() {
+                return a;
+            },
+            set false(c) {
+                a = c;
+            }
+        };
+        console.log(b.true, b.false = 2, b.true);
+    }
+    expect_exact: 'var a=1;var b={get true(){return a},set false(c){a=c}};console.log(b.true,b.false=2,b.true);'
+    expect_stdout: "1 2 2"
+}
+
+accessor_get_set: {
+    input: {
+        var a = 1;
+        var b = {
+            get set() {
+                return a;
+            },
+            set get(c) {
+                a = c;
+            }
+        };
+        console.log(b.set, b.get = 2, b.set);
+    }
+    expect_exact: 'var a=1;var b={get set(){return a},set get(c){a=c}};console.log(b.set,b.get=2,b.set);'
+    expect_stdout: "1 2 2"
+}
+
+accessor_null_undefined: {
+    input: {
+        var a = 1;
+        var b = {
+            get null() {
+                return a;
+            },
+            set undefined(c) {
+                a = c;
+            }
+        };
+        console.log(b.null, b.undefined = 2, b.null);
+    }
+    expect_exact: 'var a=1;var b={get null(){return a},set undefined(c){a=c}};console.log(b.null,b.undefined=2,b.null);'
+    expect_stdout: "1 2 2"
+}
+
+accessor_number: {
+    input: {
+        var a = 1;
+        var b = {
+            get 42() {
+                return a;
+            },
+            set 42(c) {
+                a = c;
+            }
+        };
+        console.log(b[42], b[42] = 2, b[42]);
+    }
+    expect_exact: 'var a=1;var b={get 42(){return a},set 42(c){a=c}};console.log(b[42],b[42]=2,b[42]);'
+    expect_stdout: "1 2 2"
+}
+
+accessor_string: {
     input: {
         var a = 1;
         var b = {
@@ -572,5 +640,22 @@ issue_2040: {
         console.log(b["a-b"], b["a-b"] = 2, b["a-b"]);
     }
     expect_exact: 'var a=1;var b={get"a-b"(){return a},set"a-b"(c){a=c}};console.log(b["a-b"],b["a-b"]=2,b["a-b"]);'
+    expect_stdout: "1 2 2"
+}
+
+accessor_this: {
+    input: {
+        var a = 1;
+        var b = {
+            get this() {
+                return a;
+            },
+            set this(c) {
+                a = c;
+            }
+        };
+        console.log(b.this, b.this = 2, b.this);
+    }
+    expect_exact: 'var a=1;var b={get this(){return a},set this(c){a=c}};console.log(b.this,b.this=2,b.this);'
     expect_stdout: "1 2 2"
 }
