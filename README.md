@@ -766,7 +766,7 @@ can pass additional arguments that control the code output:
 - `quote_style` (default `0`) -- preferred quote style for strings (affects
   quoted property names and directives as well):
   - `0` -- prefers double quotes, switches to single quotes when there are
-    more double quotes in the string itself.
+    more double quotes in the string itself. `0` is best for gzip size.
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
