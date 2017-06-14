@@ -4,6 +4,7 @@
 "use strict";
 
 var createHash = require("crypto").createHash;
+var fetch = require("./fetch");
 var fork = require("child_process").fork;
 var args = process.argv.slice(2);
 if (!args.length) {
@@ -52,7 +53,8 @@ urls.forEach(function(url) {
         output: 0,
         log: ""
     };
-    require(url.slice(0, url.indexOf(":"))).get(url, function(res) {
+    fetch(url, function(err, res) {
+        if (err) throw err;
         var uglifyjs = fork("bin/uglifyjs", args, { silent: true });
         res.on("data", function(data) {
             results[url].input += data.length;

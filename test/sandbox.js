@@ -19,23 +19,25 @@ function safe_log(arg, level) {
 
 var FUNC_TOSTRING = [
     "Function.prototype.toString = Function.prototype.valueOf = function() {",
-    "    var id = 0;",
+    "    var id = 100000;",
     "    return function() {",
     '        if (this === Array) return "[Function: Array]";',
     '        if (this === Object) return "[Function: Object]";',
     "        var i = this.name;",
     '        if (typeof i != "number") {',
     "            i = ++id;",
+].concat(Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable ? [
     '            Object.defineProperty(this, "name", {',
     "                get: function() {",
     "                    return i;",
     "                }",
     "            });",
+] : [], [
     "        }",
     '        return "[Function: " + i + "]";',
     "    }",
     "}();",
-].join("\n");
+]).join("\n");
 exports.run_code = function(code) {
     var stdout = "";
     var original_write = process.stdout.write;
@@ -50,7 +52,10 @@ exports.run_code = function(code) {
             "}();",
         ].join("\n"), {
             console: {
-                log: function() {
+                log: function(msg) {
+                    if (arguments.length == 1 && typeof msg == "string") {
+                        return console.log("%s", msg);
+                    }
                     return console.log.apply(console, [].map.call(arguments, function(arg) {
                         return safe_log(arg, 3);
                     }));

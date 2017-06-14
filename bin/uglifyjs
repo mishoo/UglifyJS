@@ -30,14 +30,7 @@ else if (process.argv.indexOf("options") >= 0) program.helpInformation = functio
     var options = UglifyJS.default_options();
     for (var option in options) {
         text.push("--" + (option == "output" ? "beautify" : option == "sourceMap" ? "source-map" : option) + " options:");
-        var defs = options[option];
-        var padding = "";
-        Object.keys(defs).map(function(name) {
-            if (padding.length < name.length) padding = Array(name.length + 1).join(" ");
-            return [ name, JSON.stringify(defs[name]) ];
-        }).forEach(function(tokens) {
-            text.push("  " + tokens[0] + padding.slice(tokens[0].length - 2) + tokens[1]);
-        });
+        text.push(format_object(options[option]));
         text.push("");
     }
     return text.join("\n");
@@ -157,7 +150,7 @@ if (program.verbose) {
 }
 if (program.self) {
     if (program.args.length) {
-        console.error("WARN: Ignoring input files since --self was passed");
+        print_error("WARN: Ignoring input files since --self was passed");
     }
     if (!options.wrap) options.wrap = "UglifyJS";
     simple_glob(UglifyJS.FILES).forEach(function(name) {
@@ -187,7 +180,7 @@ function convert_ast(fn) {
 
 function run() {
     UglifyJS.AST_Node.warn_function = function(msg) {
-        console.error("WARN:", msg);
+        print_error("WARN: " + msg);
     };
     if (program.timings) options.timings = true;
     try {
@@ -216,7 +209,7 @@ function run() {
     if (result.error) {
         var ex = result.error;
         if (ex.name == "SyntaxError") {
-            console.error("Parse error at " + ex.filename + ":" + ex.line + "," + ex.col);
+            print_error("Parse error at " + ex.filename + ":" + ex.line + "," + ex.col);
             var col = ex.col;
             var lines = files[ex.filename].split(/\r?\n/);
             var line = lines[ex.line - 1];
@@ -230,17 +223,17 @@ function run() {
                     line = line.slice(col - limit);
                     col = limit;
                 }
-                console.error(line.slice(0, 80));
-                console.error(line.slice(0, col).replace(/\S/g, " ") + "^");
+                print_error(line.slice(0, 80));
+                print_error(line.slice(0, col).replace(/\S/g, " ") + "^");
             }
         }
         if (ex.defs) {
-            console.error("Supported options:");
-            console.error(ex.defs);
+            print_error("Supported options:");
+            print_error(format_object(ex.defs));
         }
         fatal(ex);
     } else if (program.output == "ast") {
-        console.log(JSON.stringify(result.ast, function(key, value) {
+        print(JSON.stringify(result.ast, function(key, value) {
             if (skip_key(key)) return;
             if (value instanceof UglifyJS.AST_Token) return;
             if (value instanceof UglifyJS.Dictionary) return;
@@ -256,7 +249,7 @@ function run() {
             return value;
         }, 2));
     } else if (program.output == "spidermonkey") {
-        console.log(JSON.stringify(UglifyJS.minify(result.code, {
+        print(JSON.stringify(UglifyJS.minify(result.code, {
             compress: false,
             mangle: false,
             output: {
@@ -270,7 +263,7 @@ function run() {
             fs.writeFileSync(program.output + ".map", result.map);
         }
     } else {
-        console.log(result.code);
+        print(result.code);
     }
     if (program.nameCache) {
         fs.writeFileSync(program.nameCache, JSON.stringify(cache, function(key, value) {
@@ -278,13 +271,13 @@ function run() {
         }));
     }
     if (result.timings) for (var phase in result.timings) {
-        console.error("- " + phase + ": " + result.timings[phase].toFixed(3) + "s");
+        print_error("- " + phase + ": " + result.timings[phase].toFixed(3) + "s");
     }
 }
 
 function fatal(message) {
     if (message instanceof Error) message = message.stack.replace(/^\S*?Error:/, "ERROR:")
-    console.error(message);
+    print_error(message);
     process.exit(1);
 }
 
@@ -378,10 +371,10 @@ function parse_js(flag, constants) {
 function parse_source_map() {
     var parse = parse_js("sourceMap", true);
     return function(value, options) {
-        var hasContent = options && options.sourceMap && "content" in options.sourceMap;
+        var hasContent = options && "content" in options;
         var settings = parse(value, options);
         if (!hasContent && settings.content && settings.content != "inline") {
-            console.error("INFO: Using input source map:", settings.content);
+            print_error("INFO: Using input source map: " + settings.content);
             settings.content = read_file(settings.content, settings.content);
         }
         return settings;
@@ -402,4 +395,26 @@ function to_cache(key) {
 
 function skip_key(key) {
     return skip_keys.indexOf(key) >= 0;
+}
+
+function format_object(obj) {
+    var lines = [];
+    var padding = "";
+    Object.keys(obj).map(function(name) {
+        if (padding.length < name.length) padding = Array(name.length + 1).join(" ");
+        return [ name, JSON.stringify(obj[name]) ];
+    }).forEach(function(tokens) {
+        lines.push("  " + tokens[0] + padding.slice(tokens[0].length - 2) + tokens[1]);
+    });
+    return lines.join("\n");
+}
+
+function print_error(msg) {
+    process.stderr.write(msg);
+    process.stderr.write("\n");
+}
+
+function print(txt) {
+    process.stdout.write(txt);
+    process.stdout.write("\n");
 }

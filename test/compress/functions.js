@@ -21,6 +21,7 @@ iifes_returning_constants_keep_fargs_true: {
         join_vars     : true,
         reduce_vars   : true,
         cascade       : true,
+        inline        : true,
     }
     input: {
         (function(){ return -1.23; }());
@@ -56,6 +57,7 @@ iifes_returning_constants_keep_fargs_false: {
         join_vars     : true,
         reduce_vars   : true,
         cascade       : true,
+        inline        : true,
     }
     input: {
         (function(){ return -1.23; }());
@@ -82,6 +84,7 @@ issue_485_crashing_1530: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        inline: true,
     }
     input: {
         (function(a) {
@@ -154,6 +157,7 @@ function_returning_constant_literal: {
         evaluate: true,
         cascade: true,
         unused: true,
+        inline: true,
     }
     input: {
         function greeter() {
@@ -266,4 +270,69 @@ issue_203: {
         console.log(m.exports);
     }
     expect_stdout: "42"
+}
+
+no_webkit: {
+    beautify = {
+        webkit: false,
+    }
+    input: {
+        console.log(function() {
+            1 + 1;
+        }.a = 1);
+    }
+    expect_exact: "console.log(function(){1+1}.a=1);"
+    expect_stdout: "1"
+}
+
+webkit: {
+    beautify = {
+        webkit: true,
+    }
+    input: {
+        console.log(function() {
+            1 + 1;
+        }.a = 1);
+    }
+    expect_exact: "console.log((function(){1+1}).a=1);"
+    expect_stdout: "1"
+}
+
+issue_2084: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        !function() {
+            !function(c) {
+                c = 1 + c;
+                var c = 0;
+                function f14(a_1) {
+                    if (c = 1 + c, 0 !== 23..toString())
+                        c = 1 + c, a_1 && (a_1[0] = 0);
+                }
+                f14();
+            }(-1);
+        }();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        !function(c) {
+            c = 1 + c,
+            c = 1 + (c = 0),
+            0 !== 23..toString() && (c = 1 + c);
+        }(-1),
+        console.log(c);
+    }
+    expect_stdout: "0"
 }

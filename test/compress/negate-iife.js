@@ -22,7 +22,8 @@ negate_iife_1_off: {
 
 negate_iife_2: {
     options = {
-        negate_iife: true
+        inline: true,
+        negate_iife: true,
     };
     input: {
         (function(){ return {} })().x = 10;
@@ -32,6 +33,7 @@ negate_iife_2: {
 
 negate_iife_2_side_effects: {
     options = {
+        inline: true,
         negate_iife: true,
         side_effects: true,
     }
@@ -58,6 +60,7 @@ negate_iife_3_evaluate: {
     options = {
         conditionals: true,
         evaluate: true,
+        inline: true,
         negate_iife: true,
     }
     input: {
@@ -100,6 +103,7 @@ negate_iife_3_off_evaluate: {
     options = {
         conditionals: true,
         evaluate: true,
+        inline: true,
         negate_iife: false,
     }
     input: {

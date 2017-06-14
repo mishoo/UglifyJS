@@ -4,8 +4,11 @@ node_js:
     - "0.12"
     - "4"
     - "6"
+    - "8"
 env:
     - UGLIFYJS_TEST_ALL=1
 matrix:
   fast_finish: true
 sudo: false
+cache:
+  directories: tmp

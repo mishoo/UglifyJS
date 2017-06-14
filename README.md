@@ -569,7 +569,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
-- `unsafe_Func` (default: false) -- compress and mangle `Function(args, code)`.
+- `unsafe_Func` (default: false) -- compress and mangle `Function(args, code)`
+  when both `args` and `code` are string literals.
 
 - `unsafe_math` (default: false) -- optimize numerical expressions like
   `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
@@ -611,6 +612,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   by default because it seems to increase the size of the output in general)
 
 - `if_return` -- optimizations for if/return and if/continue
+
+- `inline` -- embed simple functions
 
 - `join_vars` -- join consecutive `var` statements
 
@@ -767,7 +770,7 @@ can pass additional arguments that control the code output:
 - `quote_style` (default `0`) -- preferred quote style for strings (affects
   quoted property names and directives as well):
   - `0` -- prefers double quotes, switches to single quotes when there are
-    more double quotes in the string itself.
+    more double quotes in the string itself. `0` is best for gzip size.
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
