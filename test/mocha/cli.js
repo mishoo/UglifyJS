@@ -9,7 +9,7 @@ function read(path) {
 describe("bin/uglifyjs", function () {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("should produce a functional build when using --self", function (done) {
-        this.timeout(15000);
+        this.timeout(30000);
 
         var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
 
