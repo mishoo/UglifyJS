@@ -336,3 +336,32 @@ issue_2084: {
     }
     expect_stdout: "0"
 }
+
+issue_2097: {
+    options = {
+        negate_iife: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw 0;
+            } catch (e) {
+                console.log(arguments[0]);
+            }
+        }
+        f(1);
+    }
+    expect: {
+        !function() {
+            try {
+                throw 0;
+            } catch (e) {
+                console.log(arguments[0]);
+            }
+        }(1);
+    }
+    expect_stdout: "1"
+}
