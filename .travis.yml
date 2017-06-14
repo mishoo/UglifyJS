@@ -10,3 +10,5 @@ env:
 matrix:
   fast_finish: true
 sudo: false
+cache:
+  directories: tmp
