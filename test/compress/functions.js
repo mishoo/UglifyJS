@@ -336,3 +336,81 @@ issue_2084: {
     }
     expect_stdout: "0"
 }
+
+issue_2097: {
+    options = {
+        negate_iife: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw 0;
+            } catch (e) {
+                console.log(arguments[0]);
+            }
+        }
+        f(1);
+    }
+    expect: {
+        !function() {
+            try {
+                throw 0;
+            } catch (e) {
+                console.log(arguments[0]);
+            }
+        }(1);
+    }
+    expect_stdout: "1"
+}
+
+issue_2101: {
+    options = {
+        inline: true,
+    }
+    input: {
+        a = {};
+        console.log(function() {
+            return function() {
+                return this.a;
+            }();
+        }() === function() {
+            return a;
+        }());
+    }
+    expect: {
+        a = {};
+        console.log(function() {
+            return this.a;
+        }() === a);
+    }
+    expect_stdout: "true"
+}
+
+inner_ref: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            return function() {
+                return a;
+            }();
+        }(1), function(a) {
+            return function(a) {
+                return a;
+            }();
+        }(2));
+    }
+    expect: {
+        console.log(function(a) {
+            return a;
+        }(1), function(a) {
+            return a;
+        }());
+    }
+    expect_stdout: "1 undefined"
+}
