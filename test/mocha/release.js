@@ -14,7 +14,7 @@ function run(command, args, done) {
 }
 
 describe("test/benchmark.js", function() {
-    this.timeout(5 * 60 * 1000);
+    this.timeout(10 * 60 * 1000);
     [
         "-b",
         "-b bracketize",
