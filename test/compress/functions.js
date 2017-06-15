@@ -365,3 +365,52 @@ issue_2097: {
     }
     expect_stdout: "1"
 }
+
+issue_2101: {
+    options = {
+        inline: true,
+    }
+    input: {
+        a = {};
+        console.log(function() {
+            return function() {
+                return this.a;
+            }();
+        }() === function() {
+            return a;
+        }());
+    }
+    expect: {
+        a = {};
+        console.log(function() {
+            return this.a;
+        }() === a);
+    }
+    expect_stdout: "true"
+}
+
+inner_ref: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            return function() {
+                return a;
+            }();
+        }(1), function(a) {
+            return function(a) {
+                return a;
+            }();
+        }(2));
+    }
+    expect: {
+        console.log(function(a) {
+            return a;
+        }(1), function(a) {
+            return a;
+        }());
+    }
+    expect_stdout: "1 undefined"
+}
