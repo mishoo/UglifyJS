@@ -414,3 +414,32 @@ inner_ref: {
     }
     expect_stdout: "1 undefined"
 }
+
+issue_2107: {
+    options = {
+        cascade: true,
+        collapse_vars: true,
+        inline: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        !function() {
+            c++;
+        }(c++ + new function() {
+            this.a = 0;
+            var a = (c = c + 1) + (c = 1 + c);
+            return c++ + a;
+        }());
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        c++, new function() {
+            this.a = 0, c = 1 + (c += 1), c++;
+        }(), c++, console.log(c);
+    }
+    expect_stdout: "5"
+}
