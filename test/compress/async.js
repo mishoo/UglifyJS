@@ -185,6 +185,51 @@ async_identifiers: {
     node_version: ">=8"
 }
 
+async_shorthand_property: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        function print(o) { console.log(o.async + " " + o.await); }
+        var async = "Async", await = "Await";
+
+        print({ async });
+        print({ await });
+        print({ async, await });
+        print({ await, async });
+
+        print({ async: async });
+        print({ await: await });
+        print({ async: async, await: await });
+        print({ await: await, async: async });
+    }
+    expect: {
+        function a(a) { console.log(a.async + " " + a.await); }
+        var n = "Async", c = "Await";
+
+        a({ async: n });
+        a({ await: c });
+        a({ async: n, await: c });
+        a({ await: c, async: n });
+
+        a({ async: n });
+        a({ await: c });
+        a({ async: n, await: c });
+        a({ await: c, async: n });
+    }
+    expect_stdout: [
+        "Async undefined",
+        "undefined Await",
+        "Async Await",
+        "Async Await",
+        "Async undefined",
+        "undefined Await",
+        "Async Await",
+        "Async Await",
+    ]
+    node_version: ">=4"
+}
+
 /* FIXME: add test when supported by parser
 async_arrow: {
     input: {
