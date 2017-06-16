@@ -178,3 +178,66 @@ impure_getter_2: {
     }
     expect: {}
 }
+
+issue_2110_1: {
+    options = {
+        cascade: true,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function f() {}
+            function g() {
+                return this;
+            }
+            f.g = g;
+            return f.g();
+        }
+        console.log(typeof f());
+    }
+    expect: {
+        function f() {
+            function f() {}
+            return f.g = function() {
+                return this;
+            }, f.g();
+        }
+        console.log(typeof f());
+    }
+    expect_stdout: "function"
+}
+
+issue_2110_2: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function f() {}
+            function g() {
+                return this;
+            }
+            f.g = g;
+            return f.g();
+        }
+        console.log(typeof f());
+    }
+    expect: {
+        function f() {
+            function f() {}
+            f.g = function() {
+                return this;
+            };
+            return f.g();
+        }
+        console.log(typeof f());
+    }
+    expect_stdout: "function"
+}
