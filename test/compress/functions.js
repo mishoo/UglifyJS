@@ -443,3 +443,70 @@ issue_2107: {
     }
     expect_stdout: "5"
 }
+
+issue_2114_1: {
+    options = {
+        collapse_vars: true,
+        if_return: true,
+        inline: true,
+        keep_fargs: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        !function(a) {
+            a = 0;
+        }([ {
+            0: c = c + 1,
+            length: c = 1 + c
+        }, typeof void function a() {
+            var b = function f1(a) {
+            }(b && (b.b += (c = c + 1, 0)));
+        }() ]);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        !function() {
+            0;
+        }((c += 1, c = 1 + c, function() {
+            var b = void (b && (b.b += (c += 1, 0)));
+        }()));
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
+
+issue_2114_2: {
+    options = {
+        collapse_vars: true,
+        if_return: true,
+        inline: true,
+        keep_fargs: false,
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        !function(a) {
+            a = 0;
+        }([ {
+            0: c = c + 1,
+            length: c = 1 + c
+        }, typeof void function a() {
+            var b = function f1(a) {
+            }(b && (b.b += (c = c + 1, 0)));
+        }() ]);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        c = 1 + (c += 1), function() {
+            var b = void (b && (b.b += (c += 1, 0)));
+        }();
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
