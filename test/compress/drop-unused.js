@@ -1294,3 +1294,47 @@ issue_2063: {
         var a;
     }
 }
+
+issue_2105: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function(factory) {
+            factory();
+        }( function() {
+            return function(fn) {
+                fn()().prop();
+            }( function() {
+                function bar() {
+                    var quux = function() {
+                        console.log("PASS");
+                    }, foo = function() {
+                        console.log;
+                        quux();
+                    };
+                    return { prop: foo };
+                }
+                return bar;
+            } );
+        });
+    }
+    expect: {
+        !void function() {
+            var quux = function() {
+                console.log("PASS");
+            };
+            return {
+                prop: function() {
+                    console.log;
+                    quux();
+                }
+            };
+        }().prop();
+    }
+    expect_stdout: "PASS"
+}
