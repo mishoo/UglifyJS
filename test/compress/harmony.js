@@ -664,3 +664,31 @@ class_expression_statement_unused_toplevel: {
     }
     expect_exact: ""
 }
+
+export_default_function_decl: {
+    options = {
+        toplevel: true,
+        passes: 3,
+        unused: true,
+    }
+    input: {
+        // do not drop "unused" exports
+        export default function Foo() {};
+        export function Far() {};
+    }
+    expect_exact: "export default function Foo(){};export function Far(){};"
+}
+
+export_default_class_decl: {
+    options = {
+        toplevel: true,
+        passes: 3,
+        unused: true,
+    }
+    input: {
+        // do not drop "unused" exports
+        export default class Car {};
+        export class Cab {};
+    }
+    expect_exact: "export default class Car{};export class Cab{};"
+}
