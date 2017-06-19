@@ -45,7 +45,7 @@ export_default_func_1: {
     input: {
         export default function f(){};
     }
-    expect_exact: "export default function(){};"
+    expect_exact: "export default function f(){};"
 }
 
 export_default_func_2: {
@@ -58,7 +58,7 @@ export_default_func_2: {
     input: {
         export default function f(){}(1);
     }
-    expect_exact: "export default function(){};1;"
+    expect_exact: "export default function f(){};1;"
 }
 
 export_default_func_3: {
@@ -71,7 +71,7 @@ export_default_func_3: {
     input: {
         export default function f(){}(1);
     }
-    expect_exact: "export default function(){};"
+    expect_exact: "export default function f(){};"
 }
 
 export_class_1: {
@@ -121,7 +121,7 @@ export_default_class_1: {
     input: {
         export default class C {};
     }
-    expect_exact: "export default class{};"
+    expect_exact: "export default class C{};"
 }
 
 export_default_class_2: {
@@ -134,7 +134,7 @@ export_default_class_2: {
     input: {
         export default class C {}(1);
     }
-    expect_exact: "export default class{};1;"
+    expect_exact: "export default class C{};1;"
 }
 
 export_default_class_3: {
@@ -147,7 +147,7 @@ export_default_class_3: {
     input: {
         export default class C {}(1);
     }
-    expect_exact: "export default class{};"
+    expect_exact: "export default class C{};"
 }
 
 export_mangle_1: {
@@ -247,7 +247,7 @@ export_toplevel_1: {
     }
     expect: {
         export function g(){};
-        export default function(){};
+        export default function h(){};
     }
 }
 
@@ -263,7 +263,7 @@ export_toplevel_2: {
     }
     expect: {
         export class B {};
-        export default class {};
+        export default class C {};
     }
 }
 
