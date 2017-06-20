@@ -85,3 +85,13 @@ issue_2126: {
         export { f as dog };
     }
 }
+
+beautify: {
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        export { A as B, C as D };
+    }
+    expect_exact: "export { A as B, C as D };"
+}
