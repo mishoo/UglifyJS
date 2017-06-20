@@ -2,8 +2,7 @@ var assert = require("assert");
 var uglify = require("../node");
 
 describe("Export", function() {
-    it ("Should parse export directives", function() {
-
+    it("Should parse export directives", function() {
         var inputs = [
             ['export * from "a.js"', ['*'], "a.js"],
             ['export {A} from "a.js"', ['A'], "a.js"],
@@ -12,17 +11,17 @@ describe("Export", function() {
             ['export {A, B} from "a.js"', ['A', 'B'], "a.js"],
         ];
 
-        var test = function(code) {
+        function test(code) {
             return uglify.parse(code);
-        };
+        }
 
-        var extractNames = function(symbols) {
+        function extractNames(symbols) {
             var ret = [];
             for (var i = 0; i < symbols.length; i++) {
-                ret.push(symbols[i].name.name)
+                ret.push(symbols[i].foreign_name.name);
             }
             return ret;
-        };
+        }
 
         for (var i = 0; i < inputs.length; i++) {
             var ast = test(inputs[i][0]);
@@ -34,7 +33,7 @@ describe("Export", function() {
             assert(st instanceof uglify.AST_Export);
             var actualNames = extractNames(st.exported_names);
             assert.deepEqual(actualNames, names);
-            assert.equal(st.module_name.value, filename)
+            assert.equal(st.module_name.value, filename);
         }
-    })
+    });
 });

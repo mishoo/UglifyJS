@@ -36,7 +36,7 @@ issue_2038_2: {
         let a = 1;
         const c = 2;
         var n = 3;
-        export { LET as a, CONST as c, VAR as n };
+        export { a as LET, c as CONST, n as VAR };
     }
 }
 
@@ -65,5 +65,23 @@ issue_2124: {
         {
             export const C = 3;
         }
+    }
+}
+
+issue_2126: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        import { foo as bar, cat as dog } from "stuff";
+        console.log(bar, dog);
+        export { bar as qux };
+        export { dog };
+    }
+    expect: {
+        import { foo as o, cat as f } from "stuff";
+        console.log(o, f);
+        export { o as qux };
+        export { f as dog };
     }
 }
