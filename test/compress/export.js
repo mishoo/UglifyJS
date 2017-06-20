@@ -40,34 +40,6 @@ issue_2038_2: {
     }
 }
 
-issue_2124: {
-    options = {
-        unused: true,
-    }
-    input: {
-        {
-            export var V = 1;
-        }
-        {
-            export let L = 2;
-        }
-        {
-            export const C = 3;
-        }
-    }
-    expect: {
-        {
-            export var V = 1;
-        }
-        {
-            export let L = 2;
-        }
-        {
-            export const C = 3;
-        }
-    }
-}
-
 issue_2126: {
     mangle = {
         toplevel: true,

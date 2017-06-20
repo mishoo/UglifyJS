@@ -533,6 +533,36 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should throw syntax error (block-level export)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/export.js -m';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/export.js:2,4",
+                "    export var V = 1;",
+                "    ^",
+                "ERROR: Export statement may only appear at top level"
+            ].join("\n"));
+            done();
+        });
+    });
+    it("Should throw syntax error (block-level import)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/import.js -m';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/import.js:2,4",
+                '    import A from "B";',
+                "    ^",
+                "ERROR: Import statement may only appear at top level"
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should handle literal string as source map input", function(done) {
         var command = [
             uglifyjscmd,
