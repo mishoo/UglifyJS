@@ -171,7 +171,7 @@ export_mangle_2: {
             return one - two;
         };
     }
-    expect_exact: "export default function n(n,r){return n-r};"
+    expect_exact: "export default function foo(n,o){return n-o};"
 }
 
 export_mangle_3: {
@@ -207,7 +207,7 @@ export_mangle_4: {
             }
         };
     }
-    expect_exact: "export default class n{go(n,r){return n-r+n}};"
+    expect_exact: "export default class C{go(n,r){return n-r+n}};"
 }
 
 export_mangle_5: {
