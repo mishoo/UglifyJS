@@ -534,13 +534,13 @@ describe("bin/uglifyjs", function () {
         });
     });
     it("Should throw syntax error (block-level export)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/export.js -m';
+        var command = uglifyjscmd + ' test/input/invalid/export_1.js -m';
 
         exec(command, function (err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
             assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
-                "Parse error at test/input/invalid/export.js:2,4",
+                "Parse error at test/input/invalid/export_1.js:2,4",
                 "    export var V = 1;",
                 "    ^",
                 "ERROR: Export statement may only appear at top level"
@@ -559,6 +559,36 @@ describe("bin/uglifyjs", function () {
                 '    import A from "B";',
                 "    ^",
                 "ERROR: Import statement may only appear at top level"
+            ].join("\n"));
+            done();
+        });
+    });
+    it("Should throw syntax error (anonymous class)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/export_2.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/export_2.js:1,12",
+                "export class{};",
+                "            ^",
+                "ERROR: Unexpected token: punc ({)"
+            ].join("\n"));
+            done();
+        });
+    });
+    it("Should throw syntax error (anonymous function)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/export_3.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/export_3.js:1,15",
+                "export function(){};",
+                "               ^",
+                "ERROR: Unexpected token: punc (()"
             ].join("\n"));
             done();
         });

@@ -107,3 +107,16 @@ issue_2129: {
         export const { keys } = Object;
     }
 }
+
+async_func: {
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        export async function Foo(x){};
+    }
+    expect: {
+        export async function Foo(){};
+    }
+}
