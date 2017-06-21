@@ -67,3 +67,31 @@ beautify: {
     }
     expect_exact: "export { A as B, C as D };"
 }
+
+issue_2131: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function no() {
+            console.log(42);
+        }
+        function go() {
+            console.log(42);
+        }
+        var X = 1, Y = 2;
+        export function main() {
+            go(X);
+        };
+    }
+    expect: {
+        function go() {
+            console.log(42);
+        }
+        var X = 1;
+        export function main() {
+            go(X);
+        };
+    }
+}
