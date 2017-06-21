@@ -120,3 +120,37 @@ async_func: {
         export async function Foo(){};
     }
 }
+
+issue_2134_1: {
+    options = {
+        keep_fargs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export function Foo(x){};
+        Foo.prototype = {};
+    }
+    expect: {
+        export function Foo(){};
+        Foo.prototype = {};
+    }
+}
+
+issue_2134_2: {
+    options = {
+        keep_fargs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export async function Foo(x){};
+        Foo.prototype = {};
+    }
+    expect: {
+        export async function Foo(){};
+        Foo.prototype = {};
+    }
+}
