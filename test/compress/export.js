@@ -95,3 +95,15 @@ issue_2131: {
         };
     }
 }
+
+issue_2129: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        export const { keys } = Object;
+    }
+    expect: {
+        export const { keys } = Object;
+    }
+}
