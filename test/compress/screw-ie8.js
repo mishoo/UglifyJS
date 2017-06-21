@@ -255,3 +255,73 @@ issue_1586_2: {
     }
     expect_exact: "function f(){try{x()}catch(c){console.log(c.message)}}"
 }
+
+issue_2120_1: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        "aaaaaaaa";
+        var a = 1, b = "FAIL";
+        try {
+            throw 1;
+        } catch (c) {
+            try {
+                throw 0;
+            } catch (a) {
+                if (c) b = "PASS";
+            }
+        }
+        console.log(b);
+    }
+    expect: {
+        "aaaaaaaa";
+        var a = 1, b = "FAIL";
+        try {
+            throw 1;
+        } catch (t) {
+            try {
+                throw 0;
+            } catch (a) {
+                if (t) b = "PASS";
+            }
+        }
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2120_2: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        "aaaaaaaa";
+        var a = 1, b = "FAIL";
+        try {
+            throw 1;
+        } catch (c) {
+            try {
+                throw 0;
+            } catch (a) {
+                if (c) b = "PASS";
+            }
+        }
+        console.log(b);
+    }
+    expect: {
+        "aaaaaaaa";
+        var a = 1, b = "FAIL";
+        try {
+            throw 1;
+        } catch (c) {
+            try {
+                throw 0;
+            } catch (a) {
+                if (c) b = "PASS";
+            }
+        }
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
