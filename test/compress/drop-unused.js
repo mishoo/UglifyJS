@@ -1338,3 +1338,74 @@ issue_2105: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2136_1: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        !function(a, ...b) {
+            console.log(b);
+        }();
+    }
+    expect: {
+        !function(a, ...b) {
+            console.log(b);
+        }();
+    }
+    expect_stdout: "[]"
+    node_version: ">=6"
+}
+
+issue_2136_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f(x) {
+            console.log(x);
+        }
+        !function(a, ...b) {
+            f(b[0]);
+        }(1, 2, 3);
+    }
+    expect: {
+        function f(x) {
+            console.log(x);
+        }
+        f([2,3][0]);
+    }
+    expect_stdout: "2"
+    node_version: ">=6"
+}
+
+issue_2136_3: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f(x) {
+            console.log(x);
+        }
+        !function(a, ...b) {
+            f(b[0]);
+        }(1, 2, 3);
+    }
+    expect: {
+        console.log(2);
+    }
+    expect_stdout: "2"
+    node_version: ">=6"
+}
