@@ -160,39 +160,69 @@ redirection: {
         toplevel: true,
     }
     input: {
-        let foo = 1;
-        export { foo as var };
+        let foo = 1, bar = 2;
+        export { foo as delete };
+        export { bar as default };
         export { foo as var } from "module.js";
     }
     expect: {
-        let o = 1;
-        export { o as var };
+        let o = 1, d = 2;
+        export { o as delete };
+        export { d as default };
         export { foo as var } from "module.js";
     }
 }
 
-keyword_invalid: {
+keyword_invalid_1: {
     input: {
         export { default };
-        export { default as Alias };
-        export { default as default };
     }
     expect: {
         export { default };
+    }
+}
+
+keyword_invalid_2: {
+    input: {
         export { default as Alias };
+    }
+    expect: {
+        export { default as Alias };
+    }
+}
+
+keyword_invalid_3: {
+    input: {
+        export { default as default };
+    }
+    expect: {
         export { default as default };
     }
 }
 
-keyword_valid: {
+keyword_valid_1: {
     input: {
         export { default } from "module.js";
+    }
+    expect: {
+        export { default } from "module.js";
+    }
+}
+
+keyword_valid_2: {
+    input: {
         export { default as Alias } from "module.js";
+    }
+    expect: {
+        export { default as Alias } from "module.js";
+    }
+}
+
+keyword_valid_3: {
+    input: {
         export { default as default } from "module.js";
     }
     expect: {
-        export { default } from "module.js";
-        export { default as Alias } from "module.js";
         export { default as default } from "module.js";
     }
 }
