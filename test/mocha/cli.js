@@ -518,6 +518,36 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should throw syntax error (for-in init)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/for-in_1.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/for-in_1.js:2,5",
+                "for (1, 2, a in b) {",
+                "     ^",
+                "ERROR: Invalid left-hand side in for..in loop"
+            ].join("\n"));
+            done();
+        });
+    });
+    it("Should throw syntax error (for-in var)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/for-in_2.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/for-in_2.js:2,5",
+                "for (var a, b in c) {",
+                "     ^",
+                "ERROR: Only one variable declaration allowed in for..in loop"
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should handle literal string as source map input", function(done) {
         var command = [
             uglifyjscmd,
