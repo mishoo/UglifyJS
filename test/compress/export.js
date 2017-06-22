@@ -154,3 +154,45 @@ issue_2134_2: {
         Foo.prototype = {};
     }
 }
+
+redirection: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        let foo = 1;
+        export { foo as var };
+        export { foo as var } from "module.js";
+    }
+    expect: {
+        let o = 1;
+        export { o as var };
+        export { foo as var } from "module.js";
+    }
+}
+
+keyword_invalid: {
+    input: {
+        export { default };
+        export { default as Alias };
+        export { default as default };
+    }
+    expect: {
+        export { default };
+        export { default as Alias };
+        export { default as default };
+    }
+}
+
+keyword_valid: {
+    input: {
+        export { default } from "module.js";
+        export { default as Alias } from "module.js";
+        export { default as default } from "module.js";
+    }
+    expect: {
+        export { default } from "module.js";
+        export { default as Alias } from "module.js";
+        export { default as default } from "module.js";
+    }
+}
