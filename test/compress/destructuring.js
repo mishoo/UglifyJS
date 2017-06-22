@@ -639,3 +639,23 @@ issue_2044_ecma_6_beautify: {
     }
     expect_exact: "({x: a = 1, y = 2 + b, z = 3 - c} = obj);"
 }
+
+issue_2140: {
+    options = {
+        unused: true,
+    }
+    input: {
+        !function() {
+            var t = {};
+            console.log(([t.a] = [42])[0]);
+        }();
+    }
+    expect: {
+        !function() {
+            var t = {};
+            console.log(([t.a] = [42])[0]);
+        }();
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
+}
