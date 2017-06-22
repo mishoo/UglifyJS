@@ -154,3 +154,75 @@ issue_2134_2: {
         Foo.prototype = {};
     }
 }
+
+redirection: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        let foo = 1, bar = 2;
+        export { foo as delete };
+        export { bar as default };
+        export { foo as var } from "module.js";
+    }
+    expect: {
+        let o = 1, d = 2;
+        export { o as delete };
+        export { d as default };
+        export { foo as var } from "module.js";
+    }
+}
+
+keyword_invalid_1: {
+    input: {
+        export { default };
+    }
+    expect: {
+        export { default };
+    }
+}
+
+keyword_invalid_2: {
+    input: {
+        export { default as Alias };
+    }
+    expect: {
+        export { default as Alias };
+    }
+}
+
+keyword_invalid_3: {
+    input: {
+        export { default as default };
+    }
+    expect: {
+        export { default as default };
+    }
+}
+
+keyword_valid_1: {
+    input: {
+        export { default } from "module.js";
+    }
+    expect: {
+        export { default } from "module.js";
+    }
+}
+
+keyword_valid_2: {
+    input: {
+        export { default as Alias } from "module.js";
+    }
+    expect: {
+        export { default as Alias } from "module.js";
+    }
+}
+
+keyword_valid_3: {
+    input: {
+        export { default as default } from "module.js";
+    }
+    expect: {
+        export { default as default } from "module.js";
+    }
+}
