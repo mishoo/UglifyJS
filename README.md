@@ -590,6 +590,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `evaluate` -- attempt to evaluate constant expressions
 
+- `arrows` (default `true`) -- convert ES5 style anonymous function expressions
+  to arrow functions if permissible by language semantics.
+  Note: `arrows` requires that the `ecma` compress option is set to `6` or greater.
+
 - `booleans` -- various optimizations for boolean context, for example `!!a
   ? b : c → a ? b : c`
 

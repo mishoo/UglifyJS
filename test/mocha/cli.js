@@ -1,6 +1,7 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
 var readFileSync = require("fs").readFileSync;
+var semver = require("semver");
 
 function read(path) {
     return readFileSync(path, "utf8");
@@ -9,9 +10,11 @@ function read(path) {
 describe("bin/uglifyjs", function () {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("should produce a functional build when using --self", function (done) {
-        this.timeout(30000);
+        this.timeout(60000);
 
-        var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
+        var command = uglifyjscmd + ' --self -mc ecma=';
+        command += semver.satisfies(process.version, ">=4") ? "6" : "5";
+        command += ',passes=3,keep_fargs=false,unsafe --wrap WrappedUglifyJS';
 
         exec(command, function (err, stdout) {
             if (err) throw err;

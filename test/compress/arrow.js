@@ -210,3 +210,73 @@ no_leading_parentheses: {
     }
     expect_exact: "(x,y)=>x(y);async(x,y)=>await x(y);"
 }
+
+async_identifiers: {
+    options = {
+        arrows: true,
+        ecma: 6,
+    }
+    input: {
+        var async = function(x){ console.log("async", x); };
+        var await = function(x){ console.log("await", x); };
+        async(1);
+        await(2);
+    }
+    expect: {
+        var async = x => { console.log("async", x); };
+        var await = x => { console.log("await", x); };
+        async(1);
+        await(2);
+    }
+    expect_stdout: [
+        "async 1",
+        "await 2",
+    ]
+    node_version: ">=4"
+}
+
+async_function_expression: {
+    options = {
+        arrows: true,
+        ecma: 6,
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        var named = async function foo() {
+            await bar(1 + 0) + (2 + 0);
+        }
+        var anon = async function() {
+            await (1 + 0) + bar(2 + 0);
+        }
+    }
+    expect: {
+        var named = async function foo() {
+            await bar(1);
+        };
+        var anon = async () => {
+            await 1, bar(2);
+        };
+    }
+}
+
+issue_27: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        ecma: 6,
+        unused: true,
+    }
+    input: {
+        (function(jQuery) {
+            var $;
+            $ = jQuery;
+            $("body").addClass("foo");
+        })(jQuery);
+    }
+    expect: {
+        (jQuery => {
+            jQuery("body").addClass("foo");
+        })(jQuery);
+    }
+}

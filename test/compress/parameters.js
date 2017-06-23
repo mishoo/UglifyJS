@@ -1,4 +1,7 @@
 arrow_functions: {
+    options = {
+        arrows: true,
+    }
     input: {
         (a) => b;  // 1 args
         (a, b) => c;  // n args
@@ -13,6 +16,9 @@ arrow_functions: {
 }
 
 arrow_return: {
+    options = {
+        arrows: true,
+    }
     input: {
         () => {};
         () => { return; };
