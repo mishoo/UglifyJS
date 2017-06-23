@@ -202,3 +202,11 @@ arrow_unused_toplevel: {
     expect_stdout: [ "0", "1", "2", "9" ]
     node_version: ">=6"
 }
+
+no_leading_parentheses: {
+    input: {
+        (x,y) => x(y);
+        async (x,y) => await x(y);
+    }
+    expect_exact: "(x,y)=>x(y);async(x,y)=>await x(y);"
+}
