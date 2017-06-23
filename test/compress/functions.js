@@ -265,7 +265,7 @@ issue_203: {
     }
     expect: {
         var m = {};
-        var fn = Function("a", "b", "b.exports=42");
+        var fn = Function("n", "o", "o.exports=42");
         fn(null, m, m.exports);
         console.log(m.exports);
     }
