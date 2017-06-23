@@ -62,23 +62,20 @@ describe("Arrow functions", function() {
         }
     });
     it("Should not accept arrow functions in the middle or end of an expression", function() {
-        var tests = [
+        [
+            "0 + x => 0",
+            "0 + async x => 0",
             "typeof x => 0",
-            "0 + x => 0"
-        ];
-        var test = function(code) {
-            return function() {
+            "typeof async x => 0",
+            "typeof (x) => null",
+            "typeof async (x) => null",
+        ].forEach(function(code) {
+            assert.throws(function() {
                 uglify.parse(code);
-            }
-        }
-        var error = function(e) {
-            return e instanceof uglify.JS_Parse_Error &&
-                e.message === "Unexpected token: arrow (=>)";
-        }
-
-        for (var i = 0; i < tests.length; i++) {
-            assert.throws(test(tests[i]), error);
-        }
+            }, function(e) {
+                return e instanceof uglify.JS_Parse_Error && /^Unexpected /.test(e.message);
+            }, code);
+        });
     });
 
     it("Should parse a function containing default assignment correctly", function() {

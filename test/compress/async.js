@@ -230,16 +230,19 @@ async_shorthand_property: {
     node_version: ">=4"
 }
 
-/* FIXME: add test when supported by parser
 async_arrow: {
     input: {
         let a1 = async x => await foo(x);
         let a2 = async () => await bar();
         let a3 = async (x) => await baz(x);
         let a4 = async (x, y) => { await far(x, y); }
-        let a5 = async ({x = [1], y: z = 2}) => { await wow(x, y); }
+        let a5 = async ({x = [1], y: z = 2}) => { await wow(x, z); }
     }
     expect: {
+        let a1 = async x => await foo(x);
+        let a2 = async () => await bar();
+        let a3 = async (x) => await baz(x);
+        let a4 = async (x, y) => { await far(x, y); }
+        let a5 = async ({x = [1], y: z = 2}) => { await wow(x, z); }
     }
 }
-*/

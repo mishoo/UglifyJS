@@ -16,9 +16,12 @@ typeof_arrow_functions: {
         evaluate: true
     }
     input: {
-        var foo = typeof (x) => null;
+        var foo = typeof (x => null);
+        console.log(foo);
     }
-    expect_exact: "var foo=\"function\";"
+    expect_exact: "var foo=\"function\";console.log(foo);"
+    expect_stdout: "function"
+    node_version: ">=4"
 }
 
 classes: {
