@@ -246,3 +246,10 @@ async_arrow: {
         let a5 = async ({x = [1], y: z = 2}) => { await wow(x, z); }
     }
 }
+
+async_arrow_wait: {
+    input: {
+        var a = async (x, y) => await x(y);
+    }
+    expect_exact: "var a=async(x,y)=>await x(y);"
+}
