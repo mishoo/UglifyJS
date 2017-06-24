@@ -191,15 +191,51 @@ describe("Function", function() {
         ];
         var test = function(code) {
             return function() {
-                uglify.parse(code);
+                uglify.parse(code, { ecma: 5 });
             }
         }
         var error = function(e) {
-            return e instanceof uglify.JS_Parse_Error &&
-                e.message === "Invalid function parameter";
+            return e instanceof uglify.JS_Parse_Error;
         }
         for (var i = 0; i < tests.length; i++) {
-            assert.throws(test(tests[i]), error);
+            assert.throws(test(tests[i]), error, tests[i]);
+        }
+    });
+    it("Should accept trailing commas only for ES8", function() {
+        [
+            "new Foo(a, );",
+            "async(...[1, 2], );",
+            "console.log(...[1, 2], );",
+            "!function(a, b, ){ console.log(a + b); }(3, 4, );",
+        ].forEach(function(code) {
+            uglify.parse(code, { ecma: 8 });
+            assert.throws(function() {
+                uglify.parse(code, { ecma: 6 });
+            }, function(e) {
+                return e instanceof uglify.JS_Parse_Error;
+            }, code);
+        });
+    });
+    it("Should not accept invalid trailing commas", function() {
+        var tests = [
+            "f(, );",
+            "(, ) => {};",
+            "(...p, ) => {};",
+            "function f(, ) {}",
+            "function f(...p, ) {}",
+            "function foo(a, b, , ) {}",
+            'console.log("hello", , );',
+        ];
+        var test = function(code) {
+            return function() {
+                uglify.parse(code, { ecma: 8 });
+            }
+        }
+        var error = function(e) {
+            return e instanceof uglify.JS_Parse_Error;
+        }
+        for (var i = 0; i < tests.length; i++) {
+            assert.throws(test(tests[i]), error, tests[i]);
         }
     });
     it("Should not accept an initializer when parameter is a rest parameter", function() {

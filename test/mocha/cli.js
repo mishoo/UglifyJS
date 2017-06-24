@@ -596,6 +596,21 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should throw syntax error (spread in sequence)", function(done) {
+        var command = uglifyjscmd + ' test/input/invalid/sequence.js';
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/sequence.js:1,4",
+                "(a, ...b);",
+                "    ^",
+                "ERROR: Unexpected token: expand (...)"
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should handle literal string as source map input", function(done) {
         var command = [
             uglifyjscmd,
