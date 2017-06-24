@@ -167,14 +167,14 @@ async_inline: {
 
 async_identifiers: {
     input: {
-        let async = function(x){ console.log("async", x); };
-        let await = function(x){ console.log("await", x); };
+        var async = function(x){ console.log("async", x); };
+        var await = function(x){ console.log("await", x); };
         async(1);
         await(2);
     }
     expect: {
-        let async = function(x){ console.log("async", x); };
-        let await = function(x){ console.log("await", x); };
+        var async = function(x){ console.log("async", x); };
+        var await = function(x){ console.log("await", x); };
         async(1);
         await(2);
     }
@@ -182,7 +182,6 @@ async_identifiers: {
         "async 1",
         "await 2",
     ]
-    node_version: ">=8"
 }
 
 async_shorthand_property: {
