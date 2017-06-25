@@ -159,7 +159,7 @@ export_mangle_1: {
             return one - two;
         };
     }
-    expect_exact: "export function foo(n,o){return n-o};"
+    expect_exact: "export function foo(o,n){return o-n};"
 }
 
 export_mangle_2: {
@@ -171,7 +171,7 @@ export_mangle_2: {
             return one - two;
         };
     }
-    expect_exact: "export default function foo(n,o){return n-o};"
+    expect_exact: "export default function foo(o,t){return o-t};"
 }
 
 export_mangle_3: {
@@ -189,7 +189,7 @@ export_mangle_3: {
             }
         };
     }
-    expect_exact: "export class C{go(n,r){return n-r+n}};"
+    expect_exact: "export class C{go(r,e){return r-e+r}};"
 }
 
 export_mangle_4: {
@@ -207,7 +207,7 @@ export_mangle_4: {
             }
         };
     }
-    expect_exact: "export default class C{go(n,r){return n-r+n}};"
+    expect_exact: "export default class C{go(e,r){return e-r+e}};"
 }
 
 export_mangle_5: {
@@ -221,7 +221,7 @@ export_mangle_5: {
             }
         };
     }
-    expect_exact: "export default{prop:function(n,r){return n-r}};"
+    expect_exact: "export default{prop:function(r,t){return r-t}};"
 }
 
 export_mangle_6: {
@@ -232,7 +232,7 @@ export_mangle_6: {
         var baz = 2;
         export let foo = 1, bar = baz;
     }
-    expect_exact: "var a=2;export let foo=1,bar=a;"
+    expect_exact: "var o=2;export let foo=1,bar=o;"
 }
 
 export_toplevel_1: {

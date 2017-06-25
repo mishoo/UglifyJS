@@ -105,7 +105,7 @@ getter_setter_mangler: {
             };
         }
     }
-    expect_exact: "function f(n,t){return{get:n,set:t,get g(){},set s(n){},c,a:1,m(){}}}"
+    expect_exact: "function f(t,e){return{get:t,set:e,get g(){},set s(t){},c,a:1,m(){}}}"
 }
 
 use_shorthand_opportunity: {
@@ -297,7 +297,7 @@ concise_methods_and_mangle_props: {
     expect: {
         function x() {
             obj = {
-                a() { return 1; }
+                o() { return 1; }
             }
         }
     }

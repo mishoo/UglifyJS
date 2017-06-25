@@ -82,7 +82,7 @@ numeric_literal: {
         '    42: 2,',
         '    "42": 3,',
         '    37: 4,',
-        '    a: 5,',
+        '    o: 5,',
         '    1e42: 6,',
         '    b: 7,',
         '    "1e+42": 8',
@@ -92,7 +92,7 @@ numeric_literal: {
         '',
         'console.log(obj[42], obj["42"]);',
         '',
-        'console.log(obj[37], obj["a"], obj[37], obj["37"]);',
+        'console.log(obj[37], obj["o"], obj[37], obj["37"]);',
         '',
         'console.log(obj[1e42], obj["b"], obj["1e+42"]);',
     ]

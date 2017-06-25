@@ -33,8 +33,8 @@ same_variable_in_multiple_for_loop: {
             console.log(o, l);
             for (let o = 0; o < 2; o++) {
                 console.log(o, l);
-                let c = 2;
-                console.log(c);
+                let e = 2;
+                console.log(e);
             }
         }
     }
@@ -114,12 +114,12 @@ same_variable_in_multiple_forIn: {
     }
     expect: {
         var test = [ "a", "b", "c" ];
-        for (let o in test) {
-            console.log(o);
-            let e;
-            e = [ "e", "f", "g" ];
-            for (let o in test)
-                console.log(o);
+        for (let e in test) {
+            console.log(e);
+            let t;
+            t = [ "e", "f", "g" ];
+            for (let e in test)
+                console.log(e);
         }
     }
     expect_stdout: true
@@ -160,8 +160,8 @@ different_variable_in_multiple_for_loop: {
             console.log(o, l);
             for (let o = 0; o < 2; o++) {
                 console.log(o, l);
-                let c = 2;
-                console.log(c);
+                let e = 2;
+                console.log(e);
             }
         }
     }
@@ -241,12 +241,12 @@ different_variable_in_multiple_forIn: {
     }
     expect: {
         var test = [ "a", "b", "c" ];
-        for (let o in test) {
-            console.log(o);
-            let e;
-            e = [ "e", "f", "g" ];
-            for (let o in test)
-                console.log(o);
+        for (let e in test) {
+            console.log(e);
+            let t;
+            t = [ "e", "f", "g" ];
+            for (let e in test)
+                console.log(e);
         }
     }
     expect_stdout: true
@@ -281,10 +281,10 @@ more_variable_in_multiple_for: {
     }
     expect: {
         for (let o = 9, l = 0; l < 20; l += o) {
-            let c = o++ + l;
-            console.log(o, c, l);
-            for (let l = c, e = c * c, f = 0; f < 10; f++)
-                console.log(o, c, e, l, f);
+            let e = o++ + l;
+            console.log(o, e, l);
+            for (let l = e, t = e * e, c = 0; c < 10; c++)
+                console.log(o, e, t, l, c);
         }
     }
     expect_stdout: true
