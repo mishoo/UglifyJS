@@ -241,3 +241,147 @@ issue_2110_2: {
     }
     expect_stdout: "function"
 }
+
+set_immutable_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        a.foo += "";
+        if (a.foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect: {
+        1..foo += "";
+        if (1..foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+set_immutable_2: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        a.foo += "";
+        if (a.foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect: {
+        var a = 1;
+        a.foo += "", a.foo ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+set_immutable_3: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var a = 1;
+        a.foo += "";
+        if (a.foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        1..foo += "";
+        if (1..foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect_stdout: true
+}
+
+set_immutable_4: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        var a = 1;
+        a.foo += "";
+        if (a.foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        var a = 1;
+        a.foo += "", a.foo ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: true
+}
+
+set_mutable_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function a() {
+            a.foo += "";
+            if (a.foo) console.log("PASS");
+            else console.log("FAIL");
+        }();
+    }
+    expect: {
+        !function a() {
+            if (a.foo += "") console.log("PASS");
+            else console.log("FAIL");
+        }();
+    }
+    expect_stdout: "PASS"
+}
+
+set_mutable_2: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        !function a() {
+            a.foo += "";
+            if (a.foo) console.log("PASS");
+            else console.log("FAIL");
+        }();
+    }
+    expect: {
+        !function a() {
+            (a.foo += "") ? console.log("PASS") : console.log("FAIL");
+        }();
+    }
+    expect_stdout: "PASS"
+}

@@ -135,11 +135,11 @@ mangle_properties: {
         a['run']({color: "blue", foo: "baz"});
     }
     expect: {
-        a["a"] = "bar";
-        a.b = "red";
-        x = {c: 10};
-        a.d(x.c, a.a);
-        a['d']({b: "blue", a: "baz"});
+        a["o"] = "bar";
+        a.a = "red";
+        x = {r: 10};
+        a.b(x.r, a.o);
+        a['b']({a: "blue", o: "baz"});
     }
 }
 
@@ -178,16 +178,16 @@ mangle_unquoted_properties: {
         function f1() {
             a["foo"] = "bar";
             a.color = "red";
-            a.b = 2;
-            x = {"bar": 10, c: 7};
-            a.c = 9;
+            a.o = 2;
+            x = {"bar": 10, f: 7};
+            a.f = 9;
         }
         function f2() {
             a.foo = "bar";
             a['color'] = "red";
-            x = {bar: 10, c: 7};
-            a.c = 9;
-            a.b = 3;
+            x = {bar: 10, f: 7};
+            a.f = 9;
+            a.o = 3;
         }
     }
 }

@@ -86,7 +86,6 @@ function run_compress_tests() {
         log_start_file(file);
         function test_case(test) {
             log_test(test.name);
-            U.base54.reset();
             var output_options = test.beautify || {};
             var expect;
             if (test.expect) {
@@ -101,9 +100,6 @@ function run_compress_tests() {
                 quote_style: 3,
                 keep_quoted_props: true
             });
-            if (test.mangle_props) {
-                input = U.mangle_properties(input, test.mangle_props);
-            }
             var options = U.defaults(test.options, {
                 warnings: false
             });
@@ -118,9 +114,15 @@ function run_compress_tests() {
             var cmp = new U.Compressor(options, true);
             var output = cmp.compress(input);
             output.figure_out_scope(test.mangle);
-            if (test.mangle) {
+            if (test.mangle || test.mangle_props) {
+                U.base54.reset();
                 output.compute_char_frequency(test.mangle);
+            }
+            if (test.mangle) {
                 output.mangle_names(test.mangle);
+            }
+            if (test.mangle_props) {
+                output = U.mangle_properties(output, test.mangle_props);
             }
             output = make_code(output, output_options);
             if (expect != output) {

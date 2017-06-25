@@ -33,10 +33,10 @@ issue_2038_2: {
         export { LET, CONST, VAR };
     }
     expect: {
-        let a = 1;
-        const c = 2;
-        var n = 3;
-        export { a as LET, c as CONST, n as VAR };
+        let t = 1;
+        const e = 2;
+        var o = 3;
+        export { t as LET, e as CONST, o as VAR };
     }
 }
 
@@ -51,10 +51,10 @@ issue_2126: {
         export { dog };
     }
     expect: {
-        import { foo as o, cat as f } from "stuff";
-        console.log(o, f);
+        import { foo as o, cat as s } from "stuff";
+        console.log(o, s);
         export { o as qux };
-        export { f as dog };
+        export { s as dog };
     }
 }
 
@@ -166,9 +166,9 @@ redirection: {
         export { foo as var } from "module.js";
     }
     expect: {
-        let o = 1, d = 2;
-        export { o as delete };
-        export { d as default };
+        let e = 1, o = 2;
+        export { e as delete };
+        export { o as default };
         export { foo as var } from "module.js";
     }
 }

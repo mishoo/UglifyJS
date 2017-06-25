@@ -8,7 +8,7 @@ compress_new_function: {
         new Function("aa, bb", 'return aa;');
     }
     expect: {
-        Function("a", "b", "return a");
+        Function("n", "r", "return n");
     }
 }
 
@@ -27,9 +27,9 @@ compress_new_function_with_destruct: {
         new Function("[[aa]], [{bb}]", 'return aa;');
     }
     expect: {
-        Function("a", "[b]", "return a");
-        Function("a", "{bb:b}", "return a");
-        Function("[[a]]", "[{bb:b}]", 'return a');
+        Function("n", "[r]", "return n");
+        Function("n", "{bb:b}", "return n");
+        Function("[[n]]", "[{bb:b}]", "return n");
     }
 }
 

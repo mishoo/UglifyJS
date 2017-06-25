@@ -425,8 +425,8 @@ mangle_destructuring_decl: {
     expect: {
         function test(t) {
             let e = t.a || { e: 7, n: 8 };
-            let {t: n,  e: o,  n: s,  s: a = 9,  o: c,  r: l} = e;
-            console.log(n, o, s, a, c, l);
+            let {t: n,  e: o,  n: s,  s: l = 9,  o: a,  r: c} = e;
+            console.log(n, o, s, l, a, c);
         }
         test({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
         test({});
@@ -462,15 +462,15 @@ mangle_destructuring_assign_toplevel_true: {
         test({});
     }
     expect: {
-        function n(n) {
-            let t, a, c;
-            let l = n.a || { e: 7, n: 8 };
-            ({t: o,  e,  n: s,  s: t = 9,  o: a,  r: c} = l);
-            console.log(o, e, s, t, a, c);
+        function e(e) {
+            let l, s, a;
+            let c = e.a || { e: 7, n: 8 };
+            ({t: n,  e: o,  n: t,  s: l = 9,  o: s,  r: a} = c);
+            console.log(n, o, t, l, s, a);
         }
-        let o, e, s;
-        n({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
-        n({});
+        let n, o, t;
+        e({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
+        e({});
     }
     expect_stdout: [
         "1 2 3 4 5 6",
@@ -504,10 +504,10 @@ mangle_destructuring_assign_toplevel_false: {
     }
     expect: {
         function test(o) {
-            let s, a, c;
-            let l = o.a || { e: 7, n: 8 };
-            ({t,  e,  n,  s = 9,  o: a,  r: c} = l);
-            console.log(t, e, n, s, a, c);
+            let s, l, a;
+            let c = o.a || { e: 7, n: 8 };
+            ({t,  e,  n,  s = 9,  o: l,  r: a} = c);
+            console.log(t, e, n, s, l, a);
         }
         let t, e, n;
         test({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
@@ -588,8 +588,8 @@ arrow_func_with_destructuring_args: {
         })({bar: 5 - 0}, [, 6]);
     }
     expect: {
-        (({foo: o = 1, bar: n = 2}, [a = 3, b = 4]) => {
-            console.log(o, n, a, b);
+        (({foo: o = 1, bar: a = 2}, [b = 3, l = 4]) => {
+            console.log(o, a, b, l);
         })({bar: 5}, [, 6]);
     }
     expect_stdout: "1 5 3 6"

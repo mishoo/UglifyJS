@@ -63,15 +63,15 @@ class_name_can_be_mangled: {
         function x() {
             class Foo {
             }
-            var class1 = Foo
-            var class2 = class Bar {}
+            var class1 = Foo;
+            var class2 = class Bar {};
         }
     }
     expect: {
         function x() {
             class a { }
-            var n = a
-            var r = class a {}
+            var s = a;
+            var c = class a {};
         }
     }
 }
@@ -290,12 +290,12 @@ import_statement_mangling: {
         Whatever();
     }
     expect: {
-        import l from "foo";
-        import e, {Food as o} from "lel";
+        import o from "foo";
+        import m, {Food as r} from "lel";
         import {What as f} from "lel";
-        l();
-        e();
         o();
+        m();
+        r();
         f();
     }
 }
@@ -469,10 +469,10 @@ issue_1898: {
     expect: {
         class Foo {
             bar() {
-                for (const n of [ 6, 5 ])
+                for (const f of [ 6, 5 ])
                     for (let r of [ 4, 3 ])
                         for (var o of [ 2, 1 ])
-                            console.log(n, r, o);
+                            console.log(f, r, o);
             }
         }
         new Foo().bar();
@@ -497,9 +497,9 @@ issue_1753: {
     expect: {
         class SomeClass {
             constructor(r) {
-                let a = [];
-                for (let s = 0; s < 6; s++)
-                    a.push({
+                let s = [];
+                for (let a = 0; a < 6; a++)
+                    s.push({
                         mainDrawNumbers: [],
                         extraDrawNumbers: []
                     });
@@ -526,9 +526,9 @@ issue_1753_disable: {
     expect: {
         class SomeClass {
             constructor(r) {
-                let a = [];
+                let s = [];
                 for (let r = 0; r < 6; r++)
-                    a.push({
+                    s.push({
                         mainDrawNumbers: [],
                         extraDrawNumbers: []
                     });

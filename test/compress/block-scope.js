@@ -104,34 +104,36 @@ regression_block_scope_resolves: {
     };
     input: {
         (function () {
-            if(1) {
+            if (1) {
                 let x;
-                const y;
+                const y = 1;
                 class Zee {};
             }
-            if(1) {
+            if (1) {
                 let ex;
-                const why;
+                const why = 2;
                 class Zi {};
             }
-            console.log(x, y, Zee, ex, why, Zi);
+            console.log(typeof x, typeof y, typeof Zee, typeof ex, typeof why, typeof Zi);
         }());
     }
     expect: {
         (function () {
             if (1) {
-                let o;
-                const n;
-                class c {};
+                let e;
+                const o = 1;
+                class t {};
             }
             if (1) {
-                let o;
-                const n;
-                class c {};
+                let e;
+                const o = 2;
+                class t {};
             }
-            console.log(x, y, Zee, ex, why, Zi);
+            console.log(typeof x, typeof y, typeof Zee, typeof ex, typeof why, typeof Zi);
         }());
     }
+    expect_stdout: "undefined undefined undefined undefined undefined undefined"
+    node_version: ">=6"
 }
 
 switch_block_scope_mangler: {
@@ -153,25 +155,37 @@ switch_block_scope_mangler: {
                     console.log(cat);
             }
         };
+        fn(1);
+        fn(2);
+        fn(3);
     }
     expect: {
-        var fn = function(o) {
-            switch (o) {
+        var fn = function(e) {
+            switch (e) {
               case 1:
-                let e = o + 1
-                let c = o + 4;
-                console.log(e, c);
+                let l = e + 1
+                let o = e + 4;
+                console.log(l, o);
                 break;
 
               case 2:
-                let l = o + 2;
-                console.log(l);
+                let n = e + 2;
+                console.log(n);
                 break;
 
               default:
-                let a = o + 3;
-                console.log(a);
+                let c = e + 3;
+                console.log(c);
             }
         };
+        fn(1);
+        fn(2);
+        fn(3);
     }
+    expect_stdout: [
+        "2 5",
+        "4",
+        "6",
+    ]
+    node_version: ">=6"
 }

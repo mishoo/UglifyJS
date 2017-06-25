@@ -2625,3 +2625,28 @@ issue_2090_2: {
     expect_stdout: "1"
     node_version: ">=4"
 }
+
+for_in_prop: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        var a = {
+            foo: function() {
+                for (this.b in [1, 2]);
+            }
+        };
+        a.foo();
+        console.log(a.b);
+    }
+    expect: {
+        var a = {
+            foo: function() {
+                for (this.b in [1, 2]);
+            }
+        };
+        a.foo();
+        console.log(a.b);
+    }
+    expect_stdout: "1"
+}
