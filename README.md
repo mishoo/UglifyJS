@@ -434,6 +434,9 @@ if (result.error) throw result.error;
 
 ## Minify options
 
+- `ecma` (default `undefined`) - pass `5`, `6`, `7` or `8` to override `parse`,
+  `compress` and `output` options.
+
 - `warnings` (default `false`) — pass `true` to return compressor warnings
   in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
 
@@ -465,7 +468,6 @@ if (result.error) throw result.error;
 
 ```javascript
 {
-    warnings: false,
     parse: {
         // parse options
     },
@@ -485,8 +487,10 @@ if (result.error) throw result.error;
     sourceMap: {
         // source map options
     },
+    ecma: 5, // specify one of: 5, 6, 7 or 8
     toplevel: false,
     ie8: false,
+    warnings: false,
 }
 ```
 
@@ -540,6 +544,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 ## Parse options
 
 - `bare_returns` (default `false`) -- support top level `return` statements
+- `ecma` (default: `8`) -- specify one of `5`, `6`, `7` or `8`. Note: this setting
+  is not presently enforced except for ES8 optional trailing commas in function
+  parameter lists and calls with `ecma` `8`.
 - `html5_comments` (default `true`)
 - `shebang` (default `true`) -- support `#!command` as the first line
 
@@ -682,6 +689,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   functions marked as "pure".  A function call is marked as "pure" if a comment
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
+  
+- `ecma` -- default `5`. Pass `6` or greater to enable `compress` options that
+  will transform ES5 code into smaller ES6+ equivalent forms.
 
 ## Mangle options
 
@@ -754,9 +764,12 @@ can pass additional arguments that control the code output:
 - `comments` (default `false`) -- pass `true` or `"all"` to preserve all
   comments, `"some"` to preserve some comments, a regular expression string
   (e.g. `/^!/`) or a function.
-- `ecma` (default `5`) -- set output printing mode.  This will only change the
-  output in direct control of the beautifier.  Non-compatible features in the
-  abstract syntax tree will still be outputted as is.
+- `ecma` (default `5`) -- set output printing mode. Set `ecma` to `6` or
+  greater to emit shorthand object properties - i.e.: `{a}` instead of `{a: a}`.
+  The `ecma` option will only change the output in direct control of the 
+  beautifier. Non-compatible features in the abstract syntax tree will still
+  be output as is. For example: an `ecma` setting of `5` will **not** convert
+  ES6+ code to ES5.
 - `indent_level` (default 4)
 - `indent_start` (default 0) -- prefix all lines by that many spaces
 - `inline_script` (default `false`) -- escape the slash in occurrences of
