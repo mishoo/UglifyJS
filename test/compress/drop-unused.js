@@ -1409,3 +1409,20 @@ issue_2136_3: {
     expect_stdout: "2"
     node_version: ">=6"
 }
+
+issue_2163: {
+    options = {
+        pure_funcs: [ "pure" ],
+        side_effects: true,
+    }
+    input: {
+        var c;
+        /*@__PURE__*/f(...a);
+        pure(b, ...c);
+    }
+    expect: {
+        var c;
+        a;
+        b;
+    }
+}
