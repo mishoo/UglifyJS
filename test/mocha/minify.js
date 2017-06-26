@@ -212,7 +212,7 @@ describe("minify", function() {
             });
             var err = result.error;
             assert.ok(err instanceof Error);
-            assert.strictEqual(err.stack.split(/\n/)[0], "Error: Can't handle expression: debugger");
+            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token: keyword (debugger)");
         });
         it("should skip inherited properties", function() {
             var foo = Object.create({ skip: this });
