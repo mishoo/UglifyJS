@@ -1,11 +1,11 @@
 uglify-es
 =========
 
-**uglify-es** is an ECMAScript 2015 parser, minifier, compressor and beautifier toolkit.
+**uglify-es** is an ECMAScript parser, minifier, compressor and beautifier toolkit for ES6+.
 
 #### Note:
-- **The `uglify-es` API and CLI is compatible with `uglify-js@3.x`.**
-- **`uglify-es` is not backwards compatible with the `uglify-js@2.x` API and CLI.**
+- **`uglify-es` is API/CLI compatible with `uglify-js@3`.**
+- **`uglify-es` is not backwards compatible with `uglify-js@2`.**
 
 Install
 -------
