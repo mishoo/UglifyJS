@@ -280,3 +280,261 @@ issue_27: {
         })(jQuery);
     }
 }
+
+issue_2105_1: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        ecma: 6,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        !function(factory) {
+            factory();
+        }( function() {
+            return function(fn) {
+                fn()().prop();
+            }( function() {
+                function bar() {
+                    var quux = function() {
+                        console.log("PASS");
+                    }, foo = function() {
+                        console.log;
+                        quux();
+                    };
+                    return { prop: foo };
+                }
+                return bar;
+            } );
+        });
+    }
+    expect: {
+        !void (() => {
+            var quux = () => {
+                console.log("PASS");
+            };
+            return {
+                prop: () => {
+                    console.log;
+                    quux();
+                }
+            };
+        })().prop();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_2105_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ((factory) => {
+            factory();
+        })( () => {
+            return ((fn) => {
+                fn()().prop();
+            })( () => {
+                let bar = () => {
+                    var quux = () => {
+                        console.log("PASS");
+                    }, foo = () => {
+                        console.log;
+                        quux();
+                    };
+                    return { prop: foo };
+                };
+                return bar;
+            } );
+        });
+    }
+    expect: {
+        !void (() => {
+            var quux = () => {
+                console.log("PASS");
+            };
+            return {
+                prop: () => {
+                    console.log;
+                    quux();
+                }
+            };
+        })().prop();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_2136_2: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        ecma: 6,
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f(x) {
+            console.log(x);
+        }
+        !function(a, ...b) {
+            f(b[0]);
+        }(1, 2, 3);
+    }
+    expect: {
+        function f(x) {
+            console.log(x);
+        }
+        f([2,3][0]);
+    }
+    expect_stdout: "2"
+    node_version: ">=6"
+}
+
+issue_2136_3: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        ecma: 6,
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f(x) {
+            console.log(x);
+        }
+        !function(a, ...b) {
+            f(b[0]);
+        }(1, 2, 3);
+    }
+    expect: {
+        console.log(2);
+    }
+    expect_stdout: "2"
+    node_version: ">=6"
+}
+
+call_args: {
+    options = {
+        arrows: true,
+        ecma: 6,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        const a = 1;
+        console.log(a);
+        +function(a) {
+            return a;
+        }(a);
+    }
+    expect: {
+        const a = 1;
+        console.log(1);
+        +(1, 1);
+    }
+    expect_stdout: true
+}
+
+call_args_drop_param: {
+    options = {
+        arrows: true,
+        ecma: 6,
+        evaluate: true,
+        inline: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        const a = 1;
+        console.log(a);
+        +function(a) {
+            return a;
+        }(a, b);
+    }
+    expect: {
+        const a = 1;
+        console.log(1);
+        +(b, 1);
+    }
+    expect_stdout: true
+}
+
+issue_485_crashing_1530: {
+    options = {
+        arrows: true,
+        conditionals: true,
+        dead_code: true,
+        ecma: 6,
+        evaluate: true,
+        inline: true,
+    }
+    input: {
+        (function(a) {
+            if (true) return;
+            var b = 42;
+        })(this);
+    }
+    expect: {
+        this, void 0;
+    }
+}
+
+issue_2084: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        conditionals: true,
+        ecma: 6,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        !function() {
+            !function(c) {
+                c = 1 + c;
+                var c = 0;
+                function f14(a_1) {
+                    if (c = 1 + c, 0 !== 23..toString())
+                        c = 1 + c, a_1 && (a_1[0] = 0);
+                }
+                f14();
+            }(-1);
+        }();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        !((c) => {
+            c = 1 + c,
+            c = 1 + (c = 0),
+            0 !== 23..toString() && (c = 1 + c);
+        })(-1),
+        console.log(c);
+    }
+    expect_stdout: "0"
+    node_version: ">=4"
+}

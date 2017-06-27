@@ -49,8 +49,8 @@ compress_new_function_with_destruct_arrows: {
         new Function("[[aa]], [{bb}]", 'return aa;');
     }
     expect: {
-        Function("aa, [bb]", 'return aa;');
-        Function("aa, {bb}", 'return aa;');
-        Function("[[aa]], [{bb}]", 'return aa;');
+        Function("N", "[a]", 'return N');
+        Function("b", "{bb:N}", 'return b');
+        Function("[[b]]", "[{bb:N}]", 'return b');
     }
 }
