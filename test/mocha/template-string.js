@@ -30,4 +30,13 @@ describe("Template string", function() {
             assert.throws(exec(tests[i]), fail, tests[i]);
         }
     });
+    it("Should process all line terminators as LF", function() {
+        [
+            "`a\rb`",
+            "`a\nb`",
+            "`a\r\nb`",
+        ].forEach(function(code) {
+            assert.strictEqual(uglify.parse(code).print_to_string(), "`a\\nb`;");
+        });
+    });
 });
