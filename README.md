@@ -701,6 +701,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `toplevel` (default `false`). Pass `true` to mangle names declared in the
   top level scope.
 
+- `keep_classnames` (default `false`).  Pass `true` to not mangle class names.
+
 - `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
   Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
   [compress option](#compress-options).
