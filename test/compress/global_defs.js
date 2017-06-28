@@ -174,3 +174,24 @@ issue_1986: {
         console.log(42);
     }
 }
+
+issue_2167: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        global_defs: {
+            "@isDevMode": "function(){}",
+        },
+        side_effects: true,
+    }
+    input: {
+        if (isDevMode()) {
+            greetOverlord();
+        }
+        doWork();
+    }
+    expect: {
+        doWork();
+    }
+}
