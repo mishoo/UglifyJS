@@ -6,6 +6,22 @@ await_precedence: {
     expect_exact: "async function f1(){await x+y}async function f2(){await(x+y)}"
 }
 
+await_precedence_prop: {
+    input: {
+        async function f1(){ return (await foo()).bar; }
+        async function f2(){ return (await foo().bar); }
+    }
+    expect_exact: "async function f1(){return(await foo()).bar}async function f2(){return await foo().bar}"
+}
+
+await_precedence_call: {
+    input: {
+        async function f3(){ return (await foo())(); }
+        async function f4(){ return await (foo()()); }
+    }
+    expect_exact: "async function f3(){return(await foo())()}async function f4(){return await foo()()}"
+}
+
 async_function_declaration: {
     options = {
         side_effects: true,
