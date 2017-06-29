@@ -252,3 +252,12 @@ async_arrow_wait: {
     }
     expect_exact: "var a=async(x,y)=>await x(y);"
 }
+
+async_arrow_iife: {
+    input: {
+        (async () => {
+            await fetch({});
+        })();
+    }
+    expect_exact: "(async()=>{await fetch({})})();"
+}
