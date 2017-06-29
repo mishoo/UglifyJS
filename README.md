@@ -418,11 +418,11 @@ var options = {
 fs.writeFileSync("part1.js", UglifyJS.minify({
     "file1.js": fs.readFileSync("file1.js", "utf8"),
     "file2.js": fs.readFileSync("file2.js", "utf8")
-}, options), "utf8");
+}, options).code, "utf8");
 fs.writeFileSync("part2.js", UglifyJS.minify({
     "file3.js": fs.readFileSync("file3.js", "utf8"),
     "file4.js": fs.readFileSync("file4.js", "utf8")
-}, options), "utf8");
+}, options).code, "utf8");
 fs.writeFileSync(cacheFileName, JSON.stringify(options.nameCache), "utf8");
 ```
 
@@ -501,8 +501,12 @@ if (result.error) throw result.error;
 - `toplevel` (default `false`) - set to `true` if you wish to enable top level
   variable and function name mangling and to drop unused variables and functions.
 
-- `nameCache` (default `null`) - pass an object if you wish to cache mangled names
-  across multiple invocations of `minify()`.
+- `nameCache` (default `null`) - pass an empty object `{}` or a previously
+  used `nameCache` object if you wish to cache mangled variable and
+  property names across multiple invocations of `minify()`. Note: this is
+  a read/write property. `minify()` will read the name cache state of this
+  object and update it during minification so that it may be
+  reused or externally persisted by the user.
 
 - `ie8` (default `false`) - set to `true` to support IE8.
 
