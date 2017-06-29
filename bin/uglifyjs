@@ -106,17 +106,8 @@ if (program.mangleProps) {
     if (typeof options.mangle != "object") options.mangle = {};
     options.mangle.properties = program.mangleProps;
 }
-var cache;
 if (program.nameCache) {
-    cache = JSON.parse(read_file(program.nameCache, "{}"));
-    if (options.mangle) {
-        if (typeof options.mangle != "object") options.mangle = {};
-        options.mangle.cache = to_cache("vars");
-        if (options.mangle.properties) {
-            if (typeof options.mangle.properties != "object") options.mangle.properties = {};
-            options.mangle.properties.cache = to_cache("props");
-        }
-    }
+    options.nameCache = JSON.parse(read_file(program.nameCache, "{}"));
 }
 if (program.output == "ast") {
     options.output = {
@@ -266,9 +257,7 @@ function run() {
         print(result.code);
     }
     if (program.nameCache) {
-        fs.writeFileSync(program.nameCache, JSON.stringify(cache, function(key, value) {
-            return value instanceof UglifyJS.Dictionary ? value.toObject() : value;
-        }));
+        fs.writeFileSync(program.nameCache, JSON.stringify(options.nameCache));
     }
     if (result.timings) for (var phase in result.timings) {
         print_error("- " + phase + ": " + result.timings[phase].toFixed(3) + "s");
@@ -379,18 +368,6 @@ function parse_source_map() {
         }
         return settings;
     }
-}
-
-function to_cache(key) {
-    if (cache[key]) {
-        cache[key].props = UglifyJS.Dictionary.fromObject(cache[key].props);
-    } else {
-        cache[key] = {
-            cname: -1,
-            props: new UglifyJS.Dictionary()
-        };
-    }
-    return cache[key];
 }
 
 function skip_key(key) {

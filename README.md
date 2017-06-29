@@ -111,7 +111,7 @@ a double dash to prevent input files being used as option arguments:
                                 By default UglifyJS will not try to be IE-proof.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
-    --name-cache                File to hold mangled name mappings.
+    --name-cache <file>         File to hold mangled name mappings.
     --self                      Build UglifyJS as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
                                 `base`  Path to compute relative paths from input files.
@@ -383,7 +383,47 @@ var code = {
 var options = { toplevel: true };
 var result = UglifyJS.minify(code, options);
 console.log(result.code);
-// console.log(function(n,o){return n+o}(3,7));
+// console.log(3+7);
+```
+
+The `nameCache` option:
+```javascript
+var options = {
+    mangle: {
+        toplevel: true,
+    },
+    nameCache: {}
+};
+var result1 = UglifyJS.minify({
+    "file1.js": "function add(first, second) { return first + second; }"
+}, options);
+var result2 = UglifyJS.minify({
+    "file2.js": "console.log(add(1 + 2, 3 + 4));"
+}, options);
+console.log(result1.code);
+// function n(n,r){return n+r}
+console.log(result2.code);
+// console.log(n(3,7));
+```
+
+You may persist the name cache to the file system in the following way:
+```javascript
+var cacheFileName = "/tmp/cache.json";
+var options = {
+    mangle: {
+        properties: true,
+    },
+    nameCache: JSON.parse(fs.readFileSync(cacheFileName, "utf8"))
+};
+fs.writeFileSync("part1.js", UglifyJS.minify({
+    "file1.js": fs.readFileSync("file1.js", "utf8"),
+    "file2.js": fs.readFileSync("file2.js", "utf8")
+}, options).code, "utf8");
+fs.writeFileSync("part2.js", UglifyJS.minify({
+    "file3.js": fs.readFileSync("file3.js", "utf8"),
+    "file4.js": fs.readFileSync("file4.js", "utf8")
+}, options).code, "utf8");
+fs.writeFileSync(cacheFileName, JSON.stringify(options.nameCache), "utf8");
 ```
 
 An example of a combination of `minify()` options:
@@ -461,6 +501,13 @@ if (result.error) throw result.error;
 - `toplevel` (default `false`) - set to `true` if you wish to enable top level
   variable and function name mangling and to drop unused variables and functions.
 
+- `nameCache` (default `null`) - pass an empty object `{}` or a previously
+  used `nameCache` object if you wish to cache mangled variable and
+  property names across multiple invocations of `minify()`. Note: this is
+  a read/write property. `minify()` will read the name cache state of this
+  object and update it during minification so that it may be
+  reused or externally persisted by the user.
+
 - `ie8` (default `false`) - set to `true` to support IE8.
 
 ## Minify options structure
@@ -487,6 +534,7 @@ if (result.error) throw result.error;
     sourceMap: {
         // source map options
     },
+    nameCache: null, // or specify a name cache object
     toplevel: false,
     ie8: false,
 }
