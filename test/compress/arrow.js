@@ -312,7 +312,7 @@ issue_2105_1: {
         });
     }
     expect: {
-        !void (() => {
+        void (() => {
             var quux = () => {
                 console.log("PASS");
             };
@@ -357,7 +357,7 @@ issue_2105_2: {
         });
     }
     expect: {
-        !void (() => {
+        void (() => {
             var quux = () => {
                 console.log("PASS");
             };
@@ -528,7 +528,7 @@ issue_2084: {
     }
     expect: {
         var c = 0;
-        !((c) => {
+        ((c) => {
             c = 1 + c,
             c = 1 + (c = 0),
             0 !== 23..toString() && (c = 1 + c);
