@@ -268,3 +268,27 @@ async_arrow_wait: {
     }
     expect_exact: "var a=async(x,y)=>await x(y);"
 }
+
+async_arrow_iife: {
+    input: {
+        (async () => {
+            await fetch({});
+        })();
+    }
+    expect_exact: "(async()=>{await fetch({})})();"
+}
+
+async_arrow_iife_negate_iife: {
+    options = {
+        negate_iife: true,
+    }
+    input: {
+        (async () => {
+            await fetch();
+        })();
+        (() => {
+            plain();
+        })();
+    }
+    expect_exact: "(async()=>{await fetch()})();(()=>{plain()})();"
+}
