@@ -1,6 +1,7 @@
 var Uglify = require('../../');
 var assert = require("assert");
 var readFileSync = require("fs").readFileSync;
+var run_code = require("../sandbox").run_code;
 
 function read(path) {
     return readFileSync(path, "utf8");
@@ -18,6 +19,58 @@ describe("minify", function() {
         files[0] = "alert(1 + 1)";
         var result = Uglify.minify(files);
         assert.strictEqual(result.code, "alert(2);");
+    });
+
+    it("Should work with mangle.cache", function() {
+        var cache = {};
+        var original = "";
+        var compressed = "";
+        [
+            "bar.es5",
+            "baz.es5",
+            "foo.es5",
+            "qux.js",
+        ].forEach(function(file) {
+            var code = read("test/input/issue-1242/" + file);
+            var result = Uglify.minify(code, {
+                mangle: {
+                    cache: cache,
+                    toplevel: true
+                }
+            });
+            if (result.error) throw result.error;
+            original += code;
+            compressed += result.code;
+        });
+        assert.strictEqual(JSON.stringify(cache).slice(0, 20), '{"cname":5,"props":{');
+        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}function c(o){l("Foo:",2*o)}var l=console.log.bind(console);var f=n(3),i=r(12);l("qux",f,i),c(11);');
+        assert.strictEqual(run_code(compressed), run_code(original));
+    });
+
+    it("Should work with nameCache", function() {
+        var cache = {};
+        var original = "";
+        var compressed = "";
+        [
+            "bar.es5",
+            "baz.es5",
+            "foo.es5",
+            "qux.js",
+        ].forEach(function(file) {
+            var code = read("test/input/issue-1242/" + file);
+            var result = Uglify.minify(code, {
+                mangle: {
+                    toplevel: true
+                },
+                nameCache: cache
+            });
+            if (result.error) throw result.error;
+            original += code;
+            compressed += result.code;
+        });
+        assert.strictEqual(JSON.stringify(cache).slice(0, 28), '{"vars":{"cname":5,"props":{');
+        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}function c(o){l("Foo:",2*o)}var l=console.log.bind(console);var f=n(3),i=r(12);l("qux",f,i),c(11);');
+        assert.strictEqual(run_code(compressed), run_code(original));
     });
 
     describe("keep_quoted_props", function() {
