@@ -419,7 +419,7 @@ wrap_iife_in_return_call: {
     expect_exact: '(void console.log("test"))();'
 }
 
-pure_annotation: {
+pure_annotation_1: {
     options = {
         inline: true,
         side_effects: true,
@@ -428,6 +428,20 @@ pure_annotation: {
         /*@__PURE__*/(function() {
             console.log("hello");
         }());
+    }
+    expect_exact: ""
+}
+
+pure_annotation_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        /*@__PURE__*/(function(n) {
+            console.log("hello", n);
+        }(42));
     }
     expect_exact: ""
 }
@@ -449,9 +463,7 @@ drop_fargs: {
     }
     expect: {
         var a = 1;
-        !function() {
-            a++;
-        }(++a && a.var);
+        ++a && a.var, a++;
         console.log(a);
     }
     expect_stdout: "3"
@@ -474,9 +486,7 @@ keep_fargs: {
     }
     expect: {
         var a = 1;
-        !function(a_1) {
-            a++;
-        }(++a && a.var);
+        ++a && a.var, a++;
         console.log(a);
     }
     expect_stdout: "3"

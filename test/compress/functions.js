@@ -468,11 +468,9 @@ issue_2114_1: {
     }
     expect: {
         var c = 0;
-        !function() {
-            0;
-        }((c += 1, c = 1 + c, function() {
+        c = 1 + (c += 1), function() {
             var b = void (b && (b.b += (c += 1, 0)));
-        }()));
+        }();
         console.log(c);
     }
     expect_stdout: "2"

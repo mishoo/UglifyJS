@@ -1113,6 +1113,7 @@ issue_2105: {
     options = {
         collapse_vars: true,
         inline: true,
+        passes: 2,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1138,7 +1139,7 @@ issue_2105: {
         });
     }
     expect: {
-        !void function() {
+        (function() {
             var quux = function() {
                 console.log("PASS");
             };
@@ -1148,7 +1149,7 @@ issue_2105: {
                     quux();
                 }
             };
-        }().prop();
+        })().prop();
     }
     expect_stdout: "PASS"
 }

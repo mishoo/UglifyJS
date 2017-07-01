@@ -1978,10 +1978,10 @@ chained_3: {
     }
     expect: {
         console.log(function(a, b) {
-            var c = a, c = b;
+            var c = 1, c = b;
             b++;
             return c;
-        }(1, 2));
+        }(0, 2));
     }
     expect_stdout: "2"
 }
@@ -2185,4 +2185,35 @@ compound_assignment: {
         console.log(a);
     }
     expect_stdout: "4"
+}
+
+issue_2187: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        !function(foo) {
+            foo();
+            var a = 2;
+            console.log(a);
+        }(function() {
+            console.log(a);
+        });
+    }
+    expect: {
+        var a = 1;
+        !function(foo) {
+            foo();
+            var a = 2;
+            console.log(a);
+        }(function() {
+            console.log(a);
+        });
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
 }
