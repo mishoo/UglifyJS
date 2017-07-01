@@ -2187,7 +2187,7 @@ compound_assignment: {
     expect_stdout: "4"
 }
 
-issue_2187: {
+issue_2187_1: {
     options = {
         collapse_vars: true,
         unused: true,
@@ -2216,4 +2216,43 @@ issue_2187: {
         "1",
         "2",
     ]
+}
+
+issue_2187_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        console.log(function(a) {
+            return a && ++b;
+        }(b--));
+    }
+    expect: {
+        var b = 1;
+        console.log(function(a) {
+            return b-- && ++b;
+        }());
+    }
+    expect_stdout: "1"
+}
+
+issue_2187_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        console.log(function(a) {
+            return a && ++b;
+        }(b--));
+    }
+    expect: {
+        var b = 1;
+        console.log(b-- && ++b);
+    }
+    expect_stdout: "1"
 }

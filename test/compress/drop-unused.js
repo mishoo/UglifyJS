@@ -1113,7 +1113,7 @@ issue_2105: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_vars: true,
         side_effects: true,
         unused: true,
