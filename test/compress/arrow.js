@@ -374,7 +374,7 @@ issue_2105_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
-/*
+
 issue_2136_2: {
     options = {
         arrows: true,
@@ -430,7 +430,7 @@ issue_2136_3: {
     expect_stdout: "2"
     node_version: ">=6"
 }
-*/
+
 call_args: {
     options = {
         arrows: true,

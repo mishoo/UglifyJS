@@ -1358,7 +1358,7 @@ issue_2136_1: {
     expect_stdout: "[]"
     node_version: ">=6"
 }
-/*
+
 issue_2136_2: {
     options = {
         collapse_vars: true,
@@ -1410,7 +1410,7 @@ issue_2136_3: {
     expect_stdout: "2"
     node_version: ">=6"
 }
-*/
+
 issue_2163: {
     options = {
         pure_funcs: [ "pure" ],
