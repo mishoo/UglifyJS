@@ -2077,10 +2077,10 @@ chained_3: {
     }
     expect: {
         console.log(function(a, b) {
-            var c = a, c = b;
+            var c = 1, c = b;
             b++;
             return c;
-        }(1, 2));
+        }(0, 2));
     }
     expect_stdout: "2"
 }
@@ -2329,4 +2329,74 @@ reassign_const_2: {
         console.log(f());
     }
     expect_stdout: true
+}
+
+issue_2187_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        !function(foo) {
+            foo();
+            var a = 2;
+            console.log(a);
+        }(function() {
+            console.log(a);
+        });
+    }
+    expect: {
+        var a = 1;
+        !function(foo) {
+            foo();
+            var a = 2;
+            console.log(a);
+        }(function() {
+            console.log(a);
+        });
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+issue_2187_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        console.log(function(a) {
+            return a && ++b;
+        }(b--));
+    }
+    expect: {
+        var b = 1;
+        console.log(function(a) {
+            return b-- && ++b;
+        }());
+    }
+    expect_stdout: "1"
+}
+
+issue_2187_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        console.log(function(a) {
+            return a && ++b;
+        }(b--));
+    }
+    expect: {
+        var b = 1;
+        console.log(b-- && ++b);
+    }
+    expect_stdout: "1"
 }
