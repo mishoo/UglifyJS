@@ -176,6 +176,11 @@ for_sequences: {
         // 4
         x = (foo in bar);
         for (y = 5; false;);
+        // 5
+        x = function() {
+            foo in bar;
+        };
+        for (y = 5; false;);
     }
     expect: {
         // 1
@@ -188,6 +193,10 @@ for_sequences: {
         // 4
         x = (foo in bar);
         for (y = 5; false;);
+        // 5
+        for (x = function() {
+            foo in bar;
+        }, y = 5; false;);
     }
 }
 
