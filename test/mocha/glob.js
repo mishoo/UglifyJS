@@ -26,12 +26,12 @@ describe("bin/uglifyjs with input file globs", function() {
         });
     });
     it("bin/uglifyjs with multiple input file globs.", function(done) {
-        var command = uglifyjscmd + ' "test/input/issue-1242/???.es5" "test/input/issue-1242/*.js" -mc toplevel';
+        var command = uglifyjscmd + ' "test/input/issue-1242/???.es5" "test/input/issue-1242/*.js" -mc toplevel,passes=2';
 
         exec(command, function(err, stdout) {
             if (err) throw err;
 
-            assert.strictEqual(stdout, 'var print=console.log.bind(console);print("qux",9,6),print("Foo:",2*11);\n');
+            assert.strictEqual(stdout, 'var print=console.log.bind(console);print("qux",9,6),print("Foo:",22);\n');
             done();
         });
     });

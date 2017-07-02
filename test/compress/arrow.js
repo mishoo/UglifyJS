@@ -287,6 +287,7 @@ issue_2105_1: {
         collapse_vars: true,
         ecma: 6,
         inline: true,
+        passes: 3,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -312,7 +313,7 @@ issue_2105_1: {
         });
     }
     expect: {
-        void (() => {
+        (() => {
             var quux = () => {
                 console.log("PASS");
             };
@@ -332,6 +333,7 @@ issue_2105_2: {
     options = {
         collapse_vars: true,
         inline: true,
+        passes: 2,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -357,7 +359,7 @@ issue_2105_2: {
         });
     }
     expect: {
-        void (() => {
+        (() => {
             var quux = () => {
                 console.log("PASS");
             };
@@ -372,7 +374,7 @@ issue_2105_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
-
+/*
 issue_2136_2: {
     options = {
         arrows: true,
@@ -428,7 +430,7 @@ issue_2136_3: {
     expect_stdout: "2"
     node_version: ">=6"
 }
-
+*/
 call_args: {
     options = {
         arrows: true,
