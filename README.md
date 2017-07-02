@@ -1026,3 +1026,29 @@ in total it's a bit more than just using UglifyJS's own parser.
 
 [acorn]: https://github.com/ternjs/acorn
 [sm-spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k
+
+### Uglify Fast Minify Mode
+
+It's not well known, but variable and function name mangling accounts for
+95% of the size reduction in minified code for most javascript - not
+elaborate code transforms. One can simply disable `compress` to speed up
+Uglify builds by 3 to 4 times. In this fast `mangle`-only mode Uglify has
+comparable minify speeds and gzip sizes to
+[`butternut`](https://www.npmjs.com/package/butternut):
+
+| d3.js | minify size | gzip size | minify time (seconds) |
+| --- | ---: | ---: | ---: |
+| original | 451,131 | 108,733 | - |
+| uglify-js@3.0.23 mangle=false, compress=false | 316,600 | 85,245 | 0.73 |
+| uglify-js@3.0.23 mangle=true, compress=false | 220,216 | 72,730 | 1.21 |
+| Butternut 0.4.6 | 217,568 | 72,738 | 1.81 |
+| uglify-js@3.0.23 mangle=true, compress=true | 212,511 | 71,560 | 4.64 |
+
+To enable fast minify mode from the CLI use:
+```
+uglifyjs file.js -m
+```
+To enable fast minify mode with the API use:
+```js
+UglifyJS.minify(code, { compress: false, mangle: true }); 
+```
