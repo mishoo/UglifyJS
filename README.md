@@ -644,6 +644,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `booleans` -- various optimizations for boolean context, for example `!!a
   ? b : c → a ? b : c`
 
+- `typeofs` -- default `true`.  Transforms `typeof foo == "undefined"` into
+  `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
+  earlier versions due to known issues.
+
 - `loops` -- optimizations for `do`, `while` and `for` loops when we can
   statically determine the condition
 
@@ -873,7 +877,6 @@ when this flag is on:
 - `new Object()` → `{}`
 - `String(exp)` or `exp.toString()` → `"" + exp`
 - `new Object/RegExp/Function/Error/Array (...)` → we discard the `new`
-- `typeof foo == "undefined"` → `foo === void 0`
 - `void 0` → `undefined` (if there is a variable named "undefined" in
   scope; we do it because the variable name will be mangled, typically
   reduced to a single character)
@@ -1050,5 +1053,5 @@ uglifyjs file.js -m
 ```
 To enable fast minify mode with the API use:
 ```js
-UglifyJS.minify(code, { compress: false, mangle: true }); 
+UglifyJS.minify(code, { compress: false, mangle: true });
 ```
