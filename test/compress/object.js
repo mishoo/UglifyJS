@@ -510,3 +510,157 @@ variable_as_computed_property: {
     }
     expect_exact: "function getLine(header){return{[header]:{}}}"
 }
+
+prop_func_to_concise_method: {
+    options = {
+        ecma: 6,
+    }
+    input: {
+        ({
+            emit: function NamedFunctionExpression() {
+                console.log("PASS");
+            },
+            run: function() {
+                this.emit();
+            }
+        }).run();
+    }
+    expect: {
+        ({
+            emit: function NamedFunctionExpression() {
+                console.log("PASS");
+            },
+            run() {
+                this.emit();
+            }
+        }).run();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+prop_arrow_to_concise_method: {
+    options = {
+        ecma: 6,
+    }
+    input: {
+        ({
+            run: () => {
+                console.log("PASS");
+            }
+        }).run();
+    }
+    expect: {
+        ({
+            run() {
+                console.log("PASS");
+            }
+        }).run();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+prop_func_to_async_concise_method: {
+    options = {
+        ecma: 8,
+    }
+    input: {
+        ({
+            run: async function() {
+                console.log("PASS");
+            }
+        }).run();
+    }
+    expect: {
+        ({
+            async run() {
+                console.log("PASS");
+            }
+        }).run();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+prop_func_to_concise_method_various: {
+    options = {
+        ecma: 6,
+    }
+    input: {
+        ({
+            null: function(x, y){ x(y); },
+            123: function(x, y){ x(y); },
+            "A B": function(x, y){ x(y); },
+            p1: function(x, y){ x(y); },
+            p2: function*(x, y){ yield x(y); },
+            p3: async function(x, y){ await x(y); },
+            [c1]: function(x, y){ x(y); },
+            [c2]: function*(x, y){ yield x(y); },
+            [c3]: async function(x, y){ await x(y); },
+        });
+    }
+    expect: {
+        ({
+            null(x, y) { x(y); },
+            123(x, y) { x(y); },
+            "A B"(x, y) { x(y); },
+            p1(x, y) { x(y); },
+            *p2(x, y) { yield x(y); },
+            async p3(x, y) { await x(y); },
+            [c1](x, y) { x(y); },
+            *[c2](x, y) { yield x(y); },
+            async [c3](x, y) { await x(y); },
+        });
+    }
+}
+
+prop_arrows_to_concise_method_various: {
+    options = {
+        ecma: 6,
+    }
+    input: {
+        ({
+            null: (x, y) => { x(y); },
+            123: (x, y) => { x(y); },
+            "A B": (x, y) => { x(y); },
+            p1: (x, y) => { x(y); },
+            p3: async (x, y) => { await x(y); },
+            [c1]: (x, y) => { x(y); },
+            [c3]: async (x, y) => { await x(y); },
+        });
+    }
+    expect: {
+        ({
+            null(x, y) { x(y); },
+            123(x, y) { x(y); },
+            "A B"(x, y) { x(y); },
+            p1(x, y) { x(y); },
+            async p3(x, y) { await x(y); },
+            [c1](x, y) { x(y); },
+            async [c3](x, y) { await x(y); },
+        });
+    }
+}
+
+prop_arrow_with_this: {
+    options = {
+        ecma: 6,
+    }
+    input: {
+        ({
+            func_no_this: function() { run(); },
+            func_with_this: function() { run(this); },
+            arrow_no_this: () => { run(); },
+            arrow_with_this: () => { run(this); },
+        });
+    }
+    expect: {
+        ({
+            func_no_this() { run(); },
+            func_with_this() { run(this); },
+            arrow_no_this() { run(); },
+            arrow_with_this: () => { run(this); },
+        });
+    }
+}

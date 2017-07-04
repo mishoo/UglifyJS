@@ -313,12 +313,13 @@ issue_2105_1: {
         });
     }
     expect: {
-        (() => {
+        // TODO: outer function should be an arrow function
+        (function() {
             var quux = () => {
                 console.log("PASS");
             };
             return {
-                prop: () => {
+                prop() {
                     console.log;
                     quux();
                 }
