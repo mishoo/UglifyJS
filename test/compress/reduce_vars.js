@@ -1469,6 +1469,7 @@ issue_1670_1: {
         reduce_vars: true,
         side_effects: true,
         switches: true,
+        typeofs: true,
         unused: true,
     }
     input: {
@@ -1532,6 +1533,7 @@ issue_1670_3: {
         reduce_vars: true,
         side_effects: true,
         switches: true,
+        typeofs: true,
         unused: true,
     }
     input: {
