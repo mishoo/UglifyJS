@@ -561,6 +561,32 @@ prop_arrow_to_concise_method: {
     node_version: ">=6"
 }
 
+concise_method_to_prop_arrow: {
+    options = {
+        arrows: true,
+        ecma: 6,
+    }
+    input: {
+        console.log(({ a: () => 1 }).a());
+        console.log(({ a: () => { return 2; } }).a());
+        console.log(({ a() { return 3; } }).a());
+        console.log(({ a() { return this.b; }, b: 4 }).a());
+    }
+    expect: {
+        console.log({ a: () => 1 }.a());
+        console.log({ a: () => 2 }.a());
+        console.log({ a: () => 3 }.a());
+        console.log({ a() { return this.b; }, b: 4 }.a());
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+        "4",
+    ]
+    node_version: ">=4"
+}
+
 prop_func_to_async_concise_method: {
     options = {
         ecma: 8,
@@ -648,19 +674,71 @@ prop_arrow_with_this: {
         ecma: 6,
     }
     input: {
-        ({
+        function run(arg) {
+            console.log(arg === this ? "global" : arg === foo ? "foo" : arg);
+        }
+        var foo = {
             func_no_this: function() { run(); },
             func_with_this: function() { run(this); },
             arrow_no_this: () => { run(); },
             arrow_with_this: () => { run(this); },
-        });
+        };
+        for (var key in foo) foo[key]();
     }
     expect: {
-        ({
+        function run(arg) {
+            console.log(arg === this ? "global" : arg === foo ? "foo" : arg);
+        }
+        var foo = {
             func_no_this() { run(); },
             func_with_this() { run(this); },
             arrow_no_this() { run(); },
             arrow_with_this: () => { run(this); },
-        });
+        };
+        for (var key in foo) foo[key]();
     }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "global",
+    ]
+    node_version: ">=4"
+}
+
+prop_arrow_with_nested_this: {
+    options = {
+        ecma: 6,
+    }
+    input: {
+        function run(arg) {
+            console.log(arg === this ? "global" : arg === foo ? "foo" : arg);
+        }
+        var foo = {
+            func_func_this: function() { (function() { run(this); })(); },
+            func_arrow_this: function() { (() => { run(this); })(); },
+            arrow_func_this: () => { (function() { run(this); })(); },
+            arrow_arrow_this: () => { (() => { run(this); })(); },
+        };
+        for (var key in foo) foo[key]();
+    }
+    expect: {
+        function run(arg) {
+            console.log(arg === this ? "global" : arg === foo ? "foo" : arg);
+        }
+        var foo = {
+            func_func_this() { (function() { run(this); })(); },
+            func_arrow_this() { (() => { run(this); })(); },
+            arrow_func_this() { (function() { run(this); })(); },
+            arrow_arrow_this: () => { (() => { run(this); })(); },
+        };
+        for (var key in foo) foo[key]();
+    }
+    expect_stdout: [
+        "global",
+        "foo",
+        "global",
+        "global",
+    ]
+    node_version: ">=4"
 }

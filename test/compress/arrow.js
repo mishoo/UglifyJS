@@ -313,8 +313,7 @@ issue_2105_1: {
         });
     }
     expect: {
-        // TODO: outer function should be an arrow function
-        (function() {
+        (() => {
             var quux = () => {
                 console.log("PASS");
             };
@@ -540,4 +539,61 @@ issue_2084: {
     }
     expect_stdout: "0"
     node_version: ">=4"
+}
+
+export_default_object_expression: {
+    options = {
+        arrows: true,
+        evaluate: true,
+    }
+    input: {
+        export default {
+            foo: 1 + 2,
+            bar() { return 4; },
+            get baz() { return this.foo; },
+        };
+    }
+    expect_exact: "export default{foo:3,bar:()=>4,get baz(){return this.foo}};"
+}
+
+concise_methods_with_computed_property2: {
+    options = {
+        arrows: true,
+        evaluate: true,
+    }
+    input: {
+        var foo = {
+            [[1]](v) {
+                return v;
+            }
+        };
+        console.log(foo[[1]]("PASS"));
+    }
+    expect_exact: 'var foo={[[1]]:v=>v};console.log(foo[[1]]("PASS"));'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+async_object_literal: {
+    options = {
+        arrows: true,
+        ecma: 6,
+        evaluate: true,
+    }
+    input: {
+        var obj = {
+            async a() {
+                return await foo(1 + 0);
+            },
+            anon: async function() {
+                return await foo(2 + 0);
+            }
+        };
+    }
+    expect: {
+        var obj = {
+            a: async () => await foo(1),
+            anon: async () => await foo(2)
+        };
+    }
 }
