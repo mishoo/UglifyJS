@@ -1085,3 +1085,75 @@ string_charCodeAt: {
     }
     expect_stdout: "NaN"
 }
+
+issue_2207_1: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(String.fromCharCode(65));
+        console.log(Math.max(3, 6, 2, 7, 3, 4));
+        console.log(Math.cos(1.2345));
+        console.log(Math.cos(1.2345) - Math.sin(4.321));
+        console.log(Math.pow(Math.PI, Math.E - Math.LN10));
+    }
+    expect: {
+        console.log("A");
+        console.log(7);
+        console.log(Math.cos(1.2345));
+        console.log(1.2543732512566947);
+        console.log(1.6093984514472044);
+    }
+    expect_stdout: true
+}
+
+issue_2207_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Math.E);
+        console.log(Math.LN10);
+        console.log(Math.LN2);
+        console.log(Math.LOG2E);
+        console.log(Math.LOG10E);
+        console.log(Math.PI);
+        console.log(Math.SQRT1_2);
+        console.log(Math.SQRT2);
+    }
+    expect: {
+        console.log(Math.E);
+        console.log(Math.LN10);
+        console.log(Math.LN2);
+        console.log(Math.LOG2E);
+        console.log(Math.LOG10E);
+        console.log(Math.PI);
+        console.log(Math.SQRT1_2);
+        console.log(Math.SQRT2);
+    }
+    expect_stdout: true
+}
+
+issue_2207_3: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Number.MAX_VALUE);
+        console.log(Number.MIN_VALUE);
+        console.log(Number.NaN);
+        console.log(Number.NEGATIVE_INFINITY);
+        console.log(Number.POSITIVE_INFINITY);
+    }
+    expect: {
+        console.log(Number.MAX_VALUE);
+        console.log(5e-324);
+        console.log(NaN);
+        console.log(-1/0);
+        console.log(1/0);
+    }
+    expect_stdout: true
+}
