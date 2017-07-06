@@ -37,6 +37,7 @@ object: {
                 VALUE: 42,
             },
         },
+        side_effects: true,
         unsafe: true,
     }
     input: {
@@ -140,9 +141,9 @@ mixed: {
         console.log(CONFIG);
     }
     expect_warnings: [
-        'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:126,22]',
         'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:127,22]',
-        'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:129,8]',
+        'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:128,22]',
+        'WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:130,8]',
     ]
 }
 

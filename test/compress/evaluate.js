@@ -250,22 +250,26 @@ unsafe_constant: {
 
 unsafe_object: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: 1 };
         console.log(
-            ({a:1}) + 1,
-            ({a:1}).a + 1,
-            ({a:1}).b + 1,
-            ({a:1}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: 1 };
         console.log(
-            ({a:1}) + 1,
+            o + 1,
             2,
-            ({a:1}).b + 1,
+            o.b + 1,
             1..b + 1
         );
     }
@@ -274,22 +278,26 @@ unsafe_object: {
 
 unsafe_object_nested: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: { b: 1 } };
         console.log(
-            ({a:{b:1}}) + 1,
-            ({a:{b:1}}).a + 1,
-            ({a:{b:1}}).b + 1,
-            ({a:{b:1}}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: { b: 1 } };
         console.log(
-            ({a:{b:1}}) + 1,
-            ({a:{b:1}}).a + 1,
-            ({a:{b:1}}).b + 1,
+            o + 1,
+            o.a + 1,
+            o.b + 1,
             2
         );
     }
@@ -298,21 +306,25 @@ unsafe_object_nested: {
 
 unsafe_object_complex: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: { b: 1 }, b: 1 };
         console.log(
-            ({a:{b:1},b:1}) + 1,
-            ({a:{b:1},b:1}).a + 1,
-            ({a:{b:1},b:1}).b + 1,
-            ({a:{b:1},b:1}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: { b: 1 }, b: 1 };
         console.log(
-            ({a:{b:1},b:1}) + 1,
-            ({a:{b:1},b:1}).a + 1,
+            o + 1,
+            o.a + 1,
             2,
             2
         );
@@ -322,22 +334,26 @@ unsafe_object_complex: {
 
 unsafe_object_repeated: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: { b: 1 }, a: 1 };
         console.log(
-            ({a:{b:1},a:1}) + 1,
-            ({a:{b:1},a:1}).a + 1,
-            ({a:{b:1},a:1}).b + 1,
-            ({a:{b:1},a:1}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: { b: 1 }, a: 1 };
         console.log(
-            ({a:{b:1},a:1}) + 1,
+            o + 1,
             2,
-            ({a:{b:1},a:1}).b + 1,
+            o.b + 1,
             1..b + 1
         );
     }
@@ -386,9 +402,9 @@ unsafe_function: {
     expect: {
         console.log(
             ({a:{b:1},b:function(){}}) + 1,
-            ({a:{b:1},b:function(){}}).a + 1,
-            ({a:{b:1},b:function(){}}).b + 1,
-            ({a:{b:1},b:function(){}}).a.b + 1
+            ({b:function(){}}, {b:1}) + 1,
+            ({a:{b:1}}, function(){}) + 1,
+            ({b:function(){}}, {b:1}).b + 1
         );
     }
     expect_stdout: true
@@ -636,8 +652,8 @@ unsafe_prototype_function: {
         var d = ({toString: 0}) + "";
         var e = (({valueOf: 0}) + "")[2];
         var f = (({toString: 0}) + "")[2];
-        var g = ({valueOf: 0}).valueOf();
-        var h = "" + ({toString: 0});
+        var g = ({}, 0)();
+        var h = ({}, 0)();
     }
 }
 
