@@ -2320,3 +2320,25 @@ issue_2203_2: {
     }
     expect_stdout: "PASS"
 }
+
+duplicate_argname: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() { return "PASS"; }
+        console.log(function(a, a) {
+            f++;
+            return a;
+        }("FAIL", f()));
+    }
+    expect: {
+        function f() { return "PASS"; }
+        console.log(function(a, a) {
+            f++;
+            return a;
+        }("FAIL", f()));
+    }
+    expect_stdout: "PASS"
+}
