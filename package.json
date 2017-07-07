@@ -11,10 +11,7 @@
   "maintainers": [
     "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mishoo/UglifyJS2.git"
-  },
+  "repository": "https://github.com/mishoo/UglifyJS2/tree/harmony",
   "bugs": {
     "url": "https://github.com/mishoo/UglifyJS2/issues"
   },
