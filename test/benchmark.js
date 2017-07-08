@@ -6,6 +6,7 @@
 var createHash = require("crypto").createHash;
 var fetch = require("./fetch");
 var fork = require("child_process").fork;
+var zlib = require("zlib");
 var args = process.argv.slice(2);
 if (!args.length) {
     args.push("-mc");
@@ -33,6 +34,7 @@ function done() {
             console.log(info.log);
             console.log("Original:", info.input, "bytes");
             console.log("Uglified:", info.output, "bytes");
+            console.log("GZipped: ", info.gzip, "bytes");
             console.log("SHA1 sum:", info.sha1);
             if (info.code) {
                 failures.push(url);
@@ -51,6 +53,7 @@ urls.forEach(function(url) {
     results[url] = {
         input: 0,
         output: 0,
+        gzip: 0,
         log: ""
     };
     fetch(url, function(err, res) {
@@ -64,6 +67,11 @@ urls.forEach(function(url) {
         }).pipe(createHash("sha1")).on("data", function(data) {
             results[url].sha1 = data.toString("hex");
             done();
+        });
+        uglifyjs.stdout.pipe(zlib.createGzip({
+            level: zlib.Z_BEST_COMPRESSION
+        })).on("data", function(data) {
+            results[url].gzip += data.length;
         });
         uglifyjs.stderr.setEncoding("utf8");
         uglifyjs.stderr.on("data", function(data) {
