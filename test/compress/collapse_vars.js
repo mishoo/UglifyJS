@@ -2465,6 +2465,68 @@ issue_2203_2: {
     expect_stdout: "PASS"
 }
 
+issue_2203_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, (() => this)())));
+            }
+        }.b());
+    }
+    expect: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, (() => this)())));
+            }
+        }.b());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_2203_4: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return (c => {
+                    return c.a;
+                })((String, (Object, (() => this)())));
+            }
+        }.b());
+    }
+    expect: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return (c => {
+                    return (String, (Object, (() => this)())).a;
+                })();
+            }
+        }.b());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 duplicate_argname: {
     options = {
         collapse_vars: true,
