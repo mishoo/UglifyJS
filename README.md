@@ -1066,10 +1066,11 @@ comparable minify speeds and gzip sizes to
 | d3.js | minify size | gzip size | minify time (seconds) |
 | --- | ---: | ---: | ---: |
 | original | 451,131 | 108,733 | - |
-| uglify-js@3.0.23 mangle=false, compress=false | 316,600 | 85,245 | 0.73 |
-| uglify-js@3.0.23 mangle=true, compress=false | 220,216 | 72,730 | 1.21 |
-| Butternut 0.4.6 | 217,568 | 72,738 | 1.81 |
-| uglify-js@3.0.23 mangle=true, compress=true | 212,511 | 71,560 | 4.64 |
+| uglify-js@3.0.24 mangle=false, compress=false | 316,600 | 85,245 | 0.70 |
+| uglify-js@3.0.24 mangle=true, compress=false | 220,216 | 72,730 | 1.13 |
+| butternut@0.4.6 | 217,568 | 72,738 | 1.41 |
+| uglify-js@3.0.24 mangle=true, compress=true | 212,511 | 71,560 | 3.36 |
+| babili@0.1.4 | 210,713 | 72,140 | 12.64 |
 
 To enable fast minify mode from the CLI use:
 ```
