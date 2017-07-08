@@ -1,6 +1,7 @@
 typeof_eq_undefined: {
     options = {
-        comparisons: true
+        comparisons: true,
+        typeofs: true,
     }
     input: {
         var a = typeof b != "undefined";
@@ -24,6 +25,7 @@ typeof_eq_undefined_ie8: {
     options = {
         comparisons: true,
         ie8: true,
+        typeofs: true,
     }
     input: {
         var a = typeof b != "undefined";
@@ -45,7 +47,8 @@ typeof_eq_undefined_ie8: {
 
 undefined_redefined: {
     options = {
-        comparisons: true
+        comparisons: true,
+        typeofs: true,
     }
     input: {
         function f(undefined) {
@@ -58,7 +61,8 @@ undefined_redefined: {
 
 undefined_redefined_mangle: {
     options = {
-        comparisons: true
+        comparisons: true,
+        typeofs: true,
     }
     mangle = {}
     input: {

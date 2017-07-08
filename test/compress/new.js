@@ -98,3 +98,19 @@ new_with_assignement_expression: {
         new y([a, b] = [3, 4]);
     }
 }
+
+dot_parenthesis_1: {
+    input: {
+        console.log(new (Math.random().constructor) instanceof Number);
+    }
+    expect_exact: "console.log(new(Math.random().constructor)instanceof Number);"
+    expect_stdout: "true"
+}
+
+dot_parenthesis_2: {
+    input: {
+        console.log(typeof new function(){Math.random()}.constructor);
+    }
+    expect_exact: "console.log(typeof new function(){Math.random()}.constructor);"
+    expect_stdout: "function"
+}

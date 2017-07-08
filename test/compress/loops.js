@@ -480,3 +480,17 @@ do_switch: {
         } while (false);
     }
 }
+
+in_parenthesis_1: {
+    input: {
+        for (("foo" in {});0;);
+    }
+    expect_exact: 'for(("foo"in{});0;);'
+}
+
+in_parenthesis_2: {
+    input: {
+        for ((function(){ "foo" in {}; });0;);
+    }
+    expect_exact: 'for(function(){"foo"in{}};0;);'
+}
