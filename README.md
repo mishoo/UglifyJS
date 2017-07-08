@@ -1056,8 +1056,8 @@ in total it's a bit more than just using UglifyJS's own parser.
 
 ### Uglify Fast Minify Mode
 
-It's not well known, but variable and function name mangling accounts for
-95% of the size reduction in minified code for most javascript - not
+It's not well known, but whitespace removal and symbol mangling accounts
+for 95% of the size reduction in minified code for most javascript - not
 elaborate code transforms. One can simply disable `compress` to speed up
 Uglify builds by 3 to 4 times. In this fast `mangle`-only mode Uglify has
 comparable minify speeds and gzip sizes to
