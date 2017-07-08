@@ -659,3 +659,210 @@ accessor_this: {
     expect_exact: 'var a=1;var b={get this(){return a},set this(c){a=c}};console.log(b.this,b.this=2,b.this);'
     expect_stdout: "1 2 2"
 }
+
+issue_2208_1: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            p: function() {
+                return 42;
+            }
+        }.p());
+    }
+    expect: {
+        console.log(42);
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_2: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            a: 42,
+            p: function() {
+                return this.a;
+            }
+        }.p());
+    }
+    expect: {
+        console.log({
+            a: 42,
+            p: function() {
+                return this.a;
+            }
+        }.p());
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_3: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        a = 42;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect: {
+        a = 42;
+        console.log(function() {
+            return this.a;
+        }());
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_4: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        function foo() {}
+        console.log({
+            a: foo(),
+            p: function() {
+                return 42;
+            }
+        }.p());
+    }
+    expect: {
+        function foo() {}
+        console.log((foo(), function() {
+            return 42;
+        })());
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_5: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            p: "FAIL",
+            p: function() {
+                return 42;
+            }
+        }.p());
+    }
+    expect: {
+        console.log(42);
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_6: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            p: () => 42
+        }.p());
+    }
+    expect: {
+        console.log(42);
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+issue_2208_7: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            p() {
+                return 42;
+            }
+        }.p());
+    }
+    expect: {
+        console.log(42);
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+issue_2208_8: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            *p() {
+                return x();
+            }
+        }.p());
+        console.log({
+            async p() {
+                return await x();
+            }
+        }.p());
+    }
+    expect: {
+        console.log({
+            *p() {
+                return x();
+            }
+        }.p());
+        console.log(async function() {
+            return await x();
+        }());
+    }
+}
+
+issue_2208_9: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        a = 42;
+        console.log({
+            p: () => {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect: {
+        a = 42;
+        console.log(function() {
+            return this.a;
+        }());
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}

@@ -344,22 +344,26 @@ unsafe_constant: {
 
 unsafe_object: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: 1 };
         console.log(
-            ({a:1}) + 1,
-            ({a:1}).a + 1,
-            ({a:1}).b + 1,
-            ({a:1}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: 1 };
         console.log(
-            ({a:1}) + 1,
+            o + 1,
             2,
-            ({a:1}).b + 1,
+            o.b + 1,
             1..b + 1
         );
     }
@@ -368,22 +372,26 @@ unsafe_object: {
 
 unsafe_object_nested: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: { b: 1 } };
         console.log(
-            ({a:{b:1}}) + 1,
-            ({a:{b:1}}).a + 1,
-            ({a:{b:1}}).b + 1,
-            ({a:{b:1}}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: { b: 1 } };
         console.log(
-            ({a:{b:1}}) + 1,
-            ({a:{b:1}}).a + 1,
-            ({a:{b:1}}).b + 1,
+            o + 1,
+            o.a + 1,
+            o.b + 1,
             2
         );
     }
@@ -392,21 +400,25 @@ unsafe_object_nested: {
 
 unsafe_object_complex: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: { b: 1 }, b: 1 };
         console.log(
-            ({a:{b:1},b:1}) + 1,
-            ({a:{b:1},b:1}).a + 1,
-            ({a:{b:1},b:1}).b + 1,
-            ({a:{b:1},b:1}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: { b: 1 }, b: 1 };
         console.log(
-            ({a:{b:1},b:1}) + 1,
-            ({a:{b:1},b:1}).a + 1,
+            o + 1,
+            o.a + 1,
             2,
             2
         );
@@ -416,22 +428,26 @@ unsafe_object_complex: {
 
 unsafe_object_repeated: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
     }
     input: {
+        var o = { a: { b: 1 }, a: 1 };
         console.log(
-            ({a:{b:1},a:1}) + 1,
-            ({a:{b:1},a:1}).a + 1,
-            ({a:{b:1},a:1}).b + 1,
-            ({a:{b:1},a:1}).a.b + 1
+            o + 1,
+            o.a + 1,
+            o.b + 1,
+            o.a.b + 1
         );
     }
     expect: {
+        var o = { a: { b: 1 }, a: 1 };
         console.log(
-            ({a:{b:1},a:1}) + 1,
+            o + 1,
             2,
-            ({a:{b:1},a:1}).b + 1,
+            o.b + 1,
             1..b + 1
         );
     }
@@ -480,9 +496,9 @@ unsafe_function: {
     expect: {
         console.log(
             ({a:{b:1},b:function(){}}) + 1,
-            ({a:{b:1},b:function(){}}).a + 1,
-            ({a:{b:1},b:function(){}}).b + 1,
-            ({a:{b:1},b:function(){}}).a.b + 1
+            ({b:function(){}}, {b:1}) + 1,
+            ({a:{b:1}}, function(){}) + 1,
+            ({b:function(){}}, {b:1}).b + 1
         );
     }
     expect_stdout: true
@@ -730,8 +746,8 @@ unsafe_prototype_function: {
         var d = ({toString: 0}) + "";
         var e = (({valueOf: 0}) + "")[2];
         var f = (({toString: 0}) + "")[2];
-        var g = ({valueOf: 0}).valueOf();
-        var h = "" + ({toString: 0});
+        var g = ({}, 0)();
+        var h = ({}, 0)();
     }
 }
 
@@ -1161,4 +1177,76 @@ string_charCodeAt: {
         console.log(NaN);
     }
     expect_stdout: "NaN"
+}
+
+issue_2207_1: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(String.fromCharCode(65));
+        console.log(Math.max(3, 6, 2, 7, 3, 4));
+        console.log(Math.cos(1.2345));
+        console.log(Math.cos(1.2345) - Math.sin(4.321));
+        console.log(Math.pow(Math.PI, Math.E - Math.LN10));
+    }
+    expect: {
+        console.log("A");
+        console.log(7);
+        console.log(Math.cos(1.2345));
+        console.log(1.2543732512566947);
+        console.log(1.6093984514472044);
+    }
+    expect_stdout: true
+}
+
+issue_2207_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Math.E);
+        console.log(Math.LN10);
+        console.log(Math.LN2);
+        console.log(Math.LOG2E);
+        console.log(Math.LOG10E);
+        console.log(Math.PI);
+        console.log(Math.SQRT1_2);
+        console.log(Math.SQRT2);
+    }
+    expect: {
+        console.log(Math.E);
+        console.log(Math.LN10);
+        console.log(Math.LN2);
+        console.log(Math.LOG2E);
+        console.log(Math.LOG10E);
+        console.log(Math.PI);
+        console.log(Math.SQRT1_2);
+        console.log(Math.SQRT2);
+    }
+    expect_stdout: true
+}
+
+issue_2207_3: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Number.MAX_VALUE);
+        console.log(Number.MIN_VALUE);
+        console.log(Number.NaN);
+        console.log(Number.NEGATIVE_INFINITY);
+        console.log(Number.POSITIVE_INFINITY);
+    }
+    expect: {
+        console.log(Number.MAX_VALUE);
+        console.log(5e-324);
+        console.log(NaN);
+        console.log(-1/0);
+        console.log(1/0);
+    }
+    expect_stdout: true
 }

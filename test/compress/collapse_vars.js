@@ -2400,3 +2400,151 @@ issue_2187_3: {
     }
     expect_stdout: "1"
 }
+
+issue_2203_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, this)));
+            }
+        }.b());
+    }
+    expect: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, this)));
+            }
+        }.b());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2203_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        a = "PASS";
+        console.log({
+            a: "FAIL",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, function() {
+                    return this;
+                }())));
+            }
+        }.b());
+    }
+    expect: {
+        a = "PASS";
+        console.log({
+            a: "FAIL",
+            b: function() {
+                return function(c) {
+                    return (String, (Object, function() {
+                        return this;
+                    }())).a;
+                }();
+            }
+        }.b());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2203_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, (() => this)())));
+            }
+        }.b());
+    }
+    expect: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return function(c) {
+                    return c.a;
+                }((String, (Object, (() => this)())));
+            }
+        }.b());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_2203_4: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return (c => {
+                    return c.a;
+                })((String, (Object, (() => this)())));
+            }
+        }.b());
+    }
+    expect: {
+        a = "FAIL";
+        console.log({
+            a: "PASS",
+            b: function() {
+                return (c => {
+                    return (String, (Object, (() => this)())).a;
+                })();
+            }
+        }.b());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+duplicate_argname: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() { return "PASS"; }
+        console.log(function(a, a) {
+            f++;
+            return a;
+        }("FAIL", f()));
+    }
+    expect: {
+        function f() { return "PASS"; }
+        console.log(function(a, a) {
+            f++;
+            return a;
+        }("FAIL", f()));
+    }
+    expect_stdout: "PASS"
+}
