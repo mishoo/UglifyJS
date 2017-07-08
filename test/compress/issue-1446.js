@@ -71,5 +71,5 @@ undefined_redefined_mangle: {
             return typeof n == "undefined";
         }
     }
-    expect_exact: "function f(n){var r=1;return void 0===r}"
+    expect_exact: "function f(r){var n=1;return void 0===n}"
 }

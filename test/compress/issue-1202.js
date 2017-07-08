@@ -17,8 +17,8 @@ mangle_keep_fnames_false: {
     expect: {
         "use strict";
         function total() {
-            return function t(n, r, u) {
-                return n + r + u;
+            return function c(t, r, u) {
+                return t + r + u;
             };
         }
     }
