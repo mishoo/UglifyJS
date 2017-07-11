@@ -64,14 +64,13 @@ urls.forEach(function(url) {
         }).pipe(uglifyjs.stdin);
         uglifyjs.stdout.on("data", function(data) {
             results[url].output += data.length;
-        }).pipe(createHash("sha1")).on("data", function(data) {
-            results[url].sha1 = data.toString("hex");
-            done();
-        });
-        uglifyjs.stdout.pipe(zlib.createGzip({
+        }).pipe(zlib.createGzip({
             level: zlib.Z_BEST_COMPRESSION
         })).on("data", function(data) {
             results[url].gzip += data.length;
+        }).pipe(createHash("sha1")).on("data", function(data) {
+            results[url].sha1 = data.toString("hex");
+            done();
         });
         uglifyjs.stderr.setEncoding("utf8");
         uglifyjs.stderr.on("data", function(data) {
