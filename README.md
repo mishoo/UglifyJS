@@ -721,7 +721,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   compressor from discarding function names.  Useful for code relying on
   `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
-- `passes` -- default `1`. Number of times to run compress with a maximum of 3.
+- `passes` -- default `1`. The maximum number of times to run compress.
   In some cases more than one pass leads to further compressed code.  Keep in
   mind more passes will take more time.
 
