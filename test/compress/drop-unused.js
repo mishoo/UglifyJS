@@ -1090,6 +1090,7 @@ var_catch_toplevel: {
             a--;
             try {
                 a++;
+                x();
             } catch(a) {
                 if (a) var a;
                 var a = 10;
@@ -1099,9 +1100,8 @@ var_catch_toplevel: {
     }
     expect: {
         !function() {
-            a--;
             try {
-                a++;
+                x();
             } catch(a) {
                 var a;
             }
@@ -1152,4 +1152,90 @@ issue_2105: {
         })().prop();
     }
     expect_stdout: "PASS"
+}
+
+issue_2226_1: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f1() {
+            var a = b;
+            a += c;
+        }
+        function f2(a) {
+            a <<= b;
+        }
+        function f3(a) {
+            --a;
+        }
+        function f4() {
+            var a = b;
+            return a *= c;
+        }
+        function f5(a) {
+            x(a /= b);
+        }
+    }
+    expect: {
+        function f1() {
+            b;
+            c;
+        }
+        function f2(a) {
+            b;
+        }
+        function f3(a) {
+            0;
+        }
+        function f4() {
+            var a = b;
+            return a *= c;
+        }
+        function f5(a) {
+            x(a /= b);
+        }
+    }
+}
+
+issue_2226_2: {
+    options = {
+        cascade: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            a += b;
+            return a;
+        }(1, 2));
+    }
+    expect: {
+        console.log(function(a, b) {
+            return a += b;
+        }(1, 2));
+    }
+    expect_stdout: "3"
+}
+
+issue_2226_3: {
+    options = {
+        collapse_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            a += b;
+            return a;
+        }(1, 2));
+    }
+    expect: {
+        console.log(function(a, b) {
+            return a += 2;
+        }(1));
+    }
+    expect_stdout: "3"
 }
