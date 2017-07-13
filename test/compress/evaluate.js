@@ -1157,3 +1157,31 @@ issue_2207_3: {
     }
     expect_stdout: true
 }
+
+issue_2231_1: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Object.keys(void 0));
+    }
+    expect: {
+        console.log(Object.keys(void 0));
+    }
+    expect_stdout: true
+}
+
+issue_2231_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Object.getOwnPropertyNames(null));
+    }
+    expect: {
+        console.log(Object.getOwnPropertyNames(null));
+    }
+    expect_stdout: true
+}
