@@ -230,3 +230,82 @@ accessor: {
     }
     expect: {}
 }
+
+issue_2233_1: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        Array.isArray;
+        Boolean;
+        console.log;
+        Error.name;
+        Function.length;
+        Math.random;
+        Number.isNaN;
+        RegExp;
+        Object.defineProperty;
+        String.fromCharCode;
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+issue_2233_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var RegExp;
+        Array.isArray;
+        RegExp;
+        UndeclaredGlobal;
+        function foo() {
+            var Number;
+            AnotherUndeclaredGlobal;
+            Math.sin;
+            Number.isNaN;
+        }
+    }
+    expect: {
+        var RegExp;
+        UndeclaredGlobal;
+        function foo() {
+            var Number;
+            AnotherUndeclaredGlobal;
+            Number.isNaN;
+        }
+    }
+}
+
+issue_2233_3: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var RegExp;
+        Array.isArray;
+        RegExp;
+        UndeclaredGlobal;
+        function foo() {
+            var Number;
+            AnotherUndeclaredGlobal;
+            Math.sin;
+            Number.isNaN;
+        }
+    }
+    expect: {
+        UndeclaredGlobal;
+    }
+}
