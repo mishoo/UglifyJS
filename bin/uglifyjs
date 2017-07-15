@@ -35,11 +35,11 @@ else if (process.argv.indexOf("options") >= 0) program.helpInformation = functio
     }
     return text.join("\n");
 };
-program.option("-p, --parse <options>", "Specify parser options.", parse_js("parse", true));
-program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parse_js("compress", true));
-program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parse_js("mangle", true));
-program.option("--mangle-props [options]", "Mangle properties/specify mangler options.", parse_js("mangle-props", true));
-program.option("-b, --beautify [options]", "Beautify output/specify output options.", parse_js("beautify", true));
+program.option("-p, --parse <options>", "Specify parser options.", parse_js());
+program.option("-c, --compress [options]", "Enable compressor/specify compressor options.", parse_js());
+program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parse_js());
+program.option("--mangle-props [options]", "Mangle properties/specify mangler options.", parse_js());
+program.option("-b, --beautify [options]", "Beautify output/specify output options.", parse_js());
 program.option("-o, --output <file>", "Output file (default STDOUT).");
 program.option("--comments [filter]", "Preserve copyright comments in the output.");
 program.option("--config-file <file>", "Read minify() options from JSON file.");
@@ -310,7 +310,7 @@ function read_file(path, default_value) {
     }
 }
 
-function parse_js(flag, constants) {
+function parse_js(flag) {
     return function(value, options) {
         options = options || {};
         try {
@@ -328,7 +328,7 @@ function parse_js(flag, constants) {
                 if (node instanceof UglifyJS.AST_Assign) {
                     var name = node.left.print_to_string();
                     var value = node.right;
-                    if (!constants) {
+                    if (flag) {
                         options[name] = value;
                     } else if (value instanceof UglifyJS.AST_Array) {
                         options[name] = value.elements.map(to_string);
@@ -351,14 +351,18 @@ function parse_js(flag, constants) {
                 }
             }));
         } catch(ex) {
-            options[value] = null;
+            if (flag) {
+                fatal("Error parsing arguments for '" + flag + "': " + value);
+            } else {
+                options[value] = null;
+            }
         }
         return options;
     }
 }
 
 function parse_source_map() {
-    var parse = parse_js("sourceMap", true);
+    var parse = parse_js();
     return function(value, options) {
         var hasContent = options && "content" in options;
         var settings = parse(value, options);
