@@ -66,7 +66,7 @@ describe("bin/uglifyjs", function () {
             if (err) throw err;
 
             assert.strictEqual(stdout, "var bar=function(){function foo(bar){return bar}return foo}();\n" +
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DIn0=\n");
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==\n");
             done();
         });
     });
@@ -195,7 +195,7 @@ describe("bin/uglifyjs", function () {
 
             assert.strictEqual(stdout, [
                 "var bar=function(){function foo(bar){return bar}return foo}();",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DIn0=",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==",
                 "",
             ].join("\n"));
             assert.strictEqual(stderr, "WARN: inline source map not found\n");
@@ -686,8 +686,8 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
-    it("Should work with --mangle reserved=[]", function (done) {
-        var command = uglifyjscmd + ' test/input/issue-505/input.js -m reserved=[callback]';
+    it("Should work with --mangle reserved=[]", function(done) {
+        var command = uglifyjscmd + " test/input/issue-505/input.js -m reserved=[callback]";
 
         exec(command, function (err, stdout) {
             if (err) throw err;
@@ -696,13 +696,31 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
-    it("Should work with --mangle reserved=false", function (done) {
-        var command = uglifyjscmd + ' test/input/issue-505/input.js -m reserved=false';
+    it("Should work with --mangle reserved=false", function(done) {
+        var command = uglifyjscmd + " test/input/issue-505/input.js -m reserved=false";
 
         exec(command, function (err, stdout) {
             if (err) throw err;
 
             assert.strictEqual(stdout, 'function test(a){"aaaaaaaaaaaaaaaa";a(err,data);a(err,data)}\n');
+            done();
+        });
+    });
+    it("Should fail with --mangle-props reserved=[in]", function(done) {
+        var command = uglifyjscmd + " test/input/issue-505/input.js --mangle-props reserved=[in]";
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.ok(/^Supported options:\n[\s\S]*?\nERROR: `reserved=\[in]` is not a supported option/.test(stderr), stderr);
+            done();
+        });
+    });
+    it("Should fail with --define a-b", function(done) {
+        var command = uglifyjscmd + " test/input/issue-505/input.js --define a-b";
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr, "Error parsing arguments for 'define': a-b\n");
             done();
         });
     });

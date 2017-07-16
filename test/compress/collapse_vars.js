@@ -863,7 +863,7 @@ collapse_vars_unary: {
     input: {
         function f0(o, p) {
             var x = o[p];
-            delete x;
+            return delete x;
         }
         function f1(n) {
             var k = !!n;
@@ -893,7 +893,7 @@ collapse_vars_unary: {
     expect: {
         function f0(o, p) {
             var x = o[p];
-            delete x;
+            return delete x;
         }
         function f1(n) {
             return n > +!!n

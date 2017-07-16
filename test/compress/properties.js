@@ -13,8 +13,10 @@ keep_properties: {
 dot_properties: {
     options = {
         properties: true,
+    }
+    beautify = {
         ie8: true,
-    };
+    }
     input: {
         a["foo"] = "bar";
         a["if"] = "if";
@@ -36,8 +38,10 @@ dot_properties: {
 dot_properties_es5: {
     options = {
         properties: true,
+    }
+    beautify = {
         ie8: false,
-    };
+    }
     input: {
         a["foo"] = "bar";
         a["if"] = "if";
