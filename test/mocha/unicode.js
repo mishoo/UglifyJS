@@ -1,4 +1,5 @@
 var assert = require("assert");
+var semver = require("semver");
 var uglify = require("../node");
 
 describe("Unicode", function() {
@@ -138,8 +139,33 @@ describe("Unicode", function() {
 
     it("Should parse raw characters correctly", function() {
         var ast = uglify.parse('console.log("\\udbff");');
-        assert.strictEqual(ast.print_to_string(), 'console.log("\udbff");');
+        assert.strictEqual(ast.print_to_string(), 'console.log("\\udbff");');
         ast = uglify.parse(ast.print_to_string());
-        assert.strictEqual(ast.print_to_string(), 'console.log("\udbff");');
+        assert.strictEqual(ast.print_to_string(), 'console.log("\\udbff");');
     });
+
+    if (semver.satisfies(process.version, ">=4")) {
+        it("Should not unescape unpaired surrogates", function() {
+            var code = [];
+            for (var i = 0; i <= 0xFFFF; i++) {
+                code.push("\\u{" + i.toString(16) + "}");
+            }
+            code = '"' + code.join() + '"';
+            [true, false].forEach(function(ascii_only) {
+                [5, 6].forEach(function(ecma) {
+                    var result = uglify.minify(code, {
+                        compress: false,
+                        mangle: false,
+                        output: {
+                            ascii_only: ascii_only
+                        },
+                        ecma: ecma
+                    });
+                    if (result.error) throw result.error;
+                    assert.ok(code.length > result.code.length);
+                    assert.strictEqual(eval(code), eval(result.code));
+                });
+            });
+        });
+    }
 });
