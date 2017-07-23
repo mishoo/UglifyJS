@@ -147,7 +147,7 @@ describe("Unicode", function() {
     if (semver.satisfies(process.version, ">=4")) {
         it("Should not unescape unpaired surrogates", function() {
             var code = [];
-            for (var i = 0; i <= 0xFFFF; i++) {
+            for (var i = 0; i <= 0x20001; i++) {
                 code.push("\\u{" + i.toString(16) + "}");
             }
             code = '"' + code.join() + '"';
@@ -162,7 +162,7 @@ describe("Unicode", function() {
                         ecma: ecma
                     });
                     if (result.error) throw result.error;
-                    assert.ok(code.length > result.code.length);
+                    if (ecma > 5) assert.ok(code.length > result.code.length);
                     assert.strictEqual(eval(code), eval(result.code));
                 });
             });
