@@ -103,22 +103,6 @@ non_escape_2_non_escape: {
     expect_exact: 'var µþ="µþ";'
 }
 
-non_escape_2_half_escape1: {
-    beautify = {ascii_only: false, ascii_identifiers: true, ecma: 6}
-    input: {
-        var µþ = "µþ";
-    }
-    expect_exact: 'var \\u00b5\\u00fe="µþ";'
-}
-
-non_escape_2_half_escape2: {
-    beautify = {ascii_only: true, ascii_identifiers: false, ecma: 6}
-    input: {
-        var µþ = "µþ";
-    }
-    expect_exact: 'var µþ="\\xb5\\xfe";'
-}
-
 issue_2242_1: {
     beautify = {
         ascii_only: false,
