@@ -78,4 +78,41 @@ describe("String literals", function() {
         assert.equal(UglifyJS.parse('"use strict";"\\08"').print_to_string(), '"use strict";"\\08";');
         assert.equal(UglifyJS.parse('"use strict";"\\09"').print_to_string(), '"use strict";"\\09";');
     });
+
+    it("Should not unescape unpaired surrogates", function() {
+        var code = [];
+        for (var i = 0; i <= 0xF; i++) {
+            code.push("\\u000" + i.toString(16));
+        }
+        for (;i <= 0xFF; i++) {
+            code.push("\\u00" + i.toString(16));
+        }
+        for (;i <= 0xFFF; i++) {
+            code.push("\\u0" + i.toString(16));
+        }
+        for (; i <= 0xFFFF; i++) {
+            code.push("\\u" + i.toString(16));
+        }
+        code = '"' + code.join() + '"';
+        var normal = UglifyJS.minify(code, {
+            compress: false,
+            mangle: false,
+            output: {
+                ascii_only: false
+            }
+        });
+        if (normal.error) throw normal.error;
+        assert.ok(code.length > normal.code.length);
+        assert.strictEqual(eval(code), eval(normal.code));
+        var ascii = UglifyJS.minify(code, {
+            compress: false,
+            mangle: false,
+            output: {
+                ascii_only: false
+            }
+        });
+        if (ascii.error) throw ascii.error;
+        assert.ok(code.length > ascii.code.length);
+        assert.strictEqual(eval(code), eval(ascii.code));
+    });
 });
