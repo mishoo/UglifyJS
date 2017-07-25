@@ -2548,3 +2548,71 @@ duplicate_argname: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2250_1: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(x) {
+            if (x) {
+                const a = foo();
+                x(a);
+            }
+        }
+        function g(x) {
+            if (x) {
+                let a = foo();
+                x(a);
+            }
+        }
+        function h(x) {
+            if (x) {
+                var a = foo();
+                x(a);
+            }
+        }
+    }
+    expect: {
+        function f(x) {
+            x && x(foo());
+        }
+        function g(x) {
+            x && x(foo());
+        }
+        function h(x) {
+            x && x(foo());
+        }
+    }
+}
+
+issue_2250_2: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        {
+            const foo = function(){};
+            foo(bar());
+        }
+        {
+            let foo = function(){};
+            foo(bar());
+        }
+        {
+            var foo = function(){};
+            foo(bar());
+        }
+    }
+    expect: {
+        bar();
+        bar();
+        bar();
+    }
+}
