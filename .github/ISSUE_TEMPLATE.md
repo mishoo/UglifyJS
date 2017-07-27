@@ -8,7 +8,14 @@
 
 **Uglify version (`uglifyjs -V`)**
 
-**JavaScript input**  <!-- ideally as small as possible -->
+**JavaScript input**
+
+<!--
+    A complete parsable JS program exhibiting the issue with
+    UglifyJS alone - without third party tools or libraries.
+    Ideally the input should be as small as possible.
+    Post a link to a gist if necessary.
+-->
 
 **The `uglifyjs` CLI command executed or `minify()` options used.**
 
