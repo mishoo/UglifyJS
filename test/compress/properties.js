@@ -870,3 +870,37 @@ issue_2208_9: {
     expect_stdout: "42"
     node_version: ">=4"
 }
+
+methods_keep_quoted_true: {
+    options = {
+        arrows: true,
+        ecma: 6,
+    }
+    mangle_props = {
+        keep_quoted: true,
+    };
+    input: {
+        class C { "Quoted"(){} Unquoted(){} }
+        f1({ "Quoted"(){}, Unquoted(){}, "Prop": 3 });
+        f2({ "Quoted": function(){} });
+        f3({ "Quoted": ()=>{} });
+    }
+    expect_exact: "class C{Quoted(){}o(){}}f1({Quoted(){},o(){},Prop:3});f2({Quoted(){}});f3({Quoted(){}});"
+}
+
+methods_keep_quoted_false: {
+    options = {
+        arrows: true,
+        ecma: 6,
+    }
+    mangle_props = {
+        keep_quoted: false,
+    };
+    input: {
+        class C { "Quoted"(){} Unquoted(){} }
+        f1({ "Quoted"(){}, Unquoted(){}, "Prop": 3 });
+        f2({ "Quoted": function(){} });
+        f3({ "Quoted": ()=>{} });
+    }
+    expect_exact: "class C{o(){}d(){}}f1({o(){},d(){},e:3});f2({o(){}});f3({o(){}});"
+}
