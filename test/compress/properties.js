@@ -888,9 +888,11 @@ methods_keep_quoted_true: {
         arrows: true,
         ecma: 6,
     }
-    mangle_props = {
-        keep_quoted: true,
-    };
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
     input: {
         class C { "Quoted"(){} Unquoted(){} }
         f1({ "Quoted"(){}, Unquoted(){}, "Prop": 3 });
@@ -905,9 +907,11 @@ methods_keep_quoted_false: {
         arrows: true,
         ecma: 6,
     }
-    mangle_props = {
-        keep_quoted: false,
-    };
+    mangle = {
+        properties: {
+            keep_quoted: false,
+        },
+    }
     input: {
         class C { "Quoted"(){} Unquoted(){} }
         f1({ "Quoted"(){}, Unquoted(){}, "Prop": 3 });
@@ -915,6 +919,32 @@ methods_keep_quoted_false: {
         f3({ "Quoted": ()=>{} });
     }
     expect_exact: "class C{o(){}d(){}}f1({o(){},d(){},e:3});f2({o(){}});f3({o(){}});"
+}
+
+methods_keep_quoted_from_dead_code: {
+    options = {
+        arrows: true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        ecma: 6,
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
+    input: {
+        class C { Quoted(){} Unquoted(){} }
+        f1({ Quoted(){}, Unquoted(){}, "Prop": 3 });
+        f2({ Quoted: function(){} });
+        f3({ Quoted: ()=>{} });
+        0 && obj["Quoted"];
+    }
+    expect_exact: "class C{Quoted(){}o(){}}f1({Quoted(){},o(){},Prop:3});f2({Quoted(){}});f3({Quoted(){}});"
 }
 
 issue_2256: {
