@@ -111,18 +111,22 @@ function run_compress_tests() {
                 };
                 if (!options.warnings) options.warnings = true;
             }
+            if (test.mangle && test.mangle.properties && test.mangle.properties.keep_quoted) {
+                var quoted_props = test.mangle.properties.reserved;
+                if (!Array.isArray(quoted_props)) quoted_props = [];
+                test.mangle.properties.reserved = quoted_props;
+                U.reserve_quoted_keys(input, quoted_props);
+            }
             var cmp = new U.Compressor(options, true);
             var output = cmp.compress(input);
             output.figure_out_scope(test.mangle);
-            if (test.mangle || test.mangle_props) {
+            if (test.mangle) {
                 U.base54.reset();
                 output.compute_char_frequency(test.mangle);
-            }
-            if (test.mangle) {
                 output.mangle_names(test.mangle);
-            }
-            if (test.mangle_props) {
-                output = U.mangle_properties(output, test.mangle_props);
+                if (test.mangle.properties) {
+                    output = U.mangle_properties(output, test.mangle.properties);
+                }
             }
             output = make_code(output, output_options);
             if (expect != output) {
