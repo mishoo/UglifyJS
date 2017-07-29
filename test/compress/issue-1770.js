@@ -1,5 +1,7 @@
 mangle_props: {
-    mangle_props = {}
+    mangle = {
+        properties: true,
+    }
     input: {
         var obj = {
             undefined: 1,
@@ -54,10 +56,12 @@ mangle_props: {
 }
 
 numeric_literal: {
+    mangle = {
+        properties: true,
+    }
     beautify = {
         beautify: true,
     }
-    mangle_props = {}
     input: {
         var obj = {
             0: 0,
