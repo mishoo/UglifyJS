@@ -124,6 +124,17 @@ describe("minify", function() {
             assert.strictEqual(result.code,
                     'a["foo"]="bar",a.a="red",x={"bar":10};');
         });
+        it("Should not mangle quoted property within dead code", function() {
+            var result = Uglify.minify('({ "keep": 1 }); g.keep = g.change;', {
+                mangle: {
+                    properties: {
+                        keep_quoted: true
+                    }
+                }
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, "g.keep=g.g;");
+        });
     });
 
     describe("inSourceMap", function() {
