@@ -1,6 +1,8 @@
 dont_reuse_prop: {
-    mangle_props = {
-        regex: /asd/
+    mangle = {
+        properties: {
+            regex: /asd/,
+        },
     }
     input: {
         "aaaaaaaaaabbbbb";
@@ -20,8 +22,10 @@ dont_reuse_prop: {
 }
 
 unmangleable_props_should_always_be_reserved: {
-    mangle_props = {
-        regex: /asd/
+    mangle = {
+        properties: {
+            regex: /asd/,
+        },
     }
     input: {
         "aaaaaaaaaabbbbb";

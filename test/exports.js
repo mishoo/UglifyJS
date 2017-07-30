@@ -8,6 +8,7 @@ exports["defaults"] = defaults;
 exports["mangle_properties"] = mangle_properties;
 exports["minify"] = minify;
 exports["parse"] = parse;
+exports["reserve_quoted_keys"] = reserve_quoted_keys;
 exports["string_template"] = string_template;
 exports["tokenizer"] = tokenizer;
 exports["is_identifier"] = is_identifier;

@@ -128,9 +128,11 @@ evaluate_string_length: {
 }
 
 mangle_properties: {
-    mangle_props = {
-        keep_quoted: false
-    };
+    mangle = {
+        properties: {
+            keep_quoted: false,
+        },
+    }
     input: {
         a["foo"] = "bar";
         a.color = "red";
@@ -139,11 +141,11 @@ mangle_properties: {
         a['run']({color: "blue", foo: "baz"});
     }
     expect: {
-        a["o"] = "bar";
-        a.a = "red";
-        x = {r: 10};
-        a.b(x.r, a.o);
-        a['b']({a: "blue", o: "baz"});
+        a["a"] = "bar";
+        a.b = "red";
+        x = {o: 10};
+        a.r(x.o, a.a);
+        a['r']({b: "blue", a: "baz"});
     }
 }
 
@@ -151,9 +153,11 @@ mangle_unquoted_properties: {
     options = {
         properties: false
     }
-    mangle_props = {
-        builtins: true,
-        keep_quoted: true
+    mangle = {
+        properties: {
+            builtins: true,
+            keep_quoted: true,
+        },
     }
     beautify = {
         beautify: false,
@@ -182,24 +186,26 @@ mangle_unquoted_properties: {
         function f1() {
             a["foo"] = "bar";
             a.color = "red";
-            a.o = 2;
-            x = {"bar": 10, f: 7};
-            a.f = 9;
+            a.r = 2;
+            x = {"bar": 10, b: 7};
+            a.b = 9;
         }
         function f2() {
             a.foo = "bar";
             a['color'] = "red";
-            x = {bar: 10, f: 7};
-            a.f = 9;
-            a.o = 3;
+            x = {bar: 10, b: 7};
+            a.b = 9;
+            a.r = 3;
         }
     }
 }
 
 mangle_debug: {
-    mangle_props = {
-        debug: ""
-    };
+    mangle = {
+        properties: {
+            debug: "",
+        },
+    }
     input: {
         a.foo = "bar";
         x = { baz: "ban" };
@@ -211,9 +217,11 @@ mangle_debug: {
 }
 
 mangle_debug_true: {
-    mangle_props = {
-        debug: true
-    };
+    mangle = {
+        properties: {
+            debug: true,
+        },
+    }
     input: {
         a.foo = "bar";
         x = { baz: "ban" };
@@ -225,9 +233,11 @@ mangle_debug_true: {
 }
 
 mangle_debug_suffix: {
-    mangle_props = {
-        debug: "XYZ"
-    };
+    mangle = {
+        properties: {
+            debug: "XYZ",
+        },
+    }
     input: {
         a.foo = "bar";
         x = { baz: "ban" };
@@ -242,11 +252,13 @@ mangle_debug_suffix_keep_quoted: {
     options = {
         properties: false
     }
-    mangle_props = {
-        builtins: true,
-        keep_quoted: true,
-        debug: "XYZ",
-        reserved: []
+    mangle = {
+        properties: {
+            builtins: true,
+            debug: "XYZ",
+            keep_quoted: true,
+            reserved: [],
+        },
     }
     beautify = {
         beautify: false,
@@ -876,9 +888,11 @@ methods_keep_quoted_true: {
         arrows: true,
         ecma: 6,
     }
-    mangle_props = {
-        keep_quoted: true,
-    };
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
     input: {
         class C { "Quoted"(){} Unquoted(){} }
         f1({ "Quoted"(){}, Unquoted(){}, "Prop": 3 });
@@ -893,9 +907,11 @@ methods_keep_quoted_false: {
         arrows: true,
         ecma: 6,
     }
-    mangle_props = {
-        keep_quoted: false,
-    };
+    mangle = {
+        properties: {
+            keep_quoted: false,
+        },
+    }
     input: {
         class C { "Quoted"(){} Unquoted(){} }
         f1({ "Quoted"(){}, Unquoted(){}, "Prop": 3 });
@@ -903,4 +919,48 @@ methods_keep_quoted_false: {
         f3({ "Quoted": ()=>{} });
     }
     expect_exact: "class C{o(){}d(){}}f1({o(){},d(){},e:3});f2({o(){}});f3({o(){}});"
+}
+
+methods_keep_quoted_from_dead_code: {
+    options = {
+        arrows: true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        ecma: 6,
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
+    input: {
+        class C { Quoted(){} Unquoted(){} }
+        f1({ Quoted(){}, Unquoted(){}, "Prop": 3 });
+        f2({ Quoted: function(){} });
+        f3({ Quoted: ()=>{} });
+        0 && obj["Quoted"];
+    }
+    expect_exact: "class C{Quoted(){}o(){}}f1({Quoted(){},o(){},Prop:3});f2({Quoted(){}});f3({Quoted(){}});"
+}
+
+issue_2256: {
+    options = {
+        side_effects: true,
+    }
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
+    input: {
+        ({ "keep": 1 });
+        g.keep = g.change;
+    }
+    expect: {
+        g.keep = g.g;
+    }
 }

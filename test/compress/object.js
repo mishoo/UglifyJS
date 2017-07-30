@@ -284,9 +284,11 @@ concise_methods_with_various_property_names: {
 }
 
 concise_methods_and_mangle_props: {
-    mangle_props = {
-        regex: /_/
-    };
+    mangle = {
+        properties: {
+            regex: /_/,
+        },
+    }
     input: {
         function x() {
             obj = {
