@@ -325,3 +325,69 @@ issue_2120_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2254_1: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        "eeeeee";
+        try {
+            console.log(f("PASS"));
+        } catch (e) {}
+        function f(s) {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return s;
+            }
+        }
+    }
+    expect: {
+        "eeeeee";
+        try {
+            console.log(f("PASS"));
+        } catch (e) {}
+        function f(e) {
+            try {
+                throw "FAIL";
+            } catch (t) {
+                return e;
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2254_2: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        "eeeeee";
+        try {
+            console.log(f("PASS"));
+        } catch (e) {}
+        function f(s) {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return s;
+            }
+        }
+    }
+    expect: {
+        "eeeeee";
+        try {
+            console.log(f("PASS"));
+        } catch (e) {}
+        function f(t) {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return t;
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
