@@ -729,3 +729,31 @@ object_rest_spread: {
         const w = { a: 1, b: 2 }; console.log({ ...w, w: 0, ...{}, ...n, ...{ K: 9 } });
     }
 }
+
+object_spread_unsafe: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        join_vars: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        var o1 = { x: 1, y: 2 };
+        var o2 = { x: 3, z: 4 };
+        var cloned = { ...o1 };
+        var merged = { ...o1, ...o2 };
+        console.log(cloned, merged);
+    }
+    expect: {
+        var o = { x: 1, y: 2 }, l = { ...o }, x = { ...o, ...{ x: 3, z: 4 } };
+        console.log(l, x);
+    }
+}
