@@ -757,3 +757,50 @@ object_spread_unsafe: {
         console.log(l, x);
     }
 }
+
+array_spread_of_sequence: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        var a = [1];
+        console.log([...(a, a)]);
+        console.log([...a, a]);
+        console.log([...(a || a)]);
+        console.log([...a || a]);
+    }
+    expect: {
+        var o = [1];
+        console.log([...(o, o)]);
+        console.log([...o, o]);
+        console.log([...o || o]);
+        console.log([...o || o]);
+    }
+    expect_stdout: [
+        "[ 1 ]",
+        "[ 1, [ 1 ] ]",
+        "[ 1 ]",
+        "[ 1 ]",
+    ]
+    node_version: ">=6"
+}
+
+object_spread_of_sequence: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        var a = {x: 1};
+        console.log({ ...(a, a) });
+        console.log({ ...a, a });
+        console.log({ ...(a || a) });
+        console.log({ ...a || a });
+    }
+    expect: {
+        var o = { x: 1 };
+        console.log({ ...(o, o) });
+        console.log({ ...o, a: o });
+        console.log({ ...o || o });
+        console.log({ ...o || o });
+    }
+}
