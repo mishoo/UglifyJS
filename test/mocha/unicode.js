@@ -146,6 +146,7 @@ describe("Unicode", function() {
 
     if (semver.satisfies(process.version, ">=4")) {
         it("Should not unescape unpaired surrogates", function() {
+            this.timeout(5000);
             var code = [];
             for (var i = 0; i <= 0x20001; i++) {
                 code.push("\\u{" + i.toString(16) + "}");
