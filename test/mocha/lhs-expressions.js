@@ -253,13 +253,19 @@ describe("Left-hand side expressions", function () {
         // Multiple spreads are not allowed in destructuring array
         expect("[...a, ...b] = [1, 2, 3, 4]", "Spread must the be last element in destructuring array");
 
+        // Array spread must be last in destructuring declaration
+        expect("let [ ...x, a ] = o;", "Rest element must be last element");
+
+        // Only one spread per destructuring array declaration
+        expect("let [ a, ...x, ...y ] = o;", "Rest element must be last element");
+
         // Spread in block should not be allowed
         expect("{...a} = foo", "Unexpected token: expand (...)");
 
         // Object spread must be last in destructuring declaration
-        expect("let { ...x, a } = o;", "Unexpected token: punc (,)");
+        expect("let { ...x, a } = o;", "Rest element must be last element");
 
         // Only one spread per destructuring declaration
-        expect("let { a, ...x, ...y } = o;", "Unexpected token: punc (,)");
+        expect("let { a, ...x, ...y } = o;", "Rest element must be last element");
     });
 });
