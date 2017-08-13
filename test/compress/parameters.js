@@ -142,11 +142,11 @@ destructuring_arguments_3: {
     }
     input: {
         function fn3({x: {y: {z: {} = 42}}}) {}
-        const { cover = (function () {}), xCover = (0, function() {})  } = {};
-        let { cover = (function () {}), xCover = (0, function() {})  } = {};
-        var { cover = (function () {}), xCover = (0, function() {})  } = {};
+        const { a = (function () {}), b = (0, function() {})  } = {};
+        let { c = (function () {}), d = (0, function() {})  } = {};
+        var { e = (function () {}), f = (0, function() {})  } = {};
     }
-    expect_exact: "function fn3({x:{y:{z:{}=42}}}){}const{cover=function(){},xCover=(0,function(){})}={};let{cover=function(){},xCover=(0,function(){})}={};var{cover=function(){},xCover=(0,function(){})}={};"
+    expect_exact: "function fn3({x:{y:{z:{}=42}}}){}const{a=function(){},b=(0,function(){})}={};let{c=function(){},d=(0,function(){})}={};var{e=function(){},f=(0,function(){})}={};"
 }
 
 default_arguments: {
