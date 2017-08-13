@@ -385,3 +385,76 @@ set_mutable_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2265_1: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        ({ ...{} }).p;
+        ({ ...g }).p;
+    }
+    expect: {
+        ({ ...g }).p;
+    }
+}
+
+issue_2265_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = {
+            get b() {
+                throw 0;
+            }
+        };
+        ({...a}).b;
+    }
+    expect: {
+        var a = {
+            get b() {
+                throw 0;
+            }
+        };
+        ({...a}).b;
+    }
+}
+
+issue_2265_3: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = {
+            set b() {
+                throw 0;
+            }
+        };
+        ({...a}).b;
+    }
+    expect: {}
+}
+
+issue_2265_4: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = { b: 1 };
+        ({...a}).b;
+    }
+    expect: {}
+}
