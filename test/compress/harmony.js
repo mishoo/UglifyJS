@@ -211,13 +211,13 @@ export_statement: {
     }
     input: {
         export default 1 + 2;
-        export var foo = 4;
-        export let foo = 6;
-        export const foo = 6;
-        export function foo() {};
-        export class foo { };
+        export var a = 4;
+        export let b = 6;
+        export const c = 6;
+        export function d() {};
+        export class e {};
     }
-    expect_exact: "export default 3;export var foo=4;export let foo=6;export const foo=6;export function foo(){};export class foo{};"
+    expect_exact: "export default 3;export var a=4;export let b=6;export const c=6;export function d(){};export class e{};"
 }
 
 export_default_object_expression: {

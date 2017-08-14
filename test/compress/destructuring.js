@@ -65,10 +65,10 @@ nested_destructuring_objects: {
     }
     input: {
         const [{a},b] = c;
-        let [{a},b] = c;
-        var [{a},b] = c;
+        let [{d},e] = f;
+        var [{g},h] = i;
     }
-    expect_exact: 'const[{a},b]=c;let[{a},b]=c;var[{a},b]=c;';
+    expect_exact: 'const[{a},b]=c;let[{d},e]=f;var[{g},h]=i;';
 }
 
 destructuring_constdef_in_loops: {
@@ -274,8 +274,8 @@ reduce_vars: {
         var {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};
         ({aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}});
         const [{a},b] = c;
-        let [{a},b] = c;
-        var [{a},b] = c;
+        let [{d},e] = f;
+        var [{g},h] = i;
         [{a},b] = c;
         for (const [x,y] in pairs);
         for (let [x,y] in pairs);
@@ -292,8 +292,8 @@ reduce_vars: {
         var {aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}};
         ({aa, bb: {cc, dd}} = {aa:1, bb: {cc:2, dd: 3}});
         const [{a},b] = c;
-        let [{a},b] = c;
-        var [{a},b] = c;
+        let [{d},e] = f;
+        var [{g},h] = i;
         [{a},b] = c;
         for (const [x,y] in pairs);
         for (let [x,y] in pairs);

@@ -291,4 +291,34 @@ describe("minify", function() {
             assert.strictEqual(result.code, "alert({bar:42});");
         });
     });
+
+    describe("duplicated block-scoped declarations", function() {
+        [
+            "let a=1;let a=2;",
+            "let a=1;var a=2;",
+            "var a=1;let a=2;",
+            "let[a]=[1];var a=2;",
+            "let a=1;var[a]=[2];",
+            "let[a]=[1];var[a]=[2];",
+            "const a=1;const a=2;",
+            "const a=1;var a=2;",
+            "var a=1;const a=2;",
+            "const[a]=[1];var a=2;",
+            "const a=1;var[a]=[2];",
+            "const[a]=[1];var[a]=[2];",
+        ].forEach(function(code) {
+            it(code, function() {
+                var result = Uglify.minify(code, {
+                    compress: false,
+                    mangle: false
+                });
+                assert.strictEqual(result.error, undefined);
+                assert.strictEqual(result.code, code);
+                result = Uglify.minify(code);
+                var err = result.error;
+                assert.ok(err instanceof Error);
+                assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: a redeclared");
+            });
+        });
+    });
 });
