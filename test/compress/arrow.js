@@ -629,5 +629,4 @@ issue_2271: {
         new Foo().set("PASS").print();
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
 }
