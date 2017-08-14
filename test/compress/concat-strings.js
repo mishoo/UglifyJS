@@ -21,7 +21,7 @@ concat_1: {
         var c = 1 + x() + 2 + "boo";
         var d = 1 + x() + 2 + 3 + "boo";
         var e = 1 + x() + 2 + "X3boo";
-        var f = "\x00360\08\0";
+        var f = "\x00360\x008\0";
     }
 }
 
