@@ -36,9 +36,10 @@ compress_new_function_with_destruct: {
 compress_new_function_with_destruct_arrows: {
     options = {
         arrows: true,
+        unsafe_arrows: true,
         unsafe: true,
         unsafe_Func: true,
-        ecma: 6
+        ecma: 6,
     }
     beautify = {
         ecma: 6
@@ -49,8 +50,8 @@ compress_new_function_with_destruct_arrows: {
         new Function("[[aa]], [{bb}]", 'return aa;');
     }
     expect: {
-        Function("n,[r]", "return n");
-        Function("n,{bb:b}", "return n");
-        Function("[[n]],[{bb:b}]", "return n");
+        Function("n,[a]", "return n");
+        Function("b,{bb:n}", "return b");
+        Function("[[b]],[{bb:n}]", "return b");
     }
 }
