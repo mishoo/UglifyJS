@@ -36,9 +36,10 @@ compress_new_function_with_destruct: {
 compress_new_function_with_destruct_arrows: {
     options = {
         arrows: true,
+        unsafe_arrows: true,
         unsafe: true,
         unsafe_Func: true,
-        ecma: 6
+        ecma: 6,
     }
     beautify = {
         ecma: 6

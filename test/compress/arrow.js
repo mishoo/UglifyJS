@@ -213,7 +213,7 @@ no_leading_parentheses: {
 
 async_identifiers: {
     options = {
-        arrows: true,
+        unsafe_arrows: true,
         ecma: 6,
     }
     input: {
@@ -237,7 +237,7 @@ async_identifiers: {
 
 async_function_expression: {
     options = {
-        arrows: true,
+        unsafe_arrows: true,
         ecma: 6,
         evaluate: true,
         side_effects: true,
@@ -262,7 +262,7 @@ async_function_expression: {
 
 issue_27: {
     options = {
-        arrows: true,
+        unsafe_arrows: true,
         collapse_vars: true,
         ecma: 6,
         unused: true,
@@ -283,7 +283,7 @@ issue_27: {
 
 issue_2105_1: {
     options = {
-        arrows: true,
+        unsafe_arrows: true,
         collapse_vars: true,
         ecma: 6,
         inline: true,
@@ -501,7 +501,7 @@ issue_485_crashing_1530: {
 
 issue_2084: {
     options = {
-        arrows: true,
+        unsafe_arrows: true,
         collapse_vars: true,
         conditionals: true,
         ecma: 6,
@@ -577,6 +577,7 @@ concise_methods_with_computed_property2: {
 async_object_literal: {
     options = {
         arrows: true,
+        unsafe_arrows: true,
         ecma: 6,
         evaluate: true,
     }
@@ -596,4 +597,36 @@ async_object_literal: {
             anon: async () => await foo(2)
         };
     }
+}
+
+issue_2271: {
+    options = {
+        arrows: true,
+        ecma: 6,
+        evaluate: true,
+        unsafe_arrows: false,
+    }
+    input: {
+        var Foo = function() {};
+        Foo.prototype.set = function(value) {
+            this.value = value;
+            return this;
+        }
+        Foo.prototype.print = function() {
+            console.log(this.value);
+        }
+        new Foo().set("PASS").print();
+    }
+    expect: {
+        var Foo = function() {};
+        Foo.prototype.set = function(value) {
+            this.value = value;
+            return this;
+        }
+        Foo.prototype.print = function() {
+            console.log(this.value);
+        }
+        new Foo().set("PASS").print();
+    }
+    expect_stdout: "PASS"
 }

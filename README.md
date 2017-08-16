@@ -646,9 +646,16 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `evaluate` -- attempt to evaluate constant expressions
 
-- `arrows` (default `true`) -- convert ES5 style anonymous function expressions
-  to arrow functions if permissible by language semantics.
-  Note: `arrows` requires that the `ecma` compress option is set to `6` or greater.
+- `arrows` (default `true`) -- Converts `()=>{return x}` to `()=>x`. Class
+  and object literal methods will also be converted to arrow expressions if
+  the resultant code is shorter: `m(){return x}` becomes `m:()=>x`.
+  This transform requires that the `ecma` compress option is set to `6` or greater.
+
+- `unsafe_arrows` (default `false`) -- Convert ES5 style anonymous function
+  expressions to arrow functions if the function body does not reference `this`.
+  Note: it is not always safe to perform this conversion if code relies on the
+  the function having a `prototype`, which arrow functions lack.
+  This transform requires that the `ecma` compress option is set to `6` or greater.
 
 - `booleans` -- various optimizations for boolean context, for example `!!a
   ? b : c → a ? b : c`
