@@ -64,6 +64,13 @@ a double dash to prevent input files being used as option arguments:
                                               not used.
     -m, --mangle [options]      Mangle names/specify mangler options:
                                 `reserved`  List of names that should not be mangled.
+                                `cache` Boolean for cache determination.
+                                `eval` Boolean for mangling `eval` statements.
+                                `ie8` Mangle support for ie8.
+                                `keep_fnames` Keep function names.
+                                `properties` Mangle properties.
+                                `safari10` Boolean flag used to bypass Safari 10 `let` bug.
+                                `toplevel` Boolean flag to determine toplevel.                                
     --mangle-props [options]    Mangle properties/specify mangler options:
                                 `builtins`  Mangle property names that overlaps
                                             with standard JavaScript globals.
@@ -745,9 +752,16 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
   [compress option](#compress-options).
 
-- `eval` (default `false`). Pass `true` to mangle names visible in scopes
-  where `eval` or `with` are used.
+- `cache` (default `false`). Boolean for cache determination.
 
+- `eval` (default `false`). Pass `true` to mangle names visible in scopes where `eval` or `with` are used.
+
+- `ie8` (default `false`). Mangle support for ie8.
+
+- `properties` (default `false`). Mangle properties.
+
+- `safari10` (default `false`). Boolean flag used to bypass Safari 10 `let` bug.
+                                
 Examples:
 
 ```javascript
