@@ -213,7 +213,7 @@ When mangling is enabled but you want to prevent certain names from being
 mangled, you can declare those names with `--mangle reserved` — pass a
 comma-separated list of names.  For example:
 
-    uglifyjs ... -m reserved=[$,require,exports]
+    uglifyjs ... -m reserved=['$','require','exports']
 
 to prevent the `require`, `exports` and `$` names from being changed.
 
