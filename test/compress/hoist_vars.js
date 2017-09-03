@@ -88,3 +88,24 @@ sequences_funs: {
         }
     }
 }
+
+issue_2295: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+    }
+    input: {
+        function foo(o) {
+            var a = o.a;
+            if (a) return a;
+            var a = 1;
+        }
+    }
+    expect: {
+        function foo(o) {
+            var a = o.a;
+            if (a) return a;
+            a = 1;
+        }
+    }
+}
