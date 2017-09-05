@@ -1,4 +1,4 @@
-**Bug report or feature request?** 
+**Bug report, feature request or question?** 
 
 <!-- Note: sub-optimal but correct code is not a bug -->
 
