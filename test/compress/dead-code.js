@@ -241,6 +241,7 @@ issue_2233_1: {
         Array.isArray;
         Boolean;
         console.log;
+        Date;
         Error.name;
         Function.length;
         Math.random;
