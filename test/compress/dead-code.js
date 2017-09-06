@@ -240,8 +240,6 @@ issue_2233_1: {
     input: {
         Array.isArray;
         Boolean;
-        //clearInterval;
-        //clearTimeout;
         console.log;
         Date;
         decodeURI;
@@ -265,8 +263,6 @@ issue_2233_1: {
         String.fromCharCode;
         RangeError;
         ReferenceError;
-        //setInterval;
-        //setTimeout;
         SyntaxError;
         TypeError;
         unescape;
@@ -274,6 +270,23 @@ issue_2233_1: {
     }
     expect: {}
     expect_stdout: true
+}
+
+global_timeout_and_interval_symbols: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        // These global symbols do not exist in the test sandbox
+        // and must be tested separately.
+        clearInterval;
+        clearTimeout;
+        setInterval;
+        setTimeout;
+    }
+    expect: {}
 }
 
 issue_2233_2: {
