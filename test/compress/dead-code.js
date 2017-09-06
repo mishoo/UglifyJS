@@ -240,22 +240,36 @@ issue_2233_1: {
     input: {
         Array.isArray;
         Boolean;
+        //clearInterval;
+        //clearTimeout;
         console.log;
         Date;
+        decodeURI;
+        decodeURIComponent;
+        encodeURI;
+        encodeURIComponent;
         Error.name;
+        escape;
+        eval;
         EvalError;
         Function.length;
+        isFinite;
+        isNaN;
         JSON;
         Math.random;
         Number.isNaN;
+        parseFloat;
         parseInt;
         RegExp;
         Object.defineProperty;
         String.fromCharCode;
         RangeError;
         ReferenceError;
+        //setInterval;
+        //setTimeout;
         SyntaxError;
         TypeError;
+        unescape;
         URIError;
     }
     expect: {}
