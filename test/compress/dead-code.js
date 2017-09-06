@@ -243,12 +243,20 @@ issue_2233_1: {
         console.log;
         Date;
         Error.name;
+        EvalError;
         Function.length;
+        JSON;
         Math.random;
         Number.isNaN;
+        parseInt;
         RegExp;
         Object.defineProperty;
         String.fromCharCode;
+        RangeError;
+        ReferenceError;
+        SyntaxError;
+        TypeError;
+        URIError;
     }
     expect: {}
     expect_stdout: true
