@@ -241,16 +241,52 @@ issue_2233_1: {
         Array.isArray;
         Boolean;
         console.log;
+        Date;
+        decodeURI;
+        decodeURIComponent;
+        encodeURI;
+        encodeURIComponent;
         Error.name;
+        escape;
+        eval;
+        EvalError;
         Function.length;
+        isFinite;
+        isNaN;
+        JSON;
         Math.random;
         Number.isNaN;
+        parseFloat;
+        parseInt;
         RegExp;
         Object.defineProperty;
         String.fromCharCode;
+        RangeError;
+        ReferenceError;
+        SyntaxError;
+        TypeError;
+        unescape;
+        URIError;
     }
     expect: {}
     expect_stdout: true
+}
+
+global_timeout_and_interval_symbols: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        // These global symbols do not exist in the test sandbox
+        // and must be tested separately.
+        clearInterval;
+        clearTimeout;
+        setInterval;
+        setTimeout;
+    }
+    expect: {}
 }
 
 issue_2233_2: {
