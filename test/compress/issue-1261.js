@@ -96,6 +96,13 @@ pure_function_calls_toplevel: {
             })();
         })();
 
+        // pure top-level calls will be dropped regardless of the leading comments position
+        var MyClass = /*#__PURE__*//*@class*/(function(){
+            function MyClass() {}
+            MyClass.prototype.method = function() {};
+            return MyClass;
+        })();
+
         // comment #__PURE__ comment
         bar(), baz(), quux();
         a.b(), /* @__PURE__ */ c.d.e(), f.g();
@@ -110,10 +117,12 @@ pure_function_calls_toplevel: {
         "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:92,37]",
         "WARN: Dropping unused variable iife2 [test/compress/issue-1261.js:92,16]",
         "WARN: Dropping side-effect-free statement [test/compress/issue-1261.js:90,8]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:100,8]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:101,31]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:107,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:108,31]",
         "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:84,33]",
         "WARN: Dropping unused variable iife1 [test/compress/issue-1261.js:84,12]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:100,45]",
+        "WARN: Dropping unused variable MyClass [test/compress/issue-1261.js:100,12]",
     ]
 }
 
@@ -148,29 +157,29 @@ should_warn: {
         baz();
     }
     expect_warnings: [
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:128,61]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:128,23]",
-        "WARN: Dropping side-effect-free statement [test/compress/issue-1261.js:128,23]",
-        "WARN: Boolean || always true [test/compress/issue-1261.js:129,23]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:129,23]",
-        "WARN: Condition always true [test/compress/issue-1261.js:129,23]",
-        "WARN: Condition left of || always true [test/compress/issue-1261.js:130,8]",
-        "WARN: Condition always true [test/compress/issue-1261.js:130,8]",
-        "WARN: Boolean && always false [test/compress/issue-1261.js:131,23]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:131,23]",
-        "WARN: Condition always false [test/compress/issue-1261.js:131,23]",
-        "WARN: Condition left of && always false [test/compress/issue-1261.js:132,8]",
-        "WARN: Condition always false [test/compress/issue-1261.js:132,8]",
-        "WARN: + in boolean context always true [test/compress/issue-1261.js:133,23]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:133,23]",
-        "WARN: Condition always true [test/compress/issue-1261.js:133,23]",
-        "WARN: + in boolean context always true [test/compress/issue-1261.js:134,8]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:134,31]",
-        "WARN: Condition always true [test/compress/issue-1261.js:134,8]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:135,23]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:136,24]",
-        "WARN: Condition always true [test/compress/issue-1261.js:136,8]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:137,31]",
-        "WARN: Condition always false [test/compress/issue-1261.js:137,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:137,61]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:137,23]",
+        "WARN: Dropping side-effect-free statement [test/compress/issue-1261.js:137,23]",
+        "WARN: Boolean || always true [test/compress/issue-1261.js:138,23]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:138,23]",
+        "WARN: Condition always true [test/compress/issue-1261.js:138,23]",
+        "WARN: Condition left of || always true [test/compress/issue-1261.js:139,8]",
+        "WARN: Condition always true [test/compress/issue-1261.js:139,8]",
+        "WARN: Boolean && always false [test/compress/issue-1261.js:140,23]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:140,23]",
+        "WARN: Condition always false [test/compress/issue-1261.js:140,23]",
+        "WARN: Condition left of && always false [test/compress/issue-1261.js:141,8]",
+        "WARN: Condition always false [test/compress/issue-1261.js:141,8]",
+        "WARN: + in boolean context always true [test/compress/issue-1261.js:142,23]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:142,23]",
+        "WARN: Condition always true [test/compress/issue-1261.js:142,23]",
+        "WARN: + in boolean context always true [test/compress/issue-1261.js:143,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:143,31]",
+        "WARN: Condition always true [test/compress/issue-1261.js:143,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:144,23]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:145,24]",
+        "WARN: Condition always true [test/compress/issue-1261.js:145,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:146,31]",
+        "WARN: Condition always false [test/compress/issue-1261.js:146,8]",
     ]
 }
