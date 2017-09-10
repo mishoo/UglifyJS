@@ -148,19 +148,19 @@ debugging your compressed JavaScript.  To get a source map, pass
 
 Additional options:
 
-- `--source-map filename=<NAME>` to specify the name of the source map.
+- `--source-map "filename='<NAME>'"` to specify the name of the source map.
 
-- `--source-map root=<URL>` to pass the URL where the original files can be found.
+- `--source-map "root='<URL>'"` to pass the URL where the original files can be found.
   Otherwise UglifyJS assumes HTTP `X-SourceMap` is being used and will omit the
   `//# sourceMappingURL=` directive.
 
-- `--source-map url=<URL>` to specify the URL where the source map can be found.
+- `--source-map "url='<URL>'"` to specify the URL where the source map can be found.
 
 For example:
 
     uglifyjs js/file1.js js/file2.js \
              -o foo.min.js -c -m \
-             --source-map root="http://foo.com/src",url=foo.min.js.map
+             --source-map "root='http://foo.com/src',url='foo.min.js.map'"
 
 The above will compress and mangle `file1.js` and `file2.js`, will drop the
 output in `foo.min.js` and the source map in `foo.min.js.map`.  The source
@@ -179,8 +179,8 @@ CoffeeScript → compiled JS, UglifyJS can generate a map from CoffeeScript →
 compressed JS by mapping every token in the compiled JS to its original
 location.
 
-To use this feature pass `--source-map content="/path/to/input/source.map"`
-or `--source-map content=inline` if the source map is included inline with
+To use this feature pass `--source-map "content='/path/to/input/source.map'"`
+or `--source-map "content=inline"` if the source map is included inline with
 the sources.
 
 ## CLI compress options
@@ -211,7 +211,7 @@ When mangling is enabled but you want to prevent certain names from being
 mangled, you can declare those names with `--mangle reserved` — pass a
 comma-separated list of names.  For example:
 
-    uglifyjs ... -m reserved=[$,require,exports]
+    uglifyjs ... -m reserved=['$','require','exports']
 
 to prevent the `require`, `exports` and `$` names from being changed.
 

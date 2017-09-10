@@ -388,16 +388,52 @@ issue_2233_1: {
         Array.isArray;
         Boolean;
         console.log;
+        Date;
+        decodeURI;
+        decodeURIComponent;
+        encodeURI;
+        encodeURIComponent;
         Error.name;
+        escape;
+        eval;
+        EvalError;
         Function.length;
+        isFinite;
+        isNaN;
+        JSON;
         Math.random;
         Number.isNaN;
+        parseFloat;
+        parseInt;
         RegExp;
         Object.defineProperty;
         String.fromCharCode;
+        RangeError;
+        ReferenceError;
+        SyntaxError;
+        TypeError;
+        unescape;
+        URIError;
     }
     expect: {}
     expect_stdout: true
+}
+
+global_timeout_and_interval_symbols: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        // These global symbols do not exist in the test sandbox
+        // and must be tested separately.
+        clearInterval;
+        clearTimeout;
+        setInterval;
+        setTimeout;
+    }
+    expect: {}
 }
 
 issue_2233_2: {
@@ -455,4 +491,72 @@ issue_2233_3: {
     expect: {
         UndeclaredGlobal;
     }
+}
+
+global_fns: {
+    options = {
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        Boolean(1, 2);
+        decodeURI(1, 2);
+        decodeURIComponent(1, 2);
+        Date(1, 2);
+        encodeURI(1, 2);
+        encodeURIComponent(1, 2);
+        Error(1, 2);
+        escape(1, 2);
+        EvalError(1, 2);
+        isFinite(1, 2);
+        isNaN(1, 2);
+        Number(1, 2);
+        Object(1, 2);
+        parseFloat(1, 2);
+        parseInt(1, 2);
+        RangeError(1, 2);
+        ReferenceError(1, 2);
+        String(1, 2);
+        SyntaxError(1, 2);
+        TypeError(1, 2);
+        unescape(1, 2);
+        URIError(1, 2);
+        try {
+            Function(1, 2);
+        } catch (e) {
+            console.log(e.name);
+        }
+        try {
+            RegExp(1, 2);
+        } catch (e) {
+            console.log(e.name);
+        }
+        try {
+            Array(NaN);
+        } catch (e) {
+            console.log(e.name);
+        }
+    }
+    expect: {
+        try {
+            Function(1, 2);
+        } catch (e) {
+            console.log(e.name);
+        }
+        try {
+            RegExp(1, 2);
+        } catch (e) {
+            console.log(e.name);
+        }
+        try {
+            Array(NaN);
+        } catch (e) {
+            console.log(e.name);
+        }
+    }
+    expect_stdout: [
+        "SyntaxError",
+        "SyntaxError",
+        "RangeError",
+    ]
 }

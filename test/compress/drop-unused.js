@@ -1513,3 +1513,25 @@ issue_2226_3: {
     }
     expect_stdout: "3"
 }
+
+issue_2288: {
+    options = {
+        unused: true,
+    }
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        function foo(o) {
+            for (var j = o.a, i = 0; i < 0; i++);
+            for (var i = 0; i < 0; i++);
+        }
+    }
+    expect: {
+        function foo(o) {
+            o.a;
+            for (i = 0; i < 0; i++);
+            for (var i = 0; i < 0; i++);
+        }
+    }
+}
