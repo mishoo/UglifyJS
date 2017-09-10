@@ -2616,3 +2616,45 @@ issue_2250_2: {
         bar();
     }
 }
+
+issue_2298: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function f() {
+                var a = undefined;
+                var undefined = a++;
+                try {
+                    !function g(b) {
+                        b[1] = "foo";
+                    }();
+                    console.log("FAIL");
+                } catch (e) {
+                    console.log("PASS");
+                }
+            }
+            f();
+        }();
+    }
+    expect: {
+        !function() {
+            (function() {
+                var a = undefined;
+                var undefined = a++;
+                try {
+                    !function(b) {
+                        (void 0)[1] = "foo";
+                    }();
+                    console.log("FAIL");
+                } catch (e) {
+                    console.log("PASS");
+                }
+            })();
+        }();
+    }
+    expect_stdout: "PASS"
+}
