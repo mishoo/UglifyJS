@@ -573,6 +573,25 @@ describe("bin/uglifyjs", function () {
             return JSON.stringify(map).replace(/"/g, '\\"');
         }
     });
+    it("Should include function calls in source map", function(done) {
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-2310/input.js",
+            "-c",
+            "--source-map", "url=inline",
+        ].join(" ");
+
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, [
+                'function foo(){return function(){console.log("PASS")}}foo()();',
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMjMxMC9pbnB1dC5qcyJdLCJuYW1lcyI6WyJmb28iLCJjb25zb2xlIiwibG9nIiwiZiJdLCJtYXBwaW5ncyI6IkFBQUEsU0FBU0EsTUFDTCxPQUFPLFdBQ0hDLFFBQVFDLElBQUksU0FLUkYsS0FDUkcifQ==",
+                ""
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should dump AST as JSON", function(done) {
         var command = uglifyjscmd + " test/input/global_defs/simple.js -mco ast";
         exec(command, function (err, stdout) {
