@@ -458,3 +458,217 @@ issue_2265_4: {
     }
     expect: {}
 }
+
+issue_2313_1: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function x() {
+            console.log(1);
+            return {
+                y: function() {
+                    console.log(2);
+                    return {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++;
+        if (x().y().z) {
+            console.log(3);
+        }
+    }
+    expect: {
+        function x() {
+            return console.log(1), {
+                y: function() {
+                    return console.log(2), {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++,
+        x().y().z && console.log(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "1",
+        "2",
+    ]
+}
+
+issue_2313_2: {
+    options = {
+        cascade: true,
+        conditionals: true,
+        pure_getters: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function x() {
+            console.log(1);
+            return {
+                y: function() {
+                    console.log(2);
+                    return {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++;
+        if (x().y().z) {
+            console.log(3);
+        }
+    }
+    expect: {
+        function x() {
+            return console.log(1), {
+                y: function() {
+                    return console.log(2), {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++,
+        x().y().z && console.log(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "1",
+        "2",
+    ]
+}
+
+issue_2313_3: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        pure_getters: "strict",
+    }
+    input: {
+        function x() {
+            console.log(1);
+            return {
+                y: function() {
+                    console.log(2);
+                    return {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++;
+        if (x().y().z) {
+            console.log(3);
+        }
+    }
+    expect: {
+        function x() {
+            console.log(1);
+            return {
+                y: function() {
+                    console.log(2);
+                    return {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++;
+        x().y().z && console.log(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "1",
+        "2",
+    ]
+}
+
+issue_2313_4: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        pure_getters: true,
+    }
+    input: {
+        function x() {
+            console.log(1);
+            return {
+                y: function() {
+                    console.log(2);
+                    return {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++;
+        if (x().y().z) {
+            console.log(3);
+        }
+    }
+    expect: {
+        function x() {
+            console.log(1);
+            return {
+                y: function() {
+                    console.log(2);
+                    return {
+                        z: 0
+                    };
+                }
+            };
+        }
+        x().y().z++;
+        x().y().z && console.log(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "1",
+        "2",
+    ]
+}
+
+issue_2313_5: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        x().y++;
+        x().y;
+    }
+    expect: {
+        x().y++;
+        x().y;
+    }
+}
+
+issue_2313_6: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+    }
+    input: {
+        x().y++;
+        x().y;
+    }
+    expect: {
+        x().y++;
+        x();
+    }
+}
