@@ -739,3 +739,44 @@ issue_2062: {
     }
     expect_stdout: "1"
 }
+
+issue_2313: {
+    options = {
+        cascade: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        var foo = {
+            get c() {
+                a++;
+                return 42;
+            },
+            set c(c) {
+                b++;
+            },
+            d: function() {
+                this.c++;
+                if (this.c) console.log(a, b);
+            }
+        }
+        foo.d();
+    }
+    expect: {
+        var a = 0, b = 0;
+        var foo = {
+            get c() {
+                return a++, 42;
+            },
+            set c(c) {
+                b++;
+            },
+            d: function() {
+                if (this.c++, this.c) console.log(a, b);
+            }
+        }
+        foo.d();
+    }
+    expect_stdout: "2 1"
+}
