@@ -672,3 +672,51 @@ issue_2313_6: {
         x();
     }
 }
+
+issue_2313_7: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        pure_getters: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        class foo {
+            get c() {
+                a++;
+                return 42;
+            }
+            set c(c) {
+                b++;
+            }
+        }
+        class bar extends foo {
+            d() {
+                super.c++;
+                if (super.c) console.log(a, b);
+            }
+        }
+        new bar().d();
+    }
+    expect: {
+        var a = 0, b = 0;
+        class foo {
+            get c() {
+                a++;
+                return 42;
+            }
+            set c(c) {
+                b++;
+            }
+        }
+        class bar extends foo {
+            d() {
+                super.c++;
+                super.c && console.log(a, b);
+            }
+        }
+        new bar().d();
+    }
+    expect_stdout: "2 1"
+    node_version: ">=6"
+}
