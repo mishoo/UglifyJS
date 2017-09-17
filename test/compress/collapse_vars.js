@@ -2658,3 +2658,70 @@ issue_2298: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2313_1: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        var foo = {
+            get c() {
+                a++;
+                return 42;
+            },
+            set c(c) {
+                b++;
+            },
+            d: function() {
+                this.c++;
+                if (this.c) console.log(a, b);
+            }
+        }
+        foo.d();
+    }
+    expect: {
+        var a = 0, b = 0;
+        var foo = {
+            get c() {
+                a++;
+                return 42;
+            },
+            set c(c) {
+                b++;
+            },
+            d: function() {
+                this.c++;
+                this.c && console.log(a, b);
+            }
+        }
+        foo.d();
+    }
+    expect_stdout: "2 1"
+}
+
+issue_2313_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = 0;
+        !function a() {
+            a && c++;
+            var a = 0;
+            a && c++;
+        }();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        !function a() {
+            a && c++;
+            var a = 0;
+            a && c++;
+        }();
+        console.log(c);
+    }
+    expect_stdout: "0"
+}
