@@ -232,9 +232,12 @@ function run() {
                 var result = {
                     _class: "AST_" + value.TYPE
                 };
-                value.CTOR.PROPS.forEach(function(prop) {
-                    result[prop] = value[prop];
-                });
+                var ctor = value.CTOR;
+                do {
+                    ctor.SELF_PROPS.forEach(function(prop) {
+                        result[prop] = value[prop];
+                    });
+                } while (ctor = ctor.BASE);
                 return result;
             }
             return value;
