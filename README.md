@@ -631,6 +631,11 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `unsafe_math` (default: false) -- optimize numerical expressions like
   `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
 
+- `unsafe_methods` (default: false) -- Converts `{ m: function(){} }` to
+  `{ m(){} }`. `ecma` must be set to `6` or greater to enable this transform.
+  Note: if enabled there is a risk of getting a "`<method name>` is not a
+  constructor" TypeError should any code try to `new` the former function.
+
 - `unsafe_proto` (default: false) -- optimize expressions like
   `Array.prototype.slice.call(a)` into `[].slice.call(a)`
 

@@ -887,6 +887,7 @@ methods_keep_quoted_true: {
     options = {
         arrows: true,
         ecma: 6,
+        unsafe_methods: true,
     }
     mangle = {
         properties: {
@@ -906,6 +907,7 @@ methods_keep_quoted_false: {
     options = {
         arrows: true,
         ecma: 6,
+        unsafe_methods: true,
     }
     mangle = {
         properties: {
@@ -931,6 +933,7 @@ methods_keep_quoted_from_dead_code: {
         evaluate: true,
         reduce_vars: true,
         side_effects: true,
+        unsafe_methods: true,
     }
     mangle = {
         properties: {
@@ -963,4 +966,36 @@ issue_2256: {
     expect: {
         g.keep = g.g;
     }
+}
+
+issue_2321: {
+    options = {
+        ecma: 6,
+        unsafe_methods: false,
+    }
+    input: {
+        var f = {
+            foo: function(){ console.log("foo") },
+            bar() { console.log("bar") }
+        };
+        var foo = new f.foo();
+        var bar =     f.bar();
+    }
+    expect: {
+        var f = {
+            foo: function() {
+                console.log("foo");
+            },
+            bar() {
+                console.log("bar");
+            }
+        };
+        var foo = new f.foo();
+        var bar = f.bar();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=6"
 }

@@ -290,6 +290,7 @@ issue_2105_1: {
         passes: 3,
         reduce_vars: true,
         side_effects: true,
+        unsafe_methods: true,
         unused: true,
     }
     input: {

@@ -516,6 +516,7 @@ variable_as_computed_property: {
 prop_func_to_concise_method: {
     options = {
         ecma: 6,
+        unsafe_methods: true,
     }
     input: {
         ({
@@ -544,6 +545,7 @@ prop_func_to_concise_method: {
 prop_arrow_to_concise_method: {
     options = {
         ecma: 6,
+        unsafe_methods: true,
     }
     input: {
         ({
@@ -592,6 +594,7 @@ concise_method_to_prop_arrow: {
 prop_func_to_async_concise_method: {
     options = {
         ecma: 8,
+        unsafe_methods: true,
     }
     input: {
         ({
@@ -614,6 +617,7 @@ prop_func_to_async_concise_method: {
 prop_func_to_concise_method_various: {
     options = {
         ecma: 6,
+        unsafe_methods: true,
     }
     input: {
         ({
@@ -646,6 +650,7 @@ prop_func_to_concise_method_various: {
 prop_arrows_to_concise_method_various: {
     options = {
         ecma: 6,
+        unsafe_methods: true,
     }
     input: {
         ({
@@ -674,6 +679,7 @@ prop_arrows_to_concise_method_various: {
 prop_arrow_with_this: {
     options = {
         ecma: 6,
+        unsafe_methods: true,
     }
     input: {
         function run(arg) {
@@ -711,6 +717,7 @@ prop_arrow_with_this: {
 prop_arrow_with_nested_this: {
     options = {
         ecma: 6,
+        unsafe_methods: true,
     }
     input: {
         function run(arg) {
