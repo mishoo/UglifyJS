@@ -999,3 +999,56 @@ issue_2321: {
     ]
     node_version: ">=6"
 }
+
+unsafe_methods_regex: {
+    options = {
+        ecma: 6,
+        unsafe_methods: /^[A-Z1]/,
+    }
+    input: {
+        var f = {
+            123: function(){ console.log("123") },
+            foo: function(){ console.log("foo") },
+            bar() { console.log("bar") },
+            Baz: function(){ console.log("baz") },
+            BOO: function(){ console.log("boo") },
+            null: function(){ console.log("null") },
+            undefined: function(){ console.log("undefined") },
+        };
+        f[123]();
+        new f.foo();
+        f.bar();
+        f.Baz();
+        f.BOO();
+        new f.null();
+        new f.undefined();
+    }
+    expect: {
+        var f = {
+            123() { console.log("123") },
+            foo: function(){ console.log("foo") },
+            bar() { console.log("bar"); },
+            Baz() { console.log("baz") },
+            BOO() { console.log("boo") },
+            null: function(){ console.log("null") },
+            undefined: function(){ console.log("undefined") },
+        };
+        f[123]();
+        new f.foo();
+        f.bar();
+        f.Baz();
+        f.BOO();
+        new f.null();
+        new f.undefined();
+    }
+    expect_stdout: [
+        "123",
+        "foo",
+        "bar",
+        "baz",
+        "boo",
+        "null",
+        "undefined",
+    ]
+    node_version: ">=6"
+}

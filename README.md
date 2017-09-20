@@ -633,6 +633,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `unsafe_methods` (default: false) -- Converts `{ m: function(){} }` to
   `{ m(){} }`. `ecma` must be set to `6` or greater to enable this transform.
+  If `unsafe_methods` is a RegExp then key/value pairs with keys matching the
+  RegExp will be converted to concise methods.
   Note: if enabled there is a risk of getting a "`<method name>` is not a
   constructor" TypeError should any code try to `new` the former function.
 
