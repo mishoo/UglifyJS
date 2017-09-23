@@ -817,12 +817,26 @@ class_name_can_be_preserved_with_reserved: {
             class Bar {};
             Bar.foo;
         }
+
+        function y() {
+            var Foo = class Foo {};
+            Foo.bar();
+            var Bar = class Bar {};
+            Bar.bar();
+        }
     }
     expect: {
-        function x(){
-            class Foo{}
+        function x() {
+            class Foo {}
             Foo.bar;
-            class s{}s.foo
+            class a{}
+            a.foo
+        }
+        function y() {
+            var Foo = class Foo {};
+            Foo.bar();
+            var a = class a{};
+            a.bar()
         }
     }
 }
