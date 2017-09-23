@@ -804,3 +804,21 @@ object_spread_of_sequence: {
         console.log({ ...o || o });
     }
 }
+
+// issue 2316
+class_name_can_be_preserved_with_reserved: {
+    mangle = {
+        reserved: ['Foo']
+    }
+    input: {
+        function x() {
+            class Foo {};
+            Foo.bar;
+            class Bar {};
+            Bar.foo;
+        }
+    }
+    expect: {
+        function x(){class Foo{}Foo.bar;class o{}o.foo}
+    }
+}
