@@ -808,35 +808,34 @@ object_spread_of_sequence: {
 // issue 2316
 class_name_can_be_preserved_with_reserved: {
     mangle = {
-        reserved: ['Foo']
+        reserved: [ "Foo" ],
     }
     input: {
         function x() {
-            class Foo {};
+            class Foo {}
             Foo.bar;
-            class Bar {};
+            class Bar {}
             Bar.foo;
         }
-
         function y() {
             var Foo = class Foo {};
-            Foo.bar();
+            Foo.bar;
             var Bar = class Bar {};
-            Bar.bar();
+            Bar.bar;
         }
     }
     expect: {
         function x() {
             class Foo {}
             Foo.bar;
-            class a{}
-            a.foo
+            class a {}
+            a.foo;
         }
         function y() {
             var Foo = class Foo {};
-            Foo.bar();
-            var a = class a{};
-            a.bar()
+            Foo.bar;
+            var a = class a {};
+            a.bar;
         }
     }
 }
