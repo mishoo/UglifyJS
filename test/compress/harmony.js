@@ -819,6 +819,6 @@ class_name_can_be_preserved_with_reserved: {
         }
     }
     expect: {
-        function x(){class Foo{}Foo.bar;class o{}o.foo}
+        function x(){class Foo{}Foo.bar;class s{}s.foo}
     }
 }
