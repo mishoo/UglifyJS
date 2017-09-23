@@ -2725,3 +2725,73 @@ issue_2313_2: {
     }
     expect_stdout: "0"
 }
+
+issue_2319_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a;
+        }(!function() {
+            return this;
+        }()));
+    }
+    expect: {
+        console.log(function(a) {
+            return !function() {
+                return this;
+            }();
+        }());
+    }
+    expect_stdout: "false"
+}
+
+issue_2319_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            "use strict";
+            return a;
+        }(!function() {
+            return this;
+        }()));
+    }
+    expect: {
+        console.log(function(a) {
+            "use strict";
+            return a;
+        }(!function() {
+            return this;
+        }()));
+    }
+    expect_stdout: "false"
+}
+
+issue_2319_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        console.log(function(a) {
+            return a;
+        }(!function() {
+            return this;
+        }()));
+    }
+    expect: {
+        "use strict";
+        console.log(function(a) {
+            return !function() {
+                return this;
+            }();
+        }());
+    }
+    expect_stdout: "true"
+}
