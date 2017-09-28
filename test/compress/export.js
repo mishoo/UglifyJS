@@ -226,3 +226,27 @@ keyword_valid_3: {
         export { default as default } from "module.js";
     }
 }
+
+dynamic_import: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        import traditional from './traditional.js';
+        function imp(x) {
+            return import(x);
+        }
+        import("module_for_side_effects.js");
+        let dynamic = import("some/module.js");
+        dynamic.foo();
+    }
+    expect: {
+        import o from "./traditional.js";
+        function t(o) {
+            return import(o);
+        }
+        import("module_for_side_effects.js");
+        let r = import("some/module.js");
+        r.foo();
+    }
+}
