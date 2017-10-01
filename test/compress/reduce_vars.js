@@ -2549,7 +2549,7 @@ issue_1922_2: {
     expect_stdout: "1"
 }
 
-accessor: {
+accessor_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -2576,6 +2576,33 @@ accessor: {
         }.b, a);
     }
     expect_stdout: "1 1"
+}
+
+accessor_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var A = 1;
+        var B = {
+            get c() {
+                console.log(A);
+            }
+        };
+        B.c;
+    }
+    expect: {
+        ({
+            get c() {
+                console.log(1);
+            }
+        }).c;
+    }
+    expect_stdout: "1"
 }
 
 issue_2090_1: {

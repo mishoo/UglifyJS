@@ -73,6 +73,12 @@ describe("minify", function() {
         assert.strictEqual(run_code(compressed), run_code(original));
     });
 
+    it("should not parse invalid use of reserved words", function() {
+        assert.strictEqual(Uglify.minify("function enum(){}").error, undefined);
+        assert.strictEqual(Uglify.minify("function static(){}").error, undefined);
+        assert.strictEqual(Uglify.minify("function this(){}").error.message, "Unexpected token: name (this)");
+    });
+
     describe("keep_quoted_props", function() {
         it("Should preserve quotes in object literals", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
