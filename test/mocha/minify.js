@@ -76,6 +76,7 @@ describe("minify", function() {
     it("should not parse invalid use of reserved words", function() {
         assert.strictEqual(Uglify.minify("function enum(){}").error, undefined);
         assert.strictEqual(Uglify.minify("function static(){}").error, undefined);
+        assert.strictEqual(Uglify.minify("function super(){}").error.message, "Unexpected token: name (super)");
         assert.strictEqual(Uglify.minify("function this(){}").error.message, "Unexpected token: name (this)");
     });
 
