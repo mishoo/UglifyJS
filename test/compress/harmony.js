@@ -839,3 +839,27 @@ class_name_can_be_preserved_with_reserved: {
         }
     }
 }
+
+issue_2345: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log([...[3, 2, 1]].join("-"));
+        var a = [3, 2, 1];
+        console.log([...a].join("-"));
+    }
+    expect: {
+        console.log([...[3, 2, 1]].join("-"));
+        var a = [3, 2, 1];
+        console.log([...a].join("-"));
+    }
+    expect_stdout: [
+        "3-2-1",
+        "3-2-1",
+    ]
+    node_version: ">=6"
+}
