@@ -172,6 +172,7 @@ unsafe_evaluate: {
     options = {
         evaluate     : true,
         reduce_vars  : true,
+        side_effects : true,
         unsafe       : true,
         unused       : true
     }
@@ -1898,10 +1899,7 @@ redefine_farg_3: {
         console.log(f([]), g([]), h([]));
     }
     expect: {
-        console.log(function(a) {
-            var a;
-            return typeof a;
-        }([]), "number", "undefined");
+        console.log(typeof [], "number", "undefined");
     }
     expect_stdout: "object number undefined"
 }
@@ -2628,4 +2626,191 @@ for_in_prop: {
         console.log(a.b);
     }
     expect_stdout: "1"
+}
+
+obj_var_1: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log({
+            bar: function() {
+                return 2;
+            }
+        }.bar());
+    }
+    expect_stdout: "2"
+}
+
+obj_var_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log(2);
+    }
+    expect_stdout: "2"
+}
+
+obj_arg_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        function f(obj) {
+            return obj.bar();
+        }
+        console.log(f({
+            bar: function() {
+                return C + C;
+            }
+        }));
+    }
+    expect: {
+        console.log({
+            bar: function() {
+                return 2;
+            }
+        }.bar());
+    }
+    expect_stdout: "2"
+}
+
+obj_arg_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        function f(obj) {
+            return obj.bar();
+        }
+        console.log(f({
+            bar: function() {
+                return C + C;
+            }
+        }));
+    }
+    expect: {
+        console.log(2);
+    }
+    expect_stdout: "2"
+}
+
+func_arg_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        !function(a) {
+            console.log(a());
+        }(function() {
+            return a;
+        });
+    }
+    expect: {
+        console.log(42);
+    }
+    expect_stdout: "42"
+}
+
+func_arg_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        !function(a) {
+            console.log(a());
+        }(function(a) {
+            return a;
+        });
+    }
+    expect: {
+        console.log(void 0);
+    }
+    expect_stdout: "undefined"
+}
+
+regex_loop: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(x) {
+            for (var r, s = "acdabcdeabbb"; r = x().exec(s);)
+                console.log(r[0]);
+        }
+        var a = /ab*/g;
+        f(function() {
+            return a;
+        });
+    }
+    expect: {
+        var a = /ab*/g;
+        (function(x) {
+            for (var r, s = "acdabcdeabbb"; r = x().exec(s);)
+                console.log(r[0]);
+        })(function() {
+            return a;
+        });
+    }
+    expect_stdout: true
 }
