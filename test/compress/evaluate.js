@@ -1021,6 +1021,7 @@ issue_1964_1: {
     input: {
         function f() {
             var long_variable_name = /\s/;
+            console.log(long_variable_name.source);
             return "a b c".split(long_variable_name)[1];
         }
         console.log(f());
@@ -1028,11 +1029,15 @@ issue_1964_1: {
     expect: {
         function f() {
             var long_variable_name = /\s/;
+            console.log(long_variable_name.source);
             return "a b c".split(long_variable_name)[1];
         }
         console.log(f());
     }
-    expect_stdout: "b"
+    expect_stdout: [
+        "\\s",
+        "b",
+    ]
 }
 
 issue_1964_2: {
@@ -1045,17 +1050,22 @@ issue_1964_2: {
     input: {
         function f() {
             var long_variable_name = /\s/;
+            console.log(long_variable_name.source);
             return "a b c".split(long_variable_name)[1];
         }
         console.log(f());
     }
     expect: {
         function f() {
+            console.log(/\s/.source);
             return "a b c".split(/\s/)[1];
         }
         console.log(f());
     }
-    expect_stdout: "b"
+    expect_stdout: [
+        "\\s",
+        "b",
+    ]
 }
 
 array_slice_index: {
