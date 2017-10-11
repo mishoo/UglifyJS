@@ -153,10 +153,10 @@ Additional options:
 - `--source-map "filename='<NAME>'"` to specify the name of the source map.
 
 - `--source-map "root='<URL>'"` to pass the URL where the original files can be found.
-  Otherwise UglifyJS assumes HTTP `X-SourceMap` is being used and will omit the
-  `//# sourceMappingURL=` directive.
 
 - `--source-map "url='<URL>'"` to specify the URL where the source map can be found.
+  Otherwise UglifyJS assumes HTTP `X-SourceMap` is being used and will omit the
+  `//# sourceMappingURL=` directive.
 
 For example:
 
