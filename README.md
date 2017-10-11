@@ -203,11 +203,9 @@ Example:
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
 
-- `toplevel` — mangle names declared in the top level scope (disabled by
-  default).
+- `toplevel` (default `false`) -- mangle names declared in the top level scope.
 
-- `eval` — mangle names visible in scopes where `eval` or `with` are used
-  (disabled by default).
+- `eval` (default `false`) -- mangle names visible in scopes where `eval` or `with` are used.
 
 When mangling is enabled but you want to prevent certain names from being
 mangled, you can declare those names with `--mangle reserved` — pass a
@@ -590,111 +588,80 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 ## Parse options
 
 - `bare_returns` (default `false`) -- support top level `return` statements
+
 - `html5_comments` (default `true`)
+
 - `shebang` (default `true`) -- support `#!command` as the first line
 
 ## Compress options
 
-- `sequences` (default: true) -- join consecutive simple statements using the
-  comma operator.  May be set to a positive integer to specify the maximum number
-  of consecutive comma sequences that will be generated. If this option is set to
-  `true` then the default `sequences` limit is `200`. Set option to `false` or `0`
-  to disable. The smallest `sequences` length is `2`. A `sequences` value of `1`
-  is grandfathered to be equivalent to `true` and as such means `200`. On rare
-  occasions the default sequences limit leads to very slow compress times in which
-  case a value of `20` or less is recommended.
+- `booleans` (default: `true`) -- various optimizations for boolean context, for example `!!a
+  ? b : c → a ? b : c`
 
-- `properties` -- rewrite property access using the dot notation, for
-  example `foo["bar"] → foo.bar`
+- `cascade` (default: `true`) -- small optimization for sequences, transform `x, x` into `x`
+  and `x = something(), x` into `x = something()`
 
-- `dead_code` -- remove unreachable code
+- `collapse_vars` (default: `true`) -- Collapse single-use non-constant variables - side
+  effects permitting.
 
-- `drop_debugger` -- remove `debugger;` statements
-
-- `unsafe` (default: false) -- apply "unsafe" transformations (discussion below)
-
-- `unsafe_comps` (default: false) -- Reverse `<` and `<=` to `>` and `>=` to
-  allow improved compression. This might be unsafe when an at least one of two
-  operands is an object with computed values due the use of methods like `get`,
-  or `valueOf`. This could cause change in execution order after operands in the
-  comparison are switching. Compression only works if both `comparisons` and
-  `unsafe_comps` are both set to true.
-
-- `unsafe_Func` (default: false) -- compress and mangle `Function(args, code)`
-  when both `args` and `code` are string literals.
-
-- `unsafe_math` (default: false) -- optimize numerical expressions like
-  `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
-
-- `unsafe_proto` (default: false) -- optimize expressions like
-  `Array.prototype.slice.call(a)` into `[].slice.call(a)`
-
-- `unsafe_regexp` (default: false) -- enable substitutions of variables with
-  `RegExp` values the same way as if they are constants.
-
-- `conditionals` -- apply optimizations for `if`-s and conditional
-  expressions
-
-- `comparisons` -- apply certain optimizations to binary nodes, for example:
+- `comparisons` (default: `true`) -- apply certain optimizations to binary nodes, for example:
   `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
   nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
 
-- `evaluate` -- attempt to evaluate constant expressions
+- `conditionals` (default: `true`) -- apply optimizations for `if`-s and conditional
+  expressions
 
-- `booleans` -- various optimizations for boolean context, for example `!!a
-  ? b : c → a ? b : c`
+- `dead_code` (default: `true`) -- remove unreachable code
 
-- `typeofs` -- default `true`.  Transforms `typeof foo == "undefined"` into
-  `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
-  earlier versions due to known issues.
+- `drop_console` (default: `false`) -- default `false`.  Pass `true` to discard calls to
+  `console.*` functions. If you wish to drop a specific function call
+  such as `console.info` and/or retain side effects from function arguments
+  after dropping the function call then use `pure_funcs` instead.
 
-- `loops` -- optimizations for `do`, `while` and `for` loops when we can
-  statically determine the condition
+- `drop_debugger` (default: `true`) -- remove `debugger;` statements
 
-- `unused` -- drop unreferenced functions and variables (simple direct variable
-  assignments do not count as references unless set to `"keep_assign"`)
+- `evaluate` (default: `true`) -- attempt to evaluate constant expressions
 
-- `toplevel` -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
-  in the top level scope (`false` by default, `true` to drop both unreferenced
-  functions and variables)
+- `expression` (default: `false`) -- default `false`.  Pass `true` to preserve completion values
+  from terminal statements without `return`, e.g. in bookmarklets.
 
-- `top_retain` -- prevent specific toplevel functions and variables from `unused`
-  removal (can be array, comma-separated, RegExp or function. Implies `toplevel`)
+- `hoist_funs` (default: `true`) -- hoist function declarations
 
-- `hoist_funs` -- hoist function declarations
-
-- `hoist_vars` (default: false) -- hoist `var` declarations (this is `false`
+- `hoist_vars` (default: `false`) -- hoist `var` declarations (this is `false`
   by default because it seems to increase the size of the output in general)
 
-- `if_return` -- optimizations for if/return and if/continue
+- `if_return` (default: `true`) -- optimizations for if/return and if/continue
 
-- `inline` -- embed simple functions
+- `inline` (default: `true`) -- embed simple functions
 
-- `join_vars` -- join consecutive `var` statements
+- `join_vars` (default: `true`) -- join consecutive `var` statements
 
-- `cascade` -- small optimization for sequences, transform `x, x` into `x`
-  and `x = something(), x` into `x = something()`
+- `keep_fargs` (default: `true`) -- default `true`.  Prevents the
+  compressor from discarding unused function arguments.  You need this
+  for code which relies on `Function.length`.
 
-- `collapse_vars` -- Collapse single-use non-constant variables - side
-  effects permitting.
+- `keep_fnames` (default: `false`) -- default `false`.  Pass `true` to prevent the
+  compressor from discarding function names.  Useful for code relying on
+  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
-- `reduce_vars` -- Improve optimization on variables assigned with and
-  used as constant values.
+- `keep_infinity` (default: `false`) -- default `false`. Pass `true` to prevent `Infinity` from
+  being compressed into `1/0`, which may cause performance issues on Chrome.
 
-- `warnings` -- display warnings when dropping unreachable code or unused
-  declarations etc.
+- `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops when we can
+  statically determine the condition
 
-- `negate_iife` -- negate "Immediately-Called Function Expressions"
+- `negate_iife` (default: `true`) -- negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the
   code generator would insert.
 
-- `pure_getters` -- the default is `false`.  If you pass `true` for
-  this, UglifyJS will assume that object property access
-  (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
-  Specify `"strict"` to treat `foo.bar` as side-effect-free only when
-  `foo` is certain to not throw, i.e. not `null` or `undefined`.
+- `passes` (default: `1`) -- The maximum number of times to run compress.
+  In some cases more than one pass leads to further compressed code.  Keep in
+  mind more passes will take more time.
 
-- `pure_funcs` -- default `null`.  You can pass an array of names and
+- `properties` (default: `true`) -- rewrite property access using the dot notation, for
+  example `foo["bar"] → foo.bar`
+
+- `pure_funcs` (default: `null`) -- You can pass an array of names and
   UglifyJS will assume that those functions do not produce side
   effects.  DANGER: will not check if the name is redefined in scope.
   An example case here, for instance `var q = Math.floor(a/b)`.  If
@@ -705,33 +672,66 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   statement would get discarded.  The current implementation adds some
   overhead (compression will be slower).
 
-- `drop_console` -- default `false`.  Pass `true` to discard calls to
-  `console.*` functions. If you wish to drop a specific function call
-  such as `console.info` and/or retain side effects from function arguments
-  after dropping the function call then use `pure_funcs` instead.
+- `pure_getters` (default: `"strict"`) -- If you pass `true` for
+  this, UglifyJS will assume that object property access
+  (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
+  Specify `"strict"` to treat `foo.bar` as side-effect-free only when
+  `foo` is certain to not throw, i.e. not `null` or `undefined`.
 
-- `expression` -- default `false`.  Pass `true` to preserve completion values
-  from terminal statements without `return`, e.g. in bookmarklets.
+- `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
+  used as constant values.
 
-- `keep_fargs` -- default `true`.  Prevents the
-  compressor from discarding unused function arguments.  You need this
-  for code which relies on `Function.length`.
+- `sequences` (default: `true`) -- join consecutive simple statements using the
+  comma operator.  May be set to a positive integer to specify the maximum number
+  of consecutive comma sequences that will be generated. If this option is set to
+  `true` then the default `sequences` limit is `200`. Set option to `false` or `0`
+  to disable. The smallest `sequences` length is `2`. A `sequences` value of `1`
+  is grandfathered to be equivalent to `true` and as such means `200`. On rare
+  occasions the default sequences limit leads to very slow compress times in which
+  case a value of `20` or less is recommended.
 
-- `keep_fnames` -- default `false`.  Pass `true` to prevent the
-  compressor from discarding function names.  Useful for code relying on
-  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
-
-- `passes` -- default `1`. The maximum number of times to run compress.
-  In some cases more than one pass leads to further compressed code.  Keep in
-  mind more passes will take more time.
-
-- `keep_infinity` -- default `false`. Pass `true` to prevent `Infinity` from
-  being compressed into `1/0`, which may cause performance issues on Chrome.
-
-- `side_effects` -- default `true`. Pass `false` to disable potentially dropping
+- `side_effects` (default: `true`) -- default `true`. Pass `false` to disable potentially dropping
   functions marked as "pure".  A function call is marked as "pure" if a comment
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
+
+- `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
+  in the top level scope (`false` by default, `true` to drop both unreferenced
+  functions and variables)
+
+- `top_retain` (default: `null`) -- prevent specific toplevel functions and variables from `unused`
+  removal (can be array, comma-separated, RegExp or function. Implies `toplevel`)
+
+- `typeofs` (default: `true`) -- default `true`.  Transforms `typeof foo == "undefined"` into
+  `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
+  earlier versions due to known issues.
+
+- `unsafe_comps` (default: `false`) -- Reverse `<` and `<=` to `>` and `>=` to
+  allow improved compression. This might be unsafe when an at least one of two
+  operands is an object with computed values due the use of methods like `get`,
+  or `valueOf`. This could cause change in execution order after operands in the
+  comparison are switching. Compression only works if both `comparisons` and
+  `unsafe_comps` are both set to true.
+
+- `unsafe` (default: `false`) -- apply "unsafe" transformations (discussion below)
+
+- `unsafe_Func` (default: `false`) -- compress and mangle `Function(args, code)`
+  when both `args` and `code` are string literals.
+
+- `unsafe_math` (default: `false`) -- optimize numerical expressions like
+  `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
+
+- `unsafe_proto` (default: `false`) -- optimize expressions like
+  `Array.prototype.slice.call(a)` into `[].slice.call(a)`
+
+- `unsafe_regexp` (default: `false`) -- enable substitutions of variables with
+  `RegExp` values the same way as if they are constants.
+
+- `unused` (default: `true`) -- drop unreferenced functions and variables (simple direct variable
+  assignments do not count as references unless set to `"keep_assign"`)
+
+- `warnings` (default: `false`) -- display warnings when dropping unreachable code or unused
+  declarations etc.
 
 ## Mangle options
 
@@ -772,15 +772,19 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 ### Mangle properties options
 
-- `reserved` (default: `[]`) -- Do not mangle property names listed in the
-  `reserved` array.
-- `regex` (default: `null`) -— Pass a RegExp literal to only mangle property
-  names matching the regular expression.
-- `keep_quoted` (default: `false`) -— Only mangle unquoted property names.
-- `debug` (default: `false`) -— Mangle names with the original name still present.
-  Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
 - `builtins` (default: `false`) -- Use `true` to allow the mangling of builtin
   DOM properties. Not recommended to override this setting.
+
+- `debug` (default: `false`) -— Mangle names with the original name still present.
+  Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
+
+- `keep_quoted` (default: `false`) -— Only mangle unquoted property names.
+
+- `regex` (default: `null`) -— Pass a RegExp literal to only mangle property
+  names matching the regular expression.
+
+- `reserved` (default: `[]`) -- Do not mangle property names listed in the
+  `reserved` array.
 
 ## Output options
 
@@ -790,31 +794,43 @@ can pass additional arguments that control the code output:
 
 - `ascii_only` (default `false`) -- escape Unicode characters in strings and
   regexps (affects directives with non-ascii characters becoming invalid)
+
 - `beautify` (default `true`) -- whether to actually beautify the output.
   Passing `-b` will set this to true, but you might need to pass `-b` even
   when you want to generate minified code, in order to specify additional
   arguments, so you can use `-b beautify=false` to override it.
+
 - `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
+
 - `comments` (default `false`) -- pass `true` or `"all"` to preserve all
   comments, `"some"` to preserve some comments, a regular expression string
   (e.g. `/^!/`) or a function.
-- `indent_level` (default 4)
-- `indent_start` (default 0) -- prefix all lines by that many spaces
+
+- `indent_level` (default `4`)
+
+- `indent_start` (default `0`) -- prefix all lines by that many spaces
+
 - `inline_script` (default `false`) -- escape the slash in occurrences of
   `</script` in strings
+
 - `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
   quotes from property names in object literals.
+
 - `max_line_len` (default `false`) -- maximum line length (for uglified code)
+
 - `preamble` (default `null`) -- when passed it must be a string and
   it will be prepended to the output literally.  The source map will
   adjust for this text.  Can be used to insert a comment containing
   licensing information, for example.
+
 - `preserve_line` (default `false`) -- pass `true` to preserve lines, but it
   only works if `beautify` is set to `false`.
+
 - `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
   objects
+
 - `quote_style` (default `0`) -- preferred quote style for strings (affects
   quoted property names and directives as well):
   - `0` -- prefers double quotes, switches to single quotes when there are
@@ -822,16 +838,20 @@ can pass additional arguments that control the code output:
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
+
 - `semicolons` (default `true`) -- separate statements with semicolons.  If
   you pass `false` then whenever possible we will use a newline instead of a
   semicolon, leading to more readable output of uglified code (size before
   gzip could be smaller; size after gzip insignificantly larger).
+
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
-- `width` (default 80) -- only takes effect when beautification is on, this
+
+- `width` (default `80`) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
   obey.  It refers to the width of the line text (excluding indentation).
   It doesn't work very well currently, but it does make the code generated
   by UglifyJS more readable.
+
 - `wrap_iife` (default `false`) -- pass `true` to wrap immediately invoked
   function expressions. See
   [#640](https://github.com/mishoo/UglifyJS2/issues/640) for more details.
