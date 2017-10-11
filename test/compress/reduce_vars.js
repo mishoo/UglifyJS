@@ -2814,3 +2814,83 @@ regex_loop: {
     }
     expect_stdout: true
 }
+
+obj_for_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = { a: 1 };
+        for (var i = o.a--; i; i--)
+            console.log(i);
+    }
+    expect: {
+        for (var i = { a: 1 }.a--; i; i--)
+            console.log(i);
+    }
+    expect_stdout: "1"
+}
+
+obj_for_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = { a: 1 };
+        for (var i; i = o.a--;)
+            console.log(i);
+    }
+    expect: {
+        var o = { a: 1 };
+        for (var i; i = o.a--;)
+            console.log(i);
+    }
+    expect_stdout: "1"
+}
+
+array_forin_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2, 3 ];
+        for (var b in a)
+            console.log(b);
+    }
+    expect: {
+        for (var b in [ 1, 2, 3 ])
+            console.log(b);
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "2",
+    ]
+}
+
+array_forin_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = [];
+        for (var b in [ 1, 2, 3 ])
+            a.push(b);
+        console.log(a.length);
+    }
+    expect: {
+        var a = [];
+        for (var b in [ 1, 2, 3 ])
+            a.push(b);
+        console.log(a.length);
+    }
+    expect_stdout: "3"
+}
