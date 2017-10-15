@@ -759,6 +759,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `ecma` -- default `5`. Pass `6` or greater to enable `compress` options that
   will transform ES5 code into smaller ES6+ equivalent forms.
 
+- `computed_props` -- default `true`. Transforms constant computed properties
+  into regular ones: `{["computed"]: 1}` is converted into `{computed: 1}`.
+
 ## Mangle options
 
 - `reserved` (default `[]`). Pass an array of identifiers that should be
