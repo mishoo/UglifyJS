@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "commander": "~2.11.0",
-    "source-map": "~0.5.1"
+    "source-map": "~0.6.1"
   },
   "devDependencies": {
     "acorn": "~5.1.1",
