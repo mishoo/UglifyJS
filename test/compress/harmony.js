@@ -863,3 +863,75 @@ issue_2345: {
     ]
     node_version: ">=6"
 }
+
+issue_2349: {
+    mangle = {}
+    input: {
+        function foo(boo, key) {
+            const value = boo.get();
+            return value.map(({[key]: bar}) => bar);
+        }
+        console.log(foo({
+            get: () => [ {
+                blah: 42
+            } ]
+        }, "blah"));
+    }
+    expect: {
+        function foo(o, n) {
+            const t = o.get();
+            return t.map(({[n]: o}) => o);
+        }
+        console.log(foo({
+            get: () => [ {
+                blah: 42
+            } ]
+        }, "blah"));
+    }
+    expect_stdout: [
+        "[ 42 ]",
+    ]
+    node_version: ">=7"
+}
+
+issue_2349b: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        ecma: 6,
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        toplevel: true,
+        side_effects: true,
+        unsafe: true,
+        unsafe_arrows: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        function foo(boo, key) {
+            const value = boo.get();
+            return value.map(function({[key]: bar}){ return bar; });
+        }
+        console.log(foo({
+            get: function() {
+                return  [ {
+                    blah: 42
+                } ];
+            }
+        }, "blah"));
+    }
+    expect: {
+        console.log([ {
+            blah: 42
+        } ].map(({["blah"]: l}) => l));
+    }
+    expect_stdout: [
+        "[ 42 ]",
+    ]
+    node_version: ">=7"
+}
