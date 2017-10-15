@@ -508,6 +508,9 @@ if (result.error) throw result.error;
 
 - `ie8` (default `false`) - set to `true` to support IE8.
 
+- `keep_fnames` (default: `false`) - pass `true` to prevent discarding or mangling
+  of function names.  Useful for code relying on `Function.prototype.name`.
+
 ## Minify options structure
 
 ```javascript
@@ -625,6 +628,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `expression` (default: `false`) -- default `false`.  Pass `true` to preserve completion values
   from terminal statements without `return`, e.g. in bookmarklets.
 
+- `global_defs` (default: `{}`) -- see [conditional compilation](#conditional-compilation)
+
 - `hoist_funs` (default: `true`) -- hoist function declarations
 
 - `hoist_vars` (default: `false`) -- hoist `var` declarations (this is `false`
@@ -639,10 +644,6 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `keep_fargs` (default: `true`) -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
-
-- `keep_fnames` (default: `false`) -- default `false`.  Pass `true` to prevent the
-  compressor from discarding function names.  Useful for code relying on
-  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
 - `keep_infinity` (default: `false`) -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
@@ -695,6 +696,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
 
+- `switches` (default: `true`) -- de-duplicate and remove unreachable `switch` branches
+
 - `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
   in the top level scope (`false` by default, `true` to drop both unreferenced
   functions and variables)
@@ -740,10 +743,6 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `toplevel` (default `false`). Pass `true` to mangle names declared in the
   top level scope.
-
-- `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
-  Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
-  [compress option](#compress-options).
 
 - `eval` (default `false`). Pass `true` to mangle names visible in scopes
   where `eval` or `with` are used.
