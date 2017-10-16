@@ -2951,3 +2951,24 @@ issue_2364_9: {
     }
     expect_stdout: "PASS"
 }
+
+pure_getters_chain: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function o(t, r) {
+            var a = t[1], s = t[2], o = t[3], i = t[5];
+            return a <= 23 && s <= 59 && o <= 59 && (!r || i);
+        }
+        console.log(o([ , 23, 59, 59, , 42], 1));
+    }
+    expect: {
+        function o(t, r) {
+            return t[1] <= 23 && t[2] <= 59 && t[3] <= 59 && (!r || t[5]);
+        }
+        console.log(o([ , 23, 59, 59, , 42], 1));
+    }
+    expect_stdout: "42"
+}
