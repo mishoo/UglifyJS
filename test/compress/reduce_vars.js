@@ -2933,7 +2933,9 @@ obj_for_1: {
             console.log(i);
     }
     expect: {
-        for (var i = { a: 1 }.a--; i; i--)
+        // TODO make this work on harmony
+        var o = { a: 1 };
+        for (var i = o.a--; i; i--)
             console.log(i);
     }
     expect_stdout: "1"
@@ -2970,7 +2972,9 @@ array_forin_1: {
             console.log(b);
     }
     expect: {
-        for (var b in [ 1, 2, 3 ])
+        // TODO make this work on harmony
+        var a = [ 1, 2, 3 ];
+        for (var b in a)
             console.log(b);
     }
     expect_stdout: [
@@ -2999,4 +3003,51 @@ array_forin_2: {
         console.log(a.length);
     }
     expect_stdout: "3"
+}
+
+array_forof_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2, 3 ];
+        for (var b of a)
+            console.log(b);
+    }
+    expect: {
+        // TODO make this work on harmony
+        var a = [ 1, 2, 3 ];
+        for (var b of a)
+            console.log(b);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+    node_version: ">=0.12"
+}
+
+array_forof_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = [];
+        for (var b of [ 1, 2, 3 ])
+            a.push(b);
+        console.log(a.length);
+    }
+    expect: {
+        var a = [];
+        for (var b of [ 1, 2, 3 ])
+            a.push(b);
+        console.log(a.length);
+    }
+    expect_stdout: "3"
+    node_version: ">=0.12"
 }
