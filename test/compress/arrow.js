@@ -631,3 +631,31 @@ issue_2271: {
     }
     expect_stdout: "PASS"
 }
+
+concise_method_with_super: {
+    options = {
+        arrows: true,
+    }
+    input: {
+        var o = {
+            f: "FAIL",
+            g() {
+                return super.f;
+            }
+        }
+        Object.setPrototypeOf(o, { f: "PASS" });
+        console.log(o.g());
+    }
+    expect: {
+        var o = {
+            f: "FAIL",
+            g() {
+                return super.f;
+            }
+        }
+        Object.setPrototypeOf(o, { f: "PASS" });
+        console.log(o.g());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
