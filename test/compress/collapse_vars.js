@@ -1268,22 +1268,21 @@ collapse_vars_short_circuited_conditions: {
 
 collapse_vars_regexp: {
     options = {
-        collapse_vars: true,
-        loops:         false,
-        sequences:     true,
-        dead_code:     true,
-        conditionals:  true,
-        comparisons:   true,
-        evaluate:      true,
         booleans:      true,
-        unused:        true,
-        hoist_funs:    true,
-        keep_fargs:    true,
+        cascade:       true,
+        collapse_vars: true,
+        comparisons:   true,
+        conditionals:  true,
+        dead_code:     true,
+        evaluate:      true,
         if_return:     true,
         join_vars:     true,
-        cascade:       true,
-        side_effects:  true,
+        hoist_funs:    true,
+        keep_fargs:    true,
+        loops:         false,
         reduce_vars:   true,
+        side_effects:  true,
+        unused:        true,
     }
     input: {
         function f1() {
@@ -1292,16 +1291,24 @@ collapse_vars_regexp: {
             return [rx, k];
         }
         function f2() {
-            var rx = /[abc123]+/;
+            var rx = /ab*/g;
             return function(s) {
                 return rx.exec(s);
             };
         }
-        (function(){
+        (function() {
             var result;
             var s = 'acdabcdeabbb';
             var rx = /ab*/g;
             while (result = rx.exec(s)) {
+                console.log(result[0]);
+            }
+        })();
+        (function() {
+            var result;
+            var s = 'acdabcdeabbb';
+            var rx = f2();
+            while (result = rx(s)) {
                 console.log(result[0]);
             }
         })();
@@ -1311,14 +1318,19 @@ collapse_vars_regexp: {
             return [/[A-Z]+/, 9];
         }
         function f2() {
-            var rx = /[abc123]+/;
+            var rx = /ab*/g;
             return function(s) {
                 return rx.exec(s);
             };
         }
-        (function(){
+        (function() {
             var result, rx = /ab*/g;
             while (result = rx.exec("acdabcdeabbb"))
+                console.log(result[0]);
+        })();
+        (function() {
+            var result, rx = f2();
+            while (result = rx("acdabcdeabbb"))
                 console.log(result[0]);
         })();
     }
@@ -1933,9 +1945,9 @@ issue_1858: {
     }
     expect: {
         console.log(function(x) {
-            var a = {}, b = a.b = x;
+            var a = {}, b = a.b = 1;
             return a.b + b;
-        }(1));
+        }());
     }
     expect_stdout: "2"
 }
@@ -2794,4 +2806,71 @@ issue_2319_3: {
         }());
     }
     expect_stdout: "true"
+}
+
+prop_side_effects_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        console.log(C);
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log(1);
+        console.log({
+            bar: function() {
+                return 2;
+            }
+        }.bar());
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+prop_side_effects_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        console.log(C);
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log(1);
+        console.log(2);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
 }
