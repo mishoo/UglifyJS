@@ -2600,3 +2600,55 @@ prop_side_effects_2: {
         "2",
     ]
 }
+
+issue_2364: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = a.f;
+            a.f++;
+            return b;
+        }({ f: 1 }));
+        console.log(function() {
+            var a = { f: 1 }, b = a.f;
+            a.f++;
+            return b;
+        }());
+        console.log({
+            f: 1,
+            g: function() {
+                var b = this.f;
+                this.f++;
+                return b;
+            }
+        }.g());
+    }
+    expect: {
+        console.log(function(a) {
+            var b = a.f;
+            a.f++;
+            return b;
+        }({ f: 1 }));
+        console.log(function() {
+            var a = { f: 1 }, b = a.f;
+            a.f++;
+            return b;
+        }());
+        console.log({
+            f: 1,
+            g: function() {
+                var b = this.f;
+                this.f++;
+                return b;
+            }
+        }.g());
+    }
+    expect_stdout: [
+        "1",
+        "1",
+        "1",
+    ]
+}
