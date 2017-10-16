@@ -126,6 +126,67 @@ computed_property_names: {
     expect_exact: 'obj({["x"+"x"]:6});'
 }
 
+convert_computed_props_to_regular_ones: {
+    options = {
+        booleans: true,
+        computed_props: true,
+        evaluate: true,
+    }
+    input: {
+        var o = {
+            ["hi"]: 0,
+            ["A" + 1]: 1,
+            [/B/]: 2,
+            [100 + 23]: 3,
+            [1 + .5]: 4,
+            [Math.PI]: 5,
+            [undefined]: 6,
+            [true]: 7,
+            [false]: 8,
+            [null]: 9,
+            [Infinity]: 10,
+            [NaN]: 11,
+        };
+        for (var k in o) {
+            console.log(k, o[k]);
+        }
+    }
+    expect: {
+        var o = {
+            hi: 0,
+            A1: 1,
+            [/B/]: 2,
+            123: 3,
+            1.5: 4,
+            [Math.PI]: 5,
+
+            // leave these problematic cases as is
+            [void 0]: 6,
+            [!0]: 7,
+            [!1]: 8,
+            [null]: 9,
+            [1 / 0]: 10,
+            [NaN]: 11
+        };
+        for (var k in o) console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "123 3",
+        "hi 0",
+        "A1 1",
+        "/B/ 2",
+        "1.5 4",
+        "3.141592653589793 5",
+        "undefined 6",
+        "true 7",
+        "false 8",
+        "null 9",
+        "Infinity 10",
+        "NaN 11",
+    ]
+    node_version: ">=6"
+}
+
 computed_property_names_evaluated_1: {
     options = {
         evaluate: true
