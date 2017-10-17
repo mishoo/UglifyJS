@@ -604,7 +604,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 ## Compress options
 
-- `arrows` (default `true`) -- Converts `()=>{return x}` to `()=>x`. Class
+- `arrows` (default: `true`) -- Converts `()=>{return x}` to `()=>x`. Class
   and object literal methods will also be converted to arrow expressions if
   the resultant code is shorter: `m(){return x}` becomes `m:()=>x`.
   This transform requires that the `ecma` compress option is set to `6` or greater.
@@ -622,8 +622,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
   nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
 
-- `computed_props` -- default `true`. Transforms constant computed properties
-  into regular ones: `{["computed"]: 1}` is converted into `{computed: 1}`.
+- `computed_props` (default: `true`) -- Transforms constant computed properties
+  into regular ones: `{["computed"]: 1}` is converted to `{computed: 1}`.
 
 - `conditionals` (default: `true`) -- apply optimizations for `if`-s and conditional
   expressions
@@ -637,7 +637,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `drop_debugger` (default: `true`) -- remove `debugger;` statements
 
-- `ecma` -- default `5`. Pass `6` or greater to enable `compress` options that
+- `ecma` (default: `5`) -- Pass `6` or greater to enable `compress` options that
   will transform ES5 code into smaller ES6+ equivalent forms.
 
 - `evaluate` (default: `true`) -- attempt to evaluate constant expressions
@@ -661,6 +661,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `keep_fargs` (default: `true`) -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
+
+- `keep_fnames` (default: `false`) -- Pass `true` to prevent the
+  compressor from discarding function names.  Useful for code relying on
+  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
 - `keep_infinity` (default: `false`) -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
@@ -726,7 +730,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
   earlier versions due to known issues.
 
-- `unsafe_arrows` (default `false`) -- Convert ES5 style anonymous function
+- `unsafe` (default: `false`) -- apply "unsafe" transformations (discussion below)
+
+- `unsafe_arrows` (default: `false`) -- Convert ES5 style anonymous function
   expressions to arrow functions if the function body does not reference `this`.
   Note: it is not always safe to perform this conversion if code relies on the
   the function having a `prototype`, which arrow functions lack.
@@ -739,13 +745,18 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
-- `unsafe` (default: `false`) -- apply "unsafe" transformations (discussion below)
-
 - `unsafe_Func` (default: `false`) -- compress and mangle `Function(args, code)`
   when both `args` and `code` are string literals.
 
 - `unsafe_math` (default: `false`) -- optimize numerical expressions like
   `2 * x * 3` into `6 * x`, which may give imprecise floating point results.
+
+- `unsafe_methods` (default: false) -- Converts `{ m: function(){} }` to
+  `{ m(){} }`. `ecma` must be set to `6` or greater to enable this transform.
+  If `unsafe_methods` is a RegExp then key/value pairs with keys matching the
+  RegExp will be converted to concise methods.
+  Note: if enabled there is a risk of getting a "`<method name>` is not a
+  constructor" TypeError should any code try to `new` the former function.
 
 - `unsafe_proto` (default: `false`) -- optimize expressions like
   `Array.prototype.slice.call(a)` into `[].slice.call(a)`
@@ -761,16 +772,20 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 ## Mangle options
 
+- `eval` (default `false`). Pass `true` to mangle names visible in scopes
+  where `eval` or `with` are used.
+
 - `keep_classnames` (default `false`).  Pass `true` to not mangle class names.
+
+- `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
+  Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
+  [compress option](#compress-options).
 
 - `reserved` (default `[]`). Pass an array of identifiers that should be
   excluded from mangling. Example: `["foo", "bar"]`.
 
 - `toplevel` (default `false`). Pass `true` to mangle names declared in the
   top level scope.
-
-- `eval` (default `false`). Pass `true` to mangle names visible in scopes
-  where `eval` or `with` are used.
 
 - `safari10` (default `false`). Pass `true` to work around the Safari 10 loop
   iterator [bug](https://bugs.webkit.org/show_bug.cgi?id=171041)
