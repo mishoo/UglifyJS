@@ -772,6 +772,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 ## Mangle options
 
+- `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
+  Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
+  [compress option](#compress-options).
+
 - `keep_classnames` (default `false`).  Pass `true` to not mangle class names.
 
 - `reserved` (default `[]`). Pass an array of identifiers that should be
