@@ -2875,3 +2875,79 @@ issue_2364_7: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2364_8: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b, c) {
+            var d = a[b.f = function() {
+                return "PASS";
+            }];
+            return c.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f({}, o, o));
+    }
+    expect: {
+        function f(a, b, c) {
+            var d = a[b.f = function() {
+                return "PASS";
+            }];
+            return c.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f({}, o, o));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2364_9: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            var d = a();
+            return b.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f(function() {
+            o.f = function() {
+                return "PASS";
+            };
+        }, o));
+    }
+    expect: {
+        function f(a, b) {
+            var d = a();
+            return b.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f(function() {
+            o.f = function() {
+                return "PASS";
+            };
+        }, o));
+    }
+    expect_stdout: "PASS"
+}
