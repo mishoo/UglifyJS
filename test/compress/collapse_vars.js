@@ -2711,3 +2711,75 @@ issue_2364_2: {
         }
     }
 }
+
+issue_2364_3: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar) {
+            var result = inc(bar);
+            return foo.amount = bar.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar) {
+            var result = inc(bar);
+            return foo.amount = bar.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect_stdout: "1 0"
+}
+
+issue_2364_4: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar, baz) {
+            var result = inc(bar);
+            return foo.amount = baz.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data, data);
+        console.log(foo.amount, answer);
+    }
+    expect: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar, baz) {
+            var result = inc(bar);
+            return foo.amount = baz.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data, data);
+        console.log(foo.amount, answer);
+    }
+    expect_stdout: "1 0"
+}
