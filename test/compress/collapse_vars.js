@@ -2601,7 +2601,7 @@ prop_side_effects_2: {
     ]
 }
 
-issue_2364: {
+issue_2365: {
     options = {
         collapse_vars: true,
         pure_getters: true,
@@ -2651,4 +2651,63 @@ issue_2364: {
         "1",
         "1",
     ]
+}
+
+issue_2364_1: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo() {
+            var first = arguments[0];
+            var result = inc(first);
+            return foo.amount = first.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo() {
+            var first = arguments[0];
+            var result = inc(first);
+            return foo.amount = first.count, result;
+        }
+        var data = {
+            count: 0
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect_stdout: "1 0"
+}
+
+issue_2364_2: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function callValidate() {
+            var validate = compilation.validate;
+            var result = validate.apply(null, arguments);
+            return callValidate.errors = validate.errors, result;
+        }
+    }
+    expect: {
+        function callValidate() {
+            var validate = compilation.validate;
+            var result = validate.apply(null, arguments);
+            return callValidate.errors = validate.errors, result;
+        }
+    }
 }
