@@ -622,7 +622,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
   nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
 
-- `computed_props` (default `true`) -- Transforms constant computed properties
+- `computed_props` (default: `true`) -- Transforms constant computed properties
   into regular ones: `{["computed"]: 1}` is converted to `{computed: 1}`.
 
 - `conditionals` (default: `true`) -- apply optimizations for `if`-s and conditional
@@ -637,7 +637,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `drop_debugger` (default: `true`) -- remove `debugger;` statements
 
-- `ecma` (default `5`) -- Pass `6` or greater to enable `compress` options that
+- `ecma` (default: `5`) -- Pass `6` or greater to enable `compress` options that
   will transform ES5 code into smaller ES6+ equivalent forms.
 
 - `evaluate` (default: `true`) -- attempt to evaluate constant expressions
