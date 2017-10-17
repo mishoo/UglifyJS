@@ -2783,3 +2783,95 @@ issue_2364_4: {
     }
     expect_stdout: "1 0"
 }
+
+issue_2364_5: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: true,
+        properties: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f0(o, a, h) {
+            var b = 3 - a;
+            var obj = o;
+            var seven = 7;
+            var prop = 'run';
+            var t = obj[prop](b)[seven] = h;
+            return t;
+        }
+    }
+    expect: {
+        function f0(o, a, h) {
+            return o.run(3 - a)[7] = h;
+        }
+    }
+}
+
+issue_2364_6: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = a.p;
+            b.p = "FAIL";
+            return c;
+        }
+        var o = {
+            p: "PASS"
+        }
+        console.log(f(o, o));
+    }
+    expect: {
+        function f(a, b) {
+            var c = a.p;
+            b.p = "FAIL";
+            return c;
+        }
+        var o = {
+            p: "PASS"
+        }
+        console.log(f(o, o));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2364_7: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = a.p;
+            b.f();
+            return c;
+        }
+        var o = {
+            p: "PASS",
+            f: function() {
+                this.p = "FAIL";
+            }
+        }
+        console.log(f(o, o));
+    }
+    expect: {
+        function f(a, b) {
+            var c = a.p;
+            b.f();
+            return c;
+        }
+        var o = {
+            p: "PASS",
+            f: function() {
+                this.p = "FAIL";
+            }
+        }
+        console.log(f(o, o));
+    }
+    expect_stdout: "PASS"
+}
