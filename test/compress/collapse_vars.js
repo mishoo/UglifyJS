@@ -2972,3 +2972,47 @@ pure_getters_chain: {
     }
     expect_stdout: "42"
 }
+
+conditional_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = "";
+            var d = b ? ">" : "<";
+            if (a) c += "=";
+            return c += d;
+        }
+        console.log(f(0, 0), f(0, 1), f(1, 0), f(1, 1));
+    }
+    expect: {
+        function f(a, b) {
+            var c = "";
+            if (a) c += "=";
+            return c += b ? ">" : "<";
+        }
+        console.log(f(0, 0), f(0, 1), f(1, 0), f(1, 1));
+    }
+    expect_stdout: "< > =< =>"
+}
+
+conditional_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = a + 1, d = a + 2;
+            return b ? c : d;
+        }
+        console.log(f(3, 0), f(4, 1));
+    }
+    expect: {
+        function f(a, b) {
+            return b ? a + 1 : a + 2;
+        }
+        console.log(f(3, 0), f(4, 1));
+    }
+    expect_stdout: "5 5"
+}
