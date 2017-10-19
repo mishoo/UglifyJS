@@ -515,7 +515,6 @@ if (result.error) throw result.error;
 
 ```javascript
 {
-    warnings: false,
     parse: {
         // parse options
     },
@@ -538,6 +537,7 @@ if (result.error) throw result.error;
     nameCache: null, // or specify a name cache object
     toplevel: false,
     ie8: false,
+    warnings: false,
 }
 ```
 
@@ -645,6 +645,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
 
+- `keep_fnames` (default: `false`) -- Pass `true` to prevent the
+  compressor from discarding function names.  Useful for code relying on
+  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
+
 - `keep_infinity` (default: `false`) -- default `false`. Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
@@ -709,14 +713,14 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
   earlier versions due to known issues.
 
+- `unsafe` (default: `false`) -- apply "unsafe" transformations (discussion below)
+
 - `unsafe_comps` (default: `false`) -- Reverse `<` and `<=` to `>` and `>=` to
   allow improved compression. This might be unsafe when an at least one of two
   operands is an object with computed values due the use of methods like `get`,
   or `valueOf`. This could cause change in execution order after operands in the
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
-
-- `unsafe` (default: `false`) -- apply "unsafe" transformations (discussion below)
 
 - `unsafe_Func` (default: `false`) -- compress and mangle `Function(args, code)`
   when both `args` and `code` are string literals.
@@ -738,14 +742,18 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 ## Mangle options
 
+- `eval` (default `false`). Pass `true` to mangle names visible in scopes
+  where `eval` or `with` are used.
+
+- `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
+  Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
+  [compress option](#compress-options).
+
 - `reserved` (default `[]`). Pass an array of identifiers that should be
   excluded from mangling. Example: `["foo", "bar"]`.
 
 - `toplevel` (default `false`). Pass `true` to mangle names declared in the
   top level scope.
-
-- `eval` (default `false`). Pass `true` to mangle names visible in scopes
-  where `eval` or `with` are used.
 
 Examples:
 
