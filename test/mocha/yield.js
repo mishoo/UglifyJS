@@ -102,4 +102,15 @@ describe("Yield", function() {
             assert.throws(test(tests[i]), fail, tests[i]);
         }
     });
+
+    it("Should allow yield to be used as class/object property name", function() {
+        var input = [
+            '"use strict";',
+            "({yield:42});",
+            "({yield(){}});",
+            "(class{yield(){}});",
+            "class C{yield(){}}",
+        ].join("");
+        assert.strictEqual(UglifyJS.minify(input, { compress: false }).code, input);
+    });
 });
