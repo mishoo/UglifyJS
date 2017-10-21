@@ -2874,3 +2874,419 @@ prop_side_effects_2: {
         "2",
     ]
 }
+
+issue_2365: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = a.f;
+            a.f++;
+            return b;
+        }({ f: 1 }));
+        console.log(function() {
+            var a = { f: 1 }, b = a.f;
+            a.f++;
+            return b;
+        }());
+        console.log({
+            f: 1,
+            g: function() {
+                var b = this.f;
+                this.f++;
+                return b;
+            }
+        }.g());
+    }
+    expect: {
+        console.log(function(a) {
+            var b = a.f;
+            a.f++;
+            return b;
+        }({ f: 1 }));
+        console.log(function() {
+            var a = { f: 1 }, b = a.f;
+            a.f++;
+            return b;
+        }());
+        console.log({
+            f: 1,
+            g: function() {
+                var b = this.f;
+                this.f++;
+                return b;
+            }
+        }.g());
+    }
+    expect_stdout: [
+        "1",
+        "1",
+        "1",
+    ]
+}
+
+issue_2364_1: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo() {
+            var first = arguments[0];
+            var result = inc(first);
+            return foo.amount = first.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo() {
+            var first = arguments[0];
+            var result = inc(first);
+            return foo.amount = first.count, result;
+        }
+        var data = {
+            count: 0
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect_stdout: "1 0"
+}
+
+issue_2364_2: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function callValidate() {
+            var validate = compilation.validate;
+            var result = validate.apply(null, arguments);
+            return callValidate.errors = validate.errors, result;
+        }
+    }
+    expect: {
+        function callValidate() {
+            var validate = compilation.validate;
+            var result = validate.apply(null, arguments);
+            return callValidate.errors = validate.errors, result;
+        }
+    }
+}
+
+issue_2364_3: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar) {
+            var result = inc(bar);
+            return foo.amount = bar.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar) {
+            var result = inc(bar);
+            return foo.amount = bar.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data);
+        console.log(foo.amount, answer);
+    }
+    expect_stdout: "1 0"
+}
+
+issue_2364_4: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar, baz) {
+            var result = inc(bar);
+            return foo.amount = baz.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data, data);
+        console.log(foo.amount, answer);
+    }
+    expect: {
+        function inc(obj) {
+            return obj.count++;
+        }
+        function foo(bar, baz) {
+            var result = inc(bar);
+            return foo.amount = baz.count, result;
+        }
+        var data = {
+            count: 0,
+        };
+        var answer = foo(data, data);
+        console.log(foo.amount, answer);
+    }
+    expect_stdout: "1 0"
+}
+
+issue_2364_5: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: true,
+        properties: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f0(o, a, h) {
+            var b = 3 - a;
+            var obj = o;
+            var seven = 7;
+            var prop = 'run';
+            var t = obj[prop](b)[seven] = h;
+            return t;
+        }
+    }
+    expect: {
+        function f0(o, a, h) {
+            return o.run(3 - a)[7] = h;
+        }
+    }
+}
+
+issue_2364_6: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = a.p;
+            b.p = "FAIL";
+            return c;
+        }
+        var o = {
+            p: "PASS"
+        }
+        console.log(f(o, o));
+    }
+    expect: {
+        function f(a, b) {
+            var c = a.p;
+            b.p = "FAIL";
+            return c;
+        }
+        var o = {
+            p: "PASS"
+        }
+        console.log(f(o, o));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2364_7: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = a.p;
+            b.f();
+            return c;
+        }
+        var o = {
+            p: "PASS",
+            f: function() {
+                this.p = "FAIL";
+            }
+        }
+        console.log(f(o, o));
+    }
+    expect: {
+        function f(a, b) {
+            var c = a.p;
+            b.f();
+            return c;
+        }
+        var o = {
+            p: "PASS",
+            f: function() {
+                this.p = "FAIL";
+            }
+        }
+        console.log(f(o, o));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2364_8: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b, c) {
+            var d = a[b.f = function() {
+                return "PASS";
+            }];
+            return c.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f({}, o, o));
+    }
+    expect: {
+        function f(a, b, c) {
+            var d = a[b.f = function() {
+                return "PASS";
+            }];
+            return c.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f({}, o, o));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2364_9: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            var d = a();
+            return b.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f(function() {
+            o.f = function() {
+                return "PASS";
+            };
+        }, o));
+    }
+    expect: {
+        function f(a, b) {
+            var d = a();
+            return b.f(d);
+        }
+        var o = {
+            f: function() {
+                return "FAIL";
+            }
+        };
+        console.log(f(function() {
+            o.f = function() {
+                return "PASS";
+            };
+        }, o));
+    }
+    expect_stdout: "PASS"
+}
+
+pure_getters_chain: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function o(t, r) {
+            var a = t[1], s = t[2], o = t[3], i = t[5];
+            return a <= 23 && s <= 59 && o <= 59 && (!r || i);
+        }
+        console.log(o([ , 23, 59, 59, , 42], 1));
+    }
+    expect: {
+        function o(t, r) {
+            return t[1] <= 23 && t[2] <= 59 && t[3] <= 59 && (!r || t[5]);
+        }
+        console.log(o([ , 23, 59, 59, , 42], 1));
+    }
+    expect_stdout: "42"
+}
+
+conditional_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = "";
+            var d = b ? ">" : "<";
+            if (a) c += "=";
+            return c += d;
+        }
+        console.log(f(0, 0), f(0, 1), f(1, 0), f(1, 1));
+    }
+    expect: {
+        function f(a, b) {
+            var c = "";
+            if (a) c += "=";
+            return c += b ? ">" : "<";
+        }
+        console.log(f(0, 0), f(0, 1), f(1, 0), f(1, 1));
+    }
+    expect_stdout: "< > =< =>"
+}
+
+conditional_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c = a + 1, d = a + 2;
+            return b ? c : d;
+        }
+        console.log(f(3, 0), f(4, 1));
+    }
+    expect: {
+        function f(a, b) {
+            return b ? a + 1 : a + 2;
+        }
+        console.log(f(3, 0), f(4, 1));
+    }
+    expect_stdout: "5 5"
+}
