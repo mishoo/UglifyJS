@@ -2954,3 +2954,32 @@ const_expr_2: {
     }
     expect_stdout: "2 2"
 }
+
+escaped_prop: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var obj = { o: { a: 1 } };
+        (function(o) {
+            o.a++;
+        })(obj.o);
+        (function(o) {
+            console.log(o.a);
+        })(obj.o);
+    }
+    expect: {
+        var obj = { o: { a: 1 } };
+        obj.o.a++;
+        console.log(obj.o.a);
+    }
+    expect_stdout: "2"
+}
