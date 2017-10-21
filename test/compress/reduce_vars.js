@@ -1190,10 +1190,10 @@ defun_label: {
         !function() {
             console.log(function(a) {
                 L: {
-                    if (2) break L;
+                    if (a) break L;
                     return 1;
                 }
-            }());
+            }(2));
         }();
     }
     expect_stdout: true
