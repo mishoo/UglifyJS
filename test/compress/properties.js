@@ -804,3 +804,21 @@ issue_2256: {
         g.keep = g.g;
     }
 }
+
+lhs_prop: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(++{
+            a: 1
+        }.a);
+    }
+    expect: {
+        console.log(++{
+            a: 1
+        }.a);
+    }
+    expect_stdout: "2"
+}
