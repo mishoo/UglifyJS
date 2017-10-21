@@ -1190,10 +1190,10 @@ defun_label: {
         !function() {
             console.log(function(a) {
                 L: {
-                    if (a) break L;
+                    if (2) break L;
                     return 1;
                 }
-            }(2));
+            }());
         }();
     }
     expect_stdout: true
@@ -3050,4 +3050,64 @@ array_forof_2: {
     }
     expect_stdout: "3"
     node_version: ">=0.12"
+}
+
+const_expr_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2
+        };
+        o.a++;
+        console.log(o.a, o.b);
+    }
+    expect: {
+        var o = {
+            a: 1,
+            b: 2
+        };
+        o.a++;
+        console.log(o.a, o.b);
+    }
+    expect_stdout: "2 2"
+}
+
+const_expr_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        Object.prototype.c = function() {
+            this.a++;
+        };
+        var o = {
+            a: 1,
+            b: 2
+        };
+        o.c();
+        console.log(o.a, o.b);
+    }
+    expect: {
+        Object.prototype.c = function() {
+            this.a++;
+        };
+        var o = {
+            a: 1,
+            b: 2
+        };
+        o.c();
+        console.log(o.a, o.b);
+    }
+    expect_stdout: "2 2"
 }
