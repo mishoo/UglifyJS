@@ -805,7 +805,7 @@ issue_2256: {
     }
 }
 
-lhs_prop: {
+lhs_prop_1: {
     options = {
         evaluate: true,
         unsafe: true,
@@ -821,4 +821,23 @@ lhs_prop: {
         }.a);
     }
     expect_stdout: "2"
+}
+
+lhs_prop_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            a[2] = "g";
+        })("abc");
+    }
+    expect: {
+        "abc"[2] = "g";
+    }
 }
