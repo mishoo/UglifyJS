@@ -561,7 +561,7 @@ global_fns: {
     ]
 }
 
-issue_2383: {
+issue_2383_1: {
     options = {
         conditionals: true,
         dead_code: true,
@@ -575,4 +575,49 @@ issue_2383: {
     expect: {
         var x, y;
     }
+}
+
+issue_2383_2: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        if (0) {
+            var {
+                x = 0,
+                y: [ w, , { z, p: q = 7 } ] = [ 1, 2, { z: 3 } ]
+            } = {};
+        }
+        console.log(x, q, w, z);
+    }
+    expect: {
+        var x, w, z, q;
+        console.log(x, q, w, z);
+    }
+    expect_stdout: "undefined undefined undefined undefined"
+    node_version: ">=6"
+}
+
+issue_2383_3: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        var b = 7, y = 8;
+        if (0) {
+            var a = 1, [ x, y, z ] = [ 2, 3, 4 ], b = 5;
+        }
+        console.log(a, x, y, z, b);
+    }
+    expect: {
+        var b = 7, y = 8;
+        var a, x, y, z, b;
+        console.log(a, x, y, z, b);
+    }
+    expect_stdout: "undefined undefined 8 undefined 7"
+    node_version: ">=6"
 }
