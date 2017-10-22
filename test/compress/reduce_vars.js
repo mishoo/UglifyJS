@@ -2660,8 +2660,8 @@ obj_var_2: {
         evaluate: true,
         inline: true,
         passes: 2,
+        properties: true,
         reduce_vars: true,
-        side_effects: true,
         toplevel: true,
         unsafe: true,
         unused: true,
@@ -2716,10 +2716,10 @@ obj_arg_2: {
         evaluate: true,
         inline: true,
         passes: 2,
+        properties: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
-        unsafe: true,
         unused: true,
     }
     input: {

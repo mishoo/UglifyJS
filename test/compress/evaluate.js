@@ -386,10 +386,10 @@ unsafe_object_accessor: {
     }
 }
 
-unsafe_function: {
+prop_function: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        properties: true,
     }
     input: {
         console.log(
@@ -402,9 +402,9 @@ unsafe_function: {
     expect: {
         console.log(
             ({a:{b:1},b:function(){}}) + 1,
-            ({b:function(){}}, {b:1}) + 1,
-            ({a:{b:1}}, function(){}) + 1,
-            ({b:function(){}}, {b:1}).b + 1
+            ({b:1}) + 1,
+            function(){} + 1,
+            2
         );
     }
     expect_stdout: true
@@ -630,10 +630,10 @@ unsafe_string_bad_index: {
     expect_stdout: true
 }
 
-unsafe_prototype_function: {
+prototype_function: {
     options = {
-        evaluate  : true,
-        unsafe    : true
+        evaluate: true,
+        properties: true,
     }
     input: {
         var a = ({valueOf: 0}) < 1;
@@ -652,8 +652,8 @@ unsafe_prototype_function: {
         var d = ({toString: 0}) + "";
         var e = (({valueOf: 0}) + "")[2];
         var f = (({toString: 0}) + "")[2];
-        var g = ({}, 0)();
-        var h = ({}, 0)();
+        var g = 0();
+        var h = 0();
     }
 }
 
