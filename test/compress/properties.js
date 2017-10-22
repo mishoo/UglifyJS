@@ -841,3 +841,22 @@ lhs_prop_2: {
         "abc"[2] = "g";
     }
 }
+
+literal_duplicate_key_side_effects: {
+    options = {
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            a: "FAIL",
+            a: console.log ? "PASS" : "FAIL"
+        }.a);
+    }
+    expect: {
+        console.log({
+            a: "FAIL",
+            a: console.log ? "PASS" : "FAIL"
+        }.a);
+    }
+    expect_stdout: "PASS"
+}
