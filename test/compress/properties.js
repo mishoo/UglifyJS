@@ -677,8 +677,8 @@ accessor_this: {
 issue_2208_1: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -696,8 +696,8 @@ issue_2208_1: {
 issue_2208_2: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -721,8 +721,8 @@ issue_2208_2: {
 issue_2208_3: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         a = 42;
@@ -746,8 +746,8 @@ issue_2208_3: {
 issue_2208_4: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         function foo() {}
@@ -770,8 +770,8 @@ issue_2208_4: {
 issue_2208_5: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -808,7 +808,7 @@ issue_2256: {
 lhs_prop_1: {
     options = {
         evaluate: true,
-        unsafe: true,
+        properties: true,
     }
     input: {
         console.log(++{
@@ -827,9 +827,9 @@ lhs_prop_2: {
     options = {
         evaluate: true,
         inline: true,
+        properties: true,
         reduce_vars: true,
         side_effects: true,
-        unsafe: true,
         unused: true,
     }
     input: {
@@ -844,7 +844,7 @@ lhs_prop_2: {
 
 literal_duplicate_key_side_effects: {
     options = {
-        unsafe: true,
+        properties: true,
     }
     input: {
         console.log({
@@ -853,10 +853,137 @@ literal_duplicate_key_side_effects: {
         }.a);
     }
     expect: {
+        console.log(console.log ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+prop_side_effects_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        console.log(C);
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log(1);
+        var obj = {
+            bar: function() {
+                return 2;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+prop_side_effects_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        properties: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        console.log(C);
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log(1);
+        console.log(2);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+accessor_1: {
+    options = {
+        properties: true,
+    }
+    input: {
         console.log({
             a: "FAIL",
-            a: console.log ? "PASS" : "FAIL"
+            get a() {
+                return "PASS";
+            }
+        }.a);
+    }
+    expect: {
+        console.log({
+            a: "FAIL",
+            get a() {
+                return "PASS";
+            }
         }.a);
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+accessor_2: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log({
+            get a() {
+                return "PASS";
+            },
+            set a(v) {},
+            a: "FAIL"
+        }.a);
+    }
+    expect: {
+        console.log({
+            get a() {
+                return "PASS";
+            },
+            set a(v) {},
+            a: "FAIL"
+        }.a);
+    }
+    expect_stdout: true
+}
+
+array_hole: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log(
+            [ 1, 2, , 3][1],
+            [ 1, 2, , 3][2],
+            [ 1, 2, , 3][3]
+        );
+    }
+    expect: {
+        console.log(2, void 0, 3);
+    }
+    expect_stdout: "2 undefined 3"
 }
