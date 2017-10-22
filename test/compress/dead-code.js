@@ -560,3 +560,19 @@ global_fns: {
         "RangeError",
     ]
 }
+
+issue_2383: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        if (0) {
+            var {x, y} = foo();
+        }
+    }
+    expect: {
+        var x, y;
+    }
+}
