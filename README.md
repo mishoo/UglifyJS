@@ -221,7 +221,7 @@ to prevent the `require`, `exports` and `$` names from being changed.
 is a separate step, different from variable name mangling.  Pass
 `--mangle-props` to enable it.  It will mangle all properties in the
 input code with the exception of built in DOM properties and properties
-in core javascript classes.  For example:
+in core JavaScript classes.  For example:
 
 ```javascript
 // example.js
@@ -236,7 +236,7 @@ x.bar_ = 2;
 x["baz_"] = 3;
 console.log(x.calc());
 ```
-Mangle all properties (except for javascript `builtins`):
+Mangle all properties (except for JavaScript `builtins`):
 ```bash
 $ uglifyjs example.js -c -m --mangle-props
 ```
@@ -1060,7 +1060,7 @@ in total it's a bit more than just using UglifyJS's own parser.
 ### Uglify Fast Minify Mode
 
 It's not well known, but whitespace removal and symbol mangling accounts
-for 95% of the size reduction in minified code for most javascript - not
+for 95% of the size reduction in minified code for most JavaScript - not
 elaborate code transforms. One can simply disable `compress` to speed up
 Uglify builds by 3 to 4 times. In this fast `mangle`-only mode Uglify has
 comparable minify speeds and gzip sizes to
