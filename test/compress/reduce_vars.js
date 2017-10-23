@@ -211,7 +211,7 @@ unsafe_evaluate: {
     }
 }
 
-unsafe_evaluate_object: {
+unsafe_evaluate_object_1: {
     options = {
         evaluate     : true,
         reduce_vars  : true,
@@ -251,7 +251,83 @@ unsafe_evaluate_object: {
     }
 }
 
-unsafe_evaluate_array: {
+unsafe_evaluate_object_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var obj = {
+            foo: 1,
+            bar: 2,
+            square: function(x) {
+                return x * x;
+            },
+            cube: function(x) {
+                return x * x * x;
+            },
+        };
+        console.log(obj.foo, obj.bar, obj.square(2), obj.cube);
+    }
+    expect: {
+        var obj = {
+            foo: 1,
+            bar: 2,
+            square: function(x) {
+                return x * x;
+            },
+            cube: function(x) {
+                return x * x * x;
+            },
+        };
+        console.log(1, 2, obj.square(2), obj.cube);
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_object_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var obj = {
+            get foo() {
+                return 1;
+            },
+            bar: 2,
+            square: function(x) {
+                return x * x;
+            },
+            cube: function(x) {
+                return x * x * x;
+            },
+        };
+        console.log(obj.foo, obj.bar, obj.square(2), obj.cube);
+    }
+    expect: {
+        var obj = {
+            get foo() {
+                return 1;
+            },
+            bar: 2,
+            square: function(x) {
+                return x * x;
+            },
+            cube: function(x) {
+                return x * x * x;
+            },
+        };
+        console.log(obj.foo, obj.bar, obj.square(2), obj.cube);
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_array_1: {
     options = {
         evaluate     : true,
         reduce_vars  : true,
@@ -297,6 +373,42 @@ unsafe_evaluate_array: {
             console.log(a.length);
         }
     }
+}
+
+unsafe_evaluate_array_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var arr = [
+            1,
+            2,
+            function(x) {
+                return x * x;
+            },
+            function(x) {
+                return x * x * x;
+            },
+        ];
+        console.log(arr[0], arr[1], arr[2](2), arr[3]);
+    }
+    expect: {
+        var arr = [
+            1,
+            2,
+            function(x) {
+                return x * x;
+            },
+            function(x) {
+                return x * x * x;
+            },
+        ];
+        console.log(1, 2, arr[2](2), arr[3]);
+    }
+    expect_stdout: true
 }
 
 unsafe_evaluate_equality_1: {
