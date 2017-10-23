@@ -44,7 +44,7 @@ program.option("-o, --output <file>", "Output file (default STDOUT).");
 program.option("--comments [filter]", "Preserve copyright comments in the output.");
 program.option("--config-file <file>", "Read minify() options from JSON file.");
 program.option("-d, --define <expr>[=value]", "Global definitions.", parse_js("define"));
-program.option("--ecma <version>", "Specifiy ECMAScript release: 5, 6, 7 or 8.");
+program.option("--ecma <version>", "Specify ECMAScript release: 5, 6, 7 or 8.");
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
