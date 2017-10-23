@@ -211,6 +211,90 @@ unsafe_evaluate: {
     }
 }
 
+unsafe_evaluate_side_effect_free: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(){ var o={p:1}; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:2}; console.log(o.p); return o; }());
+    }
+    expect: {
+        console.log(function(){ console.log(1); return 1; }());
+        console.log(function(){ var o={p:2}; console.log(2); return o; }());
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_escaped: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(){ var o={p:1}; console.log(o, o.p); return o.p; }());
+        console.log(function(){ var o={p:2}; console.log(o.p, o); return o.p; }());
+    }
+    expect: {
+        console.log(function(){ var o={p:1}; console.log(o, o.p); return o.p; }());
+        console.log(function(){ var o={p:2}; console.log(o.p, o); return o.p; }());
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_modified: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(){ var o={p:1}; o.p++; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:2}; --o.p; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:3}; o.p += ""; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:4}; o = {}; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:5}; o.p = -9; console.log(o.p); return o.p; }());
+        function inc() { this.p++; }
+        console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
+    }
+    expect: {
+        console.log(function(){ var o={p:1}; o.p++; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:2}; --o.p; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:3}; o.p += ""; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:4}; o = {}; console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:5}; o.p = -9; console.log(o.p); return o.p; }());
+        function inc() { this.p++; }
+        console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_unknown: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(){ var o={p:1}; console.log(o.not_present); return o.p; }());
+        console.log(function(){ var o={p:2}; console.log(o.prototype); return o.p; }());
+        console.log(function(){ var o={p:3}; console.log(o.hasOwnProperty); return o.p; }());
+    }
+    expect: {
+        console.log(function(){ var o={p:1}; console.log(o.not_present); return o.p; }());
+        console.log(function(){ var o={p:2}; console.log(o.prototype); return o.p; }());
+        console.log(function(){ var o={p:3}; console.log(o.hasOwnProperty); return o.p; }());
+    }
+    expect_stdout: true
+}
+
 unsafe_evaluate_object_1: {
     options = {
         evaluate     : true,
@@ -409,6 +493,96 @@ unsafe_evaluate_array_2: {
         console.log(1, 2, arr[2](2), arr[3]);
     }
     expect_stdout: true
+}
+
+unsafe_evaluate_array_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var arr = [
+            1,
+            2,
+            function() {
+                return ++arr[0];
+            },
+        ];
+        console.log(arr[0], arr[1], arr[2](), arr[0]);
+    }
+    expect: {
+        var arr = [
+            1,
+            2,
+            function() {
+                return ++arr[0];
+            },
+        ];
+        console.log(arr[0], arr[1], arr[2](), arr[0]);
+    }
+    expect_stdout: "1 2 2 2"
+}
+
+unsafe_evaluate_array_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var arr = [
+            1,
+            2,
+            function() {
+                return ++this[0];
+            },
+        ];
+        console.log(arr[0], arr[1], arr[2], arr[0]);
+    }
+    expect: {
+        var arr = [
+            1,
+            2,
+            function() {
+                return ++this[0];
+            },
+        ];
+        console.log(1, 2, arr[2], 1);
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_array_5: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var arr = [
+            1,
+            2,
+            function() {
+                return ++this[0];
+            },
+        ];
+        console.log(arr[0], arr[1], arr[2](), arr[0]);
+    }
+    expect: {
+        var arr = [
+            1,
+            2,
+            function() {
+                return ++this[0];
+            },
+        ];
+        console.log(arr[0], arr[1], arr[2](), arr[0]);
+    }
+    expect_stdout: "1 2 2 2"
 }
 
 unsafe_evaluate_equality_1: {
