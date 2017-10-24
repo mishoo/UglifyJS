@@ -211,7 +211,7 @@ unsafe_evaluate: {
     }
 }
 
-unsafe_evaluate_side_effect_free: {
+unsafe_evaluate_side_effect_free_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -221,10 +221,31 @@ unsafe_evaluate_side_effect_free: {
     input: {
         console.log(function(){ var o={p:1}; console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:2}; console.log(o.p); return o; }());
+        console.log(function(){ var o={p:3}; console.log([o][0].p); return o.p; }());
     }
     expect: {
         console.log(function(){ console.log(1); return 1; }());
         console.log(function(){ var o={p:2}; console.log(2); return o; }());
+        console.log(function(){ console.log(3); return 3; }());
+    }
+    expect_stdout: true
+}
+
+unsafe_evaluate_side_effect_free_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(){ var o={p:1},a=[o]; console.log(a[0].p); return o.p; }());
+    }
+    expect: {
+        console.log(function(){ console.log(1); return 1; }());
     }
     expect_stdout: true
 }
@@ -239,10 +260,12 @@ unsafe_evaluate_escaped: {
     input: {
         console.log(function(){ var o={p:1}; console.log(o, o.p); return o.p; }());
         console.log(function(){ var o={p:2}; console.log(o.p, o); return o.p; }());
+        console.log(function(){ var o={p:3},a=[o]; console.log(a[0].p++); return o.p; }());
     }
     expect: {
         console.log(function(){ var o={p:1}; console.log(o, o.p); return o.p; }());
         console.log(function(){ var o={p:2}; console.log(o.p, o); return o.p; }());
+        console.log(function(){ var o={p:3},a=[o]; console.log(a[0].p++); return o.p; }());
     }
     expect_stdout: true
 }
@@ -262,6 +285,7 @@ unsafe_evaluate_modified: {
         console.log(function(){ var o={p:5}; o.p = -9; console.log(o.p); return o.p; }());
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:7}; console.log([o][0].p++); return o.p; }());
     }
     expect: {
         console.log(function(){ var o={p:1}; o.p++; console.log(o.p); return o.p; }());
@@ -271,6 +295,7 @@ unsafe_evaluate_modified: {
         console.log(function(){ var o={p:5}; o.p = -9; console.log(o.p); return o.p; }());
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
+        console.log(function(){ var o={p:7}; console.log([o][0].p++); return o.p; }());
     }
     expect_stdout: true
 }
