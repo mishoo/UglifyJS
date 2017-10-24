@@ -184,7 +184,7 @@ single_use: {
     }
 }
 
-name_collision: {
+name_collision_1: {
     options = {
         reduce_vars: true,
         hoist_props: true,
@@ -219,4 +219,70 @@ name_collision: {
         f();
     }
     expect_stdout: "1 3 4 5 6 7"
+}
+
+name_collision_2: {
+    options = {
+        reduce_vars: true,
+        hoist_props: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            p: 1,
+            0: function(x) {
+                return x;
+            },
+            1: function(x) {
+                return x + 1;
+            }
+        }, o__$0 = 2, o__$1 = 3;
+        console.log(o.p === o.p, o[0](4), o[1](5), o__$0, o__$1);
+    }
+    expect: {
+        var o_p = 1,
+            o__ = function(x) {
+                return x;
+            },
+            o__$2 = function(x) {
+                return x + 1;
+            },
+            o__$0 = 2,
+            o__$1 = 3;
+        console.log(o_p === o_p, o__(4), o__$2(5), o__$0, o__$1);
+    }
+    expect_stdout: "true 4 6 2 3"
+}
+
+name_collision_3: {
+    options = {
+        reduce_vars: true,
+        hoist_props: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            p: 1,
+            0: function(x) {
+                return x;
+            },
+            1: function(x) {
+                return x + 1;
+            }
+        }, o__$0 = 2, o__$1 = 3;
+        console.log(o.p === o.p, o[0](4), o[1](5));
+    }
+    expect: {
+        var o_p = 1,
+            o__ = function(x) {
+                return x;
+            },
+            o__$2 = function(x) {
+                return x + 1;
+            },
+            o__$0 = 2,
+            o__$1 = 3;
+        console.log(o_p === o_p, o__(4), o__$2(5));
+    }
+    expect_stdout: "true 4 6"
 }
