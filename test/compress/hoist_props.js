@@ -91,8 +91,8 @@ issue_2377_3: {
 
 direct_access_1: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
         unused: true,
     }
@@ -119,8 +119,8 @@ direct_access_1: {
 
 direct_access_2: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
         unused: true,
     }
@@ -142,8 +142,8 @@ direct_access_2: {
 
 direct_access_3: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
         unused: true,
     }
@@ -162,8 +162,8 @@ direct_access_3: {
 
 single_use: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
         unused: true,
     }
@@ -186,8 +186,8 @@ single_use: {
 
 name_collision_1: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
     }
     input: {
@@ -223,8 +223,8 @@ name_collision_1: {
 
 name_collision_2: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
     }
     input: {
@@ -256,8 +256,8 @@ name_collision_2: {
 
 name_collision_3: {
     options = {
-        reduce_vars: true,
         hoist_props: true,
+        reduce_vars: true,
         toplevel: true,
     }
     input: {
@@ -285,4 +285,87 @@ name_collision_3: {
         console.log(o_p === o_p, o__(4), o__$2(5));
     }
     expect_stdout: "true 4 6"
+}
+
+contains_this_1: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            u: function() {
+                return this === this;
+            },
+            p: 1
+        };
+        console.log(o.p, o.p);
+    }
+    expect: {
+        console.log(1, 1);
+    }
+    expect_stdout: "1 1"
+}
+
+contains_this_2: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            u: function() {
+                return this === this;
+            },
+            p: 1
+        };
+        console.log(o.p, o.p, o.u);
+    }
+    expect: {
+        console.log(1, 1, function() {
+            return this === this;
+        });
+    }
+    expect_stdout: true
+}
+
+contains_this_3: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            u: function() {
+                return this === this;
+            },
+            p: 1
+        };
+        console.log(o.p, o.p, o.u());
+    }
+    expect: {
+        var o = {
+            u: function() {
+                return this === this;
+            },
+            p: 1
+        };
+        console.log(o.p, o.p, o.u());
+    }
+    expect_stdout: "1 1 true"
 }
