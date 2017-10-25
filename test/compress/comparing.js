@@ -74,3 +74,40 @@ dont_change_in_or_instanceof_expressions: {
         null instanceof null;
     }
 }
+
+self_comparison_1: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        a === a;
+        a !== b;
+        b.c === a.c;
+        b.c !== b.c;
+    }
+    expect: {
+        a == a;
+        a !== b;
+        b.c === a.c;
+        b.c != b.c;
+    }
+}
+
+self_comparison_2: {
+    options = {
+        comparisons: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {}
+        var o = {};
+        console.log(f != f, o === o);
+    }
+    expect: {
+        function f() {}
+        var o = {};
+        console.log(false, true);
+    }
+    expect_stdout: "false true"
+}
