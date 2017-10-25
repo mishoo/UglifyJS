@@ -1195,3 +1195,40 @@ issue_2231_2: {
     }
     expect_stdout: true
 }
+
+self_comparison_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var o = { n: NaN };
+        console.log(o.n == o.n, o.n === o.n, o.n != o.n, o.n !== o.n, typeof o.n);
+    }
+    expect: {
+        console.log(false, false, true, true, "number");
+    }
+    expect_stdout: "false false true true 'number'"
+}
+
+self_comparison_2: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = { n: NaN };
+        console.log(o.n == o.n, o.n === o.n, o.n != o.n, o.n !== o.n, typeof o.n);
+    }
+    expect: {
+        console.log(false, false, true, true, "number");
+    }
+    expect_stdout: "false false true true 'number'"
+}
