@@ -131,6 +131,7 @@ for_loop: {
         evaluate: true,
         reduce_vars: true,
         unsafe: true,
+        unused: true,
     };
     input: {
         function f0() {
@@ -166,7 +167,7 @@ for_loop: {
         function f1() {
             var a = [1, 2, 3];
             var b = 0;
-            for (var i = 0, len = a.length; i < len; i++)
+            for (var i = 0; i < 3; i++)
                 b += a[i];
             return b;
         }
@@ -179,4 +180,58 @@ for_loop: {
         console.log(f0(), f1(), f2());
     }
     expect_stdout: "6 6 4"
+}
+
+index: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2 ];
+        console.log(a[0], a[1]);
+    }
+    expect: {
+        console.log(1, 2);
+    }
+    expect_stdout: "1 2"
+}
+
+length: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2 ];
+        console.log(a.length);
+    }
+    expect: {
+        console.log(2);
+    }
+    expect_stdout: "2"
+}
+
+index_length: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2 ];
+        console.log(a[0], a.length);
+    }
+    expect: {
+        console.log(1, 2);
+    }
+    expect_stdout: "1 2"
 }
