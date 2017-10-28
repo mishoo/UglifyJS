@@ -3111,3 +3111,88 @@ const_expr_2: {
     }
     expect_stdout: "2 2"
 }
+
+issue_2406_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: false,
+        unused: true,
+    }
+    input: {
+        const c = {
+            fn: function() {
+                return this;
+            }
+        };
+        let l = {
+            fn: function() {
+                return this;
+            }
+        };
+        var v = {
+            fn: function() {
+                return this;
+            }
+        };
+        console.log(c.fn(), l.fn(), v.fn());
+    }
+    expect: {
+        const c = {
+            fn: function() {
+                return this;
+            }
+        };
+        let l = {
+            fn: function() {
+                return this;
+            }
+        };
+        var v = {
+            fn: function() {
+                return this;
+            }
+        };
+        console.log(c.fn(), l.fn(), v.fn());
+    }
+}
+
+issue_2406_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        const c = {
+            fn: function() {
+                return this;
+            }
+        };
+        let l = {
+            fn: function() {
+                return this;
+            }
+        };
+        var v = {
+            fn: function() {
+                return this;
+            }
+        };
+        console.log(c.fn(), l.fn(), v.fn());
+    }
+    expect: {
+        console.log({
+            fn: function() {
+                return this;
+            }
+        }.fn(), {
+            fn: function() {
+                return this;
+            }
+        }.fn(), {
+            fn: function() {
+                return this;
+            }
+        }.fn());
+    }
+}
