@@ -2973,6 +2973,7 @@ obj_var_2: {
         passes: 2,
         properties: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unsafe: true,
         unused: true,

@@ -390,6 +390,7 @@ prop_function: {
     options = {
         evaluate: true,
         properties: true,
+        side_effects: true,
     }
     input: {
         console.log(
@@ -634,6 +635,7 @@ prototype_function: {
     options = {
         evaluate: true,
         properties: true,
+        side_effects: true,
     }
     input: {
         var a = ({valueOf: 0}) < 1;

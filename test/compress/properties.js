@@ -1,7 +1,8 @@
 keep_properties: {
     options = {
-        properties: false
-    };
+        evaluate: true,
+        properties: false,
+    }
     input: {
         a["foo"] = "bar";
     }
@@ -12,6 +13,7 @@ keep_properties: {
 
 dot_properties: {
     options = {
+        evaluate: true,
         properties: true,
     }
     beautify = {
@@ -37,6 +39,7 @@ dot_properties: {
 
 dot_properties_es5: {
     options = {
+        evaluate: true,
         properties: true,
     }
     beautify = {
@@ -61,8 +64,8 @@ dot_properties_es5: {
 sub_properties: {
     options = {
         evaluate: true,
-        properties: true
-    };
+        properties: true,
+    }
     input: {
         a[0] = 0;
         a["0"] = 1;
@@ -81,18 +84,18 @@ sub_properties: {
         a[3.14] = 3;
         a.if = 4;
         a["foo bar"] = 5;
-        a[NaN] = 6;
-        a[null] = 7;
+        a.NaN = 6;
+        a.null = 7;
         a[void 0] = 8;
     }
 }
 
 evaluate_array_length: {
     options = {
+        evaluate: true,
         properties: true,
         unsafe: true,
-        evaluate: true
-    };
+    }
     input: {
         a = [1, 2, 3].length;
         a = [1, 2, 3].join()["len" + "gth"];
@@ -109,10 +112,10 @@ evaluate_array_length: {
 
 evaluate_string_length: {
     options = {
+        evaluate: true,
         properties: true,
         unsafe: true,
-        evaluate: true
-    };
+    }
     input: {
         a = "foo".length;
         a = ("foo" + "bar")["len" + "gth"];
@@ -151,7 +154,8 @@ mangle_properties: {
 
 mangle_unquoted_properties: {
     options = {
-        properties: false
+        evaluate: true,
+        properties: false,
     }
     mangle = {
         properties: {
@@ -249,7 +253,8 @@ mangle_debug_suffix: {
 
 mangle_debug_suffix_keep_quoted: {
     options = {
-        properties: false
+        evaluate: true,
+        properties: false,
     }
     mangle = {
         properties: {
@@ -833,18 +838,29 @@ lhs_prop_2: {
         unused: true,
     }
     input: {
+        [1][0] = 42;
+        (function(a) {
+            a.b = "g";
+        })("abc");
         (function(a) {
             a[2] = "g";
-        })("abc");
+        })("def");
+        (function(a) {
+            a[""] = "g";
+        })("ghi");
     }
     expect: {
-        "abc"[2] = "g";
+        [1][0] = 42;
+        "abc".b = "g";
+        "def"[2] = "g";
+        "ghi"[""] = "g";
     }
 }
 
 literal_duplicate_key_side_effects: {
     options = {
         properties: true,
+        side_effects: true,
     }
     input: {
         console.log({
@@ -864,6 +880,7 @@ prop_side_effects_1: {
         inline: true,
         properties: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -899,6 +916,7 @@ prop_side_effects_2: {
         passes: 2,
         properties: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -906,11 +924,11 @@ prop_side_effects_2: {
         var C = 1;
         console.log(C);
         var obj = {
-            bar: function() {
+            "": function() {
                 return C + C;
             }
         };
-        console.log(obj.bar());
+        console.log(obj[""]());
     }
     expect: {
         console.log(1);
@@ -974,6 +992,7 @@ accessor_2: {
 array_hole: {
     options = {
         properties: true,
+        side_effects: true,
     }
     input: {
         console.log(
