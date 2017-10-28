@@ -59,7 +59,7 @@ template_string_with_constant_expression: {
         var foo = `${4 + 4} equals 4 + 4`;
     }
     expect: {
-        var foo = `8 equals 4 + 4`;
+        var foo = "8 equals 4 + 4";
     }
 }
 
@@ -89,21 +89,21 @@ template_string_with_predefined_constants: {
         var c = `${4**14}`; // 8 in template vs 9 chars - 268435456
     }
     expect: {
-        var foo = `This is undefined`;
-        var bar = `This is NaN`;
-        var baz = `This is null`;
+        var foo = "This is undefined";
+        var bar = "This is NaN";
+        var baz = "This is null";
         var foofoo = `This is ${1/0}`;
         var foobar = "This is ${1/0}";
         var foobaz = 'This is ${1/0}';
         var barfoo = "This is ${NaN}";
         var bazfoo = "This is ${null}";
         var bazbaz = `This is ${1/0}`;
-        var barbar = `This is NaN`;
+        var barbar = "This is NaN";
         var barbar = "This is ${0/0}";
         var barber = 'This is ${0/0}';
 
-        var a = `4194304`;
-        var b = `16777216`; // Potential for further concatentation
+        var a = "4194304";
+        var b = "16777216"; // Potential for further concatentation
         var c = `${4**14}`; // Not worth converting
     }
 }
@@ -123,7 +123,7 @@ template_string_evaluate_with_many_segments: {
     }
     expect: {
         var foo = `Hello ${guest()}, welcome to ${location()}.`;
-        var bar = `1234567890`;
+        var bar = "1234567890";
         var baz = `${foobar()}${foobar()}${foobar()}${foobar()}`;
         var buzz = `1${foobar()}2${foobar()}3${foobar()}`;
     }
@@ -159,7 +159,7 @@ template_string_to_normal_string: {
         var bar = "Decimals " + `${1}${2}${3}${4}${5}${6}${7}${8}${9}${0}`;
     }
     expect: {
-        var foo = `This is undefined`;
+        var foo = "This is undefined";
         var bar = "Decimals 1234567890";
     }
 }
@@ -192,7 +192,7 @@ evaluate_nested_templates: {
         var baz = `${`${`${`foo`}`}`}`;
     }
     expect: {
-        var baz = `foo`;
+        var baz = "foo";
     }
 }
 
@@ -241,8 +241,8 @@ enforce_double_quotes_and_evaluate: {
         var baz = `Hello ${world()}`;
     }
     expect: {
-        var foo = `Hello world`;
-        var bar = `Hello world`;
+        var foo = "Hello world";
+        var bar = "Hello world";
         var baz = `Hello ${world()}`;
     }
 }
@@ -260,8 +260,8 @@ enforce_single_quotes_and_evaluate: {
         var baz = `Hello ${world()}`;
     }
     expect: {
-        var foo = `Hello world`;
-        var bar = `Hello world`;
+        var foo = "Hello world";
+        var bar = "Hello world";
         var baz = `Hello ${world()}`;
     }
 }
@@ -339,7 +339,7 @@ escape_dollar_curly: {
         console.log(`${1-0}\${2-0}$\{3-0}${4-0}`)
         console.log(`$${""}{not an expression}`)
     }
-    expect_exact: "console.log(`\\${ beep }`);console.log(`1\\${2-0}\\${3-0}4`);console.log(`\\${not an expression}`);"
+    expect_exact: 'console.log("${ beep }");console.log("1${2-0}${3-0}4");console.log("${not an expression}");'
 }
 
 template_starting_with_newline: {
@@ -399,4 +399,62 @@ issue_1856_ascii_only: {
         console.log(`\\n\\r\\u2028\\u2029\n\r\u2028\u2029`);
     }
     expect_exact: "console.log(`\\\\n\\\\r\\\\u2028\\\\u2029\\n\\r\\u2028\\u2029`);"
+}
+
+side_effects: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        `t1`;
+        tag`t2`;
+        `t${3}`;
+        tag`t${4}`;
+        console.log(`
+t${5}`);
+        function f(a) {
+            `t6${a}`;
+            a = `t7${a}` & a;
+            a = `t8${b}` | a;
+            a = f`t9${a}` ^ a;
+        }
+    }
+    expect: {
+        tag`t2`;
+        tag`t${4}`;
+        console.log("\nt5");
+        function f(a) {
+            a &= `t7${a}`;
+            a = `t8${b}` | a;
+            a = f`t9${a}` ^ a;
+        }
+    }
+}
+
+simple_string: {
+    options = {
+        computed_props: true,
+        evaluate: true,
+        properties: true,
+    }
+    input: {
+        console.log({[`foo`]: 1}[`foo`], `hi` == "hi", `world`);
+    }
+    expect: {
+        console.log({foo: 1}.foo, true, "world");
+    }
+    expect_stdout: "1 true 'world'"
+    node_version: ">=4"
+}
+
+semicolons: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        foo;
+        `bar`;
+    }
+    expect_exact: "foo;`bar`\n"
 }
