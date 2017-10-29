@@ -203,50 +203,110 @@ constant_join_3: {
 
 for_loop: {
     options = {
-        unsafe      : true,
-        unused      : true,
-        evaluate    : true,
-        reduce_vars : true
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
     };
     input: {
         function f0() {
             var a = [1, 2, 3];
-            for (var i = 0; i < a.length; i++) {
-                console.log(a[i]);
-            }
+            var b = 0;
+            for (var i = 0; i < a.length; i++)
+                b += a[i];
+            return b;
         }
-
         function f1() {
             var a = [1, 2, 3];
-            for (var i = 0, len = a.length; i < len; i++) {
-                console.log(a[i]);
-            }
+            var b = 0;
+            for (var i = 0, len = a.length; i < len; i++)
+                b += a[i];
+            return b;
         }
-
-        function f2() {
-            var a = [1, 2, 3];
-            for (var i = 0; i < a.length; i++) {
-                a[i]++;
-            }
-        }
-    }
-    expect: {
-        function f0() {
-            var a = [1, 2, 3];
-            for (var i = 0; i < 3; i++)
-                console.log(a[i]);
-        }
-
-        function f1() {
-            var a = [1, 2, 3];
-            for (var i = 0; i < 3; i++)
-                console.log(a[i]);
-        }
-
         function f2() {
             var a = [1, 2, 3];
             for (var i = 0; i < a.length; i++)
                 a[i]++;
+            return a[2];
         }
+        console.log(f0(), f1(), f2());
     }
+    expect: {
+        function f0() {
+            var a = [1, 2, 3];
+            var b = 0;
+            for (var i = 0; i < 3; i++)
+                b += a[i];
+            return b;
+        }
+        function f1() {
+            var a = [1, 2, 3];
+            var b = 0;
+            for (var i = 0; i < 3; i++)
+                b += a[i];
+            return b;
+        }
+        function f2() {
+            var a = [1, 2, 3];
+            for (var i = 0; i < a.length; i++)
+                a[i]++;
+            return a[2];
+        }
+        console.log(f0(), f1(), f2());
+    }
+    expect_stdout: "6 6 4"
+}
+
+index: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2 ];
+        console.log(a[0], a[1]);
+    }
+    expect: {
+        console.log(1, 2);
+    }
+    expect_stdout: "1 2"
+}
+
+length: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2 ];
+        console.log(a.length);
+    }
+    expect: {
+        console.log(2);
+    }
+    expect_stdout: "2"
+}
+
+index_length: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = [ 1, 2 ];
+        console.log(a[0], a.length);
+    }
+    expect: {
+        console.log(1, 2);
+    }
+    expect_stdout: "1 2"
 }
