@@ -1258,3 +1258,27 @@ array_hole: {
     }
     expect_stdout: "2 undefined 3"
 }
+
+computed_property: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        console.log({
+            a: "bar",
+            [console.log("foo")]: 42,
+        }.a);
+    }
+    expect: {
+        console.log([
+            "bar",
+            console.log("foo")
+        ][0]);
+    }
+    expect_stdout: [
+        "foo",
+        "bar"
+    ]
+    node_version: ">=4"
+}
