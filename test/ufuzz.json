@@ -16,11 +16,9 @@
     {},
     {
         "compress": {
-            "toplevel": true
+            "hoist_props": true
         },
-        "mangle": {
-            "toplevel": true
-        }
+        "toplevel": true
     },
     {
         "compress": {

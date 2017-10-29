@@ -151,13 +151,13 @@ issue_1841_2: {
 
 function_returning_constant_literal: {
     options = {
-        reduce_vars: true,
-        unsafe: true,
-        toplevel: true,
-        evaluate: true,
-        cascade: true,
-        unused: true,
         inline: true,
+        passes: 2,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
     }
     input: {
         function greeter() {

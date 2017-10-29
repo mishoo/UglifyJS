@@ -2150,7 +2150,7 @@ inner_lvalues: {
         console.log(null, a, b);
     }
     expect: {
-        var a, b = 10;
+        var b = 10;
         var a = (--b || a || 3).toString(), c = --b + -a;
         console.log(null, a, b);
     }
@@ -2806,73 +2806,6 @@ issue_2319_3: {
         }());
     }
     expect_stdout: "true"
-}
-
-prop_side_effects_1: {
-    options = {
-        collapse_vars: true,
-        evaluate: true,
-        pure_getters: "strict",
-        reduce_vars: true,
-        toplevel: true,
-        unsafe: true,
-        unused: true,
-    }
-    input: {
-        var C = 1;
-        console.log(C);
-        var obj = {
-            bar: function() {
-                return C + C;
-            }
-        };
-        console.log(obj.bar());
-    }
-    expect: {
-        console.log(1);
-        console.log({
-            bar: function() {
-                return 2;
-            }
-        }.bar());
-    }
-    expect_stdout: [
-        "1",
-        "2",
-    ]
-}
-
-prop_side_effects_2: {
-    options = {
-        collapse_vars: true,
-        evaluate: true,
-        inline: true,
-        passes: 2,
-        pure_getters: "strict",
-        reduce_vars: true,
-        side_effects: true,
-        toplevel: true,
-        unsafe: true,
-        unused: true,
-    }
-    input: {
-        var C = 1;
-        console.log(C);
-        var obj = {
-            bar: function() {
-                return C + C;
-            }
-        };
-        console.log(obj.bar());
-    }
-    expect: {
-        console.log(1);
-        console.log(2);
-    }
-    expect_stdout: [
-        "1",
-        "2",
-    ]
 }
 
 issue_2365: {

@@ -649,6 +649,12 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `hoist_funs` (default: `true`) -- hoist function declarations
 
+- `hoist_props` (default: `false`) -- hoist properties from constant object and
+  array literals into regular variables subject to a set of constraints. For example:
+  `var o={p:1, q:2}; f(o.p, o.q);` is converted to `f(1, 2);`. Note: `hoist_props`
+  works best with `mangle` enabled, the `compress` option `passes` set to `2` or higher,
+  and the `compress` option `toplevel` enabled.
+
 - `hoist_vars` (default: `false`) -- hoist `var` declarations (this is `false`
   by default because it seems to increase the size of the output in general)
 

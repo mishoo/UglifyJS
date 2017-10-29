@@ -1291,7 +1291,6 @@ issue_2063: {
     }
     expect: {
         var a;
-        var a;
     }
 }
 

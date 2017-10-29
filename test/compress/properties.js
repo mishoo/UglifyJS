@@ -1,7 +1,8 @@
 keep_properties: {
     options = {
-        properties: false
-    };
+        evaluate: true,
+        properties: false,
+    }
     input: {
         a["foo"] = "bar";
     }
@@ -12,6 +13,7 @@ keep_properties: {
 
 dot_properties: {
     options = {
+        evaluate: true,
         properties: true,
     }
     beautify = {
@@ -37,6 +39,7 @@ dot_properties: {
 
 dot_properties_es5: {
     options = {
+        evaluate: true,
         properties: true,
     }
     beautify = {
@@ -61,8 +64,8 @@ dot_properties_es5: {
 sub_properties: {
     options = {
         evaluate: true,
-        properties: true
-    };
+        properties: true,
+    }
     input: {
         a[0] = 0;
         a["0"] = 1;
@@ -81,18 +84,18 @@ sub_properties: {
         a[3.14] = 3;
         a.if = 4;
         a["foo bar"] = 5;
-        a[NaN] = 6;
-        a[null] = 7;
+        a.NaN = 6;
+        a.null = 7;
         a[void 0] = 8;
     }
 }
 
 evaluate_array_length: {
     options = {
+        evaluate: true,
         properties: true,
         unsafe: true,
-        evaluate: true
-    };
+    }
     input: {
         a = [1, 2, 3].length;
         a = [1, 2, 3].join()["len" + "gth"];
@@ -109,10 +112,10 @@ evaluate_array_length: {
 
 evaluate_string_length: {
     options = {
+        evaluate: true,
         properties: true,
         unsafe: true,
-        evaluate: true
-    };
+    }
     input: {
         a = "foo".length;
         a = ("foo" + "bar")["len" + "gth"];
@@ -151,7 +154,8 @@ mangle_properties: {
 
 mangle_unquoted_properties: {
     options = {
-        properties: false
+        evaluate: true,
+        properties: false,
     }
     mangle = {
         properties: {
@@ -250,7 +254,8 @@ mangle_debug_suffix: {
 
 mangle_debug_suffix_keep_quoted: {
     options = {
-        properties: false
+        evaluate: true,
+        properties: false,
     }
     mangle = {
         properties: {
@@ -679,8 +684,8 @@ accessor_this: {
 issue_2208_1: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -698,8 +703,8 @@ issue_2208_1: {
 issue_2208_2: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -723,8 +728,8 @@ issue_2208_2: {
 issue_2208_3: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         a = 42;
@@ -748,8 +753,8 @@ issue_2208_3: {
 issue_2208_4: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         function foo() {}
@@ -772,8 +777,8 @@ issue_2208_4: {
 issue_2208_5: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -792,8 +797,8 @@ issue_2208_5: {
 issue_2208_6: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -809,9 +814,11 @@ issue_2208_6: {
 
 issue_2208_7: {
     options = {
+        ecma: 6,
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
+        unsafe_arrows: true,
     }
     input: {
         console.log({
@@ -829,9 +836,11 @@ issue_2208_7: {
 
 issue_2208_8: {
     options = {
+        ecma: 6,
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
+        unsafe_arrows: true,
     }
     input: {
         console.log({
@@ -851,17 +860,17 @@ issue_2208_8: {
                 return x();
             }
         }.p());
-        console.log(async function() {
+        console.log((async () => {
             return await x();
-        }());
+        })());
     }
 }
 
 issue_2208_9: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         a = 42;
@@ -1051,4 +1060,225 @@ unsafe_methods_regex: {
         "undefined",
     ]
     node_version: ">=6"
+}
+
+lhs_prop_1: {
+    options = {
+        evaluate: true,
+        properties: true,
+    }
+    input: {
+        console.log(++{
+            a: 1
+        }.a);
+    }
+    expect: {
+        console.log(++{
+            a: 1
+        }.a);
+    }
+    expect_stdout: "2"
+}
+
+lhs_prop_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        [1][0] = 42;
+        (function(a) {
+            a.b = "g";
+        })("abc");
+        (function(a) {
+            a[2] = "g";
+        })("def");
+        (function(a) {
+            a[""] = "g";
+        })("ghi");
+    }
+    expect: {
+        [1][0] = 42;
+        "abc".b = "g";
+        "def"[2] = "g";
+        "ghi"[""] = "g";
+    }
+}
+
+literal_duplicate_key_side_effects: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        console.log({
+            a: "FAIL",
+            a: console.log ? "PASS" : "FAIL"
+        }.a);
+    }
+    expect: {
+        console.log(console.log ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+prop_side_effects_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        console.log(C);
+        var obj = {
+            bar: function() {
+                return C + C;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect: {
+        console.log(1);
+        var obj = {
+            bar: function() {
+                return 2;
+            }
+        };
+        console.log(obj.bar());
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+prop_side_effects_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var C = 1;
+        console.log(C);
+        var obj = {
+            "": function() {
+                return C + C;
+            }
+        };
+        console.log(obj[""]());
+    }
+    expect: {
+        console.log(1);
+        console.log(2);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+accessor_1: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log({
+            a: "FAIL",
+            get a() {
+                return "PASS";
+            }
+        }.a);
+    }
+    expect: {
+        console.log({
+            a: "FAIL",
+            get a() {
+                return "PASS";
+            }
+        }.a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+accessor_2: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log({
+            get a() {
+                return "PASS";
+            },
+            set a(v) {},
+            a: "FAIL"
+        }.a);
+    }
+    expect: {
+        console.log({
+            get a() {
+                return "PASS";
+            },
+            set a(v) {},
+            a: "FAIL"
+        }.a);
+    }
+    expect_stdout: true
+}
+
+array_hole: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(
+            [ 1, 2, , 3][1],
+            [ 1, 2, , 3][2],
+            [ 1, 2, , 3][3]
+        );
+    }
+    expect: {
+        console.log(2, void 0, 3);
+    }
+    expect_stdout: "2 undefined 3"
+}
+
+computed_property: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        console.log({
+            a: "bar",
+            [console.log("foo")]: 42,
+        }.a);
+    }
+    expect: {
+        console.log([
+            "bar",
+            console.log("foo")
+        ][0]);
+    }
+    expect_stdout: [
+        "foo",
+        "bar"
+    ]
+    node_version: ">=4"
 }
