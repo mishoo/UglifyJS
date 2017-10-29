@@ -442,7 +442,7 @@ simple_string: {
         console.log({[`foo`]: 1}[`foo`], `hi` == "hi", `world`);
     }
     expect: {
-        console.log({foo: 1}.foo, true, "world");
+        console.log([ 1 ][0], true, "world");
     }
     expect_stdout: "1 true 'world'"
     node_version: ">=4"

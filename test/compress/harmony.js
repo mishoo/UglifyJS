@@ -902,10 +902,10 @@ issue_2349b: {
         evaluate: true,
         inline: true,
         passes: 3,
+        properties: true,
         reduce_vars: true,
         toplevel: true,
         side_effects: true,
-        unsafe: true,
         unsafe_arrows: true,
         unused: true,
     }

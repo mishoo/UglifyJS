@@ -797,8 +797,8 @@ issue_2208_5: {
 issue_2208_6: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         console.log({
@@ -814,9 +814,11 @@ issue_2208_6: {
 
 issue_2208_7: {
     options = {
+        ecma: 6,
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
+        unsafe_arrows: true,
     }
     input: {
         console.log({
@@ -834,9 +836,11 @@ issue_2208_7: {
 
 issue_2208_8: {
     options = {
+        ecma: 6,
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
+        unsafe_arrows: true,
     }
     input: {
         console.log({
@@ -856,17 +860,17 @@ issue_2208_8: {
                 return x();
             }
         }.p());
-        console.log(async function() {
+        console.log((async () => {
             return await x();
-        }());
+        })());
     }
 }
 
 issue_2208_9: {
     options = {
         inline: true,
+        properties: true,
         side_effects: true,
-        unsafe: true,
     }
     input: {
         a = 42;
