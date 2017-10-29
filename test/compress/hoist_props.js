@@ -369,3 +369,117 @@ contains_this_3: {
     }
     expect_stdout: "1 1 true"
 }
+
+hoist_class: {
+    options = {
+        comparisons: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        keep_fnames: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function run(c, v) {
+            return new c(v).value;
+        }
+        var o = {
+            p: class Foo {
+                constructor(value) {
+                    this.value = value * 10;
+                }
+            },
+            x: 1,
+            y: 2,
+        };
+        console.log(o.p.name, o.p === o.p, run(o.p, o.x), run(o.p, o.y));
+    }
+    expect: {
+        function run(c, v) {
+            return new c(v).value;
+        }
+        var o_p = class Foo {
+            constructor(value) {
+                this.value = 10 * value;
+            }
+        };
+        console.log(o_p.name, true, run(o_p, 1), run(o_p, 2));
+    }
+    node_version: ">=6"
+    expect_stdout: "Foo true 10 20"
+}
+
+hoist_class_with_new: {
+    options = {
+        comparisons: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        keep_fnames: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            p: class Foo {
+                constructor(value) {
+                    this.value = value * 10;
+                }
+            },
+            x: 1,
+            y: 2,
+        };
+        console.log(o.p.name, o.p === o.p, new o.p(o.x).value, new o.p(o.y).value);
+    }
+    expect: {
+        // FIXME: class `o.p` not hoisted due to `new`
+        var o = {
+            p: class Foo {
+                constructor(value) {
+                    this.value = 10 * value;
+                }
+            },
+            x: 1,
+            y: 2
+        };
+        console.log(o.p.name, o.p == o.p, new o.p(o.x).value, new o.p(o.y).value);
+    }
+    node_version: ">=6"
+    expect_stdout: "Foo true 10 20"
+}
+
+hoist_function_with_call: {
+    options = {
+        comparisons: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        keep_fnames: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            p: function Foo(value) {
+                return 10 * value;
+            },
+            x: 1,
+            y: 2
+        };
+        console.log(o.p.name, o.p === o.p, o.p(o.x), o.p(o.y));
+    }
+    expect: {
+        var o_p = function Foo(value){
+            return 10 * value
+        };
+        console.log(o_p.name, true, o_p(1), o_p(2));
+    }
+    expect_stdout: "Foo true 10 20"
+}
