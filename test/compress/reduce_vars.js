@@ -3295,3 +3295,45 @@ escaped_prop: {
     }
     expect_stdout: "2"
 }
+
+issue_2420: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function run() {
+            var self = this;
+            if (self.count++)
+                self.foo();
+            else
+                self.bar();
+        }
+        var o = {
+            count: 0,
+            foo: function() { console.log("foo"); },
+            bar: function() { console.log("bar"); },
+        };
+        run.call(o);
+        run.call(o);
+    }
+    expect: {
+        function run() {
+            if (this.count++)
+                this.foo();
+            else
+                this.bar();
+        }
+        var o = {
+            count: 0,
+            foo: function() { console.log("foo"); },
+            bar: function() { console.log("bar"); },
+        };
+        run.call(o);
+        run.call(o);
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+}
