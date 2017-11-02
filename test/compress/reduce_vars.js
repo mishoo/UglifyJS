@@ -3296,7 +3296,7 @@ escaped_prop: {
     expect_stdout: "2"
 }
 
-issue_2420: {
+issue_2420_1: {
     options = {
         reduce_vars: true,
         unused: true,
@@ -3335,5 +3335,51 @@ issue_2420: {
     expect_stdout: [
         "bar",
         "foo",
+    ]
+}
+
+issue_2420_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var t = this;
+            if (t.bar)
+                t.foo();
+            else
+                !function(t) {
+                    console.log(this === t);
+                }(this);
+        }
+        var o = {
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        };
+        f.call(o);
+        o.bar = 0;
+        f.call(o);
+    }
+    expect: {
+        function f() {
+            if (this.bar)
+                this.foo();
+            else
+                !function(t) {
+                    console.log(this === t);
+                }(this);
+        }
+        var o = {
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        };
+        f.call(o);
+        o.bar = 0;
+        f.call(o);
+    }
+    expect_stdout: [
+        "foo 1",
+        "false",
     ]
 }
