@@ -3345,41 +3345,37 @@ issue_2420_2: {
     }
     input: {
         function f() {
-            var t = this;
-            if (t.bar)
-                t.foo();
+            var that = this;
+            if (that.bar)
+                that.foo();
             else
-                !function(t) {
-                    console.log(this === t);
-                }(this);
+                !function(that, self) {
+                    console.log(this === that, self === this, that === self);
+                }(that, this);
         }
-        var o = {
+        f.call({
             bar: 1,
             foo: function() { console.log("foo", this.bar); },
-        };
-        f.call(o);
-        o.bar = 0;
-        f.call(o);
+        });
+        f.call({});
     }
     expect: {
         function f() {
             if (this.bar)
                 this.foo();
             else
-                !function(t) {
-                    console.log(this === t);
-                }(this);
+                !function(that, self) {
+                    console.log(this === that, self === this, that === self);
+                }(this, this);
         }
-        var o = {
+        f.call({
             bar: 1,
             foo: function() { console.log("foo", this.bar); },
-        };
-        f.call(o);
-        o.bar = 0;
-        f.call(o);
+        });
+        f.call({});
     }
     expect_stdout: [
         "foo 1",
-        "false",
+        "false false true",
     ]
 }
