@@ -47,25 +47,23 @@ collapse_vars_side_effects_1: {
     }
     expect: {
         function f1() {
-            var s = "abcdef", i = 2;
-            console.log.bind(console)(s.charAt(i++), s.charAt(i++), s.charAt(i++), 7);
+            var i = 2;
+            console.log.bind(console)("abcdef".charAt(i++), "abcdef".charAt(i++), "abcdef".charAt(i++), 7);
         }
         function f2() {
             var log = console.log.bind(console),
-                s = "abcdef",
                 i = 2,
-                x = s.charAt(i++),
-                y = s.charAt(i++),
-                z = s.charAt(i++);
+                x = "abcdef".charAt(i++),
+                y = "abcdef".charAt(i++),
+                z = "abcdef".charAt(i++);
             log(x, i, y, z, 7);
         }
         function f3() {
-            var s = "abcdef",
-                i = 2,
+            var i = 2,
                 log = console.log.bind(console),
-                x = s.charAt(i++),
-                y = s.charAt(i++);
-            log(x, s.charAt(i++), y, 7);
+                x = "abcdef".charAt(i++),
+                y = "abcdef".charAt(i++);
+            log(x, "abcdef".charAt(i++), y, 7);
         }
         function f4() {
             var i = 10,
