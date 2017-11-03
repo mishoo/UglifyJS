@@ -162,6 +162,7 @@ var VALUES = [
     '"object"',
     '"number"',
     '"function"',
+    'this',
 ];
 
 var BINARY_OPS_NO_COMMA = [
