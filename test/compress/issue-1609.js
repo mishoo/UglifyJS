@@ -44,8 +44,7 @@ chained_evaluation_2: {
     expect: {
         (function() {
             (function() {
-                var b = "long piece of string";
-                f(b).bar = b;
+                f("long piece of string").bar = "long piece of string";
             })();
         })();
     }
