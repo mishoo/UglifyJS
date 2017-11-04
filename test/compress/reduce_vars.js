@@ -3379,3 +3379,75 @@ issue_2420_2: {
         "false false true",
     ]
 }
+
+issue_2423_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+        p();
+    }
+    expect: {
+        function p() { console.log(function() { return 1; }()); }
+        p();
+        p();
+    }
+}
+
+issue_2423_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+        p();
+    }
+    expect: {
+        function p() { console.log(1); }
+        p();
+        p();
+    }
+}
+
+issue_2423_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+    }
+    expect: {
+        (function() { console.log(function() { return 1; }()); })();
+    }
+}
+
+issue_2423_4: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+    }
+    expect: {
+        void console.log(1);
+    }
+}
