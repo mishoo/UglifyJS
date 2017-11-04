@@ -1109,11 +1109,11 @@ var_catch_toplevel: {
     }
 }
 
-issue_2105: {
+issue_2105_1: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 3,
+        passes: 2,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1139,17 +1139,50 @@ issue_2105: {
         });
     }
     expect: {
-        (function() {
-            var quux = function() {
+        ({
+            prop: function() {
+                console.log;
                 console.log("PASS");
-            };
-            return {
-                prop: function() {
-                    console.log;
-                    quux();
+            }
+        }).prop();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2105_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        properties: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        !function(factory) {
+            factory();
+        }( function() {
+            return function(fn) {
+                fn()().prop();
+            }( function() {
+                function bar() {
+                    var quux = function() {
+                        console.log("PASS");
+                    }, foo = function() {
+                        console.log;
+                        quux();
+                    };
+                    return { prop: foo };
                 }
-            };
-        })().prop();
+                return bar;
+            } );
+        });
+    }
+    expect: {
+        console.log("PASS");
     }
     expect_stdout: "PASS"
 }

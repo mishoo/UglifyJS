@@ -3397,6 +3397,10 @@ issue_2423_1: {
         p();
         p();
     }
+    expect_stdout: [
+        "1",
+        "1",
+    ]
 }
 
 issue_2423_2: {
@@ -3417,6 +3421,10 @@ issue_2423_2: {
         p();
         p();
     }
+    expect_stdout: [
+        "1",
+        "1",
+    ]
 }
 
 issue_2423_3: {
@@ -3433,12 +3441,14 @@ issue_2423_3: {
     expect: {
         (function() { console.log(function() { return 1; }()); })();
     }
+    expect_stdout: "1"
 }
 
 issue_2423_4: {
     options = {
         inline: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -3448,6 +3458,45 @@ issue_2423_4: {
         p();
     }
     expect: {
-        void console.log(1);
+        console.log(1);
     }
+    expect_stdout: "1"
+}
+
+issue_2423_5: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function x() {
+            y();
+        }
+        function y() {
+            console.log(1);
+        }
+        function z() {
+            function y() {
+                console.log(2);
+            }
+            x();
+        }
+        z();
+        z();
+    }
+    expect: {
+        function z() {
+            console.log(1);
+        }
+        z();
+        z();
+    }
+    expect_stdout: [
+        "1",
+        "1",
+    ]
 }
