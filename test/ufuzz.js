@@ -350,10 +350,10 @@ function createParams() {
     return params.join(', ');
 }
 
-function createArgs() {
+function createArgs(recurmax, stmtDepth, canThrow) {
     var args = [];
     for (var n = rng(4); --n >= 0;) {
-        args.push(createValue());
+        args.push(createExpression(recurmax, COMMA_OK, stmtDepth, canThrow));
     }
     return args.join(', ');
 }
@@ -391,9 +391,10 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
 
     VAR_NAMES.length = namesLenBefore;
 
-    if (noDecl) s = 'var ' + createVarName(MANDATORY) + ' = ' + s + '(' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ');';
+    if (noDecl) s = 'var ' + createVarName(MANDATORY) + ' = ' + s;
     // avoid "function statements" (decl inside statements)
-    else if (inGlobal || rng(10) > 0) s += 'var ' + createVarName(MANDATORY) + ' = ' + name + '(' + createArgs() + ');';
+    else if (inGlobal || rng(10) > 0) s += 'var ' + createVarName(MANDATORY) + ' = ' + name;
+    s += '(' + createArgs(recurmax, stmtDepth, canThrow) + ');';
 
     return s;
 }
@@ -627,6 +628,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
         return createValue();
+      case p++:
+      case p++:
+        return getVarName();
       case p++:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:
