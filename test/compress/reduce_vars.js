@@ -3500,3 +3500,45 @@ issue_2423_5: {
         "1",
     ]
 }
+
+issue_2423_6: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function x() {
+            y();
+        }
+        function y() {
+            console.log(1);
+        }
+        function z() {
+            function y() {
+                console.log(2);
+            }
+            x();
+            y();
+        }
+        z();
+        z();
+    }
+    expect: {
+        function z(){
+            console.log(1);
+            console.log(2);
+        }
+        z();
+        z();
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "1",
+        "2",
+    ]
+}
