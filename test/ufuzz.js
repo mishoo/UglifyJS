@@ -353,7 +353,7 @@ function createParams() {
 function createArgs(recurmax, stmtDepth, canThrow) {
     var args = [];
     for (var n = rng(4); --n >= 0;) {
-        args.push(createExpression(recurmax, COMMA_OK, stmtDepth, canThrow));
+        args.push(rng(2) ? createValue() : createExpression(recurmax - 1, COMMA_OK, stmtDepth, canThrow));
     }
     return args.join(', ');
 }
