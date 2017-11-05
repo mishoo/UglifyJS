@@ -3223,3 +3223,69 @@ conditional_2: {
     }
     expect_stdout: "5 5"
 }
+
+issue_2425_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 8;
+        (function(b) {
+            b.toString();
+        })(--a, a |= 10);
+        console.log(a);
+    }
+    expect: {
+        var a = 8;
+        (function(b) {
+            b.toString();
+        })(--a, a |= 10);
+        console.log(a);
+    }
+    expect_stdout: "15"
+}
+
+issue_2425_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 8;
+        (function(b, c) {
+            b.toString();
+        })(--a, a |= 10);
+        console.log(a);
+    }
+    expect: {
+        var a = 8;
+        (function(b, c) {
+            b.toString();
+        })(--a, a |= 10);
+        console.log(a);
+    }
+    expect_stdout: "15"
+}
+
+issue_2425_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 8;
+        (function(b, b) {
+            b.toString();
+        })(--a, a |= 10);
+        console.log(a);
+    }
+    expect: {
+        var a = 8;
+        (function(b, b) {
+            (a |= 10).toString();
+        })(--a);
+        console.log(a);
+    }
+    expect_stdout: "15"
+}

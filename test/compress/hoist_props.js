@@ -483,3 +483,31 @@ hoist_function_with_call: {
     }
     expect_stdout: "Foo true 10 20"
 }
+
+new_this: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+            f: function(a) {
+                this.b = a;
+            }
+        };
+        console.log(new o.f(o.a).b, o.b);
+    }
+    expect: {
+        console.log(new function(a) {
+            this.b = a;
+        }(1).b, 2);
+    }
+    expect_stdout: "1 2"
+}
