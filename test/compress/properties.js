@@ -1282,3 +1282,22 @@ computed_property: {
     ]
     node_version: ">=4"
 }
+
+new_this: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        new {
+            f: function(a) {
+                this.a = a;
+            }
+        }.f(42);
+    }
+    expect: {
+        new function(a) {
+            this.a = a;
+        }(42);
+    }
+}

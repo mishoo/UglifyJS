@@ -3537,3 +3537,293 @@ escaped_prop: {
     }
     expect_stdout: "2"
 }
+
+issue_2420_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function run() {
+            var self = this;
+            if (self.count++)
+                self.foo();
+            else
+                self.bar();
+        }
+        var o = {
+            count: 0,
+            foo: function() { console.log("foo"); },
+            bar: function() { console.log("bar"); },
+        };
+        run.call(o);
+        run.call(o);
+    }
+    expect: {
+        function run() {
+            if (this.count++)
+                this.foo();
+            else
+                this.bar();
+        }
+        var o = {
+            count: 0,
+            foo: function() { console.log("foo"); },
+            bar: function() { console.log("bar"); },
+        };
+        run.call(o);
+        run.call(o);
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+}
+
+issue_2420_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var that = this;
+            if (that.bar)
+                that.foo();
+            else
+                !function(that, self) {
+                    console.log(this === that, self === this, that === self);
+                }(that, this);
+        }
+        f.call({
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        });
+        f.call({});
+    }
+    expect: {
+        function f() {
+            if (this.bar)
+                this.foo();
+            else
+                !function(that, self) {
+                    console.log(this === that, self === this, that === self);
+                }(this, this);
+        }
+        f.call({
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        });
+        f.call({});
+    }
+    expect_stdout: [
+        "foo 1",
+        "false false true",
+    ]
+}
+
+issue_2420_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var that = this;
+            if (that.bar)
+                that.foo();
+            else
+                ((that, self) => {
+                    console.log(this === that, self === this, that === self);
+                })(that, this);
+        }
+        f.call({
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        });
+        f.call({});
+    }
+    expect: {
+        function f() {
+            if (this.bar)
+                this.foo();
+            else
+                ((that, self) => {
+                    console.log(this === that, self === this, that === self);
+                })(this, this);
+        }
+        f.call({
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        });
+        f.call({});
+    }
+    expect_stdout: [
+        "foo 1",
+        "true true true",
+    ]
+    node_version: ">=4"
+}
+
+issue_2423_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+        p();
+    }
+    expect: {
+        function p() { console.log(function() { return 1; }()); }
+        p();
+        p();
+    }
+    expect_stdout: [
+        "1",
+        "1",
+    ]
+}
+
+issue_2423_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+        p();
+    }
+    expect: {
+        function p() { console.log(1); }
+        p();
+        p();
+    }
+    expect_stdout: [
+        "1",
+        "1",
+    ]
+}
+
+issue_2423_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+    }
+    expect: {
+        (function() { console.log(function() { return 1; }()); })();
+    }
+    expect_stdout: "1"
+}
+
+issue_2423_4: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function c() { return 1; }
+        function p() { console.log(c()); }
+        p();
+    }
+    expect: {
+        console.log(1);
+    }
+    expect_stdout: "1"
+}
+
+issue_2423_5: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function x() {
+            y();
+        }
+        function y() {
+            console.log(1);
+        }
+        function z() {
+            function y() {
+                console.log(2);
+            }
+            x();
+        }
+        z();
+        z();
+    }
+    expect: {
+        function z() {
+            console.log(1);
+        }
+        z();
+        z();
+    }
+    expect_stdout: [
+        "1",
+        "1",
+    ]
+}
+
+issue_2423_6: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function x() {
+            y();
+        }
+        function y() {
+            console.log(1);
+        }
+        function z() {
+            function y() {
+                console.log(2);
+            }
+            x();
+            y();
+        }
+        z();
+        z();
+    }
+    expect: {
+        function z(){
+            console.log(1);
+            console.log(2);
+        }
+        z();
+        z();
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "1",
+        "2",
+    ]
+}
