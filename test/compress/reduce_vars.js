@@ -3622,6 +3622,49 @@ issue_2420_2: {
     ]
 }
 
+issue_2420_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var that = this;
+            if (that.bar)
+                that.foo();
+            else
+                ((that, self) => {
+                    console.log(this === that, self === this, that === self);
+                })(that, this);
+        }
+        f.call({
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        });
+        f.call({});
+    }
+    expect: {
+        function f() {
+            if (this.bar)
+                this.foo();
+            else
+                ((that, self) => {
+                    console.log(this === that, self === this, that === self);
+                })(this, this);
+        }
+        f.call({
+            bar: 1,
+            foo: function() { console.log("foo", this.bar); },
+        });
+        f.call({});
+    }
+    expect_stdout: [
+        "foo 1",
+        "true true true",
+    ]
+    node_version: ">=4"
+}
+
 issue_2423_1: {
     options = {
         reduce_vars: true,

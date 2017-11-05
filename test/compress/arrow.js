@@ -314,17 +314,12 @@ issue_2105_1: {
         });
     }
     expect: {
-        (() => {
-            var quux = () => {
+        ({
+            prop() {
+                console.log;
                 console.log("PASS");
-            };
-            return {
-                prop() {
-                    console.log;
-                    quux();
-                }
-            };
-        })().prop();
+            }
+        }).prop();
     }
     expect_stdout: "PASS"
     node_version: ">=4"
@@ -360,17 +355,12 @@ issue_2105_2: {
         });
     }
     expect: {
-        (() => {
-            var quux = () => {
+        ({
+            prop: () => {
+                console.log;
                 console.log("PASS");
-            };
-            return {
-                prop: () => {
-                    console.log;
-                    quux();
-                }
-            };
-        })().prop();
+            }
+        }).prop();
     }
     expect_stdout: "PASS"
     node_version: ">=6"
