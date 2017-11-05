@@ -3029,3 +3029,51 @@ issue_2425_3: {
     }
     expect_stdout: "15"
 }
+
+issue_2437: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            bar();
+        }
+        function bar() {
+            if (xhrDesc) {
+                var req = new XMLHttpRequest();
+                var result = !!req.onreadystatechange;
+                Object.defineProperty(XMLHttpRequest.prototype, 'onreadystatechange', xhrDesc || {});
+                return result;
+            }
+            else {
+                var req = new XMLHttpRequest();
+                var detectFunc = function () { };
+                req.onreadystatechange = detectFunc;
+                var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+                req.onreadystatechange = null;
+                return result;
+            }
+        }
+        foo();
+    }
+    expect: {
+        !function() {
+            if (xhrDesc)
+                return result = !!(req = new XMLHttpRequest()).onreadystatechange,
+                    Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
+                    result;
+            var req = new XMLHttpRequest(), detectFunc = function() {};
+            req.onreadystatechange = detectFunc;
+            var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            req.onreadystatechange = null;
+        }();
+    }
+}
