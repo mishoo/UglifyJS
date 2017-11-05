@@ -508,3 +508,41 @@ issue_2114_2: {
     }
     expect_stdout: "2"
 }
+
+issue_2428: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function bar(k) {
+            console.log(k);
+        }
+        function foo(x) {
+            return bar(x);
+        }
+        function baz(a) {
+            foo(a);
+        }
+        baz(42);
+        baz("PASS");
+    }
+    expect: {
+        function baz(a) {
+            console.log(a);
+        }
+        baz(42);
+        baz("PASS");
+    }
+    expect_stdout: [
+        "42",
+        "PASS",
+    ]
+}
