@@ -1388,6 +1388,7 @@ issue_1605_1: {
     options = {
         collapse_vars: true,
         toplevel: false,
+        unused: true,
     }
     input: {
         function foo(x) {
@@ -1410,6 +1411,7 @@ issue_1605_2: {
     options = {
         collapse_vars: true,
         toplevel: "vars",
+        unused: true,
     }
     input: {
         function foo(x) {
@@ -1537,6 +1539,7 @@ issue_1631_3: {
 var_side_effects_1: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         var print = console.log.bind(console);
@@ -1559,6 +1562,7 @@ var_side_effects_1: {
 var_side_effects_2: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         var print = console.log.bind(console);
@@ -1584,6 +1588,7 @@ var_side_effects_3: {
         collapse_vars: true,
         pure_getters: true,
         unsafe: true,
+        unused: true,
     }
     input: {
         var print = console.log.bind(console);
@@ -1659,6 +1664,7 @@ iife_2: {
         }(foo);
     }
     expect: {
+        var foo;
         !function(x) {
             console.log(x);
         }(bar());
@@ -1945,6 +1951,7 @@ ref_scope: {
 chained_1: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         var a = 2;
@@ -1961,6 +1968,7 @@ chained_1: {
 chained_2: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         var a;
@@ -2061,6 +2069,7 @@ inner_lvalues: {
 double_def: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         var a = x, a = a && y;
@@ -2075,6 +2084,7 @@ double_def: {
 toplevel_single_reference: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         var a;
@@ -2084,9 +2094,10 @@ toplevel_single_reference: {
         }
     }
     expect: {
-        var a;
-        for (var b in x)
+        for (var b in x) {
+            var a;
             b(a = b);
+        }
     }
 }
 
@@ -2889,6 +2900,7 @@ pure_getters_chain: {
     options = {
         collapse_vars: true,
         pure_getters: true,
+        unused: true,
     }
     input: {
         function o(t, r) {
@@ -2909,6 +2921,7 @@ pure_getters_chain: {
 conditional_1: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         function f(a, b) {
@@ -2933,6 +2946,7 @@ conditional_1: {
 conditional_2: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     input: {
         function f(a, b) {
@@ -3014,4 +3028,52 @@ issue_2425_3: {
         console.log(a);
     }
     expect_stdout: "15"
+}
+
+issue_2437: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            bar();
+        }
+        function bar() {
+            if (xhrDesc) {
+                var req = new XMLHttpRequest();
+                var result = !!req.onreadystatechange;
+                Object.defineProperty(XMLHttpRequest.prototype, 'onreadystatechange', xhrDesc || {});
+                return result;
+            }
+            else {
+                var req = new XMLHttpRequest();
+                var detectFunc = function () { };
+                req.onreadystatechange = detectFunc;
+                var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+                req.onreadystatechange = null;
+                return result;
+            }
+        }
+        foo();
+    }
+    expect: {
+        !function() {
+            if (xhrDesc)
+                return result = !!(req = new XMLHttpRequest()).onreadystatechange,
+                    Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
+                    result;
+            var req = new XMLHttpRequest(), detectFunc = function() {};
+            req.onreadystatechange = detectFunc;
+            var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            req.onreadystatechange = null;
+        }();
+    }
 }

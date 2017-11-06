@@ -2131,14 +2131,13 @@ redefine_farg_1: {
     }
     expect: {
         function f(a) {
-            var a;
             return typeof a;
         }
         function g() {
-            return"number";
+            return "number";
         }
         function h(a, b) {
-            var a = b;
+            a = b;
             return typeof a;
         }
         console.log(f([]), g([]), h([]));
@@ -2173,10 +2172,9 @@ redefine_farg_2: {
     }
     expect: {
         console.log(function(a) {
-            var a;
             return typeof a;
         }([]), "number",function(a, b) {
-            var a = b;
+            a = b;
             return typeof a;
         }([]));
     }
@@ -2185,11 +2183,13 @@ redefine_farg_2: {
 
 redefine_farg_3: {
     options = {
+        cascade: true,
         evaluate: true,
         inline: true,
         keep_fargs: false,
-        passes: 3,
+        passes: 2,
         reduce_vars: true,
+        sequences: true,
         side_effects: true,
         toplevel: true,
         unused: true,
