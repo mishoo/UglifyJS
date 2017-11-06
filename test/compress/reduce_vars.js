@@ -3654,3 +3654,183 @@ issue_2440_with_2: {
         }
     }
 }
+
+recursive_inlining_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        !function(){
+            function foo() { bar(); }
+            function bar() { foo(); }
+            console.log("PASS");
+        }();
+    }
+    expect: {
+        !function() {
+            console.log("PASS");
+        }();
+    }
+}
+
+recursive_inlining_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        !function(){
+            function foo() { qux(); }
+            function bar() { foo(); }
+            function qux() { bar(); }
+            console.log("PASS");
+        }();
+    }
+    expect: {
+        !function() {
+            console.log("PASS");
+        }();
+    }
+}
+
+recursive_inlining_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo(x) { console.log("foo", x); if (x) bar(x-1); }
+            function bar(x) { console.log("bar", x); if (x) qux(x-1); }
+            function qux(x) { console.log("qux", x); if (x) foo(x-1); }
+            qux(4);
+        }();
+    }
+    expect: {
+        !function() {
+            function qux(x) {
+                console.log("qux", x);
+                if (x) (function(x) {
+                    console.log("foo", x);
+                    if (x) (function(x) {
+                        console.log("bar", x);
+                        if (x) qux(x - 1);
+                    })(x - 1);
+                })(x - 1);
+            }
+            qux(4);
+        }();
+    }
+    expect_stdout: [
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+    ]
+}
+
+recursive_inlining_4: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo(x) { console.log("foo", x); if (x) bar(x-1); }
+            function bar(x) { console.log("bar", x); if (x) qux(x-1); }
+            function qux(x) { console.log("qux", x); if (x) foo(x-1); }
+            qux(4);
+            bar(5);
+        }();
+    }
+    expect: {
+        !function() {
+            function bar(x) {
+                console.log("bar", x);
+                if (x) qux(x - 1);
+            }
+            function qux(x) {
+                console.log("qux", x);
+                if (x) (function(x) {
+                    console.log("foo", x);
+                    if (x) bar(x - 1);
+                })(x - 1);
+            }
+            qux(4);
+            bar(5);
+        }();
+    }
+    expect_stdout: [
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+        "bar 5",
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+    ]
+}
+
+recursive_inlining_5: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo(x) { console.log("foo", x); if (x) bar(x-1); }
+            function bar(x) { console.log("bar", x); if (x) qux(x-1); }
+            function qux(x) { console.log("qux", x); if (x) foo(x-1); }
+            qux(4);
+            bar(5);
+            foo(3);
+        }();
+    }
+    expect: {
+        !function() {
+            function foo(x) {
+                console.log("foo", x);
+                if (x) bar(x - 1);
+            }
+            function bar(x) {
+                console.log("bar", x);
+                if (x) qux(x - 1);
+            }
+            function qux(x) {
+                console.log("qux", x);
+                if (x) foo(x - 1);
+            }
+            qux(4);
+            bar(5);
+            foo(3);
+        }();
+    }
+    expect_stdout: [
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+        "bar 5",
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+    ]
+}
