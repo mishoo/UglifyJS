@@ -51,6 +51,7 @@ this_binding_collapse_vars: {
     options = {
         collapse_vars: true,
         toplevel: true,
+        unused: true,
     };
     input: {
         var c = a; c();

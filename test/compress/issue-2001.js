@@ -177,6 +177,7 @@ export_mangle_2: {
 export_mangle_3: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     mangle = {
         toplevel: true,
@@ -195,6 +196,7 @@ export_mangle_3: {
 export_mangle_4: {
     options = {
         collapse_vars: true,
+        unused: true,
     }
     mangle = {
         toplevel: true,
