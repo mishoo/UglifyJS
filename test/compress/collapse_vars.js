@@ -2226,10 +2226,11 @@ unused_orig: {
     expect: {
         var a = 1;
         console.log(function(b) {
-            var a;
             var c = b;
-            for (var d in c)
+            for (var d in c) {
+                var a;
                 return --b + (a = c[0]);
+            }
             a && a.NaN;
         }([2]), a);
     }
@@ -2576,7 +2577,9 @@ issue_2250_1: {
     options = {
         collapse_vars: true,
         conditionals: true,
+        passes: 2,
         reduce_vars: true,
+        unused: true,
     }
     input: {
         function f(x) {
@@ -2618,6 +2621,7 @@ issue_2250_2: {
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
+        unused: true,
     }
     input: {
         {
