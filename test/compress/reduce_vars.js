@@ -2131,14 +2131,13 @@ redefine_farg_1: {
     }
     expect: {
         function f(a) {
-            var a;
             return typeof a;
         }
         function g() {
-            return"number";
+            return "number";
         }
         function h(a, b) {
-            var a = b;
+            a = b;
             return typeof a;
         }
         console.log(f([]), g([]), h([]));
@@ -2173,10 +2172,9 @@ redefine_farg_2: {
     }
     expect: {
         console.log(function(a) {
-            var a;
             return typeof a;
         }([]), "number",function(a, b) {
-            var a = b;
+            a = b;
             return typeof a;
         }([]));
     }
@@ -2185,11 +2183,13 @@ redefine_farg_2: {
 
 redefine_farg_3: {
     options = {
+        cascade: true,
         evaluate: true,
         inline: true,
         keep_fargs: false,
-        passes: 3,
+        passes: 2,
         reduce_vars: true,
+        sequences: true,
         side_effects: true,
         toplevel: true,
         unused: true,
@@ -3825,5 +3825,308 @@ issue_2423_6: {
         "2",
         "1",
         "2",
+    ]
+}
+
+issue_2440_eval_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+    }
+    expect: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+    }
+}
+
+issue_2440_eval_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+        function foo() {
+            return bar();
+        }
+    }
+    expect: {
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+        function foo() {
+            return bar();
+        }
+    }
+}
+
+issue_2440_with_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+    }
+    expect: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+    }
+}
+
+issue_2440_with_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+        function foo() {
+            return bar();
+        }
+    }
+    expect: {
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+        function foo() {
+            return bar();
+        }
+    }
+}
+
+issue_2442: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            foo();
+        }
+    }
+    expect: {}
+}
+
+recursive_inlining_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo() { bar(); }
+            function bar() { foo(); }
+            console.log("PASS");
+        }();
+    }
+    expect: {
+        !function() {
+            console.log("PASS");
+        }();
+    }
+    expect_stdout: "PASS"
+}
+
+recursive_inlining_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo() { qux(); }
+            function bar() { foo(); }
+            function qux() { bar(); }
+            console.log("PASS");
+        }();
+    }
+    expect: {
+        !function() {
+            console.log("PASS");
+        }();
+    }
+    expect_stdout: "PASS"
+}
+
+recursive_inlining_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo(x) { console.log("foo", x); if (x) bar(x-1); }
+            function bar(x) { console.log("bar", x); if (x) qux(x-1); }
+            function qux(x) { console.log("qux", x); if (x) foo(x-1); }
+            qux(4);
+        }();
+    }
+    expect: {
+        !function() {
+            function qux(x) {
+                console.log("qux", x);
+                if (x) (function(x) {
+                    console.log("foo", x);
+                    if (x) (function(x) {
+                        console.log("bar", x);
+                        if (x) qux(x - 1);
+                    })(x - 1);
+                })(x - 1);
+            }
+            qux(4);
+        }();
+    }
+    expect_stdout: [
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+    ]
+}
+
+recursive_inlining_4: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo(x) { console.log("foo", x); if (x) bar(x-1); }
+            function bar(x) { console.log("bar", x); if (x) qux(x-1); }
+            function qux(x) { console.log("qux", x); if (x) foo(x-1); }
+            qux(4);
+            bar(5);
+        }();
+    }
+    expect: {
+        !function() {
+            function bar(x) {
+                console.log("bar", x);
+                if (x) qux(x - 1);
+            }
+            function qux(x) {
+                console.log("qux", x);
+                if (x) (function(x) {
+                    console.log("foo", x);
+                    if (x) bar(x - 1);
+                })(x - 1);
+            }
+            qux(4);
+            bar(5);
+        }();
+    }
+    expect_stdout: [
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+        "bar 5",
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+    ]
+}
+
+recursive_inlining_5: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            function foo(x) { console.log("foo", x); if (x) bar(x-1); }
+            function bar(x) { console.log("bar", x); if (x) qux(x-1); }
+            function qux(x) { console.log("qux", x); if (x) foo(x-1); }
+            qux(4);
+            bar(5);
+            foo(3);
+        }();
+    }
+    expect: {
+        !function() {
+            function foo(x) {
+                console.log("foo", x);
+                if (x) bar(x - 1);
+            }
+            function bar(x) {
+                console.log("bar", x);
+                if (x) qux(x - 1);
+            }
+            function qux(x) {
+                console.log("qux", x);
+                if (x) foo(x - 1);
+            }
+            qux(4);
+            bar(5);
+            foo(3);
+        }();
+    }
+    expect_stdout: [
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+        "bar 5",
+        "qux 4",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
+        "foo 3",
+        "bar 2",
+        "qux 1",
+        "foo 0",
     ]
 }
