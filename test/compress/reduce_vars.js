@@ -3542,3 +3542,115 @@ issue_2423_6: {
         "2",
     ]
 }
+
+issue_2440_eval_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+    }
+    expect: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+    }
+}
+
+issue_2440_eval_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+        function foo() {
+            return bar();
+        }
+    }
+    expect: {
+        baz = {
+            quux: foo
+        };
+        exec = function() {
+            return eval("foo()");
+        };
+        function foo() {
+            return bar();
+        }
+    }
+}
+
+issue_2440_with_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+    }
+    expect: {
+        function foo() {
+            return bar();
+        }
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+    }
+}
+
+issue_2440_with_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+        function foo() {
+            return bar();
+        }
+    }
+    expect: {
+        baz = {
+            quux: foo
+        };
+        with (o) whatever();
+        function foo() {
+            return bar();
+        }
+    }
+}
