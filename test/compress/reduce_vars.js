@@ -3673,6 +3673,7 @@ recursive_inlining_1: {
             console.log("PASS");
         }();
     }
+    expect_stdout: "PASS"
 }
 
 recursive_inlining_2: {
@@ -3694,6 +3695,7 @@ recursive_inlining_2: {
             console.log("PASS");
         }();
     }
+    expect_stdout: "PASS"
 }
 
 recursive_inlining_3: {
