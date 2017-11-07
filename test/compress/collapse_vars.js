@@ -3355,3 +3355,25 @@ issue_2437: {
         }();
     }
 }
+
+issue_2453: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function log(n) {
+            console.log(n);
+        }
+        const a = 42;
+        log(a);
+    }
+    expect: {
+        function log(n) {
+            console.log(n);
+        }
+        const a = 42;
+        log(a);
+    }
+    expect_stdout: "42"
+}
