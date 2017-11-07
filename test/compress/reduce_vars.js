@@ -3845,3 +3845,78 @@ recursive_inlining_5: {
         "foo 0",
     ]
 }
+
+issue_2450_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        function g() {
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        function f() {}
+        function g() {
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "true"
+}
+
+issue_2450_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function g() {
+            function f() {}
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        function g() {
+            return function() {};
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "false"
+}
+
+issue_2450_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var x = (function() {
+            function test() {
+                return "foo";
+            }
+            return function b() {
+                return [1, test];
+            }
+        })();
+        console.log(x()[1] === x()[1]);
+    }
+    expect: {
+        var x = (function() {
+            function test() {
+                return "foo";
+            }
+            return function() {
+                return [1, test];
+            }
+        })();
+        console.log(x()[1] === x()[1]);
+    }
+    expect_stdout: "true"
+}
