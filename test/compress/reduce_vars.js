@@ -1123,11 +1123,12 @@ toplevel_on_loops_1: {
         while (x);
     }
     expect: {
+        function bar() {
+            console.log("bar:", --x);
+        }
         var x = 3;
         do
-            (function() {
-                console.log("bar:", --x);
-            })();
+            bar();
         while (x);
     }
     expect_stdout: true
@@ -1180,9 +1181,10 @@ toplevel_on_loops_2: {
         while (x);
     }
     expect: {
-        for (;;) (function() {
+        function bar() {
             console.log("bar:");
-        })();
+        }
+        for (;;) bar();
     }
 }
 
@@ -3843,5 +3845,147 @@ recursive_inlining_5: {
         "bar 2",
         "qux 1",
         "foo 0",
+    ]
+}
+
+issue_2450_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        function g() {
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        function f() {}
+        function g() {
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "true"
+}
+
+issue_2450_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function g() {
+            function f() {}
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        function g() {
+            return function() {};
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "false"
+}
+
+issue_2450_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var x = (function() {
+            function test() {
+                return "foo";
+            }
+            return function b() {
+                return [1, test];
+            }
+        })();
+        console.log(x()[1] === x()[1]);
+    }
+    expect: {
+        var x = (function() {
+            function test() {
+                return "foo";
+            }
+            return function() {
+                return [1, test];
+            }
+        })();
+        console.log(x()[1] === x()[1]);
+    }
+    expect_stdout: "true"
+}
+
+issue_2450_4: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            console.log(a === b);
+            a = b;
+        }
+        function g() {}
+        for (var i = 3; --i >= 0;)
+            f(g);
+    }
+    expect: {
+        var a;
+        function f(b) {
+            console.log(a === b);
+            a = b;
+        }
+        function g() {}
+        for (var i = 3; --i >= 0;)
+            f(g);
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "true",
+    ]
+}
+
+issue_2450_5: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            console.log(a === b);
+            a = b;
+        }
+        function g() {}
+        [1, 2, 3].forEach(function() {
+            f(g);
+        });
+    }
+    expect: {
+        var a;
+        function g() {}
+        [1, 2, 3].forEach(function() {
+            (function(b) {
+                console.log(a === b);
+                a = b;
+            })(g);
+        });
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "true",
     ]
 }
