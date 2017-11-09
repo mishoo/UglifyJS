@@ -3036,6 +3036,7 @@ issue_2437: {
         conditionals: true,
         inline: true,
         join_vars: true,
+        passes: 2,
         reduce_vars: true,
         side_effects: true,
         sequences: true,

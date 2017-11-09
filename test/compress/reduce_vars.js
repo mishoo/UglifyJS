@@ -3714,6 +3714,7 @@ recursive_inlining_2: {
 
 recursive_inlining_3: {
     options = {
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }
@@ -3988,4 +3989,39 @@ issue_2450_5: {
         "true",
         "true",
     ]
+}
+
+issue_2449: {
+    options = {
+        passes: 10,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return a;
+        }
+        function g() {
+            return f();
+        }
+        (function() {
+            var a = "FAIL";
+            if (a == a) console.log(g());
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        function g() {
+            return function() {
+                return a;
+            }();
+        }
+        (function() {
+            var a = "FAIL";
+            if (a == a) console.log(g());
+        })();
+    }
+    expect_stdout: "PASS"
 }

@@ -1113,7 +1113,7 @@ issue_2105_1: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1153,7 +1153,7 @@ issue_2105_2: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         properties: true,
         pure_getters: "strict",
         reduce_vars: true,
