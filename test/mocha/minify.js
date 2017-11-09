@@ -297,4 +297,36 @@ describe("minify", function() {
             assert.strictEqual(result.code, "alert({bar:42});");
         });
     });
+
+    describe("collapse_vars", function() {
+        it("Should not produce invalid AST", function() {
+            var code = [
+                "function f(a) {",
+                "    a = x();",
+                "    return a;",
+                "}",
+                "f();",
+            ].join("\n");
+            var ast = Uglify.minify(code, {
+                compress: false,
+                mangle: false,
+                output: {
+                    ast: true
+                },
+            }).ast;
+            assert.strictEqual(ast.TYPE, "Toplevel");
+            assert.strictEqual(ast.body.length, 2);
+            assert.strictEqual(ast.body[0].TYPE, "Defun");
+            assert.strictEqual(ast.body[0].body.length, 2);
+            assert.strictEqual(ast.body[0].body[0].TYPE, "SimpleStatement");
+            var stat = ast.body[0].body[0];
+            Uglify.minify(ast, {
+                compress: {
+                    sequences: false
+                }
+            });
+            assert.ok(stat.body);
+            assert.strictEqual(stat.print_to_string(), "a=x()");
+        });
+    });
 });
