@@ -286,6 +286,7 @@ unsafe_evaluate_modified: {
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:7}; console.log([o][0].p++); return o.p; }());
+        console.log(function(){ var o={p:8}; console.log({q:o}.q.p++); return o.p; }());
     }
     expect: {
         console.log(function(){ var o={p:1}; o.p++; console.log(o.p); return o.p; }());
@@ -296,6 +297,7 @@ unsafe_evaluate_modified: {
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:7}; console.log([o][0].p++); return o.p; }());
+        console.log(function(){ var o={p:8}; console.log({q:o}.q.p++); return o.p; }());
     }
     expect_stdout: true
 }
@@ -3269,7 +3271,7 @@ const_expr_2: {
     expect_stdout: "2 2"
 }
 
-escaped_prop: {
+escaped_prop_1: {
     options = {
         collapse_vars: true,
         evaluate: true,
@@ -3296,6 +3298,40 @@ escaped_prop: {
         console.log(obj.o.a);
     }
     expect_stdout: "2"
+}
+
+escaped_prop_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            if (a) console.log(a === b.c);
+            a = b.c;
+        }
+        function g() {}
+        function h() {
+            f({ c: g });
+        }
+        h();
+        h();
+    }
+    expect: {
+        var a;
+        function g() {}
+        function h() {
+            (function(b) {
+                if (a) console.log(a === b.c);
+                a = b.c;
+            })({ c: g });
+        }
+        h();
+        h();
+    }
+    expect_stdout: "true"
 }
 
 issue_2420_1: {
