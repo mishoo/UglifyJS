@@ -323,7 +323,8 @@ describe("minify", function() {
             Uglify.minify(ast, {
                 compress: {
                     sequences: false
-                }
+                },
+                mangle: false
             });
             assert.ok(stat.body);
             assert.strictEqual(stat.print_to_string(), "a=x()");
