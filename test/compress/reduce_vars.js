@@ -1351,6 +1351,7 @@ defun_inline_3: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1373,6 +1374,7 @@ defun_inline_3: {
 defun_call: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1400,6 +1402,7 @@ defun_call: {
 defun_redefine: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1433,6 +1436,7 @@ defun_redefine: {
 func_inline: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1460,6 +1464,7 @@ func_inline: {
 func_modified: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2041,6 +2046,7 @@ redefine_arguments_2: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2079,6 +2085,7 @@ redefine_arguments_3: {
         inline: true,
         keep_fargs: false,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2154,6 +2161,7 @@ redefine_farg_2: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2192,6 +2200,7 @@ redefine_farg_3: {
         inline: true,
         keep_fargs: false,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2648,6 +2657,7 @@ boolean_binary_assign: {
 cond_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2671,6 +2681,7 @@ cond_assign: {
 iife_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2701,6 +2712,7 @@ iife_assign: {
 
 issue_1850_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: false,
         unused: true,
@@ -2724,6 +2736,7 @@ issue_1850_1: {
 
 issue_1850_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: "funcs",
         unused: true,
@@ -2746,6 +2759,7 @@ issue_1850_2: {
 
 issue_1850_3: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: "vars",
         unused: true,
@@ -2769,6 +2783,7 @@ issue_1850_3: {
 
 issue_1850_4: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2792,6 +2807,7 @@ issue_1850_4: {
 issue_1865: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
     }
@@ -2895,6 +2911,7 @@ accessor_2: {
     options = {
         collapse_vars: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2920,6 +2937,7 @@ accessor_2: {
 
 for_in_prop: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -2947,6 +2965,7 @@ obj_var_1: {
     options = {
         evaluate: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2976,6 +2995,7 @@ obj_var_2: {
         inline: true,
         passes: 2,
         properties: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3002,6 +3022,7 @@ obj_arg_1: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3033,6 +3054,7 @@ obj_arg_2: {
         inline: true,
         passes: 2,
         properties: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3060,6 +3082,7 @@ func_arg_1: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3084,6 +3107,7 @@ func_arg_2: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3105,6 +3129,7 @@ func_arg_2: {
 
 regex_loop: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3241,6 +3266,7 @@ const_expr_1: {
 const_expr_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -3277,6 +3303,7 @@ escaped_prop_1: {
         evaluate: true,
         inline: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3302,6 +3329,7 @@ escaped_prop_1: {
 
 escaped_prop_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3336,6 +3364,7 @@ escaped_prop_2: {
 
 issue_2420_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3378,6 +3407,7 @@ issue_2420_1: {
 
 issue_2420_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3420,6 +3450,7 @@ issue_2420_2: {
 
 issue_2423_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3444,6 +3475,7 @@ issue_2423_1: {
 issue_2423_2: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3467,6 +3499,7 @@ issue_2423_2: {
 
 issue_2423_3: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3485,6 +3518,7 @@ issue_2423_3: {
 issue_2423_4: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3505,6 +3539,7 @@ issue_2423_5: {
     options = {
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3543,6 +3578,7 @@ issue_2423_6: {
     options = {
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3583,6 +3619,7 @@ issue_2423_6: {
 
 issue_2440_eval_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3613,6 +3650,7 @@ issue_2440_eval_1: {
 
 issue_2440_eval_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3643,6 +3681,7 @@ issue_2440_eval_2: {
 
 issue_2440_with_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3669,6 +3708,7 @@ issue_2440_with_1: {
 
 issue_2440_with_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3695,6 +3735,7 @@ issue_2440_with_2: {
 
 issue_2442: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3709,6 +3750,7 @@ issue_2442: {
 
 recursive_inlining_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3729,6 +3771,7 @@ recursive_inlining_1: {
 
 recursive_inlining_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3751,6 +3794,7 @@ recursive_inlining_2: {
 recursive_inlining_3: {
     options = {
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3788,6 +3832,7 @@ recursive_inlining_3: {
 
 recursive_inlining_4: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3834,6 +3879,7 @@ recursive_inlining_4: {
 
 recursive_inlining_5: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3887,6 +3933,7 @@ recursive_inlining_5: {
 
 issue_2450_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3910,6 +3957,7 @@ issue_2450_1: {
 
 issue_2450_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3932,6 +3980,7 @@ issue_2450_2: {
 
 issue_2450_3: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3962,6 +4011,7 @@ issue_2450_3: {
 
 issue_2450_4: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3995,6 +4045,7 @@ issue_2450_4: {
 
 issue_2450_5: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -4030,6 +4081,7 @@ issue_2450_5: {
 issue_2449: {
     options = {
         passes: 10,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -4060,4 +4112,75 @@ issue_2449: {
         })();
     }
     expect_stdout: "PASS"
+}
+
+perf_1: {
+    options = {
+        passes: 10,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        function indirect_foo(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 1e7; ++i) {
+            sum += indirect_foo(i, i+1, i*3);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function indirect_foo(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 1e7; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "333333483333479600000"
+}
+
+perf_2: {
+    options = {
+        passes: 10,
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        function indirect_foo(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 1e7; ++i) {
+            sum += indirect_foo(i, i+1, i*3);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        function indirect_foo(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 1e7; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "333333483333479600000"
 }

@@ -3037,6 +3037,7 @@ issue_2437: {
         inline: true,
         join_vars: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         sequences: true,
