@@ -511,3 +511,22 @@ new_this: {
     }
     expect_stdout: "1 2"
 }
+
+issue_2462: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        export const Foo = {
+            a: 1,
+            b: () => 2
+        };
+    }
+    expect: {
+        export const Foo = {
+            a: 1,
+            b: () => 2
+        };
+    }
+}
