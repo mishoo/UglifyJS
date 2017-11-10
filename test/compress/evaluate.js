@@ -251,6 +251,7 @@ unsafe_constant: {
 unsafe_object: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -279,6 +280,7 @@ unsafe_object: {
 unsafe_object_nested: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -307,6 +309,7 @@ unsafe_object_nested: {
 unsafe_object_complex: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -335,6 +338,7 @@ unsafe_object_complex: {
 unsafe_object_repeated: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -363,6 +367,7 @@ unsafe_object_repeated: {
 unsafe_object_accessor: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
     }
@@ -663,6 +668,7 @@ call_args: {
     options = {
         evaluate: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -686,6 +692,7 @@ call_args_drop_param: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -1016,6 +1023,7 @@ Infinity_NaN_undefined_LHS: {
 issue_1964_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe_regexp: false,
         unused: true,
@@ -1045,6 +1053,7 @@ issue_1964_1: {
 issue_1964_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe_regexp: true,
         unused: true,
@@ -1201,6 +1210,7 @@ issue_2231_2: {
 self_comparison_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -1221,6 +1231,7 @@ self_comparison_2: {
         evaluate: true,
         hoist_props: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,

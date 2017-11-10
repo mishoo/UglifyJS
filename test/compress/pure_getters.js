@@ -1,6 +1,7 @@
 strict: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: false,
         reduce_vars: false,
         side_effects: true,
         toplevel: true,
@@ -30,6 +31,7 @@ strict: {
 strict_reduce_vars: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -58,6 +60,7 @@ strict_reduce_vars: {
 unsafe: {
     options = {
         pure_getters: true,
+        reduce_funcs: false,
         reduce_vars: false,
         side_effects: true,
         toplevel: true,
@@ -84,6 +87,7 @@ unsafe: {
 unsafe_reduce_vars: {
     options = {
         pure_getters: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -249,6 +253,7 @@ set_immutable_1: {
         collapse_vars: true,
         evaluate: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -272,6 +277,7 @@ set_immutable_2: {
         cascade: true,
         conditionals: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -295,6 +301,7 @@ set_immutable_3: {
         collapse_vars: true,
         evaluate: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -320,6 +327,7 @@ set_immutable_4: {
         cascade: true,
         conditionals: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -345,6 +353,7 @@ set_mutable_1: {
         collapse_vars: true,
         evaluate: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -369,6 +378,7 @@ set_mutable_2: {
         cascade: true,
         conditionals: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,

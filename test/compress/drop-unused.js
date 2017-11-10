@@ -735,6 +735,7 @@ assign_chain: {
 issue_1583: {
     options = {
         keep_fargs: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
