@@ -734,6 +734,7 @@ assign_chain: {
 issue_1583: {
     options = {
         keep_fargs: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1114,6 +1115,7 @@ issue_2105_1: {
         collapse_vars: true,
         inline: true,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1156,6 +1158,7 @@ issue_2105_2: {
         passes: 3,
         properties: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unsafe: true,

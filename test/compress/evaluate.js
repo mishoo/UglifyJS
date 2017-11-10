@@ -663,6 +663,7 @@ call_args: {
     options = {
         evaluate: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -686,6 +687,7 @@ call_args_drop_param: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
