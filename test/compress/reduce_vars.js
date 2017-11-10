@@ -4130,7 +4130,7 @@ perf_1: {
             return foo(x, y, z);
         }
         var sum = 0;
-        for (var i = 0; i < 1e7; ++i) {
+        for (var i = 0; i < 100; ++i) {
             sum += indirect_foo(i, i+1, i*3);
         }
         console.log(sum);
@@ -4142,11 +4142,11 @@ perf_1: {
             }(x, y, z);
         }
         var sum = 0;
-        for (var i = 0; i < 1e7; ++i)
+        for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
         console.log(sum);
     }
-    expect_stdout: "333333483333479600000"
+    expect_stdout: "348150"
 }
 
 perf_2: {
@@ -4165,7 +4165,7 @@ perf_2: {
             return foo(x, y, z);
         }
         var sum = 0;
-        for (var i = 0; i < 1e7; ++i) {
+        for (var i = 0; i < 100; ++i) {
             sum += indirect_foo(i, i+1, i*3);
         }
         console.log(sum);
@@ -4178,9 +4178,9 @@ perf_2: {
             return foo(x, y, z);
         }
         var sum = 0;
-        for (var i = 0; i < 1e7; ++i)
+        for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
         console.log(sum);
     }
-    expect_stdout: "333333483333479600000"
+    expect_stdout: "348150"
 }
