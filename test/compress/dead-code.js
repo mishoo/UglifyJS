@@ -292,6 +292,7 @@ global_timeout_and_interval_symbols: {
 issue_2233_2: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unsafe: true,
@@ -323,6 +324,7 @@ issue_2233_2: {
 issue_2233_3: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,

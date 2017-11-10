@@ -129,6 +129,7 @@ constant_join_3: {
 for_loop: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
         unused: true,
@@ -185,6 +186,7 @@ for_loop: {
 index: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -203,6 +205,7 @@ index: {
 length: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -221,6 +224,7 @@ length: {
 index_length: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,

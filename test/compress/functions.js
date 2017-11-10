@@ -19,6 +19,7 @@ iifes_returning_constants_keep_fargs_true: {
         booleans      : true,
         if_return     : true,
         join_vars     : true,
+        reduce_funcs  : true,
         reduce_vars   : true,
         cascade       : true,
         inline        : true,
@@ -55,6 +56,7 @@ iifes_returning_constants_keep_fargs_false: {
         booleans      : true,
         if_return     : true,
         join_vars     : true,
+        reduce_funcs  : true,
         reduce_vars   : true,
         cascade       : true,
         inline        : true,
@@ -101,6 +103,7 @@ issue_1841_1: {
     options = {
         keep_fargs: false,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -127,6 +130,7 @@ issue_1841_2: {
     options = {
         keep_fargs: false,
         pure_getters: false,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -154,6 +158,7 @@ function_returning_constant_literal: {
         inline: true,
         passes: 2,
         properties: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -305,6 +310,7 @@ issue_2084: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -340,6 +346,7 @@ issue_2084: {
 issue_2097: {
     options = {
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -515,6 +522,7 @@ issue_2428: {
         inline: true,
         passes: 3,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
