@@ -305,6 +305,7 @@ issue_2084: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -340,6 +341,7 @@ issue_2084: {
 issue_2097: {
     options = {
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -515,6 +517,7 @@ issue_2428: {
         inline: true,
         passes: 3,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,

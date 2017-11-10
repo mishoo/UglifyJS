@@ -1,5 +1,6 @@
 side_effects_catch: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -34,6 +35,7 @@ side_effects_catch: {
 
 side_effects_else: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -62,6 +64,7 @@ side_effects_else: {
 
 side_effects_finally: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -98,6 +101,7 @@ side_effects_finally: {
 
 side_effects_label: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -130,6 +134,7 @@ side_effects_label: {
 
 side_effects_switch: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,

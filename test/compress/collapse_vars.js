@@ -2369,6 +2369,7 @@ duplicate_argname: {
 issue_2298: {
     options = {
         collapse_vars: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3037,6 +3038,7 @@ issue_2437: {
         inline: true,
         join_vars: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         sequences: true,
