@@ -250,3 +250,13 @@ dynamic_import: {
         r.foo();
     }
 }
+
+trailing_comma: {
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        export const a = 1;
+    }
+    expect_exact: "export const a = 1;"
+}
