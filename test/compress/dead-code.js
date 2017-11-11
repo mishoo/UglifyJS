@@ -202,6 +202,7 @@ dead_code_const_declaration: {
         booleans     : true,
         conditionals : true,
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
     };
     input: {
@@ -229,6 +230,7 @@ dead_code_const_annotation: {
         booleans     : true,
         conditionals : true,
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         toplevel     : true,
     };
@@ -281,6 +283,7 @@ dead_code_const_annotation_complex_scope: {
         booleans     : true,
         conditionals : true,
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         toplevel     : true,
     };

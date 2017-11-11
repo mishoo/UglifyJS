@@ -12,6 +12,7 @@ issue_1191: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_funcs  : true,
         reduce_vars   : true,
     }
     input: {
@@ -44,6 +45,7 @@ issue_1194: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_funcs  : true,
         reduce_vars   : true,
     }
     input: {
@@ -72,6 +74,7 @@ issue_1396: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_funcs  : true,
         reduce_vars   : true,
     }
     input: {
@@ -143,6 +146,7 @@ regexp_literal_not_const: {
         join_vars     : true,
         sequences     : false,
         collapse_vars : false,
+        reduce_funcs  : true,
         reduce_vars   : true,
     }
     input: {

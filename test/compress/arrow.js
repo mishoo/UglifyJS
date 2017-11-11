@@ -288,6 +288,7 @@ issue_2105_1: {
         ecma: 6,
         inline: true,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unsafe_methods: true,
@@ -330,6 +331,7 @@ issue_2105_2: {
         collapse_vars: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -401,6 +403,7 @@ issue_2136_3: {
         evaluate: true,
         inline: true,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -428,6 +431,7 @@ call_args: {
         ecma: 6,
         evaluate: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -452,6 +456,7 @@ call_args_drop_param: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -499,6 +504,7 @@ issue_2084: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,

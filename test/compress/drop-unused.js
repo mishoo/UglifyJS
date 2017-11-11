@@ -733,6 +733,7 @@ drop_value: {
 const_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1427,6 +1428,7 @@ issue_2136_3: {
         evaluate: true,
         inline: true,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,

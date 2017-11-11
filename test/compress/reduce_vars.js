@@ -3025,6 +3025,7 @@ accessor_2: {
 method_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -3054,6 +3055,7 @@ method_2: {
     options = {
         collapse_vars: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3081,6 +3083,7 @@ method_2: {
 issue_2090_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -3104,6 +3107,7 @@ issue_2090_1: {
 issue_2090_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -3439,6 +3443,7 @@ array_forin_2: {
 
 array_forof_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3464,6 +3469,7 @@ array_forof_1: {
 
 array_forof_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3548,6 +3554,7 @@ const_expr_2: {
 
 issue_2406_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: false,
         unused: true,
@@ -3592,6 +3599,7 @@ issue_2406_1: {
 
 issue_2406_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3784,6 +3792,7 @@ issue_2420_2: {
 
 issue_2420_3: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }

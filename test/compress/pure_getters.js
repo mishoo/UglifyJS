@@ -415,6 +415,7 @@ issue_2265_1: {
 issue_2265_2: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -440,6 +441,7 @@ issue_2265_2: {
 issue_2265_3: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -459,6 +461,7 @@ issue_2265_3: {
 issue_2265_4: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,

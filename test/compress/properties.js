@@ -940,6 +940,7 @@ methods_keep_quoted_from_dead_code: {
         dead_code: true,
         ecma: 6,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unsafe_methods: true,

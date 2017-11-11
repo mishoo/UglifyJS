@@ -391,6 +391,7 @@ hoist_class: {
         inline: true,
         keep_fnames: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -433,6 +434,7 @@ hoist_class_with_new: {
         inline: true,
         keep_fnames: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -474,6 +476,7 @@ hoist_function_with_call: {
         inline: true,
         keep_fnames: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -529,6 +532,7 @@ new_this: {
 issue_2462: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {

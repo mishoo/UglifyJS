@@ -141,6 +141,7 @@ async_inline: {
         evaluate: true,
         inline: true,
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,

@@ -2595,6 +2595,7 @@ issue_2250_1: {
         collapse_vars: true,
         conditionals: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2635,6 +2636,7 @@ issue_2250_2: {
     options = {
         collapse_vars: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
