@@ -4208,7 +4208,6 @@ issue_2449: {
 
 perf_1: {
     options = {
-        passes: 10,
         reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
@@ -4223,7 +4222,7 @@ perf_1: {
         }
         var sum = 0;
         for (var i = 0; i < 100; ++i) {
-            sum += indirect_foo(i, i+1, i*3);
+            sum += indirect_foo(i, i + 1, 3 * i);
         }
         console.log(sum);
     }
@@ -4243,7 +4242,6 @@ perf_1: {
 
 perf_2: {
     options = {
-        passes: 10,
         reduce_funcs: false,
         reduce_vars: true,
         toplevel: true,
@@ -4258,7 +4256,7 @@ perf_2: {
         }
         var sum = 0;
         for (var i = 0; i < 100; ++i) {
-            sum += indirect_foo(i, i+1, i*3);
+            sum += indirect_foo(i, i + 1, 3 * i);
         }
         console.log(sum);
     }
@@ -4268,6 +4266,209 @@ perf_2: {
         }
         function indirect_foo(x, y, z) {
             return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        var indirect_foo = function(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var indirect_foo = function(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_4: {
+    options = {
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        var indirect_foo = function(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var foo = function(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        var indirect_foo = function(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_5: {
+    options = {
+        passes: 10,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function indirect_foo(x, y, z) {
+            function foo(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i) {
+            sum += indirect_foo(i, i + 1, 3 * i);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function indirect_foo(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_6: {
+    options = {
+        passes: 10,
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function indirect_foo(x, y, z) {
+            function foo(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i) {
+            sum += indirect_foo(i, i + 1, 3 * i);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function indirect_foo(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_7: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var indirect_foo = function(x, y, z) {
+            var foo = function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var indirect_foo = function(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_8: {
+    options = {
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var indirect_foo = function(x, y, z) {
+            var foo = function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var indirect_foo = function(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
         }
         var sum = 0;
         for (var i = 0; i < 100; ++i)
