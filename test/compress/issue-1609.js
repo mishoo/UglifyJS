@@ -2,6 +2,7 @@ chained_evaluation_1: {
     options = {
         collapse_vars: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -28,6 +29,7 @@ chained_evaluation_2: {
     options = {
         collapse_vars: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }

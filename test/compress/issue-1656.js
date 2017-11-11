@@ -15,6 +15,7 @@ f7: {
         negate_iife: true,
         passes: 3,
         properties: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,

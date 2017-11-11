@@ -3,6 +3,7 @@ issue_2377_1: {
         evaluate: true,
         inline: true,
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -35,6 +36,7 @@ issue_2377_2: {
         inline: true,
         hoist_props: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -66,6 +68,7 @@ issue_2377_3: {
         inline: true,
         hoist_props: true,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -92,6 +95,7 @@ issue_2377_3: {
 direct_access_1: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -120,6 +124,7 @@ direct_access_1: {
 direct_access_2: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -143,6 +148,7 @@ direct_access_2: {
 direct_access_3: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -163,6 +169,7 @@ direct_access_3: {
 single_use: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -187,6 +194,7 @@ single_use: {
 name_collision_1: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -224,6 +232,7 @@ name_collision_1: {
 name_collision_2: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -257,6 +266,7 @@ name_collision_2: {
 name_collision_3: {
     options = {
         hoist_props: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -293,6 +303,7 @@ contains_this_1: {
         hoist_props: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -318,6 +329,7 @@ contains_this_2: {
         hoist_props: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -345,6 +357,7 @@ contains_this_3: {
         hoist_props: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -490,6 +503,7 @@ new_this: {
         hoist_props: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,

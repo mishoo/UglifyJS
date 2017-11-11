@@ -6,6 +6,7 @@ reduce_vars: {
         global_defs   : {
             C : 0
         },
+        reduce_funcs  : true,
         reduce_vars   : true,
         toplevel      : true,
         unused        : true
@@ -64,6 +65,7 @@ modified: {
     options = {
         conditionals  : true,
         evaluate      : true,
+        reduce_funcs  : true,
         reduce_vars   : true,
         unused        : true,
     }
@@ -171,6 +173,7 @@ modified: {
 unsafe_evaluate: {
     options = {
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         side_effects : true,
         unsafe       : true,
@@ -214,6 +217,7 @@ unsafe_evaluate: {
 unsafe_evaluate_side_effect_free_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
         unused: true,
@@ -237,6 +241,7 @@ unsafe_evaluate_side_effect_free_2: {
         evaluate: true,
         passes: 2,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
         unused: true,
@@ -253,6 +258,7 @@ unsafe_evaluate_side_effect_free_2: {
 unsafe_evaluate_escaped: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
         unused: true,
@@ -273,6 +279,7 @@ unsafe_evaluate_escaped: {
 unsafe_evaluate_modified: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
         unused: true,
@@ -286,6 +293,7 @@ unsafe_evaluate_modified: {
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:7}; console.log([o][0].p++); return o.p; }());
+        console.log(function(){ var o={p:8}; console.log({q:o}.q.p++); return o.p; }());
     }
     expect: {
         console.log(function(){ var o={p:1}; o.p++; console.log(o.p); return o.p; }());
@@ -296,6 +304,7 @@ unsafe_evaluate_modified: {
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:7}; console.log([o][0].p++); return o.p; }());
+        console.log(function(){ var o={p:8}; console.log({q:o}.q.p++); return o.p; }());
     }
     expect_stdout: true
 }
@@ -303,6 +312,7 @@ unsafe_evaluate_modified: {
 unsafe_evaluate_unknown: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
         unused: true,
@@ -323,6 +333,7 @@ unsafe_evaluate_unknown: {
 unsafe_evaluate_object_1: {
     options = {
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         unsafe       : true
     }
@@ -363,6 +374,7 @@ unsafe_evaluate_object_1: {
 unsafe_evaluate_object_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -399,6 +411,7 @@ unsafe_evaluate_object_2: {
 unsafe_evaluate_object_3: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -439,6 +452,7 @@ unsafe_evaluate_object_3: {
 unsafe_evaluate_array_1: {
     options = {
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         unsafe       : true
     }
@@ -487,6 +501,7 @@ unsafe_evaluate_array_1: {
 unsafe_evaluate_array_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -523,6 +538,7 @@ unsafe_evaluate_array_2: {
 unsafe_evaluate_array_3: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -553,6 +569,7 @@ unsafe_evaluate_array_3: {
 unsafe_evaluate_array_4: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -583,6 +600,7 @@ unsafe_evaluate_array_4: {
 unsafe_evaluate_array_5: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -613,6 +631,7 @@ unsafe_evaluate_array_5: {
 unsafe_evaluate_equality_1: {
     options = {
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         unsafe       : true,
         unused       : true
@@ -645,6 +664,7 @@ unsafe_evaluate_equality_2: {
         collapse_vars: true,
         evaluate     : true,
         passes       : 2,
+        reduce_funcs : true,
         reduce_vars  : true,
         unsafe       : true,
         unused       : true
@@ -681,6 +701,7 @@ passes: {
         conditionals: true,
         evaluate: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -712,6 +733,7 @@ passes: {
 iife: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -732,6 +754,7 @@ iife: {
 iife_new: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -752,6 +775,7 @@ iife_new: {
 multi_def_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -777,6 +801,7 @@ multi_def_1: {
 multi_def_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -806,6 +831,7 @@ multi_def_2: {
 multi_def_3: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -833,6 +859,7 @@ multi_def_3: {
 use_before_var: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -852,6 +879,7 @@ use_before_var: {
 inner_var_if: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -875,6 +903,7 @@ inner_var_if: {
 inner_var_label: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -900,6 +929,7 @@ inner_var_label: {
 inner_var_for_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -929,6 +959,7 @@ inner_var_for_1: {
 inner_var_for_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -952,6 +983,7 @@ inner_var_for_2: {
 inner_var_for_in_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -983,6 +1015,7 @@ inner_var_for_in_1: {
 inner_var_for_in_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -1002,6 +1035,7 @@ inner_var_for_in_2: {
 inner_var_catch: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -1029,6 +1063,7 @@ inner_var_catch: {
 issue_1533_1: {
     options = {
         collapse_vars: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -1050,6 +1085,7 @@ issue_1533_1: {
 issue_1533_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -1073,6 +1109,7 @@ issue_1533_2: {
 toplevel_on: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:true,
         unused: true,
@@ -1090,6 +1127,7 @@ toplevel_on: {
 toplevel_off: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:false,
         unused: true,
@@ -1109,6 +1147,7 @@ toplevel_on_loops_1: {
     options = {
         evaluate: true,
         loops: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:true,
         unused: true,
@@ -1123,11 +1162,12 @@ toplevel_on_loops_1: {
         while (x);
     }
     expect: {
+        function bar() {
+            console.log("bar:", --x);
+        }
         var x = 3;
         do
-            (function() {
-                console.log("bar:", --x);
-            })();
+            bar();
         while (x);
     }
     expect_stdout: true
@@ -1137,6 +1177,7 @@ toplevel_off_loops_1: {
     options = {
         evaluate: true,
         loops: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:false,
         unused: true,
@@ -1166,6 +1207,7 @@ toplevel_on_loops_2: {
     options = {
         evaluate: true,
         loops: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:true,
         unused: true,
@@ -1180,9 +1222,10 @@ toplevel_on_loops_2: {
         while (x);
     }
     expect: {
-        for (;;) (function() {
+        function bar() {
             console.log("bar:");
-        })();
+        }
+        for (;;) bar();
     }
 }
 
@@ -1190,6 +1233,7 @@ toplevel_off_loops_2: {
     options = {
         evaluate: true,
         loops: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:false,
         unused: true,
@@ -1218,6 +1262,7 @@ toplevel_on_loops_3: {
     options = {
         evaluate: true,
         loops: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:true,
         unused: true,
@@ -1235,6 +1280,7 @@ toplevel_off_loops_3: {
     options = {
         evaluate: true,
         loops: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel:false,
         unused: true,
@@ -1252,6 +1298,7 @@ toplevel_off_loops_3: {
 defun_reference: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -1288,6 +1335,7 @@ defun_reference: {
 
 defun_inline_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1316,6 +1364,7 @@ defun_inline_1: {
 
 defun_inline_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1347,6 +1396,7 @@ defun_inline_3: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1369,6 +1419,7 @@ defun_inline_3: {
 defun_call: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1396,6 +1447,7 @@ defun_call: {
 defun_redefine: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1429,6 +1481,7 @@ defun_redefine: {
 func_inline: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1456,6 +1509,7 @@ func_inline: {
 func_modified: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1483,6 +1537,7 @@ func_modified: {
 defun_label: {
     options = {
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1512,6 +1567,7 @@ defun_label: {
 
 double_reference: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1534,6 +1590,7 @@ double_reference: {
 
 iife_arguments_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1556,6 +1613,7 @@ iife_arguments_1: {
 
 iife_arguments_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1579,6 +1637,7 @@ iife_arguments_2: {
 
 iife_eval_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1601,6 +1660,7 @@ iife_eval_1: {
 
 iife_eval_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1625,6 +1685,7 @@ iife_eval_2: {
 
 iife_func_side_effects: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1675,6 +1736,7 @@ iife_func_side_effects: {
 issue_1595_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1693,6 +1755,7 @@ issue_1595_1: {
 issue_1595_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1712,6 +1775,7 @@ issue_1595_3: {
     options = {
         evaluate: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1730,6 +1794,7 @@ issue_1595_3: {
 issue_1595_4: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1752,6 +1817,7 @@ issue_1606: {
     options = {
         evaluate: true,
         hoist_vars: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -1778,6 +1844,7 @@ issue_1670_1: {
         conditionals: true,
         evaluate: true,
         dead_code: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         switches: true,
@@ -1811,6 +1878,7 @@ issue_1670_2: {
         evaluate: true,
         dead_code: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         switches: true,
@@ -1842,6 +1910,7 @@ issue_1670_3: {
         conditionals: true,
         evaluate: true,
         dead_code: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         switches: true,
@@ -1875,6 +1944,7 @@ issue_1670_4: {
         evaluate: true,
         dead_code: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         switches: true,
@@ -1905,6 +1975,7 @@ issue_1670_5: {
         dead_code: true,
         evaluate: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         switches: true,
@@ -1935,6 +2006,7 @@ issue_1670_6: {
         dead_code: true,
         evaluate: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         switches: true,
@@ -1969,6 +2041,7 @@ issue_1670_6: {
 unary_delete: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1997,6 +2070,7 @@ redefine_arguments_1: {
     options = {
         evaluate: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2037,6 +2111,7 @@ redefine_arguments_2: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2075,6 +2150,7 @@ redefine_arguments_3: {
         inline: true,
         keep_fargs: false,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2111,6 +2187,7 @@ redefine_farg_1: {
     options = {
         evaluate: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2150,6 +2227,7 @@ redefine_farg_2: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2188,6 +2266,7 @@ redefine_farg_3: {
         inline: true,
         keep_fargs: false,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2218,6 +2297,7 @@ redefine_farg_3: {
 delay_def: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2250,6 +2330,7 @@ booleans: {
     options = {
         booleans: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -2280,6 +2361,7 @@ booleans: {
 side_effects_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2299,6 +2381,7 @@ side_effects_assign: {
 pure_getters_1: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2321,6 +2404,7 @@ pure_getters_1: {
 pure_getters_2: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2337,6 +2421,7 @@ pure_getters_2: {
 pure_getters_3: {
     options = {
         pure_getters: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2353,6 +2438,7 @@ catch_var: {
     options = {
         booleans: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -2377,6 +2463,7 @@ catch_var: {
 var_assign_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2400,6 +2487,7 @@ var_assign_1: {
 var_assign_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2422,6 +2510,7 @@ var_assign_2: {
 var_assign_3: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2446,6 +2535,7 @@ var_assign_3: {
 var_assign_4: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2468,6 +2558,7 @@ var_assign_4: {
 var_assign_5: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2497,6 +2588,7 @@ var_assign_5: {
 var_assign_6: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2518,6 +2610,7 @@ var_assign_6: {
 immutable: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2538,6 +2631,7 @@ immutable: {
 issue_1814_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2564,6 +2658,7 @@ issue_1814_1: {
 issue_1814_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2590,6 +2685,7 @@ issue_1814_2: {
 try_abort: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2621,6 +2717,7 @@ try_abort: {
 boolean_binary_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2644,6 +2741,7 @@ boolean_binary_assign: {
 cond_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2667,6 +2765,7 @@ cond_assign: {
 iife_assign: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2697,6 +2796,7 @@ iife_assign: {
 
 issue_1850_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: false,
         unused: true,
@@ -2720,6 +2820,7 @@ issue_1850_1: {
 
 issue_1850_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: "funcs",
         unused: true,
@@ -2742,6 +2843,7 @@ issue_1850_2: {
 
 issue_1850_3: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: "vars",
         unused: true,
@@ -2765,6 +2867,7 @@ issue_1850_3: {
 
 issue_1850_4: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2788,6 +2891,7 @@ issue_1850_4: {
 issue_1865: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unsafe: true,
     }
@@ -2817,6 +2921,7 @@ issue_1865: {
 issue_1922_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2838,6 +2943,7 @@ issue_1922_1: {
 issue_1922_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2861,6 +2967,7 @@ issue_1922_2: {
 accessor_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -2891,6 +2998,7 @@ accessor_2: {
     options = {
         collapse_vars: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3022,6 +3130,7 @@ issue_2090_2: {
 
 for_in_prop: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -3049,6 +3158,7 @@ obj_var_1: {
     options = {
         evaluate: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3078,6 +3188,7 @@ obj_var_2: {
         inline: true,
         passes: 2,
         properties: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3104,6 +3215,7 @@ obj_arg_1: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3135,6 +3247,7 @@ obj_arg_2: {
         inline: true,
         passes: 2,
         properties: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3162,6 +3275,7 @@ func_arg_1: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3186,6 +3300,7 @@ func_arg_2: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3207,6 +3322,7 @@ func_arg_2: {
 
 regex_loop: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3235,6 +3351,7 @@ regex_loop: {
 
 obj_for_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3255,6 +3372,7 @@ obj_for_1: {
 
 obj_for_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3274,6 +3392,7 @@ obj_for_2: {
 
 array_forin_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3298,6 +3417,7 @@ array_forin_1: {
 
 array_forin_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3367,6 +3487,7 @@ array_forof_2: {
 const_expr_1: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -3394,6 +3515,7 @@ const_expr_1: {
 const_expr_2: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -3509,12 +3631,13 @@ issue_2406_2: {
     }
 }
 
-escaped_prop: {
+escaped_prop_1: {
     options = {
         collapse_vars: true,
         evaluate: true,
         inline: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3538,8 +3661,44 @@ escaped_prop: {
     expect_stdout: "2"
 }
 
+escaped_prop_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            if (a) console.log(a === b.c);
+            a = b.c;
+        }
+        function g() {}
+        function h() {
+            f({ c: g });
+        }
+        h();
+        h();
+    }
+    expect: {
+        var a;
+        function g() {}
+        function h() {
+            (function(b) {
+                if (a) console.log(a === b.c);
+                a = b.c;
+            })({ c: g });
+        }
+        h();
+        h();
+    }
+    expect_stdout: "true"
+}
+
 issue_2420_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3582,6 +3741,7 @@ issue_2420_1: {
 
 issue_2420_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3667,6 +3827,7 @@ issue_2420_3: {
 
 issue_2423_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3691,6 +3852,7 @@ issue_2423_1: {
 issue_2423_2: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3714,6 +3876,7 @@ issue_2423_2: {
 
 issue_2423_3: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3732,6 +3895,7 @@ issue_2423_3: {
 issue_2423_4: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3752,6 +3916,7 @@ issue_2423_5: {
     options = {
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3790,6 +3955,7 @@ issue_2423_6: {
     options = {
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -3830,6 +3996,7 @@ issue_2423_6: {
 
 issue_2440_eval_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3860,6 +4027,7 @@ issue_2440_eval_1: {
 
 issue_2440_eval_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3890,6 +4058,7 @@ issue_2440_eval_2: {
 
 issue_2440_with_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3916,6 +4085,7 @@ issue_2440_with_1: {
 
 issue_2440_with_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3942,6 +4112,7 @@ issue_2440_with_2: {
 
 issue_2442: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3956,6 +4127,7 @@ issue_2442: {
 
 recursive_inlining_1: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3976,6 +4148,7 @@ recursive_inlining_1: {
 
 recursive_inlining_2: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3997,6 +4170,8 @@ recursive_inlining_2: {
 
 recursive_inlining_3: {
     options = {
+        passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -4034,6 +4209,7 @@ recursive_inlining_3: {
 
 recursive_inlining_4: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -4080,6 +4256,7 @@ recursive_inlining_4: {
 
 recursive_inlining_5: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -4129,4 +4306,459 @@ recursive_inlining_5: {
         "qux 1",
         "foo 0",
     ]
+}
+
+issue_2450_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        function g() {
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        function f() {}
+        function g() {
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "true"
+}
+
+issue_2450_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function g() {
+            function f() {}
+            return f;
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        function g() {
+            return function() {};
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "false"
+}
+
+issue_2450_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var x = (function() {
+            function test() {
+                return "foo";
+            }
+            return function b() {
+                return [1, test];
+            }
+        })();
+        console.log(x()[1] === x()[1]);
+    }
+    expect: {
+        var x = (function() {
+            function test() {
+                return "foo";
+            }
+            return function() {
+                return [1, test];
+            }
+        })();
+        console.log(x()[1] === x()[1]);
+    }
+    expect_stdout: "true"
+}
+
+issue_2450_4: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            console.log(a === b);
+            a = b;
+        }
+        function g() {}
+        for (var i = 3; --i >= 0;)
+            f(g);
+    }
+    expect: {
+        var a;
+        function f(b) {
+            console.log(a === b);
+            a = b;
+        }
+        function g() {}
+        for (var i = 3; --i >= 0;)
+            f(g);
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "true",
+    ]
+}
+
+issue_2450_5: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            console.log(a === b);
+            a = b;
+        }
+        function g() {}
+        [1, 2, 3].forEach(function() {
+            f(g);
+        });
+    }
+    expect: {
+        var a;
+        function g() {}
+        [1, 2, 3].forEach(function() {
+            (function(b) {
+                console.log(a === b);
+                a = b;
+            })(g);
+        });
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "true",
+    ]
+}
+
+issue_2449: {
+    options = {
+        passes: 10,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return a;
+        }
+        function g() {
+            return f();
+        }
+        (function() {
+            var a = "FAIL";
+            if (a == a) console.log(g());
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        function g() {
+            return function() {
+                return a;
+            }();
+        }
+        (function() {
+            var a = "FAIL";
+            if (a == a) console.log(g());
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+perf_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        function indirect_foo(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i) {
+            sum += indirect_foo(i, i + 1, 3 * i);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function indirect_foo(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_2: {
+    options = {
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        function indirect_foo(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i) {
+            sum += indirect_foo(i, i + 1, 3 * i);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        function indirect_foo(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        var indirect_foo = function(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var indirect_foo = function(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_4: {
+    options = {
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        var indirect_foo = function(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var foo = function(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        var indirect_foo = function(x, y, z) {
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_5: {
+    options = {
+        passes: 10,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function indirect_foo(x, y, z) {
+            function foo(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i) {
+            sum += indirect_foo(i, i + 1, 3 * i);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function indirect_foo(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_6: {
+    options = {
+        passes: 10,
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function indirect_foo(x, y, z) {
+            function foo(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i) {
+            sum += indirect_foo(i, i + 1, 3 * i);
+        }
+        console.log(sum);
+    }
+    expect: {
+        function indirect_foo(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_7: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var indirect_foo = function(x, y, z) {
+            var foo = function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var indirect_foo = function(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
+}
+
+perf_8: {
+    options = {
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var indirect_foo = function(x, y, z) {
+            var foo = function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }
+            return foo(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        var indirect_foo = function(x, y, z) {
+            return function(x, y, z) {
+                return x < y ? x * y + z : x * z - y;
+            }(x, y, z);
+        }
+        var sum = 0;
+        for (var i = 0; i < 100; ++i)
+            sum += indirect_foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect_stdout: "348150"
 }

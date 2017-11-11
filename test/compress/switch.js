@@ -714,6 +714,7 @@ issue_1705_2: {
     options = {
         dead_code: true,
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,

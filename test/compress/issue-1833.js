@@ -1,6 +1,7 @@
 iife_for: {
     options = {
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -26,6 +27,7 @@ iife_for: {
 iife_for_in: {
     options = {
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -51,6 +53,7 @@ iife_for_in: {
 iife_do: {
     options = {
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -80,6 +83,7 @@ iife_do: {
 iife_while: {
     options = {
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,

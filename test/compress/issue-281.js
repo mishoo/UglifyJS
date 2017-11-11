@@ -3,6 +3,7 @@ collapse_vars_constants: {
         collapse_vars: true,
         evaluate: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -240,6 +241,7 @@ negate_iife_issue_1073: {
         evaluate: true,
         inline: true,
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         unused: true,
@@ -267,6 +269,7 @@ issue_1288_side_effects: {
         evaluate: true,
         inline: true,
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -299,6 +302,7 @@ inner_var_for_in_1: {
     options = {
         evaluate: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {
@@ -330,6 +334,7 @@ issue_1595_3: {
         evaluate: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }

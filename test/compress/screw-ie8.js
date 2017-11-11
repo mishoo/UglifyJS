@@ -187,6 +187,7 @@ dont_screw_try_catch_undefined: {
 reduce_vars: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
         ie8: true,
         unused: true,

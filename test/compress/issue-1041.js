@@ -14,6 +14,7 @@ const_declaration: {
 const_pragma: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     };
 
@@ -29,6 +30,7 @@ const_pragma: {
 not_const: {
     options = {
         evaluate: true,
+        reduce_funcs: true,
         reduce_vars: true,
     };
 

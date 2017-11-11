@@ -785,6 +785,7 @@ issue_1539: {
 vardef_value: {
     options = {
         keep_fnames: false,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -846,6 +847,7 @@ assign_chain: {
 issue_1583: {
     options = {
         keep_fargs: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -1200,6 +1202,7 @@ var_catch_toplevel: {
     options = {
         conditionals: true,
         negate_iife: true,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -1298,7 +1301,8 @@ issue_2105_1: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 2,
+        passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1338,9 +1342,10 @@ issue_2105_2: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         properties: true,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unsafe: true,
