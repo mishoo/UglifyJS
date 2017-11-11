@@ -202,6 +202,7 @@ dead_code_const_declaration: {
         booleans     : true,
         conditionals : true,
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
     };
     input: {
@@ -229,6 +230,7 @@ dead_code_const_annotation: {
         booleans     : true,
         conditionals : true,
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         toplevel     : true,
     };
@@ -281,6 +283,7 @@ dead_code_const_annotation_complex_scope: {
         booleans     : true,
         conditionals : true,
         evaluate     : true,
+        reduce_funcs : true,
         reduce_vars  : true,
         toplevel     : true,
     };
@@ -439,6 +442,7 @@ global_timeout_and_interval_symbols: {
 issue_2233_2: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         unsafe: true,
@@ -470,6 +474,7 @@ issue_2233_2: {
 issue_2233_3: {
     options = {
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,

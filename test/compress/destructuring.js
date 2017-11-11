@@ -262,6 +262,7 @@ destructuring_dont_evaluate_with_undefined_as_default_assignment: {
 
 reduce_vars: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
     }
     input: {

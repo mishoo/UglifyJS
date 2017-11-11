@@ -96,6 +96,7 @@ self_comparison_1: {
 self_comparison_2: {
     options = {
         comparisons: true,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
     }

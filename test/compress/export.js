@@ -124,6 +124,7 @@ async_func: {
 issue_2134_1: {
     options = {
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -141,6 +142,7 @@ issue_2134_1: {
 issue_2134_2: {
     options = {
         keep_fargs: false,
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
