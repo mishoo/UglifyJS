@@ -3518,3 +3518,63 @@ issue_2436_12: {
         }
     }
 }
+
+issue_2436_13: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            function f(b) {
+                (function g(b) {
+                    var b = b && (b.null = "FAIL");
+                })(a);
+            }
+            f();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            (function(b) {
+                (function(b) {
+                    a && (a.null = "FAIL");
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2436_14: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        var b = {};
+        (function() {
+            var c = a;
+            c && function(c, d) {
+                console.log(c, d);
+            }(b, c);
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        var b = {};
+        (function() {
+            a && function(c, d) {
+                console.log(c, d);
+            }(b, a);
+        })();
+    }
+    expect_stdout: true
+}
