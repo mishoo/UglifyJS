@@ -3098,3 +3098,423 @@ issue_2437: {
         }();
     }
 }
+
+issue_2436_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log({
+            x: o.a,
+            y: o.b,
+        });
+    }
+    expect_stdout: true
+}
+
+issue_2436_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            o.a = 3;
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            o.a = 3;
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect_stdout: true
+}
+
+issue_2436_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            o = {
+                a: 3,
+                b: 4,
+            };
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            o = {
+                a: 3,
+                b: 4,
+            };
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect_stdout: true
+}
+
+issue_2436_4: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+            var o;
+        }(o));
+    }
+    expect: {
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }({
+            a: 1,
+            b: 2,
+        }));
+    }
+    expect_stdout: true
+}
+
+issue_2436_5: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(o) {
+            return {
+                x: o.a,
+                y: o.b,
+            };
+        }(o));
+    }
+    expect: {
+        console.log(function(o) {
+            return {
+                x: o.a,
+                y: o.b,
+            };
+        }({
+            a: 1,
+            b: 2,
+        }));
+    }
+    expect_stdout: true
+}
+
+issue_2436_6: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+        unsafe: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        console.log({
+            x: 1,
+            y: 2,
+        });
+    }
+    expect_stdout: true
+}
+
+issue_2436_7: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        inline: true,
+        passes: 3,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        console.log({
+            x: 1,
+            y: 2,
+        });
+    }
+    expect_stdout: true
+}
+
+issue_2436_8: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect_stdout: true
+}
+
+issue_2436_9: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = console;
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect: {
+        var o = console;
+        console.log(function(c) {
+            return {
+                x: c.a,
+                y: c.b,
+            };
+        }(o));
+    }
+    expect_stdout: true
+}
+
+issue_2436_10: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        function f(n) {
+            o = { b: 3 };
+            return n;
+        }
+        console.log(function(c) {
+            return [
+                c.a,
+                f(c.b),
+                c.b,
+            ];
+        }(o).join(" "));
+    }
+    expect: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        function f(n) {
+            o = { b: 3 };
+            return n;
+        }
+        console.log(function(c) {
+            return [
+                c.a,
+                f(c.b),
+                c.b,
+            ];
+        }(o).join(" "));
+    }
+    expect_stdout: "1 2 2"
+}
+
+issue_2436_11: {
+    options = {
+        collapse_vars: true,
+        join_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function matrix() {}
+        function isCollection() {}
+        function _randomDataForMatrix() {}
+        function _randomInt() {}
+        function f(arg1, arg2) {
+            if (isCollection(arg1)) {
+                var size = arg1;
+                var max = arg2;
+                var min = 0;
+                var res = _randomDataForMatrix(size.valueOf(), min, max, _randomInt);
+                return size && true === size.isMatrix ? matrix(res) : res;
+            } else {
+                var min = arg1;
+                var max = arg2;
+                return _randomInt(min, max);
+            }
+        }
+    }
+    expect: {
+        function matrix() {}
+        function isCollection() {}
+        function _randomDataForMatrix() {}
+        function _randomInt() {}
+        function f(arg1, arg2) {
+            if (isCollection(arg1)) {
+                var size = arg1, max = arg2, min = 0, res = _randomDataForMatrix(size.valueOf(), min, max, _randomInt);
+                return size && true === size.isMatrix ? matrix(res) : res;
+            } else {
+                return _randomInt(min = arg1, max = arg2);
+            }
+        }
+    }
+}
+
+issue_2436_12: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function isUndefined() {}
+        function f() {
+            var viewValue = this.$$lastCommittedViewValue;
+            var modelValue = viewValue;
+            return isUndefined(modelValue) ? modelValue : null;
+        }
+    }
+    expect: {
+        function isUndefined() {}
+        function f() {
+            var modelValue = this.$$lastCommittedViewValue;
+            return isUndefined(modelValue) ? modelValue : null;
+        }
+    }
+}
