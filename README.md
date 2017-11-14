@@ -689,11 +689,12 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   Specify `"strict"` to treat `foo.bar` as side-effect-free only when
   `foo` is certain to not throw, i.e. not `null` or `undefined`.
 
-- `reduce_funcs` (default: `true`) -- Allows single-use functions
-  to be inlined as function expressions when permissible.
-  Enabled by default.  Option depends on `reduce_vars` being enabled.
-  For speed critical code this option should be disabled.
-
+- `reduce_funcs` (default: `true`) -- Allows single-use functions to be
+  inlined as function expressions when permissible allowing further 
+  optimization.  Enabled by default.  Option depends on `reduce_vars` 
+  being enabled.  Some code runs faster in the Chrome V8 engine if this 
+  option is disabled.  Does not negatively impact other major browsers.
+  
 - `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
   used as constant values.
 
