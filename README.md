@@ -865,6 +865,9 @@ can pass additional arguments that control the code output:
 
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
 
+- `webkit` (default `false`) -- enable workarounds for WebKit bugs.
+  PhantomJS users should set this option to `true`.
+
 - `width` (default `80`) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
   obey.  It refers to the width of the line text (excluding indentation).
