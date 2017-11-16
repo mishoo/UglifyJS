@@ -458,3 +458,51 @@ semicolons: {
     }
     expect_exact: "foo;`bar`\n"
 }
+
+regex_1: {
+    input: {
+        console.log(`${/a/} ${6/2} ${/b/.test("b")} ${1?/c/:/d/}`);
+    }
+    expect_exact: 'console.log(`${/a/} ${6/2} ${/b/.test("b")} ${1?/c/:/d/}`);'
+    expect_stdout: "/a/ 3 true /c/"
+    node_version: ">=4"
+}
+
+regex_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(`${/a/} ${6/2} ${/b/.test("b")} ${1?/c/:/d/}`);
+    }
+    expect: {
+        console.log("/a/ 3 true /c/");
+    }
+    expect_stdout: "/a/ 3 true /c/"
+    node_version: ">=4"
+}
+
+sequence_1: {
+    input: {
+        console.log(`${1,2} ${/a/,/b/}`);
+    }
+    expect_exact: 'console.log(`${1,2} ${/a/,/b/}`);'
+    expect_stdout: "2 /b/"
+    node_version: ">=4"
+}
+
+sequence_2: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(`${1,2} ${/a/,/b/}`);
+    }
+    expect: {
+        console.log("2 /b/");
+    }
+    expect_stdout: "2 /b/"
+    node_version: ">=4"
+}
