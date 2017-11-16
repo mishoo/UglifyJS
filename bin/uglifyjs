@@ -15,7 +15,7 @@ var path = require("path");
 var program = require("commander");
 var UglifyJS = require("../tools/node");
 
-var skip_keys = [ "cname", "enclosed", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
+var skip_keys = [ "cname", "enclosed", "inlined", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
 var files = {};
 var options = {
     compress: false,
