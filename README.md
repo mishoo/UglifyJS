@@ -632,7 +632,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `hoist_funs` (default: `true`) -- hoist function declarations
 
-- `hoist_props` (default: `false`) -- hoist properties from constant object and
+- `hoist_props` (default: `true`) -- hoist properties from constant object and
   array literals into regular variables subject to a set of constraints. For example:
   `var o={p:1, q:2}; f(o.p, o.q);` is converted to `f(1, 2);`. Note: `hoist_props`
   works best with `mangle` enabled, the `compress` option `passes` set to `2` or higher,
@@ -690,11 +690,11 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   `foo` is certain to not throw, i.e. not `null` or `undefined`.
 
 - `reduce_funcs` (default: `true`) -- Allows single-use functions to be
-  inlined as function expressions when permissible allowing further 
-  optimization.  Enabled by default.  Option depends on `reduce_vars` 
-  being enabled.  Some code runs faster in the Chrome V8 engine if this 
+  inlined as function expressions when permissible allowing further
+  optimization.  Enabled by default.  Option depends on `reduce_vars`
+  being enabled.  Some code runs faster in the Chrome V8 engine if this
   option is disabled.  Does not negatively impact other major browsers.
-  
+
 - `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
   used as constant values.
 
