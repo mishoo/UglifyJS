@@ -706,11 +706,12 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   Specify `"strict"` to treat `foo.bar` as side-effect-free only when
   `foo` is certain to not throw, i.e. not `null` or `undefined`.
 
-- `reduce_funcs` (default: `true`) -- Allows single-use functions
-  to be inlined as function expressions when permissible.
-  Enabled by default.  Option depends on `reduce_vars` being enabled.
-  For speed critical code this option should be disabled.
-
+- `reduce_funcs` (default: `true`) -- Allows single-use functions to be
+  inlined as function expressions when permissible allowing further 
+  optimization.  Enabled by default.  Option depends on `reduce_vars` 
+  being enabled.  Some code runs faster in the Chrome V8 engine if this 
+  option is disabled.  Does not negatively impact other major browsers.
+  
 - `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
   used as constant values.
 
@@ -906,6 +907,9 @@ can pass additional arguments that control the code output:
   gzip could be smaller; size after gzip insignificantly larger).
 
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
+
+- `webkit` (default `false`) -- enable workarounds for WebKit bugs.
+  PhantomJS users should set this option to `true`.
 
 - `width` (default `80`) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to

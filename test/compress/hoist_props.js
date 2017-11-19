@@ -548,3 +548,92 @@ issue_2462: {
         };
     }
 }
+
+issue_2473_1: {
+    options = {
+        hoist_props: false,
+        reduce_vars: true,
+        top_retain: [ "x", "y" ],
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var x = {};
+        var y = [];
+        var z = {};
+    }
+    expect: {
+        var x = {};
+        var y = [];
+    }
+}
+
+issue_2473_2: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        top_retain: [ "x", "y" ],
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var x = {};
+        var y = [];
+        var z = {};
+    }
+    expect: {
+        var x = {};
+        var y = [];
+    }
+}
+
+issue_2473_3: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        top_retain: "o",
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(o.a, o.b);
+    }
+    expect: {
+        var o = {
+            a: 1,
+            b: 2,
+        };
+        console.log(o.a, o.b);
+    }
+    expect_stdout: "1 2"
+}
+
+issue_2473_4: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        top_retain: "o",
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var o = {
+                a: 1,
+                b: 2,
+            };
+            console.log(o.a, o.b);
+        })();
+    }
+    expect: {
+        (function() {
+            var o_a = 1, o_b = 2;
+            console.log(o_a, o_b);
+        })();
+    }
+    expect_stdout: "1 2"
+}

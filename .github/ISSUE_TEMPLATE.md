@@ -15,6 +15,8 @@
     UglifyJS alone - without third party tools or libraries.
     Ideally the input should be as small as possible.
     Post a link to a gist if necessary.
+
+    Issues without a reproducible test case will be closed.
 -->
 
 **The `uglifyjs` CLI command executed or `minify()` options used.**
