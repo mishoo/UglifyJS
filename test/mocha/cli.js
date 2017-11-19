@@ -10,7 +10,7 @@ function read(path) {
 describe("bin/uglifyjs", function () {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("should produce a functional build when using --self", function (done) {
-        this.timeout(60000);
+        this.timeout(120000);
 
         var command = uglifyjscmd + ' --self -mc ecma=';
         command += semver.satisfies(process.version, ">=4") ? "6" : "5";
