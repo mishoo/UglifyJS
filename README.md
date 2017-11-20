@@ -128,11 +128,11 @@ Training (Nice2Predict)
 Succesfull compilation of `Nice2Predict` creates a training binary in `Nice2Predict` installation directory.
 To train to model we simply run:
 
-> ./bin/training/train --logtostderr -num_threads 16 --input training_data
+> bazel run n2p/training/train_json -- --logtostderr -num_threads 16 --input path/to/training_data
 
 where `training_data` is the file produced in previous step and `num_threads` specifies how many threads should the training algorithm use. To get full options available for training (such as learning rate, regularization and margin), use:
 
-> ./bin/training/train --help
+> bazel run n2p/training/train_json -- --help
 
 After the training finishes, two files are created which contains the trained model: `model_strings` and `model_features`.
 
@@ -141,7 +141,7 @@ Predicting Properties (Nice2Predict)
 
 To predict properties for new programs, start a server after a model was trained:
 
-> ./bin/server/nice2server --logtostderr
+> bazel run n2p/json_server/json_server -- --logtostderr --model=$PWD/model
 
 Then, the server will predict properties for programs given in JsonRPC format. One can debug and observe deobfuscation from the viewer available in the [viewer/viewer.html](https://github.com/eth-srl/Nice2Predict/blob/master/viewer/viewer.html) (online demo available at http://www.nice2predict.org).
 The server takes as an input same JSON format as described above and returns best assigment to the unknown properties (labelled as `inf`).
