@@ -6,7 +6,7 @@ This is on open-source reimplementation of the [JS Nice](http://www.jsnice.org) 
 
 The implementation of UnuglifyJS is based on [UglifyJS 2](https://github.com/mishoo/UglifyJS2) -- parser, minifier, compressor or beautifier toolkit for JavaScript. 
 
-This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/Nice2Pre) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. A live demo of the Unuglify client is available at http://www.nice2predict.org.
+This page documents how to use the UnuglifyJS as a client of the [Nice 2 Predict](https://github.com/eth-srl/Nice2Predict) framework to build statistical model learnt from thousands of open source projects, which is subsequently used to rename variables and parameters names of minified JavaScript files. A live demo of the Unuglify client is available at http://www.nice2predict.org.
 
 NPM Module 
 -------
