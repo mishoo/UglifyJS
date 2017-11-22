@@ -975,3 +975,89 @@ shorthand_keywords: {
     expect_stdout: true
     node_version: ">=4"
 }
+
+array_literal_with_spread: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        var f = (x) => [...x][0];
+        console.log(f(["PASS"]));
+
+        console.log([10, ...[], 20, ...[30, 40], 50]["length"]);
+        console.log([10, ...[], 20, ...[30, 40], 50][0]);
+        console.log([10, ...[], 20, ...[30, 40], 50][1]);
+        console.log([10, ...[], 20, ...[30, 40], 50][2]);
+        console.log([10, ...[], 20, ...[30, 40], 50][3]);
+        console.log([10, ...[], 20, ...[30, 40], 50][4]);
+        console.log([10, ...[], 20, ...[30, 40], 50][5]);
+
+        console.log([10, 20][0]);
+        console.log([10, 20][1]);
+        console.log([10, 20][2]);
+
+        console.log([...[], 10, 20][0]);
+        console.log([...[], 10, 20][1]);
+        console.log([...[], 10, 20][2]);
+
+        console.log([10, ...[], 20][0]);
+        console.log([10, ...[], 20][1]);
+        console.log([10, ...[], 20][2]);
+
+        console.log([10, 20, ...[]][0]);
+        console.log([10, 20, ...[]][1]);
+        console.log([10, 20, ...[]][2]);
+    }
+    expect: {
+        var f = x => [ ...x ][0];
+        console.log(f([ "PASS" ]));
+
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ]["length"]);
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][0]);
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][1]);
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][2]);
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][3]);
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][4]);
+        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][5]);
+
+        console.log(10);
+        console.log(20);
+        console.log([ 10, 20 ][2]);
+
+        console.log([...[], 10, 20][0]);
+        console.log([...[], 10, 20][1]);
+        console.log([...[], 10, 20][2]);
+
+        console.log([10, ...[], 20][0]);
+        console.log([10, ...[], 20][1]);
+        console.log([10, ...[], 20][2]);
+
+        console.log([10, 20, ...[]][0]);
+        console.log([10, 20, ...[]][1]);
+        console.log([10, 20, ...[]][2]);
+    }
+    expect_stdout: [
+        "PASS",
+        "5",
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "undefined",
+        "10",
+        "20",
+        "undefined",
+        "10",
+        "20",
+        "undefined",
+        "10",
+        "20",
+        "undefined",
+        "10",
+        "20",
+        "undefined",
+    ]
+    node_version: ">=6"
+}
