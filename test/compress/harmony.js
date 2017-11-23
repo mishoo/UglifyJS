@@ -1009,7 +1009,7 @@ array_literal_with_spread_2: {
     }
     expect: {
         console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ]["length"]);
-        console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][0]);
+        console.log(10);
         console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][1]);
         console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][2]);
         console.log([ 10, ...[], 20, ...[ 30, 40 ], 50 ][3]);
@@ -1059,12 +1059,12 @@ array_literal_with_spread_3: {
         console.log([...[], 10, 20][1]);
         console.log([...[], 10, 20][2]);
 
-        console.log([10, ...[], 20][0]);
+        console.log(10);
         console.log([10, ...[], 20][1]);
         console.log([10, ...[], 20][2]);
 
-        console.log([10, 20, ...[]][0]);
-        console.log([10, 20, ...[]][1]);
+        console.log(10);
+        console.log(20);
         console.log([10, 20, ...[]][2]);
     }
     expect_stdout: [
@@ -1080,6 +1080,75 @@ array_literal_with_spread_3: {
         "10",
         "20",
         "undefined",
+    ]
+    node_version: ">=6"
+}
+
+array_literal_with_spread_4: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        function t(x) {
+            console.log("(" + x + ")");
+            return 10 * x;
+        }
+
+        console.log([t(1), t(2)][0]);
+        console.log([t(1), t(2)][1]);
+        console.log([t(1), t(2)][2]);
+
+        console.log([...[], t(1), t(2)][0]);
+        console.log([...[], t(1), t(2)][1]);
+        console.log([...[], t(1), t(2)][2]);
+
+        console.log([t(1), ...[], t(2)][0]);
+        console.log([t(1), ...[], t(2)][1]);
+        console.log([t(1), ...[], t(2)][2]);
+
+        console.log([t(1), t(2), ...[]][0]);
+        console.log([t(1), t(2), ...[]][1]);
+        console.log([t(1), t(2), ...[]][2]);
+    }
+    expect: {
+        function t(x) {
+            console.log("(" + x + ")");
+            return 10 * x;
+        }
+
+        console.log([ t(1), t(2) ][0]);
+        console.log((t(1), t(2)));
+        console.log([ t(1), t(2) ][2]);
+
+        console.log([ ...[], t(1), t(2) ][0]);
+        console.log([ ...[], t(1), t(2) ][1]);
+        console.log([ ...[], t(1), t(2) ][2]);
+
+        console.log([ t(1), t(2) ][0]);
+        console.log([ t(1), ...[], t(2) ][1]);
+        console.log([ t(1), ...[], t(2) ][2]);
+
+        console.log([ t(1), t(2) ][0]);
+        console.log((t(1), t(2)));
+        console.log([ t(1), t(2), ...[] ][2]);
+    }
+    expect_stdout: [
+        "(1)", "(2)", "10",
+        "(1)", "(2)", "20",
+        "(1)", "(2)", "undefined",
+
+        "(1)", "(2)", "10",
+        "(1)", "(2)", "20",
+        "(1)", "(2)", "undefined",
+
+        "(1)", "(2)", "10",
+        "(1)", "(2)", "20",
+        "(1)", "(2)", "undefined",
+
+        "(1)", "(2)", "10",
+        "(1)", "(2)", "20",
+        "(1)", "(2)", "undefined",
     ]
     node_version: ">=6"
 }
