@@ -4819,3 +4819,54 @@ issue_2485: {
     }
     expect_stdout: "6"
 }
+
+issue_2496: {
+    options = {
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function execute(callback) {
+            callback();
+        }
+        class Foo {
+            constructor(message) {
+                this.message = message;
+            }
+            go() {
+                this.message = "PASS";
+                console.log(this.message);
+            }
+            run() {
+                execute(() => {
+                    this.go();
+                });
+            }
+        }
+        new Foo("FAIL").run();
+    }
+    expect: {
+        class Foo {
+            constructor(message) {
+                this.message = message;
+            }
+            go() {
+                this.message = "PASS";
+                console.log(this.message);
+            }
+            run() {
+                (function(callback) {
+                    callback();
+                })(() => {
+                    this.go();
+                });
+            }
+        }
+        new Foo("FAIL").run();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
