@@ -3618,3 +3618,41 @@ issue_2497: {
         }
     }
 }
+
+issue_2506: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        function f0(bar) {
+            function f1(Infinity_2) {
+                function f13(NaN) {
+                    if (false <= NaN & this >> 1 >= 0) {
+                        c++;
+                    }
+                }
+                var b_2 = f13(NaN, c++);
+            }
+            var bar = f1(-3, -1);
+        }
+        f0(false);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        function f0(bar) {
+            (function(Infinity_2) {
+                (function(NaN) {
+                    if (false <= 0/0 & this >> 1 >= 0)
+                        c++;
+                })(0, c++);
+            })();
+        }
+        f0(false);
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
