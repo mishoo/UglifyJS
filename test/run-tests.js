@@ -117,6 +117,10 @@ function run_compress_tests() {
                 test.mangle.properties.reserved = quoted_props;
                 U.reserve_quoted_keys(input, quoted_props);
             }
+            if (test.rename) {
+                input.figure_out_scope(test.mangle);
+                input.expand_names(test.mangle);
+            }
             var cmp = new U.Compressor(options, true);
             var output = cmp.compress(input);
             output.figure_out_scope(test.mangle);
