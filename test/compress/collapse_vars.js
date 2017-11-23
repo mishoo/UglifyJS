@@ -3578,3 +3578,43 @@ issue_2436_14: {
     }
     expect_stdout: true
 }
+
+issue_2497: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function sample() {
+            if (true) {
+                for (var i = 0; i < 1; ++i) {
+                    for (var k = 0; k < 1; ++k) {
+                        var value = 1;
+                        var x = value;
+                        value = x ? x + 1 : 0;
+                    }
+                }
+            } else {
+                for (var i = 0; i < 1; ++i) {
+                    for (var k = 0; k < 1; ++k) {
+                        var value = 1;
+                    }
+                }
+            }
+        }
+    }
+    expect: {
+        function sample() {
+            if (true)
+                for (i = 0; i < 1; ++i)
+                    for (k = 0; k < 1; ++k) {
+                        value = 1;
+                        value = value ? value + 1 : 0;
+                    }
+            else
+                for (var i = 0; i < 1; ++i)
+                    for (var k = 0; k < 1; ++k)
+                        var value=1;
+        }
+    }
+}
