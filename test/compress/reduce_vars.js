@@ -4836,13 +4836,13 @@ issue_2496: {
             constructor(message) {
                 this.message = message;
             }
-            go(value) {
+            go() {
                 this.message = "PASS";
                 console.log(this.message);
             }
             run() {
                 execute(() => {
-                    this.go(3);
+                    this.go();
                 });
             }
         }
@@ -4853,7 +4853,7 @@ issue_2496: {
             constructor(message) {
                 this.message = message;
             }
-            go(value) {
+            go() {
                 this.message = "PASS";
                 console.log(this.message);
             }
@@ -4861,7 +4861,7 @@ issue_2496: {
                 (function(callback) {
                     callback();
                 })(() => {
-                    this.go(3);
+                    this.go();
                 });
             }
         }
