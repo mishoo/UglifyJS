@@ -72,6 +72,7 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     "wrap"
 ].forEach(function(name) {
     if (name in program) {
+        if (name == "rename" && program[name]) return;
         options[name] = program[name];
     }
 });
