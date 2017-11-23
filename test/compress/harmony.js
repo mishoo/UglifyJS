@@ -990,7 +990,7 @@ array_literal_with_spread_1: {
         console.log(f([ "PASS" ]));
     }
     expect_stdout: "PASS"
-    node_version: ">=4"
+    node_version: ">=6"
 }
 
 array_literal_with_spread_2: {
@@ -1025,7 +1025,7 @@ array_literal_with_spread_2: {
         "50",
         "undefined",
     ]
-    node_version: ">=4"
+    node_version: ">=6"
 }
 
 array_literal_with_spread_3: {
@@ -1081,5 +1081,5 @@ array_literal_with_spread_3: {
         "20",
         "undefined",
     ]
-    node_version: ">=4"
+    node_version: ">=6"
 }
