@@ -500,3 +500,51 @@ issue_2473_4: {
     }
     expect_stdout: "1 2"
 }
+
+issue_2508_1: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: [ 1 ],
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect: {
+        (function(x) {
+            console.log(x);
+        })([ 1 ]);
+    }
+}
+
+issue_2508_2: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: { b: 2 },
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect: {
+        (function(x) {
+            console.log(x);
+        })({ b: 2 });
+    }
+}
