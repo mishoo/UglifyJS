@@ -500,3 +500,136 @@ issue_2473_4: {
     }
     expect_stdout: "1 2"
 }
+
+issue_2508_1: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: [ 1 ],
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect: {
+        (function(x) {
+            console.log(x);
+        })([ 1 ]);
+    }
+    expect_stdout: true
+}
+
+issue_2508_2: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: { b: 2 },
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect: {
+        (function(x) {
+            console.log(x);
+        })({ b: 2 });
+    }
+    expect_stdout: true
+}
+
+issue_2508_3: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: [ o ],
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect: {
+        var o = {
+            a: [ o ],
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect_stdout: true
+}
+
+issue_2508_4: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            a: { b: o },
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect: {
+        var o = {
+            a: { b: o },
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.a);
+    }
+    expect_stdout: true
+}
+
+issue_2508_5: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            f: function(x) {
+                console.log(x);
+            }
+        };
+        o.f(o.f);
+    }
+    expect: {
+        var o_f = function(x) {
+            console.log(x);
+        };
+        o_f(o_f);
+    }
+    expect_stdout: true
+}
