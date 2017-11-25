@@ -46,6 +46,7 @@ program.option("--config-file <file>", "Read minify() options from JSON file.");
 program.option("-d, --define <expr>[=value]", "Global definitions.", parse_js("define"));
 program.option("--ecma <version>", "Specify ECMAScript release: 5, 6, 7 or 8.");
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
+program.option("--keep-classnames", "Do not mangle/drop class names.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
 program.option("--self", "Build UglifyJS as a library (implies --wrap UglifyJS)");
@@ -94,6 +95,9 @@ if (program.define) {
     for (var expr in program.define) {
         options.compress.global_defs[expr] = program.define[expr];
     }
+}
+if (program.keepClassnames) {
+    options.keep_classnames = true;
 }
 if (program.keepFnames) {
     options.keep_fnames = true;
