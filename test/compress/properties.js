@@ -1305,3 +1305,29 @@ new_this: {
         }(42);
     }
 }
+
+issue_2513: {
+    options = {
+        evaluate: true,
+        properties: true,
+    }
+    input: {
+        !function(Infinity, NaN, undefined) {
+            console.log("a"[1/0], "b"["Infinity"]);
+            console.log("c"[0/0], "d"["NaN"]);
+            console.log("e"[void 0], "f"["undefined"]);
+        }(0, 0, 0);
+    }
+    expect: {
+        !function(Infinity, NaN, undefined) {
+            console.log("a"[1/0], "b"[1/0]);
+            console.log("c".NaN, "d".NaN);
+            console.log("e"[void 0], "f"[void 0]);
+        }(0, 0, 0);
+    }
+    expect_stdout: [
+        "undefined undefined",
+        "undefined undefined",
+        "undefined undefined",
+    ]
+}

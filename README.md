@@ -617,17 +617,17 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   the resultant code is shorter: `m(){return x}` becomes `m:()=>x`.
   This transform requires that the `ecma` compress option is set to `6` or greater.
 
-- `booleans` (default: `true`) -- various optimizations for boolean context, for example `!!a
-  ? b : c → a ? b : c`
+- `booleans` (default: `true`) -- various optimizations for boolean context,
+  for example `!!a ? b : c → a ? b : c`
 
-- `cascade` (default: `true`) -- small optimization for sequences, transform `x, x` into `x`
-  and `x = something(), x` into `x = something()`
+- `cascade` (default: `true`) -- small optimization for sequences, transform
+  `x, x` into `x` and `x = something(), x` into `x = something()`
 
-- `collapse_vars` (default: `true`) -- Collapse single-use non-constant variables - side
-  effects permitting.
+- `collapse_vars` (default: `true`) -- Collapse single-use non-constant variables,
+  side effects permitting.
 
-- `comparisons` (default: `true`) -- apply certain optimizations to binary nodes, for example:
-  `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
+- `comparisons` (default: `true`) -- apply certain optimizations to binary nodes,
+  e.g. `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
   nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
 
 - `computed_props` (default: `true`) -- Transforms constant computed properties
@@ -638,7 +638,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `dead_code` (default: `true`) -- remove unreachable code
 
-- `drop_console` (default: `false`) -- default `false`.  Pass `true` to discard calls to
+- `drop_console` (default: `false`) -- Pass `true` to discard calls to
   `console.*` functions. If you wish to drop a specific function call
   such as `console.info` and/or retain side effects from function arguments
   after dropping the function call then use `pure_funcs` instead.
@@ -650,14 +650,14 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `evaluate` (default: `true`) -- attempt to evaluate constant expressions
 
-- `expression` (default: `false`) -- default `false`.  Pass `true` to preserve completion values
+- `expression` (default: `false`) -- Pass `true` to preserve completion values
   from terminal statements without `return`, e.g. in bookmarklets.
 
 - `global_defs` (default: `{}`) -- see [conditional compilation](#conditional-compilation)
 
 - `hoist_funs` (default: `true`) -- hoist function declarations
 
-- `hoist_props` (default: `false`) -- hoist properties from constant object and
+- `hoist_props` (default: `true`) -- hoist properties from constant object and
   array literals into regular variables subject to a set of constraints. For example:
   `var o={p:1, q:2}; f(o.p, o.q);` is converted to `f(1, 2);`. Note: `hoist_props`
   works best with `mangle` enabled, the `compress` option `passes` set to `2` or higher,
@@ -676,19 +676,18 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   compressor from discarding class names.  See also: the `keep_classnames`
   [mangle option](#mangle).
 
-- `keep_fargs` (default: `true`) -- default `true`.  Prevents the
-  compressor from discarding unused function arguments.  You need this
-  for code which relies on `Function.length`.
+- `keep_fargs` (default: `true`) -- Prevents the compressor from discarding unused
+  function arguments.  You need this for code which relies on `Function.length`.
 
 - `keep_fnames` (default: `false`) -- Pass `true` to prevent the
   compressor from discarding function names.  Useful for code relying on
   `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
 
-- `keep_infinity` (default: `false`) -- default `false`. Pass `true` to prevent `Infinity` from
+- `keep_infinity` (default: `false`) -- Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
-- `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops when we can
-  statically determine the condition
+- `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops
+  when we can statically determine the condition.
 
 - `negate_iife` (default: `true`) -- negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the
@@ -719,11 +718,11 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   `foo` is certain to not throw, i.e. not `null` or `undefined`.
 
 - `reduce_funcs` (default: `true`) -- Allows single-use functions to be
-  inlined as function expressions when permissible allowing further 
-  optimization.  Enabled by default.  Option depends on `reduce_vars` 
-  being enabled.  Some code runs faster in the Chrome V8 engine if this 
+  inlined as function expressions when permissible allowing further
+  optimization.  Enabled by default.  Option depends on `reduce_vars`
+  being enabled.  Some code runs faster in the Chrome V8 engine if this
   option is disabled.  Does not negatively impact other major browsers.
-  
+
 - `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
   used as constant values.
 
@@ -736,21 +735,22 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   occasions the default sequences limit leads to very slow compress times in which
   case a value of `20` or less is recommended.
 
-- `side_effects` (default: `true`) -- default `true`. Pass `false` to disable potentially dropping
+- `side_effects` (default: `true`) -- Pass `false` to disable potentially dropping
   functions marked as "pure".  A function call is marked as "pure" if a comment
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
 
 - `switches` (default: `true`) -- de-duplicate and remove unreachable `switch` branches
 
-- `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or variables (`"vars"`)
-  in the top level scope (`false` by default, `true` to drop both unreferenced
-  functions and variables)
+- `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or
+  variables (`"vars"`) in the top level scope (`false` by default, `true` to drop
+  both unreferenced functions and variables)
 
-- `top_retain` (default: `null`) -- prevent specific toplevel functions and variables from `unused`
-  removal (can be array, comma-separated, RegExp or function. Implies `toplevel`)
+- `top_retain` (default: `null`) -- prevent specific toplevel functions and
+  variables from `unused` removal (can be array, comma-separated, RegExp or
+  function. Implies `toplevel`)
 
-- `typeofs` (default: `true`) -- default `true`.  Transforms `typeof foo == "undefined"` into
+- `typeofs` (default: `true`) -- Transforms `typeof foo == "undefined"` into
   `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
   earlier versions due to known issues.
 
@@ -788,31 +788,31 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `unsafe_regexp` (default: `false`) -- enable substitutions of variables with
   `RegExp` values the same way as if they are constants.
 
-- `unused` (default: `true`) -- drop unreferenced functions and variables (simple direct variable
-  assignments do not count as references unless set to `"keep_assign"`)
+- `unused` (default: `true`) -- drop unreferenced functions and variables (simple
+  direct variable assignments do not count as references unless set to `"keep_assign"`)
 
-- `warnings` (default: `false`) -- display warnings when dropping unreachable code or unused
-  declarations etc.
+- `warnings` (default: `false`) -- display warnings when dropping unreachable
+  code or unused declarations etc.
 
 ## Mangle options
 
-- `eval` (default `false`). Pass `true` to mangle names visible in scopes
+- `eval` (default `false`) -- Pass `true` to mangle names visible in scopes
   where `eval` or `with` are used.
 
-- `keep_classnames` (default `false`).  Pass `true` to not mangle class names.
+- `keep_classnames` (default `false`) -- Pass `true` to not mangle class names.
   See also: the `keep_classnames` [compress option](#compress-options).
 
-- `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
+- `keep_fnames` (default `false`) -- Pass `true` to not mangle function names.
   Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
   [compress option](#compress-options).
 
-- `reserved` (default `[]`). Pass an array of identifiers that should be
+- `reserved` (default `[]`) -- Pass an array of identifiers that should be
   excluded from mangling. Example: `["foo", "bar"]`.
 
-- `toplevel` (default `false`). Pass `true` to mangle names declared in the
+- `toplevel` (default `false`) -- Pass `true` to mangle names declared in the
   top level scope.
 
-- `safari10` (default `false`). Pass `true` to work around the Safari 10 loop
+- `safari10` (default `false`) -- Pass `true` to work around the Safari 10 loop
   iterator [bug](https://bugs.webkit.org/show_bug.cgi?id=171041)
   "Cannot declare a let variable twice".
 
