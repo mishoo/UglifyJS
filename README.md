@@ -107,6 +107,7 @@ a double dash to prevent input files being used as option arguments:
                                 Equivalent to setting `ie8: true` in `minify()`
                                 for `compress`, `mangle` and `output` options.
                                 By default UglifyJS will not try to be IE-proof.
+    --keep-classnames           Do not mangle/drop class names.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
     --name-cache <file>         File to hold mangled name mappings.
@@ -509,8 +510,13 @@ if (result.error) throw result.error;
 
 - `ie8` (default `false`) - set to `true` to support IE8.
 
+- `keep_classnames` (default: `undefined`) - pass `true` to prevent discarding or mangling
+  of class names.
+
 - `keep_fnames` (default: `false`) - pass `true` to prevent discarding or mangling
-  of function names.  Useful for code relying on `Function.prototype.name`.
+  of function names.  Useful for code relying on `Function.prototype.name`. If the
+  top level minify option `keep_classnames` is `undefined` it will be overriden with
+  the value of the top level minify option `keep_fnames`.
 
 ## Minify options structure
 
@@ -538,6 +544,8 @@ if (result.error) throw result.error;
     ecma: 5, // specify one of: 5, 6, 7 or 8
     nameCache: null, // or specify a name cache object
     toplevel: false,
+    keep_classnames: false,
+    keep_fnames: false,
     ie8: false,
     warnings: false,
 }
@@ -664,6 +672,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `join_vars` (default: `true`) -- join consecutive `var` statements
 
+- `keep_classnames` (default: `false`) -- Pass `true` to prevent the
+  compressor from discarding class names.  See also: the `keep_classnames`
+  [mangle option](#mangle).
+
 - `keep_fargs` (default: `true`) -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
@@ -788,6 +800,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   where `eval` or `with` are used.
 
 - `keep_classnames` (default `false`).  Pass `true` to not mangle class names.
+  See also: the `keep_classnames` [compress option](#compress-options).
 
 - `keep_fnames` (default `false`).  Pass `true` to not mangle function names.
   Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
