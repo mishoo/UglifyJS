@@ -672,14 +672,14 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `join_vars` (default: `true`) -- join consecutive `var` statements
 
+- `keep_classnames` (default: `false`) -- Pass `true` to prevent the
+  compressor from discarding class names.  See also: the `keep_classnames`
+  [mangle option](#mangle).
+
 - `keep_fargs` (default: `true`) -- default `true`.  Prevents the
   compressor from discarding unused function arguments.  You need this
   for code which relies on `Function.length`.
 
-- `keep_classnames` (default: `false`) -- Pass `true` to prevent the
-  compressor from discarding class names.  See also: the `keep_classnames`
-  [mangle option](#mangle).
-  
 - `keep_fnames` (default: `false`) -- Pass `true` to prevent the
   compressor from discarding function names.  Useful for code relying on
   `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
