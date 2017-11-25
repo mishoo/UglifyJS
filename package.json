@@ -4,7 +4,7 @@
   "homepage": "http://lisperator.net/uglifyjs",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
   "license": "BSD-2-Clause",
-  "version": "3.1.10",
+  "version": "3.2.0",
   "engines": {
     "node": ">=0.8.0"
   },
@@ -29,11 +29,11 @@
     "LICENSE"
   ],
   "dependencies": {
-    "commander": "~2.11.0",
+    "commander": "~2.12.1",
     "source-map": "~0.6.1"
   },
   "devDependencies": {
-    "acorn": "~5.1.1",
+    "acorn": "~5.2.1",
     "mocha": "~3.5.1",
     "semver": "~5.4.1"
   },
