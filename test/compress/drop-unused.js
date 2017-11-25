@@ -1574,3 +1574,101 @@ issue_2288: {
         }
     }
 }
+
+issue_2418_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function f() {});
+    }
+    expect: {
+        class C {}
+        function F() {}
+        (class {});
+        (function() {});
+    }
+}
+
+issue_2418_2: {
+    options = {
+        keep_classnames: false,
+        keep_fnames: false,
+        unused: true,
+    }
+    input: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function f() {});
+    }
+    expect: {
+        class C {}
+        function F() {}
+        (class {});
+        (function() {});
+    }
+}
+
+issue_2418_3: {
+    options = {
+        keep_classnames: false,
+        keep_fnames: true,
+        unused: true,
+    }
+    input: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function f() {});
+    }
+    expect: {
+        class C {}
+        function F() {}
+        (class {});
+        (function f() {});
+    }
+}
+
+issue_2418_4: {
+    options = {
+        keep_classnames: true,
+        keep_fnames: false,
+        unused: true,
+    }
+    input: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function f() {});
+    }
+    expect: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function() {});
+    }
+}
+
+issue_2418_5: {
+    options = {
+        keep_classnames: true,
+        keep_fnames: true,
+        unused: true,
+    }
+    input: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function f() {});
+    }
+    expect: {
+        class C {}
+        function F() {}
+        (class c {});
+        (function f() {});
+    }
+}
