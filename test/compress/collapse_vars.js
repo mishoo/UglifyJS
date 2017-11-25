@@ -3880,3 +3880,81 @@ issue_2436_14: {
     }
     expect_stdout: true
 }
+
+issue_2497: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function sample() {
+            if (true) {
+                for (var i = 0; i < 1; ++i) {
+                    for (var k = 0; k < 1; ++k) {
+                        var value = 1;
+                        var x = value;
+                        value = x ? x + 1 : 0;
+                    }
+                }
+            } else {
+                for (var i = 0; i < 1; ++i) {
+                    for (var k = 0; k < 1; ++k) {
+                        var value = 1;
+                    }
+                }
+            }
+        }
+    }
+    expect: {
+        function sample() {
+            if (true)
+                for (i = 0; i < 1; ++i)
+                    for (k = 0; k < 1; ++k) {
+                        value = 1;
+                        value = value ? value + 1 : 0;
+                    }
+            else
+                for (var i = 0; i < 1; ++i)
+                    for (var k = 0; k < 1; ++k)
+                        var value=1;
+        }
+    }
+}
+
+issue_2506: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        function f0(bar) {
+            function f1(Infinity_2) {
+                function f13(NaN) {
+                    if (false <= NaN & this >> 1 >= 0) {
+                        c++;
+                    }
+                }
+                var b_2 = f13(NaN, c++);
+            }
+            var bar = f1(-3, -1);
+        }
+        f0(false);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        function f0(bar) {
+            (function(Infinity_2) {
+                (function(NaN) {
+                    if (false <= 0/0 & this >> 1 >= 0)
+                        c++;
+                })(0, c++);
+            })();
+        }
+        f0(false);
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
