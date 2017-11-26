@@ -23,6 +23,7 @@ new Function("MOZ_SourceMap", "exports", function() {
         return fs.readFileSync(file, "utf8");
     });
     code.push("exports.describe_ast = " + describe_ast.toString());
+    code.push(";var domprops = " + JSON.stringify(require("./domprops.json")));
     return code.join("\n\n");
 }())(
     require("source-map"),
