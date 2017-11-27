@@ -2013,7 +2013,8 @@ chained_3: {
     }
     expect: {
         console.log(function(a, b) {
-            var c = 1, c = b;
+            var c = 1;
+            c = b;
             b++;
             return c;
         }(0, 2));
@@ -2081,7 +2082,7 @@ inner_lvalues: {
     expect_stdout: true
 }
 
-double_def: {
+double_def_1: {
     options = {
         collapse_vars: true,
         unused: true,
@@ -2091,8 +2092,23 @@ double_def: {
         a();
     }
     expect: {
-        var a = x;
-        (a = a && y)();
+        var a;
+        (a = (a = x) && y)();
+    }
+}
+
+double_def_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = x, a = a && y;
+        a();
+    }
+    expect: {
+        (x && y)();
     }
 }
 
@@ -2201,7 +2217,7 @@ lvalues_def: {
     }
     expect: {
         var a = 0, b = 1;
-        var a = b++, b = +void 0;
+        a = b++, b = +void 0;
         a && a[a++];
         console.log(a, b);
     }
@@ -3074,10 +3090,9 @@ issue_2437: {
                 var result = !!req.onreadystatechange;
                 Object.defineProperty(XMLHttpRequest.prototype, 'onreadystatechange', xhrDesc || {});
                 return result;
-            }
-            else {
+            } else {
                 var req = new XMLHttpRequest();
-                var detectFunc = function () { };
+                var detectFunc = function () {};
                 req.onreadystatechange = detectFunc;
                 var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
                 req.onreadystatechange = null;
@@ -3093,9 +3108,9 @@ issue_2437: {
                 return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
             }
-            var req = new XMLHttpRequest(), detectFunc = function() {};
-            req.onreadystatechange = detectFunc,
-            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
+            var req, detectFunc = function() {};
+            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
             req.onreadystatechange = null;
         }();
     }
@@ -3609,15 +3624,15 @@ issue_2497: {
     expect: {
         function sample() {
             if (true)
-                for (i = 0; i < 1; ++i)
-                    for (k = 0; k < 1; ++k) {
+                for (var i = 0; i < 1; ++i)
+                    for (var k = 0; k < 1; ++k) {
                         value = 1;
                         value = value ? value + 1 : 0;
                     }
             else
-                for (var i = 0; i < 1; ++i)
-                    for (var k = 0; k < 1; ++k)
-                        var value=1;
+                for (i = 0; i < 1; ++i)
+                    for (k = 0; k < 1; ++k)
+                        var value = 1;
         }
     }
 }

@@ -972,8 +972,8 @@ inner_var_for_2: {
     }
     expect: {
         !function() {
-            a = 1;
-            for (var b = 1; --b;) var a = 2;
+            var a = 1;
+            for (var b = 1; --b;) a = 2;
             console.log(a);
         }();
     }
