@@ -523,6 +523,10 @@ if (result.error) throw result.error;
   top level minify option `keep_classnames` is `undefined` it will be overriden with
   the value of the top level minify option `keep_fnames`.
 
+- `safari10` (default: `false`) - pass `true` to work around Safari 10/11 bugs in
+  loop scoping and `await`. See `safari10` options in [`mangle`](#mangle-options)
+  and [`output`](#output-options) for details.
+
 ## Minify options structure
 
 ```javascript
@@ -547,11 +551,12 @@ if (result.error) throw result.error;
         // source map options
     },
     ecma: 5, // specify one of: 5, 6, 7 or 8
-    nameCache: null, // or specify a name cache object
-    toplevel: false,
     keep_classnames: false,
     keep_fnames: false,
     ie8: false,
+    nameCache: null, // or specify a name cache object
+    safari10: false,
+    toplevel: false,
     warnings: false,
 }
 ```
