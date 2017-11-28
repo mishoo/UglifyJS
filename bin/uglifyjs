@@ -50,6 +50,7 @@ program.option("--keep-classnames", "Do not mangle/drop class names.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
 program.option("--no-rename", "Disable symbol expansion.");
+program.option("--safari10", "Support non-standard Safari 10.");
 program.option("--self", "Build UglifyJS as a library (implies --wrap UglifyJS)");
 program.option("--source-map [options]", "Enable source map/specify source map options.", parse_source_map());
 program.option("--timings", "Display operations run time on STDERR.")
@@ -69,6 +70,7 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     "ie8",
     "mangle",
     "rename",
+    "safari10",
     "sourceMap",
     "toplevel",
     "wrap"

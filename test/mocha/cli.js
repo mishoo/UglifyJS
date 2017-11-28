@@ -16,7 +16,7 @@ describe("bin/uglifyjs", function () {
         command += semver.satisfies(process.version, ">=4") ? "6" : "5";
         command += ',passes=3,keep_fargs=false,unsafe --wrap WrappedUglifyJS';
 
-        exec(command, function (err, stdout) {
+        exec(command, { maxBuffer: 1048576 }, function (err, stdout) {
             if (err) throw err;
 
             eval(stdout);
