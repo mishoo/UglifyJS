@@ -705,7 +705,7 @@ collapse_vars_lvalues_drop_assign: {
         function f2(x) { var z = x, a = ++z; return z += a; }
         function f3(x) { var a = (x -= 3); return x + a; }
         function f4(x) { var a = (x -= 3); return x + a; }
-        function f5(x) { e1(); var v = e2(), c = v = --x; return x - c; }
+        function f5(x) { e1(), e2(); var c = --x; return x - c; }
         function f6(x) { e1(), e2(); return --x - x; }
         function f7(x) { e1(); return x - (e2() - x); }
         function f8(x) { e1(); return x - (e2() - x); }
@@ -2386,6 +2386,7 @@ duplicate_argname: {
 issue_2298: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -3087,13 +3088,14 @@ issue_2437: {
     }
     expect: {
         !function() {
-            if (xhrDesc)
-                return result = !!(req = new XMLHttpRequest()).onreadystatechange,
-                    Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
+            if (xhrDesc) {
+                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
+                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
+            }
             var req = new XMLHttpRequest(), detectFunc = function() {};
-            req.onreadystatechange = detectFunc;
-            var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            req.onreadystatechange = detectFunc,
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
             req.onreadystatechange = null;
         }();
     }
@@ -3522,6 +3524,7 @@ issue_2436_12: {
 issue_2436_13: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }
@@ -3622,6 +3625,7 @@ issue_2497: {
 issue_2506: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }
