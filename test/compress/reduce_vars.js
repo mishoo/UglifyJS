@@ -4849,7 +4849,7 @@ issue_2496: {
         new Foo("FAIL").run();
     }
     expect: {
-        class Foo {
+        new class {
             constructor(message) {
                 this.message = message;
             }
@@ -4864,9 +4864,25 @@ issue_2496: {
                     this.go();
                 });
             }
-        }
-        new Foo("FAIL").run();
+        }("FAIL").run();
     }
     expect_stdout: "PASS"
     node_version: ">=6"
+}
+
+issue_2416: {
+    options = {
+        keep_classnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class Foo {}
+        console.log(Foo.name);
+    }
+    expect: {
+        console.log((class Foo {}).name);
+    }
+    expect_stdout: "Foo"
 }
