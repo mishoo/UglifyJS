@@ -4887,3 +4887,21 @@ issue_2416: {
     expect_stdout: "Foo"
     node_version: ">=6"
 }
+
+issue_2455: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            var that = this;
+            for (;;) that.bar();
+        }
+    }
+    expect: {
+        function foo() {
+            for (;;) this.bar();
+        }
+    }
+}
