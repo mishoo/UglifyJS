@@ -4885,4 +4885,5 @@ issue_2416: {
         console.log((class Foo {}).name);
     }
     expect_stdout: "Foo"
+    node_version: ">=6"
 }
