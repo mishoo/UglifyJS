@@ -293,3 +293,31 @@ async_arrow_iife_negate_iife: {
     }
     expect_exact: "(async()=>{await fetch()})();(()=>{plain()})();"
 }
+
+issue_2344_1: {
+    beautify = {
+        safari10: false,
+    }
+    input: {
+        async () => {
+            +await x;
+            await y;
+            return await z;
+        };
+    }
+    expect_exact: "async()=>{+await x;await y;return await z};"
+}
+
+issue_2344_2: {
+    beautify = {
+        safari10: true,
+    }
+    input: {
+        async () => {
+            +await x;
+            await y;
+            return await z;
+        };
+    }
+    expect_exact: "async()=>{+(await x);await y;return await z};"
+}
