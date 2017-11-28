@@ -454,17 +454,12 @@ hoist_class_with_new: {
         console.log(o.p.name, o.p === o.p, new o.p(o.x).value, new o.p(o.y).value);
     }
     expect: {
-        // FIXME: class `o.p` not hoisted due to `new`
-        var o = {
-            p: class Foo {
-                constructor(value) {
-                    this.value = 10 * value;
-                }
-            },
-            x: 1,
-            y: 2
+        var o_p = class Foo {
+            constructor(value) {
+                this.value = 10 * value;
+            }
         };
-        console.log(o.p.name, o.p == o.p, new o.p(o.x).value, new o.p(o.y).value);
+        console.log(o_p.name, true, new o_p(1).value, new o_p(2).value);
     }
     node_version: ">=6"
     expect_stdout: "Foo true 10 20"
@@ -766,6 +761,31 @@ issue_2508_5: {
     }
     expect: {
         var o_f = function(x) {
+            console.log(x);
+        };
+        o_f(o_f);
+    }
+    expect_stdout: true
+}
+
+issue_2508_6: {
+    options = {
+        collapse_vars: true,
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            f: x => {
+                console.log(x);
+            }
+        };
+        o.f(o.f);
+    }
+    expect: {
+        var o_f = x => {
             console.log(x);
         };
         o_f(o_f);
