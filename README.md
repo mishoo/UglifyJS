@@ -815,6 +815,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `safari10` (default `false`) -- Pass `true` to work around the Safari 10 loop
   iterator [bug](https://bugs.webkit.org/show_bug.cgi?id=171041)
   "Cannot declare a let variable twice".
+  See also: the `safari10` [output option](#output-options).
 
 Examples:
 
@@ -913,6 +914,10 @@ can pass additional arguments that control the code output:
   - `1` -- always use single quotes
   - `2` -- always use double quotes
   - `3` -- always use the original quotes
+
+- `safari10` (default `false`) -- set this option to `true` to work around
+  a [Safari 10/11 await bug](https://bugs.webkit.org/show_bug.cgi?id=176685).
+  See also: the `safari10` [mangle option](#mangle-options).
 
 - `semicolons` (default `true`) -- separate statements with semicolons.  If
   you pass `false` then whenever possible we will use a newline instead of a
