@@ -114,7 +114,8 @@ a double dash to prevent input files being used as option arguments:
     --safari10                  Support non-standard Safari 10/11.
                                 Equivalent to setting `safari10: true` in `minify()`
                                 for `mangle` and `output` options.
-                                By default UglifyJS will not try to be Safari-proof.
+                                By default `uglify-es` will not work around
+                                Safari 10/11 bugs.
     --self                      Build UglifyJS as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
                                 `base`  Path to compute relative paths from input files.
