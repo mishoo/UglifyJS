@@ -4525,3 +4525,21 @@ issue_2485: {
     }
     expect_stdout: "6"
 }
+
+issue_2455: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            var that = this;
+            for (;;) that.bar();
+        }
+    }
+    expect: {
+        function foo() {
+            for (;;) this.bar();
+        }
+    }
+}
