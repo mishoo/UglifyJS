@@ -178,6 +178,8 @@ try_catch_finally: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        passes: 2,
+        side_effects: true,
     }
     input: {
         var a = 1;

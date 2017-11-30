@@ -87,6 +87,7 @@ issue_485_crashing_1530: {
         dead_code: true,
         evaluate: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         (function(a) {
@@ -94,9 +95,7 @@ issue_485_crashing_1530: {
             var b = 42;
         })(this);
     }
-    expect: {
-        this, void 0;
-    }
+    expect: {}
 }
 
 issue_1841_1: {
