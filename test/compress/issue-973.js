@@ -1,7 +1,8 @@
 this_binding_conditionals: {
     options = {
         conditionals: true,
-        evaluate    : true
+        evaluate: true,
+        side_effects: true,
     };
     input: {
         (1 && a)();
