@@ -134,5 +134,5 @@ label_while: {
             L: while (0) continue L;
         }
     }
-    expect_exact: "function f(){L:;}"
+    expect_exact: "function f(){L:0}"
 }

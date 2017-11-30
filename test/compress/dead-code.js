@@ -129,8 +129,8 @@ dead_code_constant_boolean_should_warn_more: {
         function bar() {}
         // nothing for the while
         // as for the for, it should keep:
-        var x = 10, y;
         var moo;
+        var x = 10, y;
         bar();
     }
     expect_stdout: true
@@ -165,8 +165,8 @@ dead_code_constant_boolean_should_warn_more_strict: {
         var foo;
         // nothing for the while
         // as for the for, it should keep:
-        var x = 10, y;
         var moo;
+        var x = 10, y;
         bar();
     }
     expect_stdout: true
