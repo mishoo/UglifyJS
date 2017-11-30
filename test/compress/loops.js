@@ -148,9 +148,11 @@ parse_do_while_without_semicolon: {
 
 evaluate: {
     options = {
-        loops: true,
         dead_code: true,
         evaluate: true,
+        loops: true,
+        passes: 2,
+        side_effects: true,
     };
     input: {
         while (true) {
