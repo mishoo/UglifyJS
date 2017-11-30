@@ -44,7 +44,7 @@ typeof_in_boolean_context: {
         function f2() { return g(), "Yes"; }
         foo();
         console.log(1);
-        var a = !(console.log(2), !0);
+        var a = !(console.log(2), 1);
         foo();
     }
 }
@@ -57,6 +57,6 @@ issue_1668: {
         if (typeof bar);
     }
     expect: {
-        if (!0);
+        if (1);
     }
 }
