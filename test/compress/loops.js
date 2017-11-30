@@ -452,3 +452,19 @@ in_parenthesis_2: {
     }
     expect_exact: 'for(function(){"foo"in{}};0;);'
 }
+
+init_side_effects: {
+    options = {
+        loops: true,
+        side_effects: true,
+    };
+    input: {
+        for (function() {}(), i = 0; i < 5; i++) console.log(i);
+        for (function() {}(); i < 10; i++) console.log(i);
+    }
+    expect: {
+        for (i = 0; i < 5; i++) console.log(i);
+        for (; i < 10; i++) console.log(i);
+    }
+    expect_stdout: true
+}
