@@ -68,6 +68,7 @@ label_if_break: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         L: if (true) {

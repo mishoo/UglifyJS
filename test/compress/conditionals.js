@@ -1015,3 +1015,32 @@ delete_conditional_2: {
     }
     expect_stdout: true
 }
+
+issue_2535: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        passes: 2,
+        side_effects: true,
+    }
+    input: {
+        if (true || x()) y();
+        if (true && x()) y();
+        if (x() || true) y();
+        if (x() && true) y();
+        if (false || x()) y();
+        if (false && x()) y();
+        if (x() || false) y();
+        if (x() && false) y();
+    }
+    expect: {
+        y();
+        x() && y();
+        (x(), 0) || y();
+        x() && y();
+        x() && y();
+        x() && y();
+        (x(), 1) || y();
+    }
+}
