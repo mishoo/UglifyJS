@@ -833,7 +833,34 @@ issue_2535: {
     }
     expect: {
         w(), 42;
+        42;
         y();
         z();
     }
+}
+
+issue_1750: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        switches: true,
+    }
+    input: {
+        var a = 0, b = 1;
+        switch (true) {
+          case a, true:
+          default:
+            b = 2;
+          case true:
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 0, b = 1;
+        true;
+        a, true;
+        b = 2;
+        console.log(a, b);
+    }
+    expect_stdout: "0 2"
 }
