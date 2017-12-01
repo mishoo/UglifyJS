@@ -1016,7 +1016,7 @@ delete_conditional_2: {
     expect_stdout: true
 }
 
-issue_2535: {
+issue_2535_1: {
     options = {
         booleans: true,
         conditionals: true,
@@ -1043,4 +1043,75 @@ issue_2535: {
         x() && y();
         (x(), 0) && y();
     }
+}
+
+issue_2535_2: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        function x() {}
+        function y() {
+            return "foo";
+        }
+        console.log((x() || true) || y());
+        console.log((y() || true) || x());
+        console.log((x() || true) && y());
+        console.log((y() || true) && x());
+        console.log((x() && true) || y());
+        console.log((y() && true) || x());
+        console.log((x() && true) && y());
+        console.log((y() && true) && x());
+        console.log((x() || false) || y());
+        console.log((y() || false) || x());
+        console.log((x() || false) && y());
+        console.log((y() || false) && x());
+        console.log((x() && false) || y());
+        console.log((y() && false) || x());
+        console.log((x() && false) && y());
+        console.log((y() && false) && x());
+    }
+    expect: {
+        function x() {}
+        function y() {
+            return "foo";
+        }
+        console.log(x() || !0);
+        console.log(y() || !0);
+        console.log((x(), y()));
+        console.log((y(), x()));
+        console.log(!!x() || y());
+        console.log(!!y() || x());
+        console.log(x() && y());
+        console.log(y() && x());
+        console.log(x() || y());
+        console.log(y() || x());
+        console.log(!!x() && y());
+        console.log(!!y() && x());
+        console.log((x(), y()));
+        console.log((y(), x()));
+        console.log(x() && !1);
+        console.log(y() && !1);
+    }
+    expect_stdout: [
+        "true",
+        "foo",
+        "foo",
+        "undefined",
+        "foo",
+        "true",
+        "undefined",
+        "undefined",
+        "foo",
+        "foo",
+        "false",
+        "undefined",
+        "foo",
+        "undefined",
+        "undefined",
+        "false",
+    ]
 }
