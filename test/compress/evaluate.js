@@ -1,6 +1,7 @@
 and: {
     options = {
-        evaluate: true
+        evaluate: true,
+        side_effects: true,
     }
     input: {
         var a;
@@ -76,7 +77,8 @@ and: {
 
 or: {
     options = {
-        evaluate: true
+        evaluate: true,
+        side_effects: true,
     }
     input: {
         var a;
@@ -158,7 +160,8 @@ or: {
 
 unary_prefix: {
     options = {
-        evaluate: true
+        evaluate: true,
+        side_effects: true,
     }
     input: {
         a = !0 && b;
@@ -1244,4 +1247,62 @@ self_comparison_2: {
         console.log(false, false, true, true, "number");
     }
     expect_stdout: "false false true true 'number'"
+}
+
+issue_2535_1: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        if ((x() || true) || y()) z();
+        if ((x() || true) && y()) z();
+        if ((x() && true) || y()) z();
+        if ((x() && true) && y()) z();
+        if ((x() || false) || y()) z();
+        if ((x() || false) && y()) z();
+        if ((x() && false) || y()) z();
+        if ((x() && false) && y()) z();
+    }
+    expect: {
+        if (x(), 1) z();
+        if (x(), y()) z();
+        if (x() || y()) z();
+        if (x() && y()) z();
+        if (x() || y()) z();
+        if (x() && y()) z();
+        if (x(), y()) z();
+        if (x(), 0) z();
+    }
+}
+
+issue_2535_2: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        (x() || true) || y();
+        (x() || true) && y();
+        (x() && true) || y();
+        (x() && true) && y();
+        (x() || false) || y();
+        (x() || false) && y();
+        (x() && false) || y();
+        (x() && false) && y();
+    }
+    expect: {
+        x(),
+        x(), y(),
+        x() || y(),
+        x() && y(),
+        x() || y(),
+        x() && y(),
+        x(), y(),
+        x();
+    }
 }
