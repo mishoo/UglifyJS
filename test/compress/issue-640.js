@@ -100,7 +100,7 @@ wrongly_optimized: {
             foo();
         }
         // TODO: optimize to `func(), bar()`
-        if (func(), !0) bar();
+        if (func(), 1) bar();
     }
 }
 

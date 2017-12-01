@@ -2347,7 +2347,7 @@ booleans: {
     }
     expect: {
         console.log(function(a) {
-            if (!1);
+            if (0);
             switch (!1) {
               case 0:
                 return "FAIL";
