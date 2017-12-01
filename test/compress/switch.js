@@ -817,3 +817,23 @@ issue_1758: {
     }
     expect_stdout: "0 3"
 }
+
+issue_2535: {
+    options = {
+        evaluate: true,
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch(w(), 42) {
+            case 13: x();
+            case 42: y();
+            default: z();
+        }
+    }
+    expect: {
+        w(), 42;
+        y();
+        z();
+    }
+}
