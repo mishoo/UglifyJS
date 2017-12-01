@@ -1306,3 +1306,37 @@ issue_2535_2: {
         x();
     }
 }
+
+issue_2535_3: {
+    options = {
+        booleans: true,
+        evaluate: true,
+    }
+    input: {
+        console.log(Object(1) && 1 && 2);
+        console.log(Object(1) && true && 1 && 2 && Object(2));
+        console.log(Object(1) && true && 1 && null && 2 && Object(2));
+        console.log(2 == Object(1) || 0 || void 0 || null);
+        console.log(2 == Object(1) || 0 || void 0 || null || Object(2));
+        console.log(2 == Object(1) || 0 || void 0 || "ok" || null || Object(2));
+    }
+    expect: {
+        console.log(Object(1) && 2);
+        console.log(Object(1) && Object(2));
+        console.log(Object(1) && null);
+        console.log(2 == Object(1) || null);
+        console.log(2 == Object(1) || Object(2));
+        console.log(2 == Object(1) || "ok");
+    }
+    expect_stdout: true
+    expect_warnings: [
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1316,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1317,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1318,20]",
+        "WARN: Condition left of && always false [test/compress/evaluate.js:1318,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1319,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1320,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1321,20]",
+        "WARN: Condition left of || always true [test/compress/evaluate.js:1321,20]",
+    ]
+}
