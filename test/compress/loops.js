@@ -468,3 +468,27 @@ init_side_effects: {
     }
     expect_stdout: true
 }
+
+dead_code_condition: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        sequences: true,
+    }
+    input: {
+        for (var a = 0, b = 5; (a += 1, 3) - 3 && b > 0; b--) {
+            var c = function() {
+                b--;
+            }(a++);
+        }
+        console.log(a);
+    }
+    expect: {
+        var c;
+        var a = 0, b = 5;
+        a += 1, 0,
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
