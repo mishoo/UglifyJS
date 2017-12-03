@@ -1423,13 +1423,13 @@ issue_2535_3: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1316,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1317,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1318,20]",
-        "WARN: Condition left of && always false [test/compress/evaluate.js:1318,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1319,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1320,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1321,20]",
-        "WARN: Condition left of || always true [test/compress/evaluate.js:1321,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1409,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1410,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1411,20]",
+        "WARN: Condition left of && always false [test/compress/evaluate.js:1411,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1412,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1413,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1414,20]",
+        "WARN: Condition left of || always true [test/compress/evaluate.js:1414,20]",
     ]
 }
