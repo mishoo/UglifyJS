@@ -812,3 +812,204 @@ prop_arrow_with_nested_this: {
     ]
     node_version: ">=4"
 }
+
+issue_2554_1: {
+    options = {
+        computed_props: true,
+        evaluate: true,
+    }
+    input: {
+        var obj = {
+            ["x" + ""]: 1,
+            ["method" + ""]() {
+                this.s = "PASS";
+            },
+            get ["g" + ""]() {
+                return this.x;
+            },
+            set ["s" + ""](value) {
+                this.x = value;
+            }
+        };
+        obj.method();
+        console.log(obj.g);
+    }
+    expect: {
+        var obj = {
+            x: 1,
+            method() {
+                this.s = "PASS";
+            },
+            get g() {
+                return this.x;
+            },
+            set s(value) {
+                this.x = value;
+            }
+        };
+        obj.method();
+        console.log(obj.g);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_2554_2: {
+    options = {
+        computed_props: true,
+        evaluate: true,
+    }
+    input: {
+        var instance = new class {
+            constructor() {
+                this.x = 2;
+            }
+            ["method" + ""]() {
+                this.s = "PASS";
+            }
+            get ["g" + ""]() {
+                return this.x;
+            }
+            set ["s" + ""](value) {
+                this.x = value;
+            }
+        }();
+        instance.method();
+        console.log(instance.g);
+    }
+    expect: {
+        var instance = new class {
+            constructor() {
+                this.x = 2;
+            }
+            method() {
+                this.s = "PASS";
+            }
+            get g() {
+                return this.x;
+            }
+            set s(value) {
+                this.x = value;
+            }
+        }();
+        instance.method();
+        console.log(instance.g);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_2554_3: {
+    options = {
+        computed_props: true,
+        evaluate: true,
+    }
+    input: {
+        var foo = {
+            [1 + 0]: 1,
+            [2 + 0]() {
+                this[4] = "PASS";
+            },
+            get [3 + 0]() {
+                return this[1];
+            },
+            set [4 + 0](value) {
+                this[1] = value;
+            }
+        };
+        foo[2]();
+        console.log(foo[3]);
+    }
+    expect: {
+        var foo = {
+            1: 1,
+            2() {
+                this[4] = "PASS";
+            },
+            get 3() {
+                return this[1];
+            },
+            set 4(value) {
+                this[1] = value;
+            }
+        };
+        foo[2]();
+        console.log(foo[3]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_2554_4: {
+    options = {
+        computed_props: true,
+        evaluate: true,
+    }
+    input: {
+        var bar = new class {
+            constructor() {
+                this[1] = 2;
+            }
+            [2 + 0]() {
+                this[4] = "PASS";
+            }
+            get [3 + 0]() {
+                return this[1];
+            }
+            set [4 + 0](value) {
+                this[1] = value;
+            }
+        }();
+        bar[2]();
+        console.log(bar[3]);
+    }
+    expect: {
+        var bar = new class {
+            constructor() {
+                this[1] = 2;
+            }
+            2() {
+                this[4] = "PASS";
+            }
+            get 3() {
+                return this[1];
+            }
+            set 4(value) {
+                this[1] = value;
+            }
+        }();
+        bar[2]();
+        console.log(bar[3]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_2554_5: {
+    options = {
+        computed_props: true,
+        evaluate: true,
+    }
+    input: {
+        new class {
+            ["constructor"]() {
+                console.log("FAIL");
+            }
+            "constructor"() {
+                console.log("PASS");
+            }
+        }();
+    }
+    expect: {
+        new class {
+            ["constructor"]() {
+                console.log("FAIL");
+            }
+            constructor() {
+                console.log("PASS");
+            }
+        }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
