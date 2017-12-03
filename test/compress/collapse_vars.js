@@ -705,7 +705,7 @@ collapse_vars_lvalues_drop_assign: {
         function f2(x) { var z = x, a = ++z; return z += a; }
         function f3(x) { var a = (x -= 3); return x + a; }
         function f4(x) { var a = (x -= 3); return x + a; }
-        function f5(x) { e1(); var v = e2(), c = v = --x; return x - c; }
+        function f5(x) { e1(), e2(); var c = --x; return x - c; }
         function f6(x) { e1(), e2(); return --x - x; }
         function f7(x) { e1(); return x - (e2() - x); }
         function f8(x) { e1(); return x - (e2() - x); }
@@ -2112,7 +2112,8 @@ chained_3: {
     }
     expect: {
         console.log(function(a, b) {
-            var c = 1, c = b;
+            var c = 1;
+            c = b;
             b++;
             return c;
         }(0, 2));
@@ -2180,7 +2181,7 @@ inner_lvalues: {
     expect_stdout: true
 }
 
-double_def: {
+double_def_1: {
     options = {
         collapse_vars: true,
         unused: true,
@@ -2190,8 +2191,23 @@ double_def: {
         a();
     }
     expect: {
-        var a = x;
-        (a = a && y)();
+        var a;
+        (a = (a = x) && y)();
+    }
+}
+
+double_def_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = x, a = a && y;
+        a();
+    }
+    expect: {
+        (x && y)();
     }
 }
 
@@ -2300,7 +2316,7 @@ lvalues_def: {
     }
     expect: {
         var a = 0, b = 1;
-        var a = b++, b = +void 0;
+        a = b++, b = +void 0;
         a && a[a++];
         console.log(a, b);
     }
@@ -2666,6 +2682,7 @@ issue_2250_2: {
 issue_2298: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -3353,10 +3370,9 @@ issue_2437: {
                 var result = !!req.onreadystatechange;
                 Object.defineProperty(XMLHttpRequest.prototype, 'onreadystatechange', xhrDesc || {});
                 return result;
-            }
-            else {
+            } else {
                 var req = new XMLHttpRequest();
-                var detectFunc = function () { };
+                var detectFunc = function () {};
                 req.onreadystatechange = detectFunc;
                 var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
                 req.onreadystatechange = null;
@@ -3367,13 +3383,14 @@ issue_2437: {
     }
     expect: {
         !function() {
-            if (xhrDesc)
-                return result = !!(req = new XMLHttpRequest()).onreadystatechange,
-                    Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
+            if (xhrDesc) {
+                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
+                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
-            var req = new XMLHttpRequest(), detectFunc = function() {};
-            req.onreadystatechange = detectFunc;
-            var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            }
+            var req, detectFunc = function() {};
+            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
             req.onreadystatechange = null;
         }();
     }
@@ -3824,6 +3841,7 @@ issue_2436_12: {
 issue_2436_13: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }
@@ -3908,15 +3926,15 @@ issue_2497: {
     expect: {
         function sample() {
             if (true)
-                for (i = 0; i < 1; ++i)
-                    for (k = 0; k < 1; ++k) {
+                for (var i = 0; i < 1; ++i)
+                    for (var k = 0; k < 1; ++k) {
                         value = 1;
                         value = value ? value + 1 : 0;
                     }
             else
-                for (var i = 0; i < 1; ++i)
-                    for (var k = 0; k < 1; ++k)
-                        var value=1;
+                for (i = 0; i < 1; ++i)
+                    for (k = 0; k < 1; ++k)
+                        var value = 1;
         }
     }
 }
@@ -3924,6 +3942,7 @@ issue_2497: {
 issue_2506: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }

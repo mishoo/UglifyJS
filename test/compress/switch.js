@@ -817,3 +817,50 @@ issue_1758: {
     }
     expect_stdout: "0 3"
 }
+
+issue_2535: {
+    options = {
+        evaluate: true,
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch(w(), 42) {
+            case 13: x();
+            case 42: y();
+            default: z();
+        }
+    }
+    expect: {
+        w(), 42;
+        42;
+        y();
+        z();
+    }
+}
+
+issue_1750: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        switches: true,
+    }
+    input: {
+        var a = 0, b = 1;
+        switch (true) {
+          case a, true:
+          default:
+            b = 2;
+          case true:
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 0, b = 1;
+        true;
+        a, true;
+        b = 2;
+        console.log(a, b);
+    }
+    expect_stdout: "0 2"
+}

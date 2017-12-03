@@ -87,6 +87,7 @@ issue_485_crashing_1530: {
         dead_code: true,
         evaluate: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         (function(a) {
@@ -94,9 +95,7 @@ issue_485_crashing_1530: {
             var b = 42;
         })(this);
     }
-    expect: {
-        this, void 0;
-    }
+    expect: {}
 }
 
 issue_1841_1: {
@@ -553,4 +552,103 @@ issue_2428: {
         "42",
         "PASS",
     ]
+}
+
+issue_2531_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function outer() {
+            function inner(value) {
+                function closure() {
+                    return value;
+                }
+                return function() {
+                    return closure();
+                };
+            }
+            return inner("Hello");
+        }
+        console.log("Greeting:", outer()());
+    }
+    expect: {
+        function outer() {
+            return function(value) {
+                return function() {
+                    return value;
+                };
+            }("Hello");
+        }
+        console.log("Greeting:", outer()());
+    }
+    expect_stdout: "Greeting: Hello"
+}
+
+issue_2531_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function outer() {
+            function inner(value) {
+                function closure() {
+                    return value;
+                }
+                return function() {
+                    return closure();
+                };
+            }
+            return inner("Hello");
+        }
+        console.log("Greeting:", outer()());
+    }
+    expect: {
+        function outer() {
+            return function() {
+                return "Hello";
+            };
+        }
+        console.log("Greeting:", outer()());
+    }
+    expect_stdout: "Greeting: Hello"
+}
+
+issue_2531_3: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function outer() {
+            function inner(value) {
+                function closure() {
+                    return value;
+                }
+                return function() {
+                    return closure();
+                };
+            }
+            return inner("Hello");
+        }
+        console.log("Greeting:", outer()());
+    }
+    expect: {
+        console.log("Greeting:", "Hello");
+    }
+    expect_stdout: "Greeting: Hello"
 }

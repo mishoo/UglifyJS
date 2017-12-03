@@ -1569,9 +1569,89 @@ issue_2288: {
     expect: {
         function foo(o) {
             o.a;
-            for (i = 0; i < 0; i++);
             for (var i = 0; i < 0; i++);
+            for (i = 0; i < 0; i++);
         }
+    }
+}
+
+issue_2516_1: {
+    options = {
+        collapse_vars: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            function qux(x) {
+                bar.call(null, x);
+            }
+            function bar(x) {
+                var FOUR = 4;
+                var trouble = x || never_called();
+                var value = (FOUR - 1) * trouble;
+                console.log(value == 6 ? "PASS" : value);
+            }
+            Baz = qux;
+        }
+        var Baz;
+        foo();
+        Baz(2);
+    }
+    expect: {
+        function foo() {
+            Baz = function(x) {
+                (function(x) {
+                    var trouble = x || never_called();
+                    var value = (4 - 1) * trouble;
+                    console.log(6 == value ? "PASS" : value);
+                }).call(null, x);
+            };
+        }
+        var Baz;
+        foo();
+        Baz(2);
+    }
+}
+
+issue_2516_2: {
+    options = {
+        collapse_vars: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        passes: 2,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            function qux(x) {
+                bar.call(null, x);
+            }
+            function bar(x) {
+                var FOUR = 4;
+                var trouble = x || never_called();
+                var value = (FOUR - 1) * trouble;
+                console.log(value == 6 ? "PASS" : value);
+            }
+            Baz = qux;
+        }
+        var Baz;
+        foo();
+        Baz(2);
+    }
+    expect: {
+        function foo() {
+            Baz = function(x) {
+                (function(x) {
+                    var value = (4 - 1) * (x || never_called());
+                    console.log(6 == value ? "PASS" : value);
+                }).call(null, x);
+            };
+        }
+        var Baz;
+        foo();
+        Baz(2);
     }
 }
 

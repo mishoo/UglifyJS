@@ -129,8 +129,8 @@ dead_code_constant_boolean_should_warn_more: {
         var bar;
         // nothing for the while
         // as for the for, it should keep:
-        var x = 10, y;
         var moo;
+        var x = 10, y;
         bar();
     }
     expect_stdout: true
@@ -165,8 +165,8 @@ dead_code_constant_boolean_should_warn_more_strict: {
         var foo;
         // nothing for the while
         // as for the for, it should keep:
-        var x = 10, y;
         var moo;
+        var x = 10, y;
         bar();
     }
     expect_stdout: true
@@ -175,10 +175,11 @@ dead_code_constant_boolean_should_warn_more_strict: {
 
 dead_code_block_decls_die: {
     options = {
-        dead_code    : true,
-        conditionals : true,
-        booleans     : true,
-        evaluate     : true
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
     };
     input: {
         if (0) {
@@ -197,13 +198,14 @@ dead_code_block_decls_die: {
 
 dead_code_const_declaration: {
     options = {
-        dead_code    : true,
-        loops        : true,
-        booleans     : true,
-        conditionals : true,
-        evaluate     : true,
-        reduce_funcs : true,
-        reduce_vars  : true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
     };
     input: {
         var unused;
@@ -225,14 +227,15 @@ dead_code_const_declaration: {
 
 dead_code_const_annotation: {
     options = {
-        dead_code    : true,
-        loops        : true,
-        booleans     : true,
-        conditionals : true,
-        evaluate     : true,
-        reduce_funcs : true,
-        reduce_vars  : true,
-        toplevel     : true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
     };
     input: {
         var unused;
@@ -278,14 +281,16 @@ dead_code_const_annotation_regex: {
 
 dead_code_const_annotation_complex_scope: {
     options = {
-        dead_code    : true,
-        loops        : true,
-        booleans     : true,
-        conditionals : true,
-        evaluate     : true,
-        reduce_funcs : true,
-        reduce_vars  : true,
-        toplevel     : true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
     };
     input: {
         var unused_var;
@@ -328,6 +333,8 @@ try_catch_finally: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        passes: 2,
+        side_effects: true,
     }
     input: {
         var a = 1;
@@ -571,6 +578,7 @@ issue_2383_1: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         if (0) {
@@ -587,6 +595,7 @@ issue_2383_2: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         if (0) {
@@ -610,6 +619,7 @@ issue_2383_3: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         var b = 7, y = 8;

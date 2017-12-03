@@ -972,8 +972,8 @@ inner_var_for_2: {
     }
     expect: {
         !function() {
-            a = 1;
-            for (var b = 1; --b;) var a = 2;
+            var a = 1;
+            for (var b = 1; --b;) a = 2;
             console.log(a);
         }();
     }
@@ -1209,6 +1209,7 @@ toplevel_on_loops_2: {
         loops: true,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel:true,
         unused: true,
     }
@@ -2346,7 +2347,7 @@ booleans: {
     }
     expect: {
         console.log(function(a) {
-            if (!1);
+            if (0);
             switch (!1) {
               case 0:
                 return "FAIL";

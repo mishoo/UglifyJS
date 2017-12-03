@@ -192,9 +192,11 @@ keep_collapse_const_in_own_block_scope_2: {
 
 evaluate: {
     options = {
-        loops: true,
         dead_code: true,
         evaluate: true,
+        loops: true,
+        passes: 2,
+        side_effects: true,
     };
     input: {
         while (true) {
@@ -493,4 +495,44 @@ in_parenthesis_2: {
         for ((function(){ "foo" in {}; });0;);
     }
     expect_exact: 'for(function(){"foo"in{}};0;);'
+}
+
+init_side_effects: {
+    options = {
+        loops: true,
+        side_effects: true,
+    };
+    input: {
+        for (function() {}(), i = 0; i < 5; i++) console.log(i);
+        for (function() {}(); i < 10; i++) console.log(i);
+    }
+    expect: {
+        for (i = 0; i < 5; i++) console.log(i);
+        for (; i < 10; i++) console.log(i);
+    }
+    expect_stdout: true
+}
+
+dead_code_condition: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        sequences: true,
+    }
+    input: {
+        for (var a = 0, b = 5; (a += 1, 3) - 3 && b > 0; b--) {
+            var c = function() {
+                b--;
+            }(a++);
+        }
+        console.log(a);
+    }
+    expect: {
+        var c;
+        var a = 0, b = 5;
+        a += 1, 0,
+        console.log(a);
+    }
+    expect_stdout: "1"
 }

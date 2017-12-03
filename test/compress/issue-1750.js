@@ -7,7 +7,7 @@ case_1: {
     input: {
         var a = 0, b = 1;
         switch (true) {
-          case a, true:
+          case a || true:
           default:
             b = 2;
           case true:
@@ -17,7 +17,7 @@ case_1: {
     expect: {
         var a = 0, b = 1;
         switch (true) {
-          case a, true:
+          case a || true:
             b = 2;
         }
         console.log(a, b);

@@ -45,9 +45,9 @@ condition_evaluate: {
         if (void 0 == null);
     }
     expect: {
-        while (!1);
-        for (; !0;);
-        if (!0);
+        while (0);
+        for (; 1;);
+        if (1);
     }
 }
 
@@ -68,6 +68,7 @@ label_if_break: {
         conditionals: true,
         dead_code: true,
         evaluate: true,
+        side_effects: true,
     }
     input: {
         L: if (true) {

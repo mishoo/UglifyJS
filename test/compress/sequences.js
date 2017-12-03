@@ -252,13 +252,12 @@ negate_iife_for: {
     input: {
         (function() {})();
         for (i = 0; i < 5; i++) console.log(i);
-
         (function() {})();
-        for (; i < 5; i++) console.log(i);
+        for (; i < 10; i++) console.log(i);
     }
     expect: {
         for (!function() {}(), i = 0; i < 5; i++) console.log(i);
-        for (function() {}(); i < 5; i++) console.log(i);
+        for (!function() {}(); i < 10; i++) console.log(i);
     }
     expect_stdout: true
 }

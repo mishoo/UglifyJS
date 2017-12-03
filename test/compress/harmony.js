@@ -13,7 +13,8 @@ arrow_function_parens_2: {
 
 typeof_arrow_functions: {
     options = {
-        evaluate: true
+        evaluate: true,
+        typeofs: true,
     }
     input: {
         var foo = typeof (x => null);
