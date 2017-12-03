@@ -184,6 +184,7 @@ issue_2167: {
         global_defs: {
             "@isDevMode": "function(){}",
         },
+        passes: 2,
         side_effects: true,
     }
     input: {

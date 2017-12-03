@@ -26,7 +26,7 @@ issue_1639_1: {
     }
     expect: {
         for (var a = 100, b = 10, L1 = 5; --L1 > 0;)
-            if (--b, !1) var ignore = 0;
+            if (--b, 0) var ignore = 0;
         console.log(a, b);
     }
     expect_stdout: true
@@ -57,7 +57,7 @@ issue_1639_2: {
     expect: {
         var a = 100, b = 10;
         function f19() {
-            ++a, 1;
+            ++a, 0;
         }
         f19(),
         console.log(a, b);

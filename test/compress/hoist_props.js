@@ -792,3 +792,34 @@ issue_2508_6: {
     }
     expect_stdout: true
 }
+
+issue_2519: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        hoist_props: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function testFunc() {
+            var dimensions = {
+                minX: 5,
+                maxX: 6,
+            };
+            var scale = 1;
+            var d = {
+                x: (dimensions.maxX + dimensions.minX) / 2,
+            };
+            return d.x * scale;
+        }
+        console.log(testFunc());
+    }
+    expect: {
+        function testFunc() {
+            return 1 * ((6 + 5) / 2);
+        }
+        console.log(testFunc());
+    }
+    expect_stdout: "5.5"
+}

@@ -1,6 +1,7 @@
 and: {
     options = {
-        evaluate: true
+        evaluate: true,
+        side_effects: true,
     }
     input: {
         var a;
@@ -76,7 +77,8 @@ and: {
 
 or: {
     options = {
-        evaluate: true
+        evaluate: true,
+        side_effects: true,
     }
     input: {
         var a;
@@ -158,7 +160,8 @@ or: {
 
 unary_prefix: {
     options = {
-        evaluate: true
+        evaluate: true,
+        side_effects: true,
     }
     input: {
         a = !0 && b;
@@ -1337,4 +1340,96 @@ self_comparison_2: {
         console.log(false, false, true, true, "number");
     }
     expect_stdout: "false false true true 'number'"
+}
+
+issue_2535_1: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        if ((x() || true) || y()) z();
+        if ((x() || true) && y()) z();
+        if ((x() && true) || y()) z();
+        if ((x() && true) && y()) z();
+        if ((x() || false) || y()) z();
+        if ((x() || false) && y()) z();
+        if ((x() && false) || y()) z();
+        if ((x() && false) && y()) z();
+    }
+    expect: {
+        if (x(), 1) z();
+        if (x(), y()) z();
+        if (x() || y()) z();
+        if (x() && y()) z();
+        if (x() || y()) z();
+        if (x() && y()) z();
+        if (x(), y()) z();
+        if (x(), 0) z();
+    }
+}
+
+issue_2535_2: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        (x() || true) || y();
+        (x() || true) && y();
+        (x() && true) || y();
+        (x() && true) && y();
+        (x() || false) || y();
+        (x() || false) && y();
+        (x() && false) || y();
+        (x() && false) && y();
+    }
+    expect: {
+        x(),
+        x(), y(),
+        x() || y(),
+        x() && y(),
+        x() || y(),
+        x() && y(),
+        x(), y(),
+        x();
+    }
+}
+
+issue_2535_3: {
+    options = {
+        booleans: true,
+        evaluate: true,
+    }
+    input: {
+        console.log(Object(1) && 1 && 2);
+        console.log(Object(1) && true && 1 && 2 && Object(2));
+        console.log(Object(1) && true && 1 && null && 2 && Object(2));
+        console.log(2 == Object(1) || 0 || void 0 || null);
+        console.log(2 == Object(1) || 0 || void 0 || null || Object(2));
+        console.log(2 == Object(1) || 0 || void 0 || "ok" || null || Object(2));
+    }
+    expect: {
+        console.log(Object(1) && 2);
+        console.log(Object(1) && Object(2));
+        console.log(Object(1) && null);
+        console.log(2 == Object(1) || null);
+        console.log(2 == Object(1) || Object(2));
+        console.log(2 == Object(1) || "ok");
+    }
+    expect_stdout: true
+    expect_warnings: [
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1316,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1317,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1318,20]",
+        "WARN: Condition left of && always false [test/compress/evaluate.js:1318,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1319,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1320,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1321,20]",
+        "WARN: Condition left of || always true [test/compress/evaluate.js:1321,20]",
+    ]
 }

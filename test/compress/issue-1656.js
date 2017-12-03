@@ -39,7 +39,7 @@ f7: {
         "var b = 10;",
         "",
         "!function() {",
-        "    for (;b = 100, !1; ) ;",
+        "    b = 100;",
         "}(), console.log(100, b);",
     ]
     expect_stdout: true

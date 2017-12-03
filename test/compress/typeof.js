@@ -1,6 +1,7 @@
 typeof_evaluation: {
     options = {
-        evaluate: true
+        evaluate: true,
+        typeofs: true,
     };
     input: {
         a = typeof 1;
@@ -44,7 +45,7 @@ typeof_in_boolean_context: {
         function f2() { return g(), "Yes"; }
         foo();
         console.log(1);
-        var a = !(console.log(2), !0);
+        var a = !(console.log(2), 1);
         foo();
     }
 }
@@ -57,6 +58,83 @@ issue_1668: {
         if (typeof bar);
     }
     expect: {
-        if (!0);
+        if (1);
     }
+}
+
+typeof_defun_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            console.log("YES");
+        }
+        function g() {
+            h = 42;
+            console.log("NOPE");
+        }
+        function h() {
+            console.log("YUP");
+        }
+        g = 42;
+        "function" == typeof f && f();
+        "function" == typeof g && g();
+        "function" == typeof h && h();
+    }
+    expect: {
+        function g() {
+            h = 42;
+            console.log("NOPE");
+        }
+        function h() {
+            console.log("YUP");
+        }
+        g = 42;
+        console.log("YES");
+        "function" == typeof g && g();
+        h();
+    }
+    expect_stdout: [
+        "YES",
+        "YUP",
+    ]
+}
+
+typeof_defun_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+    }
+    input: {
+        var f = function() {
+            console.log(x);
+        };
+        var x = 0;
+        x++ < 2 && typeof f == "function" && f();
+        x++ < 2 && typeof f == "function" && f();
+        x++ < 2 && typeof f == "function" && f();
+    }
+    expect: {
+        var f = function() {
+            console.log(x);
+        };
+        var x = 0;
+        x++ < 2 && f();
+        x++ < 2 && f();
+        x++ < 2 && f();
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
 }
