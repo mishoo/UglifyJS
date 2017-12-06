@@ -122,3 +122,25 @@ return_undefined: {
         }
     }
 }
+
+return_void: {
+    options = {
+        if_return: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g() {
+                h();
+            }
+            return g();
+        }
+    }
+    expect: {
+        function f() {
+            h();
+        }
+    }
+}
