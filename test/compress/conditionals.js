@@ -615,6 +615,7 @@ cond_9: {
     }
     input: {
         function f(x, y) {
+            g() ? x(1) : x(2);
             x ? (y || x)() : (y || x)();
             x ? y(a, b) : y(d, b, c);
             x ? y(a, b, c) : y(a, b, c);
@@ -629,6 +630,7 @@ cond_9: {
     }
     expect: {
         function f(x, y) {
+            g() ? x(1) : x(2);
             x, (y || x)();
             x ? y(a, b) : y(d, b, c);
             x, y(a, b, c);
