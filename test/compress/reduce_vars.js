@@ -4544,3 +4544,80 @@ issue_2455: {
         }
     }
 }
+
+issue_2560_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function baz(s) {
+            return s ? foo : bar;
+        }
+        function foo() {}
+        function bar() {}
+        main();
+    }
+    expect: {
+        function baz(s) {
+            return s ? foo : bar;
+        }
+        function foo() {}
+        function bar() {}
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2560_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function baz() {
+            return foo, bar;
+        }
+        function foo() {}
+        function bar() {}
+        main();
+    }
+    expect: {
+        function baz() {
+            return function() {}, bar;
+        }
+        function bar() {}
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
