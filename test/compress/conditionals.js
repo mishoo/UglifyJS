@@ -166,22 +166,24 @@ cond_1: {
         conditionals: true
     };
     input: {
-        var do_something; // if undeclared it's assumed to have side-effects
-        if (some_condition()) {
-            do_something(x);
-        } else {
-            do_something(y);
-        }
-        if (some_condition()) {
-            side_effects(x);
-        } else {
-            side_effects(y);
+        function foo(do_something, some_condition) {
+            if (some_condition) {
+                do_something(x);
+            } else {
+                do_something(y);
+            }
+            if (some_condition) {
+                side_effects(x);
+            } else {
+                side_effects(y);
+            }
         }
     }
     expect: {
-        var do_something;
-        do_something(some_condition() ? x : y);
-        some_condition() ? side_effects(x) : side_effects(y);
+        function foo(do_something, some_condition) {
+            do_something(some_condition ? x : y);
+            some_condition ? side_effects(x) : side_effects(y);
+        }
     }
 }
 
@@ -190,16 +192,18 @@ cond_2: {
         conditionals: true
     };
     input: {
-        var x, FooBar;
-        if (some_condition()) {
-            x = new FooBar(1);
-        } else {
-            x = new FooBar(2);
+        function foo(x, FooBar, some_condition) {
+            if (some_condition) {
+                x = new FooBar(1);
+            } else {
+                x = new FooBar(2);
+            }
         }
     }
     expect: {
-        var x, FooBar;
-        x = new FooBar(some_condition() ? 1 : 2);
+        function foo(x, FooBar, some_condition) {
+            x = new FooBar(some_condition ? 1 : 2);
+        }
     }
 }
 
@@ -1113,5 +1117,53 @@ issue_2535_2: {
         "undefined",
         "undefined",
         "false",
+    ]
+}
+
+issue_2560: {
+    options = {
+        conditionals: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function log(x) {
+            console.log(x);
+        }
+        function foo() {
+            return log;
+        }
+        function bar() {
+            if (x !== (x = foo())) {
+                x(1);
+            } else {
+                x(2);
+            }
+        }
+        var x = function() {
+            console.log("init");
+        };
+        bar();
+        bar();
+    }
+    expect: {
+        function log(x) {
+            console.log(x);
+        }
+        function bar() {
+            x !== (x = log) ? x(1) : x(2);
+        }
+        var x = function() {
+            console.log("init");
+        };
+        bar();
+        bar();
+    }
+    expect_stdout: [
+        "1",
+        "2",
     ]
 }
