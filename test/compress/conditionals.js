@@ -609,6 +609,36 @@ cond_8c: {
     }
 }
 
+cond_9: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y) {
+            x ? y(a, b, c) : y(a, b, c);
+            x ? y(a, b, c) : y(a, b, f);
+            x ? y(a, b, c) : y(a, e, c);
+            x ? y(a, b, c) : y(a, e, f);
+            x ? y(a, b, c) : y(d, b, c);
+            x ? y(a, b, c) : y(d, b, f);
+            x ? y(a, b, c) : y(d, e, c);
+            x ? y(a, b, c) : y(d, e, f);
+        }
+    }
+    expect: {
+        function f(x, y) {
+            x, y(a, b, c);
+            y(a, b, x ? c : f);
+            y(a, x ? b : e, c);
+            x ? y(a, b, c) : y(a, e, f);
+            y(x ? a : d, b, c);
+            x ? y(a, b, c) : y(d, b, f);
+            x ? y(a, b, c) : y(d, e, c);
+            x ? y(a, b, c) : y(d, e, f);
+        }
+    }
+}
+
 ternary_boolean_consequent: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
