@@ -179,7 +179,9 @@ keep_fnames: {
 }
 
 drop_assign: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function f1() {
             var a;
@@ -200,7 +202,7 @@ drop_assign: {
             var a;
             return function() {
                 a = 1;
-            }
+            };
         }
     }
     expect: {
@@ -217,16 +219,17 @@ drop_assign: {
             return 1;
         }
         function f5() {
-            var a;
             return function() {
-                a = 1;
-            }
+                1;
+            };
         }
     }
 }
 
 keep_assign: {
-    options = { unused: "keep_assign" };
+    options = {
+        unused: "keep_assign",
+    }
     input: {
         function f1() {
             var a;
@@ -247,7 +250,7 @@ keep_assign: {
             var a;
             return function() {
                 a = 1;
-            }
+            };
         }
     }
     expect: {
@@ -270,19 +273,22 @@ keep_assign: {
             var a;
             return function() {
                 a = 1;
-            }
+            };
         }
     }
 }
 
 drop_toplevel_funcs: {
-    options = { toplevel: "funcs", unused: true };
+    options = {
+        toplevel: "funcs",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -298,13 +304,16 @@ drop_toplevel_funcs: {
 }
 
 drop_toplevel_vars: {
-    options = { toplevel: "vars", unused: true };
+    options = {
+        toplevel: "vars",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -312,11 +321,10 @@ drop_toplevel_vars: {
         console.log(b = 3);
     }
     expect: {
-        var c = g;
         function f(d) {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         2;
         function g() {}
@@ -326,13 +334,17 @@ drop_toplevel_vars: {
 }
 
 drop_toplevel_vars_fargs: {
-    options = { keep_fargs: false, toplevel: "vars", unused: true };
+    options = {
+        keep_fargs: false,
+        toplevel: "vars",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -340,11 +352,10 @@ drop_toplevel_vars_fargs: {
         console.log(b = 3);
     }
     expect: {
-        var c = g;
         function f() {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         2;
         function g() {}
@@ -354,13 +365,16 @@ drop_toplevel_vars_fargs: {
 }
 
 drop_toplevel_all: {
-    options = { toplevel: true, unused: true };
+    options = {
+        toplevel: true,
+        unused: true
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -374,13 +388,16 @@ drop_toplevel_all: {
 }
 
 drop_toplevel_retain: {
-    options = { top_retain: "f,a,o", unused: true };
+    options = {
+        top_retain: "f,a,o",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -388,26 +405,28 @@ drop_toplevel_retain: {
         console.log(b = 3);
     }
     expect: {
-        var a, c = g;
+        var a;
         function f(d) {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         a = 2;
-        function g() {}
         console.log(3);
     }
 }
 
 drop_toplevel_retain_array: {
-    options = { top_retain: [ "f", "a", "o" ], unused: true };
+    options = {
+        top_retain: [ "f", "a", "o" ],
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -415,26 +434,28 @@ drop_toplevel_retain_array: {
         console.log(b = 3);
     }
     expect: {
-        var a, c = g;
+        var a;
         function f(d) {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         a = 2;
-        function g() {}
         console.log(3);
     }
 }
 
 drop_toplevel_retain_regex: {
-    options = { top_retain: /^[fao]$/, unused: true };
+    options = {
+        top_retain: /^[fao]$/,
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -442,26 +463,29 @@ drop_toplevel_retain_regex: {
         console.log(b = 3);
     }
     expect: {
-        var a, c = g;
+        var a;
         function f(d) {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         a = 2;
-        function g() {}
         console.log(3);
     }
 }
 
 drop_toplevel_all_retain: {
-    options = { toplevel: true, top_retain: "f,a,o", unused: true };
+    options = {
+        toplevel: true,
+        top_retain: "f,a,o",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -469,26 +493,29 @@ drop_toplevel_all_retain: {
         console.log(b = 3);
     }
     expect: {
-        var a, c = g;
+        var a;
         function f(d) {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         a = 2;
-        function g() {}
         console.log(3);
     }
 }
 
 drop_toplevel_funcs_retain: {
-    options = { toplevel: "funcs", top_retain: "f,a,o", unused: true };
+    options = {
+        toplevel: "funcs",
+        top_retain: "f,a,o",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -500,7 +527,7 @@ drop_toplevel_funcs_retain: {
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -509,13 +536,17 @@ drop_toplevel_funcs_retain: {
 }
 
 drop_toplevel_vars_retain: {
-    options = { toplevel: "vars", top_retain: "f,a,o", unused: true };
+    options = {
+        toplevel: "vars",
+        top_retain: "f,a,o",
+        unused: true,
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -523,11 +554,11 @@ drop_toplevel_vars_retain: {
         console.log(b = 3);
     }
     expect: {
-        var a, c = g;
+        var a;
         function f(d) {
             return function() {
-                c = 2;
-            }
+                2;
+            };
         }
         a = 2;
         function g() {}
@@ -537,13 +568,16 @@ drop_toplevel_vars_retain: {
 }
 
 drop_toplevel_keep_assign: {
-    options = { toplevel: true, unused: "keep_assign" };
+    options = {
+        toplevel: true,
+        unused: "keep_assign",
+    }
     input: {
         var a, b = 1, c = g;
         function f(d) {
             return function() {
                 c = 2;
-            }
+            };
         }
         a = 2;
         function g() {}
@@ -753,11 +787,11 @@ issue_1583: {
     expect: {
         function m(t) {
             (function(e) {
-                t = function() {
+                (function() {
                     return (function(a) {
                         return function(a) {};
                     })();
-                }();
+                })();
             })();
         }
     }
