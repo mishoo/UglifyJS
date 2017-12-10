@@ -55,3 +55,10 @@ issue_2242_4: {
     }
     expect_exact: 'console.log("\ud83d\ude00","\\ud83d@\\ude00");'
 }
+
+issue_2569: {
+    input: {
+        new RegExp("[\udc42-\udcaa\udd74-\udd96\ude45-\ude4f\udea3-\udecc]");
+    }
+    expect_exact: 'new RegExp("[\\udc42-\\udcaa\\udd74-\\udd96\\ude45-\\ude4f\\udea3-\\udecc]");'
+}
