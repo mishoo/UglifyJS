@@ -4545,7 +4545,7 @@ issue_2455: {
     }
 }
 
-issue_2560_1: {
+escape_conditional: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -4584,7 +4584,7 @@ issue_2560_1: {
     expect_stdout: "PASS"
 }
 
-issue_2560_2: {
+escape_sequence: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -4622,7 +4622,7 @@ issue_2560_2: {
     expect_stdout: "PASS"
 }
 
-issue_2560_3: {
+escape_throw: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -4667,7 +4667,7 @@ issue_2560_3: {
     expect_stdout: "PASS"
 }
 
-issue_2560_4: {
+escape_local_conditional: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -4704,7 +4704,7 @@ issue_2560_4: {
     expect_stdout: "PASS"
 }
 
-issue_2560_5: {
+escape_local_sequence: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -4741,7 +4741,7 @@ issue_2560_5: {
     expect_stdout: "PASS"
 }
 
-issue_2560_6: {
+escape_local_throw: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
