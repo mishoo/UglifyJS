@@ -652,3 +652,23 @@ issue_2531_3: {
     }
     expect_stdout: "Greeting: Hello"
 }
+
+empty_body: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            function noop() {}
+            noop();
+            return noop;
+        }
+    }
+    expect: {
+        function f() {
+            function noop() {}
+            return noop;
+        }
+    }
+}

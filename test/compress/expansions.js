@@ -36,19 +36,19 @@ avoid_spread_in_ternary: {
         function print(...x) {
             console.log(...x);
         }
-        var a = [1, 2], b = [3, 4];
+        var a = [1, 2], b = [3, 4], m = Math;
 
-        if (Math)
+        if (m)
             print(a);
         else
             print(b);
 
-        if (Math)
+        if (m)
             print(...a);
         else
             print(b);
 
-        if (Math.no_such_property)
+        if (m.no_such_property)
             print(a);
         else
             print(...b);
@@ -57,10 +57,10 @@ avoid_spread_in_ternary: {
         function print(...x) {
             console.log(...x);
         }
-        var a = [ 1, 2 ], b = [ 3, 4 ];
-        print(Math ? a : b);
-        Math ? print(...a) : print(b);
-        Math.no_such_property ? print(a) : print(...b);
+        var a = [ 1, 2 ], b = [ 3, 4 ], m = Math;
+        print(m ? a : b);
+        m ? print(...a) : print(b);
+        m.no_such_property ? print(a) : print(...b);
     }
     expect_stdout: [
         "[ 1, 2 ]",
