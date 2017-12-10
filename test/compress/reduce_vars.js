@@ -4906,3 +4906,243 @@ issue_2455: {
         }
     }
 }
+
+issue_2560_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function baz(s) {
+            return s ? foo : bar;
+        }
+        function foo() {}
+        function bar() {}
+        main();
+    }
+    expect: {
+        function baz(s) {
+            return s ? foo : bar;
+        }
+        function foo() {}
+        function bar() {}
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2560_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function baz() {
+            return foo, bar;
+        }
+        function foo() {}
+        function bar() {}
+        main();
+    }
+    expect: {
+        function baz() {
+            return function() {}, bar;
+        }
+        function bar() {}
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2560_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function baz() {
+            try {
+                throw foo;
+            } catch (bar) {
+                return bar;
+            }
+        }
+        function foo() {}
+        main();
+    }
+    expect: {
+        function baz() {
+            try {
+                throw foo;
+            } catch (bar) {
+                return bar;
+            }
+        }
+        function foo() {}
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2560_4: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("PASS");
+            else
+                console.log("FAIL");
+        }
+        function baz(s) {
+            function foo() {}
+            function bar() {}
+            return s ? foo : bar;
+        }
+        main();
+    }
+    expect: {
+        function baz(s) {
+            return s ? function() {} : function() {};
+        }
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("PASS");
+            else
+                console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2560_5: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("PASS");
+            else
+                console.log("FAIL");
+        }
+        function baz() {
+            function foo() {}
+            function bar() {}
+            return foo, bar;
+        }
+        main();
+    }
+    expect: {
+        function baz() {
+            return function() {}, function() {};
+        }
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("PASS");
+            else
+                console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2560_6: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("PASS");
+            else
+                console.log("FAIL");
+        }
+        function baz() {
+            function foo() {}
+            try {
+                throw foo;
+            } catch (bar) {
+                return bar;
+            }
+        }
+        main();
+    }
+    expect: {
+        function baz() {
+            try {
+                throw function() {};
+            } catch (bar) {
+                return bar;
+            }
+        }
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("PASS");
+            else
+                console.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
