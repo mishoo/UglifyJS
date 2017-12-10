@@ -69,10 +69,11 @@ collapse_vars_side_effects_1: {
             log(x, s.charAt(i++), y, 7);
         }
         function f4() {
-            var i = 10,
+            var log = console.log.bind(console),
+                i = 10,
                 x = i += 2,
                 y = i += 3;
-            console.log.bind(console)(x, i += 4, y, i);
+            log(x, i += 4, y, i);
         }
         f1(), f2(), f3(), f4();
     }
@@ -152,7 +153,7 @@ collapse_vars_issue_721: {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
         keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
-        reduce_funcs: true, reduce_vars:true
+        reduce_funcs: true, reduce_vars:true, passes:2
     }
     input: {
         define(["require", "exports", 'handlebars'], function (require, exports, hb) {
@@ -675,8 +676,8 @@ collapse_vars_lvalues: {
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var w = e1(), v = e2(), c = v = --x; return (w = x) - c; }
         function f6(x) { var w = e1(), v = e2(); return (v = --x) - (w = x); }
-        function f7(x) { var w = e1(); return (w = x) - (e2() - x); }
-        function f8(x) { var w = e1(); return (w = x) - (e2() - x); }
+        function f7(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
+        function f8(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
         function f9(x) { var w = e1(); return e2() - x - (w = x); }
     }
 }
@@ -685,7 +686,7 @@ collapse_vars_lvalues_drop_assign: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, passes:3
     }
     input: {
         function f0(x) { var i = ++x; return x += i; }
@@ -706,10 +707,10 @@ collapse_vars_lvalues_drop_assign: {
         function f3(x) { var a = (x -= 3); return x + a; }
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { e1(), e2(); var c = --x; return x - c; }
-        function f6(x) { e1(), e2(); return --x - x; }
-        function f7(x) { e1(); return x - (e2() - x); }
-        function f8(x) { e1(); return x - (e2() - x); }
-        function f9(x) { e1(); return e2() - x - x; }
+        function f6(x) { return e1(), e2(), --x - x; }
+        function f7(x) { return e1(), x - (e2() - x); }
+        function f8(x) { return e1(), x - (e2() - x); }
+        function f9(x) { return e1(), e2() - x - x; }
     }
 }
 
@@ -1767,11 +1768,10 @@ switch_case: {
     }
     expect: {
         function f(x, y, z) {
-            var c = z;
             switch (x()) {
               default: d();
               case y(): e();
-              case c: f();
+              case z: f();
             }
         }
     }
@@ -2195,7 +2195,7 @@ issue_315: {
     expect: {
         console.log(function() {
             var w, _i, _len, _ref, _results;
-            for (_results = [], _i = 0, _len = (_ref = "test".trim().split(" ")).length; _i < _len ; _i++)
+            for (_ref = "test".trim().split(" "), _results = [], _i = 0, _len = _ref.length; _i < _len ; _i++)
                 w = _ref[_i], _results.push(w.toLowerCase());
             return _results;
         }());
@@ -3108,8 +3108,8 @@ issue_2437: {
                 return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
             }
-            var req, detectFunc = function() {};
-            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
+            var req = new XMLHttpRequest(), detectFunc = function() {};
+            req.onreadystatechange = detectFunc;
             result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
             req.onreadystatechange = null;
         }();
@@ -3674,4 +3674,58 @@ issue_2506: {
         console.log(c);
     }
     expect_stdout: "1"
+}
+
+issue_2571_1: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1;
+        try {
+            var a = function f0(c) {
+                throw c;
+            }(2);
+            var d = --b + a;
+        } catch (e) {
+        }
+        console.log(b);
+    }
+    expect: {
+        var b = 1;
+        try {
+            var a = function f0(c) {
+                throw c;
+            }(2);
+            var d = --b + a;
+        } catch (e) {
+        }
+        console.log(b);
+    }
+    expect_stdout: "1"
+}
+
+issue_2571_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            var a = A, b = 1;
+            throw a;
+        } catch (e) {
+            console.log(b);
+        }
+    }
+    expect: {
+        try {
+            var a = A, b = 1;
+            throw a;
+        } catch (e) {
+            console.log(b);
+        }
+    }
+    expect_stdout: "undefined"
 }
