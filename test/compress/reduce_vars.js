@@ -5187,3 +5187,49 @@ escape_yield: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+escape_await: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing;
+            baz().then(x => {
+                thing = x;
+            });
+            baz().then(x => {
+                if (thing !== (thing = x))
+                    console.log("FAIL");
+                else
+                    console.log("PASS");
+            });
+        }
+        function foo() {}
+        async function baz() {
+            return await foo;
+        }
+        main();
+    }
+    expect: {
+        function foo() {}
+        async function baz() {
+            return await foo;
+        }
+        (function() {
+            var thing;
+            baz().then(x => {
+                thing = x;
+            });
+            baz().then(x => {
+                if (thing !== (thing = x))
+                    console.log("FAIL");
+                else
+                    console.log("PASS");
+            });
+        })();
+    }
+}
