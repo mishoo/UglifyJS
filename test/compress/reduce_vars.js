@@ -5233,3 +5233,46 @@ escape_await: {
         })();
     }
 }
+
+escape_expansion: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function foo() {}
+        function bar(...x) {
+            return x[0];
+        }
+        function baz() {
+            return bar(...[ foo ]);
+        }
+        main();
+    }
+    expect: {
+        function foo() {}
+        function baz() {
+            return function(...x) {
+                return x[0];
+            }(...[ foo ]);
+        }
+        (function() {
+            var thing = baz();
+            if (thing !== (thing = baz()))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
