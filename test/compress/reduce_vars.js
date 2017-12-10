@@ -5130,8 +5130,10 @@ issue_2560_6: {
     }
     expect: {
         function baz() {
+            // TODO: improve to match `master`
+            function foo() {}
             try {
-                throw function() {};
+                throw foo;
             } catch (bar) {
                 return bar;
             }
