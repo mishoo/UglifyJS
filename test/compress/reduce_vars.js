@@ -5148,3 +5148,42 @@ issue_2560_6: {
     }
     expect_stdout: "PASS"
 }
+
+escape_yield: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function main() {
+            var thing = gen.next().value;
+            if (thing !== (thing = gen.next().value))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        }
+        function foo() {}
+        function* baz(s) {
+            for (;;) yield foo;
+        }
+        var gen = baz();
+        main();
+    }
+    expect: {
+        function foo() {}
+        var gen = function*(s) {
+            for (;;) yield foo;
+        }();
+        (function() {
+            var thing = gen.next().value;
+            if (thing !== (thing = gen.next().value))
+                console.log("FAIL");
+            else
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
