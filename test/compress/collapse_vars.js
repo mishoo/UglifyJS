@@ -1749,7 +1749,7 @@ for_init: {
     }
 }
 
-switch_case: {
+switch_case_1: {
     options = {
         collapse_vars: true,
         unused: true,
@@ -1775,6 +1775,62 @@ switch_case: {
             }
         }
     }
+}
+
+switch_case_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 1, b = 2;
+        switch (b++) {
+          case b:
+            var c = a;
+            var a;
+            break;
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = 1, b = 2;
+        switch (b++) {
+          case b:
+            var c = a;
+            var a;
+            break;
+        }
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+switch_case_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 1, b = 2;
+        switch (a) {
+          case a:
+            var b;
+            break;
+          case b:
+            break;
+        }
+        console.log(b);
+    }
+    expect: {
+        var a = 1, b = 2;
+        switch (a) {
+          case a:
+            var b;
+            break;
+          case b:
+            break;
+        }
+        console.log(b);
+    }
+    expect_stdout: "2"
 }
 
 issue_27: {
