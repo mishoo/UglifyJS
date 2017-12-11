@@ -3785,3 +3785,23 @@ issue_2571_2: {
     }
     expect_stdout: "undefined"
 }
+
+may_throw: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f() {
+            var a_2 = function() {
+                var a;
+            }();
+        }
+    }
+    expect: {
+        function f() {
+            var a_2 = function() {
+                var a;
+            }();
+        }
+    }
+}
