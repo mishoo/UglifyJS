@@ -3824,3 +3824,32 @@ side_effect_free_replacement: {
         x(b);
     }
 }
+
+recursive_function_replacement: {
+    rename = true
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        function f(a) {
+            return x(g(a));
+        }
+        function g(a) {
+            return y(f(a));
+        }
+        console.log(f(c));
+    }
+    expect: {
+        function f(n) {
+            return x(y(f(n)));
+        }
+        console.log(f(c));
+    }
+}
