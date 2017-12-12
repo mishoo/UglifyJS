@@ -3805,3 +3805,22 @@ may_throw: {
         }
     }
 }
+
+side_effect_free_replacement: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var b;
+        (function(a) {
+            x(a);
+        })(b);
+    }
+    expect: {
+        var b;
+        x(b);
+    }
+}
