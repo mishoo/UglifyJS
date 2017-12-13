@@ -453,7 +453,7 @@ pure_annotation_2: {
 
 drop_fargs: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         inline: true,
         keep_fargs: false,
         side_effects: true,
@@ -476,7 +476,7 @@ drop_fargs: {
 
 keep_fargs: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         inline: true,
         keep_fargs: true,
         side_effects: true,

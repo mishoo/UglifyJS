@@ -2,7 +2,7 @@ non_hoisted_function_after_return: {
     options = {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
-        if_return: true, join_vars: true, cascade: true, side_effects: true
+        if_return: true, join_vars: true, side_effects: true
     }
     input: {
         function foo(x) {
@@ -38,7 +38,7 @@ non_hoisted_function_after_return_2a: {
     options = {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
-        if_return: true, join_vars: true, cascade: true, side_effects: true,
+        if_return: true, join_vars: true, side_effects: true,
         collapse_vars: false, passes: 2, warnings: "verbose"
     }
     input: {
@@ -85,7 +85,7 @@ non_hoisted_function_after_return_2b: {
     options = {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
-        if_return: true, join_vars: true, cascade: true, side_effects: true,
+        if_return: true, join_vars: true, side_effects: true,
         collapse_vars: false
     }
     input: {
@@ -123,7 +123,7 @@ non_hoisted_function_after_return_strict: {
     options = {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
-        if_return: true, join_vars: true, cascade: true, side_effects: true
+        if_return: true, join_vars: true, side_effects: true
     }
     input: {
         "use strict";
@@ -164,7 +164,7 @@ non_hoisted_function_after_return_2a_strict: {
     options = {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
-        if_return: true, join_vars: true, cascade: true, side_effects: true,
+        if_return: true, join_vars: true, side_effects: true,
         collapse_vars: false, passes: 2, warnings: "verbose"
     }
     input: {
@@ -216,7 +216,7 @@ non_hoisted_function_after_return_2b_strict: {
     options = {
         hoist_funs: false, dead_code: true, conditionals: true, comparisons: true,
         evaluate: true, booleans: true, loops: true, unused: true, keep_fargs: true,
-        if_return: true, join_vars: true, cascade: true, side_effects: true,
+        if_return: true, join_vars: true, side_effects: true,
         collapse_vars: false
     }
     input: {

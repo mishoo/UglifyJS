@@ -21,7 +21,7 @@ iifes_returning_constants_keep_fargs_true: {
         join_vars     : true,
         reduce_funcs  : true,
         reduce_vars   : true,
-        cascade       : true,
+        collapse_vars : true,
         inline        : true,
     }
     input: {
@@ -58,7 +58,7 @@ iifes_returning_constants_keep_fargs_false: {
         join_vars     : true,
         reduce_funcs  : true,
         reduce_vars   : true,
-        cascade       : true,
+        collapse_vars : true,
         inline        : true,
     }
     input: {
@@ -423,9 +423,9 @@ inner_ref: {
 
 issue_2107: {
     options = {
-        cascade: true,
         collapse_vars: true,
         inline: true,
+        passes: 3,
         sequences: true,
         side_effects: true,
         unused: true,

@@ -317,7 +317,7 @@ unsafe_undefined: {
 
 issue_1685: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -341,7 +341,7 @@ issue_1685: {
 
 func_def_1: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -361,7 +361,7 @@ func_def_1: {
 
 func_def_2: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -379,7 +379,7 @@ func_def_2: {
 
 func_def_3: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -401,7 +401,7 @@ func_def_3: {
 
 func_def_4: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -427,7 +427,7 @@ func_def_4: {
 
 func_def_5: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -634,7 +634,7 @@ side_effects: {
 
 side_effects_cascade_1: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         sequences: true,
         side_effects: true,
@@ -655,7 +655,7 @@ side_effects_cascade_1: {
 
 side_effects_cascade_2: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
     }
     input: {
@@ -677,7 +677,7 @@ side_effects_cascade_2: {
 
 side_effects_cascade_3: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         side_effects: true,
     }
@@ -692,14 +692,14 @@ side_effects_cascade_3: {
     expect: {
         function f(a, b) {
             !(b += a) && ((b = a) || (b -= a, b ^= a)),
-            --a;
+            a--;
         }
     }
 }
 
 issue_27: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         passes: 2,
         sequences: true,
         side_effects: true,
@@ -722,7 +722,7 @@ issue_27: {
 issue_2062: {
     options = {
         booleans: true,
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         side_effects: true,
     }
@@ -741,7 +741,7 @@ issue_2062: {
 
 issue_2313: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
     }
@@ -778,4 +778,21 @@ issue_2313: {
         foo.d();
     }
     expect_stdout: "2 1"
+}
+
+cascade_assignment_in_return: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            return a = x(), b(a);
+        }
+    }
+    expect: {
+        function f(a, b) {
+            return b(x());
+        }
+    }
 }

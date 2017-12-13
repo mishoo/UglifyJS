@@ -1,7 +1,6 @@
 f7: {
     options = {
         booleans: true,
-        cascade: true,
         collapse_vars: true,
         comparisons: true,
         conditionals: true,

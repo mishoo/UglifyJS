@@ -601,9 +601,6 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `booleans` (default: `true`) -- various optimizations for boolean context,
   for example `!!a ? b : c → a ? b : c`
 
-- `cascade` (default: `true`) -- small optimization for sequences, transform
-  `x, x` into `x` and `x = something(), x` into `x = something()`
-
 - `collapse_vars` (default: `true`) -- Collapse single-use non-constant variables,
   side effects permitting.
 
