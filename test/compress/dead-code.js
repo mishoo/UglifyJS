@@ -491,6 +491,20 @@ return_assignment: {
             var e;
             return e = x();
         }
+        function f5(a) {
+            try {
+                return a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6(a) {
+            try {
+                return a = x();
+            } finally {
+                console.log(a);
+            }
+        }
     }
     expect: {
         function f1(a, b, c) {
@@ -504,6 +518,138 @@ return_assignment: {
         }
         function f4() {
             return x();
+        }
+        function f5(a) {
+            try {
+                return x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6(a) {
+            try {
+                return a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+    }
+}
+
+throw_assignment: {
+    options = {
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f1() {
+            throw a = x();
+        }
+        function f2(a) {
+            throw a = x();
+        }
+        function f3() {
+            var a;
+            throw a = x();
+        }
+        function f4() {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f5(a) {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6() {
+            var a;
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f7() {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f8(a) {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f9() {
+            var a;
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+    }
+    expect: {
+        function f1() {
+            throw a = x();
+        }
+        function f2(a) {
+            throw x();
+        }
+        function f3() {
+            throw x();
+        }
+        function f4() {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f5(a) {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6() {
+            var a;
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f7() {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f8(a) {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f9() {
+            var a;
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
         }
     }
 }
