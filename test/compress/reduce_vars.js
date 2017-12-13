@@ -2262,7 +2262,7 @@ redefine_farg_2: {
 
 redefine_farg_3: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         evaluate: true,
         inline: true,
         keep_fargs: false,

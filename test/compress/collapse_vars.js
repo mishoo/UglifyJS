@@ -2,7 +2,7 @@ collapse_vars_side_effects_1: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -83,7 +83,7 @@ collapse_vars_side_effects_2: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function fn(x) { return console.log(x), x; }
@@ -151,7 +151,7 @@ collapse_vars_issue_721: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true, passes:2
     }
     input: {
@@ -218,7 +218,7 @@ collapse_vars_properties: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -246,7 +246,7 @@ collapse_vars_if: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -297,7 +297,7 @@ collapse_vars_while: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:false, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -346,7 +346,7 @@ collapse_vars_do_while: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:false, loops:false, unused:"keep_assign",
-        hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true, cascade:true,
+        hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true,
         side_effects:true
     }
     input: {
@@ -422,7 +422,7 @@ collapse_vars_do_while_drop_assign: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:false, loops:false, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f1(y) {
@@ -497,7 +497,7 @@ collapse_vars_seq: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         var f1 = function(x, y) {
@@ -505,20 +505,23 @@ collapse_vars_seq: {
             a = z, b = 7;
             return a + b;
         };
+        console.log(f1(1, 2));
     }
     expect: {
         var f1 = function(x, y) {
-            var a, b, r = x + y;
-            return a = r * r - r, b = 7, a + b
+            var r = x + y;
+            return r * r - r + 7;
         };
+        console.log(f1(1, 2));
     }
+    expect_stdout: "13"
 }
 
 collapse_vars_throw: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         var f1 = function(x, y) {
@@ -526,20 +529,31 @@ collapse_vars_throw: {
             a = z, b = 7;
             throw a + b;
         };
+        try {
+            f1(1, 2);
+        } catch (e) {
+            console.log(e);
+        }
     }
     expect: {
         var f1 = function(x, y) {
-            var a, b, r = x + y;
-            throw a = r * r - r, b = 7, a + b
+            var r = x + y;
+            throw r * r - r + 7;
         };
+        try {
+            f1(1, 2);
+        } catch (e) {
+            console.log(e);
+        }
     }
+    expect_stdout: "13"
 }
 
 collapse_vars_switch: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f1() {
@@ -579,7 +593,7 @@ collapse_vars_assignment: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function log(x) { return console.log(x), x; }
@@ -652,7 +666,7 @@ collapse_vars_lvalues: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:"keep_assign",
-        hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true, cascade:true,
+        hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true,
         side_effects:true
     }
     input: {
@@ -685,7 +699,7 @@ collapse_vars_lvalues_drop_assign: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true, passes:3
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true, passes:3
     }
     input: {
         function f0(x) { var i = ++x; return x += i; }
@@ -717,7 +731,7 @@ collapse_vars_misc1: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -765,7 +779,7 @@ collapse_vars_self_reference: {
         collapse_vars:true, unused:false,
         sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         // avoid bug in self-referential declaration.
@@ -795,7 +809,7 @@ collapse_vars_repeated: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -838,7 +852,7 @@ collapse_vars_closures: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -866,7 +880,7 @@ collapse_vars_unary: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f0(o, p) {
@@ -929,7 +943,7 @@ collapse_vars_try: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -985,7 +999,7 @@ collapse_vars_array: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f1(x, y) {
@@ -1019,7 +1033,7 @@ collapse_vars_object: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f0(x, y) {
@@ -1087,7 +1101,7 @@ collapse_vars_eval_and_with: {
     options = {
         collapse_vars:true, sequences:false, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         // Don't attempt to collapse vars in presence of eval() or with statement.
@@ -1127,7 +1141,7 @@ collapse_vars_constants: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -1165,7 +1179,7 @@ collapse_vars_arguments: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true,
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         toplevel:true, reduce_funcs: true, reduce_vars:true
     }
     input: {
@@ -1188,7 +1202,7 @@ collapse_vars_short_circuit: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f0(x) { var a = foo(), b = bar(); return b || x; }
@@ -1241,7 +1255,6 @@ collapse_vars_short_circuited_conditions: {
         keep_fargs:    true,
         if_return:     false,
         join_vars:     true,
-        cascade:       true,
         side_effects:  true,
     }
     input: {
@@ -1279,7 +1292,6 @@ collapse_vars_short_circuited_conditions: {
 collapse_vars_regexp: {
     options = {
         booleans:      true,
-        cascade:       true,
         collapse_vars: true,
         comparisons:   true,
         conditionals:  true,
@@ -1443,7 +1455,6 @@ issue_1605_2: {
 
 issue_1631_1: {
     options = {
-        cascade: true,
         collapse_vars: true,
         hoist_funs: true,
         join_vars: true,
@@ -1479,7 +1490,6 @@ issue_1631_1: {
 
 issue_1631_2: {
     options = {
-        cascade: true,
         collapse_vars: true,
         hoist_funs: true,
         join_vars: true,
@@ -1515,7 +1525,6 @@ issue_1631_2: {
 
 issue_1631_3: {
     options = {
-        cascade: true,
         collapse_vars: true,
         hoist_funs: true,
         join_vars: true,
@@ -1690,7 +1699,7 @@ var_defs: {
     options = {
         collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         var f1 = function(x, y) {
@@ -3879,5 +3888,93 @@ recursive_function_replacement: {
             return x(y(f(n)));
         }
         console.log(f(c));
+    }
+}
+
+cascade_conditional: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            (a = x(), a) ? a++ : (b = y(a), b(a));
+        }
+    }
+    expect: {
+        function f(a, b) {
+            (a = x()) ? a++ : (b = y(a))(a);
+        }
+    }
+}
+
+cascade_if_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        if (a = x(), a)
+            if (a == y()) z();
+    }
+    expect: {
+        var a;
+        if (a = x())
+            if (a == y()) z();
+    }
+}
+
+cascade_if_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            if (a(), b = x()) return b;
+        }
+    }
+    expect: {
+        function f(a, b) {
+            if (a(), b = x()) return b;
+        }
+    }
+}
+
+cascade_return: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a) {
+            return a = x();
+            return a;
+        }
+    }
+    expect: {
+        function f(a) {
+            return a = x();
+            return a;
+        }
+    }
+}
+
+cascade_switch: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            switch(a = x(), a) {
+              case a = x(), b(a):
+                break;
+            }
+        }
+    }
+    expect: {
+        function f(a, b) {
+            switch(a = x()) {
+              case b(a = x()):
+                break;
+            }
+        }
     }
 }

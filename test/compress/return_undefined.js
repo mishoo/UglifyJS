@@ -17,7 +17,6 @@ return_undefined: {
         keep_fnames   : false,
         hoist_vars    : true,
         join_vars     : true,
-        cascade       : true,
         negate_iife   : true
     };
     input: {

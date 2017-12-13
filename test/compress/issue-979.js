@@ -2,7 +2,7 @@ issue979_reported: {
     options = {
         sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f1() {
@@ -32,7 +32,7 @@ issue979_test_negated_is_best: {
     options = {
         sequences:true, properties:true, dead_code:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, cascade:true, side_effects:true
+        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
     input: {
         function f3() {

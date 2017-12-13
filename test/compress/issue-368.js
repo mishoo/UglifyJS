@@ -1,6 +1,6 @@
 collapse: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
         unused: true,
@@ -41,7 +41,7 @@ collapse: {
             return void 0 !== ('function' === typeof b ? b() : b) && c();
         }
         function f2(b) {
-            return b = c(), 'stirng' == typeof ('function' === typeof b ? b() : b) && d();
+            return 'stirng' == typeof ('function' === typeof (b = c()) ? b() : b) && d();
         }
         function f3(c) {
             var a;
