@@ -417,3 +417,93 @@ global_fns: {
         "RangeError",
     ]
 }
+
+collapse_vars_assignment: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        passes: 2,
+        unused: true,
+    }
+    input: {
+        function f0(c) {
+            var a = 3 / c;
+            return a = a;
+        }
+    }
+    expect: {
+        function f0(c) {
+            return 3 / c;
+        }
+    }
+}
+
+collapse_vars_lvalues_drop_assign: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f0(x) { var i = ++x; return x += i; }
+        function f1(x) { var a = (x -= 3); return x += a; }
+        function f2(x) { var z = x, a = ++z; return z += a; }
+    }
+    expect: {
+        function f0(x) { var i = ++x; return x + i; }
+        function f1(x) { var a = (x -= 3); return x + a; }
+        function f2(x) { var z = x, a = ++z; return z + a; }
+    }
+}
+
+collapse_vars_misc1: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f10(x) { var a = 5, b = 3; return a += b; }
+        function f11(x) { var a = 5, b = 3; return a += --b; }
+    }
+    expect: {
+        function f10(x) { return 5 + 3; }
+        function f11(x) { var b = 3; return 5 + --b; }
+    }
+}
+
+return_assignment: {
+    options = {
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f1(a, b, c) {
+            return a = x(), b = y(), b = a && (c >>= 5);
+        }
+        function f2() {
+            return e = x();
+        }
+        function f3(e) {
+            return e = x();
+        }
+        function f4() {
+            var e;
+            return e = x();
+        }
+    }
+    expect: {
+        function f1(a, b, c) {
+            return a = x(), y(), a && (c >> 5);
+        }
+        function f2() {
+            return e = x();
+        }
+        function f3(e) {
+            return x();
+        }
+        function f4() {
+            return x();
+        }
+    }
+}
