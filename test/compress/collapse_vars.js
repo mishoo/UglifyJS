@@ -69,11 +69,10 @@ collapse_vars_side_effects_1: {
             log(x, s.charAt(i++), y, 7);
         }
         function f4() {
-            var log = console.log.bind(console),
-                i = 10,
+            var i = 10,
                 x = i += 2,
                 y = i += 3;
-            log(x, i += 4, y, i);
+            console.log.bind(console)(x, i += 4, y, i);
         }
         f1(), f2(), f3(), f4();
     }
@@ -676,8 +675,8 @@ collapse_vars_lvalues: {
         function f4(x) { var a = (x -= 3); return x + a; }
         function f5(x) { var w = e1(), v = e2(), c = v = --x; return (w = x) - c; }
         function f6(x) { var w = e1(), v = e2(); return (v = --x) - (w = x); }
-        function f7(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
-        function f8(x) { var w = e1(), v = e2(); return (w = x) - (v - x); }
+        function f7(x) { var w = e1(); return (w = x) - (e2() - x); }
+        function f8(x) { var w = e1(); return (w = x) - (e2() - x); }
         function f9(x) { var w = e1(); return e2() - x - (w = x); }
     }
 }
@@ -2251,7 +2250,7 @@ issue_315: {
     expect: {
         console.log(function() {
             var w, _i, _len, _ref, _results;
-            for (_ref = "test".trim().split(" "), _results = [], _i = 0, _len = _ref.length; _i < _len ; _i++)
+            for (_results = [], _i = 0, _len = (_ref = "test".trim().split(" ")).length; _i < _len ; _i++)
                 w = _ref[_i], _results.push(w.toLowerCase());
             return _results;
         }());
@@ -3164,8 +3163,8 @@ issue_2437: {
                 return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
             }
-            var req = new XMLHttpRequest(), detectFunc = function() {};
-            req.onreadystatechange = detectFunc;
+            var req, detectFunc = function() {};
+            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
             result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
             req.onreadystatechange = null;
         }();
@@ -3786,7 +3785,7 @@ issue_2571_2: {
     expect_stdout: "undefined"
 }
 
-may_throw: {
+may_throw_1: {
     options = {
         collapse_vars: true,
     }
@@ -3804,6 +3803,35 @@ may_throw: {
             }();
         }
     }
+}
+
+may_throw_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(b) {
+            try {
+                var a = x();
+                ++b;
+                return b(a);
+            } catch(e) {}
+            console.log(b);
+        }
+        f(0);
+    }
+    expect: {
+        function f(b) {
+            try {
+                var a = x();
+                return (++b)(a);
+            } catch(e) {}
+            console.log(b);
+        }
+        f(0);
+    }
+    expect_stdout: "0"
 }
 
 side_effect_free_replacement: {
