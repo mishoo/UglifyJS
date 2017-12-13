@@ -475,6 +475,7 @@ collapse_vars_misc1: {
 return_assignment: {
     options = {
         dead_code: true,
+        unused: true,
     }
     input: {
         function f1(a, b, c) {
@@ -493,7 +494,7 @@ return_assignment: {
     }
     expect: {
         function f1(a, b, c) {
-            return a = x(), b = y(), a && (c >> 5);
+            return a = x(), y(), a && (c >> 5);
         }
         function f2() {
             return e = x();
@@ -502,7 +503,6 @@ return_assignment: {
             return x();
         }
         function f4() {
-            var e;
             return x();
         }
     }
