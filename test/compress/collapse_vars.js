@@ -591,7 +591,7 @@ collapse_vars_switch: {
 
 collapse_vars_assignment: {
     options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        collapse_vars:true, sequences:true, properties:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
         keep_fargs:true, if_return:true, join_vars:true, side_effects:true
     }
@@ -639,7 +639,7 @@ collapse_vars_assignment: {
             return a = a;
         }
         function f1(c) {
-            return 1 - 3 / c
+            return 1 - 3 / c;
         }
         function f2(c) {
             return log(c = 3 / c - 7);
@@ -664,7 +664,7 @@ collapse_vars_assignment: {
 
 collapse_vars_lvalues: {
     options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        collapse_vars:true, sequences:true, properties:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:"keep_assign",
         hoist_funs:true, keep_fargs:true, if_return:true, join_vars:true,
         side_effects:true
@@ -697,7 +697,7 @@ collapse_vars_lvalues: {
 
 collapse_vars_lvalues_drop_assign: {
     options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        collapse_vars:true, sequences:true, properties:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
         keep_fargs:true, if_return:true, join_vars:true, side_effects:true, passes:3
     }
@@ -729,7 +729,7 @@ collapse_vars_lvalues_drop_assign: {
 
 collapse_vars_misc1: {
     options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
+        collapse_vars:true, sequences:true, properties:true, conditionals:true,
         comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
         keep_fargs:true, if_return:true, join_vars:true, side_effects:true,
         reduce_funcs: true, reduce_vars:true
