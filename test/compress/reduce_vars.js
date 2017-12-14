@@ -4838,3 +4838,31 @@ inverted_var: {
     }
     expect_stdout: true
 }
+
+defun_single_use_loop: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var x, i = 2; --i >= 0; ) {
+            var y = x;
+            x = f;
+            console.log(x === y);
+        }
+        function f() {};
+    }
+    expect: {
+        for (var x, i = 2; --i >= 0; ) {
+            var y = x;
+            x = f;
+            console.log(x === y);
+        }
+        function f() {};
+    }
+    expect_stdout: [
+        "false",
+        "true",
+    ]
+}
