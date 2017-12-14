@@ -1993,10 +1993,8 @@ undeclared: {
     }
     expect: {
         function f(x, y) {
-            var a;
-            a = x;
             b = y;
-            return b + a;
+            return b + x;
         }
     }
 }
@@ -3975,6 +3973,24 @@ cascade_switch: {
               case b(a = x()):
                 break;
             }
+        }
+    }
+}
+
+cascade_call: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return x((b = a, y(b)));
+        }
+    }
+    expect: {
+        function f(a) {
+            return x(y(a));
         }
     }
 }
