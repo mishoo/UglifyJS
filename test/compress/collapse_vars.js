@@ -3317,15 +3317,14 @@ issue_2436_4: {
         }(o));
     }
     expect: {
-        console.log(function(c) {
-            return {
-                x: c.a,
-                y: c.b,
-            };
-        }({
+        console.log({
+            x: (c = {
             a: 1,
             b: 2,
-        }));
+        }).a,
+            y: c.b,
+        });
+        var c;
     }
     expect_stdout: true
 }
@@ -3448,12 +3447,11 @@ issue_2436_8: {
         }(o));
     }
     expect: {
-        console.log(function(c) {
-            return {
-                x: c.a,
-                y: c.b,
-            };
-        }(o));
+        console.log({
+            x: (c = o).a,
+            y: c.b,
+        });
+        var c;
     }
     expect_stdout: true
 }
@@ -3478,12 +3476,11 @@ issue_2436_9: {
     }
     expect: {
         var o = console;
-        console.log(function(c) {
-            return {
-                x: c.a,
-                y: c.b,
-            };
-        }(o));
+        console.log({
+            x: (c = o).a,
+            y: c.b,
+        });
+        var c;
     }
     expect_stdout: true
 }
@@ -3523,13 +3520,12 @@ issue_2436_10: {
             o = { b: 3 };
             return n;
         }
-        console.log(function(c) {
-            return [
-                c.a,
-                f(c.b),
-                c.b,
-            ];
-        }(o).join(" "));
+        console.log((c = o, [
+            c.a,
+            f(c.b),
+            c.b,
+        ]).join(" "));
+        var c;
     }
     expect_stdout: "1 2 2"
 }

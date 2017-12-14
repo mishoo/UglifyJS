@@ -578,11 +578,10 @@ issue_2531_1: {
     }
     expect: {
         function outer() {
-            return function(value) {
-                return function() {
-                    return value;
-                };
-            }("Hello");
+            return value = "Hello", function() {
+                return value;
+            };
+            var value;
         }
         console.log("Greeting:", outer()());
     }
@@ -593,9 +592,10 @@ issue_2531_2: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -627,9 +627,10 @@ issue_2531_3: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
