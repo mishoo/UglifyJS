@@ -672,3 +672,78 @@ empty_body: {
         }
     }
 }
+
+inline_loop_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return x();
+        }
+        for (;;) f();
+    }
+    expect: {
+        for (;;) x();
+    }
+}
+
+inline_loop_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (;;) f();
+        function f() {
+            return x();
+        }
+    }
+    expect: {
+        for (;;) x();
+    }
+}
+
+inline_loop_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function() {
+            return x();
+        };
+        for (;;) f();
+    }
+    expect: {
+        for (;;) x();
+    }
+}
+
+inline_loop_4: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (;;) f();
+        var f = function() {
+            return x();
+        };
+    }
+    expect: {
+        for (;;) f();
+        var f = function() {
+            return x();
+        };
+    }
+}
