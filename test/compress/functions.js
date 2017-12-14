@@ -748,3 +748,27 @@ inline_loop_4: {
         };
     }
 }
+
+issue_2476: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        for (var sum = 0, i = 0; i < 10; i++)
+            sum += foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        for (var sum = 0, i = 0; i < 10; i++)
+            sum += (x = i, y = i + 1, z = 3 * i, x < y ? x * y + z : x * z - y);
+        console.log(sum);
+        var x, y, z;
+    }
+    expect_stdout: "465"
+}
