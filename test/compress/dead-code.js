@@ -505,6 +505,30 @@ return_assignment: {
                 console.log(a);
             }
         }
+        function y() {
+            console.log("y");
+        }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6 ].forEach(function(f, i) {
+                e = null;
+                try {
+                    i += 1;
+                    console.log("result " + f(10 * i, 100 * i, 1000 * i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== e) console.log("e: " + e);
+            });
+        }
+        var x, e;
+        test(1);
+        test(-1);
     }
     expect: {
         function f1(a, b, c) {
@@ -533,7 +557,50 @@ return_assignment: {
                 console.log(a);
             }
         }
+        function y() {
+            console.log("y");
+        }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6 ].forEach(function(f, i) {
+                e = null;
+                try {
+                    i += 1;
+                    console.log("result " + f(10 * i, 100 * i, 1000 * i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== e) console.log("e: " + e);
+            });
+        }
+        var x, e;
+        test(1);
+        test(-1);
     }
+    expect_stdout: [
+        "y",
+        "result 31",
+        "result 2",
+        "e: 2",
+        "result 3",
+        "result 4",
+        "result 5",
+        "6",
+        "result 6",
+        "caught -1",
+        "caught -2",
+        "caught -3",
+        "caught -4",
+        "50",
+        "result undefined",
+        "60",
+        "caught -6",
+    ]
 }
 
 throw_assignment: {
@@ -596,6 +663,26 @@ throw_assignment: {
                 console.log(a);
             }
         }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6, f7, f8, f9 ].forEach(function(f, i) {
+                a = null;
+                try {
+                    f(10 * (1 + i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== a) console.log("a: " + a);
+            });
+        }
+        var x, a;
+        test(1);
+        test(-1);
     }
     expect: {
         function f1() {
@@ -651,5 +738,54 @@ throw_assignment: {
                 console.log(a);
             }
         }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6, f7, f8, f9 ].forEach(function(f, i) {
+                a = null;
+                try {
+                    f(10 * (1 + i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== a) console.log("a: " + a);
+            });
+        }
+        var x, a;
+        test(1);
+        test(-1);
     }
+    expect_stdout: [
+        "caught 1",
+        "a: 1",
+        "caught 2",
+        "caught 3",
+        "4",
+        "a: 4",
+        "5",
+        "6",
+        "7",
+        "caught 7",
+        "a: 7",
+        "8",
+        "caught 8",
+        "9",
+        "caught 9",
+        "caught -1",
+        "caught -2",
+        "caught -3",
+        "null",
+        "50",
+        "undefined",
+        "null",
+        "caught -7",
+        "80",
+        "caught -8",
+        "undefined",
+        "caught -9",
+    ]
 }
