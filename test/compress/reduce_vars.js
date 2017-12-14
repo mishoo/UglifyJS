@@ -4784,3 +4784,57 @@ escape_local_throw: {
     }
     expect_stdout: "PASS"
 }
+
+inverted_var: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = 1;
+            return a;
+        }(), function() {
+            var b;
+            b = 2;
+            return b;
+        }(), function() {
+            c = 3;
+            return c;
+            var c;
+        }(), function(c) {
+            c = 4;
+            return c;
+        }(), function (c) {
+            c = 5;
+            return c;
+            var c;
+        }(), function c() {
+            c = 6;
+            return c;
+        }(), function c() {
+            c = 7;
+            return c;
+            var c;
+        }(), function() {
+            c = 8;
+            return c;
+            var c = "foo";
+        }());
+    }
+    expect: {
+        console.log(1, 2, 3, 4, 5, function c() {
+            c = 6;
+            return c;
+        }(), 7, function() {
+            c = 8;
+            return c;
+            var c = "foo";
+        }());
+    }
+    expect_stdout: true
+}
