@@ -789,3 +789,42 @@ throw_assignment: {
         "caught -9",
     ]
 }
+
+issue_2597: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(b) {
+            try {
+                try {
+                    throw "foo";
+                } catch (e) {
+                    return b = true;
+                }
+            } finally {
+                b && (a = "PASS");
+            }
+        }
+        var a = "FAIL";
+        f();
+        console.log(a);
+    }
+    expect: {
+        function f(b) {
+            try {
+                try {
+                    throw "foo";
+                } catch (e) {
+                    return b = true;
+                }
+            } finally {
+                b && (a = "PASS");
+            }
+        }
+        var a = "FAIL";
+        f();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
