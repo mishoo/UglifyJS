@@ -767,8 +767,8 @@ issue_2476: {
     expect: {
         for (var sum = 0, i = 0; i < 10; i++)
             sum += (x = i, y = i + 1, z = 3 * i, x < y ? x * y + z : x * z - y);
-        console.log(sum);
         var x, y, z;
+        console.log(sum);
     }
     expect_stdout: "465"
 }
