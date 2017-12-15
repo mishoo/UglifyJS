@@ -4867,3 +4867,35 @@ defun_single_use_loop: {
         "true",
     ]
 }
+
+do_while: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            do {
+                (function() {
+                    a && (c = "PASS");
+                })();
+            } while (a = 0);
+        }
+        var c = "FAIL";
+        f(1);
+        console.log(c);
+    }
+    expect: {
+        function f(a) {
+            do {
+                (function() {
+                    a && (c = "PASS");
+                })();
+            } while (a = 0);
+        }
+        var c = "FAIL";
+        f(1);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
