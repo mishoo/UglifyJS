@@ -4899,3 +4899,27 @@ do_while: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2598: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        function g(a) {
+            return a || f;
+        }
+        console.log(g(false) === g(null));
+    }
+    expect: {
+        function f() {}
+        function g(a) {
+            return a || f;
+        }
+        console.log(g(false) === g(null));
+    }
+    expect_stdout: "true"
+}
