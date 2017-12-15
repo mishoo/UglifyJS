@@ -1396,7 +1396,7 @@ defun_inline_3: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
@@ -2250,12 +2250,11 @@ redefine_farg_2: {
         console.log(f([]), g([]), h([]));
     }
     expect: {
-        console.log(function(a) {
-            return typeof a;
-        }([]), "number",function(a, b) {
+        console.log((a = [], typeof a), "number",function(a, b) {
             a = b;
             return typeof a;
         }([]));
+        var a;
     }
     expect_stdout: "object number undefined"
 }
@@ -2266,7 +2265,7 @@ redefine_farg_3: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
@@ -3107,6 +3106,7 @@ obj_var_2: {
 
 obj_arg_1: {
     options = {
+        collapse_vars: true,
         evaluate: true,
         inline: true,
         passes: 2,
@@ -3138,9 +3138,10 @@ obj_arg_1: {
 
 obj_arg_2: {
     options = {
+        collapse_vars: true,
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         properties: true,
         reduce_funcs: true,
         reduce_vars: true,

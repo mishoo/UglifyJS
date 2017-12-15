@@ -578,11 +578,10 @@ issue_2531_1: {
     }
     expect: {
         function outer() {
-            return function(value) {
-                return function() {
-                    return value;
-                };
-            }("Hello");
+            return value = "Hello", function() {
+                return value;
+            };
+            var value;
         }
         console.log("Greeting:", outer()());
     }
@@ -593,9 +592,10 @@ issue_2531_2: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -627,9 +627,10 @@ issue_2531_3: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -746,4 +747,28 @@ inline_loop_4: {
             return x();
         };
     }
+}
+
+issue_2476: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo(x, y, z) {
+            return x < y ? x * y + z : x * z - y;
+        }
+        for (var sum = 0, i = 0; i < 10; i++)
+            sum += foo(i, i + 1, 3 * i);
+        console.log(sum);
+    }
+    expect: {
+        for (var sum = 0, i = 0; i < 10; i++)
+            sum += (x = i, y = i + 1, z = 3 * i, x < y ? x * y + z : x * z - y);
+        var x, y, z;
+        console.log(sum);
+    }
+    expect_stdout: "465"
 }

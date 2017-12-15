@@ -26,7 +26,7 @@ describe("bin/uglifyjs with input file globs", function() {
         });
     });
     it("bin/uglifyjs with multiple input file globs.", function(done) {
-        var command = uglifyjscmd + ' "test/input/issue-1242/???.es5" "test/input/issue-1242/*.js" -mc toplevel,passes=2';
+        var command = uglifyjscmd + ' "test/input/issue-1242/???.es5" "test/input/issue-1242/*.js" -mc toplevel,passes=3';
 
         exec(command, function(err, stdout) {
             if (err) throw err;
