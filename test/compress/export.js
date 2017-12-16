@@ -272,6 +272,13 @@ export_default_anonymous_function: {
     expect_exact: "export default function(){foo()};"
 }
 
+export_default_arrow: {
+    input: {
+        export default () => foo();
+    }
+    expect_exact: "export default()=>foo();"
+}
+
 export_default_anonymous_generator: {
     input: {
         export default function * () {
