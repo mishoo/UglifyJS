@@ -847,3 +847,79 @@ issue_2601_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2604_1: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function() {
+            try {
+                throw 1;
+            } catch (b) {
+                (function f(b) {
+                    b && b();
+                })();
+                b && (a = "PASS");
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function() {
+            try {
+                throw 1;
+            } catch (b) {
+                (function(b) {
+                    b && b();
+                })();
+                b && (a = "PASS");
+            }
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2604_2: {
+    rename = true
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        var a = "FAIL";
+        (function() {
+            try {
+                throw 1;
+            } catch (b) {
+                (function f(b) {
+                    b && b();
+                })();
+                b && (a = "PASS");
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function() {
+            try {
+                throw 1;
+            } catch (o) {
+                o && (a = "PASS");
+            }
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
