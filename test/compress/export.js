@@ -262,3 +262,37 @@ trailing_comma: {
     }
     expect_exact: "export const a = 1;"
 }
+
+export_default_anonymous_function: {
+    input: {
+        export default function () {
+            foo();
+        }
+    }
+    expect_exact: "export default function(){foo()};"
+}
+
+export_default_anonymous_generator: {
+    input: {
+        export default function * () {
+            yield foo();
+        }
+    }
+    expect_exact: "export default function*(){yield foo()};"
+}
+
+export_default_anonymous_async_function: {
+    input: {
+        export default async function() {
+            return await foo();
+        }
+    }
+    expect_exact: "export default async function(){return await foo()};"
+}
+
+export_default_async_arrow_function: {
+    input: {
+        export default async () => await foo();
+    }
+    expect_exact: "export default async()=>await foo();"
+}
