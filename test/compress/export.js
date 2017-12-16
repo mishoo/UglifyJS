@@ -303,3 +303,32 @@ export_default_async_arrow_function: {
     }
     expect_exact: "export default async()=>await foo();"
 }
+
+export_default_named_generator: {
+    input: {
+        export default function * gen() {
+            yield foo();
+        }
+    }
+    expect_exact: "export default function*gen(){yield foo()};"
+}
+
+export_default_named_async_function: {
+    input: {
+        export default async function bar() {
+            return await foo();
+        }
+    }
+    expect_exact: "export default async function bar(){return await foo()};"
+}
+
+export_default_anonymous_class: {
+    input: {
+        export default class {
+            constructor() {
+                foo();
+            }
+        };
+    }
+    expect_exact: "export default class{constructor(){foo()}};"
+}
