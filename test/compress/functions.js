@@ -923,3 +923,29 @@ issue_2604_2: {
     }
     expect_stdout: "PASS"
 }
+
+unsafe_call: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            console.log(a, b);
+        }).call("foo", "bar");
+        (function(a, b) {
+            console.log(this, a, b);
+        }).call("foo", "bar");
+    }
+    expect: {
+        console.log("bar", void 0);
+        (function(a, b) {
+            console.log(this, a, b);
+        }).call("foo", "bar");
+    }
+    expect_stdout: true
+}
