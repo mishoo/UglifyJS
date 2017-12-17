@@ -3990,3 +3990,25 @@ cascade_call: {
         }
     }
 }
+
+replace_all_var: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            var b = b || c && c[a = "FAIL"], c = a;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            var b = b || c && c[a = "FAIL"], c = a;
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
