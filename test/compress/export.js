@@ -396,3 +396,34 @@ export_default_anonymous_class: {
     }
     expect_exact: "export default class{constructor(){foo()}};"
 }
+
+export_default_anonymous_function_not_call: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        export default function(){}(foo);
+    }
+    // FIXME: should be `export default function(){};foo;`
+    expect_exact: "export default function(){}(foo);"
+}
+
+export_default_anonymous_generator_not_call: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        export default function*(){}(foo);
+    }
+    expect_exact: "export default function*(){};foo;"
+}
