@@ -264,6 +264,14 @@ trailing_comma: {
 }
 
 export_default_anonymous_function: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default function () {
             foo();
@@ -273,6 +281,14 @@ export_default_anonymous_function: {
 }
 
 export_default_arrow: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default () => foo();
     }
@@ -280,6 +296,14 @@ export_default_arrow: {
 }
 
 export_default_anonymous_generator: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default function * () {
             yield foo();
@@ -289,6 +313,14 @@ export_default_anonymous_generator: {
 }
 
 export_default_anonymous_async_function: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default async function() {
             return await foo();
@@ -298,6 +330,14 @@ export_default_anonymous_async_function: {
 }
 
 export_default_async_arrow_function: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default async () => await foo();
     }
@@ -305,6 +345,14 @@ export_default_async_arrow_function: {
 }
 
 export_default_named_generator: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default function * gen() {
             yield foo();
@@ -314,6 +362,14 @@ export_default_named_generator: {
 }
 
 export_default_named_async_function: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default async function bar() {
             return await foo();
@@ -323,6 +379,14 @@ export_default_named_async_function: {
 }
 
 export_default_anonymous_class: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
     input: {
         export default class {
             constructor() {
