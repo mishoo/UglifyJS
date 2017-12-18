@@ -1050,6 +1050,24 @@ unsafe_call_2: {
     expect_stdout: true
 }
 
+unsafe_call_3: {
+    options = {
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(function() {
+            return arguments[0] + eval("arguments")[1];
+        }.call(0, 1, 2));
+    }
+    expect: {
+        console.log(function() {
+            return arguments[0] + eval("arguments")[1];
+        }(1, 2));
+    }
+    expect_stdout: "3"
+}
+
 issue_2616: {
     options = {
         evaluate: true,
