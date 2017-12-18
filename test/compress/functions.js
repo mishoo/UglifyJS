@@ -1049,3 +1049,37 @@ unsafe_call_2: {
     }
     expect_stdout: true
 }
+
+issue_2616: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            function f() {
+                function g(NaN) {
+                    (true << NaN) - 0/0 || (c = "PASS");
+                }
+                g([]);
+            }
+            f();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function() {
+            (function() {
+                NaN = [], (true << NaN) - 0/0 || (c = "PASS");
+                var NaN;
+            })();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
