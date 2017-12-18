@@ -924,7 +924,67 @@ issue_2604_2: {
     expect_stdout: "PASS"
 }
 
-unsafe_call: {
+unsafe_apply_1: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            console.log(a, b);
+        }).apply("foo", [ "bar" ]);
+        (function(a, b) {
+            console.log(this, a, b);
+        }).apply("foo", [ "bar" ]);
+    }
+    expect: {
+        console.log("bar", void 0);
+        (function(a, b) {
+            console.log(this, a, b);
+        }).call("foo", "bar");
+    }
+    expect_stdout: true
+}
+
+unsafe_apply_2: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        function foo() {
+            console.log(a, b);
+        }
+        var bar = function(a, b) {
+            console.log(this, a, b);
+        }
+        (function() {
+            foo.apply("foo", [ "bar" ]);
+            bar.apply("foo", [ "bar" ]);
+        })();
+    }
+    expect: {
+        function foo() {
+            console.log(a, b);
+        }
+        var bar = function(a, b) {
+            console.log(this, a, b);
+        }
+        (function() {
+            foo("bar");
+            bar.call("foo", "bar");
+        })();
+    }
+    expect_stdout: true
+}
+
+unsafe_call_1: {
     options = {
         inline: true,
         passes: 2,
@@ -946,6 +1006,40 @@ unsafe_call: {
         (function(a, b) {
             console.log(this, a, b);
         }).call("foo", "bar");
+    }
+    expect_stdout: true
+}
+
+unsafe_call_2: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        function foo() {
+            console.log(a, b);
+        }
+        var bar = function(a, b) {
+            console.log(this, a, b);
+        }
+        (function() {
+            foo.call("foo", "bar");
+            bar.call("foo", "bar");
+        })();
+    }
+    expect: {
+        function foo() {
+            console.log(a, b);
+        }
+        var bar = function(a, b) {
+            console.log(this, a, b);
+        }
+        (function() {
+            foo("bar");
+            bar.call("foo", "bar");
+        })();
     }
     expect_stdout: true
 }
