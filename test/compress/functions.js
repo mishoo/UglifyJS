@@ -1101,3 +1101,74 @@ issue_2616: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2620_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            function f(a) {
+                var b = function g(a) {
+                    a && a();
+                }();
+                if (a) {
+                    var d = c = "PASS";
+                }
+            }
+            f(1);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function() {
+            (function(a) {
+                if (function(a) {
+                    a && a();
+                }(), a) c = "PASS";
+            })(1);
+        })(),
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2620_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            function f(a) {
+                var b = function g(a) {
+                    a && a();
+                }();
+                if (a) {
+                    var d = c = "PASS";
+                }
+            }
+            f(1);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        c = "PASS",
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
