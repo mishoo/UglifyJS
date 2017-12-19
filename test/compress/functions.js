@@ -1092,10 +1092,9 @@ issue_2616: {
     expect: {
         var c = "FAIL";
         (function() {
-            (function() {
-                NaN = [], (true << NaN) - 0/0 || (c = "PASS");
-                var NaN;
-            })();
+            !function(NaN) {
+                (true << NaN) - 0/0 || (c = "PASS");
+            }([]);
         })();
         console.log(c);
     }
@@ -1168,6 +1167,93 @@ issue_2620_2: {
     expect: {
         var c = "FAIL";
         c = "PASS",
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2620_3: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            function f(a, NaN) {
+                function g() {
+                    switch (a) {
+                      case a:
+                        break;
+                      case c = "PASS", NaN:
+                        break;
+                    }
+                }
+                g();
+            }
+            f(0/0);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function() {
+            (function(a, NaN) {
+                (function() {
+                    switch (a) {
+                      case a:
+                        break;
+                      case c = "PASS", NaN:
+                        break;
+                    }
+                })();
+            })(NaN);
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2620_4: {
+    rename = true,
+    options = {
+        evaluate: true,
+        dead_code: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        switches: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            function f(a, NaN) {
+                function g() {
+                    switch (a) {
+                      case a:
+                        break;
+                      case c = "PASS", NaN:
+                        break;
+                    }
+                }
+                g();
+            }
+            f(0/0);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        !function() {
+            switch (NaN) {
+              case void (c = "PASS"):
+            }
+        }();
         console.log(c);
     }
     expect_stdout: "PASS"
