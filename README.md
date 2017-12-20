@@ -627,7 +627,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `global_defs` (default: `{}`) -- see [conditional compilation](#conditional-compilation)
 
-- `hoist_funs` (default: `true`) -- hoist function declarations
+- `hoist_funs` (default: `false`) -- hoist function declarations
 
 - `hoist_props` (default: `true`) -- hoist properties from constant object and
   array literals into regular variables subject to a set of constraints. For example:
