@@ -43,7 +43,7 @@ describe("minify", function() {
             compressed += result.code;
         });
         assert.strictEqual(JSON.stringify(cache).slice(0, 20), '{"cname":5,"props":{');
-        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}function c(o){l("Foo:",2*o)}var l=console.log.bind(console);var f=n(3),i=r(12);l("qux",f,i),c(11);');
+        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}var c=console.log.bind(console);function l(o){c("Foo:",2*o)}var f=n(3),i=r(12);c("qux",f,i),l(11);');
         assert.strictEqual(run_code(compressed), run_code(original));
     });
 
@@ -69,7 +69,7 @@ describe("minify", function() {
             compressed += result.code;
         });
         assert.strictEqual(JSON.stringify(cache).slice(0, 28), '{"vars":{"cname":5,"props":{');
-        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}function c(o){l("Foo:",2*o)}var l=console.log.bind(console);var f=n(3),i=r(12);l("qux",f,i),c(11);');
+        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}var c=console.log.bind(console);function l(o){c("Foo:",2*o)}var f=n(3),i=r(12);c("qux",f,i),l(11);');
         assert.strictEqual(run_code(compressed), run_code(original));
     });
 
