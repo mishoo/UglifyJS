@@ -294,7 +294,7 @@ unary: {
     }
 }
 
-issue_2629: {
+issue_2629_1: {
     options = {
         side_effects: true,
     }
@@ -303,6 +303,39 @@ issue_2629: {
         (/*@__PURE__*/ f2)();
         /*@__PURE__*/ (f3());
         (/*@__PURE__*/ f4());
+        /*@__PURE__*/ f5(1)(2)(3);
+        (/*@__PURE__*/ f6(1)(2)(3));
+        /*@__PURE__*/ f7.x(1).y(2).z(3);
+        (/*@__PURE__*/ f8.x(1).y(2).z(3));
     }
     expect: {}
+}
+
+issue_2629_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (/*@__PURE__*/ x(), y());
+        (w(), /*@__PURE__*/ x(), y());
+    }
+    expect: {
+        y();
+        w(), y();
+    }
+}
+
+issue_2629_3: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        [ /*@__PURE__*/ x() ];
+        [ /*@__PURE__*/ x(), y() ];
+        [ w(), /*@__PURE__*/ x(), y() ];
+    }
+    expect: {
+        y();
+        w(), y();
+    }
 }
