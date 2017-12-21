@@ -1154,7 +1154,7 @@ array_literal_with_spread_4: {
     node_version: ">=6"
 }
 
-methods_using_arguments: {
+object_literal_method_using_arguments: {
     options = {
         arrows: true,
     }
@@ -1164,12 +1164,6 @@ methods_using_arguments: {
                 return arguments[0];
             }
         }).m("PASS"));
-
-        console.log(new class {
-            m() {
-                return arguments[0];
-            }
-        }().m("PASS"));
     }
     expect: {
         console.log(({
@@ -1177,16 +1171,29 @@ methods_using_arguments: {
                 return arguments[0];
             }
         }).m("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
 
+class_method_using_arguments: {
+    options = {
+        arrows: true,
+    }
+    input: {
         console.log(new class {
             m() {
                 return arguments[0];
             }
         }().m("PASS"));
     }
-    expect_stdout: [
-        "PASS",
-        "PASS",
-    ]
+    expect: {
+        console.log(new class {
+            m() {
+                return arguments[0];
+            }
+        }().m("PASS"));
+    }
+    expect_stdout: "PASS"
     node_version: ">=6"
 }
