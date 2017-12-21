@@ -207,4 +207,16 @@ describe("Comment", function() {
         if (result.error) throw result.error;
         assert.strictEqual(result.code, code);
     });
+
+    it("Should preserve comments around IIFE", function() {
+        var result = uglify.minify("/*a*/(/*b*/function(){/*c*/}/*d*/)/*e*/();", {
+            compress: false,
+            mangle: false,
+            output: {
+                comments: "all",
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, "/*a*/ /*b*/(function(){/*c*/}/*d*/ /*e*/)();");
+    });
 });

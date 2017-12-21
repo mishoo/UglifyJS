@@ -293,3 +293,16 @@ unary: {
         bar();
     }
 }
+
+issue_2629: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        /*@__PURE__*/ f1();
+        (/*@__PURE__*/ f2)();
+        /*@__PURE__*/ (f3());
+        (/*@__PURE__*/ f4());
+    }
+    expect: {}
+}
