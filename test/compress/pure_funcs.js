@@ -293,3 +293,85 @@ unary: {
         bar();
     }
 }
+
+issue_2629_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        /*@__PURE__*/ a();
+        /*@__PURE__*/ (b());
+        (/*@__PURE__*/ c)();
+        (/*@__PURE__*/ d());
+    }
+    expect: {}
+}
+
+issue_2629_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        /*@__PURE__*/ a(1)(2)(3);
+        /*@__PURE__*/ (b(1))(2)(3);
+        /*@__PURE__*/ (c(1)(2))(3);
+        /*@__PURE__*/ (d(1)(2)(3));
+        (/*@__PURE__*/ e)(1)(2)(3);
+        (/*@__PURE__*/ f(1))(2)(3);
+        (/*@__PURE__*/ g(1)(2))(3);
+        (/*@__PURE__*/ h(1)(2)(3));
+    }
+    expect: {}
+}
+
+issue_2629_3: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        /*@__PURE__*/ a.x(1).y(2).z(3);
+        /*@__PURE__*/ (a.x)(1).y(2).z(3);
+        /*@__PURE__*/ (a.x(1)).y(2).z(3);
+        /*@__PURE__*/ (a.x(1).y)(2).z(3);
+        /*@__PURE__*/ (a.x(1).y(2)).z(3);
+        /*@__PURE__*/ (a.x(1).y(2).z)(3);
+        /*@__PURE__*/ (a.x(1).y(2).z(3));
+        (/*@__PURE__*/ a).x(1).y(2).z(3);
+        (/*@__PURE__*/ a.x)(1).y(2).z(3);
+        (/*@__PURE__*/ a.x(1)).y(2).z(3);
+        (/*@__PURE__*/ a.x(1).y)(2).z(3);
+        (/*@__PURE__*/ a.x(1).y(2)).z(3);
+        (/*@__PURE__*/ a.x(1).y(2).z)(3);
+        (/*@__PURE__*/ a.x(1).y(2).z(3));
+    }
+    expect: {}
+}
+
+issue_2629_4: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (/*@__PURE__*/ x(), y());
+        (w(), /*@__PURE__*/ x(), y());
+    }
+    expect: {
+        y();
+        w(), y();
+    }
+}
+
+issue_2629_5: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        [ /*@__PURE__*/ x() ];
+        [ /*@__PURE__*/ x(), y() ];
+        [ w(), /*@__PURE__*/ x(), y() ];
+    }
+    expect: {
+        y();
+        w(), y();
+    }
+}
