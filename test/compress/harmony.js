@@ -1153,3 +1153,47 @@ array_literal_with_spread_4: {
     ]
     node_version: ">=6"
 }
+
+object_literal_method_using_arguments: {
+    options = {
+        arrows: true,
+    }
+    input: {
+        console.log(({
+            m() {
+                return arguments[0];
+            }
+        }).m("PASS"));
+    }
+    expect: {
+        console.log(({
+            m() {
+                return arguments[0];
+            }
+        }).m("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+class_method_using_arguments: {
+    options = {
+        arrows: true,
+    }
+    input: {
+        console.log(new class {
+            m() {
+                return arguments[0];
+            }
+        }().m("PASS"));
+    }
+    expect: {
+        console.log(new class {
+            m() {
+                return arguments[0];
+            }
+        }().m("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
