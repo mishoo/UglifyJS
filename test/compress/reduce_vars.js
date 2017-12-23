@@ -3423,6 +3423,37 @@ escaped_prop_1: {
 
 escaped_prop_2: {
     options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var obj = { o: { a: 1 } };
+        (function(o) {
+            o.a++;
+        })(obj.o);
+        (function(o) {
+            console.log(o.a);
+        })(obj.o);
+    }
+    expect: {
+        var obj = { o: { a: 1 } };
+        obj.o.a++;
+        console.log(obj.o.a);
+    }
+    expect_stdout: "2"
+}
+
+escaped_prop_3: {
+    options = {
         reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
