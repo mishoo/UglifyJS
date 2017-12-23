@@ -1258,3 +1258,168 @@ issue_2620_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2630_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            while (f());
+            function f() {
+                var a = function() {
+                    var b = c++, d = c = 1 + c;
+                }();
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            while (c++, void (c = 1 + c));
+        })(),
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
+
+issue_2630_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        !function() {
+            while (f()) {}
+            function f() {
+                var not_used = function() {
+                    c = 1 + c;
+                }(c = c + 1);
+            }
+        }();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        !function() {
+            while (c += 1, void (c = 1 + c));
+        }(), console.log(c);
+    }
+    expect_stdout: "2"
+}
+
+issue_2630_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var x = 2, a = 1;
+        (function() {
+            function f1(a) {
+                f2();
+                --x >= 0 && f1({});
+            }
+            f1(a++);
+            function f2() {
+                a++;
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var x = 2, a = 1;
+        (function() {
+            function f1(a) {
+                f2();
+                --x >= 0 && f1({});
+            }
+            f1(a++);
+            function f2() {
+                a++;
+            }
+        })();
+        console.log(a);
+    }
+    expect_stdout: "5"
+}
+
+issue_2630_4: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var x = 3, a = 1, b = 2;
+        (function() {
+            (function f1() {
+                while (--x >= 0 && f2());
+            }());
+            function f2() {
+                a++ + (b += a);
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var x = 3, a = 1, b = 2;
+        (function() {
+            (function() {
+                while (--x >= 0 && void (a++, b += a));
+            })();
+        })();
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
+
+issue_2630_5: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var c = 1;
+        !function() {
+            do {
+                c *= 10;
+            } while (f());
+            function f() {
+                return function() {
+                    return (c = 2 + c) < 100;
+                }(c = c + 3);
+            }
+        }();
+        console.log(c);
+    }
+    expect: {
+        var c = 1;
+        !function() {
+            do {
+                c *= 10;
+            } while (c += 3, (c = 2 + c) < 100);
+        }();
+        console.log(c);
+    }
+    expect_stdout: "155"
+}
