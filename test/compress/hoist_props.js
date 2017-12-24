@@ -55,9 +55,8 @@ issue_2377_2: {
         console.log(obj.foo, obj.cube(3));
     }
     expect: {
-        console.log(1, function(x) {
-            return x * x * x;
-        }(3));
+        console.log(1, (x = 3, x * x * x));
+        var x;
     }
     expect_stdout: "1 27"
 }
@@ -67,9 +66,10 @@ issue_2377_3: {
         evaluate: true,
         inline: true,
         hoist_props: true,
-        passes: 3,
+        passes: 4,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }

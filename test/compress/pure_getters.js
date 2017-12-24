@@ -185,7 +185,7 @@ impure_getter_2: {
 
 issue_2110_1: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         pure_getters: "strict",
         sequences: true,
         side_effects: true,
@@ -274,7 +274,7 @@ set_immutable_1: {
 
 set_immutable_2: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         pure_getters: "strict",
         reduce_funcs: true,
@@ -324,7 +324,7 @@ set_immutable_3: {
 
 set_immutable_4: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         pure_getters: "strict",
         reduce_funcs: true,
@@ -375,7 +375,7 @@ set_mutable_1: {
 
 set_mutable_2: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         pure_getters: "strict",
         reduce_funcs: true,
@@ -476,7 +476,7 @@ issue_2265_4: {
 
 issue_2313_1: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         pure_getters: "strict",
         sequences: true,
@@ -522,7 +522,7 @@ issue_2313_1: {
 
 issue_2313_2: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         pure_getters: true,
         sequences: true,

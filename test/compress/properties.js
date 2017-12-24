@@ -1331,3 +1331,43 @@ issue_2513: {
         "undefined undefined",
     ]
 }
+
+const_prop_assign_strict: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        function Simulator() {
+            /abc/.index = 1;
+            this._aircraft = [];
+        }
+        (function() {}).prototype.destroy = x();
+    }
+    expect: {
+        function Simulator() {
+            this._aircraft = [];
+        }
+        x();
+    }
+}
+
+const_prop_assign_pure: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+    }
+    input: {
+        function Simulator() {
+            /abc/.index = 1;
+            this._aircraft = [];
+        }
+        (function() {}).prototype.destroy = x();
+    }
+    expect: {
+        function Simulator() {
+            this._aircraft = [];
+        }
+        x();
+    }
+}

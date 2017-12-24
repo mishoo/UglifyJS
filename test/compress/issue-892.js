@@ -18,7 +18,6 @@ dont_mangle_arguments: {
         hoist_vars    : true,
         if_return     : true,
         join_vars     : true,
-        cascade       : true,
         side_effects  : true,
         negate_iife   : false
     };
