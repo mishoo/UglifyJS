@@ -1423,3 +1423,27 @@ issue_2630_5: {
     }
     expect_stdout: "155"
 }
+
+recursive_inline: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            h();
+        }
+        function g(a) {
+            a();
+        }
+        function h(b) {
+            g();
+            if (b) x();
+        }
+    }
+    expect: {}
+}
