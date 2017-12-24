@@ -636,3 +636,414 @@ issue_2383_3: {
     expect_stdout: "undefined undefined 8 undefined 7"
     node_version: ">=6"
 }
+
+collapse_vars_assignment: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        passes: 2,
+        unused: true,
+    }
+    input: {
+        function f0(c) {
+            var a = 3 / c;
+            return a = a;
+        }
+    }
+    expect: {
+        function f0(c) {
+            return 3 / c;
+        }
+    }
+}
+
+collapse_vars_lvalues_drop_assign: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f0(x) { var i = ++x; return x += i; }
+        function f1(x) { var a = (x -= 3); return x += a; }
+        function f2(x) { var z = x, a = ++z; return z += a; }
+    }
+    expect: {
+        function f0(x) { var i = ++x; return x + i; }
+        function f1(x) { var a = (x -= 3); return x + a; }
+        function f2(x) { var z = x, a = ++z; return z + a; }
+    }
+}
+
+collapse_vars_misc1: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f10(x) { var a = 5, b = 3; return a += b; }
+        function f11(x) { var a = 5, b = 3; return a += --b; }
+    }
+    expect: {
+        function f10(x) { return 5 + 3; }
+        function f11(x) { var b = 3; return 5 + --b; }
+    }
+}
+
+return_assignment: {
+    options = {
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f1(a, b, c) {
+            return a = x(), b = y(), b = a && (c >>= 5);
+        }
+        function f2() {
+            return e = x();
+        }
+        function f3(e) {
+            return e = x();
+        }
+        function f4() {
+            var e;
+            return e = x();
+        }
+        function f5(a) {
+            try {
+                return a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6(a) {
+            try {
+                return a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function y() {
+            console.log("y");
+        }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6 ].forEach(function(f, i) {
+                e = null;
+                try {
+                    i += 1;
+                    console.log("result " + f(10 * i, 100 * i, 1000 * i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== e) console.log("e: " + e);
+            });
+        }
+        var x, e;
+        test(1);
+        test(-1);
+    }
+    expect: {
+        function f1(a, b, c) {
+            return a = x(), y(), a && (c >> 5);
+        }
+        function f2() {
+            return e = x();
+        }
+        function f3(e) {
+            return x();
+        }
+        function f4() {
+            return x();
+        }
+        function f5(a) {
+            try {
+                return x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6(a) {
+            try {
+                return a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function y() {
+            console.log("y");
+        }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6 ].forEach(function(f, i) {
+                e = null;
+                try {
+                    i += 1;
+                    console.log("result " + f(10 * i, 100 * i, 1000 * i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== e) console.log("e: " + e);
+            });
+        }
+        var x, e;
+        test(1);
+        test(-1);
+    }
+    expect_stdout: [
+        "y",
+        "result 31",
+        "result 2",
+        "e: 2",
+        "result 3",
+        "result 4",
+        "result 5",
+        "6",
+        "result 6",
+        "caught -1",
+        "caught -2",
+        "caught -3",
+        "caught -4",
+        "50",
+        "result undefined",
+        "60",
+        "caught -6",
+    ]
+}
+
+throw_assignment: {
+    options = {
+        dead_code: true,
+        unused: true,
+    }
+    input: {
+        function f1() {
+            throw a = x();
+        }
+        function f2(a) {
+            throw a = x();
+        }
+        function f3() {
+            var a;
+            throw a = x();
+        }
+        function f4() {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f5(a) {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6() {
+            var a;
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f7() {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f8(a) {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f9() {
+            var a;
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6, f7, f8, f9 ].forEach(function(f, i) {
+                a = null;
+                try {
+                    f(10 * (1 + i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== a) console.log("a: " + a);
+            });
+        }
+        var x, a;
+        test(1);
+        test(-1);
+    }
+    expect: {
+        function f1() {
+            throw a = x();
+        }
+        function f2(a) {
+            throw x();
+        }
+        function f3() {
+            throw x();
+        }
+        function f4() {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f5(a) {
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f6() {
+            var a;
+            try {
+                throw a = x();
+            } catch (b) {
+                console.log(a);
+            }
+        }
+        function f7() {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f8(a) {
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function f9() {
+            var a;
+            try {
+                throw a = x();
+            } finally {
+                console.log(a);
+            }
+        }
+        function test(inc) {
+            var counter = 0;
+            x = function() {
+                counter += inc;
+                if (inc < 0) throw counter;
+                return counter;
+            };
+            [ f1, f2, f3, f4, f5, f6, f7, f8, f9 ].forEach(function(f, i) {
+                a = null;
+                try {
+                    f(10 * (1 + i));
+                } catch (x) {
+                    console.log("caught " + x);
+                }
+                if (null !== a) console.log("a: " + a);
+            });
+        }
+        var x, a;
+        test(1);
+        test(-1);
+    }
+    expect_stdout: [
+        "caught 1",
+        "a: 1",
+        "caught 2",
+        "caught 3",
+        "4",
+        "a: 4",
+        "5",
+        "6",
+        "7",
+        "caught 7",
+        "a: 7",
+        "8",
+        "caught 8",
+        "9",
+        "caught 9",
+        "caught -1",
+        "caught -2",
+        "caught -3",
+        "null",
+        "50",
+        "undefined",
+        "null",
+        "caught -7",
+        "80",
+        "caught -8",
+        "undefined",
+        "caught -9",
+    ]
+}
+
+issue_2597: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(b) {
+            try {
+                try {
+                    throw "foo";
+                } catch (e) {
+                    return b = true;
+                }
+            } finally {
+                b && (a = "PASS");
+            }
+        }
+        var a = "FAIL";
+        f();
+        console.log(a);
+    }
+    expect: {
+        function f(b) {
+            try {
+                try {
+                    throw "foo";
+                } catch (e) {
+                    return b = true;
+                }
+            } finally {
+                b && (a = "PASS");
+            }
+        }
+        var a = "FAIL";
+        f();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}

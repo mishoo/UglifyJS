@@ -32,7 +32,6 @@ conditional_false_stray_else_in_loop: {
         hoist_vars   : true,
         join_vars    : true,
         if_return    : true,
-        cascade      : true,
         conditionals : false,
     }
     input: {

@@ -14,7 +14,7 @@ issue_1212_debug_false: {
         keep_fargs    : true,
         if_return     : true,
         join_vars     : true,
-        cascade       : true,
+        collapse_vars : true,
         side_effects  : true,
     }
     input: {
@@ -52,7 +52,7 @@ issue_1212_debug_true: {
         keep_fargs    : true,
         if_return     : true,
         join_vars     : true,
-        cascade       : true,
+        collapse_vars : true,
         side_effects  : true,
     }
     input: {

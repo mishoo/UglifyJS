@@ -37,6 +37,7 @@ var FUNC_TOSTRING = [
     '        return "[Function: " + i + "]";',
     "    }",
     "}();",
+    'Object.defineProperty(Function.prototype, "valueOf", { enumerable: false });',
 ]).join("\n");
 exports.run_code = function(code) {
     var stdout = "";

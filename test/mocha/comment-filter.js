@@ -14,7 +14,7 @@ describe("comment filters", function() {
 
     it("Should be able to filter commments with the 'some' option", function() {
         var ast = UglifyJS.parse("// foo\n/*@preserve*/\n// bar\n/*@license*/\n//@license with the wrong comment type\n/*@cc_on something*/");
-        assert.strictEqual(ast.print_to_string({comments: "some"}), "/*@preserve*/\n/*@license*/\n/*@cc_on something*/\n");
+        assert.strictEqual(ast.print_to_string({comments: "some"}), "/*@preserve*/\n/*@license*/\n/*@cc_on something*/");
     });
 
     it("Should be able to filter comments by passing a function", function() {
@@ -55,12 +55,12 @@ describe("comment filters", function() {
             return true;
         };
 
-        assert.strictEqual(ast.print_to_string({comments: f}), "#!Random comment\n//test1\n/*test2*/\n");
+        assert.strictEqual(ast.print_to_string({comments: f}), "#!Random comment\n//test1\n/*test2*/");
     });
 
     it("Should never be able to filter comment5 when using 'some' as filter", function() {
         var ast = UglifyJS.parse("#!foo\n//foo\n/*@preserve*/\n/* please hide me */");
-        assert.strictEqual(ast.print_to_string({comments: "some"}), "#!foo\n/*@preserve*/\n");
+        assert.strictEqual(ast.print_to_string({comments: "some"}), "#!foo\n/*@preserve*/");
     });
 
     it("Should have no problem on multiple calls", function() {

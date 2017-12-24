@@ -798,7 +798,7 @@ const_assign: {
 
 issue_1539: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
         unused: true,
@@ -845,7 +845,7 @@ vardef_value: {
 
 assign_binding: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         side_effects: true,
         unused: true,
     }
@@ -1269,7 +1269,7 @@ var_catch_toplevel: {
 
 reassign_const: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
         unused: true,
@@ -1548,7 +1548,7 @@ issue_2226_1: {
 
 issue_2226_2: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
         unused: true,
@@ -1561,8 +1561,8 @@ issue_2226_2: {
     }
     expect: {
         console.log(function(a, b) {
-            return a += b;
-        }(1, 2));
+            return a += 2;
+        }(1));
     }
     expect_stdout: "3"
 }

@@ -15,15 +15,12 @@
     },
     {},
     {
-        "compress": {
-            "hoist_props": true
-        },
         "toplevel": true
     },
     {
         "compress": {
             "keep_fargs": false,
-            "passes": 3
+            "passes": 100
         }
     }
 ]

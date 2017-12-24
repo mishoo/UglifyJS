@@ -2,7 +2,7 @@
 issue_1639_1: {
     options = {
         booleans: true,
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         evaluate: true,
         join_vars: true,
@@ -35,7 +35,7 @@ issue_1639_1: {
 issue_1639_2: {
     options = {
         booleans: true,
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         evaluate: true,
         join_vars: true,
@@ -68,7 +68,7 @@ issue_1639_2: {
 issue_1639_3: {
     options = {
         booleans: true,
-        cascade: true,
+        collapse_vars: true,
         conditionals: true,
         evaluate: true,
         sequences: true,

@@ -263,10 +263,8 @@ var CAN_CONTINUE = true;
 var CANNOT_CONTINUE = false;
 var CAN_RETURN = false;
 var CANNOT_RETURN = true;
-var NOT_GLOBAL = true;
-var IN_GLOBAL = true;
-var ANY_TYPE = false;
-var NO_DECL = true;
+var NO_DEFUN = false;
+var DEFUN_OK = true;
 var DONT_STORE = true;
 
 var VAR_NAMES = [
@@ -307,6 +305,7 @@ var TYPEOF_OUTCOMES = [
 var unique_vars = [];
 var loops = 0;
 var funcs = 0;
+var called = Object.create(null);
 var labels = 10000;
 
 function rng(max) {
@@ -323,21 +322,22 @@ function createTopLevelCode() {
     unique_vars.length = 0;
     loops = 0;
     funcs = 0;
+    called = Object.create(null);
     return [
         strictMode(),
-        'var a = 100, b = 10, c = 0;',
+        'var _calls_ = 10, a = 100, b = 10, c = 0;',
         rng(2) == 0
         ? createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0)
-        : createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, IN_GLOBAL, ANY_TYPE, CANNOT_THROW, 0),
+        : createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, DEFUN_OK, CANNOT_THROW, 0),
         'console.log(null, a, b, c);' // preceding `null` makes for a cleaner output (empty string still shows up etc)
     ].join('\n');
 }
 
-function createFunctions(n, recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
+function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ';'; }
     var s = '';
     while (n-- > 0) {
-        s += createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) + '\n';
+        s += createFunction(recurmax, allowDefun, canThrow, stmtDepth) + '\n';
     }
     return s;
 }
@@ -363,16 +363,16 @@ function filterDirective(s) {
     return s;
 }
 
-function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
+function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ';'; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
-    var func = funcs++;
     var namesLenBefore = VAR_NAMES.length;
     var name;
-    if (inGlobal || rng(5) > 0) name = 'f' + func;
-    else {
+    if (allowDefun || rng(5) > 0) {
+        name = 'f' + funcs++;
+    } else {
         unique_vars.push('a', 'b', 'c');
-        name = createVarName(MANDATORY, noDecl);
+        name = createVarName(MANDATORY, !allowDefun);
         unique_vars.length -= 3;
     }
     var s = [
@@ -381,7 +381,7 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
     ];
     if (rng(5) === 0) {
         // functions with functions. lower the recursion to prevent a mess.
-        s.push(createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), NOT_GLOBAL, ANY_TYPE, canThrow, stmtDepth));
+        s.push(createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), DEFUN_OK, canThrow, stmtDepth));
     } else {
         // functions with statements
         s.push(createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
@@ -391,12 +391,16 @@ function createFunction(recurmax, inGlobal, noDecl, canThrow, stmtDepth) {
 
     VAR_NAMES.length = namesLenBefore;
 
-    if (noDecl) s = 'var ' + createVarName(MANDATORY) + ' = ' + s;
-    // avoid "function statements" (decl inside statements)
-    else if (inGlobal || rng(10) > 0) s += 'var ' + createVarName(MANDATORY) + ' = ' + name;
-    s += '(' + createArgs(recurmax, stmtDepth, canThrow) + ');';
+    if (!allowDefun) {
+        // avoid "function statements" (decl inside statements)
+        s = 'var ' + createVarName(MANDATORY) + ' = ' + s;
+        s += '(' + createArgs(recurmax, stmtDepth, canThrow) + ')';
+    } else if (!(name in called) || rng(3) > 0) {
+        s += 'var ' + createVarName(MANDATORY) + ' = ' + name;
+        s += '(' + createArgs(recurmax, stmtDepth, canThrow) + ')';
+    }
 
-    return s;
+    return s + ';';
 }
 
 function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
@@ -541,7 +545,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
       case STMT_FUNC_EXPR:
         // "In non-strict mode code, functions can only be declared at top level, inside a block, or ..."
         // (dont both with func decls in `if`; it's only a parser thing because you cant call them without a block)
-        return '{' + createFunction(recurmax, NOT_GLOBAL, NO_DECL, canThrow, stmtDepth) + '}';
+        return '{' + createFunction(recurmax, NO_DEFUN, canThrow, stmtDepth) + '}';
       case STMT_TRY:
         // catch var could cause some problems
         // note: the "blocks" are syntactically mandatory for try/catch/finally
@@ -648,7 +652,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 '(function ' + name + '(){',
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                '})()'
+                rng(2) == 0 ? '})' : '})()'
             );
             break;
           case 1:
@@ -687,7 +691,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             }
             s.push(
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                '}'
+                rng(2) == 0 ? '}' : '}()'
             );
             break;
         }
@@ -754,6 +758,13 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         var name = getVarName();
         return name + ' && ' + name + '.' + getDotKey();
+      case p++:
+      case p++:
+      case p++:
+      case p++:
+        var name = rng(3) == 0 ? getVarName() : 'f' + rng(funcs + 2);
+        called[name] = true;
+        return 'typeof ' + name + ' == "function" && --_calls_ >= 0 && ' + name + '(' + createArgs(recurmax, stmtDepth, canThrow) + ')';
     }
     _createExpression.N = p;
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
