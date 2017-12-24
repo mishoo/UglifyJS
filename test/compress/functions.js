@@ -990,6 +990,20 @@ unsafe_apply_2: {
     expect_stdout: true
 }
 
+unsafe_apply_expansion: {
+    options = {
+        unsafe: true,
+    }
+    input: {
+        console.log.apply(console, [1, ...[2, 3], 4]);
+    }
+    expect: {
+        console.log.call(console, 1, ...[2, 3], 4);
+    }
+    expect_stdout: "1 2 3 4"
+    node_version: ">=6"
+}
+
 unsafe_call_1: {
     options = {
         inline: true,
@@ -1066,6 +1080,25 @@ unsafe_call_3: {
         }(1, 2));
     }
     expect_stdout: "3"
+}
+
+unsafe_call_expansion: {
+    options = {
+        unsafe: true,
+    }
+    input: {
+        (function(...a) {
+            console.log(...a);
+        }).call(console, 1, ...[2, 3], 4);
+    }
+    expect: {
+        console,
+        (function(...a) {
+            console.log(...a);
+        })(1, ...[2, 3], 4);
+    }
+    expect_stdout: "1 2 3 4"
+    node_version: ">=6"
 }
 
 issue_2616: {
