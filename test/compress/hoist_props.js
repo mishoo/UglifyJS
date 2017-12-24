@@ -489,10 +489,14 @@ hoist_function_with_call: {
         console.log(o.p.name, o.p === o.p, o.p(o.x), o.p(o.y));
     }
     expect: {
-        var o_p = function Foo(value){
-            return 10 * value
+        var o = {
+            p: function Foo(value) {
+                return 10 * value;
+            },
+            x: 1,
+            y: 2
         };
-        console.log(o_p.name, true, o_p(1), o_p(2));
+        console.log(o.p.name, o.p == o.p, o.p(o.x), o.p(o.y));
     }
     expect_stdout: "Foo true 10 20"
 }

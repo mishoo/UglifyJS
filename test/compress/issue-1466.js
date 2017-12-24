@@ -11,7 +11,6 @@ same_variable_in_multiple_for_loop: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }
@@ -54,7 +53,6 @@ same_variable_in_multiple_forOf: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }
@@ -96,7 +94,6 @@ same_variable_in_multiple_forIn: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }
@@ -138,7 +135,6 @@ different_variable_in_multiple_for_loop: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }
@@ -181,7 +177,6 @@ different_variable_in_multiple_forOf: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }
@@ -223,7 +218,6 @@ different_variable_in_multiple_forIn: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }
@@ -265,7 +259,6 @@ more_variable_in_multiple_for: {
         keep_fargs: true,
         if_return: true,
         join_vars: true,
-        cascade: true,
         side_effects: true,
         collapse_vars: true,
     }

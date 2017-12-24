@@ -1269,7 +1269,7 @@ var_catch_toplevel: {
 
 reassign_const: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
         unused: true,

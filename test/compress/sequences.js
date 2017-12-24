@@ -721,7 +721,7 @@ issue_27: {
 
 reassign_const: {
     options = {
-        cascade: true,
+        collapse_vars: true,
         sequences: true,
         side_effects: true,
     }
