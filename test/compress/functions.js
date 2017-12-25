@@ -1548,3 +1548,27 @@ issue_2647_3: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+recursive_inline: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            h();
+        }
+        function g(a) {
+            a();
+        }
+        function h(b) {
+            g();
+            if (b) x();
+        }
+    }
+    expect: {}
+}
