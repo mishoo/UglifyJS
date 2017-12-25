@@ -1456,3 +1456,95 @@ issue_2630_5: {
     }
     expect_stdout: "155"
 }
+
+issue_2647_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(n, o = "FAIL") {
+            console.log(n);
+        })("PASS");
+        (function(n, o = "PASS") {
+            console.log(o);
+        })("FAIL");
+        (function(o = "PASS") {
+            console.log(o);
+        })();
+        (function(n, {o = "FAIL"}) {
+            console.log(n);
+        })("PASS", {});
+    }
+    expect: {
+        console.log("PASS");
+        (function(n, o = "PASS") {
+            console.log(o);
+        })();
+        (function(o = "PASS") {
+            console.log(o);
+        })();
+        (function(n, {o = "FAIL"}) {
+            console.log("PASS");
+        })(0, {});
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+    node_version: ">=6"
+}
+
+issue_2647_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo(x) {
+                return x.toUpperCase();
+            }
+            console.log((() => foo("pass"))());
+        }());
+    }
+    expect: {
+        (function() {
+            console.log("pass".toUpperCase());
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_2647_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo(x) {
+                return x.toUpperCase();
+            }
+            console.log((() => {
+                return foo("pass");
+            })());
+        }());
+    }
+    expect: {
+        (function() {
+            console.log("pass".toUpperCase());
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
