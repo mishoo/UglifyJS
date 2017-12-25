@@ -21,6 +21,7 @@ var urls = [
     "http://builds.emberjs.com/tags/v2.11.0/ember.prod.js",
     "https://cdn.jsdelivr.net/lodash/4.17.4/lodash.js",
     "https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.js",
+    "https://raw.githubusercontent.com/kangax/html-minifier/v3.5.7/dist/htmlminifier.js",
 ];
 var results = {};
 var remaining = 2 * urls.length;
