@@ -1413,3 +1413,24 @@ issue_2516_2: {
         Baz(2);
     }
 }
+
+defun_lambda_same_name: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }
+        console.log(function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }(5));
+    }
+    expect: {
+        console.log(function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }(5));
+    }
+    expect_stdout: "120"
+}
