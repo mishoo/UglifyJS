@@ -1434,3 +1434,57 @@ defun_lambda_same_name: {
     }
     expect_stdout: "120"
 }
+
+issue_2660_1: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 2;
+        function f(b) {
+            return b && f() || a--;
+        }
+        f(1);
+        console.log(a);
+    }
+    expect: {
+        var a = 2;
+        (function f(b) {
+            return b && f() || a--;
+        })(1);
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_2660_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f(b) {
+            b && f();
+            --a, a.toString();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        (function f(b) {
+            b && f(),
+            (--a).toString();
+        })(),
+        console.log(a);
+    }
+    expect_stdout: "0"
+}
