@@ -1355,10 +1355,9 @@ defun_inline_1: {
         function f() {
             return function(b) {
                 return b;
-            }(2) + h();
-            function h() {
+            }(2) + function h() {
                 return h();
-            }
+            }();
         }
     }
 }
@@ -1382,12 +1381,11 @@ defun_inline_2: {
     }
     expect: {
         function f() {
-            function h() {
-                return h();
-            }
             return function(b) {
                 return b;
-            }(2) + h();
+            }(2) + function h() {
+                return h();
+            }();
         }
     }
 }
