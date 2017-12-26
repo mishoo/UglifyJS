@@ -1345,11 +1345,10 @@ issue_2630_3: {
     expect: {
         var x = 2, a = 1;
         (function() {
-            function f1(a) {
+            (function f1(a) {
                 f2();
                 --x >= 0 && f1({});
-            }
-            f1(a++);
+            })(a++);
             function f2() {
                 a++;
             }
@@ -1424,7 +1423,7 @@ issue_2630_5: {
     expect_stdout: "155"
 }
 
-recursive_inline: {
+recursive_inline_1: {
     options = {
         inline: true,
         reduce_funcs: true,
@@ -1446,6 +1445,26 @@ recursive_inline: {
         }
     }
     expect: {}
+}
+
+recursive_inline_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }
+        console.log(f(5));
+    }
+    expect: {
+        console.log(function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }(5));
+    }
+    expect_stdout: "120"
 }
 
 issue_2657: {
