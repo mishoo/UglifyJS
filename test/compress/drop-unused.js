@@ -1435,11 +1435,11 @@ defun_lambda_same_name: {
     expect_stdout: "120"
 }
 
-issue_2660: {
+issue_2660_1: {
     options = {
         reduce_vars: true,
-        toplevel: true,
         side_effects: true,
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -1458,4 +1458,33 @@ issue_2660: {
         console.log(a);
     }
     expect_stdout: "1"
+}
+
+issue_2660_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f(b) {
+            b && f();
+            --a, a.toString();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        (function f(b) {
+            b && f(),
+            (--a).toString();
+        })(),
+        console.log(a);
+    }
+    expect_stdout: "0"
 }
