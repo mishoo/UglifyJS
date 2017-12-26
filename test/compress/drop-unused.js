@@ -1488,3 +1488,37 @@ issue_2660_2: {
     }
     expect_stdout: "0"
 }
+
+issue_2665: {
+    options = {
+        evaluate: true,
+        inline: true,
+        keep_fargs: false,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function g() {
+            a-- && g();
+        }
+        typeof h == "function" && h();
+        function h() {
+            typeof g == "function" && g();
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function g() {
+            a-- && g();
+        }();
+        console.log(a);
+    }
+    expect_stdout: "-1"
+}
