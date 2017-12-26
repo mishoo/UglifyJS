@@ -1447,3 +1447,33 @@ recursive_inline: {
     }
     expect: {}
 }
+
+issue_2657: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        console.log(function f() {
+            return h;
+            function g(b) {
+                return b || b();
+            }
+            function h(a) {
+                g(a);
+                return a;
+            }
+        }()(42));
+    }
+    expect: {
+        "use strict";
+        console.log(function(a) {
+            return b = a, b || b(), a;
+            var b;
+        }(42));
+    }
+    expect_stdout: "42"
+}
