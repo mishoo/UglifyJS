@@ -1434,3 +1434,28 @@ defun_lambda_same_name: {
     }
     expect_stdout: "120"
 }
+
+issue_2660: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 2;
+        function f(b) {
+            return b && f() || a--;
+        }
+        f(1);
+        console.log(a);
+    }
+    expect: {
+        var a = 2;
+        (function f(b) {
+            return b && f() || a--;
+        })(1);
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
