@@ -5446,3 +5446,22 @@ issue_2598: {
     }
     expect_stdout: "true"
 }
+
+issue_2669: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        let foo;
+        console.log(([ foo ] = [ "PASS" ]) && foo);
+    }
+    expect: {
+        let foo;
+        console.log(([ foo ] = [ "PASS" ]) && foo);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
