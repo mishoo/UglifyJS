@@ -1509,7 +1509,7 @@ issue_2663_1: {
             function createFn(j) {
                 return function() {
                     console.log(j);
-                }
+                };
             }
             for (i in { a: 1, b: 2, c: 3 })
                 o[i] = createFn(i);
@@ -1523,7 +1523,7 @@ issue_2663_1: {
             function createFn(j) {
                 return function() {
                     console.log(j);
-                }
+                };
             }
             for (i in { a: 1, b: 2, c: 3 })
                 o[i] = createFn(i);
@@ -1539,6 +1539,40 @@ issue_2663_1: {
 }
 
 issue_2663_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var i;
+            function fn(j) {
+                return function() {
+                    console.log(j);
+                }();
+            }
+            for (i in { a: 1, b: 2, c: 3 })
+                fn(i);
+        })();
+    }
+    expect: {
+        (function() {
+            var i;
+            for (i in { a: 1, b: 2, c: 3 })
+                j = i, console.log(j);
+            var j;
+        })();
+    }
+    expect_stdout: [
+        "a",
+        "b",
+        "c",
+    ]
+}
+
+issue_2663_3: {
     options = {
         inline: true,
         reduce_vars: true,
