@@ -1197,3 +1197,18 @@ class_method_using_arguments: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_2676: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A {}
+        A.a = 42;
+    }
+    expect: {
+        (class {}).a = 42;
+    }
+}
