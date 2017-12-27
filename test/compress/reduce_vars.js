@@ -5465,3 +5465,25 @@ issue_2669: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_2670: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        const obj = {};
+        obj.prop = "PASS";
+        const {prop: value} = obj;
+        console.log(value);
+    }
+    expect: {
+        const obj = {};
+        obj.prop = "PASS";
+        const {prop: value} = obj;
+        console.log(value);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
