@@ -611,3 +611,35 @@ issue_2313_6: {
         x();
     }
 }
+
+issue_2678: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        var a = 1, c = "FAIL";
+        (function f() {
+            (a-- && f()).p;
+            return {
+                get p() {
+                    c = "PASS";
+                }
+            };
+        })();
+        console.log(c);
+    }
+    expect: {
+        var a = 1, c = "FAIL";
+        (function f() {
+            (a-- && f()).p;
+            return {
+                get p() {
+                    c = "PASS";
+                }
+            };
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
