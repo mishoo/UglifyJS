@@ -4180,10 +4180,9 @@ recursive_function_replacement: {
         console.log(f(c));
     }
     expect: {
-        function f(n) {
-            return x(y(f(n)));
-        }
-        console.log(f(c));
+        console.log(function n(o) {
+            return x(y(n(o)));
+        }(c));
     }
 }
 
