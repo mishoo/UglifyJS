@@ -1378,11 +1378,10 @@ issue_2630_3: {
     expect: {
         var x = 2, a = 1;
         (function() {
-            function f1(a) {
+            (function f1(a) {
                 f2();
                 --x >= 0 && f1({});
-            }
-            f1(a++);
+            })(a++);
             function f2() {
                 a++;
             }
@@ -1549,7 +1548,7 @@ issue_2647_3: {
     node_version: ">=4"
 }
 
-recursive_inline: {
+recursive_inline_1: {
     options = {
         inline: true,
         reduce_funcs: true,
@@ -1571,4 +1570,204 @@ recursive_inline: {
         }
     }
     expect: {}
+}
+
+recursive_inline_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }
+        console.log(f(5));
+    }
+    expect: {
+        console.log(function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }(5));
+    }
+    expect_stdout: "120"
+}
+
+issue_2657: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        console.log(function f() {
+            return h;
+            function g(b) {
+                return b || b();
+            }
+            function h(a) {
+                g(a);
+                return a;
+            }
+        }()(42));
+    }
+    expect: {
+        "use strict";
+        console.log(function(a) {
+            return b = a, b || b(), a;
+            var b;
+        }(42));
+    }
+    expect_stdout: "42"
+}
+
+issue_2663_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var i, o = {};
+            function createFn(j) {
+                return function() {
+                    console.log(j);
+                };
+            }
+            for (i in { a: 1, b: 2, c: 3 })
+                o[i] = createFn(i);
+            for (i in o)
+                o[i]();
+        })();
+    }
+    expect: {
+        (function() {
+            var i, o = {};
+            function createFn(j) {
+                return function() {
+                    console.log(j);
+                };
+            }
+            for (i in { a: 1, b: 2, c: 3 })
+                o[i] = createFn(i);
+            for (i in o)
+                o[i]();
+        })();
+    }
+    expect_stdout: [
+        "a",
+        "b",
+        "c",
+    ]
+}
+
+issue_2663_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var i;
+            function fn(j) {
+                return function() {
+                    console.log(j);
+                }();
+            }
+            for (i in { a: 1, b: 2, c: 3 })
+                fn(i);
+        })();
+    }
+    expect: {
+        (function() {
+            var i;
+            for (i in { a: 1, b: 2, c: 3 })
+                j = i, console.log(j);
+            var j;
+        })();
+    }
+    expect_stdout: [
+        "a",
+        "b",
+        "c",
+    ]
+}
+
+issue_2663_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function () {
+            var outputs = [
+                { type: 0, target: null, eventName: "ngSubmit", propName: null },
+                { type: 0, target: null, eventName: "submit", propName: null },
+                { type: 0, target: null, eventName: "reset", propName: null },
+            ];
+            function listenToElementOutputs(outputs) {
+                var handlers = [];
+                for (var i = 0; i < outputs.length; i++) {
+                    var output = outputs[i];
+                    var handleEventClosure = renderEventHandlerClosure(output.eventName);
+                    handlers.push(handleEventClosure)
+                }
+                var target, name;
+                return handlers;
+            }
+            function renderEventHandlerClosure(eventName) {
+                return function () {
+                    return console.log(eventName);
+                };
+            }
+            listenToElementOutputs(outputs).forEach(function (handler) {
+                return handler()
+            });
+        })();
+    }
+    expect: {
+        (function() {
+            function renderEventHandlerClosure(eventName) {
+                return function() {
+                    return console.log(eventName);
+                };
+            }
+            (function(outputs) {
+                var handlers = [];
+                for (var i = 0; i < outputs.length; i++) {
+                    var output = outputs[i];
+                    var handleEventClosure = renderEventHandlerClosure(output.eventName);
+                    handlers.push(handleEventClosure);
+                }
+                return handlers;
+            })([ {
+                type: 0,
+                target: null,
+                eventName: "ngSubmit",
+                propName: null
+            }, {
+                type: 0,
+                target: null,
+                eventName: "submit",
+                propName: null
+            }, {
+                type: 0,
+                target: null,
+                eventName: "reset",
+                propName: null
+            } ]).forEach(function(handler) {
+                return handler();
+            });
+        })();
+    }
+    expect_stdout: [
+        "ngSubmit",
+        "submit",
+        "reset",
+    ]
 }

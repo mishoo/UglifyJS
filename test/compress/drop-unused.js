@@ -1786,3 +1786,112 @@ issue_2418_5: {
         (function f() {});
     }
 }
+
+defun_lambda_same_name: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }
+        console.log(function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }(5));
+    }
+    expect: {
+        console.log(function f(n) {
+            return n ? n * f(n - 1) : 1;
+        }(5));
+    }
+    expect_stdout: "120"
+}
+
+issue_2660_1: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 2;
+        function f(b) {
+            return b && f() || a--;
+        }
+        f(1);
+        console.log(a);
+    }
+    expect: {
+        var a = 2;
+        (function f(b) {
+            return b && f() || a--;
+        })(1);
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_2660_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function f(b) {
+            b && f();
+            --a, a.toString();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        (function f(b) {
+            b && f(),
+            (--a).toString();
+        })(),
+        console.log(a);
+    }
+    expect_stdout: "0"
+}
+
+issue_2665: {
+    options = {
+        evaluate: true,
+        inline: true,
+        keep_fargs: false,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        function g() {
+            a-- && g();
+        }
+        typeof h == "function" && h();
+        function h() {
+            typeof g == "function" && g();
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        !function g() {
+            a-- && g();
+        }();
+        console.log(a);
+    }
+    expect_stdout: "-1"
+}

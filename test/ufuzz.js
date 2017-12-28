@@ -329,7 +329,8 @@ function createTopLevelCode() {
         rng(2) == 0
         ? createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0)
         : createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, DEFUN_OK, CANNOT_THROW, 0),
-        'console.log(null, a, b, c);' // preceding `null` makes for a cleaner output (empty string still shows up etc)
+        // preceding `null` makes for a cleaner output (empty string still shows up etc)
+        'console.log(null, a, b, c, Infinity, NaN, undefined);'
     ].join('\n');
 }
 
@@ -635,6 +636,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
         return getVarName();
+      case p++:
+        return getVarName() + createAssignment() + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:

@@ -1047,3 +1047,30 @@ issue_2597: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2666: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(a) {
+            return a = {
+                p: function() {
+                    return a;
+                }
+            };
+        }
+        console.log(typeof f().p());
+    }
+    expect: {
+        function f(a) {
+            return a = {
+                p: function() {
+                    return a;
+                }
+            };
+        }
+        console.log(typeof f().p());
+    }
+    expect_stdout: "object"
+}
