@@ -88,9 +88,8 @@ yield_before_punctuators: {
         })();
         function* g1() { (yield) }
         function* g2() { [yield] }
-        function* g3() { return {yield} } // Added return to avoid {} drop
-        function* g4() { yield, yield; }
-        function* g5() { (yield) ? yield : yield; }
+        function* g3() { yield, yield; }
+        function* g4() { (yield) ? yield : yield; }
     }
     expect: {
         iter = (function*() {
@@ -98,9 +97,8 @@ yield_before_punctuators: {
         })();
         function* g1() { (yield) }
         function* g2() { [yield] }
-        function* g3() { return {yield} }
-        function* g4() { yield, yield; }
-        function* g5() { (yield) ? yield : yield; }
+        function* g3() { yield, yield; }
+        function* g4() { (yield) ? yield : yield; }
     }
 }
 
@@ -198,4 +196,22 @@ yield_as_ES5_property: {
     }
     expect_exact: '"use strict";console.log({yield:42}.yield);'
     expect_stdout: "42"
+}
+
+issue_2689: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function* y() {
+            var t = yield x();
+            return new t();
+        }
+    }
+    expect: {
+        function* y() {
+            return new (yield x());
+        }
+    }
 }
