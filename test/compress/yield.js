@@ -209,9 +209,5 @@ issue_2689: {
             return new t();
         }
     }
-    expect: {
-        function* y() {
-            return new (yield x());
-        }
-    }
+    expect_exact: "function*y(){return new(yield x())}"
 }
