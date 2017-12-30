@@ -859,6 +859,7 @@ issue_2666: {
 issue_2692: {
     options = {
         dead_code: true,
+        reduce_vars: false,
     }
     input: {
         function f(a) {
