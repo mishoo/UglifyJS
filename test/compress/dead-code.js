@@ -855,3 +855,28 @@ issue_2666: {
     }
     expect_stdout: "object"
 }
+
+issue_2692: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(a) {
+            return a = g;
+            function g() {
+                return a;
+            }
+        }
+        console.log(typeof f()());
+    }
+    expect: {
+        function f(a) {
+            return a = g;
+            function g() {
+                return a;
+            }
+        }
+        console.log(typeof f()());
+    }
+    expect_stdout: "function"
+}
