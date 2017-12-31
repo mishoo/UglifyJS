@@ -800,12 +800,12 @@ issue_2601_1: {
     expect: {
         var a = "FAIL";
         (function() {
+            var b;
             b = "foo",
             function(b) {
                 b && b();
             }(),
             b && (a = "PASS");
-            var b;
         })(),
         console.log(a);
     }
