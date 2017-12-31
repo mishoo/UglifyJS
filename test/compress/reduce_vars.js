@@ -2312,8 +2312,7 @@ delay_def: {
     }
     expect: {
         function f() {
-            return a;
-            var a;
+            return;
         }
         function g() {
             return a;
@@ -2322,6 +2321,28 @@ delay_def: {
         console.log(f(), g());
     }
     expect_stdout: true
+}
+
+delay_def_lhs: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            long_name++;
+            return long_name;
+            var long_name;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            long_name++;
+            return long_name;
+            var long_name;
+        }());
+    }
+    expect_stdout: "NaN"
 }
 
 booleans: {
@@ -4951,4 +4972,30 @@ issue_2598: {
         console.log(g(false) === g(null));
     }
     expect_stdout: "true"
+}
+
+var_if: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            if (x()) {
+                var a;
+                if (!g) a = true;
+                if (a) g();
+            }
+        }
+    }
+    expect: {
+        function f() {
+            if (x()) {
+                var a;
+                if (!g) a = true;
+                if (a) g();
+            }
+        }
+    }
 }
