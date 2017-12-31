@@ -833,3 +833,29 @@ hoist_decl: {
         for (y(); 0;) z();
     }
 }
+
+for_init_var: {
+    options = {
+        join_vars: true,
+        unused: false,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            var b = 42;
+            for (var c = 5; c > 0;) c--;
+            a = "FAIL";
+            var a;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            for (var b = 42, c = 5, a; c > 0;) c--;
+            a = "FAIL";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
