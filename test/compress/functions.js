@@ -1646,3 +1646,28 @@ issue_2663_3: {
         "reset",
     ]
 }
+
+duplicate_argnames: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b, b, b) {
+            b && (a = "FAIL");
+        }
+        f(0, console);
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        console, b && (a = "FAIL");
+        var b;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
