@@ -1203,3 +1203,24 @@ issue_2560: {
         "2",
     ]
 }
+
+hoist_decl: {
+    options = {
+        conditionals: true,
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        if (x()) {
+            var a;
+            y();
+        } else {
+            z();
+            var b;
+        }
+    }
+    expect: {
+        var a, b;
+        x() ? y() : z();
+    }
+}

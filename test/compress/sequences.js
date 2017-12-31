@@ -796,3 +796,40 @@ cascade_assignment_in_return: {
         }
     }
 }
+
+hoist_defun: {
+    options = {
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        x();
+        function f() {}
+        y();
+    }
+    expect: {
+        function f() {}
+        x(), y();
+    }
+}
+
+hoist_decl: {
+    options = {
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        var a;
+        w();
+        var b = x();
+        y();
+        for (var c; 0;) z();
+        var d;
+    }
+    expect: {
+        var a;
+        w();
+        var b = x(), c, d;
+        for (y(); 0;) z();
+    }
+}
