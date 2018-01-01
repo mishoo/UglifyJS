@@ -1671,3 +1671,26 @@ duplicate_argnames: {
     }
     expect_stdout: "PASS"
 }
+
+loop_init_arg: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        for (var k in "12") (function (b) {
+            (b >>= 1) && (a = "FAIL"), b = 2;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        for (var k in "12")
+            b = void 0, (b >>= 1) && (a = "FAIL"), b = 2;
+        var b;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
