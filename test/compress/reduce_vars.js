@@ -1555,10 +1555,10 @@ defun_label: {
         !function() {
             console.log(function(a) {
                 L: {
-                    if (a) break L;
+                    if (2) break L;
                     return 1;
                 }
-            }(2));
+            }());
         }();
     }
     expect_stdout: true
@@ -3366,9 +3366,7 @@ obj_for_1: {
             console.log(i);
     }
     expect: {
-        // TODO make this work on harmony
-        var o = { a: 1 };
-        for (var i = o.a--; i; i--)
+        for (var i = { a: 1 }.a--; i; i--)
             console.log(i);
     }
     expect_stdout: "1"
@@ -3407,9 +3405,7 @@ array_forin_1: {
             console.log(b);
     }
     expect: {
-        // TODO make this work on harmony
-        var a = [ 1, 2, 3 ];
-        for (var b in a)
+        for (var b in [ 1, 2, 3 ])
             console.log(b);
     }
     expect_stdout: [
@@ -3454,9 +3450,7 @@ array_forof_1: {
             console.log(b);
     }
     expect: {
-        // TODO make this work on harmony
-        var a = [ 1, 2, 3 ];
-        for (var b of a)
+        for (var b of [ 1, 2, 3 ])
             console.log(b);
     }
     expect_stdout: [
@@ -5160,10 +5154,8 @@ escape_local_throw: {
     }
     expect: {
         function baz() {
-            // TODO: improve to match `master`
-            function foo() {}
             try {
-                throw foo;
+                throw function() {};
             } catch (bar) {
                 return bar;
             }
