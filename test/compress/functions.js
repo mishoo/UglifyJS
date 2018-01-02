@@ -1285,7 +1285,7 @@ issue_2630_1: {
     expect: {
         var c = 0;
         (function() {
-            while (c++, void (c = 1 + c));
+            while (void (c = 1 + ++c));
         })(),
         console.log(c);
     }
@@ -1316,7 +1316,7 @@ issue_2630_2: {
     expect: {
         var c = 0;
         !function() {
-            while (c += 1, void (c = 1 + c));
+            while (void (c = 1 + (c += 1)));
         }(), console.log(c);
     }
     expect_stdout: "2"
