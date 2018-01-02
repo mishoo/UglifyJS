@@ -1901,3 +1901,27 @@ inline_true: {
         "3",
     ]
 }
+
+use_before_init_in_loop: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        for (var b = 2; --b >= 0;) (function() {
+            var c = function() {
+                return 1;
+            }(c && (a = "FAIL"));
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        for (var b = 2; --b >= 0;) (function() {
+            var c = (c && (a = "FAIL"), 1);
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
