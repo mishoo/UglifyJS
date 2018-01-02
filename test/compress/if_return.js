@@ -326,3 +326,49 @@ issue_512: {
         }
     }
 }
+
+if_var_return: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        function f() {
+            var a;
+            return;
+            var b;
+        }
+        function g() {
+            var a;
+            if (u()) {
+                var b;
+                return v();
+                var c;
+            }
+            var d;
+            if (w()) {
+                var e;
+                return x();
+                var f;
+            } else {
+                var g;
+                y();
+                var h;
+            }
+            var i;
+            z();
+            var j;
+        }
+    }
+    expect: {
+        function f() {
+            var a, b;
+        }
+        function g() {
+            var a, b, c, d, e, f, g, h, i, j;
+            return u() ? v() : w() ? x() : (y(), z(), void 0);
+        }
+    }
+}
