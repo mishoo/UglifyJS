@@ -640,7 +640,13 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `if_return` (default: `true`) -- optimizations for if/return and if/continue
 
-- `inline` (default: `true`) -- embed simple functions
+- `inline` (default: `true`) -- inline calls to function with simple/`return` statement:
+  - `false` -- same as `0`
+  - `0` -- disabled inlining
+  - `1` -- inline simple functions
+  - `2` -- inline functions with arguments
+  - `3` -- inline functions with arguments and variables
+  - `true` -- same as `3`
 
 - `join_vars` (default: `true`) -- join consecutive `var` statements
 

@@ -1694,3 +1694,210 @@ loop_init_arg: {
     }
     expect_stdout: "PASS"
 }
+
+inline_false: {
+    options = {
+        inline: false,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_0: {
+    options = {
+        inline: 0,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_1: {
+    options = {
+        inline: 1,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_2: {
+    options = {
+        inline: 2,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        a = 2, console.log(a);
+        var a;
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_3: {
+    options = {
+        inline: 3,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        a = 2, console.log(a);
+        var a;
+        b = 3, c = b, console.log(c);
+        var b, c;
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_true: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        a = 2, console.log(a);
+        var a;
+        b = 3, c = b, console.log(c);
+        var b, c;
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
