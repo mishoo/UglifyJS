@@ -1522,3 +1522,125 @@ issue_2665: {
     }
     expect_stdout: "-1"
 }
+
+double_assign_1: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f1() {
+            var a = {};
+            var a = [];
+            return a;
+        }
+        function f2() {
+            var a = {};
+            a = [];
+            return a;
+        }
+        function f3() {
+            a = {};
+            var a = [];
+            return a;
+        }
+        function f4(a) {
+            a = {};
+            a = [];
+            return a;
+        }
+        function f5(a) {
+            var a = {};
+            a = [];
+            return a;
+        }
+        function f6(a) {
+            a = {};
+            var a = [];
+            return a;
+        }
+        console.log(f1(), f2(), f3(), f4(), f5(), f6());
+    }
+    expect: {
+        function f1() {
+            return [];
+        }
+        function f2() {
+            var a;
+            a = [];
+            return a;
+        }
+        function f3() {
+            return [];
+        }
+        function f4(a) {
+            a = [];
+            return a;
+        }
+        function f5(a) {
+            a = [];
+            return a;
+        }
+        function f6(a) {
+            a = [];
+            return a;
+        }
+        console.log(f1(), f2(), f3(), f4(), f5(), f6());
+    }
+    expect_stdout: true
+}
+
+double_assign_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var i = 0; i < 2; i++)
+            a = void 0, a = {}, console.log(a);
+        var a;
+    }
+    expect: {
+        for (var i = 0; i < 2; i++)
+            void 0, a = {}, console.log(a);
+        var a;
+    }
+}
+
+double_assign_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var i = 0; i < 2; i++)
+            a = void 0, a = { a: a }, console.log(a);
+        var a;
+    }
+    expect: {
+        for (var i = 0; i < 2; i++)
+            a = void 0, a = { a: a }, console.log(a);
+        var a;
+    }
+}
+
+cascade_drop_assign: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b = a = "PASS";
+        console.log(b);
+    }
+    expect: {
+        var b = "PASS";
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
