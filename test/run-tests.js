@@ -208,7 +208,8 @@ function run_compress_tests() {
                     // The test with expect_stdout passed.
                     // Now try to reminify original input with standard options
                     // to see if it matches expect_stdout.
-                    var reminified_result = U.minify(test.input.print_to_string(), {
+                    var reminify_input = test.input.print_to_string();
+                    var reminify_options = {
                         output: {
                             beautify: true,
                         },
@@ -222,7 +223,9 @@ function run_compress_tests() {
                             // keep_classnames: options.keep_classnames, // harmony
                             // probably other test affecting options have to be copied
                         },
-                    });
+                    };
+                    var reminify_options_json = JSON.stringify(JSON.parse(JSON.stringify(reminify_options)), null, 2);
+                    var reminified_result = U.minify(reminify_input, reminify_options);
                     if (reminified_result.error) {
                         log("!!! failed input reminify\n---INPUT---\n{input}\n--reminify error---\n{reminify_error}\n\n", {
                             input: input_formatted,
@@ -233,8 +236,9 @@ function run_compress_tests() {
                     } else {
                         stdout = sandbox.run_code(reminified_result.code);
                         if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
-                            log("!!! failed running reminified input\n---INPUT---\n{input}\n---reminified INPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                                input: input_formatted,
+                            log("!!! failed running reminified input\n---INPUT---\n{input}\n---options---\n{options}\n---reminified INPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                                input: reminify_input,
+                                options: reminify_options_json,
                                 output: reminified_result.code,
                                 expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
                                 expected: test.expect_stdout,
