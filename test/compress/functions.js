@@ -1416,7 +1416,7 @@ issue_2630_5: {
         !function() {
             do {
                 c *= 10;
-            } while (c += 3, (c = 2 + c) < 100);
+            } while ((c = 2 + (c += 3)) < 100);
         }();
         console.log(c);
     }
