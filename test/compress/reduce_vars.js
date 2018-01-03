@@ -5237,3 +5237,42 @@ defun_catch_6: {
     }
     expect_stdout: "42"
 }
+
+duplicate_lambda_defun_name_1: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function f(a) {
+            function f() {}
+            return f.length;
+        }());
+    }
+    expect: {
+        console.log(function f(a) {
+            function f() {}
+            return f.length;
+        }());
+    }
+    expect_stdout: "0"
+}
+
+duplicate_lambda_defun_name_2: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(a) {
+            function f() {}
+            return f.length;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            return function() {}.length;
+        }());
+    }
+    expect_stdout: "0"
+}

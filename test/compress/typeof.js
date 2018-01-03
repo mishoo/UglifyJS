@@ -138,3 +138,43 @@ typeof_defun_2: {
         "2",
     ]
 }
+
+duplicate_defun_arg_name: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        function long_name(long_name) {
+            return typeof long_name;
+        }
+        console.log(typeof long_name, long_name());
+    }
+    expect: {
+        function long_name(long_name) {
+            return typeof long_name;
+        }
+        console.log(typeof long_name, long_name());
+    }
+    expect_stdout: "function undefined"
+}
+
+duplicate_lambda_arg_name: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        console.log(function long_name(long_name) {
+            return typeof long_name;
+        }());
+    }
+    expect: {
+        console.log(function long_name(long_name) {
+            return typeof long_name;
+        }());
+    }
+    expect_stdout: "undefined"
+}
