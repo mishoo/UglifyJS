@@ -4999,3 +4999,241 @@ var_if: {
         }
     }
 }
+
+defun_assign: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(typeof a);
+        a = 42;
+        console.log(typeof a);
+        function a() {}
+        console.log(typeof a);
+    }
+    expect: {
+        console.log(typeof a);
+        a = 42;
+        console.log(typeof a);
+        function a() {}
+        console.log(typeof a);
+    }
+    expect_stdout: [
+        "function",
+        "number",
+        "number",
+    ]
+}
+
+defun_var_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var a = 42, b;
+        function a() {}
+        function b() {}
+        console.log(typeof a, typeof b);
+    }
+    expect: {
+        var a = 42;
+        function a() {}
+        console.log(typeof a, "function");
+    }
+    expect_stdout: "number function"
+}
+
+defun_var_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        function a() {}
+        function b() {}
+        var a = 42, b;
+        console.log(typeof a, typeof b);
+    }
+    expect: {
+        function a() {}
+        var a = 42;
+        console.log(typeof a, "function");
+    }
+    expect_stdout: "number function"
+}
+
+defun_var_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        function a() {}
+        function b() {}
+        console.log(typeof a, typeof b);
+        var a = 42, b;
+    }
+    expect: {
+        function a() {}
+        console.log(typeof a, "function");
+        var a = 42;
+    }
+    expect_stdout: "function function"
+}
+
+defun_catch_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function a() {}
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+defun_catch_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            function a() {}
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+defun_catch_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+            function a() {}
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+defun_catch_4: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            function a() {}
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            function a() {}
+            console.log(a);
+        }
+    }
+    expect_stdout: true
+}
+
+defun_catch_5: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+            function a() {}
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+            function a() {}
+        }
+    }
+    expect_stdout: true
+}
+
+defun_catch_6: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+        function a() {}
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}

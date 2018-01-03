@@ -100,7 +100,7 @@ typeof_defun_1: {
         g = 42;
         console.log("YES");
         "function" == typeof g && g();
-        h();
+        "function" == typeof h && h();
     }
     expect_stdout: [
         "YES",
