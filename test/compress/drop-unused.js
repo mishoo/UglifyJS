@@ -1627,3 +1627,20 @@ double_assign_3: {
         var a;
     }
 }
+
+cascade_drop_assign: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b = a = "PASS";
+        console.log(b);
+    }
+    expect: {
+        var b = "PASS";
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
