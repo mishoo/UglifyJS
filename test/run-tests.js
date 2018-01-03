@@ -205,6 +205,48 @@ function run_compress_tests() {
                             failed_files[file] = 1;
                         }
                     }
+                    // The test with expect_stdout passed.
+                    // Now try to reminify original input with standard options
+                    // to see if it matches expect_stdout.
+                    var reminified_result = U.minify(test.input.print_to_string(), {
+                        output: {
+                            beautify: true,
+                        },
+                        mangle: false,
+                        compress: {
+                            passes: 9,
+                            toplevel: true,
+                            global_defs: options.global_defs,
+                            keep_fargs: options.keep_fargs,
+                            keep_fnames: options.keep_fnames,
+                            // keep_classnames: options.keep_classnames, // harmony
+                            // probably other test affecting options have to be copied
+                        },
+                    });
+                    if (reminified_result.error) {
+                        log("!!! failed input reminify\n---INPUT---\n{input}\n--reminify error---\n{reminify_error}\n\n", {
+                            input: input_formatted,
+                            reminify_error: reminified_result.error,
+                        });
+                        failures++;
+                        failed_files[file] = 1;
+                    } else {
+                        stdout = sandbox.run_code(reminified_result.code);
+                        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+                            log("!!! failed running reminified input\n---INPUT---\n{input}\n---reminified INPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                                input: input_formatted,
+                                output: reminified_result.code,
+                                expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
+                                expected: test.expect_stdout,
+                                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                                actual: stdout,
+                            });
+                            failures++;
+                            failed_files[file] = 1;
+                        } else {
+                            //log("*** reminify passed: " + test.name);
+                        }
+                    }
                 }
             }
         }
