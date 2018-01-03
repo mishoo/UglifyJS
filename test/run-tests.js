@@ -208,7 +208,7 @@ function run_compress_tests() {
                     // The test with expect_stdout passed.
                     // Now try to reminify original input with standard options
                     // to see if it matches expect_stdout.
-                    var reminify_input = test.input.print_to_string();
+                    var reminify_input = input_code;
                     var reminify_options = {
                         output: {
                             beautify: true,
