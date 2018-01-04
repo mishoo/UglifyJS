@@ -827,3 +827,73 @@ issue_2519: {
     }
     expect_stdout: "5.5"
 }
+
+toplevel_const: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: false,
+    }
+    input: {
+        const a = {
+            b: 1,
+            c: 2
+        };
+        console.log(a.b + a.c);
+    }
+    expect: {
+        const a = {
+            b: 1,
+            c: 2
+        };
+        console.log(a.b + a.c);
+    }
+    expect_stdout: "3"
+}
+
+toplevel_let: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: false,
+    }
+    input: {
+        let a = {
+            b: 1,
+            c: 2
+        };
+        console.log(a.b + a.c);
+    }
+    expect: {
+        let a = {
+            b: 1,
+            c: 2
+        };
+        console.log(a.b + a.c);
+    }
+    expect_stdout: "3"
+    node_version: ">=6"
+}
+
+toplevel_var: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: false,
+    }
+    input: {
+        var a = {
+            b: 1,
+            c: 2
+        };
+        console.log(a.b + a.c);
+    }
+    expect: {
+        var a = {
+            b: 1,
+            c: 2
+        };
+        console.log(a.b + a.c);
+    }
+    expect_stdout: "3"
+}
