@@ -1887,3 +1887,21 @@ use_before_init_in_loop: {
     }
     expect_stdout: "PASS"
 }
+
+duplicate_arg_var: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(function(b) {
+            return b;
+            var b;
+        }("PASS"));
+    }
+    expect: {
+        console.log((b = "PASS", b));
+        var b;
+    }
+    expect_stdout: "PASS"
+}
