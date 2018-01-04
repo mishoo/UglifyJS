@@ -214,46 +214,6 @@ hoist_funs: {
     node_version: "<=4"
 }
 
-hoist_funs_strict: {
-    options = {
-        hoist_funs: true,
-    }
-    input: {
-        "use strict";
-        console.log(1, typeof f, typeof g);
-        if (console.log(2, typeof f, typeof g))
-            console.log(3, typeof f, typeof g);
-        else {
-            console.log(4, typeof f, typeof g);
-            function f() {}
-            console.log(5, typeof f, typeof g);
-        }
-        function g() {}
-        console.log(6, typeof f, typeof g);
-    }
-    expect: {
-        "use strict";
-        function g() {}
-        console.log(1, typeof f, typeof g);
-        if (console.log(2, typeof f, typeof g))
-            console.log(3, typeof f, typeof g);
-        else {
-            console.log(4, typeof f, typeof g);
-            function f() {}
-            console.log(5, typeof f, typeof g);
-        }
-        console.log(6, typeof f, typeof g);
-    }
-    expect_stdout: [
-        "1 'undefined' 'function'",
-        "2 'undefined' 'function'",
-        "4 'function' 'function'",
-        "5 'function' 'function'",
-        "6 'undefined' 'function'",
-    ]
-    node_version: ">=4"
-}
-
 issue_203: {
     options = {
         keep_fargs: false,

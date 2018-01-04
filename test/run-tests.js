@@ -100,6 +100,15 @@ function run_compress_tests() {
                 quote_style: 3,
                 keep_quoted_props: true
             });
+            try {
+                U.parse(input_code);
+            } catch (ex) {
+                log("!!! Cannot parse input\n---INPUT---\n{input}\n--PARSE ERROR--\n{error}\n\n", {
+                    input: input_formatted,
+                    error: ex,
+                });
+                return false;
+            }
             var options = U.defaults(test.options, {
                 warnings: false
             });
@@ -139,78 +148,74 @@ function run_compress_tests() {
                     output: output,
                     expected: expect
                 });
-                failures++;
-                failed_files[file] = 1;
+                return false;
             }
-            else {
-                // expect == output
-                try {
-                    var reparsed_ast = U.parse(output);
-                } catch (ex) {
-                    log("!!! Test matched expected result but cannot parse output\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--REPARSE ERROR--\n{error}\n\n", {
+            // expect == output
+            try {
+                U.parse(output);
+            } catch (ex) {
+                log("!!! Test matched expected result but cannot parse output\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--REPARSE ERROR--\n{error}\n\n", {
+                    input: input_formatted,
+                    output: output,
+                    error: ex,
+                });
+                return false;
+            }
+            if (test.expect_warnings) {
+                U.AST_Node.warn_function = original_warn_function;
+                var expected_warnings = make_code(test.expect_warnings, {
+                    beautify: false,
+                    quote_style: 2, // force double quote to match JSON
+                });
+                warnings_emitted = warnings_emitted.map(function(input) {
+                    return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
+                });
+                var actual_warnings = JSON.stringify(warnings_emitted);
+                if (expected_warnings != actual_warnings) {
+                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
                         input: input_formatted,
-                        output: output,
-                        error: ex.toString(),
+                        expected_warnings: expected_warnings,
+                        actual_warnings: actual_warnings,
                     });
-                    failures++;
-                    failed_files[file] = 1;
-                }
-                if (test.expect_warnings) {
-                    U.AST_Node.warn_function = original_warn_function;
-                    var expected_warnings = make_code(test.expect_warnings, {
-                        beautify: false,
-                        quote_style: 2, // force double quote to match JSON
-                    });
-                    warnings_emitted = warnings_emitted.map(function(input) {
-                      return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
-                    });
-                    var actual_warnings = JSON.stringify(warnings_emitted);
-                    if (expected_warnings != actual_warnings) {
-                        log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
-                            input: input_formatted,
-                            expected_warnings: expected_warnings,
-                            actual_warnings: actual_warnings,
-                        });
-                        failures++;
-                        failed_files[file] = 1;
-                    }
-                }
-                if (test.expect_stdout
-                    && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-                    var stdout = sandbox.run_code(input_code);
-                    if (test.expect_stdout === true) {
-                        test.expect_stdout = stdout;
-                    }
-                    if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
-                        log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                            input: input_formatted,
-                            expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
-                            expected: test.expect_stdout,
-                            actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                            actual: stdout,
-                        });
-                        failures++;
-                        failed_files[file] = 1;
-                    } else {
-                        stdout = sandbox.run_code(output);
-                        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
-                            log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                                input: input_formatted,
-                                expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
-                                expected: test.expect_stdout,
-                                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                                actual: stdout,
-                            });
-                            failures++;
-                            failed_files[file] = 1;
-                        }
-                    }
+                    return false;
                 }
             }
+            if (test.expect_stdout
+                && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
+                var stdout = sandbox.run_code(input_code);
+                if (test.expect_stdout === true) {
+                    test.expect_stdout = stdout;
+                }
+                if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+                    log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                        input: input_formatted,
+                        expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
+                        expected: test.expect_stdout,
+                        actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                        actual: stdout,
+                    });
+                    return false;
+                }
+                stdout = sandbox.run_code(output);
+                if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                        input: input_formatted,
+                        expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
+                        expected: test.expect_stdout,
+                        actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                        actual: stdout,
+                    });
+                    return false;
+                }
+            }
+            return true;
         }
         var tests = parse_test(path.resolve(dir, file));
         for (var i in tests) if (tests.hasOwnProperty(i)) {
-            test_case(tests[i]);
+            if (!test_case(tests[i])) {
+                failures++;
+                failed_files[file] = 1;
+            }
         }
     }
     files.forEach(function(file){
