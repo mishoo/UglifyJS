@@ -42,8 +42,15 @@ describe("minify", function() {
             original += code;
             compressed += result.code;
         });
-        assert.strictEqual(JSON.stringify(cache).slice(0, 20), '{"cname":5,"props":{');
-        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}var c=console.log.bind(console);function l(o){c("Foo:",2*o)}var f=n(3),i=r(12);c("qux",f,i),l(11);');
+        assert.strictEqual(JSON.stringify(cache).slice(0, 10), '{"props":{');
+        assert.strictEqual(compressed, [
+            "function n(n){return 3*n}",
+            "function r(n){return n/2}",
+            "var o=console.log.bind(console);",
+            'function c(n){o("Foo:",2*n)}',
+            "var a=n(3),b=r(12);",
+            'o("qux",a,b),c(11);',
+        ].join(""));
         assert.strictEqual(run_code(compressed), run_code(original));
     });
 
@@ -68,12 +75,48 @@ describe("minify", function() {
             original += code;
             compressed += result.code;
         });
-        assert.strictEqual(JSON.stringify(cache).slice(0, 28), '{"vars":{"cname":5,"props":{');
-        assert.strictEqual(compressed, 'function n(n){return 3*n}function r(n){return n/2}var c=console.log.bind(console);function l(o){c("Foo:",2*o)}var f=n(3),i=r(12);c("qux",f,i),l(11);');
+        assert.strictEqual(JSON.stringify(cache).slice(0, 18), '{"vars":{"props":{');
+        assert.strictEqual(compressed, [
+            "function n(n){return 3*n}",
+            "function r(n){return n/2}",
+            "var o=console.log.bind(console);",
+            'function c(n){o("Foo:",2*n)}',
+            "var a=n(3),b=r(12);",
+            'o("qux",a,b),c(11);',
+        ].join(""));
         assert.strictEqual(run_code(compressed), run_code(original));
     });
 
-    it("should not parse invalid use of reserved words", function() {
+    it("Should avoid mangled names in cache", function() {
+        var cache = {};
+        var original = "";
+        var compressed = "";
+        [
+            '"xxxyy";var i={s:1};',
+            '"xxyyy";var j={t:2,u:3},k=4;',
+            'console.log(i.s,j.t,j.u,k);',
+        ].forEach(function(code) {
+            var result = Uglify.minify(code, {
+                compress: false,
+                mangle: {
+                    properties: true,
+                    toplevel: true
+                },
+                nameCache: cache
+            });
+            if (result.error) throw result.error;
+            original += code;
+            compressed += result.code;
+        });
+        assert.strictEqual(compressed, [
+            '"xxxyy";var x={x:1};',
+            '"xxyyy";var y={y:2,a:3},a=4;',
+            'console.log(x.x,y.y,y.a,a);',
+        ].join(""));
+        assert.strictEqual(run_code(compressed), run_code(original));
+    });
+
+    it("Should not parse invalid use of reserved words", function() {
         assert.strictEqual(Uglify.minify("function enum(){}").error, undefined);
         assert.strictEqual(Uglify.minify("function static(){}").error, undefined);
         assert.strictEqual(Uglify.minify("function this(){}").error.message, "Unexpected token: name (this)");
