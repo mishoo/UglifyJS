@@ -1299,6 +1299,7 @@ issue_2630_2: {
         passes: 2,
         reduce_vars: true,
         sequences: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -1905,6 +1906,7 @@ inline_true: {
 use_before_init_in_loop: {
     options = {
         inline: true,
+        side_effects: true,
         toplevel: true,
     }
     input: {
@@ -1918,9 +1920,9 @@ use_before_init_in_loop: {
     }
     expect: {
         var a = "PASS";
-        for (var b = 2; --b >= 0;) (function() {
-            var c = (c && (a = "FAIL"), 1);
-        })();
+        for (var b = 2; --b >= 0;)
+            c = void 0, c = (c && (a = "FAIL"), 1);
+        var c;
         console.log(a);
     }
     expect_stdout: "PASS"
