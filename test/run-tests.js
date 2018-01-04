@@ -10,6 +10,7 @@ var semver = require("semver");
 var tests_dir = path.dirname(module.filename);
 var failures = 0;
 var failed_files = {};
+var minify_options = require("./ufuzz.json").map(JSON.stringify);
 
 run_compress_tests();
 if (failures) {
@@ -207,6 +208,9 @@ function run_compress_tests() {
                     });
                     return false;
                 }
+                if (!reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
+                    return false;
+                }
             }
             return true;
         }
@@ -350,4 +354,47 @@ function evaluate(code) {
     if (code instanceof U.AST_Node)
         code = make_code(code, { beautify: true });
     return new Function("return(" + code + ")")();
+}
+
+// Try to reminify original input with standard options
+// to see if it matches expect_stdout.
+function reminify(orig_options, input_code, input_formatted, expect_stdout) {
+    for (var i = 0; i < minify_options.length; i++) {
+        var options = JSON.parse(minify_options[i]);
+        if (options.compress) [
+            "keep_fargs",
+            "keep_fnames",
+        ].forEach(function(name) {
+            if (name in orig_options) {
+                options.compress[name] = orig_options[name];
+            }
+        });
+        var options_formatted = JSON.stringify(options, null, 4);
+        var result = U.minify(input_code, options);
+        if (result.error) {
+            log("!!! failed input reminify\n---INPUT---\n{input}\n--ERROR---\n{error}\n\n", {
+                input: input_formatted,
+                error: result.error,
+            });
+            return false;
+        } else {
+            var stdout = sandbox.run_code(result.code);
+            if (typeof expect_stdout != "string" && typeof stdout != "string" && expect_stdout.name == stdout.name) {
+                stdout = expect_stdout;
+            }
+            if (!sandbox.same_stdout(expect_stdout, stdout)) {
+                log("!!! failed running reminified input\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n---OUTPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                    input: input_formatted,
+                    options: options_formatted,
+                    output: result.code,
+                    expected_type: typeof expect_stdout == "string" ? "STDOUT" : "ERROR",
+                    expected: expect_stdout,
+                    actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                    actual: stdout,
+                });
+                return false;
+            }
+        }
+    }
+    return true;
 }
