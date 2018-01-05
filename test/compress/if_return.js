@@ -372,3 +372,27 @@ if_var_return: {
         }
     }
 }
+
+if_if_return_return: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f(a, b) {
+            if (a) {
+                if (b)
+                    return b;
+                return;
+            }
+            g();
+        }
+    }
+    expect: {
+        function f(a, b) {
+            if (a)
+                return b || void 0;
+            g();
+        }
+    }
+}
