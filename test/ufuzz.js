@@ -127,6 +127,9 @@ for (var i = 2; i < process.argv.length; ++i) {
 }
 
 var VALUES = [
+    '"a"',
+    '"b"',
+    '"c"',
     '""',
     'true',
     'false',
