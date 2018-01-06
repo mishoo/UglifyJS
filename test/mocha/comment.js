@@ -219,4 +219,24 @@ describe("Comment", function() {
         if (result.error) throw result.error;
         assert.strictEqual(result.code, "/*a*/ /*b*/(function(){/*c*/}/*d*/ /*e*/)();");
     });
+
+    it("Should output line comments after statements", function() {
+        var result = uglify.minify([
+            "x()//foo",
+            "{y()//bar",
+            "}",
+        ].join("\n"), {
+            compress: false,
+            mangle: false,
+            output: {
+                comments: "all",
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "x();//foo",
+            "{y();//bar",
+            "}",
+        ].join("\n"));
+    });
 });
