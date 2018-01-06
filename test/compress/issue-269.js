@@ -64,3 +64,27 @@ strings_concat: {
 		);
 	}
 }
+
+regexp: {
+	options = {
+		evaluate: true,
+		unsafe: true,
+	}
+	input: {
+		RegExp("foo");
+		RegExp("bar", "ig");
+		RegExp(foo);
+		RegExp("bar", ig);
+		RegExp("should", "fail");
+	}
+	expect: {
+		/foo/;
+		/bar/ig;
+		RegExp(foo);
+		RegExp("bar", ig);
+		RegExp("should", "fail");
+	}
+	expect_warnings: [
+		'WARN: Error converting RegExp("should","fail") [test/compress/issue-269.js:78,2]',
+	]
+}
