@@ -1905,3 +1905,26 @@ duplicate_arg_var: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2737: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            while (a());
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect: {
+        (function(a) {
+            while (a());
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect_stdout: "function"
+}
