@@ -299,7 +299,7 @@ unsafe_evaluate_modified: {
         console.log(function(){ var o={p:1}; o.p++; console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:2}; --o.p; console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:3}; o.p += ""; console.log(o.p); return o.p; }());
-        console.log(function(){ var o={p:4}; o = {}; console.log(o.p); return o.p; }());
+        console.log(function(){ var o; o = {}; console.log(o.p); return o.p; }());
         console.log(function(){ var o={p:5}; o.p = -9; console.log(o.p); return o.p; }());
         function inc() { this.p++; }
         console.log(function(){ var o={p:6}; inc.call(o); console.log(o.p); return o.p; }());
@@ -2312,8 +2312,7 @@ delay_def: {
     }
     expect: {
         function f() {
-            return a;
-            var a;
+            return;
         }
         function g() {
             return a;
@@ -2322,6 +2321,28 @@ delay_def: {
         console.log(f(), g());
     }
     expect_stdout: true
+}
+
+delay_def_lhs: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            long_name++;
+            return long_name;
+            var long_name;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            long_name++;
+            return long_name;
+            var long_name;
+        }());
+    }
+    expect_stdout: "NaN"
 }
 
 booleans: {
@@ -5476,4 +5497,307 @@ issue_2670: {
     }
     expect_stdout: "PASS"
     node_version: ">=6"
+}
+
+var_if: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            if (x()) {
+                var a;
+                if (!g) a = true;
+                if (a) g();
+            }
+        }
+    }
+    expect: {
+        function f() {
+            if (x()) {
+                var a;
+                if (!g) a = true;
+                if (a) g();
+            }
+        }
+    }
+}
+
+defun_assign: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(typeof a);
+        a = 42;
+        console.log(typeof a);
+        function a() {}
+        console.log(typeof a);
+    }
+    expect: {
+        console.log(typeof a);
+        a = 42;
+        console.log(typeof a);
+        function a() {}
+        console.log(typeof a);
+    }
+    expect_stdout: [
+        "function",
+        "number",
+        "number",
+    ]
+}
+
+defun_var_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var a = 42, b;
+        function a() {}
+        function b() {}
+        console.log(typeof a, typeof b);
+    }
+    expect: {
+        var a = 42;
+        function a() {}
+        console.log(typeof a, "function");
+    }
+    expect_stdout: "number function"
+}
+
+defun_var_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        function a() {}
+        function b() {}
+        var a = 42, b;
+        console.log(typeof a, typeof b);
+    }
+    expect: {
+        function a() {}
+        var a = 42;
+        console.log(typeof a, "function");
+    }
+    expect_stdout: "number function"
+}
+
+defun_var_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        function a() {}
+        function b() {}
+        console.log(typeof a, typeof b);
+        var a = 42, b;
+    }
+    expect: {
+        function a() {}
+        console.log(typeof a, "function");
+        var a = 42;
+    }
+    expect_stdout: "function function"
+}
+
+defun_catch_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function a() {}
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+defun_catch_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            function a() {}
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+defun_catch_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+            function a() {}
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+defun_catch_4: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            function a() {}
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            function a() {}
+            console.log(a);
+        }
+    }
+    expect_stdout: true
+}
+
+defun_catch_5: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+            function a() {}
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+            function a() {}
+        }
+    }
+    expect_stdout: true
+}
+
+defun_catch_6: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+        function a() {}
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (a) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "42"
+}
+
+duplicate_lambda_defun_name_1: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function f(a) {
+            function f() {}
+            return f.length;
+        }());
+    }
+    expect: {
+        console.log(function f(a) {
+            function f() {}
+            return f.length;
+        }());
+    }
+    expect_stdout: "0"
+}
+
+duplicate_lambda_defun_name_2: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(a) {
+            function f() {}
+            return f.length;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            return function() {}.length;
+        }());
+    }
+    expect_stdout: "0"
 }

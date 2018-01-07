@@ -348,6 +348,57 @@ set_immutable_4: {
     expect_stdout: true
 }
 
+set_immutable_5: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var a = 1;
+        a.foo += "";
+        if (a.foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        1..foo += "";
+        1..foo ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: true
+}
+
+set_immutable_6: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        a.foo += "";
+        if (a.foo) console.log("FAIL");
+        else console.log("PASS");
+    }
+    expect: {
+        1..foo ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: true
+}
+
 set_mutable_1: {
     options = {
         collapse_vars: true,

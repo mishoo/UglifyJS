@@ -5,11 +5,7 @@
 
 var site = "http://browserbench.org/JetStream";
 if (typeof phantom == "undefined") {
-    // workaround for tty output truncation upon process.exit()
-    [process.stdout, process.stderr].forEach(function(stream){
-        if (stream._handle && stream._handle.setBlocking)
-            stream._handle.setBlocking(true);
-    });
+    require("../tools/exit");
     var args = process.argv.slice(2);
     var debug = args.indexOf("--debug");
     if (debug >= 0) {
