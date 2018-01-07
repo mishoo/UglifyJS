@@ -100,7 +100,7 @@ typeof_defun_1: {
         g = 42;
         console.log("YES");
         "function" == typeof g && g();
-        h();
+        "function" == typeof h && h();
     }
     expect_stdout: [
         "YES",
@@ -137,4 +137,167 @@ typeof_defun_2: {
         "1",
         "2",
     ]
+}
+
+duplicate_defun_arg_name: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        function long_name(long_name) {
+            return typeof long_name;
+        }
+        console.log(typeof long_name, long_name());
+    }
+    expect: {
+        function long_name(long_name) {
+            return typeof long_name;
+        }
+        console.log(typeof long_name, long_name());
+    }
+    expect_stdout: "function undefined"
+}
+
+duplicate_lambda_arg_name: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        console.log(function long_name(long_name) {
+            return typeof long_name;
+        }());
+    }
+    expect: {
+        console.log(function long_name(long_name) {
+            return typeof long_name;
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_2728_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        (function arguments() {
+            console.log(typeof arguments);
+        })();
+    }
+    expect: {
+        (function arguments() {
+            console.log(typeof arguments);
+        })();
+    }
+    expect_stdout: "object"
+}
+
+issue_2728_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        function arguments() {
+            return typeof arguments;
+        }
+        console.log(typeof arguments, arguments());
+    }
+    expect: {
+        function arguments() {
+            return typeof arguments;
+        }
+        console.log(typeof arguments, arguments());
+    }
+    expect_stdout: "function object"
+}
+
+issue_2728_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        (function() {
+            function arguments() {
+            }
+            console.log(typeof arguments);
+        })();
+    }
+    expect: {
+        (function() {
+            function arguments() {
+            }
+            console.log("function");
+        })();
+    }
+    expect_stdout: "function"
+}
+
+issue_2728_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+    }
+    input: {
+        function arguments() {
+        }
+        console.log(typeof arguments);
+    }
+    expect: {
+        function arguments() {
+        }
+        console.log("function");
+    }
+    expect_stdout: "function"
+}
+
+issue_2728_5: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        (function arguments(arguments) {
+            console.log(typeof arguments);
+        })();
+    }
+    expect: {
+        (function arguments(arguments) {
+            console.log(typeof arguments);
+        })();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_2728_6: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        function arguments(arguments) {
+            return typeof arguments;
+        }
+        console.log(typeof arguments, arguments());
+    }
+    expect: {
+        function arguments(arguments) {
+            return typeof arguments;
+        }
+        console.log(typeof arguments, arguments());
+    }
+    expect_stdout: "function undefined"
 }

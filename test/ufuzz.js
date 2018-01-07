@@ -6,11 +6,7 @@
 // bin/uglifyjs s.js -c && bin/uglifyjs s.js -c passes=3 && bin/uglifyjs s.js -c passes=3 -m
 // cat s.js | node && node s.js && bin/uglifyjs s.js -c | node && bin/uglifyjs s.js -c passes=3 | node && bin/uglifyjs s.js -c passes=3 -m | node
 
-// workaround for tty output truncation upon process.exit()
-[process.stdout, process.stderr].forEach(function(stream){
-    if (stream._handle && stream._handle.setBlocking)
-        stream._handle.setBlocking(true);
-});
+require("../tools/exit");
 
 var UglifyJS = require("..");
 var randomBytes = require("crypto").randomBytes;
@@ -127,6 +123,9 @@ for (var i = 2; i < process.argv.length; ++i) {
 }
 
 var VALUES = [
+    '"a"',
+    '"b"',
+    '"c"',
     '""',
     'true',
     'false',

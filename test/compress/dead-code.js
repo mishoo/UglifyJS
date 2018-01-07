@@ -1100,3 +1100,31 @@ issue_2692: {
     }
     expect_stdout: "function"
 }
+
+issue_2701: {
+    options = {
+        dead_code: true,
+        inline: false,
+    }
+    input: {
+        function f(a) {
+            return a = function() {
+                return function() {
+                    return a;
+                };
+            }();
+        }
+        console.log(typeof f()());
+    }
+    expect: {
+        function f(a) {
+            return a = function() {
+                return function() {
+                    return a;
+                };
+            }();
+        }
+        console.log(typeof f()());
+    }
+    expect_stdout: "function"
+}

@@ -800,12 +800,12 @@ issue_2601_1: {
     expect: {
         var a = "FAIL";
         (function() {
+            var b;
             b = "foo",
             function(b) {
                 b && b();
             }(),
             b && (a = "PASS");
-            var b;
         })(),
         console.log(a);
     }
@@ -1318,7 +1318,7 @@ issue_2630_1: {
     expect: {
         var c = 0;
         (function() {
-            while (c++, void (c = 1 + c));
+            while (void (c = 1 + ++c));
         })(),
         console.log(c);
     }
@@ -1332,6 +1332,7 @@ issue_2630_2: {
         passes: 2,
         reduce_vars: true,
         sequences: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -1349,7 +1350,7 @@ issue_2630_2: {
     expect: {
         var c = 0;
         !function() {
-            while (c += 1, void (c = 1 + c));
+            while (void (c = 1 + (c += 1)));
         }(), console.log(c);
     }
     expect_stdout: "2"
@@ -1449,7 +1450,7 @@ issue_2630_5: {
         !function() {
             do {
                 c *= 10;
-            } while (c += 3, (c = 2 + c) < 100);
+            } while ((c = 2 + (c += 3)) < 100);
         }();
         console.log(c);
     }
@@ -1515,7 +1516,8 @@ issue_2647_2: {
     }
     expect: {
         (function() {
-            console.log("pass".toUpperCase());
+            console.log((() => (x = "pass", x.toUpperCase()))());
+            var x;
         })();
     }
     expect_stdout: "PASS"
@@ -1770,4 +1772,348 @@ issue_2663_3: {
         "submit",
         "reset",
     ]
+}
+
+duplicate_argnames: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b, b, b) {
+            b && (a = "FAIL");
+        }
+        f(0, console);
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        console, b && (a = "FAIL");
+        var b;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+loop_init_arg: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        for (var k in "12") (function (b) {
+            (b >>= 1) && (a = "FAIL"), b = 2;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        for (var k in "12")
+            b = void 0, (b >>= 1) && (a = "FAIL"), b = 2;
+        var b;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+inline_false: {
+    options = {
+        inline: false,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_0: {
+    options = {
+        inline: 0,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_1: {
+    options = {
+        inline: 1,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_2: {
+    options = {
+        inline: 2,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        a = 2, console.log(a);
+        var a;
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_3: {
+    options = {
+        inline: 3,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        a = 2, console.log(a);
+        var a;
+        b = 3, c = b, console.log(c);
+        var b, c;
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+inline_true: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function() {
+            console.log(1);
+        })();
+        (function(a) {
+            console.log(a);
+        })(2);
+        (function(b) {
+            var c = b;
+            console.log(c);
+        })(3);
+    }
+    expect: {
+        console.log(1);
+        a = 2, console.log(a);
+        var a;
+        b = 3, c = b, console.log(c);
+        var b, c;
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+}
+
+use_before_init_in_loop: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        for (var b = 2; --b >= 0;) (function() {
+            var c = function() {
+                return 1;
+            }(c && (a = "FAIL"));
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        for (var b = 2; --b >= 0;)
+            c = void 0, c = (c && (a = "FAIL"), 1);
+        var c;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+duplicate_arg_var: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(function(b) {
+            return b;
+            var b;
+        }("PASS"));
+    }
+    expect: {
+        console.log((b = "PASS", b));
+        var b;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2737_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            while (a());
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect: {
+        (function(a) {
+            while (a());
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect_stdout: "function"
+}
+
+issue_2737_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(bar) {
+            for (;bar(); ) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect: {
+        (function(bar) {
+            for (;bar(); ) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect_stdout: "PASS"
 }

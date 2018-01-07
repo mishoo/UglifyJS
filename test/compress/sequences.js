@@ -820,3 +820,66 @@ cascade_assignment_in_return: {
         }
     }
 }
+
+hoist_defun: {
+    options = {
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        x();
+        function f() {}
+        y();
+    }
+    expect: {
+        function f() {}
+        x(), y();
+    }
+}
+
+hoist_decl: {
+    options = {
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        var a;
+        w();
+        var b = x();
+        y();
+        for (var c; 0;) z();
+        var d;
+    }
+    expect: {
+        var a;
+        w();
+        var b = x(), c, d;
+        for (y(); 0;) z();
+    }
+}
+
+for_init_var: {
+    options = {
+        join_vars: true,
+        unused: false,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            var b = 42;
+            for (var c = 5; c > 0;) c--;
+            a = "FAIL";
+            var a;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            for (var b = 42, c = 5, a; c > 0;) c--;
+            a = "FAIL";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
