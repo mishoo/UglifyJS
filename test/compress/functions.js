@@ -1906,7 +1906,7 @@ duplicate_arg_var: {
     expect_stdout: "PASS"
 }
 
-issue_2737: {
+issue_2737_1: {
     options = {
         inline: true,
         reduce_vars: true,
@@ -1927,4 +1927,27 @@ issue_2737: {
         });
     }
     expect_stdout: "function"
+}
+
+issue_2737_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(bar) {
+            for (;bar(); ) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect: {
+        (function(bar) {
+            for (;bar(); ) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect_stdout: "PASS"
 }
