@@ -1905,3 +1905,49 @@ duplicate_arg_var: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2737_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            while (a());
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect: {
+        (function(a) {
+            while (a());
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect_stdout: "function"
+}
+
+issue_2737_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(bar) {
+            for (;bar(); ) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect: {
+        (function(bar) {
+            for (;bar(); ) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect_stdout: "PASS"
+}
