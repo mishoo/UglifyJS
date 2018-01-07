@@ -5632,6 +5632,8 @@ defun_catch_1: {
         }
     }
     expect: {
+        // TODO: drop unused AST_Defun
+        function a() {}
         try {
             throw 42;
         } catch (a) {
@@ -5657,6 +5659,8 @@ defun_catch_2: {
     }
     expect: {
         try {
+            // TODO: drop unused AST_Defun
+            function a() {}
             throw 42;
         } catch (a) {
             console.log(a);
@@ -5682,6 +5686,8 @@ defun_catch_3: {
     expect: {
         try {
             throw 42;
+            // TODO: drop unused AST_Defun
+            function a() {}
         } catch (a) {
             console.log(a);
         }
@@ -5759,6 +5765,8 @@ defun_catch_6: {
         } catch (a) {
             console.log(a);
         }
+        // TODO: drop unused AST_Defun
+        function a() {}
     }
     expect_stdout: "42"
 }
