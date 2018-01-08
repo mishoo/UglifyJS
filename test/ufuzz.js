@@ -8,7 +8,7 @@
 
 require("../tools/exit");
 
-var UglifyJS = require("..");
+var UglifyJS = require("./node");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("./sandbox");
 
@@ -1003,6 +1003,7 @@ function log_suspects(minify_options, component) {
             var o = JSON.parse(JSON.stringify(options));
             o[name] = false;
             m[component] = o;
+            UglifyJS.SymbolDef.next_id = 1;
             var result = UglifyJS.minify(original_code, m);
             if (result.error) {
                 errorln("Error testing options." + component + "." + name);
