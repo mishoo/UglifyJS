@@ -492,3 +492,44 @@ dead_code_condition: {
     }
     expect_stdout: "1"
 }
+
+issue_2740_1: {
+    options = {
+        loops: true,
+    }
+    input: {
+        for (; ; ) break;
+        for (a(); ; ) break;
+        for (; b(); ) break;
+        for (c(); d(); ) break;
+        for (; ; e()) break;
+        for (f(); ; g()) break;
+        for (; h(); i()) break;
+        for (j(); k(); l()) break;
+    }
+    expect: {
+        a();
+        b();
+        c();
+        d();
+        f();
+        h();
+        j();
+        k();
+    }
+}
+
+issue_2740_2: {
+    options = {
+        loops: true,
+        passes: 2,
+    }
+    input: {
+        L1: while (x()) {
+            break L1;
+        }
+    }
+    expect: {
+        x();
+    }
+}
