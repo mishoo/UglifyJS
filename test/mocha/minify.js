@@ -383,7 +383,7 @@ describe("minify", function() {
                         toplevel: true,
                     },
                     rename: true,
-                }).code, "var a2;(a2=y)(a2);");
+                }).code, "var a;(a=y)(a);");
             }
         });
     });
