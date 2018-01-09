@@ -215,7 +215,7 @@ unused_block_decls: {
     input: {
         function foo() {
             {
-                const x;
+                const x = 1;
             }
             {
                 let y;

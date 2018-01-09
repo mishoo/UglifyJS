@@ -41,7 +41,7 @@ do_not_remove_anon_blocks_if_they_have_decls: {
                 var x;
             }
             {
-                const y;
+                const y = 1;
                 class Zee {};
             }
         }
@@ -59,7 +59,7 @@ do_not_remove_anon_blocks_if_they_have_decls: {
             }
             var x;
             {
-                const y;
+                const y = 1;
                 class Zee {}
             }
         }
@@ -77,12 +77,12 @@ remove_unused_in_global_block: {
     input: {
         {
             let x;
-            const y;
+            const y = 1;
             class Zee {};
             var w;
         }
         let ex;
-        const why;
+        const why = 2;
         class Zed {};
         var wut;
         console.log(x, y, Zee);
@@ -90,7 +90,7 @@ remove_unused_in_global_block: {
     expect: {
         var w;
         let ex;
-        const why;
+        const why = 2;
         class Zed {};
         var wut;
         console.log(x, y, Zee);

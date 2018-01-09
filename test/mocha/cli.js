@@ -408,7 +408,7 @@ describe("bin/uglifyjs", function () {
             assert.ok(err);
             assert.strictEqual(stdout, "");
             assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
-                "Parse error at test/input/invalid/const.js:7,11",
+                "Parse error at test/input/invalid/const.js:2,11",
                 "    const a;",
                 "           ^",
                 "ERROR: Missing initializer in const declaration"
