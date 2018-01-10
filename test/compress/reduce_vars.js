@@ -5809,3 +5809,60 @@ duplicate_lambda_defun_name_2: {
     }
     expect_stdout: "0"
 }
+
+issue_2757_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        let u;
+        (function() {
+            let v;
+            console.log(u, v);
+        })();
+    }
+    expect: {
+        let u;
+        console.log(u, void 0);
+    }
+    expect_stdout: "undefined undefined"
+    node_version: ">=6"
+}
+
+issue_2757_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            let bar;
+            const unused = function() {
+                bar = true;
+            };
+            if (!bar) {
+                console.log(1);
+            }
+            console.log(2);
+        }());
+    }
+    expect: {
+        console.log(1),
+        console.log(2);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+    node_version: ">=6"
+}
