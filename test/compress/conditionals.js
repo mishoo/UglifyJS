@@ -1224,3 +1224,46 @@ hoist_decl: {
         x() ? y() : z();
     }
 }
+
+to_and_or: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var values = [
+            0,
+            null,
+            true,
+            "foo",
+            false,
+            -1 / 0,
+            void 0,
+        ];
+        values.forEach(function(x) {
+            values.forEach(function(y) {
+                values.forEach(function(z) {
+                    console.log(x ? y || z : z);
+                });
+            });
+        });
+    }
+    expect: {
+        var values = [
+            0,
+            null,
+            true,
+            "foo",
+            false,
+            -1 / 0,
+            void 0,
+        ];
+        values.forEach(function(x) {
+            values.forEach(function(y) {
+                values.forEach(function(z) {
+                    console.log(x && y || z);
+                });
+            });
+        });
+    }
+    expect_stdout: true
+}
