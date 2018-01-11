@@ -1101,7 +1101,7 @@ const_prop_assign_pure: {
     }
 }
 
-join_object_assignments: {
+join_object_assignments_1: {
     options = {
         evaluate: true,
         join_vars: true,
@@ -1137,4 +1137,28 @@ join_object_assignments: {
         }());
     }
     expect_stdout: true
+}
+
+join_object_assignments_2: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        join_vars: true,
+        passes: 3,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            foo: 1,
+        };
+        o.bar = 2;
+        o.baz = 3;
+        console.log(o.foo, o.bar + o.bar, o.foo * o.bar * o.baz);
+    }
+    expect: {
+        console.log(1, 4, 6);
+    }
+    expect_stdout: "1 4 6"
 }
