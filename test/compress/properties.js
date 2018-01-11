@@ -1100,3 +1100,65 @@ const_prop_assign_pure: {
         x();
     }
 }
+
+join_object_assignments_1: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var x = {
+                a: 1,
+                c: (console.log("c"), "C"),
+            };
+            x.b = 2;
+            x[3] = function() {
+                console.log(x);
+            },
+            x["a"] = /foo/,
+            x.bar = x;
+            return x;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var x = {
+                a: 1,
+                c: (console.log("c"), "C"),
+                b: 2,
+                3: function() {
+                    console.log(x);
+                },
+                a: /foo/,
+            };
+            x.bar = x;
+            return x;
+        }());
+    }
+    expect_stdout: true
+}
+
+join_object_assignments_2: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        join_vars: true,
+        passes: 3,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            foo: 1,
+        };
+        o.bar = 2;
+        o.baz = 3;
+        console.log(o.foo, o.bar + o.bar, o.foo * o.bar * o.baz);
+    }
+    expect: {
+        console.log(1, 4, 6);
+    }
+    expect_stdout: "1 4 6"
+}
