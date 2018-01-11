@@ -1100,3 +1100,39 @@ const_prop_assign_pure: {
         x();
     }
 }
+
+join_object_assignments: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var x = {
+                a: 1,
+            };
+            x.b = 2;
+            x[3] = function() {
+                console.log(x);
+            },
+            x["a"] = /foo/,
+            x.bar = x;
+            return x;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var x = {
+                a: 1,
+                b: 2,
+                3: function() {
+                    console.log(x);
+                },
+                a: /foo/,
+            };
+            x.bar = x;
+            return x;
+        }());
+    }
+    expect_stdout: true
+}
