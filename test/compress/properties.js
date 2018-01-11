@@ -1162,3 +1162,29 @@ join_object_assignments_2: {
     }
     expect_stdout: "1 4 6"
 }
+
+join_object_assignments_3: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {
+                a: "PASS",
+            }, a = o.a;
+            o.a = "FAIL";
+            return a;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var o = {
+                a: "PASS",
+            }, a = o.a;
+            o.a = "FAIL";
+            return a;
+        }());
+    }
+    expect_stdout: "PASS"
+}
