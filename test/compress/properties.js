@@ -1110,6 +1110,7 @@ join_object_assignments: {
         console.log(function() {
             var x = {
                 a: 1,
+                c: (console.log("c"), "C"),
             };
             x.b = 2;
             x[3] = function() {
@@ -1124,6 +1125,7 @@ join_object_assignments: {
         console.log(function() {
             var x = {
                 a: 1,
+                c: (console.log("c"), "C"),
                 b: 2,
                 3: function() {
                     console.log(x);
