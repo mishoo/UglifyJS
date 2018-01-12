@@ -5276,3 +5276,29 @@ duplicate_lambda_defun_name_2: {
     }
     expect_stdout: "0"
 }
+
+issue_2774: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log({
+            get a() {
+                var b;
+                (b = true) && b.c;
+                b = void 0;
+            }
+        }.a);
+    }
+    expect: {
+        console.log({
+            get a() {
+                var b;
+                (b = true) && b.c;
+                b = void 0;
+            }
+        }.a);
+    }
+    expect_stdout: "undefined"
+}
