@@ -2018,3 +2018,51 @@ cascade_drop_assign: {
     }
     expect_stdout: "PASS"
 }
+
+chained_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            var c = a, c = b;
+            b++;
+            return c;
+        }(1, 2));
+    }
+    expect: {
+        console.log(function(a, b) {
+            var c = b;
+            b++;
+            return c;
+        }(0, 2));
+    }
+    expect_stdout: "2"
+}
+
+issue_2768: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL", c = 1;
+        var c = function(b) {
+            var d = b = a;
+            var e = --b + (d && (a = "PASS"));
+        }();
+        console.log(a, typeof c);
+    }
+    expect: {
+        var a = "FAIL";
+        var c = (d = a, 0, void (d && (a = "PASS")));
+        var d;
+        console.log(a, typeof c);
+    }
+    expect_stdout: "PASS undefined"
+}

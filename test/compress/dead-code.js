@@ -1128,3 +1128,32 @@ issue_2701: {
     }
     expect_stdout: "function"
 }
+
+issue_2749: {
+    options = {
+        dead_code: true,
+        inline: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 2, c = "PASS";
+        while (a--)
+            (function() {
+                return b ? c = "FAIL" : b = 1;
+                try {
+                } catch (b) {
+                    var b;
+                }
+            })();
+        console.log(c);
+    }
+    expect: {
+        var a = 2, c = "PASS";
+        while (a--)
+            b = void 0, b ? c = "FAIL" : b = 1;
+        var b;
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}

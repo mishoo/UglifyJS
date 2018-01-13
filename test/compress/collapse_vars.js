@@ -2296,6 +2296,7 @@ toplevel_single_reference: {
 unused_orig: {
     options = {
         collapse_vars: true,
+        dead_code: true,
         passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
@@ -2323,7 +2324,7 @@ unused_orig: {
             var c = b;
             for (var d in c) {
                 var a;
-                return --b + (a = c[0]);
+                return --b + c[0];
             }
             a && a.NaN;
         }([2]), a);

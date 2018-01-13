@@ -536,3 +536,182 @@ dead_code_condition: {
     }
     expect_stdout: "1"
 }
+
+issue_2740_1: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        for (; ; ) break;
+        for (a(); ; ) break;
+        for (; b(); ) break;
+        for (c(); d(); ) break;
+        for (; ; e()) break;
+        for (f(); ; g()) break;
+        for (; h(); i()) break;
+        for (j(); k(); l()) break;
+    }
+    expect: {
+        a();
+        b();
+        c();
+        d();
+        f();
+        h();
+        j();
+        k();
+    }
+}
+
+issue_2740_2: {
+    options = {
+        dead_code: true,
+        loops: true,
+        passes: 2,
+    }
+    input: {
+        L1: while (x()) {
+            break L1;
+        }
+    }
+    expect: {
+        x();
+    }
+}
+
+issue_2740_3: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        L1: for (var x = 0; x < 3; x++) {
+            L2: for (var y = 0; y < 2; y++) {
+                break L1;
+            }
+        }
+        console.log(x, y);
+    }
+    expect: {
+        L1: for (var x = 0; x < 3; x++)
+            for (var y = 0; y < 2; y++)
+                break L1;
+        console.log(x, y);
+    }
+    expect_stdout: "0 0"
+}
+
+issue_2740_4: {
+    options = {
+        dead_code: true,
+        loops: true,
+        passes: 2,
+    }
+    input: {
+        L1: for (var x = 0; x < 3; x++) {
+            L2: for (var y = 0; y < 2; y++) {
+                break L2;
+            }
+        }
+        console.log(x, y);
+    }
+    expect: {
+        for (var x = 0; x < 3; x++) {
+            var y = 0;
+            y < 2;
+        }
+        console.log(x, y);
+    }
+    expect_stdout: "3 0"
+}
+
+issue_2740_5: {
+    options = {
+        dead_code: true,
+        loops: true,
+        passes: 2,
+    }
+    input: {
+        L1: for (var x = 0; x < 3; x++) {
+            break L1;
+            L2: for (var y = 0; y < 2; y++) {
+                break L2;
+            }
+        }
+        console.log(x, y);
+    }
+    expect: {
+        var x = 0;
+        x < 3;
+        var y;
+        console.log(x,y);
+    }
+    expect_stdout: "0 undefined"
+}
+
+issue_2740_6: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        const a = 9, b = 0;
+        for (const a = 1; a < 3; ++b) break;
+        console.log(a, b);
+    }
+    expect: {
+        const a = 9, b = 0;
+        {
+            const a = 1;
+            a < 3;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "9 0"
+    node_version: ">=6"
+}
+
+issue_2740_7: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        let a = 9, b = 0;
+        for (const a = 1; a < 3; ++b) break;
+        console.log(a, b);
+    }
+    expect: {
+        let a = 9, b = 0;
+        {
+            const a = 1;
+            a < 3;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "9 0"
+    node_version: ">=6"
+}
+
+issue_2740_8: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        var a = 9, b = 0;
+        for (const a = 1; a < 3; ++b) break;
+        console.log(a, b);
+    }
+    expect: {
+        var a = 9, b = 0;
+        {
+            const a = 1;
+            a < 3;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "9 0"
+    node_version: ">=6"
+}

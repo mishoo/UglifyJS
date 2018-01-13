@@ -404,4 +404,18 @@ describe("minify", function() {
             assert.strictEqual(stat.print_to_string(), "a=x()");
         });
     });
+
+    describe("rename", function() {
+        it("Should be repeatable", function() {
+            var code = "!function(x){return x(x)}(y);";
+            for (var i = 0; i < 2; i++) {
+                assert.strictEqual(Uglify.minify(code, {
+                    compress: {
+                        toplevel: true,
+                    },
+                    rename: true,
+                }).code, "var a;(a=y)(a);");
+            }
+        });
+    });
 });
