@@ -649,3 +649,69 @@ issue_2740_5: {
     }
     expect_stdout: "0 undefined"
 }
+
+issue_2740_6: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        const a = 9, b = 0;
+        for (const a = 1; a < 3; ++b) break;
+        console.log(a, b);
+    }
+    expect: {
+        const a = 9, b = 0;
+        {
+            const a = 1;
+            a < 3;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "9 0"
+    node_version: ">=6"
+}
+
+issue_2740_7: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        let a = 9, b = 0;
+        for (const a = 1; a < 3; ++b) break;
+        console.log(a, b);
+    }
+    expect: {
+        let a = 9, b = 0;
+        {
+            const a = 1;
+            a < 3;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "9 0"
+    node_version: ">=6"
+}
+
+issue_2740_8: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        var a = 9, b = 0;
+        for (const a = 1; a < 3; ++b) break;
+        console.log(a, b);
+    }
+    expect: {
+        var a = 9, b = 0;
+        {
+            const a = 1;
+            a < 3;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "9 0"
+    node_version: ">=6"
+}
