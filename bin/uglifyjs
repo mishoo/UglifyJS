@@ -11,7 +11,7 @@ var path = require("path");
 var program = require("commander");
 var UglifyJS = require("../tools/node");
 
-var skip_keys = [ "cname", "enclosed", "inlined", "parent_scope", "scope", "thedef", "uses_eval", "uses_with" ];
+var skip_keys = [ "cname", "inlined", "parent_scope", "scope", "uses_eval", "uses_with" ];
 var files = {};
 var options = {
     compress: false,
@@ -234,7 +234,33 @@ function run() {
         }
         fatal(ex);
     } else if (program.output == "ast") {
+        if (!options.compress && !options.mangle) {
+            result.ast.figure_out_scope({});
+        }
         print(JSON.stringify(result.ast, function(key, value) {
+            switch (key) {
+              case "thedef":
+                if (typeof value == "object" && typeof value.id == "number") {
+                    return value.id;
+                }
+                return;
+              case "enclosed":
+                return value.map(function(sym){
+                    return sym.id;
+                });
+              case "variables":
+              case "functions":
+              case "globals":
+                if (value && value.size()) {
+                    var ret = {};
+                    value.each(function(val, key) {
+                        // key/val inverted for readability.
+                        ret[val.id] = key;
+                    });
+                    return ret;
+                }
+                return;
+            }
             if (skip_key(key)) return;
             if (value instanceof UglifyJS.AST_Token) return;
             if (value instanceof UglifyJS.Dictionary) return;

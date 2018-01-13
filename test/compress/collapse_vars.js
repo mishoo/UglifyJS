@@ -2296,6 +2296,7 @@ toplevel_single_reference: {
 unused_orig: {
     options = {
         collapse_vars: true,
+        dead_code: true,
         passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
