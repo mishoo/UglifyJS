@@ -2324,7 +2324,7 @@ unused_orig: {
             var c = b;
             for (var d in c) {
                 var a;
-                return --b + (a = c[0]);
+                return --b + c[0];
             }
             a && a.NaN;
         }([2]), a);
