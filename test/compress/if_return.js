@@ -454,3 +454,39 @@ if_if_return_return: {
         }
     }
 }
+
+issue_2747: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f(baz) {
+            if (baz === 0) {
+                return null;
+            }
+            let r;
+            if (baz > 2) {
+                r = 4;
+            } else {
+                r = 5;
+            }
+            return r;
+        }
+        console.log(f(0), f(1), f(3));
+    }
+    expect: {
+        "use strict";
+        function f(baz) {
+            if (0 === baz) return null;
+            let r;
+            return r = baz > 2 ? 4 : 5, r;
+        }
+        console.log(f(0), f(1), f(3));
+    }
+    expect_stdout: "null 5 4"
+    node_version: ">=4"
+}
