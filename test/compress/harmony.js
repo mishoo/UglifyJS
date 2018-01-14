@@ -1212,3 +1212,36 @@ issue_2676: {
         (class {}).a = 42;
     }
 }
+
+issue_2762: {
+    mangle = {}
+    input: {
+        var bar = 1, T = true;
+        (function() {
+            if (T) {
+                const a = function() {
+                    var foo = bar;
+                    console.log(foo, a.prop, b.prop);
+                };
+                a.prop = 2;
+                const b = { prop: 3 };
+                a();
+            }
+        })();
+    }
+    expect: {
+        var bar = 1, T = true;
+        (function() {
+            if (T) {
+                const o = function() {
+                    var p = bar;
+                    console.log(p, o.prop, r.prop);
+                };
+                o.prop = 2;
+                const r = { prop: 3 };
+                o();
+            }
+        })();
+    }
+    expect_stdout: "1 2 3"
+}
