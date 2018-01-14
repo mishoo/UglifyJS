@@ -1188,3 +1188,113 @@ join_object_assignments_3: {
     }
     expect_stdout: "PASS"
 }
+
+join_object_assignments_4: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {
+                p: 3
+            };
+            return o.q = "foo";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var o = {
+                p: 3,
+                q: "foo"
+            };
+            return o.q;
+        }());
+    }
+    expect_stdout: "foo"
+}
+
+join_object_assignments_5: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {
+                p: 3
+            };
+            return o.q = /foo/,
+            o.r = "bar";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var o = {
+                p: 3,
+                q: /foo/,
+                r: "bar"
+            };
+            return o.r;
+        }());
+    }
+    expect_stdout: "bar"
+}
+
+join_object_assignments_6: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {
+                p: 3
+            };
+            return o.q = "foo",
+            o.p += "",
+            console.log(o.q),
+            o.p;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var o = {
+                p: 3,
+                q: "foo"
+            };
+            return o.p += "",
+            console.log(o.q),
+            o.p;
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "3",
+    ]
+}
+
+join_object_assignments_7: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {
+                p: 3
+            };
+            for (o.q = "foo"; console.log(o.q););
+            return o.p;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            for (var o = {
+                p: 3,
+                q: "foo"
+            }; console.log(o.q););
+            return o.p;
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "3",
+    ]
+}
