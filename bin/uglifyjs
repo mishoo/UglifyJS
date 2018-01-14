@@ -269,11 +269,9 @@ function run() {
                     _class: "AST_" + value.TYPE
                 };
                 if (value.block_scope) {
-                    result.block_scope = {
-                        variables: value.block_scope.variables,
-                        functions: value.block_scope.functions,
-                        enclosed: value.block_scope.enclosed,
-                    };
+                    result.variables = value.block_scope.variables;
+                    result.functions = value.block_scope.functions;
+                    result.enclosed = value.block_scope.enclosed;
                 }
                 value.CTOR.PROPS.forEach(function(prop) {
                     result[prop] = value[prop];
