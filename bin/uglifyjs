@@ -238,28 +238,15 @@ function run() {
             result.ast.figure_out_scope({});
         }
         print(JSON.stringify(result.ast, function(key, value) {
-            switch (key) {
+            if (value) switch (key) {
               case "thedef":
-                if (typeof value == "object" && typeof value.id == "number") {
-                    return value.id;
-                }
-                return;
+                return symdef(value);
               case "enclosed":
-                return value.map(function(sym){
-                    return sym.id;
-                });
+                return value.length ? value.map(symdef) : undefined;
               case "variables":
               case "functions":
               case "globals":
-                if (value && value.size()) {
-                    var ret = {};
-                    value.each(function(val, key) {
-                        // key/val inverted for readability.
-                        ret[val.id] = key;
-                    });
-                    return ret;
-                }
-                return;
+                return value.size() ? value.map(symdef) : undefined;
             }
             if (skip_key(key)) return;
             if (value instanceof UglifyJS.AST_Token) return;
@@ -417,6 +404,12 @@ function parse_source_map() {
 
 function skip_key(key) {
     return skip_keys.indexOf(key) >= 0;
+}
+
+function symdef(def) {
+    var ret = (1e6 + def.id) + " " + def.name;
+    if (def.mangled_name) ret += " " + def.mangled_name;
+    return ret;
 }
 
 function format_object(obj) {
