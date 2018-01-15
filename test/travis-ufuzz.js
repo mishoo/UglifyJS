@@ -34,10 +34,24 @@ if (process.argv.length > 2) {
         }));
     })();
 } else {
-    var child = require("child_process").spawn("node", [ "test/ufuzz" ], {
-        stdio: [ "ignore", "ignore", 1 ]
+    var child = require("child_process").spawn("node", [
+        "--max-old-space-size=2048",
+        "test/ufuzz"
+    ], {
+        stdio: [ "ignore", "pipe", "pipe" ]
     });
-    var keepAlive = setInterval(console.log, 5 * 60 * 1000);
+    var line = "";
+    child.stdout.on("data", function(data) {
+        line += data;
+    });
+    child.stderr.on("data", function() {
+        process.exitCode = (process.exitCode || 0) + 1;
+    }).pipe(process.stdout);
+    var keepAlive = setInterval(function() {
+        var end = line.lastIndexOf("\r");
+        console.log(line.slice(line.lastIndexOf("\r", end - 1) + 1, end));
+        line = line.slice(end + 1);
+    }, 5 * 60 * 1000);
     setTimeout(function() {
         clearInterval(keepAlive);
         child.kill();
