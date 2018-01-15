@@ -42,21 +42,26 @@ if (process.argv.length > 2) {
         "test/ufuzz"
     ], {
         stdio: [ "ignore", "pipe", "pipe" ]
+    }).on("exit", function() {
+        console.log(line);
+        clearInterval(keepAlive);
+        clearTimeout(timer);
     });
     var line = "";
     child.stdout.on("data", function(data) {
         line += data;
     });
     child.stderr.on("data", function() {
-        process.exitCode = (process.exitCode || 0) + 1;
+        process.exitCode = 1;
     }).pipe(process.stdout);
     var keepAlive = setInterval(function() {
         var end = line.lastIndexOf("\r");
         console.log(line.slice(line.lastIndexOf("\r", end - 1) + 1, end));
         line = line.slice(end + 1);
     }, ping);
-    setTimeout(function() {
+    var timer = setTimeout(function() {
         clearInterval(keepAlive);
+        child.removeAllListeners("exit");
         child.kill();
     }, period);
 }
