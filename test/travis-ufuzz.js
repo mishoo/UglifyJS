@@ -1,12 +1,15 @@
 "use strict";
 
-var period = 20 * 60 * 1000;
+var period = 45 * 60 * 1000;
+var wait = 2 * 60 * 1000;
+var ping = 5 * 60 * 1000;
 if (process.argv.length > 2) {
     var token = process.argv[2];
     var branch = process.argv[3] || "v" + require("../package.json").version;
+    var project = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
     (function init() {
-        setTimeout(init, period);
-        var options = require("url").parse("https://api.travis-ci.org/repo/mishoo%2FUglifyJS2/requests");
+        setTimeout(init, period + wait);
+        var options = require("url").parse("https://api.travis-ci.org/repo/" + project + "/requests");
         options.method = "POST";
         options.headers = {
             "Content-Type": "application/json",
@@ -51,7 +54,7 @@ if (process.argv.length > 2) {
         var end = line.lastIndexOf("\r");
         console.log(line.slice(line.lastIndexOf("\r", end - 1) + 1, end));
         line = line.slice(end + 1);
-    }, 5 * 60 * 1000);
+    }, ping);
     setTimeout(function() {
         clearInterval(keepAlive);
         child.kill();
