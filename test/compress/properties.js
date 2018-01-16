@@ -1189,7 +1189,7 @@ join_object_assignments_3: {
     expect_stdout: "PASS"
 }
 
-join_object_assignments_4: {
+join_object_assignments_return_1: {
     options = {
         join_vars: true,
     }
@@ -1213,7 +1213,7 @@ join_object_assignments_4: {
     expect_stdout: "foo"
 }
 
-join_object_assignments_5: {
+join_object_assignments_return_2: {
     options = {
         join_vars: true,
     }
@@ -1239,7 +1239,7 @@ join_object_assignments_5: {
     expect_stdout: "bar"
 }
 
-join_object_assignments_6: {
+join_object_assignments_return_3: {
     options = {
         join_vars: true,
     }
@@ -1271,7 +1271,7 @@ join_object_assignments_6: {
     ]
 }
 
-join_object_assignments_7: {
+join_object_assignments_for: {
     options = {
         join_vars: true,
     }
@@ -1297,4 +1297,44 @@ join_object_assignments_7: {
         "foo",
         "3",
     ]
+}
+
+join_object_assignments_if: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {};
+            if (o.a = "PASS") return o.a;
+        }())
+    }
+    expect: {
+        console.log(function() {
+            var o = { a: "PASS" };
+            if (o.a) return o.a;
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+join_object_assignments_forin: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {};
+            for (var a in o.a = "PASS", o)
+                return o[a];
+        }())
+    }
+    expect: {
+        console.log(function() {
+            var o = { a: "PASS" };
+            for (var a in o)
+                return o[a];
+        }());
+    }
+    expect_stdout: "PASS"
 }
