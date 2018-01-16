@@ -70,7 +70,7 @@ a double dash to prevent input files being used as option arguments:
                                 `debug`  Add debug prefix and suffix.
                                 `domprops`  Mangle property names that overlaps
                                             with DOM properties.
-                                `keep_quoted`  Only mangle unquoted properies.
+                                `keep_quoted`  Only mangle unquoted properties.
                                 `regex`  Only mangle matched property names.
                                 `reserved`  List of names that should not be mangled.
     -b, --beautify [options]    Beautify output/specify output options:
