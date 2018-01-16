@@ -4062,3 +4062,30 @@ cascade_statement: {
         }
     }
 }
+
+cascade_forin: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            return [ b, b, b ];
+        }
+        for (var c in a = console, f(a))
+            console.log(c);
+    }
+    expect: {
+        var a;
+        function f(b) {
+            return [ b, b, b ];
+        }
+        for (var c in f(a = console))
+            console.log(c);
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "2",
+    ]
+}
