@@ -1245,3 +1245,199 @@ issue_2762: {
     }
     expect_stdout: "1 2 3"
 }
+
+issue_2794_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 1,
+        properties: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            for (const a of func(value)) {
+                console.log(a);
+            }
+            function func(va) {
+                return doSomething(va);
+            }
+        }
+        function doSomething(x) {
+            return [ x, 2 * x, 3 * x ];
+        }
+        const value = 10;
+        foo();
+    }
+    expect: {
+        function foo() {
+            for (const a of (va = value, doSomething(va))) console.log(a);
+            var va;
+        }
+        function doSomething(x) {
+            return [ x, 2 * x, 3 * x ];
+        }
+        const value = 10;
+        foo();
+    }
+    expect_stdout: [
+        "10",
+        "20",
+        "30",
+    ]
+    node_version: ">=6"
+}
+
+issue_2794_2: {
+    mangle = {
+        toplevel: false,
+    }
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 1,
+        properties: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            for (const a of func(value)) {
+                console.log(a);
+            }
+            function func(va) {
+                return doSomething(va);
+            }
+        }
+        function doSomething(x) {
+            return [ x, 2 * x, 3 * x ];
+        }
+        const value = 10;
+        foo();
+    }
+    expect: {
+        function foo() {
+            for (const n of (o = value, doSomething(o))) console.log(n);
+            var o;
+        }
+        function doSomething(o) {
+            return [ o, 2 * o, 3 * o ];
+        }
+        const value = 10;
+        foo();
+    }
+    expect_stdout: [
+        "10",
+        "20",
+        "30",
+    ]
+    node_version: ">=6"
+}
+
+issue_2794_3: {
+    mangle = {
+        toplevel: true,
+    }
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: 3,
+        passes: 3,
+        properties: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            for (const a of func(value)) {
+                console.log(a);
+            }
+            function func(va) {
+                return doSomething(va);
+            }
+        }
+        function doSomething(x) {
+            return [ x, 2 * x, 3 * x ];
+        }
+        const value = 10;
+        foo();
+    }
+    expect: {
+        (function() {
+            for (const o of [ 10, 20, 30 ]) console.log(o);
+        })();
+    }
+    expect_stdout: [
+        "10",
+        "20",
+        "30",
+    ]
+    node_version: ">=6"
+}
+
+issue_2794_4: {
+    options = {}
+    input: {
+        for (var x of ([1, 2], [3, 4])) {
+            console.log(x);
+        }
+    }
+    expect_exact: "for(var x of([1,2],[3,4]))console.log(x);"
+    expect_stdout: [
+        "3",
+        "4",
+    ]
+    node_version: ">=6"
+}
+
+issue_2794_5: {
+    mangle = {}
+    options = {
+        evaluate: true,
+        passes: 1,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        for (var x of ([1, 2], [3, 4])) {
+            console.log(x);
+        }
+    }
+    expect_exact: "for(var x of[3,4])console.log(x);"
+    expect_stdout: [
+        "3",
+        "4",
+    ]
+    node_version: ">=6"
+}
+
+issue_2794_6: {
+    options = {
+    }
+    input: {
+        // TODO (or not): have parser flag invalid for-of expression.
+        // Consider it an uglify extension in the meantime.
+        for (let e of [1,2], [3,4,5]) {
+            console.log(e);
+        }
+    }
+    expect_exact: "for(let e of([1,2],[3,4,5]))console.log(e);"
+    expect_stdout: [
+        "3",
+        "4",
+        "5",
+    ]
+    node_version: ">=6"
+}
