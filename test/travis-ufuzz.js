@@ -3,13 +3,16 @@
 var period = 45 * 60 * 1000;
 var wait = 2 * 60 * 1000;
 var ping = 5 * 60 * 1000;
-if (process.argv.length > 2) {
+if (process.argv[2] == "run") {
+    for (var i = 0; i < 2; i++) spawn();
+} else if (process.argv.length > 2) {
     var token = process.argv[2];
     var branch = process.argv[3] || "v" + require("../package.json").version;
-    var project = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
+    var repository = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
+    var concurrency = process.argv[5] || 1;
     (function init() {
-        setTimeout(init, period + wait);
-        var options = require("url").parse("https://api.travis-ci.org/repo/" + project + "/requests");
+        setTimeout(init, (period + wait) / concurrency);
+        var options = require("url").parse("https://api.travis-ci.org/repo/" + repository + "/requests");
         options.method = "POST";
         options.headers = {
             "Content-Type": "application/json",
@@ -31,22 +34,22 @@ if (process.argv.length > 2) {
                     language: "node_js",
                     node_js: "9",
                     sudo: false,
-                    script: "node test/travis-ufuzz"
+                    script: "node test/travis-ufuzz run"
                 }
             }
         }));
     })();
 } else {
+    console.log("Usage: test/travis-ufuzz.js <token> [branch] [repository] [concurrency]");
+}
+
+function spawn() {
     var child = require("child_process").spawn("node", [
         "--max-old-space-size=2048",
         "test/ufuzz"
     ], {
         stdio: [ "ignore", "pipe", "pipe" ]
-    }).on("exit", function() {
-        console.log(line);
-        clearInterval(keepAlive);
-        clearTimeout(timer);
-    });
+    }).on("exit", respawn);
     var line = "";
     child.stdout.on("data", function(data) {
         line += data;
@@ -61,7 +64,14 @@ if (process.argv.length > 2) {
     }, ping);
     var timer = setTimeout(function() {
         clearInterval(keepAlive);
-        child.removeAllListeners("exit");
+        child.removeListener("exit", respawn);
         child.kill();
     }, period);
+
+    function respawn() {
+        console.log(line);
+        clearInterval(keepAlive);
+        clearTimeout(timer);
+        spawn();
+    }
 }
