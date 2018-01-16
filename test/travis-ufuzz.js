@@ -1,22 +1,29 @@
 "use strict";
 
+var child_process = require("child_process");
+var https = require("https");
+var url = require("url");
+
 var period = 45 * 60 * 1000;
 var wait = 2 * 60 * 1000;
 var ping = 5 * 60 * 1000;
-if (process.argv.length > 2) {
+if (process.argv[2] == "run") {
+    for (var i = 0; i < 2; i++) spawn();
+} else if (process.argv.length > 2) {
     var token = process.argv[2];
     var branch = process.argv[3] || "v" + require("../package.json").version;
-    var project = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
-    (function init() {
-        setTimeout(init, period + wait);
-        var options = require("url").parse("https://api.travis-ci.org/repo/" + project + "/requests");
+    var repository = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
+    var concurrency = process.argv[5] || 1;
+    (function request() {
+        setTimeout(request, (period + wait) / concurrency);
+        var options = url.parse("https://api.travis-ci.org/repo/" + repository + "/requests");
         options.method = "POST";
         options.headers = {
             "Content-Type": "application/json",
             "Travis-API-Version": 3,
             "Authorization": "token " + token
         };
-        require("https").request(options, function(res) {
+        https.request(options, function(res) {
             console.log("HTTP", res.statusCode);
             console.log(JSON.stringify(res.headers, null, 2));
             console.log();
@@ -31,22 +38,22 @@ if (process.argv.length > 2) {
                     language: "node_js",
                     node_js: "9",
                     sudo: false,
-                    script: "node test/travis-ufuzz"
+                    script: "node test/travis-ufuzz run"
                 }
             }
         }));
     })();
 } else {
-    var child = require("child_process").spawn("node", [
+    console.log("Usage: test/travis-ufuzz.js <token> [branch] [repository] [concurrency]");
+}
+
+function spawn() {
+    var child = child_process.spawn("node", [
         "--max-old-space-size=2048",
         "test/ufuzz"
     ], {
         stdio: [ "ignore", "pipe", "pipe" ]
-    }).on("exit", function() {
-        console.log(line);
-        clearInterval(keepAlive);
-        clearTimeout(timer);
-    });
+    }).on("exit", respawn);
     var line = "";
     child.stdout.on("data", function(data) {
         line += data;
@@ -61,7 +68,14 @@ if (process.argv.length > 2) {
     }, ping);
     var timer = setTimeout(function() {
         clearInterval(keepAlive);
-        child.removeAllListeners("exit");
+        child.removeListener("exit", respawn);
         child.kill();
     }, period);
+
+    function respawn() {
+        console.log(line);
+        clearInterval(keepAlive);
+        clearTimeout(timer);
+        spawn();
+    }
 }
