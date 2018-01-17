@@ -583,6 +583,25 @@ native_prototype: {
     }
 }
 
+native_prototype_lhs: {
+    options = {
+        unsafe_proto: true,
+    }
+    input: {
+        console.log(function() {
+            Function.prototype.bar = "PASS";
+            return function() {};
+        }().bar);
+    }
+    expect: {
+        console.log(function() {
+            Function.prototype.bar = "PASS";
+            return function() {};
+        }().bar);
+    }
+    expect_stdout: "PASS"
+}
+
 accessor_boolean: {
     input: {
         var a = 1;
