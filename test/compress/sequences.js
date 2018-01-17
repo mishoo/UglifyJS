@@ -859,3 +859,21 @@ for_init_var: {
     }
     expect_stdout: "PASS"
 }
+
+forin: {
+    options = {
+        sequences: true,
+    }
+    input: {
+        var o = [];
+        o.push("PASS");
+        for (var a in o)
+            console.log(o[a]);
+    }
+    expect: {
+        var o = [];
+        for (var a in o.push("PASS"), o)
+            console.log(o[a]);
+    }
+    expect_stdout: "PASS"
+}
