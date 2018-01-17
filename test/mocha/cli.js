@@ -650,4 +650,20 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should work with --rename", function(done) {
+        var command = uglifyjscmd + " test/input/rename/input.js --rename";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "function f(a){return b(a);function b(c){return c}}\n");
+            done();
+        });
+    });
+    it("Should work with --no-rename", function(done) {
+        var command = uglifyjscmd + " test/input/rename/input.js -mc --no-rename";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "function f(n){return function(n){return n}(n)}\n");
+            done();
+        });
+    });
 });
