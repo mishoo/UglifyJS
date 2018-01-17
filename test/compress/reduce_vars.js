@@ -5303,7 +5303,7 @@ issue_2774: {
     expect_stdout: "undefined"
 }
 
-issue_2799: {
+issue_2799_1: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -5335,4 +5335,28 @@ issue_2799: {
         }()(5));
     }
     expect_stdout: "15"
+}
+
+issue_2799_2: {
+    options = {
+        reduce_vars: true,
+        unsafe_proto: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo() {
+                Function.prototype.call.apply(console.log, [ null, "PASS" ]);
+            }
+            foo();
+        })();
+    }
+    expect: {
+        (function() {
+            (function() {
+                (function() {}).call.apply(console.log, [ null, "PASS" ]);
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
 }
