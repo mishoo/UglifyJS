@@ -5302,3 +5302,37 @@ issue_2774: {
     }
     expect_stdout: "undefined"
 }
+
+issue_2799: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return f;
+            function f(n) {
+                function g(i) {
+                    return i && i + g(i - 1);
+                }
+                function h(j) {
+                    return g(j);
+                }
+                return h(n);
+            }
+        }()(5));
+    }
+    expect: {
+        console.log(function() {
+            return function(n) {
+                return function(j) {
+                    return function g(i) {
+                        return i && i + g(i - 1);
+                    }(j);
+                }(n);
+            }
+        }()(5));
+    }
+    expect_stdout: "15"
+}
