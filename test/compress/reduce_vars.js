@@ -5302,3 +5302,61 @@ issue_2774: {
     }
     expect_stdout: "undefined"
 }
+
+issue_2799_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return f;
+            function f(n) {
+                function g(i) {
+                    return i && i + g(i - 1);
+                }
+                function h(j) {
+                    return g(j);
+                }
+                return h(n);
+            }
+        }()(5));
+    }
+    expect: {
+        console.log(function() {
+            return function(n) {
+                return function(j) {
+                    return function g(i) {
+                        return i && i + g(i - 1);
+                    }(j);
+                }(n);
+            }
+        }()(5));
+    }
+    expect_stdout: "15"
+}
+
+issue_2799_2: {
+    options = {
+        reduce_vars: true,
+        unsafe_proto: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo() {
+                Function.prototype.call.apply(console.log, [ null, "PASS" ]);
+            }
+            foo();
+        })();
+    }
+    expect: {
+        (function() {
+            (function() {
+                (function() {}).call.apply(console.log, [ null, "PASS" ]);
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+}
