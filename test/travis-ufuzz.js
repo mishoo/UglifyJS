@@ -8,7 +8,8 @@ var period = 45 * 60 * 1000;
 var wait = 2 * 60 * 1000;
 var ping = 5 * 60 * 1000;
 if (process.argv[2] == "run") {
-    for (var i = 0; i < 2; i++) spawn();
+    var endTime = Date.now() + period;
+    for (var i = 0; i < 2; i++) spawn(endTime);
 } else if (process.argv.length > 2) {
     var token = process.argv[2];
     var branch = process.argv[3] || "v" + require("../package.json").version;
@@ -47,7 +48,7 @@ if (process.argv[2] == "run") {
     console.log("Usage: test/travis-ufuzz.js <token> [branch] [repository] [concurrency]");
 }
 
-function spawn() {
+function spawn(endTime) {
     var child = child_process.spawn("node", [
         "--max-old-space-size=2048",
         "test/ufuzz"
@@ -70,12 +71,12 @@ function spawn() {
         clearInterval(keepAlive);
         child.removeListener("exit", respawn);
         child.kill();
-    }, period);
+    }, endTime - Date.now());
 
     function respawn() {
         console.log(line);
         clearInterval(keepAlive);
         clearTimeout(timer);
-        spawn();
+        spawn(endTime);
     }
 }
