@@ -664,3 +664,25 @@ issue_2519: {
     }
     expect_stdout: "5.5"
 }
+
+undefined_key: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        join_vars: true,
+        passes: 4,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, o = {};
+        o[a] = 1;
+        o.b = 2;
+        console.log(o[a] + o.b);
+    }
+    expect: {
+        console.log(3);
+    }
+    expect_stdout: "3"
+}
