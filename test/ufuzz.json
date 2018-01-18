@@ -5,7 +5,8 @@
         "output": {
             "beautify": true,
             "bracketize": true
-        }
+        },
+        "rename": true
     },
     {
         "compress": false
