@@ -1357,3 +1357,207 @@ join_object_assignments_forin: {
     }
     expect_stdout: "PASS"
 }
+
+join_object_assignments_negative: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        properties: true,
+    }
+    input: {
+        var o = {};
+        o[0] = 0;
+        o[-0] = 1;
+        o[-1] = 2;
+        console.log(o[0], o[-0], o[-1]);
+    }
+    expect: {
+        var o = {
+            0: 0,
+            0: 1,
+            "-1": 2
+        };
+        console.log(o[0], o[-0], o[-1]);
+    }
+    expect_stdout: "1 1 2"
+}
+
+join_object_assignments_NaN_1: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var o = {};
+        o[NaN] = 1;
+        o[0/0] = 2;
+        console.log(o[NaN], o[NaN]);
+    }
+    expect: {
+        var o = {};
+        o[NaN] = 1;
+        o[0/0] = 2;
+        console.log(o[NaN], o[NaN]);
+    }
+    expect_stdout: "2 2"
+}
+
+join_object_assignments_NaN_2: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        properties: true,
+    }
+    input: {
+        var o = {};
+        o[NaN] = 1;
+        o[0/0] = 2;
+        console.log(o[NaN], o[NaN]);
+    }
+    expect: {
+        var o = {
+            NaN: 1,
+            NaN: 2
+        };
+        console.log(o.NaN, o.NaN);
+    }
+    expect_stdout: "2 2"
+}
+
+join_object_assignments_null_0: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var o = {};
+        o[null] = 1;
+        console.log(o[null]);
+    }
+    expect: {
+        var o = {};
+        o[null] = 1;
+        console.log(o[null]);
+    }
+    expect_stdout: "1"
+}
+
+join_object_assignments_null_1: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        properties: true,
+    }
+    input: {
+        var o = {};
+        o[null] = 1;
+        console.log(o[null]);
+    }
+    expect: {
+        var o = {
+            null: 1
+        };
+        console.log(o.null);
+    }
+    expect_stdout: "1"
+}
+
+join_object_assignments_void_0: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        var o = {};
+        o[void 0] = 1;
+        console.log(o[void 0]);
+    }
+    expect: {
+        var o = {
+            undefined: 1
+        };
+        console.log(o[void 0]);
+    }
+    expect_stdout: "1"
+}
+
+join_object_assignments_undefined_1: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var o = {};
+        o[undefined] = 1;
+        console.log(o[undefined]);
+    }
+    expect: {
+        var o = {};
+        o[void 0] = 1;
+        console.log(o[void 0]);
+    }
+    expect_stdout: "1"
+}
+
+join_object_assignments_undefined_2: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        properties: true,
+    }
+    input: {
+        var o = {};
+        o[undefined] = 1;
+        console.log(o[undefined]);
+    }
+    expect: {
+        var o = {
+            undefined : 1
+        };
+        console.log(o[void 0]);
+    }
+    expect_stdout: "1"
+}
+
+join_object_assignments_Infinity: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        properties: true,
+    }
+    input: {
+        var o = {};
+        o[Infinity] = 1;
+        o[1/0] = 2;
+        o[-Infinity] = 3;
+        o[-1/0] = 4;
+        console.log(o[Infinity], o[1/0], o[-Infinity], o[-1/0]);
+    }
+    expect: {
+        var o = {
+            Infinity: 1,
+            Infinity: 2,
+            "-Infinity": 3,
+            "-Infinity": 4
+        };
+        console.log(o[1/0], o[1/0], o[-1/0], o[-1/0]);
+    }
+    expect_stdout: "2 2 4 4"
+}
+
+join_object_assignments_regex: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        properties: true,
+    }
+    input: {
+        var o = {};
+        o[/rx/] = 1;
+        console.log(o[/rx/]);
+    }
+    expect: {
+        var o = {
+            "/rx/": 1
+        };
+        console.log(o[/rx/]);
+    }
+    expect_stdout: "1"
+}
