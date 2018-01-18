@@ -998,10 +998,11 @@ function log_suspects(minify_options, component) {
     if (typeof options != "object") options = {};
     var defs = default_options[component];
     var suspects = Object.keys(defs).filter(function(name) {
-        if ((name in options ? options : defs)[name]) {
+        var flip = name == "keep_fargs";
+        if (flip ? name in options : (name in options ? options : defs)[name]) {
             var m = JSON.parse(JSON.stringify(minify_options));
             var o = JSON.parse(JSON.stringify(options));
-            o[name] = false;
+            o[name] = flip;
             m[component] = o;
             var result = UglifyJS.minify(original_code, m);
             if (result.error) {
@@ -1019,6 +1020,24 @@ function log_suspects(minify_options, component) {
             errorln("  " + name);
         });
         errorln();
+    }
+}
+
+function log_rename(options) {
+    if (!options.rename) return;
+    var m = JSON.parse(JSON.stringify(minify_options));
+    m.rename = false;
+    var result = UglifyJS.minify(original_code, m);
+    if (result.error) {
+        errorln("Error testing options.rename");
+        errorln(result.error.stack);
+    } else {
+        var r = sandbox.run_code(result.code);
+        if (sandbox.same_stdout(original_result, r)) {
+            errorln("Suspicious options:");
+            errorln("  rename");
+            errorln();
+        }
     }
 }
 
@@ -1056,6 +1075,7 @@ function log(options) {
     errorln();
     if (!ok && typeof uglify_code == "string") {
         Object.keys(default_options).forEach(log_suspects.bind(null, options));
+        log_rename(options);
         errorln("!!!!!! Failed... round " + round);
     }
 }
