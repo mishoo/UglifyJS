@@ -1561,3 +1561,30 @@ join_object_assignments_regex: {
     }
     expect_stdout: "1"
 }
+
+issue_2816: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        "use strict";
+        var o = {
+            a: 1
+        };
+        o.b = 2;
+        o.a = 3;
+        o.c = 4;
+        console.log(o.a, o.b, o.c);
+    }
+    expect: {
+        "use strict";
+        var o = {
+            a: 1,
+            b: 2
+        };
+        o.a = 3;
+        o.c = 4;
+        console.log(o.a, o.b, o.c);
+    }
+    expect_stdout: "3 2 4"
+}
