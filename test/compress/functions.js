@@ -218,7 +218,7 @@ issue_203: {
     options = {
         keep_fargs: false,
         side_effects: true,
-        unsafe_Func: true,
+        unsafe_Function: true,
         unused: true,
     }
     input: {

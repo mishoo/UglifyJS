@@ -288,7 +288,7 @@ unsafe_undefined: {
         if_return: true,
         sequences: true,
         side_effects: true,
-        unsafe: true,
+        unsafe_undefined: true,
     }
     input: {
         function f(undefined) {
