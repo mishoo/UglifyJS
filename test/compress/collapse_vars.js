@@ -4089,3 +4089,26 @@ cascade_forin: {
         "2",
     ]
 }
+
+unsafe_builtin: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b = Math.abs(a);
+            return Math.pow(b, 2);
+        }
+        console.log(f(-1), f(2));
+    }
+    expect: {
+        function f(a) {
+            return Math.pow(Math.abs(a), 2);
+        }
+        console.log(f(-1), f(2));
+    }
+    expect_stdout: "1 4"
+}
