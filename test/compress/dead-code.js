@@ -862,3 +862,20 @@ issue_2749: {
     }
     expect_stdout: "PASS"
 }
+
+unsafe_builtin: {
+    options = {
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        (!w).constructor(x);
+        Math.abs(y);
+        [ 1, 2, z ].valueOf();
+    }
+    expect: {
+        w, x;
+        y;
+        z;
+    }
+}

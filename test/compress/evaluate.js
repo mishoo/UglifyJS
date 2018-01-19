@@ -1194,6 +1194,9 @@ issue_2231_1: {
         console.log(Object.keys(void 0));
     }
     expect_stdout: true
+    expect_warnings: [
+        "WARN: Error evaluating Object.keys(void 0) [test/compress/evaluate.js:1191,20]",
+    ]
 }
 
 issue_2231_2: {
@@ -1208,6 +1211,23 @@ issue_2231_2: {
         console.log(Object.getOwnPropertyNames(null));
     }
     expect_stdout: true
+    expect_warnings: [
+        "WARN: Error evaluating Object.getOwnPropertyNames(null) [test/compress/evaluate.js:1208,20]",
+    ]
+}
+
+issue_2231_3: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Object.keys({ foo: "bar" })[0]);
+    }
+    expect: {
+        console.log("foo");
+    }
+    expect_stdout: "foo"
 }
 
 self_comparison_1: {
@@ -1330,13 +1350,13 @@ issue_2535_3: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1316,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1317,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1318,20]",
-        "WARN: Condition left of && always false [test/compress/evaluate.js:1318,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1319,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1320,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1321,20]",
-        "WARN: Condition left of || always true [test/compress/evaluate.js:1321,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1336,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1337,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1338,20]",
+        "WARN: Condition left of && always false [test/compress/evaluate.js:1338,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1339,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1340,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1341,20]",
+        "WARN: Condition left of || always true [test/compress/evaluate.js:1341,20]",
     ]
 }
