@@ -61,7 +61,7 @@ unsafe_undefined: {
     options = {
         conditionals: true,
         if_return: true,
-        unsafe: true,
+        unsafe_undefined: true,
     }
     mangle = {}
     input: {

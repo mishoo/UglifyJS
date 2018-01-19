@@ -737,7 +737,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   comparison are switching. Compression only works if both `comparisons` and
   `unsafe_comps` are both set to true.
 
-- `unsafe_Func` (default: `false`) -- compress and mangle `Function(args, code)`
+- `unsafe_Function` (default: `false`) -- compress and mangle `Function(args, code)`
   when both `args` and `code` are string literals.
 
 - `unsafe_math` (default: `false`) -- optimize numerical expressions like
@@ -748,6 +748,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `unsafe_regexp` (default: `false`) -- enable substitutions of variables with
   `RegExp` values the same way as if they are constants.
+
+- `unsafe_undefined` (default: `false`) -- substitute `void 0` if there is a
+  variable named `undefined` in scope (variable name will be mangled, typically
+  reduced to a single character)
 
 - `unused` (default: `true`) -- drop unreferenced functions and variables (simple
   direct variable assignments do not count as references unless set to `"keep_assign"`)
@@ -922,9 +926,6 @@ when this flag is on:
 - `new Object()` → `{}`
 - `String(exp)` or `exp.toString()` → `"" + exp`
 - `new Object/RegExp/Function/Error/Array (...)` → we discard the `new`
-- `void 0` → `undefined` (if there is a variable named "undefined" in
-  scope; we do it because the variable name will be mangled, typically
-  reduced to a single character)
 
 ### Conditional compilation
 
