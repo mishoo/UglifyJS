@@ -613,6 +613,10 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `dead_code` (default: `true`) -- remove unreachable code
 
+- `defaults` (default: `true`) -- Pass `false` to disable most default
+  enabled `compress` transforms. Useful when you only want to enable a few
+  `compress` options while disabling the rest.
+
 - `drop_console` (default: `false`) -- Pass `true` to discard calls to
   `console.*` functions. If you wish to drop a specific function call
   such as `console.info` and/or retain side effects from function arguments
