@@ -1360,3 +1360,17 @@ issue_2535_3: {
         "WARN: Condition left of || always true [test/compress/evaluate.js:1341,20]",
     ]
 }
+
+issue_2822: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log([ function() {}, "PASS", "FAIL" ][1]);
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
