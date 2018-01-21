@@ -1865,3 +1865,32 @@ issue_2816: {
     }
     expect_stdout: "3 2 4"
 }
+
+issue_2816_ecma6: {
+    options = {
+        ecma: "6",
+        join_vars: true,
+    }
+    input: {
+        "use strict";
+        var o = {
+            a: 1
+        };
+        o.b = 2;
+        o.a = 3;
+        o.c = 4;
+        console.log(o.a, o.b, o.c);
+    }
+    expect: {
+        "use strict";
+        var o = {
+            a: 1,
+            b: 2,
+            a: 3,
+            c: 4
+        };
+        console.log(o.a, o.b, o.c);
+    }
+    expect_stdout: "3 2 4"
+    node_version: ">=4"
+}
