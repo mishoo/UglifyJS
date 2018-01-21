@@ -258,7 +258,7 @@ issue_203: {
     options = {
         keep_fargs: false,
         side_effects: true,
-        unsafe_Func: true,
+        unsafe_Function: true,
         unused: true,
     }
     input: {
@@ -2114,6 +2114,44 @@ issue_2737_2: {
         })(function qux() {
             return console.log("PASS"), qux;
         });
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2783: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        if_return: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            return g;
+            function f(a) {
+                var b = a.b;
+                if (b) return b;
+                return a;
+            }
+            function g(o, i) {
+                while (i--) {
+                    console.log(f(o));
+                }
+            }
+        })()({ b: "PASS" }, 1);
+    }
+    expect: {
+        (function() {
+            return function(o,i) {
+                while (i--) console.log(f(o));
+            };
+            function f(a) {
+                var b = a.b;
+                return b || a;
+            }
+        })()({ b: "PASS" },1);
     }
     expect_stdout: "PASS"
 }

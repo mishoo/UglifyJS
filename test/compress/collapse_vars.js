@@ -4314,3 +4314,103 @@ replace_all_var: {
     }
     expect_stdout: "PASS"
 }
+
+cascade_statement: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            var c;
+            if (a)
+                return c = b, c || a;
+            else
+                c = a, c(b);
+        }
+        function f2(a, b) {
+            var c;
+            while (a)
+                c = b, a = c + b;
+            do
+                throw c = a + b, c;
+            while (c);
+        }
+        function f3(a, b) {
+            for (; a < b; a++)
+                if (c = a, c && b)
+                    var c = (c = b(a), c);
+        }
+    }
+    expect: {
+        function f1(a, b) {
+            var c;
+            if (a)
+                return (c = b) || a;
+            else
+                (c = a)(b);
+        }
+        function f2(a, b) {
+            var c;
+            while (a)
+                a = (c = b) + b;
+            do
+                throw c = a + b;
+            while (c);
+        }
+        function f3(a, b) {
+            for (; a < b; a++)
+                if ((c = a) && b)
+                    var c = c = b(a);
+        }
+    }
+}
+
+cascade_forin: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            return [ b, b, b ];
+        }
+        for (var c in a = console, f(a))
+            console.log(c);
+    }
+    expect: {
+        var a;
+        function f(b) {
+            return [ b, b, b ];
+        }
+        for (var c in f(a = console))
+            console.log(c);
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "2",
+    ]
+}
+
+unsafe_builtin: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b = Math.abs(a);
+            return Math.pow(b, 2);
+        }
+        console.log(f(-1), f(2));
+    }
+    expect: {
+        function f(a) {
+            return Math.pow(Math.abs(a), 2);
+        }
+        console.log(f(-1), f(2));
+    }
+    expect_stdout: "1 4"
+}

@@ -45,6 +45,7 @@ program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-classnames", "Do not mangle/drop class names.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
+program.option("--rename", "Force symbol expansion.");
 program.option("--no-rename", "Disable symbol expansion.");
 program.option("--safari10", "Support non-standard Safari 10.");
 program.option("--self", "Build UglifyJS as a library (implies --wrap UglifyJS)");
@@ -65,14 +66,12 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     "compress",
     "ie8",
     "mangle",
-    "rename",
     "safari10",
     "sourceMap",
     "toplevel",
     "wrap"
 ].forEach(function(name) {
     if (name in program) {
-        if (name == "rename" && program[name]) return;
         options[name] = program[name];
     }
 });
@@ -131,6 +130,11 @@ if (program.parse) {
     } else if (program.sourceMap && program.sourceMap.content == "inline") {
         fatal("ERROR: inline source map only works with built-in parser");
     }
+}
+if (~program.rawArgs.indexOf("--rename")) {
+    options.rename = true;
+} else if (!program.rename) {
+    options.rename = false;
 }
 var convert_path = function(name) {
     return name;

@@ -17,24 +17,30 @@ function safe_log(arg, level) {
     return arg;
 }
 
+function strip_func_ids(text) {
+    return text.toString().replace(/F[0-9]{6}N/g, "<F<>N>");
+}
+
 var FUNC_TOSTRING = [
+    "[ Array, Boolean, Error, Function, Number, Object, RegExp, String].forEach(function(f) {",
+    "    f.toString = Function.prototype.toString;",
+    "    f.valueOf = Function.prototype.valueOf;",
+    "});",
     "Function.prototype.toString = Function.prototype.valueOf = function() {",
     "    var id = 100000;",
     "    return function() {",
-    '        if (this === Array) return "[Function: Array]";',
-    '        if (this === Object) return "[Function: Object]";',
-    "        var i = this.name;",
-    '        if (typeof i != "number") {',
-    "            i = ++id;",
+    "        var n = this.name;",
+    '        if (!/^F[0-9]{6}N$/.test(n)) {',
+    '            n = "F" + ++id + "N";',
 ].concat(Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable ? [
     '            Object.defineProperty(this, "name", {',
     "                get: function() {",
-    "                    return i;",
+    "                    return n;",
     "                }",
     "            });",
 ] : [], [
     "        }",
-    '        return "[Function: " + i + "]";',
+    '        return "[Function: " + n + "]";',
     "    }",
     "}();",
     'Object.defineProperty(Function.prototype, "valueOf", { enumerable: false });',
@@ -77,7 +83,7 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
         expected = expected.message.slice(expected.message.lastIndexOf("\n") + 1);
         actual = actual.message.slice(actual.message.lastIndexOf("\n") + 1);
     }
-    return expected == actual;
+    return strip_func_ids(expected) == strip_func_ids(actual);
 } : function(expected, actual) {
-    return typeof expected == typeof actual && expected.toString() == actual.toString();
+    return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
