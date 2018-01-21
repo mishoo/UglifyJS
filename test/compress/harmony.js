@@ -1276,8 +1276,7 @@ issue_2794_1: {
     }
     expect: {
         function foo() {
-            for (const a of (va = value, doSomething(va))) console.log(a);
-            var va;
+            for (const a of doSomething(value)) console.log(a);
         }
         function doSomething(x) {
             return [ x, 2 * x, 3 * x ];
@@ -1326,8 +1325,7 @@ issue_2794_2: {
     }
     expect: {
         function foo() {
-            for (const n of (o = value, doSomething(o))) console.log(n);
-            var o;
+            for (const o of doSomething(value)) console.log(o);
         }
         function doSomething(o) {
             return [ o, 2 * o, 3 * o ];

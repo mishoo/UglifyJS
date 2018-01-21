@@ -1288,7 +1288,7 @@ issue_2231_1: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Error evaluating Object.keys(void 0) [test/compress/evaluate.js:1191,20]",
+        "WARN: Error evaluating Object.keys(void 0) [test/compress/evaluate.js:1284,20]",
     ]
 }
 
@@ -1305,7 +1305,7 @@ issue_2231_2: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Error evaluating Object.getOwnPropertyNames(null) [test/compress/evaluate.js:1208,20]",
+        "WARN: Error evaluating Object.getOwnPropertyNames(null) [test/compress/evaluate.js:1301,20]",
     ]
 }
 
@@ -1443,14 +1443,14 @@ issue_2535_3: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1409,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1410,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1411,20]",
-        "WARN: Condition left of && always false [test/compress/evaluate.js:1411,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1412,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1413,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1414,20]",
-        "WARN: Condition left of || always true [test/compress/evaluate.js:1414,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1429,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1430,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1431,20]",
+        "WARN: Condition left of && always false [test/compress/evaluate.js:1431,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1432,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1433,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1434,20]",
+        "WARN: Condition left of || always true [test/compress/evaluate.js:1434,20]",
     ]
 }
 
