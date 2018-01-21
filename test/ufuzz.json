@@ -5,7 +5,8 @@
         "output": {
             "beautify": true,
             "bracketize": true
-        }
+        },
+        "rename": true
     },
     {
         "compress": false
@@ -20,7 +21,13 @@
     {
         "compress": {
             "keep_fargs": false,
-            "passes": 100
+            "passes": 1e6,
+            "sequences": 1e6,
+            "unsafe": true,
+            "unsafe_Function": true,
+            "unsafe_math": true,
+            "unsafe_proto": true,
+            "unsafe_regexp": true
         }
     }
 ]

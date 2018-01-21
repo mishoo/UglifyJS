@@ -4,7 +4,7 @@ unsafe_undefined: {
     options = {
         conditionals: true,
         if_return: true,
-        unsafe: true
+        unsafe_undefined: true,
     }
     mangle = {}
     input: {
@@ -30,7 +30,7 @@ keep_fnames: {
     options = {
         conditionals: true,
         if_return: true,
-        unsafe: true
+        unsafe_undefined: true,
     }
     mangle = {
         keep_fnames: true
