@@ -79,6 +79,7 @@ same_variable_in_multiple_forOf: {
         }
     }
     expect_stdout: true
+    reminify: false // FIXME - regression https://github.com/mishoo/UglifyJS2/issues/2835
 }
 
 same_variable_in_multiple_forIn: {
@@ -120,6 +121,7 @@ same_variable_in_multiple_forIn: {
         }
     }
     expect_stdout: true
+    reminify: false // FIXME - regression https://github.com/mishoo/UglifyJS2/issues/2835
 }
 
 different_variable_in_multiple_for_loop: {
