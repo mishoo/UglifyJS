@@ -60,6 +60,7 @@ dead_code_2_should_warn: {
     }
     expect_stdout: true
     node_version: ">=6"
+    reminify: false // FIXME - block scoped function
 }
 
 dead_code_2_should_warn_strict: {
@@ -100,6 +101,7 @@ dead_code_2_should_warn_strict: {
     }
     expect_stdout: true
     node_version: ">=4"
+    reminify: false // FIXME - block scoped function
 }
 
 dead_code_constant_boolean_should_warn_more: {
@@ -135,6 +137,7 @@ dead_code_constant_boolean_should_warn_more: {
     }
     expect_stdout: true
     node_version: ">=6"
+    reminify: false // FIXME - block scoped function
 }
 
 dead_code_constant_boolean_should_warn_more_strict: {
@@ -171,6 +174,7 @@ dead_code_constant_boolean_should_warn_more_strict: {
     }
     expect_stdout: true
     node_version: ">=4"
+    reminify: false // FIXME - block scoped function
 }
 
 dead_code_block_decls_die: {

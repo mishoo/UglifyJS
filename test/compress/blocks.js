@@ -75,6 +75,7 @@ issue_1664: {
     }
     expect_stdout: "1"
     node_version: ">=6"
+    reminify: false // FIXME - block scoped function
 }
 
 issue_1672_for: {
