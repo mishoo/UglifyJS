@@ -208,6 +208,9 @@ function run_compress_tests() {
                     });
                     return false;
                 }
+                if (test.reminify && !reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
+                    return false;
+                }
             }
             return true;
         }
@@ -261,6 +264,16 @@ function parse_test(file) {
         }));
     }
 
+    function read_boolean(stat) {
+        if (stat.TYPE == "SimpleStatement") {
+            var body = stat.body;
+            if (body instanceof U.AST_Boolean) {
+                return body.value;
+            }
+        }
+        throw new Error("Should be boolean");
+    }
+
     function read_string(stat) {
         if (stat.TYPE == "SimpleStatement") {
             var body = stat.body;
@@ -279,7 +292,11 @@ function parse_test(file) {
     }
 
     function get_one_test(name, block) {
-        var test = { name: name, options: {} };
+        var test = {
+            name: name,
+            options: {},
+            reminify: true,
+        };
         var tw = new U.TreeWalker(function(node, descend){
             if (node instanceof U.AST_Assign) {
                 if (!(node.left instanceof U.AST_SymbolRef)) {
@@ -299,6 +316,7 @@ function parse_test(file) {
                         "expect_warnings",
                         "expect_stdout",
                         "node_version",
+                        "reminify",
                     ].indexOf(label.name) >= 0,
                     tmpl("Unsupported label {name} [{line},{col}]", {
                         name: label.name,
@@ -309,6 +327,9 @@ function parse_test(file) {
                 var stat = node.body;
                 if (label.name == "expect_exact" || label.name == "node_version") {
                     test[label.name] = read_string(stat);
+                } else if (label.name == "reminify") {
+                    var value = read_boolean(stat);
+                    test.reminify = value == null || value;
                 } else if (label.name == "expect_stdout") {
                     var body = stat.body;
                     if (body instanceof U.AST_Boolean) {
@@ -358,14 +379,17 @@ function evaluate(code) {
 function reminify(orig_options, input_code, input_formatted, expect_stdout) {
     for (var i = 0; i < minify_options.length; i++) {
         var options = JSON.parse(minify_options[i]);
-        if (options.compress) [
-            "keep_fargs",
-            "keep_fnames",
-        ].forEach(function(name) {
-            if (name in orig_options) {
-                options.compress[name] = orig_options[name];
-            }
-        });
+        options.keep_fnames = orig_options.keep_fnames;
+        options.keep_classnames = orig_options.keep_classnames;
+        if (orig_options.compress) {
+            options.compress.keep_classnames = orig_options.compress.keep_classnames;
+            options.compress.keep_fargs = orig_options.compress.keep_fargs;
+            options.compress.keep_fnames = orig_options.compress.keep_fnames;
+        }
+        if (orig_options.mangle) {
+            options.mangle.keep_classnames = orig_options.mangle.keep_classnames;
+            options.mangle.keep_fnames = orig_options.mangle.keep_fnames;
+        }
         var options_formatted = JSON.stringify(options, null, 4);
         var result = U.minify(input_code, options);
         if (result.error) {
