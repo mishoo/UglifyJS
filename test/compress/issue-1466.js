@@ -417,6 +417,7 @@ same_variable_in_multiple_forIn_sequences_const: {
         }
     }
     expect_stdout: true
+    node_version: ">=6"
 }
 
 more_variable_in_multiple_for: {
