@@ -79,7 +79,6 @@ same_variable_in_multiple_forOf: {
         }
     }
     expect_stdout: true
-    reminify: false // FIXME - regression https://github.com/mishoo/UglifyJS2/issues/2835
 }
 
 same_variable_in_multiple_forIn: {
@@ -121,7 +120,6 @@ same_variable_in_multiple_forIn: {
         }
     }
     expect_stdout: true
-    reminify: false // FIXME - regression https://github.com/mishoo/UglifyJS2/issues/2835
 }
 
 different_variable_in_multiple_for_loop: {
@@ -243,6 +241,170 @@ different_variable_in_multiple_forIn: {
             t = [ "e", "f", "g" ];
             for (let e in test)
                 console.log(e);
+        }
+    }
+    expect_stdout: true
+}
+
+same_variable_in_multiple_forOf_sequences_let: {
+    options = {
+        hoist_funs: true,
+        dead_code: true,
+        conditionals: true,
+        comparisons: true,
+        evaluate: true,
+        booleans: true,
+        loops: true,
+        unused: true,
+        keep_fargs: true,
+        if_return: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+        collapse_vars: true,
+    }
+    mangle = {}
+    input: {
+        var test = [ "a", "b", "c" ];
+        for (let tmp of test) {
+            console.log(tmp);
+            let dd;
+            dd = [ "e", "f", "g" ];
+            for (let tmp of dd) {
+                console.log(tmp);
+            }
+        }
+    }
+    expect: {
+        var test = [ "a", "b", "c" ];
+        for (let o of test) {
+            let e;
+            console.log(o), e = [ "e", "f", "g" ];
+            for (let o of e)
+                console.log(o);
+        }
+    }
+    expect_stdout: true
+}
+
+same_variable_in_multiple_forOf_sequences_const: {
+    options = {
+        hoist_funs: true,
+        dead_code: true,
+        conditionals: true,
+        comparisons: true,
+        evaluate: true,
+        booleans: true,
+        loops: true,
+        unused: true,
+        keep_fargs: true,
+        if_return: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+        collapse_vars: true,
+    }
+    mangle = {}
+    input: {
+        var test = [ "a", "b", "c" ];
+        for (const tmp of test) {
+            console.log(tmp);
+            let dd;
+            dd = [ "e", "f", "g" ];
+            for (const tmp of dd) {
+                console.log(tmp);
+            }
+        }
+    }
+    expect: {
+        var test = [ "a", "b", "c" ];
+        for (const o of test) {
+            let t;
+            console.log(o), t = [ "e", "f", "g" ];
+            for (const o of t)
+                console.log(o);
+        }
+    }
+    expect_stdout: true
+}
+
+same_variable_in_multiple_forIn_sequences_let: {
+    options = {
+        hoist_funs: true,
+        dead_code: true,
+        conditionals: true,
+        comparisons: true,
+        evaluate: true,
+        booleans: true,
+        loops: true,
+        unused: false,
+        keep_fargs: true,
+        if_return: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+        collapse_vars: true,
+    }
+    mangle = {}
+    input: {
+        var test = [ "a", "b", "c" ];
+        for (let tmp in test) {
+            console.log(tmp);
+            let dd;
+            dd = [ "e", "f", "g" ];
+            for (let tmp in test) {
+                console.log(tmp);
+            }
+        }
+    }
+    expect: {
+        var test = [ "a", "b", "c" ];
+        for (let e in test) {
+            let t;
+            console.log(e), t = [ "e", "f", "g" ];
+            for (let e in test)
+                console.log(e);
+        }
+    }
+    expect_stdout: true
+}
+
+same_variable_in_multiple_forIn_sequences_const: {
+    options = {
+        hoist_funs: true,
+        dead_code: true,
+        conditionals: true,
+        comparisons: true,
+        evaluate: true,
+        booleans: true,
+        loops: true,
+        unused: false,
+        keep_fargs: true,
+        if_return: true,
+        join_vars: true,
+        sequences: true,
+        side_effects: true,
+        collapse_vars: true,
+    }
+    mangle = {}
+    input: {
+        var test = [ "a", "b", "c" ];
+        for (const tmp in test) {
+            console.log(tmp);
+            let dd;
+            dd = [ "e", "f", "g" ];
+            for (const tmp in test) {
+                console.log(tmp);
+            }
+        }
+    }
+    expect: {
+        var test = [ "a", "b", "c" ];
+        for (const o in test) {
+            let t;
+            console.log(o), t = [ "e", "f", "g" ];
+            for (const o in test)
+                console.log(o);
         }
     }
     expect_stdout: true
