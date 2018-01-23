@@ -387,4 +387,25 @@ describe("minify", function() {
             }
         });
     });
+
+    it("should work with compress defaults disabled", function() {
+        var code = 'if (true) { console.log(1 + 2); }';
+        var options = {
+            compress: {
+                defaults: false,
+            }
+        };
+        assert.strictEqual(Uglify.minify(code, options).code, 'if(true)console.log(1+2);');
+    });
+
+    it("should work with compress defaults disabled and evaluate enabled", function() {
+        var code = 'if (true) { console.log(1 + 2); }';
+        var options = {
+            compress: {
+                defaults: false,
+                evaluate: true,
+            }
+        };
+        assert.strictEqual(Uglify.minify(code, options).code, 'if(true)console.log(3);');
+    });
 });

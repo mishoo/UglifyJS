@@ -682,4 +682,12 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should work with -c defaults=false,conditionals", function(done) {
+        var command = uglifyjscmd + " test/input/defaults/input.js -c defaults=false,conditionals";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, 'true&&console.log(1+2);\n');
+            done();
+        });
+    });
 });
