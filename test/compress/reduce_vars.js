@@ -5950,3 +5950,26 @@ issue_2799_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2836: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return "FAIL";
+        }
+        console.log(f());
+        function f() {
+            return "PASS";
+        }
+    }
+    expect: {
+        console.log(function() {
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
