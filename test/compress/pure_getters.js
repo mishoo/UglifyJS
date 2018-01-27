@@ -818,3 +818,30 @@ issue_2678: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2838: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a, b) {
+            (a || b).c = "PASS";
+            (function() {
+                return f(a, b);
+            }).prototype.foo = "bar";
+        }
+        var o = {};
+        f(null, o);
+        console.log(o.c);
+    }
+    expect: {
+        function f(a, b) {
+            (a || b).c = "PASS";
+        }
+        var o = {};
+        f(null, o);
+        console.log(o.c);
+    }
+    expect_stdout: "PASS"
+}

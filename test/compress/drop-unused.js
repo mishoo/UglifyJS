@@ -2066,3 +2066,30 @@ issue_2768: {
     }
     expect_stdout: "PASS undefined"
 }
+
+issue_2846: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            var a = 0;
+            b && b(a);
+            return a++;
+        }
+        var c = f();
+        console.log(c);
+    }
+    expect: {
+        var c = function(a, b) {
+            a = 0;
+            b && b(a);
+            return a++;
+        }();
+        console.log(c);
+    }
+    expect_stdout: "0"
+}
