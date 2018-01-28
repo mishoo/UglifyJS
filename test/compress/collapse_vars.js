@@ -52,13 +52,8 @@ collapse_vars_side_effects_1: {
             console.log.bind(console)(s.charAt(i++), s.charAt(i++), s.charAt(i++), 7);
         }
         function f2() {
-            var log = console.log.bind(console),
-                s = "abcdef",
-                i = 2,
-                x = s.charAt(i++),
-                y = s.charAt(i++),
-                z = s.charAt(i++);
-            log(x, i, y, z, 7);
+            var s = "abcdef", i = 2;
+            console.log.bind(console)(s.charAt(i++), 5, s.charAt(i++), s.charAt(i++), 7);
         }
         function f3() {
             var s = "abcdef",
@@ -72,7 +67,7 @@ collapse_vars_side_effects_1: {
             var i = 10,
                 x = i += 2,
                 y = i += 3;
-            console.log.bind(console)(x, i += 4, y, i);
+            console.log.bind(console)(x, i += 4, y, 19);
         }
         f1(), f2(), f3(), f4();
     }
