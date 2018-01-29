@@ -5435,3 +5435,35 @@ lvalues_def_2: {
     }
     expect_stdout: "2 NaN"
 }
+
+chained_assignments: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a = [0x5e, 0xad, 0xbe, 0xef];
+            var b = 0;
+            b |= a[0];
+            b <<= 8;
+            b |= a[1];
+            b <<= 8;
+            b |= a[2];
+            b <<= 8;
+            b |= a[3];
+            return b;
+        }
+        console.log(f().toString(16));
+    }
+    expect: {
+        console.log("5eadbeef");
+    }
+    expect_stdout: "5eadbeef"
+}
