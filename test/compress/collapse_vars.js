@@ -4249,3 +4249,137 @@ issue_2858: {
     }
     expect_stdout: "undefined"
 }
+
+cond_branch_1: {
+    options = {
+        collapse_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        function f1(b, c) {
+            var log = console.log;
+            var a = ++c;
+            if (b) b++;
+            log(a, b);
+        }
+        function f2(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b && b++;
+            log(a, b);
+        }
+        function f3(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b ? b++ : b--;
+            log(a, b);
+        }
+        f1(1, 2);
+        f2(3, 4);
+        f3(5, 6);
+    }
+    expect: {
+        function f1(b, c) {
+            var log = console.log;
+            if (b) b++;
+            log(++c, b);
+        }
+        function f2(b, c) {
+            var log = console.log;
+            b && b++,
+            log(++c, b);
+        }
+        function f3(b, c) {
+            var log = console.log;
+            b ? b++ : b--,
+            log(++c, b);
+        }
+        f1(1, 2),
+        f2(3, 4),
+        f3(5, 6);
+    }
+    expect_stdout: [
+        "3 2",
+        "5 4",
+        "7 6",
+    ]
+}
+
+cond_branch_2: {
+    options = {
+        collapse_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        function f1(b, c) {
+            var log = console.log;
+            var a = ++c;
+            if (b) b += a;
+            log(a, b);
+        }
+        function f2(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b && (b += a);
+            log(a, b);
+        }
+        function f3(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b ? b += a : b--;
+            log(a, b);
+        }
+        f1(1, 2);
+        f2(3, 4);
+        f3(5, 6);
+    }
+    expect: {
+        function f1(b, c) {
+            var log = console.log;
+            var a = ++c;
+            if (b) b += a;
+            log(a, b);
+        }
+        function f2(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b && (b += a),
+            log(a, b);
+        }
+        function f3(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b ? b += a : b--,
+            log(a, b);
+        }
+        f1(1, 2),
+        f2(3, 4),
+        f3(5, 6);
+    }
+    expect_stdout: [
+        "3 4",
+        "5 8",
+        "7 12",
+    ]
+}
+
+cond_branch_switch: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = 0;
+        if (c = 1 + c, 0) switch (c = 1 + c) {
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        if (c = 1 + c, 0) switch (c = 1 + c) {
+        }
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
