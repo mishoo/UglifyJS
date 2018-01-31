@@ -4107,3 +4107,86 @@ unsafe_builtin: {
     }
     expect_stdout: "1 4"
 }
+
+return_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var log = console.log;
+        function f(b, c) {
+            var a = c;
+            if (b) return b;
+            log(a);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect: {
+        var log = console.log;
+        function f(b, c) {
+            if (b) return b;
+            log(c);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect_stdout: "1"
+}
+
+return_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var log = console.log;
+        function f(b, c) {
+            var a = c();
+            if (b) return b;
+            log(a);
+        }
+        f(false, function() { return 1 });
+        f(true, function() { return 2 });
+    }
+    expect: {
+        var log = console.log;
+        function f(b, c) {
+            var a = c();
+            if (b) return b;
+            log(a);
+        }
+        f(false, function() { return 1 });
+        f(true, function() { return 2 });
+    }
+    expect_stdout: "1"
+}
+
+return_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var log = console.log;
+        function f(b, c) {
+            var a = b <<= c;
+            if (b) return b;
+            log(a);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect: {
+        var log = console.log;
+        function f(b, c) {
+            var a = b <<= c;
+            if (b) return b;
+            log(a);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect_stdout: "0"
+}
