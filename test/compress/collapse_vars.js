@@ -4190,3 +4190,37 @@ return_3: {
     }
     expect_stdout: "0"
 }
+
+issue_2858: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var b;
+        (function() {
+            function f() {
+                a++;
+            }
+            f();
+            var c = f();
+            var a = void 0;
+            c || (b = a);
+        })();
+        console.log(b);
+    }
+    expect: {
+        var b;
+        (function() {
+            function f() {
+                a++;
+            }
+            f();
+            var c = f();
+            var a = void 0;
+            c || (b = a);
+        })();
+        console.log(b);
+    }
+    expect_stdout: "undefined"
+}
