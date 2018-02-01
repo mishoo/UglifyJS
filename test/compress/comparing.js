@@ -118,7 +118,7 @@ issue_2857_1: {
         comparisons: true,
     }
     input: {
-        function f(a) {
+        function f1(a) {
             a === undefined || a === null;
             a === undefined || a !== null;
             a !== undefined || a === null;
@@ -128,9 +128,19 @@ issue_2857_1: {
             a !== undefined && a === null;
             a !== undefined && a !== null;
         }
+        function f2(a) {
+            a === null || a === undefined;
+            a === null || a !== undefined;
+            a !== null || a === undefined;
+            a !== null || a !== undefined;
+            a === null && a === undefined;
+            a === null && a !== undefined;
+            a !== null && a === undefined;
+            a !== null && a !== undefined;
+        }
     }
     expect: {
-        function f(a) {
+        function f1(a) {
             null == a;
             void 0 === a || null !== a;
             void 0 !== a || null === a;
@@ -138,6 +148,16 @@ issue_2857_1: {
             void 0 === a && null === a;
             void 0 === a && null !== a;
             void 0 !== a && null === a;
+            null != a;
+        }
+        function f2(a) {
+            null == a;
+            null === a || void 0 !== a;
+            null !== a || void 0 === a;
+            null !== a || void 0 !== a;
+            null === a && void 0 === a;
+            null === a && void 0 !== a;
+            null !== a && void 0 === a;
             null != a;
         }
     }
