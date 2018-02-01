@@ -112,3 +112,133 @@ self_comparison_2: {
     }
     expect_stdout: "false true"
 }
+
+issue_2857_1: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        a === undefined || a === null;
+        a === undefined || a !== null;
+        a !== undefined || a === null;
+        a !== undefined || a !== null;
+        a === undefined && a === null;
+        a === undefined && a !== null;
+        a !== undefined && a === null;
+        a !== undefined && a !== null;
+    }
+    expect: {
+        null == a;
+        void 0 === a || null !== a;
+        void 0 !== a || null === a;
+        void 0 !== a || null !== a;
+        void 0 === a && null === a;
+        void 0 === a && null !== a;
+        void 0 !== a && null === a;
+        null != a;
+    }
+}
+
+issue_2857_2: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        a === undefined || a === null || p;
+        a === undefined || a !== null || p;
+        a !== undefined || a === null || p;
+        a !== undefined || a !== null || p;
+        a === undefined && a === null || p;
+        a === undefined && a !== null || p;
+        a !== undefined && a === null || p;
+        a !== undefined && a !== null || p;
+    }
+    expect: {
+        null == a || p;
+        void 0 === a || null !== a || p;
+        void 0 !== a || null === a || p;
+        void 0 !== a || null !== a || p;
+        void 0 === a && null === a || p;
+        void 0 === a && null !== a || p;
+        void 0 !== a && null === a || p;
+        null != a || p;
+    }
+}
+
+issue_2857_3: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        a === undefined || a === null && p;
+        a === undefined || a !== null && p;
+        a !== undefined || a === null && p;
+        a !== undefined || a !== null && p;
+        a === undefined && a === null && p;
+        a === undefined && a !== null && p;
+        a !== undefined && a === null && p;
+        a !== undefined && a !== null && p;
+    }
+    expect: {
+        void 0 === a || null === a && p;
+        void 0 === a || null !== a && p;
+        void 0 !== a || null === a && p;
+        void 0 !== a || null !== a && p;
+        void 0 === a && null === a && p;
+        void 0 === a && null !== a && p;
+        void 0 !== a && null === a && p;
+        null != a && p;
+    }
+}
+
+issue_2857_4: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        p || a === undefined || a === null;
+        p || a === undefined || a !== null;
+        p || a !== undefined || a === null;
+        p || a !== undefined || a !== null;
+        p || a === undefined && a === null;
+        p || a === undefined && a !== null;
+        p || a !== undefined && a === null;
+        p || a !== undefined && a !== null;
+    }
+    expect: {
+        p || null == a;
+        p || void 0 === a || null !== a;
+        p || void 0 !== a || null === a;
+        p || void 0 !== a || null !== a;
+        p || void 0 === a && null === a;
+        p || void 0 === a && null !== a;
+        p || void 0 !== a && null === a;
+        p || null != a;
+    }
+}
+
+issue_2857_5: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        p && a === undefined || a === null;
+        p && a === undefined || a !== null;
+        p && a !== undefined || a === null;
+        p && a !== undefined || a !== null;
+        p && a === undefined && a === null;
+        p && a === undefined && a !== null;
+        p && a !== undefined && a === null;
+        p && a !== undefined && a !== null;
+    }
+    expect: {
+        p && void 0 === a || null === a;
+        p && void 0 === a || null !== a;
+        p && void 0 !== a || null === a;
+        p && void 0 !== a || null !== a;
+        p && void 0 === a && null === a;
+        p && void 0 === a && null !== a;
+        p && void 0 !== a && null === a;
+        p && null != a;
+    }
+}
