@@ -1024,7 +1024,6 @@ function log_suspects(minify_options, component) {
 }
 
 function log_rename(options) {
-    if (!options.rename) return;
     var m = JSON.parse(JSON.stringify(options));
     m.rename = false;
     var result = UglifyJS.minify(original_code, m);
