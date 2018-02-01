@@ -118,24 +118,48 @@ issue_2857_1: {
         comparisons: true,
     }
     input: {
-        a === undefined || a === null;
-        a === undefined || a !== null;
-        a !== undefined || a === null;
-        a !== undefined || a !== null;
-        a === undefined && a === null;
-        a === undefined && a !== null;
-        a !== undefined && a === null;
-        a !== undefined && a !== null;
+        function f1(a) {
+            a === undefined || a === null;
+            a === undefined || a !== null;
+            a !== undefined || a === null;
+            a !== undefined || a !== null;
+            a === undefined && a === null;
+            a === undefined && a !== null;
+            a !== undefined && a === null;
+            a !== undefined && a !== null;
+        }
+        function f2(a) {
+            a === null || a === undefined;
+            a === null || a !== undefined;
+            a !== null || a === undefined;
+            a !== null || a !== undefined;
+            a === null && a === undefined;
+            a === null && a !== undefined;
+            a !== null && a === undefined;
+            a !== null && a !== undefined;
+        }
     }
     expect: {
-        null == a;
-        void 0 === a || null !== a;
-        void 0 !== a || null === a;
-        void 0 !== a || null !== a;
-        void 0 === a && null === a;
-        void 0 === a && null !== a;
-        void 0 !== a && null === a;
-        null != a;
+        function f1(a) {
+            null == a;
+            void 0 === a || null !== a;
+            void 0 !== a || null === a;
+            void 0 !== a || null !== a;
+            void 0 === a && null === a;
+            void 0 === a && null !== a;
+            void 0 !== a && null === a;
+            null != a;
+        }
+        function f2(a) {
+            null == a;
+            null === a || void 0 !== a;
+            null !== a || void 0 === a;
+            null !== a || void 0 !== a;
+            null === a && void 0 === a;
+            null === a && void 0 !== a;
+            null !== a && void 0 === a;
+            null != a;
+        }
     }
 }
 
@@ -144,24 +168,28 @@ issue_2857_2: {
         comparisons: true,
     }
     input: {
-        a === undefined || a === null || p;
-        a === undefined || a !== null || p;
-        a !== undefined || a === null || p;
-        a !== undefined || a !== null || p;
-        a === undefined && a === null || p;
-        a === undefined && a !== null || p;
-        a !== undefined && a === null || p;
-        a !== undefined && a !== null || p;
+        function f(a, p) {
+            a === undefined || a === null || p;
+            a === undefined || a !== null || p;
+            a !== undefined || a === null || p;
+            a !== undefined || a !== null || p;
+            a === undefined && a === null || p;
+            a === undefined && a !== null || p;
+            a !== undefined && a === null || p;
+            a !== undefined && a !== null || p;
+        }
     }
     expect: {
-        null == a || p;
-        void 0 === a || null !== a || p;
-        void 0 !== a || null === a || p;
-        void 0 !== a || null !== a || p;
-        void 0 === a && null === a || p;
-        void 0 === a && null !== a || p;
-        void 0 !== a && null === a || p;
-        null != a || p;
+        function f(a, p) {
+            null == a || p;
+            void 0 === a || null !== a || p;
+            void 0 !== a || null === a || p;
+            void 0 !== a || null !== a || p;
+            void 0 === a && null === a || p;
+            void 0 === a && null !== a || p;
+            void 0 !== a && null === a || p;
+            null != a || p;
+        }
     }
 }
 
@@ -170,24 +198,28 @@ issue_2857_3: {
         comparisons: true,
     }
     input: {
-        a === undefined || a === null && p;
-        a === undefined || a !== null && p;
-        a !== undefined || a === null && p;
-        a !== undefined || a !== null && p;
-        a === undefined && a === null && p;
-        a === undefined && a !== null && p;
-        a !== undefined && a === null && p;
-        a !== undefined && a !== null && p;
+        function f(a, p) {
+            a === undefined || a === null && p;
+            a === undefined || a !== null && p;
+            a !== undefined || a === null && p;
+            a !== undefined || a !== null && p;
+            a === undefined && a === null && p;
+            a === undefined && a !== null && p;
+            a !== undefined && a === null && p;
+            a !== undefined && a !== null && p;
+        }
     }
     expect: {
-        void 0 === a || null === a && p;
-        void 0 === a || null !== a && p;
-        void 0 !== a || null === a && p;
-        void 0 !== a || null !== a && p;
-        void 0 === a && null === a && p;
-        void 0 === a && null !== a && p;
-        void 0 !== a && null === a && p;
-        null != a && p;
+        function f(a, p) {
+            void 0 === a || null === a && p;
+            void 0 === a || null !== a && p;
+            void 0 !== a || null === a && p;
+            void 0 !== a || null !== a && p;
+            void 0 === a && null === a && p;
+            void 0 === a && null !== a && p;
+            void 0 !== a && null === a && p;
+            null != a && p;
+        }
     }
 }
 
@@ -196,24 +228,28 @@ issue_2857_4: {
         comparisons: true,
     }
     input: {
-        p || a === undefined || a === null;
-        p || a === undefined || a !== null;
-        p || a !== undefined || a === null;
-        p || a !== undefined || a !== null;
-        p || a === undefined && a === null;
-        p || a === undefined && a !== null;
-        p || a !== undefined && a === null;
-        p || a !== undefined && a !== null;
+        function f(a, p) {
+            p || a === undefined || a === null;
+            p || a === undefined || a !== null;
+            p || a !== undefined || a === null;
+            p || a !== undefined || a !== null;
+            p || a === undefined && a === null;
+            p || a === undefined && a !== null;
+            p || a !== undefined && a === null;
+            p || a !== undefined && a !== null;
+        }
     }
     expect: {
-        p || null == a;
-        p || void 0 === a || null !== a;
-        p || void 0 !== a || null === a;
-        p || void 0 !== a || null !== a;
-        p || void 0 === a && null === a;
-        p || void 0 === a && null !== a;
-        p || void 0 !== a && null === a;
-        p || null != a;
+        function f(a, p) {
+            p || null == a;
+            p || void 0 === a || null !== a;
+            p || void 0 !== a || null === a;
+            p || void 0 !== a || null !== a;
+            p || void 0 === a && null === a;
+            p || void 0 === a && null !== a;
+            p || void 0 !== a && null === a;
+            p || null != a;
+        }
     }
 }
 
@@ -222,23 +258,60 @@ issue_2857_5: {
         comparisons: true,
     }
     input: {
-        p && a === undefined || a === null;
-        p && a === undefined || a !== null;
-        p && a !== undefined || a === null;
-        p && a !== undefined || a !== null;
-        p && a === undefined && a === null;
-        p && a === undefined && a !== null;
-        p && a !== undefined && a === null;
-        p && a !== undefined && a !== null;
+        function f(a, p) {
+            p && a === undefined || a === null;
+            p && a === undefined || a !== null;
+            p && a !== undefined || a === null;
+            p && a !== undefined || a !== null;
+            p && a === undefined && a === null;
+            p && a === undefined && a !== null;
+            p && a !== undefined && a === null;
+            p && a !== undefined && a !== null;
+        }
     }
     expect: {
-        p && void 0 === a || null === a;
-        p && void 0 === a || null !== a;
-        p && void 0 !== a || null === a;
-        p && void 0 !== a || null !== a;
-        p && void 0 === a && null === a;
-        p && void 0 === a && null !== a;
-        p && void 0 !== a && null === a;
-        p && null != a;
+        function f(a, p) {
+            p && void 0 === a || null === a;
+            p && void 0 === a || null !== a;
+            p && void 0 !== a || null === a;
+            p && void 0 !== a || null !== a;
+            p && void 0 === a && null === a;
+            p && void 0 === a && null !== a;
+            p && void 0 !== a && null === a;
+            p && null != a;
+        }
     }
+}
+
+issue_2857_6: {
+    options = {
+        comparisons: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            if (({}).b === undefined || {}.b === null)
+                return a.b !== undefined && a.b !== null;
+        }
+        console.log(f({
+            a: [ null ],
+            get b() {
+                return this.a.shift();
+            }
+        }));
+    }
+    expect: {
+        function f(a) {
+            if (null == {}.b)
+                return void 0 !== a.b && null !== a.b;
+        }
+        console.log(f({
+            a: [ null ],
+            get b() {
+                return this.a.shift();
+            }
+        }));
+    }
+    expect_stdout: "true"
 }
