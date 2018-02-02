@@ -4383,3 +4383,53 @@ cond_branch_switch: {
     }
     expect_stdout: "1"
 }
+
+issue_2873_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) break;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) break;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect_stdout: "0 1"
+}
+
+issue_2873_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) continue;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) continue;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect_stdout: "0 1"
+}
