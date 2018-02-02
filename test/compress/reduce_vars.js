@@ -5507,3 +5507,29 @@ issue_2860_2: {
     }
     expect_stdout: "1"
 }
+
+issue_2869: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function f(a) {
+            var a;
+            if (!f) a = 0;
+            if (a) c = "PASS";
+        })(1);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function f(a) {
+            var a;
+            if (!f) a = 0;
+            if (a) c = "PASS";
+        })(1);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
