@@ -4191,6 +4191,31 @@ return_3: {
     expect_stdout: "0"
 }
 
+return_4: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function(b) {
+            a = "PASS";
+            return;
+            b(a);
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function(b) {
+            a = "PASS";
+            return;
+            b(a);
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
 issue_2858: {
     options = {
         collapse_vars: true,
