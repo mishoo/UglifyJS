@@ -4433,3 +4433,37 @@ issue_2873_2: {
     }
     expect_stdout: "0 1"
 }
+
+issue_2878: {
+    options = {
+        collapse_vars: true,
+        sequences: true,
+    }
+    input: {
+        var c = 0;
+        (function (a, b) {
+            function f2() {
+                if (a) c++;
+            }
+            b = f2();
+            a = 1;
+            b && b.b;
+            f2();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function (a, b) {
+            function f2() {
+                if (a) c++;
+            }
+            b = f2(),
+            a = 1,
+            b && b.b,
+            f2();
+        })(),
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
