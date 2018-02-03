@@ -4281,19 +4281,16 @@ cond_branch_1: {
     }
     expect: {
         function f1(b, c) {
-            var log = console.log;
             if (b) b++;
-            log(++c, b);
+            (0, console.log)(++c, b);
         }
         function f2(b, c) {
-            var log = console.log;
             b && b++,
-            log(++c, b);
+            (0, console.log)(++c, b);
         }
         function f3(b, c) {
-            var log = console.log;
             b ? b++ : b--,
-            log(++c, b);
+            (0, console.log)(++c, b);
         }
         f1(1, 2),
         f2(3, 4),
@@ -4337,22 +4334,19 @@ cond_branch_2: {
     }
     expect: {
         function f1(b, c) {
-            var log = console.log;
             var a = ++c;
             if (b) b += a;
-            log(a, b);
+            (0, console.log)(a, b);
         }
         function f2(b, c) {
-            var log = console.log;
             var a = ++c;
             b && (b += a),
-            log(a, b);
+            (0, console.log)(a, b);
         }
         function f3(b, c) {
-            var log = console.log;
             var a = ++c;
             b ? b += a : b--,
-            log(a, b);
+            (0, console.log)(a, b);
         }
         f1(1, 2),
         f2(3, 4),
