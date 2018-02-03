@@ -1439,3 +1439,34 @@ issue_2794_6: {
     ]
     node_version: ">=6"
 }
+
+inline_arrow_using_arguments: {
+    options = {
+        evaluate: true,
+        inline: 1,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(){
+            ((x) => {
+                console.log.apply(console, arguments),
+                console.log(x);
+            })(4);
+        })(3, 2, 1);
+    }
+    expect: {
+        (function(){
+            console.log.apply(console, arguments),
+            console.log(4);
+        })(3, 2, 1);
+    }
+    expect_stdout: [
+        "3 2 1",
+        "4",
+    ]
+    node_version: ">=6"
+}
