@@ -1516,9 +1516,11 @@ issue_2647_2: {
     }
     expect: {
         (function() {
-            console.log((() => (x = "pass", x.toUpperCase()))());
-            var x;
-        })();
+            function foo(x) {
+                return x.toUpperCase();
+            }
+            console.log((() => foo("pass"))());
+        }());
     }
     expect_stdout: "PASS"
     node_version: ">=4"
