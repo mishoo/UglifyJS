@@ -1102,3 +1102,18 @@ To enable fast minify mode with the API use:
 ```js
 UglifyJS.minify(code, { compress: false, mangle: true });
 ```
+
+### Compiler assumptions
+
+To allow for better optimizations, the compiler makes various assumptions.
+
+- `.toString()` and `.valueOf()` have not been overridden, and don't have side effects.
+- `undefined`, `NaN` and `Infinity` have not been externally redefined.
+- `arguments.callee`, `arguments.caller` and `Function.prototype.caller` are not used.
+- The code doesn't expect the contents of `Function.prototype.toString()` or
+  `Error.prototype.stack` to be anything in particular.
+- Getting and setting properties on a plain object does not cause other side effects
+  (using `.watch()` or `Proxy`).
+- Object properties are able to be added (not prevented with
+  `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()` or
+  `Object.preventExtensions()`).
