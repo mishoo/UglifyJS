@@ -23,7 +23,7 @@ Tests that cannot be expressed as a simple AST can be found in `test/mocha`.
 - Indentation uses 4 spaces, switch `case` 2 spaces.
 - Identifiers use `snake_case`.
 - Strings use double quotes (`"`).
-- Multiline object and array literals use trailing commas.
+- Use a trailing comma for multiline array and object literals to minimize diffs.
 - The Uglify code only uses ES5, even in the `harmony` branch.
 - Line length should be at most 80 cols, except when it is easier to read a
   longer line.
