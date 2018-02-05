@@ -1113,9 +1113,10 @@ disable the Uglify `compress` option and just use `mangle`.
 
 ### Compiler assumptions
 
-To allow for better optimizations, the compiler makes various assumptions.
+To allow for better optimizations, the compiler makes various assumptions:
 
-- `.toString()` and `.valueOf()` have not been overridden, and don't have side effects.
+- `.toString()` and `.valueOf()` don't have side effects, and for built-in
+  objects they have not been overridden.
 - `undefined`, `NaN` and `Infinity` have not been externally redefined.
 - `arguments.callee`, `arguments.caller` and `Function.prototype.caller` are not used.
 - The code doesn't expect the contents of `Function.prototype.toString()` or
