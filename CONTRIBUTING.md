@@ -25,30 +25,31 @@ Tests that cannot be expressed as a simple AST can be found in `test/mocha`.
 - If both sides of a comparison are of the same type, `==` and `!=` are used.
 - Multiline conditions place `&&` and `||` first on the line.
 
-Example:
+**Example feature**
 
 ```js
-if (compressor.option("comparisons")) switch (self.operator) {
-  case "==":
-  case "!=":
-    // void 0 == x => null == x
-    if (!is_strict_comparison && is_undefined(self.left, compressor)) {
-        self.left = make_node(AST_Null, self.left);
+OPT(AST_Debugger, function(self, compressor) {
+    if (compressor.option("drop_debugger"))
+        return make_node(AST_EmptyStatement, self);
+    return self;
+});
+```
+
+**Example test**
+
+```js
+drop_debugger: {
+    options = {
+        drop_debugger: true,
     }
-    // "undefined" == typeof x => undefined === x
-    else if (compressor.option("typeofs")
-        && self.left instanceof AST_String
-        && self.left.value == "undefined"
-        && self.right instanceof AST_UnaryPrefix
-        && self.right.operator == "typeof") {
-        var expr = self.right.expression;
-        if (expr instanceof AST_SymbolRef ? expr.is_declared(compressor)
-            : !(expr instanceof AST_PropAccess && compressor.option("ie8"))) {
-            self.right = expr;
-            self.left = make_node(AST_Undefined, self.left).optimize(compressor);
-            if (self.operator.length == 2) self.operator += "=";
-        }
+    input: {
+        debugger;
+        if (foo) debugger;
     }
-    ...
+    expect: {
+        if (foo);
+    }
 }
 ```
+
+
