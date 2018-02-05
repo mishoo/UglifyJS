@@ -35,7 +35,7 @@ OPT(AST_Debugger, function(self, compressor) {
 });
 ```
 
-**Example test**
+**Example test case**
 
 ```js
 drop_debugger: {
