@@ -1103,6 +1103,14 @@ To enable fast minify mode with the API use:
 UglifyJS.minify(code, { compress: false, mangle: true });
 ```
 
+#### Source maps and debugging
+
+Various `compress` transforms that simplify, rearrange, inline and remove code
+are known to have an adverse effect on debugging with source maps. This is
+expected as code is optimized and mappings are often simply not possible as
+some code no longer exists. For highest fidelity in source map debugging
+disable the Uglify `compress` option and just use `mangle`.
+
 ### Compiler assumptions
 
 To allow for better optimizations, the compiler makes various assumptions.
@@ -1117,11 +1125,3 @@ To allow for better optimizations, the compiler makes various assumptions.
 - Object properties can be added, removed and modified (not prevented with
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
-
-### Source maps and debugging
-
-Various `compress` transforms that simplify, rearrange, inline and remove code
-are known to have an adverse effect on debugging with source maps. This is
-expected as code is optimized and mappings are often simply not possible as
-some code no longer exists. For highest fidelity in source map debugging
-disable the Uglify `compress` option and just use `mangle`.
