@@ -1114,7 +1114,7 @@ To allow for better optimizations, the compiler makes various assumptions.
   `Error.prototype.stack` to be anything in particular.
 - Getting and setting properties on a plain object does not cause other side effects
   (using `.watch()` or `Proxy`).
-- Object properties are able to be added (not prevented with
+- Object properties can be added, removed and modified (not prevented with
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
 
