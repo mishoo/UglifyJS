@@ -1,6 +1,10 @@
 Contributing
 ============
 
+## Documentation
+
+Every new feature and API change should be accompanied by a README additon.
+
 ## Testing
 
 All features and bugs should have tests that verify the fix. You can run all
@@ -19,6 +23,7 @@ Tests that cannot be expressed as a simple AST can be found in `test/mocha`.
 - Indentation uses 4 spaces, switch `case` 2 spaces.
 - Identifiers use `snake_case`.
 - Strings use double quotes (`"`).
+- Multiline object and array literals use trailing commas.
 - The Uglify code only uses ES5, even in the `harmony` branch.
 - Line length should be at most 80 cols, except when it is easier to read a
   longer line.
