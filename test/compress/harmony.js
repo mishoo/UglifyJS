@@ -1470,3 +1470,134 @@ inline_arrow_using_arguments: {
     ]
     node_version: ">=6"
 }
+
+issue_2874_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: 3,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo() {
+                let letters = ["A", "B", "C"];
+                let result = [2, 1, 0].map(key => bar(letters[key] + key));
+                return result;
+            }
+            function bar(value) {
+                return () => console.log(value);
+            }
+            foo().map(fn => fn());
+        })();
+    }
+    expect: {
+        (function() {
+            (function() {
+                let letters = [ "A", "B", "C" ];
+                return [ 2, 1, 0 ].map(key => (function(value) {
+                    return () => console.log(value);
+                })(letters[key] + key));
+            })().map(fn => fn());
+        })();
+    }
+    expect_stdout: [
+        "C2",
+        "B1",
+        "A0",
+    ]
+    node_version: ">=6"
+}
+
+issue_2874_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: 3,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            let keys = [];
+            function foo() {
+                var result = [2, 1, 0].map(value => {
+                    keys.push(value);
+                    return bar();
+                });
+                return result;
+            }
+            function bar() {
+                var letters = ["A", "B", "C"], key = keys.shift();
+                return () => console.log(letters[key] + key);
+            }
+            foo().map(fn => fn());
+        })();
+    }
+    expect: {
+        (function() {
+            let keys = [];
+            [ 2, 1, 0 ].map(value => {
+                return keys.push(value), function() {
+                    var letters = [ "A", "B", "C" ], key = keys.shift();
+                    return () => console.log(letters[key] + key);
+                }();
+            }).map(fn => fn());
+        })();
+    }
+    expect_stdout: [
+        "C2",
+        "B1",
+        "A0",
+    ]
+    node_version: ">=6"
+}
+
+issue_2874_3: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: 3,
+        reduce_funcs: false,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return x + y;
+        }
+        let x, y;
+        let a = (z) => {
+            x = "A";
+            y = z;
+            console.log(f());
+        }
+        a(1);
+        a(2);
+    }
+    expect: {
+        let x, y;
+        let a = z => {
+            x = "A",
+            y = z,
+            console.log(x + y);
+        };
+        a(1),
+        a(2);
+    }
+    expect_stdout: [
+        "A1",
+        "A2",
+    ]
+    node_version: ">=6"
+}
