@@ -122,6 +122,32 @@ describe("minify", function() {
         assert.strictEqual(Uglify.minify("function this(){}").error.message, "Unexpected token: name (this)");
     });
 
+    it("Should not mutate options", function() {
+        [
+            {},
+            {
+                parse: {},
+                compress: {
+                    global_defs: {},
+                },
+                mangle: {
+                    reserved: [],
+                    // expect `cache` to be mutated
+                },
+                output: {},
+                rename: {
+                    reserved: [],
+                },
+                sourceMap: {},
+                // expect `nameCache` to be mutated
+            },
+        ].forEach(function(options) {
+            var optsString = JSON.stringify(options);
+            Uglify.minify("", options);
+            assert.strictEqual(JSON.stringify(options), optsString);
+        });
+    });
+
     describe("keep_quoted_props", function() {
         it("Should preserve quotes in object literals", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
