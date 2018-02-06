@@ -1374,3 +1374,58 @@ issue_2822: {
     }
     expect_stdout: "PASS"
 }
+
+string_case: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log("İ".toLowerCase().charCodeAt(0));
+        console.log("I".toLowerCase().charCodeAt(0));
+        console.log("Ş".toLowerCase().charCodeAt(0));
+        console.log("Ğ".toLowerCase().charCodeAt(0));
+        console.log("Ü".toLowerCase().charCodeAt(0));
+        console.log("Ö".toLowerCase().charCodeAt(0));
+        console.log("Ç".toLowerCase().charCodeAt(0));
+        console.log("i".toUpperCase().charCodeAt(0));
+        console.log("ı".toUpperCase().charCodeAt(0));
+        console.log("ş".toUpperCase().charCodeAt(0));
+        console.log("ğ".toUpperCase().charCodeAt(0));
+        console.log("ü".toUpperCase().charCodeAt(0));
+        console.log("ö".toUpperCase().charCodeAt(0));
+        console.log("ç".toUpperCase().charCodeAt(0));
+    }
+    expect: {
+        console.log(105);
+        console.log(105);
+        console.log(351);
+        console.log(287);
+        console.log(252);
+        console.log(246);
+        console.log(231);
+        console.log(73);
+        console.log(73);
+        console.log(350);
+        console.log(286);
+        console.log(220);
+        console.log(214);
+        console.log(199);
+    }
+    expect_stdout: [
+        "105",
+        "105",
+        "351",
+        "287",
+        "252",
+        "246",
+        "231",
+        "73",
+        "73",
+        "350",
+        "286",
+        "220",
+        "214",
+        "199",
+    ]
+}
