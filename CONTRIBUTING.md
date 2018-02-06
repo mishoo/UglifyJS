@@ -18,6 +18,7 @@ Tests that cannot be expressed as a simple AST can be found in `test/mocha`.
 
 ## Code style
 
+- File encoding must be `UTF-8`.
 - `LF` is always used as a line ending.
 - Statements end with semicolons.
 - Indentation uses 4 spaces, switch `case` 2 spaces.
