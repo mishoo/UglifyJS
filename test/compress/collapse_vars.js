@@ -4515,5 +4515,5 @@ issue_2891_2: {
         }
         console.log(a);
     }
-    expect_stdout: "PASS"
+    expect_stdout: true
 }
