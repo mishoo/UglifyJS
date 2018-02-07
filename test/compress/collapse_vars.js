@@ -4461,3 +4461,59 @@ issue_2878: {
     }
     expect_stdout: "1"
 }
+
+issue_2891_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS", b;
+        try {
+            b = c.p = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS", b;
+        try {
+            b = c.p = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2891_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var a = "PASS", b;
+        try {
+            b = c = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        var a = "PASS", b;
+        try {
+            b = c = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect_stdout: true
+}
