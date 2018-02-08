@@ -208,7 +208,7 @@ function run_compress_tests() {
                     });
                     return false;
                 }
-                if (0 && test.reminify && !reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
+                if (test.reminify && !reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
                     return false;
                 }
             }

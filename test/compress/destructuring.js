@@ -439,6 +439,39 @@ mangle_destructuring_decl: {
     node_version: ">=6"
 }
 
+mangle_destructuring_decl_collapse_vars: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        unused: true,
+    }
+    mangle = {
+    }
+    input: {
+        function test(opts) {
+            let a = opts.a || { e: 7, n: 8 };
+            let { t, e, n, s =  5 + 4, o, r } = a;
+            console.log(t, e, n, s, o, r);
+        }
+        test({a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 }});
+        test({});
+    }
+    expect: {
+        function test(t) {
+            let e = t.a || { e: 7, n: 8 };
+            let {t: n,  e: o,  n: s,  s: l = 9,  o: a,  r: c} = e;
+            console.log(n, o, s, l, a, c);
+        }
+        test({ a: { t: 1, e: 2, n: 3, s: 4, o: 5, r: 6 } });
+        test({});
+    }
+    expect_stdout: [
+        "1 2 3 4 5 6",
+        "undefined 7 8 9 undefined undefined",
+    ]
+    node_version: ">=6"
+}
+
 mangle_destructuring_assign_toplevel_true: {
     options = {
         toplevel: true,
