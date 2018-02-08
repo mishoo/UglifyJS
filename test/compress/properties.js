@@ -1588,3 +1588,55 @@ issue_2816: {
     }
     expect_stdout: "3 2 4"
 }
+
+issue_2893_1: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var o = {
+            get a() {
+                return "PASS";
+            },
+        };
+        o.a = "FAIL";
+        console.log(o.a);
+    }
+    expect: {
+        var o = {
+            get a() {
+                return "PASS";
+            },
+        };
+        o.a = "FAIL";
+        console.log(o.a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2893_2: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var o = {
+            set a(v) {
+                this.b = v;
+            },
+            b: "FAIL",
+        };
+        o.a = "PASS";
+        console.log(o.b);
+    }
+    expect: {
+        var o = {
+            set a(v) {
+                this.b = v;
+            },
+            b: "FAIL",
+        };
+        o.a = "PASS";
+        console.log(o.b);
+    }
+    expect_stdout: "PASS"
+}
