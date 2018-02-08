@@ -76,14 +76,12 @@ modified: {
             console.log(a + 1);
             console.log(b + 1);
         }
-
         function f1() {
             var a = 1, b = 2;
             --b;
             console.log(a + 1);
             console.log(b + 1);
         }
-
         function f2() {
             var a = 1, b = 2, c = 3;
             b = c;
@@ -92,7 +90,6 @@ modified: {
             console.log(a + c);
             console.log(a + b + c);
         }
-
         function f3() {
             var a = 1, b = 2, c = 3;
             b *= c;
@@ -101,7 +98,6 @@ modified: {
             console.log(a + c);
             console.log(a + b + c);
         }
-
         function f4() {
             var a = 1, b = 2, c = 3;
             if (a) {
@@ -114,28 +110,26 @@ modified: {
             console.log(a + c);
             console.log(a + b + c);
         }
-
         function f5(a) {
             B = a;
-            console.log(A ? 'yes' : 'no');
-            console.log(B ? 'yes' : 'no');
+            console.log(typeof A ? "yes" : "no");
+            console.log(typeof B ? "yes" : "no");
         }
+        f0(), f1(), f2(), f3(), f4(), f5();
     }
     expect: {
         function f0() {
             var b = 2;
             b++;
             console.log(2);
-            console.log(b + 1);
+            console.log(4);
         }
-
         function f1() {
             var b = 2;
             --b;
             console.log(2);
-            console.log(b + 1);
+            console.log(2);
         }
-
         function f2() {
             3;
             console.log(4);
@@ -143,16 +137,14 @@ modified: {
             console.log(4);
             console.log(7);
         }
-
         function f3() {
             var b = 2;
             b *= 3;
-            console.log(1 + b);
-            console.log(b + 3);
+            console.log(7);
+            console.log(9);
             console.log(4);
-            console.log(1 + b + 3);
+            console.log(10);
         }
-
         function f4() {
             var b = 2, c = 3;
             b = c;
@@ -161,13 +153,33 @@ modified: {
             console.log(1 + c);
             console.log(1 + b + c);
         }
-
         function f5(a) {
             B = a;
-            console.log(A ? 'yes' : 'no');
-            console.log(B ? 'yes' : 'no');
+            console.log(typeof A ? "yes" : "no");
+            console.log(typeof B ? "yes" : "no");
         }
+        f0(), f1(), f2(), f3(), f4(), f5();
     }
+    expect_stdout: [
+        "2",
+        "4",
+        "2",
+        "2",
+        "4",
+        "6",
+        "4",
+        "7",
+        "7",
+        "9",
+        "4",
+        "10",
+        "4",
+        "6",
+        "4",
+        "7",
+        "yes",
+        "yes",
+    ]
 }
 
 unsafe_evaluate: {
@@ -745,7 +757,7 @@ iife: {
     expect: {
         !function(a, b, c) {
             b++;
-            console.log(0, 1 * b, 5);
+            console.log(0, 3, 5);
         }(1, 2, 3);
     }
     expect_stdout: true
@@ -766,7 +778,7 @@ iife_new: {
     expect: {
         var A = new function(a, b, c) {
             b++;
-            console.log(0, 1 * b, 5);
+            console.log(0, 3, 5);
         }(1, 2, 3);
     }
     expect_stdout: true
@@ -5970,6 +5982,144 @@ issue_2836: {
         console.log(function() {
             return "PASS";
         }());
+    }
+    expect_stdout: "PASS"
+}
+
+lvalues_def_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        var a = b++, b = NaN;
+        console.log(a, b);
+    }
+    expect: {
+        var b = 1;
+        var a = b++;
+        b = NaN;
+        console.log(a, b);
+    }
+    expect_stdout: "1 NaN"
+}
+
+lvalues_def_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        var a = b += 1, b = NaN;
+        console.log(a, b);
+    }
+    expect: {
+        var b = 1;
+        var a = b += 1;
+        b = NaN;
+        console.log(a, b);
+    }
+    expect_stdout: "2 NaN"
+}
+
+chained_assignments: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a = [0x5e, 0xad, 0xbe, 0xef];
+            var b = 0;
+            b |= a[0];
+            b <<= 8;
+            b |= a[1];
+            b <<= 8;
+            b |= a[2];
+            b <<= 8;
+            b |= a[3];
+            return b;
+        }
+        console.log(f().toString(16));
+    }
+    expect: {
+        console.log("5eadbeef");
+    }
+    expect_stdout: "5eadbeef"
+}
+
+issue_2860_1: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a ^= 1;
+            a ^= 2;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            return 1 ^ a;
+        }());
+    }
+    expect_stdout: "1"
+}
+
+issue_2860_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a ^= 1;
+            a ^= 2;
+        }());
+    }
+    expect: {
+        console.log(1);
+    }
+    expect_stdout: "1"
+}
+
+issue_2869: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function f(a) {
+            var a;
+            if (!f) a = 0;
+            if (a) c = "PASS";
+        })(1);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function f(a) {
+            var a;
+            if (!f) a = 0;
+            if (a) c = "PASS";
+        })(1);
+        console.log(c);
     }
     expect_stdout: "PASS"
 }
