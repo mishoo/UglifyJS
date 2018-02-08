@@ -1173,3 +1173,27 @@ To enable fast minify mode with the API use:
 ```js
 UglifyJS.minify(code, { compress: false, mangle: true });
 ```
+
+#### Source maps and debugging
+
+Various `compress` transforms that simplify, rearrange, inline and remove code
+are known to have an adverse effect on debugging with source maps. This is
+expected as code is optimized and mappings are often simply not possible as
+some code no longer exists. For highest fidelity in source map debugging
+disable the Uglify `compress` option and just use `mangle`.
+
+### Compiler assumptions
+
+To allow for better optimizations, the compiler makes various assumptions:
+
+- `.toString()` and `.valueOf()` don't have side effects, and for built-in
+  objects they have not been overridden.
+- `undefined`, `NaN` and `Infinity` have not been externally redefined.
+- `arguments.callee`, `arguments.caller` and `Function.prototype.caller` are not used.
+- The code doesn't expect the contents of `Function.prototype.toString()` or
+  `Error.prototype.stack` to be anything in particular.
+- Getting and setting properties on a plain object does not cause other side effects
+  (using `.watch()` or `Proxy`).
+- Object properties can be added, removed and modified (not prevented with
+  `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
+  `Object.preventExtensions()` or `Object.seal()`).

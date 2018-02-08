@@ -52,13 +52,8 @@ collapse_vars_side_effects_1: {
             console.log.bind(console)(s.charAt(i++), s.charAt(i++), s.charAt(i++), 7);
         }
         function f2() {
-            var log = console.log.bind(console),
-                s = "abcdef",
-                i = 2,
-                x = s.charAt(i++),
-                y = s.charAt(i++),
-                z = s.charAt(i++);
-            log(x, i, y, z, 7);
+            var s = "abcdef", i = 2;
+            console.log.bind(console)(s.charAt(i++), 5, s.charAt(i++), s.charAt(i++), 7);
         }
         function f3() {
             var s = "abcdef",
@@ -72,7 +67,7 @@ collapse_vars_side_effects_1: {
             var i = 10,
                 x = i += 2,
                 y = i += 3;
-            console.log.bind(console)(x, i += 4, y, i);
+            console.log.bind(console)(x, i += 4, y, 19);
         }
         f1(), f2(), f3(), f4();
     }
@@ -4413,4 +4408,414 @@ unsafe_builtin: {
         console.log(f(-1), f(2));
     }
     expect_stdout: "1 4"
+}
+
+return_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var log = console.log;
+        function f(b, c) {
+            var a = c;
+            if (b) return b;
+            log(a);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect: {
+        var log = console.log;
+        function f(b, c) {
+            if (b) return b;
+            log(c);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect_stdout: "1"
+}
+
+return_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var log = console.log;
+        function f(b, c) {
+            var a = c();
+            if (b) return b;
+            log(a);
+        }
+        f(false, function() { return 1 });
+        f(true, function() { return 2 });
+    }
+    expect: {
+        var log = console.log;
+        function f(b, c) {
+            var a = c();
+            if (b) return b;
+            log(a);
+        }
+        f(false, function() { return 1 });
+        f(true, function() { return 2 });
+    }
+    expect_stdout: "1"
+}
+
+return_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var log = console.log;
+        function f(b, c) {
+            var a = b <<= c;
+            if (b) return b;
+            log(a);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect: {
+        var log = console.log;
+        function f(b, c) {
+            var a = b <<= c;
+            if (b) return b;
+            log(a);
+        }
+        f(false, 1);
+        f(true, 2);
+    }
+    expect_stdout: "0"
+}
+
+return_4: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function(b) {
+            a = "PASS";
+            return;
+            b(a);
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function(b) {
+            a = "PASS";
+            return;
+            b(a);
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2858: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var b;
+        (function() {
+            function f() {
+                a++;
+            }
+            f();
+            var c = f();
+            var a = void 0;
+            c || (b = a);
+        })();
+        console.log(b);
+    }
+    expect: {
+        var b;
+        (function() {
+            function f() {
+                a++;
+            }
+            f();
+            var c = f();
+            var a = void 0;
+            c || (b = a);
+        })();
+        console.log(b);
+    }
+    expect_stdout: "undefined"
+}
+
+cond_branch_1: {
+    options = {
+        collapse_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        function f1(b, c) {
+            var log = console.log;
+            var a = ++c;
+            if (b) b++;
+            log(a, b);
+        }
+        function f2(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b && b++;
+            log(a, b);
+        }
+        function f3(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b ? b++ : b--;
+            log(a, b);
+        }
+        f1(1, 2);
+        f2(3, 4);
+        f3(5, 6);
+    }
+    expect: {
+        function f1(b, c) {
+            if (b) b++;
+            (0, console.log)(++c, b);
+        }
+        function f2(b, c) {
+            b && b++,
+            (0, console.log)(++c, b);
+        }
+        function f3(b, c) {
+            b ? b++ : b--,
+            (0, console.log)(++c, b);
+        }
+        f1(1, 2),
+        f2(3, 4),
+        f3(5, 6);
+    }
+    expect_stdout: [
+        "3 2",
+        "5 4",
+        "7 6",
+    ]
+}
+
+cond_branch_2: {
+    options = {
+        collapse_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        function f1(b, c) {
+            var log = console.log;
+            var a = ++c;
+            if (b) b += a;
+            log(a, b);
+        }
+        function f2(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b && (b += a);
+            log(a, b);
+        }
+        function f3(b, c) {
+            var log = console.log;
+            var a = ++c;
+            b ? b += a : b--;
+            log(a, b);
+        }
+        f1(1, 2);
+        f2(3, 4);
+        f3(5, 6);
+    }
+    expect: {
+        function f1(b, c) {
+            var a = ++c;
+            if (b) b += a;
+            (0, console.log)(a, b);
+        }
+        function f2(b, c) {
+            var a = ++c;
+            b && (b += a),
+            (0, console.log)(a, b);
+        }
+        function f3(b, c) {
+            var a = ++c;
+            b ? b += a : b--,
+            (0, console.log)(a, b);
+        }
+        f1(1, 2),
+        f2(3, 4),
+        f3(5, 6);
+    }
+    expect_stdout: [
+        "3 4",
+        "5 8",
+        "7 12",
+    ]
+}
+
+cond_branch_switch: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = 0;
+        if (c = 1 + c, 0) switch (c = 1 + c) {
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        if (c = 1 + c, 0) switch (c = 1 + c) {
+        }
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
+
+issue_2873_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) break;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) break;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect_stdout: "0 1"
+}
+
+issue_2873_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) continue;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect: {
+        var b = 1, c = 0;
+        do {
+            c++;
+            if (!--b) continue;
+            c = 1 + c;
+        } while (0);
+        console.log(b, c);
+    }
+    expect_stdout: "0 1"
+}
+
+issue_2878: {
+    options = {
+        collapse_vars: true,
+        sequences: true,
+    }
+    input: {
+        var c = 0;
+        (function (a, b) {
+            function f2() {
+                if (a) c++;
+            }
+            b = f2();
+            a = 1;
+            b && b.b;
+            f2();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function (a, b) {
+            function f2() {
+                if (a) c++;
+            }
+            b = f2(),
+            a = 1,
+            b && b.b,
+            f2();
+        })(),
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
+
+issue_2891_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS", b;
+        try {
+            b = c.p = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS", b;
+        try {
+            b = c.p = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2891_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var a = "PASS", b;
+        try {
+            b = c = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        var a = "PASS", b;
+        try {
+            b = c = 0;
+            a = "FAIL";
+            b();
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect_stdout: true
 }

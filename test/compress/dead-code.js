@@ -1178,3 +1178,41 @@ unsafe_builtin: {
         z;
     }
 }
+
+issue_2860_1: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a ^= 1;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            return 1 ^ a;
+        }());
+    }
+    expect_stdout: "1"
+}
+
+issue_2860_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a ^= 1;
+        }());
+    }
+    expect: {
+        console.log(1);
+    }
+    expect_stdout: "1"
+}
