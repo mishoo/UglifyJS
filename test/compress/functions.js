@@ -1989,3 +1989,33 @@ issue_2783: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2898: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            while (f());
+            function f() {
+                var b = (c = 1 + c, void (c = 1 + c));
+                b && b[0];
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            while (b = void 0, void ((b = void (c = 1 + (c = 1 + c))) && b[0]));
+            var b;
+        })(),
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
