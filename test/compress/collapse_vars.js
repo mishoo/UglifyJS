@@ -4517,3 +4517,32 @@ issue_2891_2: {
     }
     expect_stdout: true
 }
+
+issue_2908: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        function f(c) {
+            if (1 == c) return;
+            a++;
+            if (2 == c) b = a;
+        }
+        f(0);
+        f(2);
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b = 0;
+        function f(c) {
+            if (1 == c) return;
+            a++;
+            if (2 == c) b = a;
+        }
+        f(0);
+        f(2);
+        console.log(b);
+    }
+    expect_stdout: "2"
+}
