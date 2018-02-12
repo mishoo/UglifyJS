@@ -1178,9 +1178,7 @@ toplevel_on_loops_1: {
             console.log("bar:", --x);
         }
         var x = 3;
-        do
-            bar();
-        while (x);
+        for (;bar(), x;);
     }
     expect_stdout: true
 }
@@ -1208,9 +1206,7 @@ toplevel_off_loops_1: {
             console.log("bar:", --x);
         }
         var x = 3;
-        do
-            bar();
-        while (x);
+        for (;bar(), x;);
     }
     expect_stdout: true
 }
@@ -1265,9 +1261,7 @@ toplevel_off_loops_2: {
             console.log("bar:");
         }
         var x = 3;
-        do
-            bar();
-        while (x);
+        for (;bar(), x;);
     }
 }
 
