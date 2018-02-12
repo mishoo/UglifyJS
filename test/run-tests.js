@@ -372,8 +372,9 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
         var options_formatted = JSON.stringify(options, null, 4);
         var result = U.minify(input_code, options);
         if (result.error) {
-            log("!!! failed input reminify\n---INPUT---\n{input}\n--ERROR---\n{error}\n\n", {
+            log("!!! failed input reminify\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n--ERROR---\n{error}\n\n", {
                 input: input_formatted,
+                options: options_formatted,
                 error: result.error,
             });
             return false;
