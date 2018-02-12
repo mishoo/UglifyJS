@@ -1343,7 +1343,7 @@ issue_2630_4: {
         var x = 3, a = 1, b = 2;
         (function() {
             (function() {
-                while (--x >= 0 && void (a++, b += a));
+                while (--x >= 0 && void (b += ++a));
             })();
         })();
         console.log(a);
