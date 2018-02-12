@@ -605,3 +605,20 @@ issue_2740_5: {
     }
     expect_stdout: "0 undefined"
 }
+
+issue_2904: {
+    options = {
+        join_vars: true,
+        loops: true,
+    }
+    input: {
+        var a = 1;
+        do {
+            console.log(a);
+        } while (--a);
+    }
+    expect: {
+        for (var a = 1; console.log(a), --a;);
+    }
+    expect_stdout: "1"
+}
