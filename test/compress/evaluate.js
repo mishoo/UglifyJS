@@ -1429,3 +1429,63 @@ string_case: {
         "199",
     ]
 }
+
+issue_2916_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        var c = "PASS";
+        (function(a, b) {
+            (function(d) {
+                d[0] = 1;
+            })(b);
+            a == b && (c = "FAIL");
+        })("", []);
+        console.log(c);
+    }
+    expect: {
+        var c = "PASS";
+        (function(a, b) {
+            (function(d) {
+                d[0] = 1;
+            })(b);
+            a == b && (c = "FAIL");
+        })("", []);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2916_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function(b) {
+            (function(d) {
+                d[0] = 1;
+            })(b);
+            +b && (c = "PASS");
+        })([]);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(b) {
+            b[0] = 1;
+            +b && (c = "PASS");
+        })([]);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
