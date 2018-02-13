@@ -18,6 +18,10 @@ if (failures) {
     console.error("!!! " + Object.keys(failed_files).join(", "));
     process.exit(1);
 }
+if (process.argv.length > 2) {
+    // User specified a specific compress/ test, don't run entire test suite
+    return;
+}
 
 var mocha_tests = require("./mocha.js");
 mocha_tests();

@@ -2031,6 +2031,29 @@ inline_true: {
     ]
 }
 
+issue_2842: {
+    options = {
+        inline: true,
+        toplevel: true,
+        reduce_vars: true,
+        reduce_funcs: true,
+    }
+    input: {
+        {
+            const data = function (data) {
+                return data[data[0]];
+            }([1, 2, 3]);
+        }
+    }
+    expect: {
+        {
+            const data = function (data) {
+                return data[data[0]];
+            }([1, 2, 3]);
+        }
+    }
+}
+
 use_before_init_in_loop: {
     options = {
         inline: true,
