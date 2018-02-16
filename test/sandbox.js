@@ -24,9 +24,8 @@ function strip_func_ids(text) {
 var FUNC_TOSTRING = [
     "[ Array, Boolean, Error, Function, Number, Object, RegExp, String].forEach(function(f) {",
     "    f.toString = Function.prototype.toString;",
-    "    f.valueOf = Function.prototype.valueOf;",
     "});",
-    "Function.prototype.toString = Function.prototype.valueOf = function() {",
+    "Function.prototype.toString = function() {",
     "    var id = 100000;",
     "    return function() {",
     "        var n = this.name;",
@@ -40,10 +39,9 @@ var FUNC_TOSTRING = [
     "            });",
 ] : [], [
     "        }",
-    '        return "[Function: " + n + "]";',
+    '        return "function " + n + "() {...}";',
     "    }",
     "}();",
-    'Object.defineProperty(Function.prototype, "valueOf", { enumerable: false });',
 ]).join("\n");
 exports.run_code = function(code) {
     var stdout = "";
