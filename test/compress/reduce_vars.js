@@ -5527,3 +5527,21 @@ issue_2869: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2919: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var arr = [ function() {} ];
+        console.log(typeof arr[0]);
+    }
+    expect: {
+        console.log("function");
+    }
+    expect_stdout: "function"
+}

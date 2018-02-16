@@ -1489,3 +1489,16 @@ issue_2916_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2919: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log([ function() {} ].toString());
+    }
+    expect: {
+        console.log("function(){}");
+    }
+}
