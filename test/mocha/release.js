@@ -38,7 +38,7 @@ describe("test/jetstream.js", function() {
     this.timeout(20 * 60 * 1000);
     [
         "-mc",
-        "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
+        "-mc keep_fargs=false,passes=3,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
     ].forEach(function(options) {
         it("Should pass with options " + options, function(done) {
             var args = options.split(/ /);

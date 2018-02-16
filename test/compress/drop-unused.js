@@ -1719,3 +1719,69 @@ issue_2846: {
     }
     expect_stdout: "0"
 }
+
+issue_805_1: {
+    options = {
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            var unused = function() {};
+            unused.prototype[a()] = 42;
+            (unused.prototype.bar = function() {
+                console.log("bar");
+            })();
+            return unused;
+        })(function() {
+            console.log("foo");
+            return "foo";
+        });
+    }
+    expect: {
+        console.log("foo"),
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+issue_805_2: {
+    options = {
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            function unused() {}
+            unused.prototype[a()] = 42;
+            (unused.prototype.bar = function() {
+                console.log("bar");
+            })();
+            return unused;
+        })(function() {
+            console.log("foo");
+            return "foo";
+        });
+    }
+    expect: {
+        console.log("foo"),
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}

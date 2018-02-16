@@ -4619,3 +4619,26 @@ issue_2914_2: {
     }
     expect_stdout: "0"
 }
+
+issue_805: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            function Foo(){}
+            Foo.prototype = {};
+            Foo.prototype.bar = 42;
+            return Foo;
+        }
+    }
+    expect: {
+        function f() {
+            function Foo(){}
+            (Foo.prototype = {}).bar = 42;
+            return Foo;
+        }
+    }
+}
