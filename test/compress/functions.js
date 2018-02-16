@@ -292,11 +292,12 @@ issue_2084: {
     }
     expect: {
         var c = 0;
-        !function(c) {
-            c = 1 + c,
+        !function() {
+            var c;
+            c = 1 + (c = -1),
             c = 1 + (c = 0),
             0 !== 23..toString() && (c = 1 + c);
-        }(-1),
+        }(),
         console.log(c);
     }
     expect_stdout: "0"
@@ -1051,11 +1052,9 @@ issue_2616: {
     }
     expect: {
         var c = "FAIL";
-        (function() {
-            !function(NaN) {
-                (true << NaN) - 0/0 || (c = "PASS");
-            }([]);
-        })();
+        !function(NaN) {
+            (true << NaN) - 0/0 || (c = "PASS");
+        }([]);
         console.log(c);
     }
     expect_stdout: "PASS"
@@ -1086,13 +1085,11 @@ issue_2620_1: {
     }
     expect: {
         var c = "FAIL";
-        (function() {
-            (function(a) {
-                if (function(a) {
-                    a && a();
-                }(), a) c = "PASS";
-            })(1);
-        })(),
+        !function(a) {
+            if (function(a) {
+                a && a();
+            }(), a) c = "PASS";
+        }(1),
         console.log(c);
     }
     expect_stdout: "PASS"
@@ -1160,18 +1157,16 @@ issue_2620_3: {
     }
     expect: {
         var c = "FAIL";
-        (function() {
-            (function(a, NaN) {
-                (function() {
-                    switch (a) {
-                      case a:
-                        break;
-                      case c = "PASS", NaN:
-                        break;
-                    }
-                })();
-            })(NaN);
-        })();
+        !function(a, NaN) {
+            (function() {
+                switch (a) {
+                    case a:
+                    break;
+                    case c = "PASS", NaN:
+                    break;
+                }
+            })();
+        }(NaN);
         console.log(c);
     }
     expect_stdout: "PASS"
@@ -1341,11 +1336,9 @@ issue_2630_4: {
     }
     expect: {
         var x = 3, a = 1, b = 2;
-        (function() {
-            (function() {
-                while (--x >= 0 && void (b += ++a));
-            })();
-        })();
+        !function() {
+            while (--x >= 0 && void (b += ++a));
+        }();
         console.log(a);
     }
     expect_stdout: "2"
