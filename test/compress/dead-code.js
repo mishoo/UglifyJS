@@ -917,3 +917,28 @@ issue_2860_2: {
     }
     expect_stdout: "1"
 }
+
+issue_2929: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                return null.p = a = 1;
+            } catch (e) {
+                return a ? "PASS" : "FAIL";
+            }
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                return null.p = a = 1;
+            } catch (e) {
+                return a ? "PASS" : "FAIL";
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+}
