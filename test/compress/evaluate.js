@@ -1502,3 +1502,36 @@ issue_2919: {
         console.log("function(){}");
     }
 }
+
+issue_2926_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        (function f(a) {
+            console.log(f.name.length, f.length);
+        })();
+    }
+    expect: {
+        (function f(a) {
+            console.log(1, 1);
+        })();
+    }
+    expect_stdout: "1 1"
+}
+
+issue_2926_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(typeof function() {}.valueOf());
+    }
+    expect: {
+        console.log("function");
+    }
+    expect_stdout: "function"
+}
