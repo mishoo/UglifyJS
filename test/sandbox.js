@@ -39,7 +39,11 @@ var FUNC_TOSTRING = [
     "            });",
 ] : [], [
     "        }",
-    '        return "function " + n + "() {...}";',
+    '        return "function " + n + "() {' + function() {
+        var s = "\7";
+        for (var i = 10; --i >= 0;) s += s;
+        return s;
+    }() + '}";',
     "    }",
     "}();",
 ]).join("\n");
