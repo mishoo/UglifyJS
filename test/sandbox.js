@@ -42,7 +42,7 @@ var FUNC_TOSTRING = [
     "        }",
     "        var body = toString.call(this);",
     '        body = body.slice(body.indexOf("{") + 1, -1);',
-    '        if (/^(?:\\s|\\{|\\}|;|[0-9\\.]+|"[^"]*"|\\w+:|var [^=;]+|\\/\\/.*|\\/\\*[\\s\\S]*\\*\\/)*(?:$|return(?:;|\\n))/.test(body)) {',
+    '        if (/^(?:[\\s{}();,]|[0-9\\.]+|"[^"]*"|\\w+:|var [^=;]+|\\/\\/.*|\\/\\*[\\s\\S]*\\*\\/)*(?:$|return(?:$|;|\\n))/.test(body)) {',
     '            body = "";',
     "        } else {",
     '            body = n + "' + function() {
