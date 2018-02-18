@@ -4642,3 +4642,26 @@ issue_805: {
         }
     }
 }
+
+issue_2931: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = function() {
+                return;
+            }();
+            return a;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            return function() {
+                return;
+            }();
+        }());
+    }
+    expect_stdout: "undefined"
+}
