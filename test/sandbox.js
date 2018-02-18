@@ -27,9 +27,10 @@ var FUNC_TOSTRING = [
     "});",
     "Function.prototype.toString = function() {",
     "    var id = 100000;",
+    "    var toString = Function.prototype.toString;",
     "    return function() {",
     "        var n = this.name;",
-    '        if (!/^F[0-9]{6}N$/.test(n)) {',
+    "        if (!/^F[0-9]{6}N$/.test(n)) {",
     '            n = "F" + ++id + "N";',
 ].concat(Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable ? [
     '            Object.defineProperty(this, "name", {',
@@ -39,12 +40,19 @@ var FUNC_TOSTRING = [
     "            });",
 ] : [], [
     "        }",
-    '        return "function " + n + "() {' + function() {
-        var s = "\7";
-        for (var i = 10; --i >= 0;) s += s;
+    "        var body = toString.call(this);",
+    '        body = body.slice(body.indexOf("{") + 1, -1);',
+    '        if (/^(?:\\s|\\{|\\}|;|[0-9\\.]+|"[^"]*"|var [^=;]+|\\/\\/.*|\\/\\*[\\s\\S]*\\*\\/)*(?:$|return(?:;|\\n))/.test(body)) {',
+    '            body = "";',
+    "        } else {",
+    '            body = n + "' + function() {
+        var s = ";";
+        for (var i = 7; --i >= 0;) s += s;
         return s;
-    }() + '}";',
-    "    }",
+    }() + '";',
+    "        }",
+    '        return "function(){" + body + "}";',
+    "    };",
     "}();",
 ]).join("\n");
 exports.run_code = function(code) {
