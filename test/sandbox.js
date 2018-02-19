@@ -27,7 +27,6 @@ var FUNC_TOSTRING = [
     "});",
     "Function.prototype.toString = function() {",
     "    var id = 100000;",
-    "    var toString = Function.prototype.toString;",
     "    return function() {",
     "        var n = this.name;",
     "        if (!/^F[0-9]{6}N$/.test(n)) {",
@@ -40,18 +39,7 @@ var FUNC_TOSTRING = [
     "            });",
 ] : [], [
     "        }",
-    "        var body = toString.call(this);",
-    '        body = body.slice(body.indexOf("{") + 1, -1);',
-    '        if (/^(?:[\\s{}();,]|[0-9\\.]+|"[^"]*"|\\w+:|var [^=;]+|\\/\\/.*|\\/\\*[\\s\\S]*\\*\\/)*(?:$|return(?:$|;|\\n))/.test(body)) {',
-    '            body = "";',
-    "        } else {",
-    '            body = n + "' + function() {
-        var s = ";";
-        for (var i = 7; --i >= 0;) s += s;
-        return s;
-    }() + '";',
-    "        }",
-    '        return "function(){" + body + "}";',
+    '        return "function(){}";',
     "    };",
     "}();",
 ]).join("\n");
