@@ -721,3 +721,54 @@ issue_2838: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2938_1: {
+    options = {
+        pure_getters: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            a.b = "PASS";
+        }
+        var o = {};
+        f(o);
+        console.log(o.b);
+    }
+    expect: {
+        function f(a) {
+            a.b = "PASS";
+        }
+        var o = {};
+        f(o);
+        console.log(o.b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2938_2: {
+    options = {
+        pure_getters: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var Parser = function Parser() {};
+        var p = Parser.prototype;
+        p.initialContext = function initialContext() {
+            console.log("PASS");
+        };
+        p.braceIsBlock = function() {};
+        (new Parser).initialContext();
+    }
+    expect: {
+        var Parser = function() {};
+        var p = Parser.prototype;
+        p.initialContext = function() {
+            console.log("PASS");
+        };
+        p.braceIsBlock = function() {};
+        (new Parser).initialContext();
+    }
+    expect_stdout: "PASS"
+}
