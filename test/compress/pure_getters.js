@@ -722,7 +722,31 @@ issue_2838: {
     expect_stdout: "PASS"
 }
 
-issue_2938: {
+issue_2938_1: {
+    options = {
+        pure_getters: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            a.b = "PASS";
+        }
+        var o = {};
+        f(o);
+        console.log(o.b);
+    }
+    expect: {
+        function f(a) {
+            a.b = "PASS";
+        }
+        var o = {};
+        f(o);
+        console.log(o.b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2938_2: {
     options = {
         pure_getters: true,
         toplevel: true,
