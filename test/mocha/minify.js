@@ -46,10 +46,10 @@ describe("minify", function() {
         assert.strictEqual(compressed, [
             "function n(n){return 3*n}",
             "function r(n){return n/2}",
-            "var o=console.log.bind(console);",
-            'function c(n){o("Foo:",2*n)}',
+            "var c=console.log.bind(console);",
+            'function o(o){c("Foo:",2*o)}',
             "var a=n(3),b=r(12);",
-            'o("qux",a,b),c(11);',
+            'c("qux",a,b),o(11);',
         ].join(""));
         assert.strictEqual(run_code(compressed), run_code(original));
     });
@@ -79,10 +79,10 @@ describe("minify", function() {
         assert.strictEqual(compressed, [
             "function n(n){return 3*n}",
             "function r(n){return n/2}",
-            "var o=console.log.bind(console);",
-            'function c(n){o("Foo:",2*n)}',
+            "var c=console.log.bind(console);",
+            'function o(o){c("Foo:",2*o)}',
             "var a=n(3),b=r(12);",
-            'o("qux",a,b),c(11);',
+            'c("qux",a,b),o(11);',
         ].join(""));
         assert.strictEqual(run_code(compressed), run_code(original));
     });

@@ -109,7 +109,7 @@ mangle_catch_toplevel: {
         }
         console.log(a);
     }
-    expect_exact: 'var o="FAIL";try{throw 1}catch(c){o="PASS"}console.log(o);'
+    expect_exact: 'var c="FAIL";try{throw 1}catch(o){c="PASS"}console.log(c);'
     expect_stdout: "PASS"
 }
 
@@ -155,7 +155,7 @@ mangle_catch_var_toplevel: {
         }
         console.log(a);
     }
-    expect_exact: 'var o="FAIL";try{throw 1}catch(r){var o="PASS"}console.log(o);'
+    expect_exact: 'var r="FAIL";try{throw 1}catch(o){var r="PASS"}console.log(r);'
     expect_stdout: "PASS"
 }
 
@@ -451,7 +451,7 @@ function_iife_catch: {
         }
         f();
     }
-    expect_exact: "function f(o){!function(){try{throw 0}catch(c){var o=1;console.log(c,o)}}()}f();"
+    expect_exact: "function f(o){!function(){try{throw 0}catch(o){var c=1;console.log(o,c)}}()}f();"
     expect_stdout: "0 1"
 }
 
@@ -473,7 +473,7 @@ function_iife_catch_ie8: {
         }
         f();
     }
-    expect_exact: "function f(o){!function(){try{throw 0}catch(o){var c=1;console.log(o,c)}}()}f();"
+    expect_exact: "function f(c){!function(){try{throw 0}catch(c){var o=1;console.log(c,o)}}()}f();"
     expect_stdout: "0 1"
 }
 
@@ -499,7 +499,7 @@ function_catch_catch: {
         }
         f();
     }
-    expect_exact: "var o=0;function f(){try{throw 1}catch(c){try{throw 2}catch(o){var o=3;console.log(o)}}console.log(o)}f();"
+    expect_exact: "var o=0;function f(){try{throw 1}catch(o){try{throw 2}catch(c){var c=3;console.log(c)}}console.log(c)}f();"
     expect_stdout: [
         "3",
         "undefined",
