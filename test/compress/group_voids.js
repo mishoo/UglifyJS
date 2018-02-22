@@ -26,13 +26,13 @@ group_voids: {
             console.log(void 0);
             for (var a = 4;;);
             var b = 4;
-            function f5() {
+            function g() {
                 var c = 5;
                 var d = 5;
                 console.log(void 0);
             }
         }
-        function f6() {
+        function f5() {
             try {
                 var a = 6;
                 console.log(void 0);
@@ -47,35 +47,35 @@ group_voids: {
         if (void 0 === b)
             c = void 0;
         function f1() {
-            var o = 1, a;
-            console.log(a);
+            var o = 1, n;
+            console.log(n);
         }
         function f2(o) {
-            var n = 2, a;
-            console.log(a);
+            var n = 2, v;
+            console.log(v);
         }
         function f3() {
-            var o = 3, a;
-            console.log(a);
+            var o = 3, n;
+            console.log(n);
         }
         function f4() {
-            console.log(a);
+            console.log(i);
             for(var o = 4;;);
-            var n = 4, a;
+            var n = 4, i;
             function v() {
                 var o = 5;
                 var n = 5;
-                console.log(a);
+                console.log(i);
             }
         }
-        function f6() {
+        function f5() {
             try {
                 var o = 6;
-                console.log(a);
+                console.log(n);
             } catch (o) {
-                console.log(a);
+                console.log(n);
             }
-            var a;
+            var n;
         }
     }
 }
@@ -108,13 +108,13 @@ group_voids_toplevel: {
             console.log(void 0);
             for (var a = 4;;);
             var b = 4;
-            function f5() {
+            function g() {
                 var c = 5;
                 var d = 5;
                 console.log(void 0);
             }
         }
-        function f6() {
+        function f5() {
             try {
                 var a = 6;
                 console.log(void 0);
@@ -168,8 +168,7 @@ group_voids_catch: {
         group_voids: true,
     }
     input: {
-        f();
-        function f() {
+        (function() {
             var a = 1;
             console.log(void 0);
             try {
@@ -177,19 +176,18 @@ group_voids_catch: {
             } catch (undefined) {
                 console.log(void 0);
             }
-        }
+        })();
     }
     expect: {
-        f();
-        function f() {
-            var o = 1, a;
-            console.log(a);
+        (function() {
+            var o = 1, c;
+            console.log(c);
             try {
                 throw "FAIL";
             } catch (o) {
-                console.log(a);
+                console.log(c);
             }
-        }
+        })();
     }
     expect_stdout: [
         "undefined",
