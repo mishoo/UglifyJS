@@ -102,12 +102,12 @@ dont_screw_try_catch: {
         };
     }
     expect: {
-        bad = function(n){
-            return function(t){
+        bad = function(t){
+            return function(n){
                 try{
-                    n()
-                } catch(n) {
-                    t(n)
+                    t()
+                } catch(t) {
+                    n(t)
                 }
             }
         };
@@ -349,11 +349,11 @@ issue_2254_1: {
         try {
             console.log(f("PASS"));
         } catch (e) {}
-        function f(e) {
+        function f(t) {
             try {
                 throw "FAIL";
-            } catch (t) {
-                return e;
+            } catch (e) {
+                return t;
             }
         }
     }

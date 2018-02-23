@@ -104,7 +104,7 @@ mangle_catch_toplevel: {
         }
         console.log(a);
     }
-    expect_exact: 'var o="FAIL";try{throw 1}catch(c){o="PASS"}console.log(o);'
+    expect_exact: 'var c="FAIL";try{throw 1}catch(o){c="PASS"}console.log(c);'
     expect_stdout: "PASS"
 }
 
@@ -148,7 +148,7 @@ mangle_catch_var_toplevel: {
         }
         console.log(a);
     }
-    expect_exact: 'var o="FAIL";try{throw 1}catch(r){var o="PASS"}console.log(o);'
+    expect_exact: 'var r="FAIL";try{throw 1}catch(o){var r="PASS"}console.log(r);'
     expect_stdout: "PASS"
 }
 
@@ -344,4 +344,96 @@ mangle_catch_redef_2_ie8_toplevel: {
     }
     expect_exact: 'try{throw"FAIL1"}catch(o){var o="FAIL2"}console.log(o);'
     expect_stdout: "undefined"
+}
+
+mangle_catch_redef_3: {
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        var o = "PASS";
+        try {
+            throw 0;
+        } catch (o) {
+            (function() {
+                function f() {
+                    o = "FAIL";
+                }
+                f(), f();
+            })();
+        }
+        console.log(o);
+    }
+    expect_exact: 'var o="PASS";try{throw 0}catch(o){(function(){function c(){o="FAIL"}c(),c()})()}console.log(o);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_3_toplevel: {
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        var o = "PASS";
+        try {
+            throw 0;
+        } catch (o) {
+            (function() {
+                function f() {
+                    o = "FAIL";
+                }
+                f(), f();
+            })();
+        }
+        console.log(o);
+    }
+    expect_exact: 'var c="PASS";try{throw 0}catch(c){(function(){function o(){c="FAIL"}o(),o()})()}console.log(c);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_ie8_3: {
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        var o = "PASS";
+        try {
+            throw 0;
+        } catch (o) {
+            (function() {
+                function f() {
+                    o = "FAIL";
+                }
+                f(), f();
+            })();
+        }
+        console.log(o);
+    }
+    expect_exact: 'var o="PASS";try{throw 0}catch(o){(function(){function c(){o="FAIL"}c(),c()})()}console.log(o);'
+    expect_stdout: "PASS"
+}
+
+mangle_catch_redef_3_ie8_toplevel: {
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var o = "PASS";
+        try {
+            throw 0;
+        } catch (o) {
+            (function() {
+                function f() {
+                    o = "FAIL";
+                }
+                f(), f();
+            })();
+        }
+        console.log(o);
+    }
+    expect_exact: 'var c="PASS";try{throw 0}catch(c){(function(){function o(){c="FAIL"}o(),o()})()}console.log(c);'
+    expect_stdout: "PASS"
 }
