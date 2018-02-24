@@ -2012,3 +2012,13 @@ issue_2898: {
     }
     expect_stdout: "2"
 }
+
+deduplicate_parenthesis: {
+    input: {
+        ({}).a = b;
+        (({}).a = b)();
+        (function() {}).a = b;
+        ((function() {}).a = b)();
+    }
+    expect_exact: "({}).a=b;({}.a=b)();(function(){}).a=b;(function(){}.a=b)();"
+}
