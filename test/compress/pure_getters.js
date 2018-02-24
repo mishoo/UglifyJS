@@ -830,3 +830,334 @@ issue_2938_4: {
     }
     expect_stdout: "PASS"
 }
+
+collapse_vars_1_true: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            for (;;) {
+                var c = a.g();
+                var d = b.p;
+                if (c || d) break;
+            }
+        }
+    }
+    expect: {
+        function f(a, b) {
+            for (;;) {
+                if (a.g() || b.p) break;
+            }
+        }
+    }
+}
+
+collapse_vars_1_false: {
+    options = {
+        collapse_vars: true,
+        pure_getters: false,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            for (;;) {
+                var c = a.g();
+                var d = b.p;
+                if (c || d) break;
+            }
+        }
+    }
+    expect: {
+        function f(a, b) {
+            for (;;) {
+                var c = a.g();
+                var d = b.p;
+                if (c || d) break;
+            }
+        }
+    }
+}
+
+collapse_vars_1_strict: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            for (;;) {
+                var c = a.g();
+                var d = b.p;
+                if (c || d) break;
+            }
+        }
+    }
+    expect: {
+        function f(a, b) {
+            for (;;) {
+                var c = a.g();
+                var d = b.p;
+                if (c || d) break;
+            }
+        }
+    }
+}
+
+collapse_vars_2_true: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            function g() {}
+            g.a = function() {};
+            g.b = g.a;
+            return g;
+        }
+    }
+    expect: {
+        function f() {
+            function g() {}
+            g.b = g.a = function() {};
+            return g;
+        }
+    }
+}
+
+collapse_vars_2_false: {
+    options = {
+        collapse_vars: true,
+        pure_getters: false,
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            function g() {}
+            g.a = function() {};
+            g.b = g.a;
+            return g;
+        }
+    }
+    expect: {
+        function f() {
+            function g() {}
+            g.a = function() {};
+            g.b = g.a;
+            return g;
+        }
+    }
+}
+
+collapse_vars_2_strict: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            function g() {}
+            g.a = function() {};
+            g.b = g.a;
+            return g;
+        }
+    }
+    expect: {
+        function f() {
+            function g() {}
+            g.b = g.a = function() {};
+            return g;
+        }
+    }
+}
+
+collapse_rhs_true: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        console.log((42..length = "PASS", "PASS"));
+        console.log(("foo".length = "PASS", "PASS"));
+        console.log((false.length = "PASS", "PASS"));
+        console.log((function() {}.length = "PASS", "PASS"));
+        console.log(({
+            get length() {
+                return "FAIL";
+            }
+        }.length = "PASS", "PASS"));
+    }
+    expect: {
+        console.log(42..length = "PASS");
+        console.log("foo".length = "PASS");
+        console.log(false.length = "PASS");
+        console.log(function() {}.length = "PASS");
+        console.log({
+            get length() {
+                return "FAIL";
+            }
+        }.length = "PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+collapse_rhs_false: {
+    options = {
+        collapse_vars: true,
+        pure_getters: false,
+    }
+    input: {
+        console.log((42..length = "PASS", "PASS"));
+        console.log(("foo".length = "PASS", "PASS"));
+        console.log((false.length = "PASS", "PASS"));
+        console.log((function() {}.length = "PASS", "PASS"));
+        console.log(({
+            get length() {
+                return "FAIL";
+            }
+        }.length = "PASS", "PASS"));
+    }
+    expect: {
+        console.log(42..length = "PASS");
+        console.log("foo".length = "PASS");
+        console.log(false.length = "PASS");
+        console.log(function() {}.length = "PASS");
+        console.log({
+            get length() {
+                return "FAIL";
+            }
+        }.length = "PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+collapse_rhs_strict: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        console.log((42..length = "PASS", "PASS"));
+        console.log(("foo".length = "PASS", "PASS"));
+        console.log((false.length = "PASS", "PASS"));
+        console.log((function() {}.length = "PASS", "PASS"));
+        console.log(({
+            get length() {
+                return "FAIL";
+            }
+        }.length = "PASS", "PASS"));
+    }
+    expect: {
+        console.log(42..length = "PASS");
+        console.log("foo".length = "PASS");
+        console.log(false.length = "PASS");
+        console.log(function() {}.length = "PASS");
+        console.log({
+            get length() {
+                return "FAIL";
+            }
+        }.length = "PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+collapse_rhs_setter: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        try {
+            console.log(({
+                set length(v) {
+                    throw "PASS";
+                }
+            }.length = "FAIL", "FAIL"));
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect: {
+        try {
+            console.log({
+                set length(v) {
+                    throw "PASS";
+                }
+            }.length = "FAIL");
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_rhs_call: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {};
+        function f() {
+            console.log("PASS");
+        }
+        o.f = f;
+        f();
+    }
+    expect: {
+        ({}.f = function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_rhs_lhs: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        function f(a, b) {
+            a.b = b, b += 2;
+            console.log(a.b, b);
+        }
+        f({}, 1);
+    }
+    expect: {
+        function f(a, b) {
+            a.b = b, b += 2;
+            console.log(a.b, b);
+        }
+        f({}, 1);
+    }
+    expect_stdout: "1 3"
+}
