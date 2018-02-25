@@ -4665,3 +4665,38 @@ issue_2931: {
     }
     expect_stdout: "undefined"
 }
+
+issue_2954: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS", b;
+        try {
+            do {
+                b = function() {
+                    throw 0;
+                }();
+                a = "FAIL";
+                b && b.c;
+            } while (0);
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS", b;
+        try {
+            do {
+                b = function() {
+                    throw 0;
+                }();
+                a = "FAIL";
+                b && b.c;
+            } while (0);
+        } catch (e) {
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
