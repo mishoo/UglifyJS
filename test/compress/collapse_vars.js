@@ -2219,8 +2219,8 @@ unused_orig: {
         console.log(function(b) {
             var c = b;
             for (var d in c) {
-                var a = c[0];
-                return --b + a;
+                var a;
+                return --b + c[0];
             }
             a && a.NaN;
         }([2]), a);
@@ -4666,7 +4666,7 @@ issue_2931: {
     expect_stdout: "undefined"
 }
 
-issue_2954: {
+issue_2954_1: {
     options = {
         collapse_vars: true,
     }
@@ -4699,4 +4699,74 @@ issue_2954: {
         console.log(a);
     }
     expect_stdout: "PASS"
+}
+
+issue_2954_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL_1", b;
+        try {
+            throw 0;
+        } catch (e) {
+            do {
+                b = function() {
+                    throw new Error("PASS");
+                }();
+                a = "FAIL_2";
+                b && b.c;
+            } while (0);
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL_1", b;
+        try {
+            throw 0;
+        } catch (e) {
+            do {
+                a = "FAIL_2";
+                (b = function() {
+                    throw new Error("PASS");
+                }()) && b.c;
+            } while (0);
+        }
+        console.log(a);
+    }
+    expect_stdout: Error("PASS")
+}
+
+issue_2954_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL_1", b;
+        try {
+        } finally {
+            do {
+                b = function() {
+                    throw new Error("PASS");
+                }();
+                a = "FAIL_2";
+                b && b.c;
+            } while (0);
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL_1", b;
+        try {
+        } finally {
+            do {
+                a = "FAIL_2";
+                (b = function() {
+                    throw new Error("PASS");
+                }()) && b.c;
+            } while (0);
+        }
+        console.log(a);
+    }
+    expect_stdout: Error("PASS")
 }
