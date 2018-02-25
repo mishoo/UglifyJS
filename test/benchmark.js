@@ -28,6 +28,7 @@ var remaining = 2 * urls.length;
 function done() {
     if (!--remaining) {
         var failures = [];
+        var sum = { input: 0, output: 0, gzip: 0 };
         urls.forEach(function(url) {
             var info = results[url];
             console.log();
@@ -40,6 +41,9 @@ function done() {
             if (info.code) {
                 failures.push(url);
             }
+            sum.input += info.input;
+            sum.output += info.output;
+            sum.gzip += info.gzip;
         });
         if (failures.length) {
             console.error("Benchmark failed:");
@@ -47,6 +51,13 @@ function done() {
                 console.error(url);
             });
             process.exit(1);
+        } else {
+            console.log();
+            console.log("Subtotal");
+            console.log();
+            console.log("Original:", sum.input, "bytes");
+            console.log("Uglified:", sum.output, "bytes");
+            console.log("GZipped: ", sum.gzip, "bytes");
         }
     }
 }
