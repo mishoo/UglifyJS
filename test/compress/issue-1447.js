@@ -40,6 +40,6 @@ conditional_false_stray_else_in_loop: {
             console.log(i);
         }
     }
-    expect_exact: "for(var i=1;i<=4;++i)if(!(i<=2))console.log(i);"
+    expect_exact: "for(var i=1;4>=i;++i)if(!(2>=i))console.log(i);"
     expect_stdout: true
 }
