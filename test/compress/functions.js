@@ -2022,3 +2022,32 @@ deduplicate_parenthesis: {
     }
     expect_exact: "({}).a=b;({}.a=b)();(function(){}).a=b;(function(){}.a=b)();"
 }
+
+drop_lone_use_strict: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        function f1() {
+            "use strict";
+        }
+        function f2() {
+            "use strict";
+            function f3() {
+                "use strict";
+            }
+        }
+        (function f4() {
+            "use strict";
+        })();
+    }
+    expect: {
+        function f1() {
+        }
+        function f2() {
+            "use strict";
+            function f3() {
+            }
+        }
+    }
+}
