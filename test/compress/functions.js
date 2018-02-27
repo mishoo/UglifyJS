@@ -2033,25 +2033,40 @@ inline_true: {
 
 issue_2842: {
     options = {
-        inline: true,
-        toplevel: true,
+        side_effects: true,
         reduce_vars: true,
         reduce_funcs: true,
+        unused: true,
     }
     input: {
-        {
-            const data = function (data) {
+        (function() {
+            function inlinedFunction(data) {
                 return data[data[0]];
-            }([1, 2, 3]);
-        }
+            }
+            function testMinify() {
+                if (true) {
+                    const data = inlinedFunction([1, 2, 3]);
+                    console.log(data);
+                }
+            }
+            return testMinify();
+        })();
     }
     expect: {
-        {
-            const data = function (data) {
-                return data[data[0]];
-            }([1, 2, 3]);
-        }
+        (function () {
+            (function () {
+                if (true) {
+                    const data = function (data) {
+                        return data[data[0]];
+                    }([1, 2, 3]);
+                    console.log(data);
+                }
+            })();
+        })();
     }
+    expect_stdout: [
+        "2"
+    ]
 }
 
 use_before_init_in_loop: {
