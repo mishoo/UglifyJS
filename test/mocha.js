@@ -22,3 +22,7 @@ module.exports = function() {
         });
     });
 };
+
+if (module.parent === null) {
+    module.exports();
+}
