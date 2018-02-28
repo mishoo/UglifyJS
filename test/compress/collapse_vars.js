@@ -4770,3 +4770,392 @@ issue_2954_3: {
     }
     expect_stdout: Error("PASS")
 }
+
+collapse_rhs_conditional_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS", b = "FAIL";
+        b = a;
+        "function" == typeof f && f(a);
+        console.log(a, b);
+    }
+    expect: {
+        var a = "PASS", b = "FAIL";
+        b = a;
+        "function" == typeof f && f(a);
+        console.log(a, b);
+    }
+    expect_stdout: "PASS PASS"
+}
+
+collapse_rhs_conditional_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL", b;
+        while ((a = "PASS", --b) && "PASS" == b);
+        console.log(a, b);
+    }
+    expect: {
+        var a = "FAIL", b;
+        while ((a = "PASS", --b) && "PASS" == b);
+        console.log(a, b);
+    }
+    expect_stdout: "PASS NaN"
+}
+
+collapse_rhs_lhs_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = 0;
+        new function() {
+            this[c++] = 1;
+            c += 1;
+        }();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        new function() {
+            this[c++] = 1;
+            c += 1;
+        }();
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
+
+collapse_rhs_lhs_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var b = 1;
+        (function f(f) {
+            f = b;
+            f[b] = 0;
+        })();
+        console.log("PASS");
+    }
+    expect: {
+        var b = 1;
+        (function f(f) {
+            f = b;
+            f[b] = 0;
+        })();
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_rhs_side_effects: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 1, c = 0;
+        new function f() {
+            this[a-- && f()] = 1;
+            c += 1;
+        }();
+        console.log(c);
+    }
+    expect: {
+        var a = 1, c = 0;
+        new function f() {
+            this[a-- && f()] = 1;
+            c += 1;
+        }();
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
+
+collapse_rhs_vardef: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b = 1;
+        a = --b + function c() {
+            var b;
+            c[--b] = 1;
+        }();
+        b |= a;
+        console.log(a, b);
+    }
+    expect: {
+        var a, b = 1;
+        a = --b + function c() {
+            var b;
+            c[--b] = 1;
+        }();
+        b |= a;
+        console.log(a, b);
+    }
+    expect_stdout: "NaN 0"
+}
+
+collapse_rhs_array: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = [];
+            b = [];
+            return [];
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            a = [];
+            b = [];
+            return [];
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "false false false"
+}
+
+collapse_rhs_boolean: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = !0;
+            b = !0;
+            return !0;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            return b = a = !0;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "true true true"
+}
+
+collapse_rhs_function: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = function() {};
+            b = function() {};
+            return function() {};
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            a = function() {};
+            b = function() {};
+            return function() {};
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "false false false"
+}
+
+collapse_rhs_number: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = 42;
+            b = 42;
+            return 42;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            return b = a = 42;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "true true true"
+}
+
+collapse_rhs_object: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = {};
+            b = {};
+            return {};
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            a = {};
+            b = {};
+            return {};
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "false false false"
+}
+
+collapse_rhs_regexp: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = /bar/;
+            b = /bar/;
+            return /bar/;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            a = /bar/;
+            b = /bar/;
+            return /bar/;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "false false false"
+}
+
+collapse_rhs_string: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = "foo";
+            b = "foo";
+            return "foo";
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            return b = a = "foo";
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "true true true"
+}
+
+collapse_rhs_var: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = f;
+            b = f;
+            return f;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            return b = a = f;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "true true true"
+}
+
+collapse_rhs_this: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = this;
+            b = this;
+            return this;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            return b = a = this;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "true true true"
+}
+
+collapse_rhs_undefined: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            a = void 0;
+            b = void 0;
+            return void 0;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect: {
+        var a, b;
+        function f() {
+            b = a = void 0;
+            return;
+        }
+        var c = f();
+        console.log(a === b, b === c, c === a);
+    }
+    expect_stdout: "true true true"
+}

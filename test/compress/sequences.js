@@ -668,8 +668,7 @@ side_effects_cascade_2: {
     }
     expect: {
         function f(a, b) {
-            b = a,
-            !a + (b += a) || (b += a),
+            !(b = a) + (b += a) || (b += a),
             b = a;
         }
     }
