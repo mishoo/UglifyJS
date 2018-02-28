@@ -104,6 +104,7 @@ if_return: {
         conditionals: true,
         if_return: true,
         sequences: true,
+        side_effects: true,
     }
     input: {
         function f(w, x, y, z) {
@@ -124,7 +125,7 @@ if_return: {
                 if (w) {
                     if (y) return;
                 } else if (z) return;
-                return x == y || (x && w(), y && z(), !0);
+                return x == y || (x && w(), y && z()), !0;
             }
         }
     }
