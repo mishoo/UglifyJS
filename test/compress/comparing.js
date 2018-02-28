@@ -11,10 +11,10 @@ comparisons: {
     }
     expect: {
         var obj1, obj2;
-        var result1 = obj2 >= obj1;
-        var result2 = obj2 >  obj1;
-        var result3 = obj1 >= obj2;
-        var result4 = obj1 >  obj2;
+        var result1 = obj1 <= obj2;
+        var result2 = obj1 <  obj2;
+        var result3 = obj2 <= obj1;
+        var result4 = obj2 <  obj1;
     }
 }
 
@@ -33,10 +33,10 @@ unsafe_comps: {
     }
     expect: {
         var obj1, obj2;
-        obj1 >  obj2 ? g1() : f1();
-        obj2 >  obj1 ? f2() : g2();
-        obj2 >  obj1 ? g3() : f3();
-        obj1 >  obj2 ? f4() : g4();
+        obj2 <  obj1 ? g1() : f1();
+        obj1 <  obj2 ? f2() : g2();
+        obj1 <  obj2 ? g3() : f3();
+        obj2 <  obj1 ? f4() : g4();
     }
 }
 

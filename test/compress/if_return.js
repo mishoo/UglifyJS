@@ -243,7 +243,7 @@ issue_1089: {
     expect: {
         function x() {
             var f = document.getElementById("fname");
-            if (f.files[0].size > 12345)
+            if (12345 < f.files[0].size)
                 return alert("alert"), f.focus(), !1;
         }
     }
