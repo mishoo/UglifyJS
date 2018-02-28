@@ -3124,7 +3124,57 @@ issue_2425_3: {
     expect_stdout: "15"
 }
 
-issue_2437: {
+issue_2437_1: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        inline: true,
+        join_vars: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            return bar();
+        }
+        function bar() {
+            if (xhrDesc) {
+                var req = new XMLHttpRequest();
+                var result = !!req.onreadystatechange;
+                Object.defineProperty(XMLHttpRequest.prototype, 'onreadystatechange', xhrDesc || {});
+                return result;
+            } else {
+                var req = new XMLHttpRequest();
+                var detectFunc = function () {};
+                req.onreadystatechange = detectFunc;
+                var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+                req.onreadystatechange = null;
+                return result;
+            }
+        }
+        console.log(foo());
+    }
+    expect: {
+        console.log(function() {
+            if (xhrDesc) {
+                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
+                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
+                    result;
+            }
+            var req, detectFunc = function() {};
+            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            return req.onreadystatechange = null, result;
+        }());
+    }
+}
+
+issue_2437_2: {
     options = {
         collapse_vars: true,
         conditionals: true,
@@ -3161,14 +3211,12 @@ issue_2437: {
     }
     expect: {
         !function() {
-            if (xhrDesc) {
-                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
-                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
-                    result;
-            }
-            var req, detectFunc = function() {};
-            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
-            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            if (xhrDesc)
+                return (req = new XMLHttpRequest()).onreadystatechange,
+                    Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {});
+            var req;
+            (req = new XMLHttpRequest).onreadystatechange = function(){},
+            req[SYMBOL_FAKE_ONREADYSTATECHANGE_1],
             req.onreadystatechange = null;
         }();
     }
