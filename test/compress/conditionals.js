@@ -332,7 +332,7 @@ cond_7: {
         x = 'foo';
         x = 'foo';
         x = (condition(), 20);
-        x = z ? 'fuji' : (condition(), 'fuji');
+        x = (z || condition(), 'fuji');
         x = (condition(), 'foobar');
         x = y ? a : b;
         x = y ? 'foo' : 'fo';
