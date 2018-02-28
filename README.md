@@ -605,8 +605,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   side effects permitting.
 
 - `comparisons` (default: `true`) -- apply certain optimizations to binary nodes,
-  e.g. `!(a <= b) → a > b` (only when `unsafe_comps`), attempts to negate binary
-  nodes, e.g. `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
+  e.g. `!(a <= b) → a > b`, attempts to negate binary nodes, e.g.
+  `a = !b && !c && !d && !e → a=!(b||c||d||e)` etc.
 
 - `conditionals` (default: `true`) -- apply optimizations for `if`-s and conditional
   expressions
@@ -730,12 +730,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `unsafe` (default: `false`) -- apply "unsafe" transformations (discussion below)
 
-- `unsafe_comps` (default: `false`) -- Reverse `<` and `<=` to `>` and `>=` to
-  allow improved compression. This might be unsafe when an at least one of two
-  operands is an object with computed values due the use of methods like `get`,
-  or `valueOf`. This could cause change in execution order after operands in the
-  comparison are switching. Compression only works if both `comparisons` and
-  `unsafe_comps` are both set to true.
+- `unsafe_comps` (default: `false`) -- compress expressions like `a <= b` assuming
+  none of the operands can be (coerced to) `NaN`.
 
 - `unsafe_Function` (default: `false`) -- compress and mangle `Function(args, code)`
   when both `args` and `code` are string literals.

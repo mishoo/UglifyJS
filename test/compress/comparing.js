@@ -1,62 +1,42 @@
-keep_comparisons: {
+comparisons: {
     options = {
         comparisons: true,
-        unsafe_comps: false
     }
     input: {
-        var obj1 = {
-            valueOf: function() {triggeredFirst();}
-        }
-        var obj2 = {
-            valueOf: function() {triggeredSecond();}
-        }
+        var obj1, obj2;
         var result1 = obj1 <= obj2;
         var result2 = obj1 <  obj2;
         var result3 = obj1 >= obj2;
         var result4 = obj1 >  obj2;
     }
     expect: {
-        var obj1 = {
-            valueOf: function() {triggeredFirst();}
-        }
-        var obj2 = {
-            valueOf: function() {triggeredSecond();}
-        }
+        var obj1, obj2;
         var result1 = obj1 <= obj2;
         var result2 = obj1 <  obj2;
-        var result3 = obj1 >= obj2;
-        var result4 = obj1 >  obj2;
+        var result3 = obj2 <= obj1;
+        var result4 = obj2 <  obj1;
     }
 }
 
-keep_comparisons_with_unsafe_comps: {
+unsafe_comps: {
     options = {
         comparisons: true,
-        unsafe_comps: true
+        conditionals: true,
+        unsafe_comps: true,
     }
     input: {
-        var obj1 = {
-            valueOf: function() {triggeredFirst();}
-        }
-        var obj2 = {
-            valueOf: function() {triggeredSecond();}
-        }
-        var result1 = obj1 <= obj2;
-        var result2 = obj1 <  obj2;
-        var result3 = obj1 >= obj2;
-        var result4 = obj1 >  obj2;
+        var obj1, obj2;
+        obj1 <= obj2 ? f1() : g1();
+        obj1 <  obj2 ? f2() : g2();
+        obj1 >= obj2 ? f3() : g3();
+        obj1 >  obj2 ? f4() : g4();
     }
     expect: {
-        var obj1 = {
-            valueOf: function() {triggeredFirst();}
-        }
-        var obj2 = {
-            valueOf: function() {triggeredSecond();}
-        }
-        var result1 = obj2 >= obj1;
-        var result2 = obj2 >  obj1;
-        var result3 = obj1 >= obj2;
-        var result4 = obj1 >  obj2;
+        var obj1, obj2;
+        obj2 <  obj1 ? g1() : f1();
+        obj1 <  obj2 ? f2() : g2();
+        obj1 <  obj2 ? g3() : f3();
+        obj2 <  obj1 ? f4() : g4();
     }
 }
 

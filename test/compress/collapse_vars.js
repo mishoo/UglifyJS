@@ -913,15 +913,15 @@ collapse_vars_unary: {
             return delete x;
         }
         function f1(n) {
-            return n > +!!n
+            return +!!n < n;
         }
         function f2(n) {
             var k = 7;
-            return k--
+            return k--;
         }
         function f3(n) {
             var k = 7;
-            return ++k
+            return ++k;
         }
         function f4(n) {
             var k = 8 - n;
