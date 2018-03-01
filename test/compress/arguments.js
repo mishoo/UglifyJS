@@ -92,3 +92,28 @@ replace_index_keep_fargs: {
         "42 42 undefined",
     ]
 }
+
+modified: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        (function(a, b) {
+            var c = arguments[0];
+            var d = arguments[1];
+            a = "foo";
+            b++;
+            console.log(a, b, c, d, arguments[0], arguments[1]);
+        })("bar", 42);
+    }
+    expect: {
+        (function(a, b) {
+            var c = a;
+            var d = b;
+            a = "foo";
+            b++;
+            console.log(a, b, c, d, a, b);
+        })("bar", 42);
+    }
+    expect_stdout: "foo 43 bar 42 foo 43"
+}
