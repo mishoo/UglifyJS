@@ -239,14 +239,14 @@ name_collision_2: {
     input: {
         var o = {
             p: 1,
-            0: function(x) {
+            "+": function(x) {
                 return x;
             },
-            1: function(x) {
+            "-": function(x) {
                 return x + 1;
             }
         }, o__$0 = 2, o__$1 = 3;
-        console.log(o.p === o.p, o[0](4), o[1](5), o__$0, o__$1);
+        console.log(o.p === o.p, o["+"](4), o["-"](5), o__$0, o__$1);
     }
     expect: {
         var o_p = 1,
@@ -273,14 +273,14 @@ name_collision_3: {
     input: {
         var o = {
             p: 1,
-            0: function(x) {
+            "+": function(x) {
                 return x;
             },
-            1: function(x) {
+            "-": function(x) {
                 return x + 1;
             }
         }, o__$0 = 2, o__$1 = 3;
-        console.log(o.p === o.p, o[0](4), o[1](5));
+        console.log(o.p === o.p, o["+"](4), o["-"](5));
     }
     expect: {
         var o_p = 1,

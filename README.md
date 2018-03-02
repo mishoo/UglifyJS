@@ -598,6 +598,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 ## Compress options
 
+- `arguments` (default: `true`) -- replace `arguments[index]` with function
+  parameter name whenever possible.
+
 - `booleans` (default: `true`) -- various optimizations for boolean context,
   for example `!!a ? b : c → a ? b : c`
 
