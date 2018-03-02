@@ -182,7 +182,7 @@ function run_compress_tests() {
             }
             if (test.expect_stdout
                 && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-                var stdout = sandbox.run_code(input_code);
+                var stdout = sandbox.run_code(input_code, true);
                 if (test.expect_stdout === true) {
                     test.expect_stdout = stdout;
                 }
@@ -196,7 +196,7 @@ function run_compress_tests() {
                     });
                     return false;
                 }
-                stdout = sandbox.run_code(output);
+                stdout = sandbox.run_code(output, true);
                 if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
                     log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
                         input: input_formatted,
@@ -378,7 +378,7 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
             });
             return false;
         } else {
-            var stdout = sandbox.run_code(result.code);
+            var stdout = sandbox.run_code(result.code, true);
             if (typeof expect_stdout != "string" && typeof stdout != "string" && expect_stdout.name == stdout.name) {
                 stdout = expect_stdout;
             }

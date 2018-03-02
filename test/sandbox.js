@@ -1,6 +1,27 @@
 var semver = require("semver");
 var vm = require("vm");
 
+function createContext() {
+    var context = Object.create(null);
+    Object.defineProperty(context, "console", {
+        value: function() {
+            var con = Object.create(null);
+            Object.defineProperty(con, "log", {
+                value: function(msg) {
+                    if (arguments.length == 1 && typeof msg == "string") {
+                        return console.log("%s", msg);
+                    }
+                    return console.log.apply(console, [].map.call(arguments, function(arg) {
+                        return safe_log(arg, 3);
+                    }));
+                }
+            });
+            return con;
+        }()
+    });
+    return vm.createContext(context);
+}
+
 function safe_log(arg, level) {
     if (arg) switch (typeof arg) {
       case "function":
@@ -9,7 +30,8 @@ function safe_log(arg, level) {
         if (/Error$/.test(arg.name)) return arg.toString();
         arg.constructor.toString();
         if (level--) for (var key in arg) {
-            if (!Object.getOwnPropertyDescriptor(arg, key).get) {
+            var desc = Object.getOwnPropertyDescriptor(arg, key);
+            if (!desc || !desc.get) {
                 arg[key] = safe_log(arg[key], level);
             }
         }
@@ -21,6 +43,7 @@ function strip_func_ids(text) {
     return text.toString().replace(/F[0-9]{6}N/g, "<F<>N>");
 }
 
+var context;
 var FUNC_TOSTRING = [
     "[ Array, Boolean, Error, Function, Number, Object, RegExp, String].forEach(function(f) {",
     "    f.toString = Function.prototype.toString;",
@@ -43,35 +66,30 @@ var FUNC_TOSTRING = [
     "    };",
     "}();",
 ]).join("\n");
-exports.run_code = function(code) {
+exports.run_code = function(code, reuse) {
     var stdout = "";
     var original_write = process.stdout.write;
     process.stdout.write = function(chunk) {
         stdout += chunk;
     };
     try {
-        vm.runInNewContext([
+        if (!reuse || !context) context = createContext();
+        vm.runInContext([
             FUNC_TOSTRING,
             "!function() {",
             code,
             "}();",
-        ].join("\n"), {
-            console: {
-                log: function(msg) {
-                    if (arguments.length == 1 && typeof msg == "string") {
-                        return console.log("%s", msg);
-                    }
-                    return console.log.apply(console, [].map.call(arguments, function(arg) {
-                        return safe_log(arg, 3);
-                    }));
-                }
-            }
-        }, { timeout: 5000 });
+        ].join("\n"), context, { timeout: 5000 });
         return stdout;
     } catch (ex) {
         return ex;
     } finally {
         process.stdout.write = original_write;
+        if (!reuse || /prototype/.test(code)) {
+            context = null;
+        } else for (var key in context) {
+            delete context[key];
+        }
     }
 };
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
