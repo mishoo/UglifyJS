@@ -5207,3 +5207,39 @@ collapse_rhs_undefined: {
     }
     expect_stdout: "true true true"
 }
+
+issue_2974: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        evaluate: true,
+        loops: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function f(b) {
+            var a = 2;
+            do {
+                b && b[b];
+                b && (b.null = -4);
+                c++;
+            } while (b.null && --a > 0);
+        })(true);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function(b) {
+            var a = 2;
+            for (; b.null = -4, c++, b.null && --a > 0;);
+        })(!0),
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
