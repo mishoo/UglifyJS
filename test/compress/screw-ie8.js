@@ -392,3 +392,75 @@ issue_2254_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_24_1: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        (function(a) {
+            console.log(typeof function f(){} === typeof a ? "FAIL" : "PASS");
+        })();
+    }
+    expect: {
+        (function(o) {
+            console.log(typeof function o(){} === typeof o ? "FAIL" : "PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_24_2: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        (function(a) {
+            console.log(typeof function f(){} === typeof a ? "FAIL" : "PASS");
+        })();
+    }
+    expect: {
+        (function(n) {
+            console.log(typeof function o(){} === typeof n ? "FAIL" : "PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2976_1: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        console.log(function f() {
+            var a;
+            return a === f ? "FAIL" : "PASS";
+        }());
+    }
+    expect: {
+        console.log(function n() {
+            var o;
+            return o === n ? "FAIL" : "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2976_2: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        console.log(function f() {
+            var a;
+            return a === f ? "FAIL" : "PASS";
+        }());
+    }
+    expect: {
+        console.log(function n() {
+            var o;
+            return o === n ? "FAIL" : "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
