@@ -410,7 +410,7 @@ export_default_anonymous_function_not_call: {
         export default function(){}(foo);
     }
     // FIXME: should be `export default function(){};foo;`
-    expect_exact: "export default function(){}(foo);"
+    expect_exact: "export default(function(){})(foo);"
 }
 
 export_default_anonymous_generator_not_call: {
