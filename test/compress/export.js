@@ -280,6 +280,13 @@ export_default_anonymous_function: {
     expect_exact: "export default function(){foo()};"
 }
 
+export_default_seq: {
+    input: {
+        export default (1, 2)
+    }
+    expect_exact: "export default(1,2);"
+}
+
 export_default_arrow: {
     options = {
         reduce_vars: true,
@@ -410,7 +417,7 @@ export_default_anonymous_function_not_call: {
         export default function(){}(foo);
     }
     // FIXME: should be `export default function(){};foo;`
-    expect_exact: "export default function(){}(foo);"
+    expect_exact: "export default(function(){}(foo));"
 }
 
 export_default_anonymous_generator_not_call: {
@@ -443,4 +450,11 @@ export_default_anonymous_async_function_not_call: {
     }
     // agrees with `acorn` and `babylon 7`
     expect_exact: "export default async function(){};foo;"
+}
+
+issue_2977: {
+    input: {
+        export default (function () {})();
+    }
+    expect_exact: "export default(function(){}());"
 }
