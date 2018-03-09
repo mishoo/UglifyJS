@@ -444,3 +444,10 @@ export_default_anonymous_async_function_not_call: {
     // agrees with `acorn` and `babylon 7`
     expect_exact: "export default async function(){};foo;"
 }
+
+issue_2977: {
+    input: {
+        export default (function () {})();
+    }
+    expect_exact: "export default(function(){})();"
+}
