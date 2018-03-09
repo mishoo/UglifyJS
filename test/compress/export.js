@@ -280,6 +280,13 @@ export_default_anonymous_function: {
     expect_exact: "export default function(){foo()};"
 }
 
+export_default_seq: {
+    input: {
+        export default (1, 2)
+    }
+    expect_exact: "export default(1,2);"
+}
+
 export_default_arrow: {
     options = {
         reduce_vars: true,
