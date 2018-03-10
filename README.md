@@ -837,8 +837,8 @@ can pass additional arguments that control the code output:
 
 - `indent_start` (default `0`) -- prefix all lines by that many spaces
 
-- `inline_script` (default `false`) -- escape the slash in occurrences of
-  `</script` in strings
+- `inline_script` (default `true`) -- escape HTML comments and the slash in
+  occurrences of `</script>` in strings
 
 - `keep_quoted_props` (default `false`) -- when turned on, prevents stripping
   quotes from property names in object literals.
