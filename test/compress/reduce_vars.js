@@ -5545,3 +5545,33 @@ issue_2919: {
     }
     expect_stdout: "function"
 }
+
+issue_2992: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = "PASS";
+        (function f(b) {
+            switch (0) {
+            case 0:
+            case b = 1:
+                b && (c = "FAIL");
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "PASS";
+        (function f(b) {
+            switch (0) {
+            case 0:
+            case b = 1:
+                b && (c = "FAIL");
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
