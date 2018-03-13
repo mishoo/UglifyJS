@@ -139,6 +139,26 @@ describe("Comment", function() {
         assert.strictEqual(result.code, code);
     });
 
+    it("Should retain comments within brackets", function() {
+        var code = [
+            "{/* foo */}",
+            "a({/* foo */});",
+            "while (a) {/* foo */}",
+            "switch (a) {/* foo */}",
+            "if (a) {/* foo */} else {/* bar */}",
+        ].join("\n\n");
+        var result = uglify.minify(code, {
+            compress: false,
+            mangle: false,
+            output: {
+                beautify: true,
+                comments: "all",
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, code);
+    });
+
     it("Should correctly preserve new lines around comments", function() {
         var tests = [
             [
