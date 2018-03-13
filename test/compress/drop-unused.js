@@ -1785,3 +1785,32 @@ issue_805_2: {
         "bar",
     ]
 }
+
+issue_2995: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            a.b = b = function() {};
+            b.c = "PASS";
+        }
+        var o = {};
+        f(o);
+        console.log(o.b.c);
+    }
+    expect: {
+        function f(a) {
+            var b;
+            a.b = b = function() {};
+            b.c = "PASS";
+        }
+        var o = {};
+        f(o);
+        console.log(o.b.c);
+    }
+    expect_stdout: "PASS"
+}
