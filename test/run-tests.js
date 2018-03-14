@@ -175,8 +175,8 @@ function run_compress_tests() {
                 if (expected_warnings != actual_warnings) {
                     log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
                         input: input_formatted,
-                        expected_warnings: expected_warnings,
-                        actual_warnings: actual_warnings,
+                        expected_warnings: JSON.parse(expected_warnings).join('\n'),
+                        actual_warnings: JSON.parse(actual_warnings).join('\n'),
                     });
                     return false;
                 }
