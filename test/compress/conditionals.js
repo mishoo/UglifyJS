@@ -1204,6 +1204,45 @@ issue_2560: {
     ]
 }
 
+issue_2994: {
+    options = {
+        conditionals: true,
+        if_return: true
+    }
+    input: {
+        function f() {
+            if (condition1) {
+                if (condition2) {
+                    return aValue;
+                } else {
+                    const variable1 = 'something';
+                    if (condition3) {
+                        const variable2 = 'else';
+                        return anotherValue;
+                    } else {
+                        return undefined;
+                    }
+                }
+            }
+        }
+    }
+    expect: {
+        function f() {
+            if (condition1) {
+                if (condition2) return aValue;
+                {
+                    const variable1 = 'something';
+                    if (condition3) {
+                        const variable2 = 'else';
+                        return anotherValue;
+                    }
+                    return;
+                }
+            }
+        }
+    }
+}
+
 hoist_decl: {
     options = {
         conditionals: true,
