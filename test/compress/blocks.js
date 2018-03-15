@@ -200,6 +200,11 @@ issue_2946_else_const: {
         } else {
             let w = 48;
         }
+        if (3) {
+            class X {}
+        } else {
+            class Y {}
+        }
     }
     expect: {
         if (1) {
@@ -211,6 +216,11 @@ issue_2946_else_const: {
             let z = 24;
         } else {
             let w = 48;
+        }
+        if (3) {
+            class X {}
+        } else {
+            class Y {}
         }
     }
 }
