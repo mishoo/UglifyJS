@@ -59,7 +59,7 @@ if_else_empty: {
         if ({} ? a : b); else {}
     }
     expect: {
-        !{} ? b : a;
+        ({}), a;
     }
 }
 

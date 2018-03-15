@@ -67,7 +67,7 @@ negate_iife_3_evaluate: {
         (function(){ return true })() ? console.log(true) : console.log(false);
     }
     expect: {
-        console.log(true);
+        true, console.log(true);
     }
     expect_stdout: true
 }
@@ -110,7 +110,7 @@ negate_iife_3_off_evaluate: {
         (function(){ return true })() ? console.log(true) : console.log(false);
     }
     expect: {
-        console.log(true);
+        true, console.log(true);
     }
     expect_stdout: true
 }

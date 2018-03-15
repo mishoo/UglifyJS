@@ -55,7 +55,7 @@ reduce_vars: {
             console.log(a - 5);
             eval("console.log(a);");
         })(eval);
-        "yes";
+        true, "yes";
         console.log(A + 1);
     }
     expect_stdout: true
@@ -147,7 +147,7 @@ modified: {
         }
         function f4() {
             var b = 2, c = 3;
-            b = c;
+            1, b = c;
             console.log(1 + b);
             console.log(b + c);
             console.log(1 + c);
@@ -715,10 +715,12 @@ passes: {
         passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
+        sequences: true,
+        side_effects: true,
         unused: true,
     }
     input: {
-        function f() {
+        (function() {
             var a = 1, b = 2, c = 3;
             if (a) {
                 b = c;
@@ -729,17 +731,22 @@ passes: {
             console.log(b + c);
             console.log(a + c);
             console.log(a + b + c);
-        }
+        })();
     }
     expect: {
-        function f() {
-            3;
-            console.log(4);
-            console.log(6);
-            console.log(4);
+        (function() {
+            console.log(4),
+            console.log(6),
+            console.log(4),
             console.log(7);
-        }
+        })();
     }
+    expect_stdout: [
+        "4",
+        "6",
+        "4",
+        "7",
+    ]
 }
 
 iife: {

@@ -745,7 +745,7 @@ in_boolean_context: {
             !b("foo"),
             !b([1, 2]),
             !b(/foo/),
-            ![1, foo()],
+            (foo(), !1),
             (foo(), !1)
         );
     }
@@ -1565,4 +1565,44 @@ issue_2968: {
         console.log(c);
     }
     expect_stdout: "PASS"
+}
+
+truthy_conditionals: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+    }
+    input: {
+        if (a = {}) x();
+        (b = /foo/) && y();
+        (c = function() {}) || z();
+    }
+    expect: {
+        a = {}, x();
+        b = /foo/, y();
+        c = function() {};
+    }
+}
+
+truthy_loops: {
+    options = {
+        evaluate: true,
+        loops: true,
+    }
+    input: {
+        while ([]) x();
+        do {
+            y();
+        } while(a = {});
+    }
+    expect: {
+        for (;;) {
+            [];
+            x();
+        }
+        for (;;) {
+            y();
+            a = {};
+        }
+    }
 }
