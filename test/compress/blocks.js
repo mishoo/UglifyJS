@@ -187,3 +187,40 @@ issue_1672_if_strict: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_2946_else_const: {
+    input: {
+        if (1) {
+            const x = 6;
+        } else {
+            const y = 12;
+        }
+        if (2) {
+            let z = 24;
+        } else {
+            let w = 48;
+        }
+        if (3) {
+            class X {}
+        } else {
+            class Y {}
+        }
+    }
+    expect: {
+        if (1) {
+            const x = 6;
+        } else {
+            const y = 12;
+        }
+        if (2) {
+            let z = 24;
+        } else {
+            let w = 48;
+        }
+        if (3) {
+            class X {}
+        } else {
+            class Y {}
+        }
+    }
+}
