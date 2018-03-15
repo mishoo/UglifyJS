@@ -1617,3 +1617,15 @@ module_enables_strict_mode: {
         }
     }
 }
+
+module_mangle_scope: {
+    mangle = {
+        module: true
+    }
+    input: {
+        let a = 10;
+    }
+    expect: {
+        let e = 10;
+    }
+}
