@@ -975,7 +975,7 @@ function try_beautify(code, result, printfn) {
         mangle: false,
         output: {
             beautify: true,
-            bracketize: true,
+            braces: true,
         },
     });
     if (beautified.error) {

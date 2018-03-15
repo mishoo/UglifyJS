@@ -11,7 +11,7 @@ function try_beautify(code) {
         mangle: false,
         output: {
             beautify: true,
-            bracketize: true
+            braces: true
         }
     });
     if (beautified.error) {

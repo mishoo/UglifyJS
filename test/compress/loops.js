@@ -294,10 +294,10 @@ issue_186_beautify_ie8: {
     ]
 }
 
-issue_186_bracketize: {
+issue_186_braces: {
     beautify = {
         beautify: false,
-        bracketize: true,
+        braces: true,
         ie8: false,
     }
     input: {
@@ -314,10 +314,10 @@ issue_186_bracketize: {
     expect_exact: 'var x=3;if(foo()){do{do{alert(x)}while(--x)}while(x)}else{bar()}'
 }
 
-issue_186_bracketize_ie8: {
+issue_186_braces_ie8: {
     beautify = {
         beautify: false,
-        bracketize: true,
+        braces: true,
         ie8: true,
     }
     input: {
@@ -334,10 +334,10 @@ issue_186_bracketize_ie8: {
     expect_exact: 'var x=3;if(foo()){do{do{alert(x)}while(--x)}while(x)}else{bar()}'
 }
 
-issue_186_beautify_bracketize: {
+issue_186_beautify_braces: {
     beautify = {
         beautify: true,
-        bracketize: true,
+        braces: true,
         ie8: false,
     }
     input: {
@@ -366,10 +366,10 @@ issue_186_beautify_bracketize: {
     ]
 }
 
-issue_186_beautify_bracketize_ie8: {
+issue_186_beautify_braces_ie8: {
     beautify = {
         beautify: true,
-        bracketize: true,
+        braces: true,
         ie8: true,
     }
     input: {

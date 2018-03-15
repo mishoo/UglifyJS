@@ -17,7 +17,7 @@ describe("test/benchmark.js", function() {
     this.timeout(10 * 60 * 1000);
     [
         "-b",
-        "-b bracketize",
+        "-b braces",
         "-m",
         "-mc passes=3",
         "-mc passes=3,toplevel",

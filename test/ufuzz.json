@@ -4,7 +4,7 @@
         "mangle": false,
         "output": {
             "beautify": true,
-            "bracketize": true
+            "braces": true
         },
         "rename": true
     },
