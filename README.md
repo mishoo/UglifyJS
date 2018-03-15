@@ -110,6 +110,7 @@ a double dash to prevent input files being used as option arguments:
     --keep-classnames           Do not mangle/drop class names.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
+    --module                    Input is an ES6 module
     --name-cache <file>         File to hold mangled name mappings.
     --safari10                  Support non-standard Safari 10/11.
                                 Equivalent to setting `safari10: true` in `minify()`

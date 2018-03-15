@@ -1601,3 +1601,19 @@ issue_2874_3: {
     ]
     node_version: ">=6"
 }
+
+module_enables_strict_mode: {
+    options = {
+        module: true,
+    }
+    input: {
+        if (1) {
+            function xyz() {}
+        }
+    }
+    expect: {
+        if (1) {
+            function xyz() {}
+        }
+    }
+}
