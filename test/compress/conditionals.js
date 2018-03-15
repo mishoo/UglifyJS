@@ -703,10 +703,11 @@ ternary_boolean_alternative: {
 
 trivial_boolean_ternary_expressions : {
     options = {
+        booleans: true,
         conditionals: true,
-        evaluate    : true,
-        booleans    : true
-    };
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         f('foo' in m ? true  : false);
         f('foo' in m ? false : true);

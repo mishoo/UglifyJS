@@ -175,8 +175,8 @@ should_warn: {
         "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:141,31]",
         "WARN: Condition always true [test/compress/issue-1261.js:141,8]",
         "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:142,23]",
-        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:143,24]",
         "WARN: Condition always true [test/compress/issue-1261.js:143,8]",
+        "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:143,24]",
         "WARN: Dropping __PURE__ call [test/compress/issue-1261.js:144,31]",
         "WARN: Condition always false [test/compress/issue-1261.js:144,8]",
     ]
