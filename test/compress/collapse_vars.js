@@ -4976,7 +4976,7 @@ collapse_rhs_array: {
     expect_stdout: "false false false"
 }
 
-collapse_rhs_boolean: {
+collapse_rhs_boolean_1: {
     options = {
         collapse_vars: true,
     }
@@ -4999,6 +4999,66 @@ collapse_rhs_boolean: {
         console.log(a === b, b === c, c === a);
     }
     expect_stdout: "true true true"
+}
+
+collapse_rhs_boolean_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        (function f1() {
+            a = function() {};
+            if (/foo/)
+                console.log(typeof a);
+        })();
+        console.log(function f2() {
+            a = [];
+            return !1;
+        }());
+    }
+    expect: {
+        var a;
+        (function f1() {
+            if (a = function() {})
+                console.log(typeof a);
+        })();
+        console.log(function f2() {
+            return !(a = []);
+        }());
+    }
+    expect_stdout: [
+        "function",
+        "false",
+    ]
+}
+
+collapse_rhs_boolean_3: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        conditionals: true,
+    }
+    input: {
+        var a, f, g, h, i, n, s, t, x, y;
+        if (x()) {
+            n = a;
+        } else if (y()) {
+            n = f();
+        } else if (s) {
+            i = false;
+            n = g(true);
+        } else if (t) {
+            i = false;
+            n = h(true);
+        } else {
+            n = [];
+        }
+    }
+    expect: {
+        var a, f, g, h, i, n, s, t, x, y;
+        n = x() ? a : y() ? f() : s ? g(!(i = !1)) : t ? h(!(i = !1)) : [];
+    }
 }
 
 collapse_rhs_function: {
