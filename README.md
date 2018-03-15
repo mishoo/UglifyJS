@@ -824,7 +824,7 @@ can pass additional arguments that control the code output:
   when you want to generate minified code, in order to specify additional
   arguments, so you can use `-b beautify=false` to override it.
 
-- `bracketize` (default `false`) -- always insert brackets in `if`, `for`,
+- `braces` (default `false`) -- always insert braces in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single
   statement.
 

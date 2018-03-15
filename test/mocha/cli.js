@@ -164,13 +164,13 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
-    it("Should work with `--beautify bracketize`", function (done) {
-        var command = uglifyjscmd + ' test/input/issue-1482/input.js -b bracketize';
+    it("Should work with `--beautify braces`", function (done) {
+        var command = uglifyjscmd + ' test/input/issue-1482/input.js -b braces';
 
         exec(command, function (err, stdout) {
             if (err) throw err;
 
-            assert.strictEqual(stdout, read("test/input/issue-1482/bracketize.js"));
+            assert.strictEqual(stdout, read("test/input/issue-1482/braces.js"));
             done();
         });
     });

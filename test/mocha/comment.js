@@ -139,7 +139,7 @@ describe("Comment", function() {
         assert.strictEqual(result.code, code);
     });
 
-    it("Should retain comments within brackets", function() {
+    it("Should retain comments within braces", function() {
         var code = [
             "{/* foo */}",
             "a({/* foo */});",
