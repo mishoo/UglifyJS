@@ -497,6 +497,9 @@ if (result.error) throw result.error;
   - `mangle.properties` (default `false`) — a subcategory of the mangle option.
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
+- `module` (default `false`) — Use when minifying an ES6 module. "use strict"
+  is implied and names can be mangled on the top scope.
+
 - `output` (default `null`) — pass an object if you wish to specify
   additional [output options](#output-options).  The defaults are optimized
   for best compression.
@@ -555,6 +558,7 @@ if (result.error) throw result.error;
     keep_classnames: false,
     keep_fnames: false,
     ie8: false,
+    module: false,
     nameCache: null, // or specify a name cache object
     safari10: false,
     toplevel: false,
@@ -703,6 +707,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops
   when we can statically determine the condition.
 
+- `module` (default `false`) -- Pass `true` when compressing an ES6 module. Strict
+  mode is implied and the `toplevel` option as well.
+
 - `negate_iife` (default: `true`) -- negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the
   code generator would insert.
@@ -823,6 +830,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `keep_fnames` (default `false`) -- Pass `true` to not mangle function names.
   Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
   [compress option](#compress-options).
+
+- `module` (default `false`) -- Pass `true` an ES6 modules, where the toplevel
+  scope is not the global scope. Implies `toplevel`.
 
 - `reserved` (default `[]`) -- Pass an array of identifiers that should be
   excluded from mangling. Example: `["foo", "bar"]`.
