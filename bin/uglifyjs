@@ -197,7 +197,8 @@ function run() {
                     return require("acorn").parse(files[name], {
                         locations: true,
                         program: toplevel,
-                        sourceFile: name
+                        sourceFile: name,
+                        sourceType: options.module || program.parse.module ? "module" : "script"
                     });
                 });
             } else if (program.parse.spidermonkey) {
