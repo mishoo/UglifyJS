@@ -734,6 +734,15 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should mangle toplevel names with the --module option", function(done) {
+        var command = uglifyjscmd + " test/input/module/input.js --module -mc";
+        exec(command, function (err, stdout, stderr) {
+            if (err) throw err;
+
+            assert.strictEqual(stdout, "let e=1;export{e as foo};\n")
+            done();
+        });
+    });
     it("Should fail with --define a-b", function(done) {
         var command = uglifyjscmd + " test/input/issue-505/input.js --define a-b";
         exec(command, function (err, stdout, stderr) {

@@ -44,6 +44,7 @@ program.option("--ecma <version>", "Specify ECMAScript release: 5, 6, 7 or 8.");
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-classnames", "Do not mangle/drop class names.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
+program.option("--module", "Input is an ES6 module");
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
 program.option("--rename", "Force symbol expansion.");
 program.option("--no-rename", "Disable symbol expansion.");
@@ -66,6 +67,7 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     "compress",
     "ie8",
     "mangle",
+    "module",
     "safari10",
     "sourceMap",
     "toplevel",
@@ -195,7 +197,8 @@ function run() {
                     return require("acorn").parse(files[name], {
                         locations: true,
                         program: toplevel,
-                        sourceFile: name
+                        sourceFile: name,
+                        sourceType: options.module || program.parse.module ? "module" : "script"
                     });
                 });
             } else if (program.parse.spidermonkey) {

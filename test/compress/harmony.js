@@ -1601,3 +1601,52 @@ issue_2874_3: {
     ]
     node_version: ">=6"
 }
+
+module_enables_strict_mode: {
+    options = {
+        module: true,
+    }
+    input: {
+        if (1) {
+            function xyz() {}
+        }
+    }
+    expect: {
+        if (1) {
+            function xyz() {}
+        }
+    }
+}
+
+module_mangle_scope: {
+    mangle = {
+        module: true
+    }
+    input: {
+        let a = 10;
+    }
+    expect: {
+        let e = 10;
+    }
+}
+
+module_enabled: {
+    options = {
+        module: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    mangle = {
+        module: true,
+    }
+    input: {
+        let apple = 10, b = 20;
+        console.log(apple++, b, apple++);
+        export { apple };
+    }
+    expect: {
+        let o = 10;
+        console.log(o++, 20, o++);
+        export { o as apple };
+    }
+}
