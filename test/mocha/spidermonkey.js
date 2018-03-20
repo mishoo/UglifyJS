@@ -1,6 +1,7 @@
 var assert = require("assert");
 var fs = require("fs");
 var exec = require("child_process").exec;
+var acorn = require("acorn");
 var uglify = require("../node");
 
 describe("spidermonkey export/import sanity test", function() {
@@ -118,6 +119,17 @@ describe("spidermonkey export/import sanity test", function() {
         var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
         var uglify_ast = uglify.parse(code);
         var moz_ast = uglify_ast.to_mozilla_ast();
+        var from_moz_ast = uglify.AST_Node.from_mozilla_ast(moz_ast);
+        assert.strictEqual(
+            from_moz_ast.print_to_string(),
+            uglify_ast.print_to_string()
+        );
+    });
+
+    it("should be capable of importing from acorn", function() {
+        var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
+        var uglify_ast = uglify.parse(code);
+        var moz_ast = acorn.parse(code, {sourceType: 'module', ecmaVersion: 9});
         var from_moz_ast = uglify.AST_Node.from_mozilla_ast(moz_ast);
         assert.strictEqual(
             from_moz_ast.print_to_string(),
