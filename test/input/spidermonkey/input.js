@@ -66,6 +66,11 @@ var { w: w1, ...V } = { w: 7, x: 1, y: 2 };
 for (const x of y) {}
 async function f1() { await x + y; }
 
+``;
+`x`;
+`x${1}`;
+String.raw`\n`;
+
 // arrow.js
 
 var foo = ([]) => "foo";
