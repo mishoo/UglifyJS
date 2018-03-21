@@ -17,10 +17,13 @@ export {A1, B1} from "a.js";
 export {C};
 
 (a, [b], {c:foo = 3}, ...d) => null;
-() => {}
+() => {};
 
 async function f() { }
-function*gen() { }
+function*gen() {
+    yield 1;
+    yield* 2;
+}
 
 class Class extends Object {
     constructor(...args) {
