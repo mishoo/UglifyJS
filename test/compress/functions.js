@@ -2051,3 +2051,160 @@ drop_lone_use_strict: {
         }
     }
 }
+
+issue_3016_1: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1;
+        do {
+            (function(a) {
+                return a[b];
+                var a;
+            })(3);
+        } while (0);
+        console.log(b);
+    }
+    expect: {
+        var b = 1;
+        do {
+            a = 3,
+            a[b];
+        } while(0);
+        var a;
+        console.log(b);
+    }
+    expect_stdout: "1"
+}
+
+issue_3016_2: {
+    options = {
+        dead_code: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1;
+        do {
+            (function(a) {
+                return a[b];
+                try {
+                    a = 2;
+                } catch (a) {
+                    var a;
+                }
+            })(3);
+        } while (0);
+        console.log(b);
+    }
+    expect: {
+        var b = 1;
+        do {
+            a = 3,
+            a[b];
+        } while(0);
+        var a;
+        console.log(b);
+    }
+    expect_stdout: "1"
+}
+
+issue_3016_2_ie8: {
+    options = {
+        dead_code: true,
+        ie8: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1;
+        do {
+            (function(a) {
+                return a[b];
+                try {
+                    a = 2;
+                } catch (a) {
+                    var a;
+                }
+            })(3);
+        } while (0);
+        console.log(b);
+    }
+    expect: {
+        var b = 1;
+        do {
+            a = 3,
+            a[b];
+        } while(0);
+        var a;
+        console.log(b);
+    }
+    expect_stdout: "1"
+}
+
+issue_3016_3: {
+    options = {
+        dead_code: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1;
+        do {
+            console.log(function() {
+                return a ? "FAIL" : a = "PASS";
+                try {
+                    a = 2;
+                } catch (a) {
+                    var a;
+                }
+            }());
+        } while (b--);
+    }
+    expect: {
+        var b = 1;
+        do {
+            console.log((a = void 0, a ? "FAIL" : a = "PASS"));
+        } while(b--);
+        var a;
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
+
+issue_3016_3_ie8: {
+    options = {
+        dead_code: true,
+        ie8: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1;
+        do {
+            console.log(function() {
+                return a ? "FAIL" : a = "PASS";
+                try {
+                    a = 2;
+                } catch (a) {
+                    var a;
+                }
+            }());
+        } while (b--);
+    }
+    expect: {
+        var b = 1;
+        do {
+            console.log((a = void 0, a ? "FAIL" : a = "PASS"));
+        } while(b--);
+        var a;
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
