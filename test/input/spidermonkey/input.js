@@ -67,7 +67,7 @@ function f () {
 console.log([10, ...[], 20, ...[30, 40], 50]["length"]);
 var { w: w1, ...V } = { w: 7, x: 1, y: 2 };
 for (const x of y) {}
-async function f1() { await x + y; }
+async function f1() { await x; }
 
 ``;
 `x`;

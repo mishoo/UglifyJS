@@ -2,6 +2,7 @@ var assert = require("assert");
 var fs = require("fs");
 var exec = require("child_process").exec;
 var acorn = require("acorn");
+var escodegen = require("escodegen");
 var uglify = require("../node");
 
 describe("spidermonkey export/import sanity test", function() {
@@ -134,6 +135,37 @@ describe("spidermonkey export/import sanity test", function() {
         assert.strictEqual(
             from_moz_ast.print_to_string(),
             uglify_ast.print_to_string()
+        );
+    });
+
+    it("should produce an AST compatible with escodegen", function() {
+        var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
+        var uglify_ast = uglify.parse(code);
+        var moz_ast = uglify_ast.to_mozilla_ast();
+        assert.strictEqual(
+            escodegen.generate(moz_ast, {
+                format: {
+                    indent: {
+                        style: "",
+                    },
+                    newline: "",
+                    space:  "",
+                    quotes: "double"
+                }
+            })
+                .replace(/;}/g, "}")
+                .replace(/var {/g, "var{")
+                .replace(/var \[/g, "var[")
+                .replace(/const {/g, "const{")
+                .replace(/const \[/g, "const[")
+                .replace(/get \"/g, "get\"")
+                .replace(/set \"/g, "set\"")
+                .replace(/\[object Object\].\[object Object\]/g, "new.target")  // escodegen issue
+                .replace(/\(await x\)/, "await x")
+            ,
+            uglify_ast.print_to_string({
+                keep_quoted_props: true
+            })
         );
     });
 });
