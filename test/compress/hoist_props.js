@@ -686,3 +686,33 @@ undefined_key: {
     }
     expect_stdout: "3"
 }
+
+issue_3021: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 1, b = 2;
+        (function() {
+            b = a;
+            if (a++ + b--)
+                return 1;
+            return;
+            var b = {};
+        })();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 1, b = 2;
+        (function() {
+            b = a;
+            if (a++ + b--)
+                return 1;
+            return;
+            var b = {};
+        })();
+        console.log(a, b);
+    }
+    expect_stdout: "2 2"
+}
