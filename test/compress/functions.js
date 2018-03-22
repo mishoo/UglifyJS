@@ -2208,3 +2208,32 @@ issue_3016_3_ie8: {
         "PASS",
     ]
 }
+
+issue_3018: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 1, c = "PASS";
+        do {
+            (function() {
+                (function(a) {
+                    a = 0 != (a && (c = "FAIL"));
+                })();
+            })();
+        } while (b--);
+        console.log(c);
+    }
+    expect: {
+        var b = 1, c = "PASS";
+        do {
+            a = void 0,
+            a = 0 != (a && (c = "FAIL"));
+        } while (b--);
+        var a;
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
