@@ -312,6 +312,15 @@ describe("minify", function() {
             assert.strictEqual(err.line, 1);
             assert.strictEqual(err.col, 12);
         });
+        it("should reject duplicated label name", function() {
+            var result = Uglify.minify("L:{L:{}}");
+            var err = result.error;
+            assert.ok(err instanceof Error);
+            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Label L defined twice");
+            assert.strictEqual(err.filename, "0");
+            assert.strictEqual(err.line, 1);
+            assert.strictEqual(err.col, 4);
+        });
     });
 
     describe("global_defs", function() {
