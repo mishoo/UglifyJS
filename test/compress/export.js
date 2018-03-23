@@ -309,7 +309,7 @@ export_default_anonymous_generator: {
             yield foo();
         }
     }
-    expect_exact: "export default function*(){yield foo()};"
+    expect_exact: "export default function*(){yield foo()}"
 }
 
 export_default_anonymous_async_function: {
@@ -326,7 +326,7 @@ export_default_anonymous_async_function: {
             return await foo();
         }
     }
-    expect_exact: "export default async function(){return await foo()};"
+    expect_exact: "export default async function(){return await foo()}"
 }
 
 export_default_async_arrow_function: {
@@ -358,7 +358,7 @@ export_default_named_generator: {
             yield foo();
         }
     }
-    expect_exact: "export default function*gen(){yield foo()};"
+    expect_exact: "export default function*gen(){yield foo()}"
 }
 
 export_default_named_async_function: {
@@ -375,7 +375,7 @@ export_default_named_async_function: {
             return await foo();
         }
     }
-    expect_exact: "export default async function bar(){return await foo()};"
+    expect_exact: "export default async function bar(){return await foo()}"
 }
 
 export_default_anonymous_class: {
@@ -426,7 +426,7 @@ export_default_anonymous_generator_not_call: {
         export default function*(){}(foo);
     }
     // agrees with `acorn` and `babylon 7`
-    expect_exact: "export default function*(){};foo;"
+    expect_exact: "export default function*(){}foo;"
 }
 
 export_default_anonymous_async_function_not_call: {
@@ -442,5 +442,5 @@ export_default_anonymous_async_function_not_call: {
         export default async function(){}(foo);
     }
     // agrees with `acorn` and `babylon 7`
-    expect_exact: "export default async function(){};foo;"
+    expect_exact: "export default async function(){}foo;"
 }
