@@ -110,6 +110,16 @@ function run_compress_tests() {
                 });
                 return false;
             }
+            var ast = input.to_mozilla_ast();
+            var ast_as_string = U.AST_Node.from_mozilla_ast(ast).print_to_string();
+            var input_string = input.print_to_string();
+            if (input_string !== ast_as_string) {
+                log("!!! Mozilla AST I/O corrupted input\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n\n", {
+                    input: input_string,
+                    output: ast_as_string,
+                });
+                return false;
+            }
             var options = U.defaults(test.options, {
                 warnings: false
             });
