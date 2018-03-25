@@ -142,30 +142,15 @@ describe("spidermonkey export/import sanity test", function() {
         var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
         var uglify_ast = uglify.parse(code);
         var moz_ast = uglify_ast.to_mozilla_ast();
+        var generated = escodegen.generate(moz_ast)
+            .replace(/\[object Object\].\[object Object\]/g, "new.target");  // escodegen issue
+        var parsed = acorn.parse(generated, {
+            sourceType: "module",
+            ecmaVersion: 9
+        });
         assert.strictEqual(
-            escodegen.generate(moz_ast, {
-                format: {
-                    indent: {
-                        style: "",
-                    },
-                    newline: "",
-                    space:  "",
-                    quotes: "double"
-                }
-            })
-                .replace(/;}/g, "}")
-                .replace(/var {/g, "var{")
-                .replace(/var \[/g, "var[")
-                .replace(/const {/g, "const{")
-                .replace(/const \[/g, "const[")
-                .replace(/get \"/g, "get\"")
-                .replace(/set \"/g, "set\"")
-                .replace(/\[object Object\].\[object Object\]/g, "new.target")  // escodegen issue
-                .replace(/\(await x\)/, "await x")
-            ,
-            uglify_ast.print_to_string({
-                keep_quoted_props: true
-            })
+            uglify.AST_Node.from_mozilla_ast(parsed).print_to_string(),
+            uglify_ast.print_to_string()
         );
     });
 });
