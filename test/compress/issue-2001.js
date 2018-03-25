@@ -5,9 +5,9 @@ export_func_1: {
         unused: true,
     }
     input: {
-        export function f(){};
+        export function f(){}
     }
-    expect_exact: "export function f(){};"
+    expect_exact: "export function f(){}"
 }
 
 export_func_2: {
@@ -20,7 +20,7 @@ export_func_2: {
     input: {
         export function f(){}(1);
     }
-    expect_exact: "export function f(){};1;"
+    expect_exact: "export function f(){}1;"
 }
 
 export_func_3: {
@@ -33,7 +33,7 @@ export_func_3: {
     input: {
         export function f(){}(1);
     }
-    expect_exact: "export function f(){};"
+    expect_exact: "export function f(){}"
 }
 
 export_default_func_1: {
@@ -43,9 +43,9 @@ export_default_func_1: {
         unused: true,
     }
     input: {
-        export default function f(){};
+        export default function f(){}
     }
-    expect_exact: "export default function f(){};"
+    expect_exact: "export default function f(){}"
 }
 
 export_default_func_2: {
@@ -58,7 +58,7 @@ export_default_func_2: {
     input: {
         export default function f(){}(1);
     }
-    expect_exact: "export default function f(){};1;"
+    expect_exact: "export default function f(){}1;"
 }
 
 export_default_func_3: {
@@ -71,7 +71,7 @@ export_default_func_3: {
     input: {
         export default function f(){}(1);
     }
-    expect_exact: "export default function f(){};"
+    expect_exact: "export default function f(){}"
 }
 
 export_class_1: {
@@ -83,7 +83,7 @@ export_class_1: {
     input: {
         export class C {};
     }
-    expect_exact: "export class C{};"
+    expect_exact: "export class C{}"
 }
 
 export_class_2: {
@@ -96,7 +96,7 @@ export_class_2: {
     input: {
         export class C {}(1);
     }
-    expect_exact: "export class C{};1;"
+    expect_exact: "export class C{}1;"
 }
 
 export_class_3: {
@@ -109,7 +109,7 @@ export_class_3: {
     input: {
         export class C {}(1);
     }
-    expect_exact: "export class C{};"
+    expect_exact: "export class C{}"
 }
 
 export_default_class_1: {
@@ -121,7 +121,7 @@ export_default_class_1: {
     input: {
         export default class C {};
     }
-    expect_exact: "export default class C{};"
+    expect_exact: "export default class C{}"
 }
 
 export_default_class_2: {
@@ -134,7 +134,7 @@ export_default_class_2: {
     input: {
         export default class C {}(1);
     }
-    expect_exact: "export default class C{};1;"
+    expect_exact: "export default class C{}1;"
 }
 
 export_default_class_3: {
@@ -147,7 +147,7 @@ export_default_class_3: {
     input: {
         export default class C {}(1);
     }
-    expect_exact: "export default class C{};"
+    expect_exact: "export default class C{}"
 }
 
 export_mangle_1: {
@@ -159,7 +159,7 @@ export_mangle_1: {
             return one - two;
         };
     }
-    expect_exact: "export function foo(o,n){return o-n};"
+    expect_exact: "export function foo(o,n){return o-n}"
 }
 
 export_mangle_2: {
@@ -171,7 +171,7 @@ export_mangle_2: {
             return one - two;
         };
     }
-    expect_exact: "export default function foo(o,t){return o-t};"
+    expect_exact: "export default function foo(o,t){return o-t}"
 }
 
 export_mangle_3: {
@@ -190,7 +190,7 @@ export_mangle_3: {
             }
         };
     }
-    expect_exact: "export class C{go(r,e){return r-e+r}};"
+    expect_exact: "export class C{go(r,e){return r-e+r}}"
 }
 
 export_mangle_4: {
@@ -209,7 +209,7 @@ export_mangle_4: {
             }
         };
     }
-    expect_exact: "export default class C{go(e,r){return e-r+e}};"
+    expect_exact: "export default class C{go(e,r){return e-r+e}}"
 }
 
 export_mangle_5: {
@@ -276,8 +276,8 @@ export_default_func_ref: {
         unused: true,
     }
     input: {
-        export default function f(){};
+        export default function f(){}
         f();
     }
-    expect_exact: "export default function f(){};f();"
+    expect_exact: "export default function f(){}f();"
 }

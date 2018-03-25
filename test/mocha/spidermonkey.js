@@ -1,5 +1,8 @@
 var assert = require("assert");
+var fs = require("fs");
 var exec = require("child_process").exec;
+var acorn = require("acorn");
+var escodegen = require("escodegen");
 var uglify = require("../node");
 
 describe("spidermonkey export/import sanity test", function() {
@@ -111,5 +114,43 @@ describe("spidermonkey export/import sanity test", function() {
             assert.strictEqual(counter_directives, tests[i].directives, "Directives count mismatch for test " + tests[i].input);
             assert.strictEqual(counter_strings, tests[i].strings, "String count mismatch for test " + tests[i].input);
         }
+    });
+
+    it("should output and parse ES6 code correctly", function() {
+        var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
+        var uglify_ast = uglify.parse(code);
+        var moz_ast = uglify_ast.to_mozilla_ast();
+        var from_moz_ast = uglify.AST_Node.from_mozilla_ast(moz_ast);
+        assert.strictEqual(
+            from_moz_ast.print_to_string(),
+            uglify_ast.print_to_string()
+        );
+    });
+
+    it("should be capable of importing from acorn", function() {
+        var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
+        var uglify_ast = uglify.parse(code);
+        var moz_ast = acorn.parse(code, {sourceType: 'module', ecmaVersion: 9});
+        var from_moz_ast = uglify.AST_Node.from_mozilla_ast(moz_ast);
+        assert.strictEqual(
+            from_moz_ast.print_to_string(),
+            uglify_ast.print_to_string()
+        );
+    });
+
+    it("should produce an AST compatible with escodegen", function() {
+        var code = fs.readFileSync("test/input/spidermonkey/input.js", "utf-8");
+        var uglify_ast = uglify.parse(code);
+        var moz_ast = uglify_ast.to_mozilla_ast();
+        var generated = escodegen.generate(moz_ast)
+            .replace(/\[object Object\].\[object Object\]/g, "new.target");  // escodegen issue
+        var parsed = acorn.parse(generated, {
+            sourceType: "module",
+            ecmaVersion: 9
+        });
+        assert.strictEqual(
+            uglify.AST_Node.from_mozilla_ast(parsed).print_to_string(),
+            uglify_ast.print_to_string()
+        );
     });
 });

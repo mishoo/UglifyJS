@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "acorn": "~5.4.1",
+    "escodegen": "^1.9.1",
     "mocha": "~3.5.1",
     "semver": "~5.5.0"
   },

@@ -218,7 +218,7 @@ export_statement: {
         export function d() {};
         export class e {};
     }
-    expect_exact: "export default 3;export var a=4;export let b=6;export const c=6;export function d(){};export class e{};"
+    expect_exact: "export default 3;export var a=4;export let b=6;export const c=6;export function d(){}export class e{}"
 }
 
 export_default_object_expression: {
@@ -254,7 +254,7 @@ export_default_anon_function: {
             console.log(1 + 2);
         }
     }
-    expect_exact: "export default function(){console.log(3)};"
+    expect_exact: "export default function(){console.log(3)}"
 }
 
 export_default_anon_class: {
@@ -266,7 +266,7 @@ export_default_anon_class: {
             foo() { console.log(1 + 2); }
         }
     }
-    expect_exact: "export default class{foo(){console.log(3)}};"
+    expect_exact: "export default class{foo(){console.log(3)}}"
 }
 
 export_module_statement: {
@@ -680,7 +680,7 @@ export_default_function_decl: {
         export default function Foo() {};
         export function Far() {};
     }
-    expect_exact: "export default function Foo(){};export function Far(){};"
+    expect_exact: "export default function Foo(){}export function Far(){}"
 }
 
 export_default_class_decl: {
@@ -694,7 +694,7 @@ export_default_class_decl: {
         export default class Car {};
         export class Cab {};
     }
-    expect_exact: "export default class Car{};export class Cab{};"
+    expect_exact: "export default class Car{}export class Cab{}"
 }
 
 object_rest_spread: {
