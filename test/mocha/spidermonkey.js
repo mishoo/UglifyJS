@@ -23,6 +23,15 @@ describe("spidermonkey export/import sanity test", function() {
         });
     });
 
+    it("should not add unnecessary escape slashes to regexps", function() {
+        var input = "/[\\\\/]/;";
+        var ast = uglify.parse(input).to_mozilla_ast();
+        assert.equal(
+            uglify.AST_Node.from_mozilla_ast(ast).print_to_string(),
+            input
+        );
+    });
+
     it("Should judge between directives and strings correctly on import", function() {
         var tests = [
             {
