@@ -22,9 +22,6 @@ if (failures) {
 var mocha_tests = require("./mocha.js");
 mocha_tests();
 
-var run_sourcemaps_tests = require('./sourcemaps');
-run_sourcemaps_tests();
-
 /* -----[ utils ]----- */
 
 function tmpl() {
@@ -49,16 +46,9 @@ function log_test(name) {
 }
 
 function find_test_files(dir) {
-    var files = fs.readdirSync(dir).filter(function(name){
+    return fs.readdirSync(dir).filter(function(name) {
         return /\.js$/i.test(name);
     });
-    if (process.argv.length > 2) {
-        var x = process.argv.slice(2);
-        files = files.filter(function(f){
-            return x.indexOf(f) >= 0;
-        });
-    }
-    return files;
 }
 
 function test_directory(dir) {
