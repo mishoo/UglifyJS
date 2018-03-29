@@ -1601,3 +1601,28 @@ issue_2874_3: {
     ]
     node_version: ">=6"
 }
+
+issue_3028: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function a(array) {
+            var shifted = array.splice(0, 2);
+            return [ ...array, ...shifted ];
+        }
+        console.log(a([ 1, 2, 3 ]).join(" "));
+    }
+    expect: {
+        function a(array) {
+            var shifted = array.splice(0, 2);
+            return [ ...array, ...shifted ];
+        }
+        console.log(a([ 1, 2, 3 ]).join(" "));
+    }
+    expect_stdout: "3 1 2"
+    node_version: ">=6"
+}
