@@ -41,9 +41,11 @@ describe("sourcemaps", function() {
             "obj.wat([]);",
         ].join("\n"), {
             sourceMap: true,
+            toplevel: true,
         });
         if (result.error) throw result.error;
-        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["obj","wat"],"mappings":"AAAA,IAAIA,IAAM,GACVA,IAAIC,IAAI"}');
+        assert.strictEqual(result.code, "({}).wat([]);");
+        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["wat"],"mappings":"CAAU,IACNA,IAAI"}');
     });
 
     describe("inSourceMap", function() {
