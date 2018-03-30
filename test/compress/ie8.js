@@ -464,3 +464,77 @@ issue_2976_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3035: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        var c = "FAIL";
+        (function(a) {
+            try {
+                throw 1;
+            } catch (b) {
+                try {
+                    throw 0;
+                } catch (a) {
+                    b && (c = "PASS");
+                }
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(o) {
+            try {
+                throw 1;
+            } catch (t) {
+                try {
+                    throw 0;
+                } catch (o) {
+                    t && (c = "PASS");
+                }
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3035_ie8: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function(a) {
+            try {
+                throw 1;
+            } catch (b) {
+                try {
+                    throw 0;
+                } catch (a) {
+                    b && (c = "PASS");
+                }
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(t) {
+            try {
+                throw 1;
+            } catch (o) {
+                try {
+                    throw 0;
+                } catch (t) {
+                    o && (c = "PASS");
+                }
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
