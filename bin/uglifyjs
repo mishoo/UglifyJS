@@ -12,6 +12,9 @@ var program = require("commander");
 var UglifyJS = require("../tools/node");
 
 var skip_keys = [ "cname", "inlined", "parent_scope", "scope", "uses_eval", "uses_with" ];
+var source_map_stub = {
+    path: null,
+};
 var files = {};
 var options = {
     compress: false,
@@ -173,6 +176,10 @@ function convert_ast(fn) {
 }
 
 function run() {
+    if (program.sourceMap.content === source_map_stub) {
+        program.sourceMap.content = read_file(source_map_stub.path, source_map_stub.path);
+    }
+    
     UglifyJS.AST_Node.warn_function = function(msg) {
         print_error("WARN: " + msg);
     };
@@ -384,7 +391,8 @@ function parse_source_map() {
         var settings = parse(value, options);
         if (!hasContent && settings.content && settings.content != "inline") {
             print_error("INFO: Using input source map: " + settings.content);
-            settings.content = read_file(settings.content, settings.content);
+            source_map_stub.path = settings.content;
+            settings.content = source_map_stub;
         }
         return settings;
     }
