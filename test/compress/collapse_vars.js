@@ -5303,3 +5303,27 @@ issue_2974: {
     }
     expect_stdout: "1"
 }
+
+issue_3032: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+    }
+    input: {
+        console.log({
+            f: function() {
+                this.a = 42;
+                return [ this.a, !1 ];
+            }
+        }.f()[0]);
+    }
+    expect: {
+        console.log({
+            f: function() {
+                this.a = 42;
+                return [ this.a, !1 ];
+            }
+        }.f()[0]);
+    }
+    expect_stdout: "42"
+}
