@@ -46,7 +46,7 @@ program.option("--name-cache <file>", "File to hold mangled name mappings.");
 program.option("--rename", "Force symbol expansion.");
 program.option("--no-rename", "Disable symbol expansion.");
 program.option("--self", "Build UglifyJS as a library (implies --wrap UglifyJS)");
-program.option("--source-map [options]", "Enable source map/specify source map options.", parse_source_map());
+program.option("--source-map [options]", "Enable source map/specify source map options.", parse_js());
 program.option("--timings", "Display operations run time on STDERR.")
 program.option("--toplevel", "Compress and/or mangle variables in toplevel scope.");
 program.option("--verbose", "Print diagnostic messages.");
@@ -176,6 +176,11 @@ function run() {
     UglifyJS.AST_Node.warn_function = function(msg) {
         print_error("WARN: " + msg);
     };
+    var content = program.sourceMap && program.sourceMap.content;
+    if (content && content != "inline") {
+        print_error("INFO: Using input source map: " + content);
+        options.sourceMap.content = read_file(content, content);
+    }
     if (program.timings) options.timings = true;
     try {
         if (program.parse) {
@@ -374,19 +379,6 @@ function parse_js(flag) {
             }
         }
         return options;
-    }
-}
-
-function parse_source_map() {
-    var parse = parse_js();
-    return function(value, options) {
-        var hasContent = options && "content" in options;
-        var settings = parse(value, options);
-        if (!hasContent && settings.content && settings.content != "inline") {
-            print_error("INFO: Using input source map: " + settings.content);
-            settings.content = read_file(settings.content, settings.content);
-        }
-        return settings;
     }
 }
 
