@@ -56,6 +56,18 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("Should give sensible error against invalid input source map", function(done) {
+        var command = uglifyjscmd + " test/mocha.js --source-map content=blah,url=inline";
+
+        exec(command, function (err, stdout, stderr) {
+            assert.ok(err);
+            assert.deepEqual(stderr.split(/\n/).slice(0, 2), [
+                "INFO: Using input source map: blah",
+                "ERROR: invalid input source map: blah",
+            ]);
+            done();
+        });
+    });
     it("Should append source map to output when using --source-map url=inline", function (done) {
         var command = uglifyjscmd + " test/input/issue-1323/sample.js --source-map url=inline";
 
