@@ -108,7 +108,7 @@ describe("bin/uglifyjs", function () {
         }
         var command = [
             uglifyjscmd,
-            "--source-map", "content=" + mapFile,
+            "--source-map", "content=" + mapFile + '"',
             "--source-map", "url=inline"
         ].join(" ");
 
@@ -119,7 +119,7 @@ describe("bin/uglifyjs", function () {
             done();
         });
         setTimeout(function() {
-            fs.copyFileSync("test/input/pr-3040/input.js.map", mapFile);
+            fs.writeFileSync(mapFile, read("test/input/pr-3040/input.js.map"));
             child.stdin.end(read("test/input/pr-3040/input.js"));
         }, 1000);
     });
