@@ -5582,3 +5582,75 @@ issue_2992: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3042_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        var a = [ 1, 2 ].map(function() {
+            return new f();
+        });
+        console.log(a[0].constructor === a[1].constructor);
+    }
+    expect: {
+        function f() {}
+        var a = [ 1, 2 ].map(function() {
+            return new f();
+        });
+        console.log(a[0].constructor === a[1].constructor);
+    }
+    expect_stdout: "true"
+}
+
+issue_3042_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function Foo() {
+            this.isFoo = function(o) {
+                return o instanceof Foo;
+            };
+        }
+        function FooCollection() {
+            this.foos = [1, 1].map(function() {
+                return new Foo();
+            });
+        }
+        var fooCollection = new FooCollection();
+        console.log(fooCollection.foos[0].isFoo(fooCollection.foos[0]));
+        console.log(fooCollection.foos[0].isFoo(fooCollection.foos[1]));
+        console.log(fooCollection.foos[1].isFoo(fooCollection.foos[0]));
+        console.log(fooCollection.foos[1].isFoo(fooCollection.foos[1]));
+    }
+    expect: {
+        function Foo() {
+            this.isFoo = function(o) {
+                return o instanceof Foo;
+            };
+        }
+        var fooCollection = new function() {
+            this.foos = [1, 1].map(function() {
+                return new Foo();
+            });
+        }();
+        console.log(fooCollection.foos[0].isFoo(fooCollection.foos[0]));
+        console.log(fooCollection.foos[0].isFoo(fooCollection.foos[1]));
+        console.log(fooCollection.foos[1].isFoo(fooCollection.foos[0]));
+        console.log(fooCollection.foos[1].isFoo(fooCollection.foos[1]));
+    }
+    expect_stdout: [
+        "true",
+        "true",
+        "true",
+        "true",
+    ]
+}
