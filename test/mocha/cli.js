@@ -108,7 +108,7 @@ describe("bin/uglifyjs", function () {
         }
         var command = [
             uglifyjscmd,
-            "--source-map", "content=" + mapFile + '"',
+            "--source-map", "content=" + mapFile,
             "--source-map", "url=inline"
         ].join(" ");
 
