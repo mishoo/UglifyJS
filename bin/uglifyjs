@@ -176,7 +176,7 @@ function convert_ast(fn) {
 }
 
 function run() {
-    if (program.sourceMap.content === source_map_stub) {
+    if (program.sourceMap && program.sourceMap.content === source_map_stub) {
         program.sourceMap.content = read_file(source_map_stub.path, source_map_stub.path);
     }
     
