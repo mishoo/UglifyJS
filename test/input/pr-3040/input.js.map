@@ -1,0 +1,1 @@
+{"version":3,"sources":["input2.js"],"names":["require","foo","hello","x","apply","_toConsumableArray","y","z"],"mappings":"kLAAcA,QAAQ,OAAfC,aAAAA,kBACSD,QAAQ,SAAjBE,gBAAAA,MAEPD,IAAIE,EAAJC,MAAAH,IAAAI,mBAASJ,IAAIK,EAAEJ,MAAMK","sourcesContent":["const {foo} = require(\"bar\");\nconst {hello} = require(\"world\");\n\nfoo.x(...foo.y(hello.z));\n"]}

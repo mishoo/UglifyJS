@@ -94,6 +94,28 @@ describe("bin/uglifyjs", function () {
             done();
         });
     });
+    it("should not load the source map before it fully receives the JS source", function(done) {
+        var command = [
+            '"' + process.argv[0] + '" test/input/pr-3040/pipe.js |', uglifyjscmd,
+            "--source-map", "content=test/input/pr-3040/input.js.map",
+            "--source-map", "url=inline"
+        ].join(" ");
+        
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            
+            // Revert input file to initial state for future test validity
+            require("fs").writeFileSync("test/input/pr-3040/input.js.map", '{"version":3,"sources":["input2.js"],"names":["require","foo","hello","x","apply","_toConsumableArray","y","z"],"mappings":"kLAAcA,QAAQ,OAAfC,aAAAA,kBACSD,QAAQ,SAAjBE,gBAAAA,MAEPD,IAAIE,EAAJC,MAAAH,IAAAI,mBAASJ,IAAIK,EAAEJ,MAAMK","sourcesContent":["const {foo} = require(\\"bar\\");\\nconst {hello} = require(\\"world\\");\\n\\nfoo.x(...foo.y(hello.z));\\n"]}');
+            
+            assert.strictEqual(stdout, [
+                'function _toConsumableArray(arr){if(Array.isArray(arr)){for(var i=0,arr2=Array(arr.length);i<arr.length;i++){arr2[i]=arr[i]}return arr2}else{return Array.from(arr)}}var _require=require("bar"),foo=_require.foo;var _require2=require("world"),hello=_require2.hello;foo.x.apply(foo,_toConsumableArray(foo.y(hello.z)));\n',
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0Mi5qcyJdLCJuYW1lcyI6WyJyZXF1aXJlIiwiZm9vIiwiaGVsbG8iLCJ4IiwiYXBwbHkiLCJfdG9Db2",
+                "5zdW1hYmxlQXJyYXkiLCJ5IiwieiJdLCJtYXBwaW5ncyI6ImtMQUFjQSxRQUFRLE9BQWZDLGFBQUFBLGtCQUNTRCxRQUFRLFNBQWpCRSxnQkFBQUEsTUFFUEQsSUFBSUUsRUFBSkMsTUFBQUgsSUFBQUksbUJBQVNKLElBQUlLLEVBQUVKLE1B",
+                "QU1LIiwic291cmNlc0NvbnRlbnQiOlsiY29uc3Qge2Zvb30gPSByZXF1aXJlKFwiYmFyXCIpO1xuY29uc3Qge2hlbGxvfSA9IHJlcXVpcmUoXCJ3b3JsZFwiKTtcblxuZm9vLngoLi4uZm9vLnkoaGVsbG8ueikpO1xuIl19\n"
+            ].join(""));
+            done();
+        });
+    });
     it("Should work with --keep-fnames (mangle only)", function (done) {
         var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m';
 
