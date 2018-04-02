@@ -716,3 +716,29 @@ issue_3021: {
     }
     expect_stdout: "2 2"
 }
+
+issue_3046: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            do {
+                var b = {
+                    c: a++
+                };
+            } while (b.c && a);
+            return a;
+        }(0));
+    }
+    expect: {
+        console.log(function(a) {
+            do {
+                var b_c = a++;
+            } while (b_c && a);
+            return a;
+        }(0));
+    }
+    expect_stdout: "1"
+}
