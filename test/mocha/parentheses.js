@@ -1,7 +1,7 @@
 var assert = require("assert");
 var uglify = require("../../");
 
-describe("New", function() {
+describe("parentheses", function() {
     it("Should add trailing parentheses for new expressions with zero arguments in beautify mode", function() {
         var tests = [
             "new x(1);",
@@ -82,5 +82,24 @@ describe("New", function() {
                 expected[i]
             );
         }
+    });
+
+    it("Should compress leading parenthesis with reasonable performance", function() {
+        this.timeout(30000);
+        var code = [
+            "({}?0:1)&&x();",
+            "(function(){}).name;",
+        ];
+        for (var i = 16; --i >= 0;) {
+            [].push.apply(code, code);
+        }
+        code = code.join("");
+        var result = uglify.minify(code, {
+            compress: false,
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        // Dismal performance for `assert.strictEqual()` in Node.js 6
+        assert.ok(result.code === code);
     });
 });
