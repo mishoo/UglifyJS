@@ -2237,3 +2237,33 @@ issue_3018: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3054: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        inline: 1,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            return { a: true };
+        }
+        console.log(function(b) {
+            b = false;
+            return f();
+        }().a, f.call().a);
+    }
+    expect: {
+        "use strict";
+        function f() {
+            return { a: !0 };
+        }
+        console.log(function(b) {
+            return { a: !(b = !1) };
+        }().a, f.call().a);
+    }
+    expect_stdout: "true true"
+}
