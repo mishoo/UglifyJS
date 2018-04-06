@@ -1640,3 +1640,61 @@ issue_2893_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_869_1: {
+    mangle = {
+        properties: {
+            reserved: [ "get" ]
+        },
+    }
+    input: {
+        var o = { p: "FAIL" };
+        Object.defineProperty(o, "p", {
+            get: function() {
+                return "PASS";
+            }
+        });
+        console.log(o.p);
+    }
+    expect: {
+        var o = { o: "FAIL" };
+        Object.defineProperty(o, "o", {
+            get: function() {
+                return "PASS";
+            }
+        });
+        console.log(o.o);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_869_2: {
+    mangle = {
+        properties: {
+            reserved: [ "get" ]
+        },
+    }
+    input: {
+        var o = { p: "FAIL" };
+        Object.defineProperties(o, {
+            p: {
+                get: function() {
+                    return "PASS";
+                }
+            }
+        });
+        console.log(o.p);
+    }
+    expect: {
+        var o = { o: "FAIL" };
+        Object.defineProperties(o, {
+            o: {
+                get: function() {
+                    return "PASS";
+                }
+            }
+        });
+        console.log(o.o);
+    }
+    expect_stdout: "PASS"
+}
