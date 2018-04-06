@@ -70,6 +70,7 @@ describe("sourcemaps", function() {
                 compress: { toplevel: true },
                 sourceMap: {
                     content: "inline",
+                    includeSources: true,
                     url: "inline"
                 }
             }).code + "\n";
@@ -108,6 +109,29 @@ describe("sourcemaps", function() {
             var err = result.error;
             assert.ok(err instanceof Error);
             assert.strictEqual(err.stack.split(/\n/)[0], "Error: inline source map only works with singular input");
+        });
+        it("Should drop source contents for includeSources=false", function() {
+            var result = Uglify.minify(read("./test/input/issue-520/input.js"), {
+                compress: false,
+                mangle: false,
+                sourceMap: {
+                    content: "inline",
+                    includeSources: true,
+                },
+            });
+            if (result.error) throw result.error;
+            var map = JSON.parse(result.map);
+            assert.strictEqual(map.sourcesContent.length, 1);
+            result = Uglify.minify(result.code, {
+                compress: false,
+                mangle: false,
+                sourceMap: {
+                    content: result.map,
+                },
+            });
+            if (result.error) throw result.error;
+            map = JSON.parse(result.map);
+            assert.ok(!("sourcesContent" in map));
         });
     });
 
