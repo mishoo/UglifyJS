@@ -91,24 +91,37 @@ describe("sourcemaps", function() {
                 });
                 assert.strictEqual(result.code, "var bar=function(bar){return bar};");
                 assert.strictEqual(warnings.length, 1);
-                assert.strictEqual(warnings[0], "inline source map not found");
+                assert.strictEqual(warnings[0], "inline source map not found: 0");
             } finally {
                 Uglify.AST_Node.warn_function = warn_function;
             }
         });
-        it("Should fail with multiple input and inline source map", function() {
-            var result = Uglify.minify([
-                read("./test/input/issue-520/input.js"),
-                read("./test/input/issue-520/output.js")
-            ], {
-                sourceMap: {
-                    content: "inline",
-                    url: "inline"
-                }
-            });
-            var err = result.error;
-            assert.ok(err instanceof Error);
-            assert.strictEqual(err.stack.split(/\n/)[0], "Error: inline source map only works with singular input");
+        it("Should handle multiple input and inline source map", function() {
+            var warn_function = Uglify.AST_Node.warn_function;
+            var warnings = [];
+            Uglify.AST_Node.warn_function = function(txt) {
+                warnings.push(txt);
+            };
+            try {
+                var result = Uglify.minify([
+                    read("./test/input/issue-520/input.js"),
+                    read("./test/input/issue-1323/sample.js"),
+                ], {
+                    sourceMap: {
+                        content: "inline",
+                        url: "inline",
+                    }
+                });
+                if (result.error) throw result.error;
+                assert.strictEqual(result.code, [
+                    "var Foo=function(){console.log(3)};new Foo;var bar=function(o){return o};",
+                    "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwiMSJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFdBQWdCQyxRQUFRQyxJQUFJLElBQVMsSUFBSUYsSUNBbkQsSUFBSUcsSUFDQSxTQUFjQSxHQUNWLE9BQU9BIn0=",
+                ].join("\n"));
+                assert.strictEqual(warnings.length, 1);
+                assert.strictEqual(warnings[0], "inline source map not found: 1");
+            } finally {
+                Uglify.AST_Node.warn_function = warn_function;
+            }
         });
         it("Should drop source contents for includeSources=false", function() {
             var result = Uglify.minify(read("./test/input/issue-520/input.js"), {
