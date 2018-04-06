@@ -121,7 +121,8 @@ describe("bin/uglifyjs", function () {
         var command = [
             uglifyjscmd,
             "--source-map", "content=" + mapFile,
-            "--source-map", "url=inline"
+            "--source-map", "includeSources=true",
+            "--source-map", "url=inline",
         ].join(" ");
 
         var child = exec(command, function(err, stdout) {
@@ -216,7 +217,14 @@ describe("bin/uglifyjs", function () {
         });
     });
     it("Should process inline source map", function(done) {
-        var command = uglifyjscmd + " test/input/issue-520/input.js -mc toplevel --source-map content=inline,url=inline";
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-520/input.js",
+            "-mc", "toplevel",
+            "--source-map", "content=inline",
+            "--source-map", "includeSources=true",
+            "--source-map", "url=inline",
+        ].join(" ");
 
         exec(command, function (err, stdout) {
             if (err) throw err;
