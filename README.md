@@ -685,7 +685,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   pass `pure_funcs: [ 'Math.floor' ]` to let it know that this
   function won't produce any side effect, in which case the whole
   statement would get discarded.  The current implementation adds some
-  overhead (compression will be slower).
+  overhead (compression will be slower). Make sure symbols under `pure_funcs`
+  are also under `mangle.reserved` to avoid mangling.
 
 - `pure_getters` (default: `"strict"`) -- If you pass `true` for
   this, UglifyJS will assume that object property access
