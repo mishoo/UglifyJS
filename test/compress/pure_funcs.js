@@ -535,3 +535,110 @@ issue_2705_6: {
         "/* */new(/* */a()||b())(c(),d());",
     ]
 }
+
+issue_3065_1: {
+    options = {
+        inline: true,
+        pure_funcs: [ "pureFunc" ],
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function modifyWrapper(a, f, wrapper) {
+            wrapper.a = a;
+            wrapper.f = f;
+            return wrapper;
+        }
+        function pureFunc(fun) {
+            return modifyWrapper(1, fun, function(a) {
+                return fun(a);
+            });
+        }
+        var unused = pureFunc(function(x) {
+            return x;
+        });
+    }
+    expect: {}
+}
+
+issue_3065_2: {
+    rename = true
+    options = {
+        inline: true,
+        pure_funcs: [ "pureFunc" ],
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        reserved: [ "pureFunc" ],
+        toplevel: true,
+    }
+    input: {
+        function modifyWrapper(a, f, wrapper) {
+            wrapper.a = a;
+            wrapper.f = f;
+            return wrapper;
+        }
+        function pureFunc(fun) {
+            return modifyWrapper(1, fun, function(a) {
+                return fun(a);
+            });
+        }
+        var unused = pureFunc(function(x) {
+            return x;
+        });
+    }
+    expect: {}
+}
+
+issue_3065_3: {
+    options = {
+        pure_funcs: [ "debug" ],
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function debug(msg) {
+            console.log(msg);
+        }
+        debug(function() {
+            console.log("PASS");
+            return "FAIL";
+        }());
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+}
+
+issue_3065_4: {
+    options = {
+        pure_funcs: [ "debug" ],
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var debug = function(msg) {
+            console.log(msg);
+        };
+        debug(function() {
+            console.log("PASS");
+            return "FAIL";
+        }());
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+    }
+}
