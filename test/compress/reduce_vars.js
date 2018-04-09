@@ -5654,3 +5654,59 @@ issue_3042_2: {
         "true",
     ]
 }
+
+issue_3068_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function() {
+            do {
+                continue;
+                var b = "defined";
+            } while (b && b.c);
+        })();
+    }
+    expect: {
+        (function() {
+            do {
+                continue;
+                var b = "defined";
+            } while (b && b.c);
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_3068_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function() {
+            do {
+                try {
+                    while ("" == typeof a);
+                } finally {
+                    continue;
+                }
+                var b = "defined";
+            } while (b && b.c);
+        })();
+    }
+    expect: {
+        (function() {
+            do {
+                try {
+                    while ("" == typeof a);
+                } finally {
+                    continue;
+                }
+                var b = "defined";
+            } while (b && b.c);
+        })();
+    }
+    expect_stdout: true
+}
