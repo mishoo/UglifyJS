@@ -824,3 +824,35 @@ issue_3071_2_toplevel: {
     }
     expect_stdout: "1"
 }
+
+issue_3071_3: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = 0;
+        (function(a, b) {
+            (function f(o) {
+                var n = 2;
+                while (--b + (o = {
+                    p: c++,
+                }) && --n > 0);
+            })();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function(a, b) {
+            (function f(o) {
+                var n = 2;
+                while (--b + (o = {
+                    p: c++,
+                }) && --n > 0);
+            })();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
