@@ -40,7 +40,7 @@ function safe_log(arg, level) {
 }
 
 function strip_func_ids(text) {
-    return text.toString().replace(/F[0-9]{6}N/g, "<F<>N>");
+    return ("" + text).replace(/F[0-9]{6}N/g, "<F<>N>");
 }
 
 var context;
