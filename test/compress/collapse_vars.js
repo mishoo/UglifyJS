@@ -3751,7 +3751,7 @@ issue_2506: {
         function f0(bar) {
             function f1(Infinity_2) {
                 function f13(NaN) {
-                    if (false <= NaN & this >> 1 >= 0) {
+                    if (false <= NaN & f0 >> 1 >= 0) {
                         c++;
                     }
                 }
@@ -3767,7 +3767,7 @@ issue_2506: {
         function f0(bar) {
             (function(Infinity_2) {
                 (function(NaN) {
-                    if (false <= 0/0 & this >> 1 >= 0)
+                    if (false <= 0/0 & f0 >> 1 >= 0)
                         c++;
                 })(0, c++);
             })();
