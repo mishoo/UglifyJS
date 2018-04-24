@@ -5327,3 +5327,24 @@ issue_3032: {
     }
     expect_stdout: "42"
 }
+
+issue_3096: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var ar = ["a", "b"];
+            var first = ar.pop();
+            return ar + "" + first;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var ar = ["a", "b"];
+            var first = ar.pop();
+            return ar + "" + first;
+        }());
+    }
+    expect_stdout: "ab"
+}
