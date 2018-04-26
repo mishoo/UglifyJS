@@ -172,7 +172,7 @@ function run_compress_tests() {
             }
             if (test.expect_stdout
                 && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-                var stdout = sandbox.run_code(input_code, true);
+                var stdout = run_code(input_code);
                 if (test.expect_stdout === true) {
                     test.expect_stdout = stdout;
                 }
@@ -186,7 +186,7 @@ function run_compress_tests() {
                     });
                     return false;
                 }
-                stdout = sandbox.run_code(output, true);
+                stdout = run_code(output);
                 if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
                     log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
                         input: input_formatted,
@@ -344,6 +344,11 @@ function evaluate(code) {
     return new Function("return(" + code + ")")();
 }
 
+function run_code(code) {
+    var result = sandbox.run_code(code, true);
+    return typeof result == "string" ? result.replace(/\u001b\[\d+m/g, "") : result;
+}
+
 // Try to reminify original input with standard options
 // to see if it matches expect_stdout.
 function reminify(orig_options, input_code, input_formatted, expect_stdout) {
@@ -367,7 +372,7 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
             });
             return false;
         } else {
-            var stdout = sandbox.run_code(result.code, true);
+            var stdout = run_code(result.code);
             if (typeof expect_stdout != "string" && typeof stdout != "string" && expect_stdout.name == stdout.name) {
                 stdout = expect_stdout;
             }
