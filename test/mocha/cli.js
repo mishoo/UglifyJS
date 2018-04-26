@@ -100,8 +100,8 @@ describe("bin/uglifyjs", function () {
         exec(command, function (err, stdout, stderr) {
             if (err) throw err;
 
-            var stderrLines = stderr.split('\n');
-            assert.strictEqual(stderrLines[0], 'INFO: Using input source map: test/input/issue-2082/sample.js.map');
+            var stderrLines = stderr.split("\n");
+            assert.strictEqual(stderrLines[0], "INFO: Using input source map: test/input/issue-2082/sample.js.map");
             assert.notStrictEqual(stderrLines[1], 'INFO: Using input source map: {"version": 3,"sources": ["index.js"],"mappings": ";"}');
             done();
         });
@@ -244,7 +244,8 @@ describe("bin/uglifyjs", function () {
                 "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==",
                 "",
             ].join("\n"));
-            assert.strictEqual(stderr, "WARN: inline source map not found: test/input/issue-1323/sample.js\n");
+            var stderrLines = stderr.split("\n");
+            assert.strictEqual(stderrLines[0], "WARN: inline source map not found: test/input/issue-1323/sample.js");
             done();
         });
     });
@@ -264,7 +265,8 @@ describe("bin/uglifyjs", function () {
                 "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwidGVzdC9pbnB1dC9pc3N1ZS0xMzIzL3NhbXBsZS5qcyJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFNBQUFBLE1BQWdCQyxRQUFRQyxJQUFJLEVBQUUsSUFBTyxJQUFJRixJQ0FuRCxJQUFJRyxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==",
                 "",
             ].join("\n"));
-            assert.strictEqual(stderr, "WARN: inline source map not found: test/input/issue-1323/sample.js\n");
+            var stderrLines = stderr.split("\n");
+            assert.strictEqual(stderrLines[0], "WARN: inline source map not found: test/input/issue-1323/sample.js");
             done();
         });
     });
