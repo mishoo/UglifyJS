@@ -91,7 +91,7 @@ describe("parentheses", function() {
             "(function(){}).name;",
         ];
         for (var i = 16; --i >= 0;) {
-            [].push.apply(code, code);
+            code = code.concat(code);
         }
         code = code.join("");
         var result = uglify.minify(code, {
