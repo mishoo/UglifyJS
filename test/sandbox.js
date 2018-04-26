@@ -2,24 +2,18 @@ var semver = require("semver");
 var vm = require("vm");
 
 function createContext() {
-    var context = Object.create(null);
-    Object.defineProperty(context, "console", {
-        value: function() {
-            var con = Object.create(null);
-            Object.defineProperty(con, "log", {
-                value: function(msg) {
-                    if (arguments.length == 1 && typeof msg == "string") {
-                        return console.log("%s", msg);
-                    }
-                    return console.log.apply(console, [].map.call(arguments, function(arg) {
-                        return safe_log(arg, 3);
-                    }));
+    return vm.createContext(Object.defineProperty({}, "console", {
+        value: {
+            log: function(msg) {
+                if (arguments.length == 1 && typeof msg == "string") {
+                    return console.log("%s", msg);
                 }
-            });
-            return con;
-        }()
-    });
-    return vm.createContext(context);
+                return console.log.apply(console, [].map.call(arguments, function(arg) {
+                    return safe_log(arg, 3);
+                }));
+            }
+        }
+    }));
 }
 
 function safe_log(arg, level) {
