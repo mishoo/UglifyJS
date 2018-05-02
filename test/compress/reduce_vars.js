@@ -1476,18 +1476,18 @@ defun_redefine: {
             };
             return g() + h();
         }
+        console.log(f());
     }
     expect:  {
         function f() {
-            function g() {
-                return 1;
-            }
-            g = function() {
+            (function() {
                 return 3;
-            };
-            return g() + 2;
+            });
+            return 3 + 2;
         }
+        console.log(f());
     }
+    expect_stdout: "5"
 }
 
 func_inline: {
@@ -1527,23 +1527,37 @@ func_modified: {
     }
     input: {
         function f(a) {
-            function a() { return 1; }
-            function b() { return 2; }
-            function c() { return 3; }
+            function a() {
+                return 1;
+            }
+            function b() {
+                return 2;
+            }
+            function c() {
+                return 3;
+            }
             b.inject = [];
-            c = function() { return 4; };
+            c = function() {
+                return 4;
+            };
             return a() + b() + c();
         }
+        console.log(f());
     }
     expect: {
         function f(a) {
-            function b() { return 2; }
-            function c() { return 3; }
+            function b() {
+                return 2;
+            }
             b.inject = [];
-            c = function() { return 4; };
-            return 1 + 2 + c();
+            (function() {
+                return 4;
+            });
+            return 1 + 2 + 4;
         }
+        console.log(f());
     }
+    expect_stdout: "7"
 }
 
 defun_label: {
@@ -5054,9 +5068,7 @@ defun_var_1: {
         console.log(typeof a, typeof b);
     }
     expect: {
-        var a = 42;
-        function a() {}
-        console.log(typeof a, "function");
+        console.log("number", "function");
     }
     expect_stdout: "number function"
 }
@@ -5076,9 +5088,7 @@ defun_var_2: {
         console.log(typeof a, typeof b);
     }
     expect: {
-        function a() {}
-        var a = 42;
-        console.log(typeof a, "function");
+        console.log("number", "function");
     }
     expect_stdout: "number function"
 }
@@ -5709,4 +5719,117 @@ issue_3068_2: {
         })();
     }
     expect_stdout: true
+}
+
+issue_3110_1: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        properties: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo() {
+                return isDev ? "foo" : "bar";
+            }
+            var isDev = true;
+            var obj = {
+                foo: foo
+            };
+            console.log(foo());
+            console.log(obj.foo());
+        })();
+    }
+    expect: {
+        console.log("foo"),
+        console.log("foo");
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
+
+issue_3110_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        passes: 4,
+        properties: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo() {
+                return isDev ? "foo" : "bar";
+            }
+            var isDev = true;
+            console.log(foo());
+            var obj = {
+                foo: foo
+            };
+            console.log(obj.foo());
+        })();
+    }
+    expect: {
+        console.log("foo"),
+        console.log("foo");
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
+
+issue_3110_3: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function foo() {
+                return isDev ? "foo" : "bar";
+            }
+            console.log(foo());
+            var isDev = true;
+            var obj = {
+                foo: foo
+            };
+            console.log(obj.foo());
+        })();
+    }
+    expect: {
+        (function() {
+            function foo() {
+                return isDev ? "foo" : "bar";
+            }
+            console.log(foo());
+            var isDev = true;
+            var obj = {
+                foo: foo
+            };
+            console.log(obj.foo());
+        })();
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
 }
