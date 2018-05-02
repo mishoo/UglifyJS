@@ -5833,3 +5833,39 @@ issue_3110_3: {
         "foo",
     ]
 }
+
+issue_3113: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            function f() {
+                while (g());
+            }
+            var a = f();
+            function g() {
+                a && a[c++];
+            }
+            g(a = 1);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            function f() {
+                while (g());
+            }
+            var a = f();
+            function g() {
+                a && a[c++];
+            }
+            g(a = 1);
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
