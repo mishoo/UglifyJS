@@ -5834,7 +5834,7 @@ issue_3110_3: {
     ]
 }
 
-issue_3113: {
+issue_3113_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -5865,6 +5865,76 @@ issue_3113: {
             }
             g(a = 1);
         })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
+
+issue_3113_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            function f() {
+                while (g());
+            }
+            var a = f();
+            function g() {
+                a && a[c++];
+            }
+            a = 1;
+            g();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            function f() {
+                while (g());
+            }
+            var a = f();
+            function g() {
+                a && a[c++];
+            }
+            a = 1;
+            g();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
+
+issue_3113_3: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            function f() {
+                while (g());
+            }
+            var a;
+            function g() {
+                a && a[c++];
+            }
+            g(a = 1);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        c++;
         console.log(c);
     }
     expect_stdout: "1"
