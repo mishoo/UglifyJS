@@ -5939,3 +5939,62 @@ issue_3113_3: {
     }
     expect_stdout: "1"
 }
+
+issue_3113_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        function f() {
+            b += a;
+        }
+        f(f(), ++a);
+        console.log(a, b);
+    }
+    expect: {
+        var a = 0, b = 0;
+        function f() {
+            b += a;
+        }
+        f(f(), ++a);
+        console.log(a, b);
+    }
+    expect_stdout: "1 1"
+}
+
+issue_3113_5: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {
+            console.log(a);
+        }
+        function g() {
+            f();
+        }
+        while (g());
+        var a = 1;
+        f();
+    }
+    expect: {
+        function f() {
+            console.log(a);
+        }
+        function g() {
+            f();
+        }
+        while (g());
+        var a = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "1",
+    ]
+}
