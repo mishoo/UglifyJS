@@ -876,3 +876,59 @@ forin: {
     }
     expect_stdout: "PASS"
 }
+
+call: {
+    options = {
+        sequences: true,
+    }
+    input: {
+        var a = function() {
+            return this;
+        }();
+        function b() {
+            console.log("foo");
+        }
+        b.c = function() {
+            console.log(this === b ? "bar" : "baz");
+        };
+        (a, b)();
+        (a, b.c)();
+        (a, function() {
+            console.log(this === a);
+        })();
+        new (a, b)();
+        new (a, b.c)();
+        new (a, function() {
+            console.log(this === a);
+        })();
+    }
+    expect: {
+        var a = function() {
+            return this;
+        }();
+        function b() {
+            console.log("foo");
+        }
+        b.c = function() {
+            console.log(this === b ? "bar" : "baz");
+        },
+        a, b(),
+        (a, b.c)(),
+        a, function() {
+            console.log(this === a);
+        }(),
+        a, new b(),
+        a, new b.c(),
+        a, new function() {
+            console.log(this === a);
+        }();
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "true",
+        "foo",
+        "baz",
+        "false",
+    ]
+}
