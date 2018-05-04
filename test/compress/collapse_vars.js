@@ -4056,6 +4056,36 @@ replace_all_var: {
     expect_stdout: "PASS"
 }
 
+replace_all_var_scope: {
+    rename = true;
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        var a = 100, b = 10;
+        (function(r, a) {
+            switch (~a) {
+            case (b += a):
+            case a++:
+            }
+        })(--b, a);
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        (function(c, o) {
+            switch (~a) {
+            case (b += a):
+            case o++:
+            }
+        })(--b, a);
+        console.log(a, b);
+    }
+    expect_stdout: "100 109"
+}
+
 cascade_statement: {
     options = {
         collapse_vars: true,
