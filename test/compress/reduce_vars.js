@@ -5998,3 +5998,35 @@ issue_3113_5: {
         "1",
     ]
 }
+
+conditional_nested: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 1, b = 0;
+        (function f(c) {
+            function g() {
+                c && (c.a = 0);
+                c && (c.a = 0);
+                c && (c[b++] *= 0);
+            }
+            g(a-- && f(g(c = 42)));
+        })();
+        console.log(b);
+    }
+    expect: {
+        var a = 1, b = 0;
+        (function f(c) {
+            function g() {
+                c && (c.a = 0);
+                c && (c.a = 0);
+                c && (c[b++] *= 0);
+            }
+            g(a-- && f(g(c = 42)));
+        })();
+        console.log(b);
+    }
+    expect_stdout: "2"
+}
