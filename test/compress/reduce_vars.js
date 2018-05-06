@@ -5999,7 +5999,7 @@ issue_3113_5: {
     ]
 }
 
-conditional_nested: {
+conditional_nested_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -6029,4 +6029,32 @@ conditional_nested: {
         console.log(b);
     }
     expect_stdout: "2"
+}
+
+conditional_nested_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = 0;
+        (function(a) {
+            function f() {
+                a && c++;
+            }
+            f(!c && f(), a = 1);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function(a) {
+            function f() {
+                a && c++;
+            }
+            f(!c && f(), a = 1);
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
 }
