@@ -6058,3 +6058,91 @@ conditional_nested_2: {
     }
     expect_stdout: "1"
 }
+
+issue_2436: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var c;
+        console.log(((c = {
+            a: 1,
+            b: 2
+        }).a = 3, {
+            x: c.a,
+            y: c.b
+        }));
+    }
+    expect: {
+        var c;
+        console.log(((c = {
+            a: 1,
+            b: 2
+        }).a = 3, {
+            x: c.a,
+            y: c.b
+        }));
+    }
+    expect_stdout: true
+}
+
+issue_2916: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function(b) {
+            (function(d) {
+                d[0] = 1;
+            })(b);
+            +b && (c = "PASS");
+        })([]);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(b) {
+            b[0] = 1;
+            +b && (c = "PASS");
+        })([]);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3125: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var o;
+        console.log((function() {
+            this.p++;
+        }.call(o = {
+            p: 6
+        }), o.p));
+    }
+    expect: {
+        var o;
+        console.log((function() {
+            this.p++;
+        }.call(o = {
+            p: 6
+        }), o.p));
+    }
+    expect_stdout: "7"
+}

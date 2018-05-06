@@ -20,6 +20,13 @@
     },
     {
         "compress": {
+            "passes": 1e6,
+            "unsafe": true
+        },
+        "toplevel": true
+    },
+    {
+        "compress": {
             "keep_fargs": false,
             "passes": 1e6,
             "sequences": 1e6,
