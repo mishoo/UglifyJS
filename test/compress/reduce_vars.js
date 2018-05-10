@@ -6059,6 +6059,38 @@ conditional_nested_2: {
     expect_stdout: "1"
 }
 
+conditional_nested_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var n = 2, c = 0;
+        (function f(a) {
+            0 < n-- && g(a = 1);
+            function g() {
+                a && c++;
+            }
+            g();
+            0 < n-- && f();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var n = 2, c = 0;
+        (function f(a) {
+            0 < n-- && g(a = 1);
+            function g() {
+                a && c++;
+            }
+            g();
+            0 < n-- && f();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
+
 issue_2436: {
     options = {
         evaluate: true,
