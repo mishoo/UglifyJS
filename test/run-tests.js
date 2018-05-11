@@ -18,9 +18,8 @@ if (failures) {
     console.error("!!! " + Object.keys(failed_files).join(", "));
     process.exit(1);
 }
-
-var mocha_tests = require("./mocha.js");
-mocha_tests();
+console.log();
+require("./mocha.js");
 
 /* -----[ utils ]----- */
 
