@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "acorn": "~5.5.3",
-    "mocha": "~3.5.1",
+    "colors": "~1.2.5",
     "semver": "~5.5.0"
   },
   "scripts": {
