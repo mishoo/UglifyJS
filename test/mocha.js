@@ -1,4 +1,3 @@
-var colors = require("colors");
 var fs = require("fs");
 
 var config = {
@@ -39,6 +38,14 @@ function log_titles(log, current, marker) {
     titles = current;
 }
 
+function red(text) {
+    return "\u001B[31m" + text + "\u001B[39m";
+}
+
+function green(text) {
+    return "\u001B[32m" + text + "\u001B[39m";
+}
+
 var errors = [];
 var total = tasks.length;
 titles = [];
@@ -54,7 +61,7 @@ process.nextTick(function run() {
             if (elapsed > task.limit) {
                 throw new Error("Timed out: " + elapsed + "ms > " + task.limit + "ms");
             }
-            log_titles(console.log, task.titles, colors.green('\u221A '));
+            log_titles(console.log, task.titles, green('\u221A '));
             process.nextTick(run);
         };
         if (task.length) {
@@ -76,19 +83,19 @@ process.nextTick(function run() {
         raise(err);
     } else if (errors.length) {
         console.error();
-        console.log(colors.red(errors.length + " test(s) failed!"));
+        console.log(red(errors.length + " test(s) failed!"));
         titles = [];
         errors.forEach(function(titles, index) {
             console.error();
             log_titles(console.error, titles, (index + 1) + ") ");
             var lines = titles.error.stack.split('\n');
-            console.error(colors.red(lines[0]));
+            console.error(red(lines[0]));
             console.error(lines.slice(1).join("\n"));
         });
         process.exit(1);
     } else {
         console.log();
-        console.log(colors.green(total + " test(s) passed."));
+        console.log(green(total + " test(s) passed."));
     }
 
     function raise(err) {
@@ -96,7 +103,7 @@ process.nextTick(function run() {
         done = function() {};
         task.titles.error = err;
         errors.push(task.titles);
-        log_titles(console.log, task.titles, colors.red('\u00D7 '));
+        log_titles(console.log, task.titles, red('\u00D7 '));
         process.nextTick(run);
     }
 });
