@@ -118,7 +118,8 @@ a double dash to prevent input files being used as option arguments:
                                            JS that was generated from some other original
                                            code. Specify "inline" if the source map is
                                            included within the sources.
-                                `filename`  Name and/or location of the output source.
+                                `filename`  Filename and/or location of the output source
+                                            (sets `file` attribute in source map).
                                 `includeSources`  Pass this flag if you want to include
                                                   the content of source files in the
                                                   source map as sourcesContent property.
@@ -149,7 +150,9 @@ debugging your compressed JavaScript.  To get a source map, pass
 
 Additional options:
 
-- `--source-map "filename='<NAME>'"` to specify the name of the source map.
+- `--source-map "filename='<NAME>'"` to specify the name of the source map. The value of
+  `filename` is only used to set `file` attribute (see [the spec][sm-spec])
+  in source map file.
 
 - `--source-map "root='<URL>'"` to pass the URL where the original files can be found.
 
