@@ -4931,6 +4931,27 @@ collapse_rhs_lhs_2: {
     expect_stdout: "PASS"
 }
 
+collapse_rhs_loop: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var s;
+        s = "<tpl>PASS</tpl>";
+        for (var m, r = /<tpl>(.*)<\/tpl>/; m = s.match(r);)
+            s = s.replace(m[0], m[1]);
+        console.log(s);
+    }
+    expect: {
+        var s;
+        s = "<tpl>PASS</tpl>";
+        for (var m, r = /<tpl>(.*)<\/tpl>/; m = s.match(r);)
+            s = s.replace(m[0], m[1]);
+        console.log(s);
+    }
+    expect_stdout: "PASS"
+}
+
 collapse_rhs_side_effects: {
     options = {
         collapse_vars: true,
