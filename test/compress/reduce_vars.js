@@ -6178,3 +6178,192 @@ issue_3125: {
     }
     expect_stdout: "7"
 }
+
+issue_3140_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                this();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                this();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3140_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                var self = this;
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                self();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                this();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3140_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                var self = this;
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                (function() {
+                    return self;
+                })()();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                var self = this;
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                (function() {
+                    return self;
+                })()();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3140_4: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                var o = {
+                    p: this
+                };
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                o.p();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect: {
+        (function() {
+            var a;
+            function f() {
+            }
+            f.g = function g() {
+                var o = {
+                    p: this
+                };
+                function h() {
+                    console.log(a ? "PASS" : "FAIL");
+                }
+                a = true;
+                o.p();
+                a = false;
+                h.g = g;
+                return h;
+            };
+            return f;
+        })().g().g();
+    }
+    expect_stdout: "PASS"
+}
