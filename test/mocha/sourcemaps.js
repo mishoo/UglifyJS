@@ -57,24 +57,23 @@ describe("sourcemaps", function() {
                     includeSources: true
                 }
             });
-
+            if (result.error) throw result.error;
             var map = JSON.parse(result.map);
-
-            assert.equal(map.file, 'simple.min.js');
+            assert.equal(map.file, "simple.min.js");
             assert.equal(map.sourcesContent.length, 1);
-            assert.equal(map.sourcesContent[0],
-                'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
+            assert.equal(map.sourcesContent[0], 'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
         });
         it("Should process inline source map", function() {
-            var code = Uglify.minify(read("./test/input/issue-520/input.js"), {
+            var result = Uglify.minify(read("./test/input/issue-520/input.js"), {
                 compress: { toplevel: true },
                 sourceMap: {
                     content: "inline",
                     includeSources: true,
                     url: "inline"
                 }
-            }).code + "\n";
-            assert.strictEqual(code, readFileSync("test/input/issue-520/output.js", "utf8"));
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code + "\n", readFileSync("test/input/issue-520/output.js", "utf8"));
         });
         it("Should warn for missing inline source map", function() {
             var warn_function = Uglify.AST_Node.warn_function;
@@ -149,22 +148,24 @@ describe("sourcemaps", function() {
     });
 
     describe("sourceMapInline", function() {
-        it("should append source map to output js when sourceMapInline is enabled", function() {
+        it("Should append source map to output js when sourceMapInline is enabled", function() {
             var result = Uglify.minify('var a = function(foo) { return foo; };', {
                 sourceMap: {
                     url: "inline"
                 }
             });
+            if (result.error) throw result.error;
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};\n" +
                 "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsSUFBSUEsRUFBSSxTQUFTQyxHQUFPLE9BQU9BIn0=");
         });
-        it("should not append source map to output js when sourceMapInline is not enabled", function() {
+        it("Should not append source map to output js when sourceMapInline is not enabled", function() {
             var result = Uglify.minify('var a = function(foo) { return foo; };');
+            if (result.error) throw result.error;
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};");
         });
-        it("should work with max_line_len", function() {
+        it("Should work with max_line_len", function() {
             var result = Uglify.minify(read("./test/input/issue-505/input.js"), {
                 output: {
                     max_line_len: 20
@@ -173,8 +174,39 @@ describe("sourcemaps", function() {
                     url: "inline"
                 }
             });
-            assert.strictEqual(result.error, undefined);
+            if (result.error) throw result.error;
             assert.strictEqual(result.code, read("./test/input/issue-505/output.js"));
+        });
+        it("Should work with unicode characters", function() {
+            var code = [
+                "var tëst = '→unicøde←';",
+                "alert(tëst);",
+            ].join("\n");
+            var result = Uglify.minify(code, {
+                sourceMap: {
+                    includeSources: true,
+                    url: "inline",
+                }
+            });
+            if (result.error) throw result.error;
+            var map = JSON.parse(result.map);
+            assert.strictEqual(map.sourcesContent.length, 1);
+            assert.strictEqual(map.sourcesContent[0], code);
+            var encoded = result.code.slice(result.code.lastIndexOf(",") + 1);
+            map = JSON.parse(new Buffer(encoded, "base64").toString());
+            assert.strictEqual(map.sourcesContent.length, 1);
+            assert.strictEqual(map.sourcesContent[0], code);
+            result = Uglify.minify(result.code, {
+                sourceMap: {
+                    content: "inline",
+                    includeSources: true,
+                }
+            });
+            if (result.error) throw result.error;
+            map = JSON.parse(result.map);
+            assert.strictEqual(map.names.length, 2);
+            assert.strictEqual(map.names[0], "tëst");
+            assert.strictEqual(map.names[1], "alert");
         });
     });
 });
