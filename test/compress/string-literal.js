@@ -14,6 +14,13 @@ issue_1929: {
         function f(s) {
             return s.split(/[\\/]/);
         }
+        console.log(JSON.stringify(f("A/B\\C\\D/E\\F")));
     }
-    expect_exact: "function f(s){return s.split(/[\\\\/]/)}"
+    expect: {
+        function f(s) {
+            return s.split(/[\\/]/);
+        }
+        console.log(JSON.stringify(f("A/B\\C\\D/E\\F")));
+    }
+    expect_stdout: '["A","B","C","D","E","F"]'
 }
