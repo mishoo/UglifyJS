@@ -1814,3 +1814,115 @@ issue_2995: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3146_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(f) {
+            f("g()");
+        })(function(a) {
+            eval(a);
+            function g(b) {
+                if (!b) b = "PASS";
+                console.log(b);
+            }
+        });
+    }
+    expect: {
+        (function(f) {
+            f("g()");
+        })(function(a) {
+            eval(a);
+            function g(b) {
+                if (!b) b = "PASS";
+                console.log(b);
+            }
+        });
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3146_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(f) {
+            f("g()");
+        })(function(a) {
+            eval(a);
+            function g(b) {
+                if (!b) b = "PASS";
+                console.log(b);
+            }
+        });
+    }
+    expect: {
+        (function(f) {
+            f("g()");
+        })(function(a) {
+            eval(a);
+            function g(b) {
+                if (!b) b = "PASS";
+                console.log(b);
+            }
+        });
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3146_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var g = "PASS";
+        (function(f) {
+            var g = "FAIL";
+            f("console.log(g)", g[g]);
+        })(function(a) {
+            eval(a);
+        });
+    }
+    expect: {
+        var g = "PASS";
+        (function(f) {
+            var g = "FAIL";
+            f("console.log(g)", g[g]);
+        })(function(a) {
+            eval(a);
+        });
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3146_4: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var g = "PASS";
+        (function(f) {
+            var g = "FAIL";
+            f("console.log(g)", g[g]);
+        })(function(a) {
+            eval(a);
+        });
+    }
+    expect: {
+        var g = "PASS";
+        (function(f) {
+            var g = "FAIL";
+            f("console.log(g)", g[g]);
+        })(function(a) {
+            eval(a);
+        });
+    }
+    expect_stdout: "PASS"
+}
