@@ -6367,3 +6367,39 @@ issue_3140_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3140_5: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var n = 1, c = 0;
+        (function(a) {
+            var b = function() {
+                this;
+                n-- && h();
+            }();
+            function h() {
+                b && c++;
+            }
+            h(b = 1);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var n = 1, c = 0;
+        (function(a) {
+            var b = function() {
+                this;
+                n-- && h();
+            }();
+            function h() {
+                b && c++;
+            }
+            h(b = 1);
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
