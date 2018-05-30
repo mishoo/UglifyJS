@@ -807,6 +807,9 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
   Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
 
 - `keep_quoted` (default: `false`) -— Only mangle unquoted property names.
+  - `true` -- quoted property names are reserved and any unquoted properties with the
+    same property name will not be mangled.
+  - `"strict"` -- advanced, all unquoted property names are mangled unless reserved.
 
 - `regex` (default: `null`) -— Pass a RegExp literal to only mangle property
   names matching the regular expression.

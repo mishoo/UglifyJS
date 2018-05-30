@@ -114,7 +114,9 @@ function run_compress_tests() {
                 var quoted_props = test.mangle.properties.reserved;
                 if (!Array.isArray(quoted_props)) quoted_props = [];
                 test.mangle.properties.reserved = quoted_props;
-                U.reserve_quoted_keys(input, quoted_props);
+                if (test.mangle.properties.keep_quoted !== "strict") {
+                    U.reserve_quoted_keys(input, quoted_props);
+                }
             }
             if (test.rename) {
                 input.figure_out_scope(test.mangle);
