@@ -104,6 +104,8 @@ a double dash to prevent input files being used as option arguments:
                                 sequences.
     --config-file <file>        Read `minify()` options from JSON file.
     -d, --define <expr>[=value] Global definitions.
+    -e, --enclose [arg[:value]] Embed everything in a big function, with configurable
+                                argument(s) & value(s).
     --ie8                       Support non-standard Internet Explorer 8.
                                 Equivalent to setting `ie8: true` in `minify()`
                                 for `compress`, `mangle` and `output` options.

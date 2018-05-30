@@ -303,4 +303,45 @@ describe("minify", function() {
             }
         });
     });
+
+    describe("enclose", function() {
+        var code = read("test/input/enclose/input.js");
+        it("Should work with true", function() {
+            var result = Uglify.minify(code, {
+                compress: false,
+                enclose: true,
+                mangle: false,
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, '(function(){function enclose(){console.log("test enclose")}enclose()})();');
+        });
+        it("Should work with arg", function() {
+            var result = Uglify.minify(code, {
+                compress: false,
+                enclose: 'undefined',
+                mangle: false,
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, '(function(undefined){function enclose(){console.log("test enclose")}enclose()})();');
+        });
+        it("Should work with arg:value", function() {
+            var result = Uglify.minify(code, {
+                compress: false,
+                enclose: 'window,undefined:window',
+                mangle: false,
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, '(function(window,undefined){function enclose(){console.log("test enclose")}enclose()})(window);');
+        });
+        it("Should work alongside wrap", function() {
+            var result = Uglify.minify(code, {
+                compress: false,
+                enclose: 'window,undefined:window',
+                mangle: false,
+                wrap: 'exports',
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, '(function(window,undefined){(function(exports){function enclose(){console.log("test enclose")}enclose()})(typeof exports=="undefined"?exports={}:exports)})(window);');
+        });
+    });
 });

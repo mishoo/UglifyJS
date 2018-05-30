@@ -40,6 +40,7 @@ program.option("-o, --output <file>", "Output file (default STDOUT).");
 program.option("--comments [filter]", "Preserve copyright comments in the output.");
 program.option("--config-file <file>", "Read minify() options from JSON file.");
 program.option("-d, --define <expr>[=value]", "Global definitions.", parse_js("define"));
+program.option("-e, --enclose [arg[,...][:value[,...]]]", "Embed everything in a big function, with configurable argument(s) & value(s).");
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
@@ -47,7 +48,7 @@ program.option("--rename", "Force symbol expansion.");
 program.option("--no-rename", "Disable symbol expansion.");
 program.option("--self", "Build UglifyJS as a library (implies --wrap UglifyJS)");
 program.option("--source-map [options]", "Enable source map/specify source map options.", parse_js());
-program.option("--timings", "Display operations run time on STDERR.")
+program.option("--timings", "Display operations run time on STDERR.");
 program.option("--toplevel", "Compress and/or mangle variables in toplevel scope.");
 program.option("--verbose", "Print diagnostic messages.");
 program.option("--warn", "Print warning messages.");
@@ -61,6 +62,7 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
 }
 [
     "compress",
+    "enclose",
     "ie8",
     "mangle",
     "sourceMap",
