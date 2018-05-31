@@ -1,4 +1,5 @@
 var fs = require("fs");
+var parse = require("url").parse;
 var path = require("path");
 
 try {
@@ -19,7 +20,9 @@ module.exports = function(url, callback) {
     var result = read(url);
     result.on("error", function(e) {
         if (e.code != "ENOENT") return callback(e);
-        require(url.slice(0, url.indexOf(":"))).get(url, function(res) {
+        var options = parse(url);
+        options.rejectUnauthorized = false;
+        require(options.protocol.slice(0, -1)).get(options, function(res) {
             if (res.statusCode !== 200) return callback(res);
             res.pipe(fs.createWriteStream(local(url)).on("close", function() {
                 callback(null, read(url));
