@@ -55,8 +55,7 @@ process.nextTick(function run() {
         var elapsed = Date.now();
         var timer;
         var done = function() {
-            clearTimeout(timer);
-            done = function() {};
+            reset();
             elapsed = Date.now() - elapsed;
             if (elapsed > task.limit) {
                 throw new Error("Timed out: " + elapsed + "ms > " + task.limit + "ms");
@@ -73,6 +72,7 @@ process.nextTick(function run() {
                 }, limit);
             };
             task.timeout(task.limit);
+            process.on("uncaughtException", raise);
             task.call(task, done);
         } else {
             task.timeout = config.timeout;
@@ -99,11 +99,16 @@ process.nextTick(function run() {
     }
 
     function raise(err) {
-        clearTimeout(timer);
-        done = function() {};
+        reset();
         task.titles.error = err;
         errors.push(task.titles);
         log_titles(console.log, task.titles, red('\u00D7 '));
         process.nextTick(run);
+    }
+
+    function reset() {
+        clearTimeout(timer);
+        done = function() {};
+        process.removeListener("uncaughtException", raise);
     }
 });
