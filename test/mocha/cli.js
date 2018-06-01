@@ -6,7 +6,7 @@ function read(path) {
     return fs.readFileSync(path, "utf8");
 }
 
-describe("bin/uglifyjs", function () {
+describe("bin/uglifyjs", function() {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("should produce a functional build when using --self", function (done) {
         this.timeout(30000);
@@ -741,6 +741,38 @@ describe("bin/uglifyjs", function () {
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(x){return function(x){return x}(x)}\n");
+            done();
+        });
+    });
+    it("Should work with --enclose", function(done) {
+        var command = uglifyjscmd + " test/input/enclose/input.js --enclose";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, '(function(){function enclose(){console.log("test enclose")}enclose()})();\n');
+            done();
+        });
+    });
+    it("Should work with --enclose arg", function(done) {
+        var command = uglifyjscmd + " test/input/enclose/input.js --enclose undefined";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, '(function(undefined){function enclose(){console.log("test enclose")}enclose()})();\n');
+            done();
+        });
+    });
+    it("Should work with --enclose arg:value", function(done) {
+        var command = uglifyjscmd + " test/input/enclose/input.js --enclose window,undefined:window";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, '(function(window,undefined){function enclose(){console.log("test enclose")}enclose()})(window);\n');
+            done();
+        });
+    });
+    it("Should work with --enclose & --wrap", function(done) {
+        var command = uglifyjscmd + " test/input/enclose/input.js --enclose window,undefined:window --wrap exports";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, '(function(window,undefined){(function(exports){function enclose(){console.log("test enclose")}enclose()})(typeof exports=="undefined"?exports={}:exports)})(window);\n');
             done();
         });
     });
