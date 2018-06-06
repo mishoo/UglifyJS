@@ -4887,7 +4887,7 @@ inverted_var: {
         }(), function(c) {
             c = 4;
             return c;
-        }(), function (c) {
+        }(), function(c) {
             c = 5;
             return c;
             var c;

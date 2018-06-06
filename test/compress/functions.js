@@ -1533,7 +1533,7 @@ issue_2663_3: {
         unused: true,
     }
     input: {
-        (function () {
+        (function() {
             var outputs = [
                 { type: 0, target: null, eventName: "ngSubmit", propName: null },
                 { type: 0, target: null, eventName: "submit", propName: null },
@@ -1550,11 +1550,11 @@ issue_2663_3: {
                 return handlers;
             }
             function renderEventHandlerClosure(eventName) {
-                return function () {
+                return function() {
                     return console.log(eventName);
                 };
             }
-            listenToElementOutputs(outputs).forEach(function (handler) {
+            listenToElementOutputs(outputs).forEach(function(handler) {
                 return handler()
             });
         })();
@@ -1634,7 +1634,7 @@ loop_init_arg: {
     }
     input: {
         var a = "PASS";
-        for (var k in "12") (function (b) {
+        for (var k in "12") (function(b) {
             (b >>= 1) && (a = "FAIL"), b = 2;
         })();
         console.log(a);
