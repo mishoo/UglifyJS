@@ -61,29 +61,24 @@ describe("Getters and setters", function() {
 
             return results;
         };
-
         var testCase = function(data) {
             return function() {
                 UglifyJS.parse(data.code);
             };
         };
-
         var fail = function(data) {
-            return function (e) {
-                return e instanceof UglifyJS.JS_Parse_Error &&
-                    e.message === "Unexpected token: operator (" + data.operator + ")";
+            return function(e) {
+                return e instanceof UglifyJS.JS_Parse_Error
+                    && e.message === "Unexpected token: operator (" + data.operator + ")";
             };
         };
-
         var errorMessage = function(data) {
             return "Expected but didn't get a syntax error while parsing following line:\n" + data.code;
         };
-
         var tests = generator();
         for (var i = 0; i < tests.length; i++) {
             var test = tests[i];
             assert.throws(testCase(test), fail(test), errorMessage(test));
         }
     });
-
 });

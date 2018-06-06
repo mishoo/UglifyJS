@@ -1,4 +1,4 @@
-var bar = (function () {
+var bar = (function() {
     function foo (bar) {
         return bar;
     }

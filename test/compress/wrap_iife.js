@@ -23,7 +23,7 @@ wrap_iife_in_expression: {
         wrap_iife: true,
     }
     input: {
-        foo = (function () {
+        foo = (function() {
             return bar();
         })();
     }

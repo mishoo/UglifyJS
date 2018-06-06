@@ -48,6 +48,18 @@ describe("sourcemaps", function() {
         assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["wat"],"mappings":"CAAU,IACNA,IAAI"}');
     });
 
+    it("Should give correct sourceRoot", function() {
+        var code = "console.log(42);";
+        var result = Uglify.minify(code, {
+            sourceMap: {
+                root: "//foo.bar/",
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, code);
+        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI","sourceRoot":"//foo.bar/"}');
+    });
+
     describe("inSourceMap", function() {
         it("Should read the given string filename correctly when sourceMapIncludeSources is enabled (#1236)", function() {
             var result = Uglify.minify(read("./test/input/issue-1236/simple.js"), {

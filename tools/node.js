@@ -14,7 +14,7 @@ var FILES = UglifyJS.FILES = [
     "../lib/propmangle.js",
     "../lib/minify.js",
     "./exports.js",
-].map(function(file){
+].map(function(file) {
     return require.resolve(file);
 });
 
@@ -33,13 +33,13 @@ function describe_ast() {
     var out = OutputStream({ beautify: true });
     function doitem(ctor) {
         out.print("AST_" + ctor.TYPE);
-        var props = ctor.SELF_PROPS.filter(function(prop){
+        var props = ctor.SELF_PROPS.filter(function(prop) {
             return !/^\$/.test(prop);
         });
         if (props.length > 0) {
             out.space();
-            out.with_parens(function(){
-                props.forEach(function(prop, i){
+            out.with_parens(function() {
+                props.forEach(function(prop, i) {
                     if (i) out.space();
                     out.print(prop);
                 });
@@ -51,8 +51,8 @@ function describe_ast() {
         }
         if (ctor.SUBCLASSES.length > 0) {
             out.space();
-            out.with_block(function(){
-                ctor.SUBCLASSES.forEach(function(ctor, i){
+            out.with_block(function() {
+                ctor.SUBCLASSES.forEach(function(ctor, i) {
                     out.indent();
                     doitem(ctor);
                     out.newline();

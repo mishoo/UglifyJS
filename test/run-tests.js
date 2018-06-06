@@ -210,7 +210,7 @@ function run_compress_tests() {
             }
         }
     }
-    files.forEach(function(file){
+    files.forEach(function(file) {
         test_file(file);
     });
 }
@@ -228,7 +228,7 @@ function parse_test(file) {
         throw e;
     }
     var tests = {};
-    var tw = new U.TreeWalker(function(node, descend){
+    var tw = new U.TreeWalker(function(node, descend) {
         if (node instanceof U.AST_LabeledStatement
             && tw.parent() instanceof U.AST_Toplevel) {
             var name = node.label.name;
@@ -271,7 +271,7 @@ function parse_test(file) {
 
     function get_one_test(name, block) {
         var test = { name: name, options: {} };
-        var tw = new U.TreeWalker(function(node, descend){
+        var tw = new U.TreeWalker(function(node, descend) {
             if (node instanceof U.AST_Assign) {
                 if (!(node.left instanceof U.AST_SymbolRef)) {
                     croak(node);

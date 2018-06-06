@@ -150,36 +150,36 @@ collapse_vars_issue_721: {
         reduce_funcs: true, reduce_vars:true, passes:2
     }
     input: {
-        define(["require", "exports", 'handlebars'], function (require, exports, hb) {
+        define(["require", "exports", 'handlebars'], function(require, exports, hb) {
             var win = window;
             var _hb = win.Handlebars = hb;
             return _hb;
         });
-        def(function (hb) {
+        def(function(hb) {
             var win = window;
             var prop = 'Handlebars';
             var _hb = win[prop] = hb;
             return _hb;
         });
-        def(function (hb) {
+        def(function(hb) {
             var prop = 'Handlebars';
             var win = window;
             var _hb = win[prop] = hb;
             return _hb;
         });
-        def(function (hb) {
+        def(function(hb) {
             var prop = 'Handlebars';
             var win = g();
             var _hb = win[prop] = hb;
             return _hb;
         });
-        def(function (hb) {
+        def(function(hb) {
             var prop = g1();
             var win = g2();
             var _hb = win[prop] = hb;
             return _hb;
         });
-        def(function (hb) {
+        def(function(hb) {
             var win = g2();
             var prop = g1();
             var _hb = win[prop] = hb;
@@ -196,14 +196,14 @@ collapse_vars_issue_721: {
         def(function(hb) {
             return window.Handlebars = hb;
         }),
-        def(function (hb) {
+        def(function(hb) {
             return g().Handlebars = hb;
         }),
-        def(function (hb) {
+        def(function(hb) {
             var prop = g1();
             return g2()[prop] = hb;
         }),
-        def(function (hb) {
+        def(function(hb) {
             return g2()[g1()] = hb;
         });
     }
@@ -3150,7 +3150,7 @@ issue_2437_1: {
                 return result;
             } else {
                 var req = new XMLHttpRequest();
-                var detectFunc = function () {};
+                var detectFunc = function(){};
                 req.onreadystatechange = detectFunc;
                 var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
                 req.onreadystatechange = null;
@@ -3166,7 +3166,7 @@ issue_2437_1: {
                 return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
             }
-            var req, detectFunc = function() {};
+            var req, detectFunc = function(){};
             (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
             result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
             return req.onreadystatechange = null, result;
@@ -3200,7 +3200,7 @@ issue_2437_2: {
                 return result;
             } else {
                 var req = new XMLHttpRequest();
-                var detectFunc = function () {};
+                var detectFunc = function(){};
                 req.onreadystatechange = detectFunc;
                 var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
                 req.onreadystatechange = null;
@@ -4513,7 +4513,7 @@ issue_2878: {
     }
     input: {
         var c = 0;
-        (function (a, b) {
+        (function(a, b) {
             function f2() {
                 if (a) c++;
             }
@@ -4526,7 +4526,7 @@ issue_2878: {
     }
     expect: {
         var c = 0;
-        (function (a, b) {
+        (function(a, b) {
             function f2() {
                 if (a) c++;
             }
