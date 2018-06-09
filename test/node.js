@@ -1,6 +1,12 @@
-var fs = require("fs");
-
-new Function("MOZ_SourceMap", "exports", require("../tools/node").FILES.map(function(file) {
-    if (/exports\.js$/.test(file)) file = require.resolve("./exports");
-    return fs.readFileSync(file, "utf8");
-}).join("\n\n"))(require("source-map"), exports);
+var orig = require("../tools/node");
+// Get all AST-nodes
+orig.utils.merge(orig, orig.ast);
+orig.SourceMap = require("../lib/sourcemap").SourceMap;
+orig.base54 = orig.utils.base54;
+orig.defaults = orig.utils.defaults;
+orig.mangle_properties =  orig.propmangle.mangle_properties;
+orig.reserve_quoted_keys =  orig.propmangle.reserve_quoted_keys;
+orig.JS_Parse_Error = orig.parser.JS_Parse_Error;
+orig.tokenizer = orig.parser.tokenizer;
+orig.is_identifier = orig.parser.is_identifier;
+module.exports = orig;

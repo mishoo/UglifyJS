@@ -5,7 +5,6 @@ var FILES = UglifyJS.FILES = [
     "../lib/utils.js",
     "../lib/ast.js",
     "../lib/parse.js",
-    "../lib/transform.js",
     "../lib/scope.js",
     "../lib/output.js",
     "../lib/compress.js",
@@ -18,7 +17,7 @@ var FILES = UglifyJS.FILES = [
     return require.resolve(file);
 });
 
-new Function("MOZ_SourceMap", "exports", function() {
+/*new Function("MOZ_SourceMap", "exports", function() {
     var code = FILES.map(function(file) {
         return fs.readFileSync(file, "utf8");
     });
@@ -27,7 +26,33 @@ new Function("MOZ_SourceMap", "exports", function() {
 }())(
     require("source-map"),
     UglifyJS
-);
+);*/
+
+var utils = require("../lib/utils");
+var output = require("../lib/output");
+var OutputStream = output.OutputStream;
+var minify = require("../lib/minify").minify;
+var ast = require("../lib/ast");
+var compress = require("../lib/compress");
+var parse =  require("../lib/parse");
+var propmangle = require("../lib/propmangle");
+require("../lib/mozilla-ast");
+
+
+exports.utils = utils;
+exports.OutputStream = OutputStream;
+exports.minify = minify;
+exports.ast = ast;
+exports.parser = parse;
+exports.parse = parse.parse;
+exports.Compressor = compress.Compressor;
+exports.Dictionary = utils.Dictionary;
+exports.TreeWalker = ast.TreeWalker;
+exports.TreeTransformer = ast.TreeTransformer;
+exports.push_uniq = utils.push_uniq;
+exports.string_template = utils.string_template;
+exports.describe_ast = describe_ast;
+exports.propmangle = propmangle;
 
 function describe_ast() {
     var out = OutputStream({ beautify: true });

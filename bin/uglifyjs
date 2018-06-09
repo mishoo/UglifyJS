@@ -100,7 +100,7 @@ if (program.mangleProps) {
         if (typeof program.mangleProps != "object") program.mangleProps = {};
         if (!Array.isArray(program.mangleProps.reserved)) program.mangleProps.reserved = [];
         require("../tools/domprops").forEach(function(name) {
-            UglifyJS._push_uniq(program.mangleProps.reserved, name);
+            UglifyJS.push_uniq(program.mangleProps.reserved, name);
         });
     }
     if (typeof options.mangle != "object") options.mangle = {};
@@ -144,12 +144,23 @@ if (program.verbose) {
 } else if (program.warn) {
     options.warnings = true;
 }
+function getVarNameFromPath(filename) {
+    var name = /((\w|-)+)(\.js)?$/.exec(filename)[1].replace("-", "_");
+    return "__" + name + "_exports";
+}
 if (program.self) {
     if (program.args.length) {
         print_error("WARN: Ignoring input files since --self was passed");
     }
     if (!options.wrap) options.wrap = "UglifyJS";
+    files["__require_emulation"] = "var __origExports = exports;" + getVarNameFromPath + "function require(filename){return require[getVarNameFromPath(filename)];}";
     simple_glob(UglifyJS.FILES).forEach(function(name) {
+        var exportCode;
+        if (/exports\.js$/.test(name))
+            exportCode = "var exports = __origExports";
+        else
+            exportCode = "var exports = require['" + getVarNameFromPath(name) + "'] = {};";
+        files["_" + name + "_exports"] = exportCode;
         files[convert_path(name)] = read_file(name);
     });
     run();
@@ -171,11 +182,11 @@ if (program.self) {
 }
 
 function convert_ast(fn) {
-    return UglifyJS.AST_Node.from_mozilla_ast(Object.keys(files).reduce(fn, null));
+    return UglifyJS.ast.AST_Node.from_mozilla_ast(Object.keys(files).reduce(fn, null));
 }
 
 function run() {
-    UglifyJS.AST_Node.warn_function = function(msg) {
+    UglifyJS.ast.AST_Node.warn_function = function(msg) {
         print_error("WARN: " + msg);
     };
     var content = program.sourceMap && program.sourceMap.content;
@@ -249,9 +260,9 @@ function run() {
                 return value.size() ? value.map(symdef) : undefined;
             }
             if (skip_key(key)) return;
-            if (value instanceof UglifyJS.AST_Token) return;
+            if (value instanceof UglifyJS.ast.AST_Token) return;
             if (value instanceof UglifyJS.Dictionary) return;
-            if (value instanceof UglifyJS.AST_Node) {
+            if (value instanceof UglifyJS.ast.AST_Node) {
                 var result = {
                     _class: "AST_" + value.TYPE
                 };
@@ -348,27 +359,27 @@ function parse_js(flag) {
                     code: false
                 }
             }).ast.walk(new UglifyJS.TreeWalker(function(node) {
-                if (node instanceof UglifyJS.AST_Assign) {
+                if (node instanceof UglifyJS.ast.AST_Assign) {
                     var name = node.left.print_to_string();
                     var value = node.right;
                     if (flag) {
                         options[name] = value;
-                    } else if (value instanceof UglifyJS.AST_Array) {
+                    } else if (value instanceof UglifyJS.ast.AST_Array) {
                         options[name] = value.elements.map(to_string);
                     } else {
                         options[name] = to_string(value);
                     }
                     return true;
                 }
-                if (node instanceof UglifyJS.AST_Symbol || node instanceof UglifyJS.AST_PropAccess) {
+                if (node instanceof UglifyJS.ast.AST_Symbol || node instanceof UglifyJS.ast.AST_PropAccess) {
                     var name = node.print_to_string();
                     options[name] = true;
                     return true;
                 }
-                if (!(node instanceof UglifyJS.AST_Sequence)) throw node;
+                if (!(node instanceof UglifyJS.ast.AST_Sequence)) throw node;
 
                 function to_string(value) {
-                    return value instanceof UglifyJS.AST_Constant ? value.getValue() : value.print_to_string({
+                    return value instanceof UglifyJS.ast.AST_Constant ? value.getValue() : value.print_to_string({
                         quote_keys: true
                     });
                 }
