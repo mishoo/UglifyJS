@@ -112,6 +112,7 @@ a double dash to prevent input files being used as option arguments:
                                 By default UglifyJS will not try to be IE-proof.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
+    --lint                      Display some scope warnings.
     --name-cache <file>         File to hold mangled name mappings.
     --self                      Build UglifyJS as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
