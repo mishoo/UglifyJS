@@ -43,6 +43,7 @@ program.option("-d, --define <expr>[=value]", "Global definitions.", parse_js("d
 program.option("-e, --enclose [arg[,...][:value[,...]]]", "Embed everything in a big function, with configurable argument(s) & value(s).");
 program.option("--ie8", "Support non-standard Internet Explorer 8.");
 program.option("--keep-fnames", "Do not mangle/drop function names. Useful for code relying on Function.prototype.name.");
+program.option("--lint [options]", "Display some scope warnings.", parse_js());
 program.option("--name-cache <file>", "File to hold mangled name mappings.");
 program.option("--rename", "Force symbol expansion.");
 program.option("--no-rename", "Disable symbol expansion.");
@@ -64,6 +65,7 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     "compress",
     "enclose",
     "ie8",
+    "lint",
     "mangle",
     "sourceMap",
     "toplevel",

@@ -706,4 +706,49 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should warn for default options with --lint", function(done) {
+        var command = uglifyjscmd + " test/input/lint/input.js --lint";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, 'function assignToGlobal(){x=1}function eval(){eval("var x = 1")}' +
+                'function funcArguments(){console.log("args: ",arguments)}function nestedDefuns(){if(true){function fn(){}}}function unreferencedFnc(){}undeclaredFnc();\n');
+            assert.strictEqual(stderr, [
+                'WARN: Accidental global?: x [test/input/lint/input.js:2,4]',
+                'WARN: arguments used in function funcArguments [test/input/lint/input.js:9,0]',
+                'WARN: Function fn declared in nested statement "BlockStatement" [test/input/lint/input.js:15,8]',
+                'WARN: Symbol fn is declared but not referenced [test/input/lint/input.js:15,17]',
+                ''
+            ].join('\n'));
+            done();
+        });
+    });
+    it("Should warn for all lint options", function(done) {
+        var command = uglifyjscmd + " test/input/lint/input.js --lint undeclared=true";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, 'function assignToGlobal(){x=1}function eval(){eval("var x = 1")}function funcArguments()' + 
+                '{console.log("args: ",arguments)}function nestedDefuns(){if(true){function fn(){}}}function unreferencedFnc(){}undeclaredFnc();\n');
+            assert.strictEqual(stderr, [
+                'WARN: Accidental global?: x [test/input/lint/input.js:2,4]',
+                'WARN: Undeclared symbol: x [test/input/lint/input.js:2,4]',
+                'WARN: arguments used in function funcArguments [test/input/lint/input.js:9,0]',
+                'WARN: Undeclared symbol: console [test/input/lint/input.js:10,4]',
+                'WARN: Function fn declared in nested statement "BlockStatement" [test/input/lint/input.js:15,8]',
+                'WARN: Symbol fn is declared but not referenced [test/input/lint/input.js:15,17]',
+                'WARN: Undeclared symbol: undeclaredFnc [test/input/lint/input.js:20,0]',
+                ''
+            ].join('\n'));
+            done();
+        });
+    });
+    it("Should work with --lint arg=value", function(done) {
+        var command = uglifyjscmd + " test/input/lint/input.js --lint assign_to_global=false,eval=false,func_arguments=false,nested_defuns=false,undeclared=false,unreferenced=true";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, 'function assignToGlobal(){x=1}function eval(){eval("var x = 1")}function funcArguments()' + 
+                '{console.log("args: ",arguments)}function nestedDefuns(){if(true){function fn(){}}}function unreferencedFnc(){}undeclaredFnc();\n');
+            assert.strictEqual(stderr, 'WARN: Symbol fn is declared but not referenced [test/input/lint/input.js:15,17]\n');
+            done();
+        });
+    });
 });
