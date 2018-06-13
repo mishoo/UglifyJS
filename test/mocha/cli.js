@@ -11,7 +11,7 @@ describe("bin/uglifyjs", function() {
     it("should produce a functional build when using --self", function(done) {
         this.timeout(30000);
         var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
-        exec(command, function(err, stdout) {
+        exec(command, {maxBuffer: 1024 * 300}, function(err, stdout) {
             if (err) throw err;
             eval(stdout);
             assert.strictEqual(typeof WrappedUglifyJS, "object");
@@ -594,7 +594,7 @@ describe("bin/uglifyjs", function() {
         exec(command, function(err, stdout) {
             if (err) throw err;
             var ast = JSON.parse(stdout);
-            assert.strictEqual(ast._class, "AST_Toplevel");
+            assert.strictEqual(ast._class, "AST.Toplevel");
             assert.ok(Array.isArray(ast.body));
             done();
         });

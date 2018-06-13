@@ -1047,7 +1047,7 @@ var result = UglifyJS.minify(ast, {
 
 Transversal and transformation of the native AST can be performed through
 [`TreeWalker`](https://github.com/mishoo/UglifyJS2/blob/master/lib/ast.js) and
-[`TreeTransformer`](https://github.com/mishoo/UglifyJS2/blob/master/lib/transform.js)
+[`TreeTransformer`](https://github.com/mishoo/UglifyJS2/blob/master/lib/ast.js)
 respectively.
 
 ### ESTree / SpiderMonkey AST
