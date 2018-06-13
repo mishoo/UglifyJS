@@ -594,7 +594,7 @@ describe("bin/uglifyjs", function() {
         exec(command, function(err, stdout) {
             if (err) throw err;
             var ast = JSON.parse(stdout);
-            assert.strictEqual(ast._class, "AST_Toplevel");
+            assert.strictEqual(ast._class, "AST.Toplevel");
             assert.ok(Array.isArray(ast.body));
             done();
         });

@@ -38,9 +38,11 @@ UglifyJS.FILES.forEach(function(filepath){
     if (exportNames.length == 0)
         return;
     // Use (utils.)merge instead of Object.assign for (very) old node
-    var exports = "merge(exports, {\n" + exportNames.map(function(name){
-        return UglifyJS.string_template('    {name} : {name},', { name: name });
-    }).join("\n") + "\n});";
+    var exports = "merge(exports, {\n" + exportNames.map(
+        name => UglifyJS.string_template('    {name} : {name},', { name: name })
+    ).concat(exportNames.filter(name => name.indexOf("AST_") == 0).map(
+        name => UglifyJS.string_template('    {expName} : {name},', { expName: name.substr(4), name: name })
+    )).join("\n") + "\n});";
     var imports = exportNames.map(function(name){
         return UglifyJS.string_template(UglifyJS.string_template('var {name} = {fn}.{name};', { name: name, fn: filename}));
     });

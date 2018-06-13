@@ -17,22 +17,11 @@ var FILES = UglifyJS.FILES = [
     return require.resolve(file);
 });
 
-/*new Function("MOZ_SourceMap", "exports", function() {
-    var code = FILES.map(function(file) {
-        return fs.readFileSync(file, "utf8");
-    });
-    code.push("exports.describe_ast = " + describe_ast.toString());
-    return code.join("\n\n");
-}())(
-    require("source-map"),
-    UglifyJS
-);*/
-
 var utils = require("../lib/utils");
 var output = require("../lib/output");
 var OutputStream = output.OutputStream;
 var minify = require("../lib/minify").minify;
-var ast = require("../lib/ast");
+var AST = require("../lib/ast");
 var compress = require("../lib/compress");
 var parse =  require("../lib/parse");
 var propmangle = require("../lib/propmangle");
@@ -42,22 +31,28 @@ require("../lib/mozilla-ast");
 exports.utils = utils;
 exports.OutputStream = OutputStream;
 exports.minify = minify;
-exports.ast = ast;
+exports.AST = AST;
 exports.parser = parse;
 exports.parse = parse.parse;
 exports.Compressor = compress.Compressor;
 exports.Dictionary = utils.Dictionary;
-exports.TreeWalker = ast.TreeWalker;
-exports.TreeTransformer = ast.TreeTransformer;
+exports.TreeWalker = AST.TreeWalker;
+exports.TreeTransformer = AST.TreeTransformer;
 exports.push_uniq = utils.push_uniq;
 exports.string_template = utils.string_template;
 exports.describe_ast = describe_ast;
 exports.propmangle = propmangle;
 
+// Backwards compatibility: Add all AST_
+for (var name in AST) if (utils.HOP(AST, name)) {
+    if (name.indexOf("AST_") == 0)
+        exports[name] = AST[name];
+}
+
 function describe_ast() {
     var out = OutputStream({ beautify: true });
     function doitem(ctor) {
-        out.print("AST_" + ctor.TYPE);
+        out.print("AST." + ctor.TYPE);
         var props = ctor.SELF_PROPS.filter(function(prop) {
             return !/^\$/.test(prop);
         });
@@ -85,7 +80,7 @@ function describe_ast() {
             });
         }
     };
-    doitem(AST_Node);
+    doitem(AST.Node);
     return out + "\n";
 }
 

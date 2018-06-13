@@ -1,6 +1,4 @@
 var orig = require("../tools/node");
-// Get all AST-nodes
-orig.utils.merge(orig, orig.ast);
 orig.SourceMap = require("../lib/sourcemap").SourceMap;
 orig.base54 = orig.utils.base54;
 orig.defaults = orig.utils.defaults;
