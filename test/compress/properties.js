@@ -1729,3 +1729,106 @@ issue_869_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3188_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            function f() {
+                console.log(this.p);
+            }
+            (function() {
+                var o = {
+                    p: "PASS",
+                    f: f
+                };
+                o.f();
+            })();
+        })();
+    }
+    expect: {
+        (function() {
+            function f() {
+                console.log(this.p);
+            }
+            ({
+                p: "PASS",
+                f: f
+            }).f();
+            var o;
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3188_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var f = function() {
+                console.log(this.p);
+            };
+            function g() {
+                var o = {
+                    p: "PASS",
+                    f: f
+                };
+                o.f();
+            }
+            g();
+        })();
+    }
+    expect: {
+        ({
+            p: "PASS",
+            f: function() {
+                console.log(this.p);
+            }
+        }).f();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3188_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            function f() {
+                console.log(this[0]);
+            }
+            (function() {
+                var o = ["PASS", f];
+                o[1]();
+            })();
+        })();
+    }
+    expect: {
+        (function() {
+            function f() {
+                console.log(this[0]);
+            }
+            ["PASS", f][1]();
+            var o;
+        })();
+    }
+    expect_stdout: "PASS"
+}
