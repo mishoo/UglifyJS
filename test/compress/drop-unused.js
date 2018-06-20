@@ -1926,3 +1926,31 @@ issue_3146_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3192: {
+    options = {
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            console.log(a = "foo", arguments[0]);
+        })("bar");
+        (function(a) {
+            "use strict";
+            console.log(a = "foo", arguments[0]);
+        })("bar");
+    }
+    expect: {
+        (function(a) {
+            console.log(a = "foo", arguments[0]);
+        })("bar");
+        (function(a) {
+            "use strict";
+            console.log("foo", arguments[0]);
+        })("bar");
+    }
+    expect_stdout: [
+        "foo foo",
+        "foo bar",
+    ]
+}
