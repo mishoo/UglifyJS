@@ -1,22 +1,22 @@
-var Uglify = require('../../');
 var assert = require("assert");
+var UglifyJS = require("../..");
 
 describe("Input file as map", function() {
     it("Should accept object", function() {
         var jsMap = {
             '/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'
         };
-        var result = Uglify.minify(jsMap, {sourceMap: true});
+        var result = UglifyJS.minify(jsMap, {sourceMap: true});
 
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
         assert.deepEqual(map.sources, ['/scripts/foo.js']);
         assert.strictEqual(map.file, undefined);
 
-        result = Uglify.minify(jsMap);
+        result = UglifyJS.minify(jsMap);
         assert.strictEqual(result.map, undefined);
 
-        result = Uglify.minify(jsMap, {sourceMap: {filename: 'out.js'}});
+        result = UglifyJS.minify(jsMap, {sourceMap: {filename: 'out.js'}});
         map = JSON.parse(result.map);
         assert.strictEqual(map.file, 'out.js');
     });
@@ -26,7 +26,7 @@ describe("Input file as map", function() {
             'var foo = {"x": 1, y: 2, \'z\': 3};',
             'var bar = 15;'
         ];
-        var result = Uglify.minify(jsSeq, {sourceMap: true});
+        var result = UglifyJS.minify(jsSeq, {sourceMap: true});
 
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3},bar=15;');
@@ -37,7 +37,7 @@ describe("Input file as map", function() {
         var jsMap = {
             '/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'
         };
-        var result = Uglify.minify(jsMap, {sourceMap: {includeSources: true}});
+        var result = UglifyJS.minify(jsMap, {sourceMap: {includeSources: true}});
 
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');

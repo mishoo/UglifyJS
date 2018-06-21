@@ -1,5 +1,5 @@
-var UglifyJS = require("../node");
 var assert = require("assert");
+var UglifyJS = require("../..");
 
 describe("operator", function() {
     it("Should handle mixing of ++/+/--/- correctly", function() {
