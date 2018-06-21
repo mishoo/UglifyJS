@@ -1,5 +1,5 @@
-var Uglify = require('../../');
 var assert = require("assert");
+var UglifyJS = require("../..");
 
 describe("let", function() {
     this.timeout(30000);
@@ -10,7 +10,7 @@ describe("let", function() {
             s += "var v" + i + "=0;";
         }
         s += '}';
-        var result = Uglify.minify(s, {
+        var result = UglifyJS.minify(s, {
             compress: false
         }).code;
 
@@ -39,7 +39,7 @@ describe("let", function() {
         for (var i = 0; i < 18000; i++) {
             s += "v.b" + i + ";";
         }
-        var result = Uglify.minify(s, {
+        var result = UglifyJS.minify(s, {
             compress: false,
             ie8: true,
             mangle: {

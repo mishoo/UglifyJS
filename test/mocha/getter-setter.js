@@ -1,5 +1,5 @@
-var UglifyJS = require("../node");
 var assert = require("assert");
+var UglifyJS = require("../node");
 
 describe("Getters and setters", function() {
     it("Should not accept operator symbols as getter/setter name", function() {
