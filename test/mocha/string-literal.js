@@ -1,5 +1,5 @@
-var UglifyJS = require("../node");
 var assert = require("assert");
+var UglifyJS = require("../node");
 
 describe("String literals", function() {
     it("Should throw syntax error if a string literal contains a newline", function() {
@@ -18,8 +18,8 @@ describe("String literals", function() {
         };
 
         var error = function(e) {
-            return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Unterminated string constant";
+            return e instanceof UglifyJS.JS_Parse_Error
+                && e.message === "Unterminated string constant";
         };
 
         for (var input in inputs) {
@@ -48,8 +48,8 @@ describe("String literals", function() {
         };
 
         var error = function(e) {
-            return e instanceof UglifyJS.JS_Parse_Error &&
-                e.message === "Legacy octal escape sequences are not allowed in strict mode";
+            return e instanceof UglifyJS.JS_Parse_Error
+                && e.message === "Legacy octal escape sequences are not allowed in strict mode";
         }
 
         for (var input in inputs) {
