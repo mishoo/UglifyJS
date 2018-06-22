@@ -420,8 +420,8 @@ issue_24_2: {
         })();
     }
     expect: {
-        (function(n) {
-            console.log(typeof function o(){} === typeof n ? "FAIL" : "PASS");
+        (function(o) {
+            console.log(typeof function n(){} === typeof o ? "FAIL" : "PASS");
         })();
     }
     expect_stdout: "PASS"
@@ -457,9 +457,29 @@ issue_2976_2: {
         }());
     }
     expect: {
-        console.log(function n() {
-            var o;
-            return o === n ? "FAIL" : "PASS";
+        console.log(function f() {
+            var n;
+            return n === f ? "FAIL" : "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2976_3: {
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(function f() {
+            var a;
+            return a === f ? "FAIL" : "PASS";
+        }());
+    }
+    expect: {
+        console.log(function o() {
+            var n;
+            return n === o ? "FAIL" : "PASS";
         }());
     }
     expect_stdout: "PASS"
@@ -537,4 +557,112 @@ issue_3035_ie8: {
         console.log(c);
     }
     expect_stdout: "PASS"
+}
+
+issue_3197_1: {
+    options = {
+        ie8: false,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        var window = {};
+        !function() {
+            function Foo() {
+                console.log(this instanceof Foo);
+            }
+            window.Foo = Foo;
+        }();
+        new window.Foo();
+    }
+    expect: {
+        var window = {};
+        window.Foo = function o() {
+            console.log(this instanceof o);
+        };
+        new window.Foo();
+    }
+    expect_stdout: "true"
+}
+
+issue_3197_1_ie8: {
+    options = {
+        ie8: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        var window = {};
+        !function() {
+            function Foo() {
+                console.log(this instanceof Foo);
+            }
+            window.Foo = Foo;
+        }();
+        new window.Foo();
+    }
+    expect: {
+        var window = {};
+        window.Foo = function Foo() {
+            console.log(this instanceof Foo);
+        };
+        new window.Foo();
+    }
+    expect_stdout: "true"
+}
+
+issue_3197_2: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        (function(a) {
+            var f = function f() {
+                console.log(this instanceof f);
+            };
+            new f(a);
+        })();
+    }
+    expect: {
+        (function(n) {
+            var o = function n() {
+                console.log(this instanceof n);
+            };
+            new o(n);
+        })();
+    }
+    expect_stdout: "true"
+}
+
+issue_3197_2_ie8: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        (function(a) {
+            var f = function f() {
+                console.log(this instanceof f);
+            };
+            new f(a);
+        })();
+    }
+    expect: {
+        (function(n) {
+            var o = function o() {
+                console.log(this instanceof o);
+            };
+            new o(n);
+        })();
+    }
+    expect_stdout: "true"
 }
