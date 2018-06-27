@@ -295,3 +295,31 @@ issue_2857_6: {
     }
     expect_stdout: "true"
 }
+
+is_boolean_unsafe: {
+    options = {
+        comparisons: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(/foo/.test("bar") === [].isPrototypeOf({}));
+    }
+    expect: {
+        console.log(/foo/.test("bar") == [].isPrototypeOf({}));
+    }
+    expect_stdout: "true"
+}
+
+is_number_unsafe: {
+    options = {
+        comparisons: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(Math.acos(42) !== "foo".charCodeAt(4));
+    }
+    expect: {
+        console.log(Math.acos(42) != "foo".charCodeAt(4));
+    }
+    expect_stdout: "true"
+}
