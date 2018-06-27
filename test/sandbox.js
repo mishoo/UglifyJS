@@ -79,7 +79,7 @@ exports.run_code = function(code, reuse) {
         return ex;
     } finally {
         process.stdout.write = original_write;
-        if (!reuse || /prototype/.test(code)) {
+        if (!reuse || code.indexOf(".prototype") >= 0) {
             context = null;
         } else for (var key in context) {
             delete context[key];

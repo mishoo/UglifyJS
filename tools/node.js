@@ -1,7 +1,6 @@
 var fs = require("fs");
 
-var UglifyJS = exports;
-var FILES = UglifyJS.FILES = [
+exports.FILES = [
     "../lib/utils.js",
     "../lib/ast.js",
     "../lib/parse.js",
@@ -19,15 +18,12 @@ var FILES = UglifyJS.FILES = [
 });
 
 new Function("MOZ_SourceMap", "exports", function() {
-    var code = FILES.map(function(file) {
+    var code = exports.FILES.map(function(file) {
         return fs.readFileSync(file, "utf8");
     });
     code.push("exports.describe_ast = " + describe_ast.toString());
     return code.join("\n\n");
-}())(
-    require("source-map"),
-    UglifyJS
-);
+}())(require("source-map"), exports);
 
 function describe_ast() {
     var out = OutputStream({ beautify: true });
@@ -65,11 +61,11 @@ function describe_ast() {
 }
 
 function infer_options(options) {
-    var result = UglifyJS.minify("", options);
+    var result = exports.minify("", options);
     return result.error && result.error.defs;
 }
 
-UglifyJS.default_options = function() {
+exports.default_options = function() {
     var defs = {};
     Object.keys(infer_options({ 0: 0 })).forEach(function(component) {
         var options = {};
