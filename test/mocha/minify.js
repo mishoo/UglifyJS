@@ -187,7 +187,7 @@ describe("minify", function() {
     });
 
     describe("#__PURE__", function() {
-        it("should drop #__PURE__ hint after use", function() {
+        it("Should drop #__PURE__ hint after use", function() {
             var result = UglifyJS.minify('//@__PURE__ comment1 #__PURE__ comment2\n foo(), bar();', {
                 output: {
                     comments: "all",
@@ -197,7 +197,7 @@ describe("minify", function() {
             var code = result.code;
             assert.strictEqual(code, "//  comment1   comment2\nbar();");
         });
-        it("should drop #__PURE__ hint if function is retained", function() {
+        it("Should drop #__PURE__ hint if function is retained", function() {
             var result = UglifyJS.minify("var a = /*#__PURE__*/(function(){ foo(); })();", {
                 output: {
                     comments: "all",
@@ -210,7 +210,7 @@ describe("minify", function() {
     });
 
     describe("JS_Parse_Error", function() {
-        it("should return syntax error", function() {
+        it("Should return syntax error", function() {
             var result = UglifyJS.minify("function f(a{}");
             var err = result.error;
             assert.ok(err instanceof Error);
@@ -219,7 +219,7 @@ describe("minify", function() {
             assert.strictEqual(err.line, 1);
             assert.strictEqual(err.col, 12);
         });
-        it("should reject duplicated label name", function() {
+        it("Should reject duplicated label name", function() {
             var result = UglifyJS.minify("L:{L:{}}");
             var err = result.error;
             assert.ok(err instanceof Error);
@@ -231,7 +231,7 @@ describe("minify", function() {
     });
 
     describe("global_defs", function() {
-        it("should throw for non-trivial expressions", function() {
+        it("Should throw for non-trivial expressions", function() {
             var result = UglifyJS.minify("alert(42);", {
                 compress: {
                     global_defs: {
@@ -243,7 +243,7 @@ describe("minify", function() {
             assert.ok(err instanceof Error);
             assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token: keyword (debugger)");
         });
-        it("should skip inherited properties", function() {
+        it("Should skip inherited properties", function() {
             var foo = Object.create({ skip: this });
             foo.bar = 42;
             var result = UglifyJS.minify("alert(FOO);", {

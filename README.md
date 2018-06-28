@@ -620,6 +620,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `dead_code` (default: `true`) -- remove unreachable code
 
+- `directives` (default: `true`) -- remove redundant or non-standard directives
+
 - `drop_console` (default: `false`) -- Pass `true` to discard calls to
   `console.*` functions. If you wish to drop a specific function call
   such as `console.info` and/or retain side effects from function arguments
