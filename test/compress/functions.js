@@ -2025,6 +2025,7 @@ deduplicate_parenthesis: {
 
 drop_lone_use_strict: {
     options = {
+        directives: true,
         side_effects: true,
     }
     input: {
@@ -2048,6 +2049,27 @@ drop_lone_use_strict: {
             "use strict";
             function f3() {
             }
+        }
+    }
+}
+
+issue_3166: {
+    options = {
+        directives: true,
+    }
+    input: {
+        "foo";
+        "use strict";
+        function f() {
+            "use strict";
+            "bar";
+            "use asm";
+        }
+    }
+    expect: {
+        "use strict";
+        function f() {
+            "use asm";
         }
     }
 }

@@ -3,7 +3,7 @@ var exec = require("child_process").exec;
 var UglifyJS = require("../..");
 
 describe("spidermonkey export/import sanity test", function() {
-    it("should produce a functional build when using --self with spidermonkey", function(done) {
+    it("Should produce a functional build when using --self with spidermonkey", function(done) {
         this.timeout(60000);
 
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
@@ -23,7 +23,7 @@ describe("spidermonkey export/import sanity test", function() {
         });
     });
 
-    it("should not add unnecessary escape slashes to regexps", function() {
+    it("Should not add unnecessary escape slashes to regexps", function() {
         var input = "/[\\\\/]/;";
         var ast = UglifyJS.parse(input).to_mozilla_ast();
         assert.equal(

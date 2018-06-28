@@ -35,7 +35,7 @@ describe("bin/uglifyjs with input file globs", function() {
             done();
         });
     });
-    it("should throw with non-matching glob string", function(done) {
+    it("Should throw with non-matching glob string", function(done) {
         var command = uglifyjscmd + ' "test/input/issue-1242/blah.*"';
 
         exec(command, function(err, stdout, stderr) {
@@ -53,7 +53,7 @@ describe("bin/uglifyjs with input file globs", function() {
             done();
         });
     });
-    it("should handle special characters in glob string", function(done) {
+    it("Should handle special characters in glob string", function(done) {
         var command = uglifyjscmd + ' "test/input/issue-1632/^{*}[???](*)+$.??" -cm';
 
         exec(command, function(err, stdout) {
@@ -63,7 +63,7 @@ describe("bin/uglifyjs with input file globs", function() {
             done();
         });
     });
-    it("should handle array of glob strings - matching and otherwise", function(done) {
+    it("Should handle array of glob strings - matching and otherwise", function(done) {
         var dir = "test/input/issue-1242";
         var command = uglifyjscmd + ' "' + [
             path.join(dir, "b*.es5"),

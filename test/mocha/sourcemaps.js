@@ -53,7 +53,6 @@ describe("sourcemaps", function() {
         assert.strictEqual(map.version, 3);
         assert.deepEqual(map.names, [ "x" ]);
     });
-
     it("Should give correct names", function() {
         var map = source_map([
             "({",
@@ -67,7 +66,6 @@ describe("sourcemaps", function() {
         ].join("\n"));
         assert.deepEqual(map.names, [ "enabled", "x" ]);
     });
-
     it("Should mark array/object literals", function() {
         var result = UglifyJS.minify([
             "var obj = {};",
@@ -80,7 +78,6 @@ describe("sourcemaps", function() {
         assert.strictEqual(result.code, "({}).wat([]);");
         assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["wat"],"mappings":"CAAU,IACNA,IAAI"}');
     });
-
     it("Should give correct sourceRoot", function() {
         var code = "console.log(42);";
         var result = UglifyJS.minify(code, {
@@ -212,6 +209,9 @@ describe("sourcemaps", function() {
         });
         it("Should work with max_line_len", function() {
             var result = UglifyJS.minify(read("./test/input/issue-505/input.js"), {
+                compress: {
+                    directives: false,
+                },
                 output: {
                     max_line_len: 20
                 },
@@ -261,7 +261,6 @@ describe("sourcemaps", function() {
             var map = prepare_map(orig);
             assert.equal(map.sourceContentFor("index.js"), orig.sourcesContent[0]);
         });
-
         it("Should copy sourcesContent if sources are relative", function() {
             var relativeMap = get_map();
             relativeMap.sources = ['./index.js'];
@@ -270,7 +269,6 @@ describe("sourcemaps", function() {
             assert.equal(map.sourcesContent.length, 1);
             assert.equal(map.sourceContentFor("index.js"), relativeMap.sourcesContent[0]);
         });
-
         it("Should not have invalid mappings from inputSourceMap", function() {
             var map = prepare_map(get_map());
             // The original source has only 2 lines, check that mappings don't have more lines

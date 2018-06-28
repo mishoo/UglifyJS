@@ -8,7 +8,7 @@ function read(path) {
 
 describe("bin/uglifyjs", function() {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
-    it("should produce a functional build when using --self", function(done) {
+    it("Should produce a functional build when using --self", function(done) {
         this.timeout(30000);
         var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
         exec(command, function(err, stdout) {
@@ -68,7 +68,7 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
-    it("should not append source map to output when not using --source-map url=inline", function(done) {
+    it("Should not append source map to output when not using --source-map url=inline", function(done) {
         var command = uglifyjscmd + ' test/input/issue-1323/sample.js';
         exec(command, function(err, stdout) {
             if (err) throw err;
@@ -76,7 +76,7 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
-    it("should not consider source map file content as source map file name (issue #2082)", function(done) {
+    it("Should not consider source map file content as source map file name (issue #2082)", function(done) {
         var command = [
             uglifyjscmd,
             "test/input/issue-2082/sample.js",
