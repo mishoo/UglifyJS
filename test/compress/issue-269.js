@@ -1,5 +1,7 @@
 issue_269_1: {
-	options = {unsafe: true};
+	options = {
+        unsafe: true,
+    }
 	input: {
 		f(
 			String(x),
@@ -20,7 +22,9 @@ issue_269_1: {
 }
 
 issue_269_dangers: {
-	options = {unsafe: true};
+	options = {
+        unsafe: true,
+    }
 	input: {
 		f(
 			String(x, x),
@@ -34,7 +38,9 @@ issue_269_dangers: {
 }
 
 issue_269_in_scope: {
-	options = {unsafe: true};
+	options = {
+        unsafe: true,
+    }
 	input: {
 		var String, Number, Boolean;
 		f(
@@ -50,7 +56,9 @@ issue_269_in_scope: {
 }
 
 strings_concat: {
-	options = {unsafe: true};
+	options = {
+        unsafe: true,
+    }
 	input: {
 		f(
 			String(x + 'str'),
@@ -67,9 +75,9 @@ strings_concat: {
 
 regexp: {
 	options = {
-		evaluate: true,
-		unsafe: true,
-	}
+        evaluate: true,
+        unsafe: true,
+    }
 	input: {
 		RegExp("foo");
 		RegExp("bar", "ig");
@@ -85,6 +93,6 @@ regexp: {
 		RegExp("should", "fail");
 	}
 	expect_warnings: [
-		'WARN: Error converting RegExp("should","fail") [test/compress/issue-269.js:78,2]',
+		'WARN: Error converting RegExp("should","fail") [test/compress/issue-269.js:86,2]',
 	]
 }

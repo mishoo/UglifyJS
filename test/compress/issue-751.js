@@ -1,7 +1,7 @@
 negate_booleans_1: {
     options = {
-        comparisons: true
-    };
+        comparisons: true,
+    }
     input: {
         var a = !a || !b || !c || !d || !e || !f;
     }
@@ -12,8 +12,8 @@ negate_booleans_1: {
 
 negate_booleans_2: {
     options = {
-        comparisons: true
-    };
+        comparisons: true,
+    }
     input: {
         var match = !x &&       // should not touch this one
             (!z || c) &&

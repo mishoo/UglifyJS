@@ -2,7 +2,7 @@ typeof_evaluation: {
     options = {
         evaluate: true,
         typeofs: true,
-    };
+    }
     input: {
         a = typeof 1;
         b = typeof 'test';
@@ -27,11 +27,11 @@ typeof_evaluation: {
 
 typeof_in_boolean_context: {
     options = {
-        booleans     : true,
-        evaluate     : true,
-        conditionals : true,
-        side_effects : true,
-    };
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         function f1(x) { return typeof x ? "yes" : "no"; }
         function f2() { return typeof g()? "Yes" : "No"; }

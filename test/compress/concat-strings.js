@@ -1,7 +1,7 @@
 concat_1: {
     options = {
-        evaluate: true
-    };
+        evaluate: true,
+    }
     input: {
         var a = "foo" + "bar" + x() + "moo" + "foo" + y() + "x" + "y" + "z" + q();
         var b = "foo" + 1 + x() + 2 + "boo";
@@ -26,7 +26,7 @@ concat_1: {
 }
 
 concat_2: {
-    options = {};
+    options = {}
     input: {
         console.log(
             1 + (2 + 3),
@@ -55,7 +55,7 @@ concat_2: {
 }
 
 concat_3: {
-    options = {};
+    options = {}
     input: {
         console.log(
             1 + 2 + (3 + 4 + 5),
@@ -84,7 +84,7 @@ concat_3: {
 }
 
 concat_4: {
-    options = {};
+    options = {}
     input: {
         console.log(
             1 + "2" + (3 + 4 + 5),
@@ -113,7 +113,7 @@ concat_4: {
 }
 
 concat_5: {
-    options = {};
+    options = {}
     input: {
         console.log(
             "1" + 2 + (3 + 4 + 5),
@@ -142,7 +142,7 @@ concat_5: {
 }
 
 concat_6: {
-    options = {};
+    options = {}
     input: {
         console.log(
             "1" + "2" + (3 + 4 + 5),

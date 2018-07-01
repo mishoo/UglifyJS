@@ -9,20 +9,20 @@ non_ascii_function_identifier_name: {
 
 iifes_returning_constants_keep_fargs_true: {
     options = {
-        keep_fargs    : true,
-        side_effects  : true,
-        evaluate      : true,
-        unused        : true,
-        dead_code     : true,
-        conditionals  : true,
-        comparisons   : true,
-        booleans      : true,
-        if_return     : true,
-        join_vars     : true,
-        reduce_funcs  : true,
-        reduce_vars   : true,
-        collapse_vars : true,
-        inline        : true,
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        inline: true,
+        join_vars: true,
+        keep_fargs: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         (function(){ return -1.23; }());
@@ -46,20 +46,20 @@ iifes_returning_constants_keep_fargs_true: {
 
 iifes_returning_constants_keep_fargs_false: {
     options = {
-        keep_fargs    : false,
-        side_effects  : true,
-        evaluate      : true,
-        unused        : true,
-        dead_code     : true,
-        conditionals  : true,
-        comparisons   : true,
-        booleans      : true,
-        if_return     : true,
-        join_vars     : true,
-        reduce_funcs  : true,
-        reduce_vars   : true,
-        collapse_vars : true,
-        inline        : true,
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        inline: true,
+        join_vars: true,
+        keep_fargs: false,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         (function(){ return -1.23; }());
@@ -1175,8 +1175,8 @@ issue_2620_3: {
 issue_2620_4: {
     rename = true,
     options = {
-        evaluate: true,
         dead_code: true,
+        evaluate: true,
         inline: true,
         passes: 2,
         reduce_vars: true,

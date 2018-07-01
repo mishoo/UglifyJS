@@ -186,7 +186,7 @@ negate_iife_5_off: {
         inline: true,
         negate_iife: false,
         sequences: true,
-    };
+    }
     input: {
         if ((function(){ return t })()) {
             foo(true);
@@ -245,7 +245,7 @@ negate_iife_issue_1073: {
         reduce_vars: true,
         sequences: true,
         unused: true,
-    };
+    }
     input: {
         new (function(a) {
             return function Foo() {
@@ -273,7 +273,7 @@ issue_1288_side_effects: {
         reduce_vars: true,
         side_effects: true,
         unused: true,
-    };
+    }
     input: {
         if (w) ;
         else {

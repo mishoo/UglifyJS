@@ -1,6 +1,6 @@
 level_zero: {
     options = {
-        keep_fnames: true
+        keep_fnames: true,
     }
     mangle = {
         keep_fnames: true
@@ -29,7 +29,7 @@ level_zero: {
 
 level_one: {
     options = {
-        keep_fnames: true
+        keep_fnames: true,
     }
     mangle = {
         keep_fnames: true
@@ -58,7 +58,7 @@ level_one: {
 
 level_two: {
     options = {
-        keep_fnames: true
+        keep_fnames: true,
     }
     mangle = {
         keep_fnames: true
@@ -97,7 +97,7 @@ level_two: {
 
 level_three: {
     options = {
-        keep_fnames: true
+        keep_fnames: true,
     }
     mangle = {
         keep_fnames: true

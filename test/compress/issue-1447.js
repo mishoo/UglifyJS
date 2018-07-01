@@ -22,17 +22,17 @@ else_with_empty_statement: {
 
 conditional_false_stray_else_in_loop: {
     options = {
-        evaluate     : true,
-        comparisons  : true,
-        booleans     : true,
-        unused       : true,
-        loops        : true,
-        side_effects : true,
-        dead_code    : true,
-        hoist_vars   : true,
-        join_vars    : true,
-        if_return    : true,
-        conditionals : false,
+        booleans: true,
+        comparisons: true,
+        conditionals: false,
+        dead_code: true,
+        evaluate: true,
+        hoist_vars: true,
+        if_return: true,
+        join_vars: true,
+        loops: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         for (var i = 1; i <= 4; ++i) {

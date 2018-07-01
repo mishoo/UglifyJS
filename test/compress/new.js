@@ -36,7 +36,9 @@ new_statements_3: {
 }
 
 new_with_rewritten_true_value: {
-    options = { booleans: true }
+    options = {
+        booleans: true,
+    }
     input: {
         new true;
     }

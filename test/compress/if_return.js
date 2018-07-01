@@ -1,14 +1,14 @@
 if_return_1: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f(x) {
@@ -24,15 +24,15 @@ if_return_1: {
 
 if_return_2: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f(x, y) {
@@ -49,15 +49,15 @@ if_return_2: {
 
 if_return_3: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f(x) {
@@ -75,15 +75,15 @@ if_return_3: {
 
 if_return_4: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f(x, y) {
@@ -100,15 +100,15 @@ if_return_4: {
 
 if_return_5: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f() {
@@ -126,15 +126,15 @@ if_return_5: {
 
 if_return_6: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f(x) {
@@ -150,15 +150,15 @@ if_return_6: {
 
 if_return_7: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f(x) {
@@ -176,10 +176,10 @@ if_return_7: {
 
 if_return_8: {
     options = {
-        if_return:     true,
-        sequences:     true,
-        conditionals:  true,
-        side_effects : true,
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
     }
     input: {
         function f(e) {
@@ -220,15 +220,15 @@ if_return_8: {
 
 issue_1089: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : true,
-        comparisons  : true,
-        evaluate     : true,
-        booleans     : true,
-        unused       : true,
-        side_effects : true,
-        dead_code    : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function x() {
@@ -251,9 +251,9 @@ issue_1089: {
 
 issue_1437: {
     options = {
-        if_return    : true,
-        sequences    : true,
-        conditionals : false
+        conditionals: false,
+        if_return: true,
+        sequences: true,
     }
     input: {
         function x() {
@@ -281,9 +281,9 @@ issue_1437: {
 
 issue_1437_conditionals: {
     options = {
-        conditionals : true,
-        if_return    : true,
-        sequences    : true
+        conditionals: true,
+        if_return: true,
+        sequences: true,
     }
     input: {
         function x() {

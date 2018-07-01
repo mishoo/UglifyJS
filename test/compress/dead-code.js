@@ -1,7 +1,7 @@
 dead_code_1: {
     options = {
-        dead_code: true
-    };
+        dead_code: true,
+    }
     input: {
         function f() {
             a();
@@ -25,8 +25,8 @@ dead_code_1: {
 
 dead_code_2_should_warn: {
     options = {
-        dead_code: true
-    };
+        dead_code: true,
+    }
     input: {
         function f() {
             g();
@@ -64,13 +64,13 @@ dead_code_2_should_warn: {
 
 dead_code_constant_boolean_should_warn_more: {
     options = {
-        dead_code    : true,
-        loops        : true,
-        booleans     : true,
-        conditionals : true,
-        evaluate     : true,
-        side_effects : true,
-    };
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        side_effects: true,
+    }
     input: {
         while (!((foo && bar) || (x + "0"))) {
             console.log("unreachable");

@@ -1,9 +1,9 @@
 wrongly_optimized: {
     options = {
-        conditionals: true,
         booleans: true,
-        evaluate: true
-    };
+        conditionals: true,
+        evaluate: true,
+    }
     input: {
         function func() {
             foo();

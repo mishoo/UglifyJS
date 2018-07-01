@@ -1,5 +1,5 @@
 NaN_and_Infinity_must_have_parens: {
-    options = {};
+    options = {}
     input: {
         Infinity.toString();
         NaN.toString();
@@ -11,7 +11,7 @@ NaN_and_Infinity_must_have_parens: {
 }
 
 NaN_and_Infinity_should_not_be_replaced_when_they_are_redefined: {
-    options = {};
+    options = {}
     input: {
         var Infinity, NaN;
         Infinity.toString();

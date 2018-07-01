@@ -1,7 +1,7 @@
 keep_debugger: {
     options = {
-        drop_debugger: false
-    };
+        drop_debugger: false,
+    }
     input: {
         debugger;
     }
@@ -12,8 +12,8 @@ keep_debugger: {
 
 drop_debugger: {
     options = {
-        drop_debugger: true
-    };
+        drop_debugger: true,
+    }
     input: {
         debugger;
         if (foo) debugger;

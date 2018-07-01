@@ -1,5 +1,7 @@
 while_becomes_for: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         while (foo()) bar();
     }
@@ -9,7 +11,9 @@ while_becomes_for: {
 }
 
 drop_if_break_1: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         for (;;)
             if (foo()) break;
@@ -20,7 +24,9 @@ drop_if_break_1: {
 }
 
 drop_if_break_2: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         for (;bar();)
             if (foo()) break;
@@ -31,7 +37,9 @@ drop_if_break_2: {
 }
 
 drop_if_break_3: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         for (;bar();) {
             if (foo()) break;
@@ -48,7 +56,10 @@ drop_if_break_3: {
 }
 
 drop_if_break_4: {
-    options = { loops: true, sequences: true };
+    options = {
+        loops: true,
+        sequences: true,
+    }
     input: {
         for (;bar();) {
             x();
@@ -64,7 +75,9 @@ drop_if_break_4: {
 }
 
 drop_if_else_break_1: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         for (;;) if (foo()) bar(); else break;
     }
@@ -74,7 +87,9 @@ drop_if_else_break_1: {
 }
 
 drop_if_else_break_2: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         for (;bar();) {
             if (foo()) baz();
@@ -87,7 +102,9 @@ drop_if_else_break_2: {
 }
 
 drop_if_else_break_3: {
-    options = { loops: true };
+    options = {
+        loops: true,
+    }
     input: {
         for (;bar();) {
             if (foo()) baz();
@@ -106,7 +123,10 @@ drop_if_else_break_3: {
 }
 
 drop_if_else_break_4: {
-    options = { loops: true, sequences: true };
+    options = {
+        loops: true,
+        sequences: true,
+    }
     input: {
         for (;bar();) {
             x();
@@ -123,7 +143,9 @@ drop_if_else_break_4: {
 }
 
 parse_do_while_with_semicolon: {
-    options = { loops: false };
+    options = {
+        loops: false,
+    }
     input: {
         do {
             x();
@@ -135,7 +157,9 @@ parse_do_while_with_semicolon: {
 }
 
 parse_do_while_without_semicolon: {
-    options = { loops: false };
+    options = {
+        loops: false,
+    }
     input: {
         do {
             x();
@@ -153,7 +177,7 @@ evaluate: {
         loops: true,
         passes: 2,
         side_effects: true,
-    };
+    }
     input: {
         while (true) {
             a();
@@ -457,7 +481,7 @@ init_side_effects: {
     options = {
         loops: true,
         side_effects: true,
-    };
+    }
     input: {
         for (function() {}(), i = 0; i < 5; i++) console.log(i);
         for (function() {}(); i < 10; i++) console.log(i);

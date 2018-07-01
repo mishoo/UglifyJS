@@ -1,7 +1,7 @@
 mangle_keep_fnames_false: {
     options = {
-        keep_fnames : true,
-        keep_fargs  : true,
+        keep_fargs: true,
+        keep_fnames: true,
     }
     mangle = {
         keep_fnames : false,
@@ -26,8 +26,8 @@ mangle_keep_fnames_false: {
 
 mangle_keep_fnames_true: {
     options = {
-        keep_fnames : true,
-        keep_fargs  : true,
+        keep_fargs: true,
+        keep_fnames: true,
     }
     mangle = {
         keep_fnames : true,

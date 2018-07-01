@@ -1,5 +1,5 @@
 unicode_parse_variables: {
-    options = {};
+    options = {}
     input: {
         var a = {};
         a.你好 = 456;

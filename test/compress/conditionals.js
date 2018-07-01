@@ -1,7 +1,7 @@
 ifs_1: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         if (foo) bar();
         if (!foo); else bar();
@@ -18,8 +18,8 @@ ifs_1: {
 
 ifs_2: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         if (foo) {
             x();
@@ -47,12 +47,12 @@ ifs_2: {
 
 ifs_3_should_warn: {
     options = {
-        conditionals : true,
-        dead_code    : true,
-        evaluate     : true,
-        booleans     : true,
-        side_effects : true,
-    };
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        side_effects: true,
+    }
     input: {
         var x, y;
         if (x && !(x + "1") && y) { // 1
@@ -78,8 +78,8 @@ ifs_3_should_warn: {
 
 ifs_4: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         if (foo && bar) {
             x(foo)[10].bar.baz = something();
@@ -95,10 +95,10 @@ ifs_4: {
 
 ifs_5: {
     options = {
-        if_return: true,
-        conditionals: true,
         comparisons: true,
-    };
+        conditionals: true,
+        if_return: true,
+    }
     input: {
         function f() {
             if (foo) return;
@@ -132,9 +132,9 @@ ifs_5: {
 
 ifs_6: {
     options = {
+        comparisons: true,
         conditionals: true,
-        comparisons: true
-    };
+    }
     input: {
         var x, y;
         if (!foo && !bar && !baz && !boo) {
@@ -163,8 +163,8 @@ ifs_6: {
 
 cond_1: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         function foo(do_something, some_condition) {
             if (some_condition) {
@@ -189,8 +189,8 @@ cond_1: {
 
 cond_2: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         function foo(x, FooBar, some_condition) {
             if (some_condition) {
@@ -209,8 +209,8 @@ cond_2: {
 
 cond_3: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         var FooBar;
         if (some_condition()) {
@@ -227,8 +227,8 @@ cond_3: {
 
 cond_4: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         var do_something;
         if (some_condition()) {
@@ -251,8 +251,8 @@ cond_4: {
 
 cond_5: {
     options = {
-        conditionals: true
-    };
+        conditionals: true,
+    }
     input: {
         if (some_condition()) {
             if (some_other_condition()) {
@@ -279,9 +279,9 @@ cond_5: {
 cond_7: {
     options = {
         conditionals: true,
-        evaluate    : true,
+        evaluate: true,
         side_effects: true,
-    };
+    }
     input: {
         var x, y, z, a, b;
         // compress these
@@ -342,8 +342,8 @@ cond_7: {
 cond_7_1: {
     options = {
         conditionals: true,
-        evaluate    : true
-    };
+        evaluate: true,
+    }
     input: {
         var x;
         // access to global should be assumed to have side effects
@@ -361,10 +361,10 @@ cond_7_1: {
 
 cond_8: {
     options = {
+        booleans: false,
         conditionals: true,
-        evaluate    : true,
-        booleans    : false
-    };
+        evaluate: true,
+    }
     input: {
         var a;
         // compress these
@@ -445,10 +445,10 @@ cond_8: {
 
 cond_8b: {
     options = {
+        booleans: true,
         conditionals: true,
-        evaluate    : true,
-        booleans    : true
-    };
+        evaluate: true,
+    }
     input: {
         var a;
         // compress these
@@ -528,10 +528,10 @@ cond_8b: {
 
 cond_8c: {
     options = {
+        booleans: false,
         conditionals: true,
-        evaluate    : false,
-        booleans    : false
-    };
+        evaluate: false,
+    }
     input: {
         var a;
         // compress these
@@ -647,9 +647,21 @@ cond_9: {
 
 ternary_boolean_consequent: {
     options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
-        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
+        loops: true,
+        properties: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f1() { return a == b ? true : x; }
@@ -675,9 +687,21 @@ ternary_boolean_consequent: {
 
 ternary_boolean_alternative: {
     options = {
-        collapse_vars:true, sequences:true, properties:true, dead_code:true, conditionals:true,
-        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
+        loops: true,
+        properties: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         function f1() { return a == b ? x : true; }
@@ -778,11 +802,11 @@ trivial_boolean_ternary_expressions : {
 
 issue_1154: {
     options = {
+        booleans: true,
         conditionals: true,
-        evaluate    : true,
-        booleans    : true,
+        evaluate: true,
         side_effects: true,
-    };
+    }
     input: {
         function f1(x) { return x ? -1 : -1; }
         function f2(x) { return x ? +2 : +2; }
@@ -818,7 +842,7 @@ issue_1154: {
 no_evaluate: {
     options = {
         conditionals: true,
-        evaluate    : false,
+        evaluate: false,
         side_effects: true,
     }
     input: {

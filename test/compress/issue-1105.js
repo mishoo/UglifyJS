@@ -1,6 +1,6 @@
 with_in_global_scope: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         var o = 42;
@@ -18,7 +18,7 @@ with_in_global_scope: {
 }
 with_in_function_scope: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         function foo() {
@@ -40,7 +40,7 @@ with_in_function_scope: {
 }
 compress_with_with_in_other_scope: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         function foo() {
@@ -69,7 +69,7 @@ compress_with_with_in_other_scope: {
 }
 with_using_existing_variable_outside_scope: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         function f() {
@@ -99,7 +99,7 @@ with_using_existing_variable_outside_scope: {
 }
 check_drop_unused_in_peer_function: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         function outer() {
@@ -148,7 +148,7 @@ check_drop_unused_in_peer_function: {
 
 Infinity_not_in_with_scope: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         var o = { Infinity: 'oInfinity' };
@@ -164,7 +164,7 @@ Infinity_not_in_with_scope: {
 
 Infinity_in_with_scope: {
     options = {
-        unused: true
+        unused: true,
     }
     input: {
         var o = { Infinity: 'oInfinity' };
@@ -180,19 +180,19 @@ Infinity_in_with_scope: {
 
 assorted_Infinity_NaN_undefined_in_with_scope: {
     options = {
-        unused:        true,
-        evaluate:      true,
-        dead_code:     true,
-        conditionals:  true,
-        comparisons:   true,
-        booleans:      true,
-        hoist_funs:    true,
-        keep_fargs:    true,
-        if_return:     true,
-        join_vars:     true,
-        side_effects:  true,
-        sequences:     false,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
         keep_infinity: false,
+        sequences: false,
+        side_effects: true,
+        unused: true,
     }
     input: {
         var f = console.log;
@@ -242,19 +242,19 @@ assorted_Infinity_NaN_undefined_in_with_scope: {
 
 assorted_Infinity_NaN_undefined_in_with_scope_keep_infinity: {
     options = {
-        unused:        true,
-        evaluate:      true,
-        dead_code:     true,
-        conditionals:  true,
-        comparisons:   true,
-        booleans:      true,
-        hoist_funs:    true,
-        keep_fargs:    true,
-        if_return:     true,
-        join_vars:     true,
-        side_effects:  true,
-        sequences:     false,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
         keep_infinity: true,
+        sequences: false,
+        side_effects: true,
+        unused: true,
     }
     input: {
         var f = console.log;

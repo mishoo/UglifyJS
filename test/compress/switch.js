@@ -820,8 +820,8 @@ issue_1758: {
 
 issue_2535: {
     options = {
-        evaluate: true,
         dead_code: true,
+        evaluate: true,
         switches: true,
     }
     input: {

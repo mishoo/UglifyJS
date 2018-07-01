@@ -1,6 +1,8 @@
 do_not_update_lhs: {
     options = {
-        global_defs: { DEBUG: 0 }
+        global_defs: {
+            DEBUG: 0,
+        },
     }
     input: {
         DEBUG++;
@@ -16,7 +18,9 @@ do_not_update_lhs: {
 
 do_update_rhs: {
     options = {
-        global_defs: { DEBUG: 0 }
+        global_defs: {
+            DEBUG: 0,
+        },
     }
     input: {
         MY_DEBUG = DEBUG;
@@ -35,7 +39,7 @@ mixed: {
             DEBUG: 0,
             ENV: 1,
             FOO: 2,
-        }
+        },
     }
     input: {
         var ENV = 3;
@@ -60,11 +64,11 @@ mixed: {
         x = 0;
     }
     expect_warnings: [
-        'WARN: global_defs ENV redefined [test/compress/issue-208.js:41,12]',
-        'WARN: global_defs FOO redefined [test/compress/issue-208.js:42,12]',
-        'WARN: global_defs FOO redefined [test/compress/issue-208.js:44,10]',
-        'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:45,8]',
-        'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:46,8]',
-        'WARN: global_defs DEBUG redefined [test/compress/issue-208.js:47,8]',
+        "WARN: global_defs ENV redefined [test/compress/issue-208.js:45,12]",
+        "WARN: global_defs FOO redefined [test/compress/issue-208.js:46,12]",
+        "WARN: global_defs FOO redefined [test/compress/issue-208.js:48,10]",
+        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:49,8]",
+        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:50,8]",
+        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:51,8]",
     ]
 }

@@ -28,12 +28,12 @@ cond_5: {
 
 dead_code_const_annotation_regex: {
     options = {
-        booleans     : true,
-        conditionals : true,
-        dead_code    : true,
-        evaluate     : true,
-        expression   : true,
-        loops        : true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        expression: true,
+        loops: true,
     }
     input: {
         var unused;
@@ -82,8 +82,8 @@ drop_value: {
 
 wrongly_optimized: {
     options = {
-        conditionals: true,
         booleans: true,
+        conditionals: true,
         evaluate: true,
         expression: true,
     }
@@ -195,7 +195,7 @@ negate_iife_5_off: {
         expression: true,
         negate_iife: false,
         sequences: true,
-    };
+    }
     input: {
         if ((function(){ return t })()) {
             foo(true);
@@ -248,7 +248,9 @@ issue_1254_negate_iife_nested: {
 conditional: {
     options = {
         expression: true,
-        pure_funcs: [ "pure" ],
+        pure_funcs: [
+            "pure"
+        ],
         side_effects: true,
     }
     input: {

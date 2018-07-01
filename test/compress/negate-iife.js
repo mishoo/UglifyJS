@@ -1,7 +1,7 @@
 negate_iife_1: {
     options = {
-        negate_iife: true
-    };
+        negate_iife: true,
+    }
     input: {
         (function(){ stuff() })();
     }
@@ -13,7 +13,7 @@ negate_iife_1: {
 negate_iife_1_off: {
     options = {
         negate_iife: false,
-    };
+    }
     input: {
         (function(){ stuff() })();
     }
@@ -24,7 +24,7 @@ negate_iife_2: {
     options = {
         inline: true,
         negate_iife: true,
-    };
+    }
     input: {
         (function(){ return {} })().x = 10;
     }
@@ -45,9 +45,9 @@ negate_iife_2_side_effects: {
 
 negate_iife_3: {
     options = {
+        conditionals: true,
         negate_iife: true,
-        conditionals: true
-    };
+    }
     input: {
         (function(){ return t })() ? console.log(true) : console.log(false);
     }
@@ -88,9 +88,9 @@ negate_iife_3_side_effects: {
 
 negate_iife_3_off: {
     options = {
-        negate_iife: false,
         conditionals: true,
-    };
+        negate_iife: false,
+    }
     input: {
         (function(){ return t })() ? console.log(true) : console.log(false);
     }
@@ -117,10 +117,10 @@ negate_iife_3_off_evaluate: {
 
 negate_iife_4: {
     options = {
-        negate_iife: true,
         conditionals: true,
-        sequences: true
-    };
+        negate_iife: true,
+        sequences: true,
+    }
     input: {
         (function(){ return t })() ? console.log(true) : console.log(false);
         (function(){
@@ -136,11 +136,11 @@ negate_iife_4: {
 
 sequence_off: {
     options = {
-        negate_iife: false,
         conditionals: true,
-        sequences: true,
+        negate_iife: false,
         passes: 2,
-    };
+        sequences: true,
+    }
     input: {
         function f() {
             (function(){ return t })() ? console.log(true) : console.log(false);
@@ -171,10 +171,10 @@ sequence_off: {
 
 negate_iife_5: {
     options = {
+        conditionals: true,
         negate_iife: true,
         sequences: true,
-        conditionals: true,
-    };
+    }
     input: {
         if ((function(){ return t })()) {
             foo(true);
@@ -194,10 +194,10 @@ negate_iife_5: {
 
 negate_iife_5_off: {
     options = {
+        conditionals: true,
         negate_iife: false,
         sequences: true,
-        conditionals: true,
-    };
+    }
     input: {
         if ((function(){ return t })()) {
             foo(true);
@@ -217,10 +217,10 @@ negate_iife_5_off: {
 
 negate_iife_nested: {
     options = {
+        conditionals: true,
         negate_iife: true,
         sequences: true,
-        conditionals: true,
-    };
+    }
     input: {
         function Foo(f) {
             this.f = f;
@@ -250,10 +250,10 @@ negate_iife_nested: {
 
 negate_iife_nested_off: {
     options = {
+        conditionals: true,
         negate_iife: false,
         sequences: true,
-        conditionals: true,
-    };
+    }
     input: {
         function Foo(f) {
             this.f = f;
@@ -283,10 +283,10 @@ negate_iife_nested_off: {
 
 negate_iife_issue_1073: {
     options = {
+        conditionals: true,
         negate_iife: true,
         sequences: true,
-        conditionals: true,
-    };
+    }
     input: {
         new (function(a) {
             return function Foo() {
@@ -356,7 +356,7 @@ issue_1288: {
         conditionals: true,
         negate_iife: true,
         side_effects: false,
-    };
+    }
     input: {
         if (w) ;
         else {

@@ -125,8 +125,8 @@ label_do: {
 
 label_while: {
     options = {
-        evaluate: true,
         dead_code: true,
+        evaluate: true,
         loops: true,
     }
     input: {

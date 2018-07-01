@@ -1,16 +1,16 @@
 string_plus_optimization: {
     options = {
-        side_effects  : true,
-        evaluate      : true,
-        conditionals  : true,
-        comparisons   : true,
-        dead_code     : true,
-        booleans      : true,
-        unused        : true,
-        if_return     : true,
-        join_vars     : true,
-        hoist_funs    : true,
-    };
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        side_effects: true,
+        unused: true,
+    }
     input: {
         function foo(anything) {
             function throwing_function() {

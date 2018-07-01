@@ -1,14 +1,14 @@
 pure_function_calls: {
     options = {
-        evaluate     : true,
-        conditionals : true,
-        comparisons  : true,
-        side_effects : true,
-        booleans     : true,
-        unused       : true,
-        if_return    : true,
-        join_vars    : true,
-        negate_iife  : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true,
+        negate_iife: true,
+        side_effects: true,
+        unused: true,
     }
     input: {
         // pure top-level IIFE will be dropped
@@ -60,16 +60,16 @@ pure_function_calls: {
 
 pure_function_calls_toplevel: {
     options = {
-        evaluate     : true,
-        conditionals : true,
-        comparisons  : true,
-        side_effects : true,
-        booleans     : true,
-        unused       : true,
-        if_return    : true,
-        join_vars    : true,
-        negate_iife  : true,
-        toplevel     : true,
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true,
+        negate_iife: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
     }
     input: {
         // pure top-level IIFE will be dropped

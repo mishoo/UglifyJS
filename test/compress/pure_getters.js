@@ -187,10 +187,10 @@ issue_2110_1: {
     options = {
         collapse_vars: true,
         pure_getters: "strict",
-        sequences: true,
-        side_effects: true,
         reduce_funcs: true,
         reduce_vars: true,
+        sequences: true,
+        side_effects: true,
         unused: true,
     }
     input: {

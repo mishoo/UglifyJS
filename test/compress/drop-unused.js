@@ -1,5 +1,8 @@
 unused_funarg_1: {
-    options = { unused: true, keep_fargs: false };
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
     input: {
         function f(a, b, c, d, e) {
             return a + b;
@@ -13,7 +16,10 @@ unused_funarg_1: {
 }
 
 unused_funarg_2: {
-    options = { unused: true, keep_fargs: false };
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
     input: {
         function f(a, b, c, d, e) {
             return a + c;
@@ -27,7 +33,9 @@ unused_funarg_2: {
 }
 
 unused_nested_function: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function f(x, y) {
             function g() {
@@ -44,7 +52,9 @@ unused_nested_function: {
 }
 
 unused_circular_references_1: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function f(x, y) {
             // circular reference
@@ -65,7 +75,9 @@ unused_circular_references_1: {
 }
 
 unused_circular_references_2: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function f(x, y) {
             var foo = 1, bar = baz, baz = foo + bar, qwe = moo();
@@ -81,7 +93,9 @@ unused_circular_references_2: {
 }
 
 unused_circular_references_3: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function f(x, y) {
             var g = function() { return h() };
@@ -97,7 +111,9 @@ unused_circular_references_3: {
 }
 
 unused_keep_setter_arg: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         var x = {
             _foo: null,
@@ -121,7 +137,9 @@ unused_keep_setter_arg: {
 }
 
 unused_var_in_catch: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function foo() {
             try {
@@ -141,7 +159,9 @@ unused_var_in_catch: {
 }
 
 used_var_in_catch: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function foo() {
             try {
@@ -165,7 +185,11 @@ used_var_in_catch: {
 }
 
 keep_fnames: {
-    options = { unused: true, keep_fnames: true, unsafe: true };
+    options = {
+        keep_fnames: true,
+        unsafe: true,
+        unused: true,
+    }
     input: {
         function foo() {
             return function bar(baz) {};
@@ -367,7 +391,7 @@ drop_toplevel_vars_fargs: {
 drop_toplevel_all: {
     options = {
         toplevel: true,
-        unused: true
+        unused: true,
     }
     input: {
         var a, b = 1, c = g;
@@ -418,7 +442,11 @@ drop_toplevel_retain: {
 
 drop_toplevel_retain_array: {
     options = {
-        top_retain: [ "f", "a", "o" ],
+        top_retain: [
+            "f",
+            "a",
+            "o"
+        ],
         unused: true,
     }
     input: {
@@ -476,8 +504,8 @@ drop_toplevel_retain_regex: {
 
 drop_toplevel_all_retain: {
     options = {
-        toplevel: true,
         top_retain: "f,a,o",
+        toplevel: true,
         unused: true,
     }
     input: {
@@ -506,8 +534,8 @@ drop_toplevel_all_retain: {
 
 drop_toplevel_funcs_retain: {
     options = {
-        toplevel: "funcs",
         top_retain: "f,a,o",
+        toplevel: "funcs",
         unused: true,
     }
     input: {
@@ -537,8 +565,8 @@ drop_toplevel_funcs_retain: {
 
 drop_toplevel_vars_retain: {
     options = {
-        toplevel: "vars",
         top_retain: "f,a,o",
+        toplevel: "vars",
         unused: true,
     }
     input: {
@@ -1377,9 +1405,9 @@ issue_2516_1: {
 issue_2516_2: {
     options = {
         collapse_vars: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
-        passes: 2,
         unused: true,
     }
     input: {

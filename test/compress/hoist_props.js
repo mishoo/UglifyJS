@@ -1,8 +1,8 @@
 issue_2377_1: {
     options = {
         evaluate: true,
-        inline: true,
         hoist_props: true,
+        inline: true,
         reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
@@ -33,8 +33,8 @@ issue_2377_1: {
 issue_2377_2: {
     options = {
         evaluate: true,
-        inline: true,
         hoist_props: true,
+        inline: true,
         passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
@@ -64,8 +64,8 @@ issue_2377_2: {
 issue_2377_3: {
     options = {
         evaluate: true,
-        inline: true,
         hoist_props: true,
+        inline: true,
         passes: 4,
         reduce_funcs: true,
         reduce_vars: true,
@@ -416,7 +416,10 @@ issue_2473_1: {
     options = {
         hoist_props: false,
         reduce_vars: true,
-        top_retain: [ "x", "y" ],
+        top_retain: [
+            "x",
+            "y"
+        ],
         toplevel: true,
         unused: true,
     }
@@ -435,7 +438,10 @@ issue_2473_2: {
     options = {
         hoist_props: true,
         reduce_vars: true,
-        top_retain: [ "x", "y" ],
+        top_retain: [
+            "x",
+            "y"
+        ],
         toplevel: true,
         unused: true,
     }
@@ -746,9 +752,9 @@ issue_3046: {
 issue_3071_1: {
     options = {
         evaluate: true,
+        hoist_props: true,
         inline: true,
         join_vars: true,
-        hoist_props: true,
         passes: 3,
         reduce_vars: true,
         sequences: true,
@@ -773,9 +779,9 @@ issue_3071_1: {
 issue_3071_2: {
     options = {
         evaluate: true,
+        hoist_props: true,
         inline: true,
         join_vars: true,
-        hoist_props: true,
         passes: 3,
         reduce_vars: true,
         sequences: true,
@@ -800,9 +806,9 @@ issue_3071_2: {
 issue_3071_2_toplevel: {
     options = {
         evaluate: true,
+        hoist_props: true,
         inline: true,
         join_vars: true,
-        hoist_props: true,
         passes: 3,
         reduce_vars: true,
         sequences: true,

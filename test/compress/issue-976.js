@@ -1,9 +1,21 @@
 eval_collapse_vars: {
     options = {
-        collapse_vars:true, sequences:false, properties:true, dead_code:true, conditionals:true,
-        comparisons:true, evaluate:true, booleans:true, loops:true, unused:true, hoist_funs:true,
-        keep_fargs:true, if_return:true, join_vars:true, side_effects:true
-    };
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
+        loops: true,
+        properties: true,
+        sequences: false,
+        side_effects: true,
+        unused: true,
+    }
     input: {
         function f1() {
             var e = 7;
@@ -46,7 +58,10 @@ eval_collapse_vars: {
 }
 
 eval_unused: {
-    options = { unused: true, keep_fargs: false };
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
     input: {
         function f1(a, eval, c, d, e) {
             return a('c') + eval;

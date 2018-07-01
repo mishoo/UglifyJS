@@ -1,7 +1,7 @@
 make_sequences_1: {
     options = {
-        sequences: true
-    };
+        sequences: true,
+    }
     input: {
         foo();
         bar();
@@ -14,8 +14,8 @@ make_sequences_1: {
 
 make_sequences_2: {
     options = {
-        sequences: true
-    };
+        sequences: true,
+    }
     input: {
         if (boo) {
             foo();
@@ -35,8 +35,8 @@ make_sequences_2: {
 
 make_sequences_3: {
     options = {
-        sequences: true
-    };
+        sequences: true,
+    }
     input: {
         function f() {
             foo();
@@ -61,8 +61,8 @@ make_sequences_3: {
 
 make_sequences_4: {
     options = {
-        sequences: true
-    };
+        sequences: true,
+    }
     input: {
         x = 5;
         if (y) z();
@@ -90,7 +90,9 @@ make_sequences_4: {
 }
 
 lift_sequences_1: {
-    options = { sequences: true };
+    options = {
+        sequences: true,
+    }
     input: {
         var foo, x, y, bar;
         foo = !(x(), y(), bar());
@@ -102,7 +104,10 @@ lift_sequences_1: {
 }
 
 lift_sequences_2: {
-    options = { sequences: true, evaluate: true };
+    options = {
+        evaluate: true,
+        sequences: true,
+    }
     input: {
         var foo = 1, bar;
         foo.x = (foo = {}, 10);
@@ -119,7 +124,10 @@ lift_sequences_2: {
 }
 
 lift_sequences_3: {
-    options = { sequences: true, conditionals: true };
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
     input: {
         var x, foo, bar, baz;
         x = (foo(), bar(), baz()) ? 10 : 20;
@@ -131,7 +139,9 @@ lift_sequences_3: {
 }
 
 lift_sequences_4: {
-    options = { side_effects: true };
+    options = {
+        side_effects: true,
+    }
     input: {
         var x, foo, bar, baz;
         x = (foo, bar, baz);
@@ -160,7 +170,9 @@ lift_sequences_5: {
 }
 
 for_sequences: {
-    options = { sequences: true };
+    options = {
+        sequences: true,
+    }
     input: {
         // 1
         foo();
@@ -203,7 +215,7 @@ for_sequences: {
 limit_1: {
     options = {
         sequences: 3,
-    };
+    }
     input: {
         a;
         b;
@@ -228,7 +240,7 @@ limit_1: {
 limit_2: {
     options = {
         sequences: 3,
-    };
+    }
     input: {
         a, b;
         c, d;
@@ -246,9 +258,9 @@ limit_2: {
 
 negate_iife_for: {
     options = {
-        sequences: true,
         negate_iife: true,
-    };
+        sequences: true,
+    }
     input: {
         (function() {})();
         for (i = 0; i < 5; i++) console.log(i);
@@ -265,7 +277,7 @@ negate_iife_for: {
 iife: {
     options = {
         sequences: true,
-    };
+    }
     input: {
         x = 42;
         (function a() {})();

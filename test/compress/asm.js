@@ -1,24 +1,24 @@
 asm_mixed: {
     options = {
-        sequences     : true,
-        properties    : true,
-        dead_code     : true,
-        drop_debugger : true,
-        conditionals  : true,
-        comparisons   : true,
-        evaluate      : true,
-        booleans      : true,
-        loops         : true,
-        unused        : true,
-        hoist_funs    : true,
-        keep_fargs    : true,
-        keep_fnames   : false,
-        hoist_vars    : true,
-        if_return     : true,
-        join_vars     : true,
-        side_effects  : true,
-        negate_iife   : true
-    };
+        booleans: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        drop_debugger: true,
+        evaluate: true,
+        hoist_funs: true,
+        hoist_vars: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
+        keep_fnames: false,
+        loops: true,
+        negate_iife: true,
+        properties: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
     input: {
         // adapted from http://asmjs.org/spec/latest/
         function asm_GeometricMean(stdlib, foreign, buffer) {
