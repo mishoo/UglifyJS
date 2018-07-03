@@ -666,3 +666,48 @@ issue_3197_2_ie8: {
     }
     expect_stdout: "true"
 }
+
+issue_3206_1: {
+    options = {
+        evaluate: true,
+        ie8: false,
+        reduce_vars: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var foo = function bar() {};
+            return "function" == typeof bar;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            return "function" == typeof bar;
+        }());
+    }
+    expect_stdout: "false"
+}
+
+issue_3206_2: {
+    options = {
+        evaluate: true,
+        ie8: true,
+        reduce_vars: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var foo = function bar() {};
+            return "function" == typeof bar;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            (function bar() {});
+            return "function" == typeof bar;
+        }());
+    }
+    expect_stdout: "false"
+}
