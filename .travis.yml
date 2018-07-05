@@ -1,14 +1,34 @@
-language: node_js
-node_js:
-    - "0.10"
-    - "0.12"
-    - "4"
-    - "6"
-    - "8"
-env:
-    - UGLIFYJS_TEST_ALL=1
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libstdc++-4.9-dev
+cache:
+  directories: tmp
+language: generic
 matrix:
   fast_finish: true
 sudo: false
-cache:
-  directories: tmp
+env:
+  global:
+    - UGLIFYJS_TEST_ALL=1
+  matrix:
+    - NODEJS_VER=node/0.10
+    - NODEJS_VER=node/0.12
+    - NODEJS_VER=node/4
+    - NODEJS_VER=node/6
+    - NODEJS_VER=node/8
+    - NODEJS_VER=node/latest
+before_install:
+  - git clone --branch v1.4.2 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
+  - . ~/.nvs/nvs.sh
+  - nvs --version
+install:
+  - nvs add $NODEJS_VER
+  - nvs use $NODEJS_VER
+  - node --version
+  - npm --version --no-update-notifier
+  - npm install --no-optional --no-save --no-update-notifier
+script:
+  - npm test --no-update-notifier
