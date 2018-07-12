@@ -93,6 +93,6 @@ regexp: {
 		RegExp("should", "fail");
 	}
 	expect_warnings: [
-		'WARN: Error converting RegExp("should","fail") [test/compress/issue-269.js:86,2]',
+		'WARN: Error converting RegExp("should","fail") [test/compress/issue-269.js:5,2]',
 	]
 }

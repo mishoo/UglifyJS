@@ -23,68 +23,200 @@ require("./mocha.js");
 
 /* -----[ utils ]----- */
 
-function tmpl() {
-    return U.string_template.apply(this, arguments);
+function evaluate(code) {
+    if (code instanceof U.AST_Node) code = make_code(code, { beautify: true });
+    return new Function("return(" + code + ")")();
 }
 
 function log() {
-    var txt = tmpl.apply(this, arguments);
-    console.log("%s", txt);
+    console.log("%s", tmpl.apply(null, arguments));
 }
 
-function log_directory(dir) {
-    log("*** Entering [{dir}]", { dir: dir });
+function make_code(ast, options) {
+    var stream = U.OutputStream(options);
+    ast.print(stream);
+    return stream.get();
 }
 
-function log_start_file(file) {
-    log("--- {file}", { file: file });
-}
-
-function log_test(name) {
-    log("    Running test [{name}]", { name: name });
-}
-
-function find_test_files(dir) {
-    return fs.readdirSync(dir).filter(function(name) {
-        return /\.js$/i.test(name);
-    });
-}
-
-function test_directory(dir) {
-    return path.resolve(tests_dir, dir);
-}
-
-function as_toplevel(input, mangle_options) {
-    if (!(input instanceof U.AST_BlockStatement))
-        throw new Error("Unsupported input syntax");
-    for (var i = 0; i < input.body.length; i++) {
-        var stat = input.body[i];
-        if (stat instanceof U.AST_SimpleStatement && stat.body instanceof U.AST_String)
-            input.body[i] = new U.AST_Directive(stat.body);
-        else break;
+function parse_test(file) {
+    var script = fs.readFileSync(file, "utf8");
+    // TODO try/catch can be removed after fixing https://github.com/mishoo/UglifyJS2/issues/348
+    try {
+        var ast = U.parse(script, {
+            filename: file
+        });
+    } catch (e) {
+        console.log("Caught error while parsing tests in " + file + "\n");
+        console.log(e);
+        throw e;
     }
-    var toplevel = new U.AST_Toplevel(input);
-    toplevel.figure_out_scope(mangle_options);
-    return toplevel;
+    var tests = {};
+    var tw = new U.TreeWalker(function(node, descend) {
+        if (node instanceof U.AST_LabeledStatement
+            && tw.parent() instanceof U.AST_Toplevel) {
+            var name = node.label.name;
+            if (name in tests) {
+                throw new Error('Duplicated test name "' + name + '" in ' + file);
+            }
+            tests[name] = get_one_test(name, node.body);
+            return true;
+        }
+        if (!(node instanceof U.AST_Toplevel)) croak(node);
+    });
+    ast.walk(tw);
+    return tests;
+
+    function croak(node) {
+        throw new Error(tmpl("Can't understand test file {file} [{line},{col}]\n{code}", {
+            file: file,
+            line: node.start.line,
+            col: node.start.col,
+            code: make_code(node, { beautify: false })
+        }));
+    }
+
+    function read_string(stat) {
+        if (stat.TYPE == "SimpleStatement") {
+            var body = stat.body;
+            switch(body.TYPE) {
+              case "String":
+                return body.value;
+              case "Array":
+                return body.elements.map(function(element) {
+                    if (element.TYPE !== "String")
+                        throw new Error("Should be array of strings");
+                    return element.value;
+                }).join("\n");
+            }
+        }
+        throw new Error("Should be string or array of strings");
+    }
+
+    function get_one_test(name, block) {
+        var test = { name: name, options: {} };
+        var tw = new U.TreeWalker(function(node, descend) {
+            if (node instanceof U.AST_Assign) {
+                if (!(node.left instanceof U.AST_SymbolRef)) {
+                    croak(node);
+                }
+                var name = node.left.name;
+                test[name] = evaluate(node.right);
+                return true;
+            }
+            if (node instanceof U.AST_LabeledStatement) {
+                var label = node.label;
+                assert.ok([
+                    "input",
+                    "expect",
+                    "expect_exact",
+                    "expect_warnings",
+                    "expect_stdout",
+                    "node_version",
+                ].indexOf(label.name) >= 0, tmpl("Unsupported label {name} [{line},{col}]", {
+                    name: label.name,
+                    line: label.start.line,
+                    col: label.start.col
+                }));
+                var stat = node.body;
+                if (label.name == "expect_exact" || label.name == "node_version") {
+                    test[label.name] = read_string(stat);
+                } else if (label.name == "expect_stdout") {
+                    var body = stat.body;
+                    if (body instanceof U.AST_Boolean) {
+                        test[label.name] = body.value;
+                    } else if (body instanceof U.AST_Call) {
+                        var ctor = global[body.expression.name];
+                        assert.ok(ctor === Error || ctor.prototype instanceof Error, tmpl("Unsupported expect_stdout format [{line},{col}]", {
+                            line: label.start.line,
+                            col: label.start.col
+                        }));
+                        test[label.name] = ctor.apply(null, body.args.map(function(node) {
+                            assert.ok(node instanceof U.AST_Constant, tmpl("Unsupported expect_stdout format [{line},{col}]", {
+                                line: label.start.line,
+                                col: label.start.col
+                            }));
+                            return node.value;
+                        }));
+                    } else {
+                        test[label.name] = read_string(stat) + "\n";
+                    }
+                } else {
+                    test[label.name] = stat;
+                }
+                return true;
+            }
+        });
+        block.walk(tw);
+        return test;
+    }
+}
+
+// Try to reminify original input with standard options
+// to see if it matches expect_stdout.
+function reminify(orig_options, input_code, input_formatted, expect_stdout) {
+    for (var i = 0; i < minify_options.length; i++) {
+        var options = JSON.parse(minify_options[i]);
+        if (options.compress) [
+            "keep_fargs",
+            "keep_fnames",
+        ].forEach(function(name) {
+            if (name in orig_options) {
+                options.compress[name] = orig_options[name];
+            }
+        });
+        var options_formatted = JSON.stringify(options, null, 4);
+        var result = U.minify(input_code, options);
+        if (result.error) {
+            log("!!! failed input reminify\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n--ERROR---\n{error}\n\n", {
+                input: input_formatted,
+                options: options_formatted,
+                error: result.error,
+            });
+            return false;
+        } else {
+            var stdout = run_code(result.code);
+            if (typeof expect_stdout != "string" && typeof stdout != "string" && expect_stdout.name == stdout.name) {
+                stdout = expect_stdout;
+            }
+            if (!sandbox.same_stdout(expect_stdout, stdout)) {
+                log("!!! failed running reminified input\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n---OUTPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                    input: input_formatted,
+                    options: options_formatted,
+                    output: result.code,
+                    expected_type: typeof expect_stdout == "string" ? "STDOUT" : "ERROR",
+                    expected: expect_stdout,
+                    actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                    actual: stdout,
+                });
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function run_code(code) {
+    var result = sandbox.run_code(code, true);
+    return typeof result == "string" ? result.replace(/\u001b\[\d+m/g, "") : result;
 }
 
 function run_compress_tests() {
-    var dir = test_directory("compress");
-    log_directory("compress");
-    var files = find_test_files(dir);
-    function test_file(file) {
-        log_start_file(file);
+    var dir = path.resolve(tests_dir, "compress");
+    fs.readdirSync(dir).filter(function(name) {
+        return /\.js$/i.test(name);
+    }).forEach(function(file) {
+        log("--- {file}", { file: file });
         function test_case(test) {
-            log_test(test.name);
+            log("    Running test [{name}]", { name: test.name });
             var output_options = test.beautify || {};
             var expect;
             if (test.expect) {
-                expect = make_code(as_toplevel(test.expect, test.mangle), output_options);
+                expect = make_code(to_toplevel(test.expect, test.mangle), output_options);
             } else {
                 expect = test.expect_exact;
             }
-            var input = as_toplevel(test.input, test.mangle);
-            var input_code = make_code(input, output_options);
+            var input = to_toplevel(test.input, test.mangle);
+            var input_code = make_code(input);
             var input_formatted = make_code(test.input, {
                 beautify: true,
                 quote_style: 3,
@@ -209,185 +341,27 @@ function run_compress_tests() {
                 failed_files[file] = 1;
             }
         }
-    }
-    files.forEach(function(file) {
-        test_file(file);
     });
 }
 
-function parse_test(file) {
-    var script = fs.readFileSync(file, "utf8");
-    // TODO try/catch can be removed after fixing https://github.com/mishoo/UglifyJS2/issues/348
-    try {
-        var ast = U.parse(script, {
-            filename: file
-        });
-    } catch (e) {
-        console.log("Caught error while parsing tests in " + file + "\n");
-        console.log(e);
-        throw e;
-    }
-    var tests = {};
-    var tw = new U.TreeWalker(function(node, descend) {
-        if (node instanceof U.AST_LabeledStatement
-            && tw.parent() instanceof U.AST_Toplevel) {
-            var name = node.label.name;
-            if (name in tests) {
-                throw new Error('Duplicated test name "' + name + '" in ' + file);
-            }
-            tests[name] = get_one_test(name, node.body);
-            return true;
-        }
-        if (!(node instanceof U.AST_Toplevel)) croak(node);
-    });
-    ast.walk(tw);
-    return tests;
-
-    function croak(node) {
-        throw new Error(tmpl("Can't understand test file {file} [{line},{col}]\n{code}", {
-            file: file,
-            line: node.start.line,
-            col: node.start.col,
-            code: make_code(node, { beautify: false })
-        }));
-    }
-
-    function read_string(stat) {
-        if (stat.TYPE == "SimpleStatement") {
-            var body = stat.body;
-            switch(body.TYPE) {
-              case "String":
-                return body.value;
-              case "Array":
-                return body.elements.map(function(element) {
-                    if (element.TYPE !== "String")
-                        throw new Error("Should be array of strings");
-                    return element.value;
-                }).join("\n");
-            }
-        }
-        throw new Error("Should be string or array of strings");
-    }
-
-    function get_one_test(name, block) {
-        var test = { name: name, options: {} };
-        var tw = new U.TreeWalker(function(node, descend) {
-            if (node instanceof U.AST_Assign) {
-                if (!(node.left instanceof U.AST_SymbolRef)) {
-                    croak(node);
-                }
-                var name = node.left.name;
-                test[name] = evaluate(node.right);
-                return true;
-            }
-            if (node instanceof U.AST_LabeledStatement) {
-                var label = node.label;
-                assert.ok(
-                    [
-                        "input",
-                        "expect",
-                        "expect_exact",
-                        "expect_warnings",
-                        "expect_stdout",
-                        "node_version",
-                    ].indexOf(label.name) >= 0,
-                    tmpl("Unsupported label {name} [{line},{col}]", {
-                        name: label.name,
-                        line: label.start.line,
-                        col: label.start.col
-                    })
-                );
-                var stat = node.body;
-                if (label.name == "expect_exact" || label.name == "node_version") {
-                    test[label.name] = read_string(stat);
-                } else if (label.name == "expect_stdout") {
-                    var body = stat.body;
-                    if (body instanceof U.AST_Boolean) {
-                        test[label.name] = body.value;
-                    } else if (body instanceof U.AST_Call) {
-                        var ctor = global[body.expression.name];
-                        assert.ok(ctor === Error || ctor.prototype instanceof Error, tmpl("Unsupported expect_stdout format [{line},{col}]", {
-                            line: label.start.line,
-                            col: label.start.col
-                        }));
-                        test[label.name] = ctor.apply(null, body.args.map(function(node) {
-                            assert.ok(node instanceof U.AST_Constant, tmpl("Unsupported expect_stdout format [{line},{col}]", {
-                                line: label.start.line,
-                                col: label.start.col
-                            }));
-                            return node.value;
-                        }));
-                    } else {
-                        test[label.name] = read_string(stat) + "\n";
-                    }
-                } else {
-                    test[label.name] = stat;
-                }
-                return true;
-            }
-        });
-        block.walk(tw);
-        return test;
-    };
+function tmpl() {
+    return U.string_template.apply(null, arguments);
 }
 
-function make_code(ast, options) {
-    var stream = U.OutputStream(options);
-    ast.print(stream);
-    return stream.get();
-}
-
-function evaluate(code) {
-    if (code instanceof U.AST_Node)
-        code = make_code(code, { beautify: true });
-    return new Function("return(" + code + ")")();
-}
-
-function run_code(code) {
-    var result = sandbox.run_code(code, true);
-    return typeof result == "string" ? result.replace(/\u001b\[\d+m/g, "") : result;
-}
-
-// Try to reminify original input with standard options
-// to see if it matches expect_stdout.
-function reminify(orig_options, input_code, input_formatted, expect_stdout) {
-    for (var i = 0; i < minify_options.length; i++) {
-        var options = JSON.parse(minify_options[i]);
-        if (options.compress) [
-            "keep_fargs",
-            "keep_fnames",
-        ].forEach(function(name) {
-            if (name in orig_options) {
-                options.compress[name] = orig_options[name];
-            }
-        });
-        var options_formatted = JSON.stringify(options, null, 4);
-        var result = U.minify(input_code, options);
-        if (result.error) {
-            log("!!! failed input reminify\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n--ERROR---\n{error}\n\n", {
-                input: input_formatted,
-                options: options_formatted,
-                error: result.error,
-            });
-            return false;
+function to_toplevel(input, mangle_options) {
+    if (!(input instanceof U.AST_BlockStatement)) throw new Error("Unsupported input syntax");
+    var directive = true;
+    var offset = input.start.line;
+    var tokens = [];
+    var toplevel = new U.AST_Toplevel(input.transform(new U.TreeTransformer(function(node) {
+        if (U.push_uniq(tokens, node.start)) node.start.line -= offset;
+        if (!directive || node === input) return;
+        if (node instanceof U.AST_SimpleStatement && node.body instanceof U.AST_String) {
+            return new U.AST_Directive(node.body);
         } else {
-            var stdout = run_code(result.code);
-            if (typeof expect_stdout != "string" && typeof stdout != "string" && expect_stdout.name == stdout.name) {
-                stdout = expect_stdout;
-            }
-            if (!sandbox.same_stdout(expect_stdout, stdout)) {
-                log("!!! failed running reminified input\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n---OUTPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                    input: input_formatted,
-                    options: options_formatted,
-                    output: result.code,
-                    expected_type: typeof expect_stdout == "string" ? "STDOUT" : "ERROR",
-                    expected: expect_stdout,
-                    actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                    actual: stdout,
-                });
-                return false;
-            }
+            directive = false;
         }
-    }
-    return true;
+    })));
+    toplevel.figure_out_scope(mangle_options);
+    return toplevel;
 }
