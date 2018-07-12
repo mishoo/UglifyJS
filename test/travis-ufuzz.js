@@ -15,6 +15,7 @@ if (process.argv[2] == "run") {
     var branch = process.argv[3] || "v" + require("../package.json").version;
     var repository = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
     var concurrency = process.argv[5] || 1;
+    var platform = process.argv[6] || "node/latest";
     (function request() {
         setTimeout(request, (period + wait) / concurrency);
         var options = url.parse("https://api.travis-ci.org/repo/" + repository + "/requests");
@@ -32,20 +33,18 @@ if (process.argv[2] == "run") {
             res.on("data", console.log);
         }).on("error", console.error).end(JSON.stringify({
             request: {
-                message: "ufuzz testing (when idle)",
+                message: "ufuzz testing",
                 branch: branch,
                 config: {
-                    merge_mode: "replace",
-                    language: "node_js",
-                    node_js: "9",
-                    sudo: false,
+                    cache: false,
+                    env: "NODEJS_VER=" + platform,
                     script: "node test/travis-ufuzz run"
                 }
             }
         }));
     })();
 } else {
-    console.log("Usage: test/travis-ufuzz.js <token> [branch] [repository] [concurrency]");
+    console.log("Usage: test/travis-ufuzz.js <token> [branch] [repository] [concurrency] [platform]");
 }
 
 function spawn(endTime) {
