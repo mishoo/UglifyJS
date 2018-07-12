@@ -64,11 +64,11 @@ mixed: {
         x = 0;
     }
     expect_warnings: [
-        "WARN: global_defs ENV redefined [test/compress/issue-208.js:45,12]",
-        "WARN: global_defs FOO redefined [test/compress/issue-208.js:46,12]",
-        "WARN: global_defs FOO redefined [test/compress/issue-208.js:48,10]",
-        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:49,8]",
-        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:50,8]",
-        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:51,8]",
+        "WARN: global_defs ENV redefined [test/compress/issue-208.js:1,12]",
+        "WARN: global_defs FOO redefined [test/compress/issue-208.js:2,12]",
+        "WARN: global_defs FOO redefined [test/compress/issue-208.js:4,10]",
+        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:5,8]",
+        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:6,8]",
+        "WARN: global_defs DEBUG redefined [test/compress/issue-208.js:7,8]",
     ]
 }

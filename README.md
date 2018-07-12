@@ -857,8 +857,8 @@ can pass additional arguments that control the code output:
   adjust for this text.  Can be used to insert a comment containing
   licensing information, for example.
 
-- `preserve_line` (default `false`) -- pass `true` to preserve lines, but it
-  only works if `beautify` is set to `false`.
+- `preserve_line` (default `false`) -- pass `true` to retain line numbering on
+  a best effort basis.
 
 - `quote_keys` (default `false`) -- pass `true` to quote all keys in literal
   objects

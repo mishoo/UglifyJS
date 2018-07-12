@@ -1199,7 +1199,7 @@ issue_2231_1: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Error evaluating Object.keys(void 0) [test/compress/evaluate.js:1195,20]",
+        "WARN: Error evaluating Object.keys(void 0) [test/compress/evaluate.js:1,20]",
     ]
 }
 
@@ -1216,7 +1216,7 @@ issue_2231_2: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Error evaluating Object.getOwnPropertyNames(null) [test/compress/evaluate.js:1212,20]",
+        "WARN: Error evaluating Object.getOwnPropertyNames(null) [test/compress/evaluate.js:1,20]",
     ]
 }
 
@@ -1354,14 +1354,14 @@ issue_2535_3: {
     }
     expect_stdout: true
     expect_warnings: [
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1340,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1341,20]",
-        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1342,20]",
-        "WARN: Condition left of && always false [test/compress/evaluate.js:1342,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1343,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1344,20]",
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:1345,20]",
-        "WARN: Condition left of || always true [test/compress/evaluate.js:1345,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:1,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:2,20]",
+        "WARN: Dropping side-effect-free && [test/compress/evaluate.js:3,20]",
+        "WARN: Condition left of && always false [test/compress/evaluate.js:3,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:4,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:5,20]",
+        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:6,20]",
+        "WARN: Condition left of || always true [test/compress/evaluate.js:6,20]",
     ]
 }
 

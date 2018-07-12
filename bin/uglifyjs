@@ -100,7 +100,7 @@ if (program.mangleProps) {
         if (typeof program.mangleProps != "object") program.mangleProps = {};
         if (!Array.isArray(program.mangleProps.reserved)) program.mangleProps.reserved = [];
         require("../tools/domprops").forEach(function(name) {
-            UglifyJS._push_uniq(program.mangleProps.reserved, name);
+            UglifyJS.push_uniq(program.mangleProps.reserved, name);
         });
     }
     if (typeof options.mangle != "object") options.mangle = {};
