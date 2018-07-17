@@ -5730,3 +5730,100 @@ issue_3096: {
     }
     expect_stdout: "ab"
 }
+
+issue_3215_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        ie8: false,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function a() {
+            var a = 42;
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log("number");
+    }
+    expect_stdout: "number"
+}
+
+issue_3215_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        ie8: true,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function a() {
+            var a = 42;
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log(function a() {
+            var a = 42;
+            return typeof a;
+        }());
+    }
+    expect_stdout: "number"
+}
+
+issue_3215_3: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        ie8: false,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = 42;
+            (function a() {});
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log("number");
+    }
+    expect_stdout: "number"
+}
+
+issue_3215_4: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        ie8: true,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = 42;
+            (function a() {});
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a = 42;
+            (function a() {});
+            return typeof a;
+        }());
+    }
+    expect_stdout: "number"
+}

@@ -16,6 +16,7 @@
     },
     {},
     {
+        "ie8": true,
         "toplevel": true
     },
     {

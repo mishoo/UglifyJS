@@ -458,8 +458,8 @@ issue_2976_2: {
     }
     expect: {
         console.log(function f() {
-            var n;
-            return n === f ? "FAIL" : "PASS";
+            var o;
+            return o === f ? "FAIL" : "PASS";
         }());
     }
     expect_stdout: "PASS"
@@ -477,9 +477,9 @@ issue_2976_3: {
         }());
     }
     expect: {
-        console.log(function o() {
-            var n;
-            return n === o ? "FAIL" : "PASS";
+        console.log(function r() {
+            var o;
+            return o === r ? "FAIL" : "PASS";
         }());
     }
     expect_stdout: "PASS"
@@ -678,6 +678,7 @@ issue_3206_1: {
     input: {
         console.log(function() {
             var foo = function bar() {};
+            var baz = function moo() {};
             return "function" == typeof bar;
         }());
     }
@@ -700,6 +701,7 @@ issue_3206_2: {
     input: {
         console.log(function() {
             var foo = function bar() {};
+            var baz = function moo() {};
             return "function" == typeof bar;
         }());
     }
@@ -710,4 +712,152 @@ issue_3206_2: {
         }());
     }
     expect_stdout: "false"
+}
+
+issue_3215_1: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        console.log(function foo() {
+            var bar = function bar(name) {
+                return "PASS";
+            };
+            try {
+                "moo";
+            } catch (e) {
+                bar = function bar(name) {
+                    return "FAIL";
+                };
+            }
+            return bar;
+        }()());
+    }
+    expect: {
+        console.log(function n() {
+            var o = function n(o) {
+                return "PASS";
+            };
+            try {
+                "moo";
+            } catch (n) {
+                o = function n(o) {
+                    return "FAIL";
+                };
+            }
+            return o;
+        }()());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3215_2: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        console.log(function foo() {
+            var bar = function bar(name) {
+                return "PASS";
+            };
+            try {
+                "moo";
+            } catch (e) {
+                bar = function bar(name) {
+                    return "FAIL";
+                };
+            }
+            return bar;
+        }()());
+    }
+    expect: {
+        console.log(function foo() {
+            var r = function r(o) {
+                return "PASS";
+            };
+            try {
+                "moo";
+            } catch (o) {
+                r = function r(o) {
+                    return "FAIL";
+                };
+            }
+            return r;
+        }()());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3215_3: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        console.log(function foo() {
+            var bar = function bar(name) {
+                return "FAIL";
+            };
+            try {
+                moo;
+            } catch (e) {
+                bar = function bar(name) {
+                    return "PASS";
+                };
+            }
+            return bar;
+        }()());
+    }
+    expect: {
+        console.log(function n() {
+            var o = function n(o) {
+                return "FAIL";
+            };
+            try {
+                moo;
+            } catch (n) {
+                o = function n(o) {
+                    return "PASS";
+                };
+            }
+            return o;
+        }()());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3215_4: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        console.log(function foo() {
+            var bar = function bar(name) {
+                return "FAIL";
+            };
+            try {
+                moo;
+            } catch (e) {
+                bar = function bar(name) {
+                    return "PASS";
+                };
+            }
+            return bar;
+        }()());
+    }
+    expect: {
+        console.log(function foo() {
+            var r = function r(o) {
+                return "FAIL";
+            };
+            try {
+                moo;
+            } catch (o) {
+                r = function r(o) {
+                    return "PASS";
+                };
+            }
+            return r;
+        }()());
+    }
+    expect_stdout: "PASS"
 }
