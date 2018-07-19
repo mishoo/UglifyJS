@@ -142,7 +142,6 @@ mixed: {
     }
     expect_warnings: [
         "WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:4,22]",
-        "WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:5,22]",
         "WARN: global_defs CONFIG.VALUE redefined [test/compress/global_defs.js:7,8]",
     ]
 }
@@ -195,5 +194,25 @@ issue_2167: {
     }
     expect: {
         doWork();
+    }
+}
+
+issue_3217: {
+    options = {
+        collapse_vars: true,
+        global_defs: {
+            "@o": "{fn:function(){var a=42;console.log(a)}}",
+        },
+        inline: true,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        o.fn();
+    }
+    expect: {
+        console.log(42);
     }
 }
