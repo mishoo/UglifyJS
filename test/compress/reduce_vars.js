@@ -5231,11 +5231,11 @@ defun_catch_4: {
         try {
             throw 42;
         } catch (a) {
-            function a() {}
             console.log(a);
         }
     }
-    expect_stdout: true
+    expect_stdout: "42"
+    node_version: "<=4"
 }
 
 defun_catch_5: {
@@ -5257,10 +5257,10 @@ defun_catch_5: {
             throw 42;
         } catch (a) {
             console.log(a);
-            function a() {}
         }
     }
-    expect_stdout: true
+    expect_stdout: "42"
+    node_version: "<=4"
 }
 
 defun_catch_6: {
