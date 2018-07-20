@@ -1,0 +1,1 @@
+{"version":3,"file":"infer2.js","sourceRoot":"","sources":["infer2.ts"],"names":[],"mappings":"AAAA,OAAO,CAAC,GAAG,CAAC,WAAW,CAAC,CAAC","sourcesContent":["console.log('infer2.js');"]}

@@ -12,7 +12,7 @@ var failures = 0;
 var failed_files = {};
 var minify_options = require("./ufuzz.json").map(JSON.stringify);
 
-run_compress_tests();
+if (!process.env.SKIP_COMPRESS_TESTS) run_compress_tests();
 if (failures) {
     console.error("\n!!! Failed " + failures + " test cases.");
     console.error("!!! " + Object.keys(failed_files).join(", "));

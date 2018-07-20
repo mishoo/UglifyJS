@@ -5,6 +5,7 @@
 
 require("../tools/exit");
 
+var execSync = require("child_process").execSync;
 var fs = require("fs");
 var info = require("../package.json");
 var path = require("path");
@@ -179,7 +180,7 @@ function run() {
         print_error("WARN: " + msg);
     };
     var content = program.sourceMap && program.sourceMap.content;
-    if (content && content != "inline") {
+    if (content && content != "inline" && content != "auto") {
         print_error("INFO: Using input source map: " + content);
         options.sourceMap.content = read_file(content, content);
     }
@@ -205,6 +206,59 @@ function run() {
         }
     } catch (ex) {
         fatal(ex);
+    }
+    if (content == "auto") {
+        function to_ascii(b64) {
+            return new Buffer(b64, "base64").toString();
+        }
+
+        function resolve_source_map_content(name, code) {
+            var sourceMappingURLMatch = /\n\/\/# sourceMappingURL=(.*)/.exec(code);
+            var sourceMappingURL = sourceMappingURLMatch ? sourceMappingURLMatch[1] : null;
+            
+            if (!sourceMappingURL) {
+                // infer
+                if (fs.existsSync(name + '.map')) {
+                    return read_file(name + '.map');
+                }
+                if (name.endsWith('.js') && fs.existsSync(name.slice(0, -2) + 'map')) {
+                    return read_file(name.slice(0, -2) + 'map');
+                }
+                return;
+            }
+
+            if (sourceMappingURL.startsWith('data:application')) {
+                var match = /data:application\/json(;.*?)?;base64,(.*)/.exec(sourceMappingURL);
+                return to_ascii(match[2]);
+            }
+
+            if (sourceMappingURL.startsWith('http')) {
+                try {
+                    return execSync('curl -s ' + sourceMappingURL).toString();
+                } catch (ex) {
+                    fatal(ex);
+                }
+            }
+
+            return read_file(path.join(path.dirname(name), sourceMappingURL));
+        }
+
+        // read source map content locations given via CLI
+        // contents=file1.js*file1.js.map|file2.js*path/to/map.js.map|...
+        var contents = {};
+        if (options.sourceMap.contents) options.sourceMap.contents.replace(/([^|*]+)=([^|]+)/g, function(_, x, y) {
+            contents[x] = read_file(y, y);
+        });
+
+        // attempt to resolve the remaining
+        for (var name in files) if (!contents[name]) {
+            var content = resolve_source_map_content(name, files[name]);
+            if (content) {
+                contents[name] = content;
+            }
+        }
+
+        options.sourceMap.contents = contents;
     }
     var result = UglifyJS.minify(files, options);
     if (result.error) {

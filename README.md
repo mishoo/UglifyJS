@@ -118,8 +118,11 @@ a double dash to prevent input files being used as option arguments:
                                 `base`  Path to compute relative paths from input files.
                                 `content`  Input source map, useful if you're compressing
                                            JS that was generated from some other original
-                                           code. Specify "inline" if the source map is
-                                           included within the sources.
+                                           code. Specify "auto" to enable automatic source
+                                           map resolution. Specify "inline" if the source map
+                                           is included within the sources only as base64 strings.
+                                `contents` Provide overrides for the auto source map resolution
+                                           strategy. See "Composed source map" below.
                                 `filename`  Filename and/or location of the output source
                                             (sets `file` attribute in source map).
                                 `includeSources`  Pass this flag if you want to include
@@ -185,9 +188,19 @@ CoffeeScript → compiled JS, UglifyJS can generate a map from CoffeeScript →
 compressed JS by mapping every token in the compiled JS to its original
 location.
 
-To use this feature pass `--source-map "content='/path/to/input/source.map'"`
-or `--source-map "content=inline"` if the source map is included inline with
-the sources.
+The easiest way to compose source maps is to use the `--source-map "content=auto"`
+option. If an input file specifies a sourceMappingURL comment, the source map will be fetched.
+If there is no comment, given an input file of `src/file.js`, the map will be looked for
+at `src/file.js.map` and `src/file.map`. Maps can fetched via HTTP too.
+
+If easier to specify the link manually, you can use the `--source-map "contents=..."` option.
+The format looks like this: `contents=file1.js*file1.js.map|file2.js*path/to/map.js.map|...`.
+These source map locations will take precedence over the auto resolution strategy.
+
+Previous versions of UglifyJS provided partial support for this via the
+`--source-map "content=inline"` option (only looking for base64 inline maps)
+and `--source-map "content='/path/to/input/source.map'"` (only supporting one file).
+These options still work, but "auto" is recommended.
 
 ## CLI compress options
 

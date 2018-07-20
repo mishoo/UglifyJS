@@ -249,6 +249,35 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should infer source maps in auto mode", function(done) {
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-3219/file.js",
+            "test/input/issue-3219/http.js",
+            "test/input/issue-3219/infer1.js",
+            "test/input/issue-3219/infer2.js",
+            "test/input/issue-3219/inline.js",
+            "--source-map", "content=auto,includeSources=true,url=inline",
+        ].join(" ");
+        exec(command, {maxBuffer: 1024 * 300}, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, read("test/input/issue-3219/output1.js"));
+            done();
+        });
+    });
+    it("Should prefer CLI source map locations over auto resolution strategy", function(done) {
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-3219/file2.js",
+            "test/input/issue-3219/file3.js",
+            "--source-map", "'content=auto,contents=test/input/issue-3219/file2.js*test/input/issue-3219/mapping2.js.map|test/input/issue-3219/file3.js*test/input/issue-3219/mapping3.js.map,includeSources=true,url=inline'",
+        ].join(" ");
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, read("test/input/issue-3219/output2.js"));
+            done();
+        });
+    });
     it("Should fail with invalid syntax", function(done) {
         var command = uglifyjscmd + ' test/input/invalid/simple.js';
         exec(command, function(err, stdout, stderr) {

@@ -19,7 +19,7 @@ it = function(title, fn) {
     fn.limit = config.limit;
     fn.titles = titles.slice();
     fn.titles.push(title);
-    tasks.push(fn);
+    if (!process.env.MOCHA_GREP || new RegExp(process.env.MOCHA_GREP).test(title)) tasks.push(fn);
 };
 
 fs.readdirSync("test/mocha").filter(function(file) {
