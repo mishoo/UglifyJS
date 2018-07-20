@@ -208,11 +208,11 @@ function run() {
         fatal(ex);
     }
     if (content == "auto") {
-        function to_ascii(b64) {
+        var to_ascii = function(b64) {
             return new Buffer(b64, "base64").toString();
-        }
+        };
 
-        function resolve_source_map_content(name, code) {
+        var resolve_source_map_content = function(name, code) {
             var sourceMappingURLMatch = /\n\/\/# sourceMappingURL=(.*)/.exec(code);
             var sourceMappingURL = sourceMappingURLMatch ? sourceMappingURLMatch[1] : null;
             
@@ -241,7 +241,7 @@ function run() {
             }
 
             return read_file(path.join(path.dirname(name), sourceMappingURL));
-        }
+        };
 
         // read source map content locations given via CLI
         // contents=file1.js*file1.js.map|file2.js*path/to/map.js.map|...
