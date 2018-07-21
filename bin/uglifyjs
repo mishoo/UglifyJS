@@ -221,18 +221,18 @@ function run() {
                 if (fs.existsSync(name + '.map')) {
                     return read_file(name + '.map');
                 }
-                if (name.endsWith('.js') && fs.existsSync(name.slice(0, -2) + 'map')) {
+                if (/\.js$/.test(name) && fs.existsSync(name.slice(0, -2) + 'map')) {
                     return read_file(name.slice(0, -2) + 'map');
                 }
                 return;
             }
 
-            if (sourceMappingURL.startsWith('data:application')) {
+            if (sourceMappingURL.indexOf('data:application') == 0) {
                 var match = /data:application\/json(;.*?)?;base64,(.*)/.exec(sourceMappingURL);
                 return to_ascii(match[2]);
             }
 
-            if (sourceMappingURL.startsWith('http')) {
+            if (sourceMappingURL.indexOf('http') == 0) {
                 try {
                     return execSync('curl -s ' + sourceMappingURL).toString();
                 } catch (ex) {
