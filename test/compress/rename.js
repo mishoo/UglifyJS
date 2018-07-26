@@ -534,3 +534,80 @@ function_catch_catch_ie8: {
         "undefined",
     ]
 }
+
+function_do_catch_ie8: {
+    rename = true
+    options = {
+        ie8: true,
+        side_effects: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1, b = 1, c = 0;
+        function d(e) {
+            var f, g, h, i;
+            do {
+                try {
+                    try {
+                        var j = function q(){}();
+                    } catch (r) {
+                        --a && w("ddddddddeeeeeeegggggggggiiiiilllllllnnnnntuuuuuuuuyyyyyyy");
+                        var k, l, m, n, o;
+                        --m;
+                        --n;
+                        --o;
+                    }
+                    try {
+                        i[1];
+                    } catch (s) {
+                        var p;
+                        switch (function t() {
+                            c++;
+                        }()) {
+                          case j + --p:
+                        }
+                    }
+                } catch (u) {}
+            } while (--i);
+            b--;
+        }
+        d();
+        console.log(b, c);
+    }
+    expect: {
+        var t = 1, u = 1, y = 0;
+        function c(c) {
+            var d;
+            do {
+                try {
+                    try {
+                        var e = void 0;
+                    } catch (i) {
+                        --t && w("ddddddddeeeeeeegggggggggiiiiilllllllnnnnntuuuuuuuuyyyyyyy");
+                        0;
+                        0;
+                        0;
+                    }
+                    try {
+                        d[1];
+                    } catch (l) {
+                        var g;
+                        switch(function x() {
+                            y++;
+                        }()) {
+                          case e + --g:
+                        }
+                    }
+                } catch (n) {}
+            } while (--d);
+            u--;
+        }
+        c();
+        console.log(u, y);
+    }
+    expect_stdout: "0 1"
+}
