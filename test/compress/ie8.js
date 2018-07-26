@@ -458,8 +458,8 @@ issue_2976_2: {
     }
     expect: {
         console.log(function f() {
-            var o;
-            return o === f ? "FAIL" : "PASS";
+            var n;
+            return n === f ? "FAIL" : "PASS";
         }());
     }
     expect_stdout: "PASS"
@@ -477,9 +477,9 @@ issue_2976_3: {
         }());
     }
     expect: {
-        console.log(function r() {
-            var o;
-            return o === r ? "FAIL" : "PASS";
+        console.log(function o() {
+            var n;
+            return n === o ? "FAIL" : "PASS";
         }());
     }
     expect_stdout: "PASS"
@@ -772,17 +772,17 @@ issue_3215_2: {
     }
     expect: {
         console.log(function foo() {
-            var r = function r(o) {
+            var o = function o(n) {
                 return "PASS";
             };
             try {
                 "moo";
-            } catch (o) {
-                r = function r(o) {
+            } catch (n) {
+                o = function o(n) {
                     return "FAIL";
                 };
             }
-            return r;
+            return o;
         }()());
     }
     expect_stdout: "PASS"
@@ -846,17 +846,17 @@ issue_3215_4: {
     }
     expect: {
         console.log(function foo() {
-            var r = function r(o) {
+            var o = function o(n) {
                 return "FAIL";
             };
             try {
                 moo;
-            } catch (o) {
-                r = function r(o) {
+            } catch (n) {
+                o = function o(n) {
                     return "PASS";
                 };
             }
-            return r;
+            return o;
         }()());
     }
     expect_stdout: "PASS"
