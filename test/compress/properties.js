@@ -1832,3 +1832,33 @@ issue_3188_3: {
     }
     expect_stdout: "PASS"
 }
+
+join_expr: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            var a = 0;
+            switch ((a = {}) && (a.b = 0)) {
+              case 0:
+                c = "PASS";
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function() {
+            var a = 0;
+            switch (a = { b: 0 }, a.b) {
+              case 0:
+                c = "PASS";
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
