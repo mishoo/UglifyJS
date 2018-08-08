@@ -236,32 +236,6 @@ issue_203: {
     expect_stdout: "42"
 }
 
-no_webkit: {
-    beautify = {
-        webkit: false,
-    }
-    input: {
-        console.log(function() {
-            1 + 1;
-        }.a = 1);
-    }
-    expect_exact: "console.log(function(){1+1}.a=1);"
-    expect_stdout: "1"
-}
-
-webkit: {
-    beautify = {
-        webkit: true,
-    }
-    input: {
-        console.log(function() {
-            1 + 1;
-        }.a = 1);
-    }
-    expect_exact: "console.log((function(){1+1}).a=1);"
-    expect_stdout: "1"
-}
-
 issue_2084: {
     options = {
         collapse_vars: true,
