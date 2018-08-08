@@ -25,30 +25,35 @@ if (typeof phantom == "undefined") {
         request.resume();
         var url = site + request.url;
         fetch(url, function(err, res) {
-            if (err) throw err;
-            response.writeHead(200, {
-                "Content-Type": {
-                    css: "text/css",
-                    js: "application/javascript",
-                    png: "image/png"
-                }[url.slice(url.lastIndexOf(".") + 1)] || "text/html; charset=utf-8"
-            });
-            if (/\.js$/.test(url)) {
-                var stderr = "";
-                var uglifyjs = child_process.fork("bin/uglifyjs", args, {
-                    silent: true
-                }).on("exit", function(code) {
-                    console.log("uglifyjs", url.slice(site.length + 1), args.join(" "));
-                    console.log(stderr);
-                    if (code) throw new Error("uglifyjs failed with code " + code);
-                });
-                uglifyjs.stderr.on("data", function(data) {
-                    stderr += data;
-                }).setEncoding("utf8");
-                uglifyjs.stdout.pipe(response);
-                res.pipe(uglifyjs.stdin);
+            if (err) {
+                if (typeof err != "number") throw err;
+                response.writeHead(err);
+                response.end();
             } else {
-                res.pipe(response);
+                response.writeHead(200, {
+                    "Content-Type": {
+                        css: "text/css",
+                        js: "application/javascript",
+                        png: "image/png"
+                    }[url.slice(url.lastIndexOf(".") + 1)] || "text/html; charset=utf-8"
+                });
+                if (/\.js$/.test(url)) {
+                    var stderr = "";
+                    var uglifyjs = child_process.fork("bin/uglifyjs", args, {
+                        silent: true
+                    }).on("exit", function(code) {
+                        console.log("uglifyjs", url.slice(site.length + 1), args.join(" "));
+                        console.log(stderr);
+                        if (code) throw new Error("uglifyjs failed with code " + code);
+                    });
+                    uglifyjs.stderr.on("data", function(data) {
+                        stderr += data;
+                    }).setEncoding("utf8");
+                    uglifyjs.stdout.pipe(response);
+                    res.pipe(uglifyjs.stdin);
+                } else {
+                    res.pipe(response);
+                }
             }
         });
     }).listen();
