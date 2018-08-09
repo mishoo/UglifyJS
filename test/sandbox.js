@@ -1,21 +1,6 @@
 var semver = require("semver");
 var vm = require("vm");
 
-function createContext() {
-    return vm.createContext(Object.defineProperty({}, "console", {
-        value: {
-            log: function(msg) {
-                if (arguments.length == 1 && typeof msg == "string") {
-                    return console.log("%s", msg);
-                }
-                return console.log.apply(console, [].map.call(arguments, function(arg) {
-                    return safe_log(arg, 3);
-                }));
-            }
-        }
-    }));
-}
-
 function safe_log(arg, level) {
     if (arg) switch (typeof arg) {
       case "function":
@@ -25,21 +10,21 @@ function safe_log(arg, level) {
         arg.constructor.toString();
         if (level--) for (var key in arg) {
             var desc = Object.getOwnPropertyDescriptor(arg, key);
-            if (!desc || !desc.get) {
-                arg[key] = safe_log(arg[key], level);
-            }
+            if (!desc || !desc.get) arg[key] = safe_log(arg[key], level);
         }
     }
     return arg;
 }
 
-function strip_func_ids(text) {
-    return ("" + text).replace(/F[0-9]{6}N/g, "<F<>N>");
+function log(msg) {
+    if (arguments.length == 1 && typeof msg == "string") return console.log("%s", msg);
+    return console.log.apply(console, [].map.call(arguments, function(arg) {
+        return safe_log(arg, 3);
+    }));
 }
 
-var context;
-var FUNC_TOSTRING = [
-    "[ Array, Boolean, Error, Function, Number, Object, RegExp, String].forEach(function(f) {",
+var func_toString = new vm.Script([
+    "[ Array, Boolean, Error, Function, Number, Object, RegExp, String ].forEach(function(f) {",
     "    f.toString = Function.prototype.toString;",
     "});",
     "Function.prototype.toString = function() {",
@@ -59,7 +44,15 @@ var FUNC_TOSTRING = [
     '        return "function(){}";',
     "    };",
     "}();",
-]).join("\n");
+]).join("\n"));
+
+function createContext() {
+    var ctx = vm.createContext(Object.defineProperty({}, "console", { value: { log: log } }));
+    func_toString.runInContext(ctx);
+    return ctx;
+}
+
+var context;
 exports.run_code = function(code, reuse) {
     var stdout = "";
     var original_write = process.stdout.write;
@@ -69,7 +62,6 @@ exports.run_code = function(code, reuse) {
     try {
         if (!reuse || !context) context = createContext();
         vm.runInContext([
-            FUNC_TOSTRING,
             "!function() {",
             code,
             "}();",
@@ -86,6 +78,11 @@ exports.run_code = function(code, reuse) {
         }
     }
 };
+
+function strip_func_ids(text) {
+    return ("" + text).replace(/F[0-9]{6}N/g, "<F<>N>");
+}
+
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
     if (typeof expected != typeof actual) return false;
     if (typeof expected != "string") {
