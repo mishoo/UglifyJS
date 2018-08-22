@@ -651,7 +651,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with explicit --no-rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js -mc --no-rename";
+        var command = uglifyjscmd + " test/input/rename/input.js -mc passes=2 --no-rename";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(n){return function(n){return n}(n)}\n");
@@ -659,7 +659,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with implicit --rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js -mc";
+        var command = uglifyjscmd + " test/input/rename/input.js -mc passes=2";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(n){return n}\n");
@@ -667,7 +667,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with implicit --no-rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js -c";
+        var command = uglifyjscmd + " test/input/rename/input.js -c passes=2";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(x){return function(x){return x}(x)}\n");
