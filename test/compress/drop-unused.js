@@ -1982,3 +1982,26 @@ issue_3192: {
         "foo bar",
     ]
 }
+
+issue_3233: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = function b() {
+            b.c = "PASS";
+        };
+        a();
+        console.log(a.c);
+    }
+    expect: {
+        var a = function b() {
+            b.c = "PASS";
+        };
+        a();
+        console.log(a.c);
+    }
+    expect_stdout: "PASS"
+}
