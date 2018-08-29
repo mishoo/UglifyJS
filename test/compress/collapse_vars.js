@@ -5827,3 +5827,183 @@ issue_3215_4: {
     }
     expect_stdout: "number"
 }
+
+issue_3238_1: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = Object.create(null);
+                c = Object.create(null);
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = Object.create(null);
+                c = Object.create(null);
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "true false"
+}
+
+issue_3238_2: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = Error();
+                c = Error();
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = Error();
+                c = Error();
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "true false"
+}
+
+issue_3238_3: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = new Date();
+                c = new Date();
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = new Date();
+                c = new Date();
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "true false"
+}
+
+issue_3238_4: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = a && {};
+                c = a && {};
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = a && {};
+                c = a && {};
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "true false"
+}
+
+issue_3238_5: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = a ? [] : 42;
+                c = a ? [] : 42;
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = a ? [] : 42;
+                c = a ? [] : 42;
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "true false"
+}
+
+issue_3238_6: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = a && 0 || [];
+                c = a && 0 || [];
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            var b, c;
+            if (a) {
+                b = a && 0 || [];
+                c = a && 0 || [];
+            }
+            return b === c;
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "true false"
+}
