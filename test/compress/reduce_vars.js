@@ -5354,6 +5354,7 @@ issue_2774: {
 
 issue_2799_1: {
     options = {
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -6428,4 +6429,160 @@ issue_3140_5: {
         console.log(c);
     }
     expect_stdout: "1"
+}
+
+issue_3240_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            f(1);
+            function f(a) {
+                console.log(a);
+                var g = function() {
+                    f(a - 1);
+                };
+                if (a) g();
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            (function f(a) {
+                console.log(a);
+                var g = function() {
+                    f(a - 1);
+                };
+                if (a) g();
+            })(1);
+        })();
+    }
+    expect_stdout: [
+        "1",
+        "0",
+    ]
+}
+
+issue_3240_2: {
+    options = {
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            f(1);
+            function f(a) {
+                console.log(a);
+                var g = function() {
+                    f(a - 1);
+                };
+                if (a) g();
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            (function f(a) {
+                console.log(a);
+                if (a) (function() {
+                    f(a - 1);
+                })();
+            })(1);
+        })();
+    }
+    expect_stdout: [
+        "1",
+        "0",
+    ]
+}
+
+issue_3240_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            f();
+            function f(b) {
+                if (!f.a) f.a = 0;
+                console.log(f.a.toString());
+                var g = function() {
+                    (b ? function() {} : function() {
+                        f.a++;
+                        f(1);
+                    })();
+                };
+                g();
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            (function f(b) {
+                if (!f.a) f.a = 0;
+                console.log(f.a.toString());
+                var g = function() {
+                    (b ? function() {} : function() {
+                        f.a++;
+                        f(1);
+                    })();
+                };
+                g();
+            })();
+        })();
+    }
+    expect_stdout: [
+        "0",
+        "1",
+    ]
+}
+
+issue_3240_4: {
+    options = {
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            f();
+            function f(b) {
+                if (!f.a) f.a = 0;
+                console.log(f.a.toString());
+                var g = function() {
+                    (b ? function() {} : function() {
+                        f.a++;
+                        f(1);
+                    })();
+                };
+                g();
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            (function f(b) {
+                if (!f.a) f.a = 0;
+                console.log(f.a.toString());
+                (function() {
+                    (b ? function() {} : function() {
+                        f.a++;
+                        f(1);
+                    })();
+                })();
+            })();
+        })();
+    }
+    expect_stdout: [
+        "0",
+        "1",
+    ]
 }
