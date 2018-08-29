@@ -1364,3 +1364,23 @@ cond_seq_assign_2: {
         "42",
     ]
 }
+
+cond_seq_assign_3: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var c = 0;
+        if (this)
+            c = 1 + c, c = c + 1;
+        else
+            c = 1 + c, c = c + 1;
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        this, c = 1 + c, c += 1;
+        console.log(c);
+    }
+    expect_stdout: "2"
+}
