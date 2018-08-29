@@ -1292,3 +1292,75 @@ to_and_or: {
     }
     expect_stdout: true
 }
+
+cond_seq_assign_1: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(a) {
+            var t;
+            if (a) {
+                t = "foo";
+                t = "bar";
+            } else {
+                console.log(t);
+                t = 42;
+            }
+            console.log(t);
+        }
+        f(f);
+        f();
+    }
+    expect: {
+        function f(a) {
+            var t;
+            t = a ? (t = "foo", "bar") : (console.log(t), 42),
+            console.log(t);
+        }
+        f(f),
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "undefined",
+        "42",
+    ]
+}
+
+cond_seq_assign_2: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(a) {
+            var t;
+            if (a) {
+                t = "foo";
+                a = "bar";
+            } else {
+                console.log(t);
+                t = 42;
+            }
+            console.log(t);
+        }
+        f(f);
+        f();
+    }
+    expect: {
+        function f(a) {
+            var t;
+            a ? (t = "foo", a = "bar") : (console.log(t), t = 42),
+            console.log(t);
+        }
+        f(f),
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+        "42",
+    ]
+}
