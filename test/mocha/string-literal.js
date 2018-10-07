@@ -65,7 +65,7 @@ describe("String literals", function() {
             ['"\\008"', '"\\x008";'],
             ['"\\0008"', '"\\x008";'],
             ['"use strict" === "use strict";\n"\\76";', '"use strict"==="use strict";">";'],
-            ['"use\\\n strict";\n"\\07";', ';"use strict";"\07";']
+            ['"use\\\n strict";\n"\\07";', ';"use strict";"\\x07";']
         ];
 
         for (var test in tests) {
