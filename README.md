@@ -664,7 +664,7 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `keep_fnames` (default: `false`) -- Pass `true` to prevent the
   compressor from discarding function names.  Useful for code relying on
-  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle).
+  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle-options).
 
 - `keep_infinity` (default: `false`) -- Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
