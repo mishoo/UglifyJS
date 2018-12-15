@@ -1245,12 +1245,12 @@ self_comparison_1: {
     }
     input: {
         var o = { n: NaN };
-        console.log(o.n == o.n, o.n === o.n, o.n != o.n, o.n !== o.n, typeof o.n);
+        console.log(typeof o.n, o.n == o.n, o.n === o.n, o.n != o.n, o.n !== o.n);
     }
     expect: {
-        console.log(false, false, true, true, "number");
+        console.log("number", false, false, true, true);
     }
-    expect_stdout: "false false true true 'number'"
+    expect_stdout: "number false false true true"
 }
 
 self_comparison_2: {
@@ -1265,12 +1265,12 @@ self_comparison_2: {
     }
     input: {
         var o = { n: NaN };
-        console.log(o.n == o.n, o.n === o.n, o.n != o.n, o.n !== o.n, typeof o.n);
+        console.log(typeof o.n, o.n == o.n, o.n === o.n, o.n != o.n, o.n !== o.n);
     }
     expect: {
-        console.log(false, false, true, true, "number");
+        console.log("number", false, false, true, true);
     }
-    expect_stdout: "false false true true 'number'"
+    expect_stdout: "number false false true true"
 }
 
 issue_2535_1: {
