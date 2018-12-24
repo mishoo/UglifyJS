@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+﻿#! /usr/bin/env node
 // -*- js -*-
 
 "use strict";
@@ -168,6 +168,9 @@ if (program.self) {
         run();
     });
     process.stdin.resume();
+}
+if (!program.args.length){
+   program.help();
 }
 
 function convert_ast(fn) {
