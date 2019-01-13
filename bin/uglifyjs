@@ -54,6 +54,9 @@ program.option("--verbose", "Print diagnostic messages.");
 program.option("--warn", "Print warning messages.");
 program.option("--wrap <name>", "Embed everything as a function with “exports” corresponding to “name” globally.");
 program.arguments("[files...]").parseArgv(process.argv);
+if (!program.args.length){
+   program.outputHelp();
+}
 if (program.configFile) {
     options = JSON.parse(read_file(program.configFile));
 }
@@ -168,9 +171,6 @@ if (program.self) {
         run();
     });
     process.stdin.resume();
-}
-if (!program.args.length){
-   program.help();
 }
 
 function convert_ast(fn) {
