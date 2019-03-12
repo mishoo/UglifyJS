@@ -237,3 +237,170 @@ duplicate_argname: {
     }
     expect_stdout: "bar 42 foo 42 bar"
 }
+
+issue_3273: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        function f(a) {
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect: {
+        function f(a) {
+            console.log(a, a);
+            a++;
+            console.log(a, a);
+        }
+        f(0);
+    }
+    expect_stdout: [
+        "0 0",
+        "1 1",
+    ]
+}
+
+issue_3273_reduce_vars: {
+    options = {
+        arguments: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect: {
+        function f(a) {
+            console.log(a, a);
+            a++;
+            console.log(a, a);
+        }
+        f(0);
+    }
+    expect_stdout: [
+        "0 0",
+        "1 1",
+    ]
+}
+
+issue_3273_local_strict: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        function f(a) {
+            "use strict";
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect: {
+        function f(a) {
+            "use strict";
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect_stdout: [
+        "0 0",
+        "1 0",
+    ]
+}
+
+issue_3273_local_strict_reduce_vars: {
+    options = {
+        arguments: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            "use strict";
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect: {
+        function f(a) {
+            "use strict";
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect_stdout: [
+        "0 0",
+        "1 0",
+    ]
+}
+
+issue_3273_global_strict: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect_stdout: [
+        "0 0",
+        "1 0",
+    ]
+}
+
+issue_3273_global_strict_reduce_vars: {
+    options = {
+        arguments: true,
+        reduce_vars: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            console.log(arguments[0], a);
+            arguments[0]++;
+            console.log(arguments[0], a);
+        }
+        f(0);
+    }
+    expect_stdout: [
+        "0 0",
+        "1 0",
+    ]
+}
