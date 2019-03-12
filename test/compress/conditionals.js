@@ -1384,3 +1384,34 @@ cond_seq_assign_3: {
     }
     expect_stdout: "2"
 }
+
+issue_3271: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(a) {
+            var i = 0, b = [];
+            if (a) {
+                b[i++] = 4,
+                b[i++] = 1;
+            } else {
+                b[i++] = 3,
+                b[i++] = 2,
+                b[i++] = 1;
+            }
+            return b;
+        }
+        console.log(f(0).pop(), f(1).pop());
+    }
+    expect: {
+        function f(a) {
+            var i = 0, b = [];
+            a ? b[i++] = 4 : (b[i++] = 3, b[i++] = 2),
+            b[i++] = 1;
+            return b;
+        }
+        console.log(f(0).pop(), f(1).pop());
+    }
+    expect_stdout: "1 1"
+}
