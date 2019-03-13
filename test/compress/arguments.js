@@ -404,3 +404,175 @@ issue_3273_global_strict_reduce_vars: {
         "1 0",
     ]
 }
+
+issue_3282_1: {
+    options = {
+        arguments: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        (function(t) {
+            return function() {
+                t();
+            };
+        })(function() {
+            'use strict';
+            function e() {
+                return arguments[0];
+            }
+            e();
+            e();
+        })();
+    }
+    expect: {
+        (function() {
+            return function() {
+                (function() {
+                    "use strict";
+                    function e() {
+                        return arguments[0];
+                    }
+                    e();
+                    e();
+                })();
+            };
+        })()();
+    }
+    expect_stdout: true
+}
+
+issue_3282_1_passes: {
+    options = {
+        arguments: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        (function(t) {
+            return function() {
+                t();
+            };
+        })(function() {
+            'use strict';
+            function e() {
+                return arguments[0];
+            }
+            e();
+            e();
+        })();
+    }
+    expect: {
+        (function() {
+            return function() {
+                (function() {
+                    "use strict";
+                    function e(argument_0) {
+                        return argument_0;
+                    }
+                    e();
+                    e();
+                })();
+            };
+        })()();
+    }
+    expect_stdout: true
+}
+
+issue_3282_2: {
+    options = {
+        arguments: true,
+        reduce_vars: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        (function(f) {
+            f();
+        })(function() {
+            return (function(t) {
+                return function() {
+                    t();
+                };
+            })(function() {
+                'use strict';
+                function e() {
+                    return arguments[0];
+                }
+                e();
+                e();
+            })();
+        });
+    }
+    expect: {
+        (function() {
+            (function() {
+                return function(t) {
+                    return function() {
+                        t();
+                    };
+                }(function() {
+                    "use strict";
+                    function e() {
+                        return arguments[0];
+                    }
+                    e();
+                    e();
+                })();
+            })();
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_3282_2_passes: {
+    options = {
+        arguments: true,
+        passes: 2,
+        reduce_vars: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        (function(f) {
+            f();
+        })(function() {
+            return (function(t) {
+                return function() {
+                    t();
+                };
+            })(function() {
+                'use strict';
+                function e() {
+                    return arguments[0];
+                }
+                e();
+                e();
+            })();
+        });
+    }
+    expect: {
+        (function() {
+            (function() {
+                return function(t) {
+                    return function() {
+                        t();
+                    };
+                }(function() {
+                    "use strict";
+                    function e(argument_0) {
+                        return argument_0;
+                    }
+                    e();
+                    e();
+                })();
+            })();
+        })();
+    }
+    expect_stdout: true
+}
