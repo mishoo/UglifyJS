@@ -6586,3 +6586,103 @@ issue_3240_4: {
         "1",
     ]
 }
+
+issues_3267_1: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(x) {
+            x();
+        })(function() {
+            (function(i) {
+                if (i)
+                    return console.log("PASS");
+                throw "FAIL";
+            })(Object());
+        });
+    }
+    expect: {
+        !function(i) {
+            if (i)
+                return console.log("PASS");
+            throw "FAIL";
+        }(Object());
+    }
+    expect_stdout: "PASS"
+}
+
+issues_3267_2: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        keep_fargs: false,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(x) {
+            x();
+        })(function() {
+            (function(i) {
+                if (i)
+                    return console.log("PASS");
+                throw "FAIL";
+            })(Object());
+        });
+    }
+    expect: {
+        !function() {
+            if (Object())
+                return console.log("PASS");
+            throw "FAIL";
+        }();
+    }
+    expect_stdout: "PASS"
+}
+
+issues_3267_3: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        keep_fargs: false,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        (function(x) {
+            x();
+        })(function() {
+            (function(i) {
+                if (i)
+                    return console.log("PASS");
+                throw "FAIL";
+            })(Object());
+        });
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
