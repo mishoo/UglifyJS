@@ -6007,3 +6007,117 @@ issue_3238_6: {
     }
     expect_stdout: "true false"
 }
+
+issue_3247: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f(o) {
+            console.log(o.p);
+        }
+        var a;
+        a = Object({ p: "PASS" });
+        a.q = true;
+        f(a, true);
+    }
+    expect: {
+        function f(o) {
+            console.log(o.p);
+        }
+        var a;
+        (a = Object({ p: "PASS" })).q = true;
+        f(a, true);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3305: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function calc(a) {
+            var x, w;
+            if (a) {
+                x = a;
+                w = 1;
+            } else {
+                x = 1;
+                w = 0;
+            }
+            return add(x, w);
+        }
+        function add(x, w) {
+            return x + w;
+        }
+        console.log(calc(41));
+    }
+    expect: {
+        function calc(a) {
+            var x, w;
+            return w = a ? (x = a, 1) : (x = 1, 0), add(x, w);
+        }
+        function add(x, w) {
+            return x + w;
+        }
+        console.log(calc(41));
+    }
+    expect_stdout: "42"
+}
+
+issue_3314: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function test(a, b) {
+            console.log(a, b);
+        }
+        var a = "FAIL", b;
+        b = a = "PASS";
+        test(a, b);
+    }
+    expect: {
+        function test(a, b) {
+            console.log(a, b);
+        }
+        var a = "FAIL", b;
+        b = a = "PASS";
+        test(a, b);
+    }
+    expect_stdout: "PASS PASS"
+}
+
+issue_3327: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        var a, b, l = ["PASS", 42];
+        if (l.length === 1) {
+            a = l[0].a;
+            b = l[0].b;
+        } else {
+            a = l[0];
+            b = l[1];
+        }
+        function echo(a, b) {
+            console.log(a, b);
+        }
+        echo(a, b);
+    }
+    expect: {
+        var a, b, l = ["PASS", 42];
+        function echo(a, b) {
+            console.log(a, b);
+        }
+        b = 1 === l.length ? (a = l[0].a, l[0].b) : (a = l[0], l[1]),
+        echo(a,b);
+    }
+    expect_stdout: "PASS 42"
+}
