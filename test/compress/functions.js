@@ -2315,3 +2315,33 @@ issue_3125: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3274: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        join_vars: true,
+        loops: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var g = function(a) {
+                var c = a.p, b = c;
+                return b != c;
+            };
+            while (g(1))
+                console.log("FAIL");
+            console.log("PASS");
+        })();
+    }
+    expect: {
+        (function() {
+            for (var c; void 0, (c = 1..p) != c;)
+                console.log("FAIL");
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
