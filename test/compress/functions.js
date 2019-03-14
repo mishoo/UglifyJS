@@ -2345,3 +2345,188 @@ issue_3274: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3297_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        function function1() {
+            var r = {
+                function2: function2
+            };
+            function function2() {
+                alert(1234);
+                function function3() {
+                    function2();
+                };
+                function3();
+            }
+            return r;
+        }
+    }
+    expect: {
+        function function1() {
+            return {
+                function2: function n() {
+                    alert(1234);
+                    function t() {
+                        n();
+                    }
+                    t();
+                }
+            };
+        }
+    }
+}
+
+issue_3297_2: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        function function1(session) {
+            var public = {
+                processBulk: processBulk
+            };
+            return public;
+            function processBulk(bulk) {
+                var subparam1 = session();
+                function processOne(param1) {
+                    var param2 = {
+                        subparam1: subparam1
+                    };
+                    doProcessOne({
+                        param1: param1,
+                        param2: param2,
+                    }, function () {
+                        processBulk(bulk);
+                    });
+                };
+                if (bulk && bulk.length > 0)
+                    processOne(bulk.shift());
+            }
+            function doProcessOne(config, callback) {
+                console.log(JSON.stringify(config));
+                callback();
+            }
+        }
+        function1(function session() {
+            return 42;
+        }).processBulk([1, 2, 3]);
+    }
+    expect: {
+        function function1(o) {
+            return {
+                processBulk: function t(u) {
+                    var r = o();
+                    function n(n) {
+                        var o = {
+                            subparam1: r
+                        };
+                        c({
+                            param1: n,
+                            param2: o
+                        }, function() {
+                            t(u);
+                        });
+                    }
+                    u && u.length > 0 && n(u.shift());
+                }
+            };
+            function c(n, o) {
+                console.log(JSON.stringify(n));
+                o();
+            }
+        }
+        function1(function() {
+            return 42;
+        }).processBulk([ 1, 2, 3 ]);
+    }
+    expect_stdout: [
+        '{"param1":1,"param2":{"subparam1":42}}',
+        '{"param1":2,"param2":{"subparam1":42}}',
+        '{"param1":3,"param2":{"subparam1":42}}',
+    ]
+}
+
+issue_3297_3: {
+    options = {
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        inline: true,
+        join_vars: true,
+        passes: 3,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        function function1(session) {
+            var public = {
+                processBulk: processBulk
+            };
+            return public;
+            function processBulk(bulk) {
+                var subparam1 = session();
+                function processOne(param1) {
+                    var param2 = {
+                        subparam1: subparam1
+                    };
+                    doProcessOne({
+                        param1: param1,
+                        param2: param2,
+                    }, function () {
+                        processBulk(bulk);
+                    });
+                };
+                if (bulk && bulk.length > 0)
+                    processOne(bulk.shift());
+            }
+            function doProcessOne(config, callback) {
+                console.log(JSON.stringify(config));
+                callback();
+            }
+        }
+        function1(function session() {
+            return 42;
+        }).processBulk([1, 2, 3]);
+    }
+    expect: {
+        function function1(c) {
+            return {
+                processBulk: function n(o) {
+                    var r, t, u = c();
+                    o && 0 < o.length && (r = {
+                        param1: o.shift(),
+                        param2: {
+                            subparam1: u
+                        }
+                    }, t = function() {
+                        n(o);
+                    }, console.log(JSON.stringify(r)), t());
+                }
+            };
+        }
+        function1(function() {
+            return 42;
+        }).processBulk([ 1, 2, 3 ]);
+    }
+    expect_stdout: [
+        '{"param1":1,"param2":{"subparam1":42}}',
+        '{"param1":2,"param2":{"subparam1":42}}',
+        '{"param1":3,"param2":{"subparam1":42}}',
+    ]
+}
