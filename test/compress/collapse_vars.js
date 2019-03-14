@@ -947,7 +947,7 @@ collapse_vars_misc1: {
         function f8() { var b = window.a * window.z; return b + (b + 5) }
         function f9() { var b = window.a * window.z; return bar() || b }
         function f10(x) { var a = 5; return a += 3; }
-        function f11(x) { var a = 5, b = 3; return a += --b; }
+        function f11(x) { var a = 5; return a += 2; }
     }
 }
 
