@@ -642,3 +642,41 @@ issue_3065_4: {
         })();
     }
 }
+
+issue_3325_1: {
+    options = {
+        pure_funcs: "cb",
+        side_effects: true,
+    }
+    input: {
+        function cb() {
+            console.log("PASS");
+        }
+        cb();
+    }
+    expect: {
+        function cb() {
+            console.log("PASS");
+        }
+    }
+}
+
+issue_3325_2: {
+    options = {
+        pure_funcs: "xxxcbxxx",
+        side_effects: true,
+    }
+    input: {
+        function cb() {
+            console.log("PASS");
+        }
+        cb();
+    }
+    expect: {
+        function cb() {
+            console.log("PASS");
+        }
+        cb();
+    }
+    expect_stdout: "PASS"
+}
