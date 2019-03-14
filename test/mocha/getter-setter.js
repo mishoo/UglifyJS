@@ -69,7 +69,7 @@ describe("Getters and setters", function() {
         var fail = function(data) {
             return function(e) {
                 return e instanceof UglifyJS.JS_Parse_Error
-                    && e.message === "Unexpected token: operator (" + data.operator + ")";
+                    && e.message === "Unexpected token: operator «" + data.operator + "»";
             };
         };
         var errorMessage = function(data) {

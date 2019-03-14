@@ -119,7 +119,7 @@ describe("minify", function() {
     it("Should not parse invalid use of reserved words", function() {
         assert.strictEqual(UglifyJS.minify("function enum(){}").error, undefined);
         assert.strictEqual(UglifyJS.minify("function static(){}").error, undefined);
-        assert.strictEqual(UglifyJS.minify("function this(){}").error.message, "Unexpected token: name (this)");
+        assert.strictEqual(UglifyJS.minify("function this(){}").error.message, "Unexpected token: name «this»");
     });
 
     describe("keep_quoted_props", function() {
@@ -214,7 +214,7 @@ describe("minify", function() {
             var result = UglifyJS.minify("function f(a{}");
             var err = result.error;
             assert.ok(err instanceof Error);
-            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token punc «{», expected punc «,»");
+            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token: punc «{», expected: punc «,»");
             assert.strictEqual(err.filename, "0");
             assert.strictEqual(err.line, 1);
             assert.strictEqual(err.col, 12);
@@ -241,7 +241,7 @@ describe("minify", function() {
             });
             var err = result.error;
             assert.ok(err instanceof Error);
-            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token: keyword (debugger)");
+            assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Unexpected token: keyword «debugger»");
         });
         it("Should skip inherited properties", function() {
             var foo = Object.create({ skip: this });
