@@ -87,7 +87,7 @@ describe("minify", function() {
         assert.strictEqual(run_code(compressed), run_code(original));
     });
 
-    it("Should avoid mangled names in cache", function() {
+    it("Should avoid cached names when mangling top-level variables", function() {
         var cache = {};
         var original = "";
         var compressed = "";
@@ -112,6 +112,30 @@ describe("minify", function() {
             '"xxxyy";var x={x:1};',
             '"xxyyy";var y={y:2,a:3},a=4;',
             'console.log(x.x,y.y,y.a,a);',
+        ].join(""));
+        assert.strictEqual(run_code(compressed), run_code(original));
+    });
+
+    it("Should avoid cached names when mangling inner-scoped variables", function() {
+        var cache = {};
+        var original = "";
+        var compressed = "";
+        [
+            'var extend = function(a, b) { console.log("extend"); a(); b(); }; function A() { console.log("A"); };',
+            'var B = function(A) { function B() { console.log("B") }; extend(B, A); return B; }(A);',
+        ].forEach(function(code) {
+            var result = UglifyJS.minify(code, {
+                compress: false,
+                nameCache: cache,
+                toplevel: true,
+            });
+            if (result.error) throw result.error;
+            original += code;
+            compressed += result.code;
+        });
+        assert.strictEqual(compressed, [
+            'var o=function(o,n){console.log("extend");o();n()};function n(){console.log("A")}',
+            'var e=function(n){function e(){console.log("B")}o(e,n);return e}(n);',
         ].join(""));
         assert.strictEqual(run_code(compressed), run_code(original));
     });
