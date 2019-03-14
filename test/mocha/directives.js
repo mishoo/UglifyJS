@@ -146,7 +146,7 @@ describe("Directives", function() {
                 UglifyJS.parse(tokenizer);
             }, function(e) {
                 return e instanceof UglifyJS.JS_Parse_Error
-                    && e.message === "Unexpected token: punc (])"
+                    && /^Unexpected token: punc «]»/.test(e.message)
             }, test[0]);
             test[1].forEach(function(directive) {
                 assert.strictEqual(tokenizer.has_directive(directive), true, directive + " in " + test[0]);

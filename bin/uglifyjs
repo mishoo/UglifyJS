@@ -56,6 +56,11 @@ program.option("--wrap <name>", "Embed everything as a function with â€œexportsâ
 program.arguments("[files...]").parseArgv(process.argv);
 if (program.configFile) {
     options = JSON.parse(read_file(program.configFile));
+    if (options.mangle && options.mangle.properties && options.mangle.properties.regex) {
+        options.mangle.properties.regex = UglifyJS.parse(options.mangle.properties.regex, {
+            expression: true
+        }).getValue();
+    }
 }
 if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
     fatal("ERROR: cannot write source map to STDOUT");
@@ -337,17 +342,9 @@ function parse_js(flag) {
     return function(value, options) {
         options = options || {};
         try {
-            UglifyJS.minify(value, {
-                parse: {
-                    expression: true
-                },
-                compress: false,
-                mangle: false,
-                output: {
-                    ast: true,
-                    code: false
-                }
-            }).ast.walk(new UglifyJS.TreeWalker(function(node) {
+            UglifyJS.parse(value, {
+                expression: true
+            }).walk(new UglifyJS.TreeWalker(function(node) {
                 if (node instanceof UglifyJS.AST_Assign) {
                     var name = node.left.print_to_string();
                     var value = node.right;

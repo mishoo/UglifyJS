@@ -257,7 +257,7 @@ describe("bin/uglifyjs", function() {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/simple.js:1,12");
             assert.strictEqual(lines[1], "function f(a{}");
             assert.strictEqual(lines[2], "            ^");
-            assert.strictEqual(lines[3], "ERROR: Unexpected token punc «{», expected punc «,»");
+            assert.strictEqual(lines[3], "ERROR: Unexpected token: punc «{», expected: punc «,»");
             done();
         });
     });
@@ -281,7 +281,7 @@ describe("bin/uglifyjs", function() {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/eof.js:2,0");
             assert.strictEqual(lines[1], "foo, bar(");
             assert.strictEqual(lines[2], "         ^");
-            assert.strictEqual(lines[3], "ERROR: Unexpected token: eof (undefined)");
+            assert.strictEqual(lines[3], "ERROR: Unexpected token: eof");
             done();
         });
     });
@@ -293,7 +293,7 @@ describe("bin/uglifyjs", function() {
             assert.strictEqual(lines[0], "Parse error at test/input/invalid/loop-no-body.js:2,0");
             assert.strictEqual(lines[1], "for (var i = 0; i < 1; i++) ");
             assert.strictEqual(lines[2], "                            ^");
-            assert.strictEqual(lines[3], "ERROR: Unexpected token: eof (undefined)");
+            assert.strictEqual(lines[3], "ERROR: Unexpected token: eof");
             done();
         });
     });
@@ -362,7 +362,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/dot_1.js:1,2",
                 "a.=",
                 "  ^",
-                "ERROR: Unexpected token: operator (=)"
+                "ERROR: Unexpected token: operator «=», expected: name"
             ].join("\n"));
             done();
         });
@@ -376,7 +376,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/dot_2.js:1,0",
                 "%.a;",
                 "^",
-                "ERROR: Unexpected token: operator (%)"
+                "ERROR: Unexpected token: operator «%»"
             ].join("\n"));
             done();
         });
@@ -390,7 +390,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/dot_3.js:1,2",
                 "a./();",
                 "  ^",
-                "ERROR: Unexpected token: operator (/)"
+                "ERROR: Unexpected token: operator «/», expected: name"
             ].join("\n"));
             done();
         });
@@ -404,7 +404,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/object.js:1,13",
                 "console.log({%: 1});",
                 "             ^",
-                "ERROR: Unexpected token: operator (%)"
+                "ERROR: Unexpected token: operator «%»"
             ].join("\n"));
             done();
         });
@@ -502,7 +502,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/else.js:1,7",
                 "if (0) else 1;",
                 "       ^",
-                "ERROR: Unexpected token: keyword (else)"
+                "ERROR: Unexpected token: keyword «else»"
             ].join("\n"));
             done();
         });
@@ -630,6 +630,14 @@ describe("bin/uglifyjs", function() {
             assert.ok(err);
             assert.strictEqual(stdout, "");
             assert.ok(/^Supported options:\n[\s\S]*?\nERROR: `reserved=\[in]` is not a supported option/.test(stderr), stderr);
+            done();
+        });
+    });
+    it("Should work with mangle.properties.regex from --config-file", function(done) {
+        var command = uglifyjscmd + " test/input/issue-3315/input.js --config-file test/input/issue-3315/config.json";
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, 'function f(){"aaaaaaaaaa";var a={prop:1,a:2};return a.prop+a.a}\n');
             done();
         });
     });
