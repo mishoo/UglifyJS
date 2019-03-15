@@ -19,6 +19,7 @@ env:
     - NODEJS_VER=node/4
     - NODEJS_VER=node/6
     - NODEJS_VER=node/8
+    - NODEJS_VER=node/10
     - NODEJS_VER=node/latest
 before_install:
   - git clone --branch v1.4.2 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
