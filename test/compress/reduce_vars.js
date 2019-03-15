@@ -6686,3 +6686,33 @@ issues_3267_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3297: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function f() {
+                var a;
+                var b = function a() {
+                    console.log(a === b) && f();
+                };
+                b();
+            }
+            f();
+        })();
+    }
+    expect: {
+        (function() {
+            (function f() {
+                var b = function a() {
+                    console.log(a === b) && f();
+                };
+                b();
+            })();
+        })();
+    }
+    expect_stdout: "true"
+}
