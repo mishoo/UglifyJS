@@ -1398,6 +1398,8 @@ recursive_inline_2: {
 issue_2657: {
     options = {
         inline: true,
+        passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         unused: true,
@@ -2467,6 +2469,7 @@ issue_3297_3: {
         inline: true,
         join_vars: true,
         passes: 3,
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2505,18 +2508,18 @@ issue_3297_3: {
         }).processBulk([1, 2, 3]);
     }
     expect: {
-        function function1(c) {
+        function function1(u) {
             return {
-                processBulk: function n(o) {
-                    var r, t, u = c();
-                    o && 0 < o.length && (r = {
-                        param1: o.shift(),
+                processBulk: function n(r) {
+                    var o, t = u();
+                    r && 0 < r.length && (o = {
+                        param1: r.shift(),
                         param2: {
-                            subparam1: u
+                            subparam1: t
                         }
-                    }, t = function() {
-                        n(o);
-                    }, console.log(JSON.stringify(r)), t());
+                    },
+                    console.log(JSON.stringify(o)),
+                    n(r));
                 }
             };
         }
@@ -2528,5 +2531,142 @@ issue_3297_3: {
         '{"param1":1,"param2":{"subparam1":42}}',
         '{"param1":2,"param2":{"subparam1":42}}',
         '{"param1":3,"param2":{"subparam1":42}}',
+    ]
+}
+
+cross_references_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var Math = {
+            square: function(n) {
+                return n * n;
+            }
+        };
+        console.log((function(factory) {
+            return factory();
+        })(function() {
+            return function(Math) {
+                return function(n) {
+                    return Math.square(n);
+                };
+            }(Math);
+        })(3));
+    }
+    expect: {
+        var Math = {
+            square: function(n) {
+                return n * n;
+            }
+        };
+        console.log(function(Math) {
+            return function(n) {
+                return Math.square(n);
+            };
+        }(Math)(3));
+    }
+    expect_stdout: "9"
+}
+
+cross_references_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        passes: 4,
+        pure_getters: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var Math = {
+            square: function(n) {
+                return n * n;
+            }
+        };
+        console.log((function(factory) {
+            return factory();
+        })(function() {
+            return function(Math) {
+                return function(n) {
+                    return Math.square(n);
+                };
+            }(Math);
+        })(3));
+    }
+    expect: {
+        console.log(9);
+    }
+    expect_stdout: "9"
+}
+
+cross_references_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var Math = {
+            square: function(n) {
+                return n * n;
+            },
+            cube: function(n) {
+                return n * n * n;
+            }
+        };
+        console.log(function(factory) {
+            return factory();
+        }(function() {
+            return function(Math) {
+                return function(n) {
+                    Math = {
+                        square: function(x) {
+                            return "(SQUARE" + x + ")";
+                        },
+                        cube: function(x) {
+                            return "(CUBE" + x + ")";
+                        }
+                    };
+                    return Math.square(n) + Math.cube(n);
+                };
+            }(Math);
+        })(2));
+        console.log(Math.square(3), Math.cube(3));
+    }
+    expect: {
+        var Math = {
+            square: function(n) {
+                return n * n;
+            },
+            cube: function(n) {
+                return n * n * n;
+            }
+        };
+        console.log(function(Math) {
+            return function(n) {
+                Math = {
+                    square: function(x) {
+                        return "(SQUARE" + x + ")";
+                    },
+                    cube: function(x) {
+                        return "(CUBE" + x + ")";
+                    }
+                };
+                return Math.square(n) + Math.cube(n);
+            };
+        }(Math)(2));
+        console.log(Math.square(3), Math.cube(3));
+    }
+    expect_stdout: [
+        "(SQUARE2)(CUBE2)",
+        "9 27",
     ]
 }
