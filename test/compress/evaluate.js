@@ -1610,3 +1610,47 @@ truthy_loops: {
         }
     }
 }
+
+if_increment: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            if (console)
+                return ++a;
+        }(0));
+    }
+    expect: {
+        console.log(function(a) {
+            if (console)
+                return 1;
+        }());
+    }
+    expect_stdout: "1"
+}
+
+try_increment: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                return ++a;
+            } catch (e) {}
+        }(0));
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                return 1;
+            } catch (e) {}
+        }());
+    }
+    expect_stdout: "1"
+}
