@@ -1367,6 +1367,7 @@ cond_seq_assign_2: {
 
 cond_seq_assign_3: {
     options = {
+        assignments: true,
         conditionals: true,
     }
     input: {

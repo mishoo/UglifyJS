@@ -1,5 +1,6 @@
 asm_mixed: {
     options = {
+        assignments: true,
         booleans: true,
         comparisons: true,
         conditionals: true,
