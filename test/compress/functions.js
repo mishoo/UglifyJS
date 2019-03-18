@@ -358,6 +358,7 @@ inner_ref: {
 
 issue_2107: {
     options = {
+        assignments: true,
         collapse_vars: true,
         inline: true,
         passes: 3,
@@ -387,6 +388,7 @@ issue_2107: {
 
 issue_2114_1: {
     options = {
+        assignments: true,
         collapse_vars: true,
         if_return: true,
         inline: true,
@@ -419,6 +421,7 @@ issue_2114_1: {
 
 issue_2114_2: {
     options = {
+        assignments: true,
         collapse_vars: true,
         if_return: true,
         inline: true,
@@ -1223,6 +1226,7 @@ issue_2630_1: {
 
 issue_2630_2: {
     options = {
+        assignments: true,
         collapse_vars: true,
         inline: true,
         passes: 2,
@@ -1320,6 +1324,7 @@ issue_2630_4: {
 
 issue_2630_5: {
     options = {
+        assignments: true,
         collapse_vars: true,
         inline: true,
         reduce_vars: true,

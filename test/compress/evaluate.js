@@ -1540,7 +1540,7 @@ issue_2926_2: {
     expect_stdout: "function"
 }
 
-issue_2968: {
+issue_2968_1: {
     options = {
         collapse_vars: true,
         evaluate: true,
@@ -1565,6 +1565,39 @@ issue_2968: {
             b = -(a = 42),
             void ((a <<= 0) && (a[(c = "PASS", 0 >>> (b += 1))] = 0));
             var a, b;
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2968_2: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            (function(a, b) {
+                a <<= 0;
+                a && (a[(c = "PASS", 0 >>> (b += 1))] = 0);
+            })(42, -42);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function() {
+            a = 42,
+            ((a <<= 0) && (a[(c = "PASS", 0)] = 0));
+            var a;
         })();
         console.log(c);
     }
