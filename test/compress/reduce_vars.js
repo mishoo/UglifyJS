@@ -6716,3 +6716,24 @@ issue_3297: {
     }
     expect_stdout: "true"
 }
+
+drop_side_effect_free: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 123;
+        "" + (a && (a.b = 0) || a);
+        console.log(a);
+    }
+    expect: {
+        var a = 123;
+        a.b = 0;
+        console.log(a);
+    }
+    expect_stdout: "123"
+}

@@ -239,3 +239,113 @@ index_length: {
     }
     expect_stdout: "1 2"
 }
+
+constructor_bad: {
+    options = {
+        unsafe: true
+    }
+    input: {
+        try {
+            Array(NaN);
+            console.log("FAIL1");
+        } catch (ex) {
+            try {
+                new Array(NaN);
+                console.log("FAIL2");
+            } catch (ex) {
+                console.log("PASS");
+            }
+        }
+        try {
+            Array(3.14);
+            console.log("FAIL1");
+        } catch (ex) {
+            try {
+                new Array(3.14);
+                console.log("FAIL2");
+            } catch (ex) {
+                console.log("PASS");
+            }
+        }
+    }
+    expect: {
+        try {
+            Array(NaN);
+            console.log("FAIL1");
+        } catch (ex) {
+            try {
+                Array(NaN);
+                console.log("FAIL2");
+            } catch (ex) {
+                console.log("PASS");
+            }
+        }
+        try {
+            Array(3.14);
+            console.log("FAIL1");
+        } catch (ex) {
+            try {
+                Array(3.14);
+                console.log("FAIL2");
+            } catch (ex) {
+                console.log("PASS");
+            }
+        }
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+    expect_warnings: [
+        "WARN: Invalid array length: 3.14 [test/compress/arrays.js:13,12]",
+        "WARN: Invalid array length: 3.14 [test/compress/arrays.js:17,16]",
+    ]
+}
+
+constructor_good: {
+    options = {
+        unsafe: true
+    }
+    input: {
+        console.log(Array());
+        console.log(Array(0));
+        console.log(Array(1));
+        console.log(Array(6));
+        console.log(Array(7));
+        console.log(Array(1, 2));
+        console.log(Array(false));
+        console.log(Array("foo"));
+        console.log(Array(Array));
+        console.log(new Array());
+        console.log(new Array(0));
+        console.log(new Array(1));
+        console.log(new Array(6));
+        console.log(new Array(7));
+        console.log(new Array(1, 2));
+        console.log(new Array(false));
+        console.log(new Array("foo"));
+        console.log(new Array(Array));
+    }
+    expect: {
+        console.log([]);
+        console.log([]);
+        console.log([,]);
+        console.log([,,,,,,]);
+        console.log(Array(7));
+        console.log([ 1, 2 ]);
+        console.log([ false ]);
+        console.log([ "foo" ]);
+        console.log(Array(Array));
+        console.log([]);
+        console.log([]);
+        console.log([,]);
+        console.log([,,,,,,]);
+        console.log(Array(7));
+        console.log([ 1, 2 ]);
+        console.log([ false ]);
+        console.log([ "foo" ]);
+        console.log(Array(Array));
+    }
+    expect_stdout: true
+    expect_warnings: []
+}
