@@ -1,6 +1,7 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
 var fs = require("fs");
+var run_code = require("../sandbox").run_code;
 
 function read(path) {
     return fs.readFileSync(path, "utf8");
@@ -713,5 +714,33 @@ describe("bin/uglifyjs", function() {
             assert.strictEqual(stdout, '(function(window,undefined){(function(exports){function enclose(){console.log("test enclose")}enclose()})(typeof exports=="undefined"?exports={}:exports)})(window);\n');
             done();
         });
+    });
+    it("Should compress swarm of unused variables with reasonable performance", function(done) {
+        var code = [
+            "console.log(function() {",
+        ];
+        for (var i = 0; i < 10000; i++) {
+            code.push("var obj" + i + " = {p: " + i + "};");
+        }
+        code.push("var map = {");
+        for (var i = 0; i < 10000; i++) {
+            code.push("obj" + i + ": obj" + i + ",");
+        }
+        code = code.concat([
+            "};",
+            "return obj25.p + obj121.p + obj1024.p;",
+            "}());",
+        ]).join("\n");
+        exec(uglifyjscmd + " -mc", function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, [
+                "console.log(function(){",
+                "var p={p:25},n={p:121},o={p:1024};",
+                "return p.p+n.p+o.p",
+                "}());\n",
+            ].join(""));
+            assert.strictEqual(run_code(stdout), run_code(code));
+            done();
+        }).stdin.end(code);
     });
 });
