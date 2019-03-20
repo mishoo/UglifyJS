@@ -3895,11 +3895,11 @@ issue_2436_10: {
             o = { b: 3 };
             return n;
         }
-        console.log((c = o, [
-            c.a,
+        console.log([
+            (c = o).a,
             f(c.b),
             c.b,
-        ]).join(" "));
+        ].join(" "));
         var c;
     }
     expect_stdout: "1 2 2"
@@ -6120,4 +6120,40 @@ issue_3327: {
         echo(a,b);
     }
     expect_stdout: "PASS 42"
+}
+
+assign_left: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            (b = a, b.p).q = "PASS";
+            return a.p.q;
+        }({p: {}}));
+    }
+    expect: {
+        console.log(function(a, b) {
+            (b = a).p.q = "PASS";
+            return a.p.q;
+        }({p: {}}));
+    }
+    expect_stdout: "PASS"
+}
+
+sub_property: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            return a[(b = a, b.length - 1)];
+        }([ "FAIL", "PASS" ]));
+    }
+    expect: {
+        console.log(function(a, b) {
+            return a[(b = a).length - 1];
+        }([ "FAIL", "PASS" ]));
+    }
+    expect_stdout: "PASS"
 }
