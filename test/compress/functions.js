@@ -2675,3 +2675,31 @@ cross_references_3: {
         "9 27",
     ]
 }
+
+loop_inline: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(o) {
+            function g(p) {
+                return o[p];
+            }
+            function h(q) {
+                while (g(q));
+            }
+            return h;
+        }([ 1, "foo", 0 ])(2));
+    }
+    expect: {
+        console.log(function(o) {
+            return function(q) {
+                while (p = q, o[p]);
+                var p;
+            };
+        }([ 1, "foo", 0 ])(2));
+    }
+    expect_stdout: "undefined"
+}
