@@ -924,14 +924,14 @@ call: {
         b.c = function() {
             console.log(this === b ? "bar" : "baz");
         },
-        a, b(),
+        b(),
         (a, b.c)(),
-        a, function() {
+        function() {
             console.log(this === a);
         }(),
-        a, new b(),
-        a, new b.c(),
-        a, new function() {
+        new b(),
+        new b.c(),
+        new function() {
             console.log(this === a);
         }();
     }
@@ -943,4 +943,24 @@ call: {
         "baz",
         "false",
     ]
+}
+
+missing_link: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        sequences: true,
+    }
+    input: {
+        var a = 100;
+        a;
+        a++ + (0 ? 2 : 1);
+        console.log(a);
+    }
+    expect: {
+        var a = 100;
+        a,
+        a++,
+        console.log(a);
+    }
 }
