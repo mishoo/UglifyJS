@@ -861,3 +861,111 @@ issue_3215_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3355_1: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        (function f() {
+            var f;
+        })();
+        (function g() {
+        })();
+        console.log(typeof f === typeof g);
+    }
+    expect: {
+        (function o() {
+            var o;
+        })();
+        (function o() {
+        })();
+        console.log(typeof f === typeof g);
+    }
+    expect_stdout: "true"
+}
+
+issue_3355_2: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        (function f() {
+            var f;
+        })();
+        (function g() {
+        })();
+        console.log(typeof f === typeof g);
+    }
+    expect: {
+        (function f() {
+            var f;
+        })();
+        (function g() {
+        })();
+        console.log(typeof f === typeof g);
+    }
+    expect_stdout: "true"
+}
+
+issue_3355_3: {
+    mangle = {
+        ie8: false,
+    }
+    input: {
+        !function(a) {
+            "aaaaaaaaaa";
+            a();
+            var b = function c() {
+                var c = 42;
+                console.log("FAIL");
+            };
+        }(function() {
+            console.log("PASS");
+        });
+    }
+    expect: {
+        !function(a) {
+            "aaaaaaaaaa";
+            a();
+            var o = function a() {
+                var a = 42;
+                console.log("FAIL");
+            };
+        }(function() {
+            console.log("PASS");
+        });
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3355_4: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        !function(a) {
+            "aaaaaaaaaa";
+            a();
+            var b = function c() {
+                var c = 42;
+                console.log("FAIL");
+            };
+        }(function() {
+            console.log("PASS");
+        });
+    }
+    expect: {
+        !function(a) {
+            "aaaaaaaaaa";
+            a();
+            var o = function n() {
+                var n = 42;
+                console.log("FAIL");
+            };
+        }(function() {
+            console.log("PASS");
+        });
+    }
+    expect_stdout: "PASS"
+}
