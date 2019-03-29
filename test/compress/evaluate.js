@@ -1124,14 +1124,14 @@ issue_2207_1: {
         console.log(Math.max(3, 6, 2, 7, 3, 4));
         console.log(Math.cos(1.2345));
         console.log(Math.cos(1.2345) - Math.sin(4.321));
-        console.log(Math.pow(Math.PI, Math.E - Math.LN10));
+        console.log(Math.pow(Math.PI, Math.E - Math.LN10).toFixed(15));
     }
     expect: {
         console.log("A");
         console.log(7);
         console.log(Math.cos(1.2345));
         console.log(1.2543732512566947);
-        console.log(1.6093984514472044);
+        console.log("1.609398451447204");
     }
     expect_stdout: true
 }
