@@ -23,12 +23,12 @@
     "LICENSE"
   ],
   "dependencies": {
-    "commander": "~2.19.0",
+    "commander": "~2.20.0",
     "source-map": "~0.6.1"
   },
   "devDependencies": {
     "acorn": "~6.1.1",
-    "semver": "~5.6.0"
+    "semver": "~6.0.0"
   },
   "scripts": {
     "test": "node test/run-tests.js"
