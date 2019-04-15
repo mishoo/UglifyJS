@@ -636,6 +636,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `expression` (default: `false`) -- Pass `true` to preserve completion values
   from terminal statements without `return`, e.g. in bookmarklets.
 
+- `functions` (default: `true`) -- convert declarations from `var`to `function`
+  whenever possible.
+
 - `global_defs` (default: `{}`) -- see [conditional compilation](#conditional-compilation)
 
 - `hoist_funs` (default: `false`) -- hoist function declarations
