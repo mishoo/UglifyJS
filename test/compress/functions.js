@@ -2703,3 +2703,216 @@ loop_inline: {
     }
     expect_stdout: "undefined"
 }
+
+functions: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function() {
+            var a = function() {
+                return "a";
+            };
+            var b = function x() {
+                return !!x;
+            };
+            var c = function(c) {
+                return c;
+            };
+            if (c(b(a()))) {
+                var d = function() {};
+                var e = function y() {
+                    return typeof y;
+                };
+                var f = function(f) {
+                    return f;
+                };
+                console.log(a(d()), b(e()), c(f(42)), typeof d, e(), typeof f);
+            }
+        }();
+    }
+    expect: {
+        !function() {
+            function a() {
+                return "a";
+            }
+            var b = function x() {
+                return !!x;
+            };
+            var c = function(c) {
+                return c;
+            };
+            if (c(b(a()))) {
+                function d() {}
+                var e = function y() {
+                    return typeof y;
+                };
+                var f = function(f) {
+                    return f;
+                };
+                console.log(a(d()), b(e()), c(f(42)), typeof d, e(), typeof f);
+            }
+        }();
+    }
+    expect_stdout: "a true 42 function function function"
+}
+
+functions_use_strict: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        !function() {
+            var a = function() {
+                return "a";
+            };
+            var b = function x() {
+                return !!x;
+            };
+            var c = function(c) {
+                return c;
+            };
+            if (c(b(a()))) {
+                var d = function() {};
+                var e = function y() {
+                    return typeof y;
+                };
+                var f = function(f) {
+                    return f;
+                };
+                console.log(a(d()), b(e()), c(f(42)), typeof d, e(), typeof f);
+            }
+        }();
+    }
+    expect: {
+        "use strict";
+        !function() {
+            function a() {
+                return "a";
+            }
+            var b = function x() {
+                return !!x;
+            };
+            var c = function(c) {
+                return c;
+            };
+            if (c(b(a()))) {
+                var d = function() {};
+                var e = function y() {
+                    return typeof y;
+                };
+                var f = function(f) {
+                    return f;
+                };
+                console.log(a(d()), b(e()), c(f(42)), typeof d, e(), typeof f);
+            }
+        }();
+    }
+    expect_stdout: "a true 42 function function function"
+}
+
+issue_2437: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        functions: true,
+        inline: true,
+        join_vars: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function foo() {
+            return bar();
+        }
+        function bar() {
+            if (xhrDesc) {
+                var req = new XMLHttpRequest();
+                var result = !!req.onreadystatechange;
+                Object.defineProperty(XMLHttpRequest.prototype, 'onreadystatechange', xhrDesc || {});
+                return result;
+            } else {
+                var req = new XMLHttpRequest();
+                var detectFunc = function(){};
+                req.onreadystatechange = detectFunc;
+                var result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+                req.onreadystatechange = null;
+                return result;
+            }
+        }
+        console.log(foo());
+    }
+    expect: {
+        console.log(function() {
+            if (xhrDesc) {
+                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
+                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
+                    result;
+            }
+            function detectFunc() {}
+            var req;
+            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
+            return req.onreadystatechange = null, result;
+        }());
+    }
+}
+
+issue_2485: {
+    options = {
+        functions: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(bar) {
+            var n = function(a, b) {
+                return a + b;
+            };
+            var sumAll = function(arg) {
+                return arg.reduce(n, 0);
+            };
+            var runSumAll = function(arg) {
+                return sumAll(arg);
+            };
+            bar.baz = function(arg) {
+                var n = runSumAll(arg);
+                return (n.get = 1), n;
+            };
+            return bar;
+        };
+        var bar = foo({});
+        console.log(bar.baz([1, 2, 3]));
+    }
+    expect: {
+        var foo = function(bar) {
+            function n(a, b) {
+                return a + b;
+            }
+            function runSumAll(arg) {
+                return function(arg) {
+                    return arg.reduce(n, 0);
+                }(arg);
+            }
+            bar.baz = function(arg) {
+                var n = runSumAll(arg);
+                return (n.get = 1), n;
+            };
+            return bar;
+        };
+        var bar = foo({});
+        console.log(bar.baz([1, 2, 3]));
+    }
+    expect_stdout: "6"
+}

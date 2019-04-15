@@ -3,7 +3,7 @@
 
 "use strict";
 
-var site = "https://browserbench.org/JetStream";
+var site = "https://browserbench.org/JetStream1.1";
 if (typeof phantom == "undefined") {
     require("../tools/exit");
     var args = process.argv.slice(2);
