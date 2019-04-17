@@ -1,7 +1,5 @@
-exports["base54"] = base54;
 exports["Compressor"] = Compressor;
 exports["defaults"] = defaults;
-exports["is_identifier"] = is_identifier;
 exports["JS_Parse_Error"] = JS_Parse_Error;
 exports["mangle_properties"] = mangle_properties;
 exports["minify"] = minify;
@@ -9,7 +7,6 @@ exports["OutputStream"] = OutputStream;
 exports["parse"] = parse;
 exports["push_uniq"] = push_uniq;
 exports["reserve_quoted_keys"] = reserve_quoted_keys;
-exports["SourceMap"] = SourceMap;
 exports["string_template"] = string_template;
 exports["tokenizer"] = tokenizer;
 exports["TreeTransformer"] = TreeTransformer;
