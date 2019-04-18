@@ -73,8 +73,10 @@ exports.run_code = function(code, reuse) {
         process.stdout.write = original_write;
         if (!reuse || code.indexOf(".prototype") >= 0) {
             context = null;
-        } else for (var key in context) {
-            delete context[key];
+        } else {
+            vm.runInContext(Object.keys(context).map(function(name) {
+                return "delete " + name;
+            }).join("\n"), context);
         }
     }
 };
