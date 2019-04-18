@@ -2981,3 +2981,34 @@ issue_3364: {
     }
     expect_stdout: "2"
 }
+
+issue_3366: {
+    options = {
+        functions: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g() {
+                return function() {};
+            }
+            var a = g();
+            (function() {
+                this && a && console.log("PASS");
+            })();
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            function a() {}
+            (function() {
+                this && a && console.log("PASS");
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+}
