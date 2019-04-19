@@ -2712,8 +2712,8 @@ functions: {
     }
     input: {
         !function() {
-            var a = function() {
-                return "a";
+            var a = function a() {
+                return a && "a";
             };
             var b = function x() {
                 return !!x;
@@ -2736,19 +2736,19 @@ functions: {
     expect: {
         !function() {
             function a() {
-                return "a";
+                return a && "a";
             }
-            var b = function x() {
-                return !!x;
-            };
+            function b() {
+                return !!b;
+            }
             var c = function(c) {
                 return c;
             };
             if (c(b(a()))) {
                 function d() {}
-                var e = function y() {
-                    return typeof y;
-                };
+                function e() {
+                    return typeof e;
+                }
                 var f = function(f) {
                     return f;
                 };
@@ -2768,8 +2768,8 @@ functions_use_strict: {
     input: {
         "use strict";
         !function() {
-            var a = function() {
-                return "a";
+            var a = function a() {
+                return a && "a";
             };
             var b = function x() {
                 return !!x;
@@ -2793,11 +2793,11 @@ functions_use_strict: {
         "use strict";
         !function() {
             function a() {
-                return "a";
+                return a && "a";
             }
-            var b = function x() {
-                return !!x;
-            };
+            function b() {
+                return !!b;
+            }
             var c = function(c) {
                 return c;
             };
