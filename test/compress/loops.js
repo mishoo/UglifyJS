@@ -646,3 +646,30 @@ issue_2904: {
     }
     expect_stdout: "1"
 }
+
+issue_3371: {
+    options = {
+        functions: true,
+        join_vars: true,
+        loops: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a = function() {
+                console.log("PASS");
+            };
+            while (a());
+        })();
+    }
+    expect: {
+        (function() {
+            function a() {
+                console.log("PASS");
+            }
+            for (; a(); );
+        })();
+    }
+    expect_stdout: "PASS"
+}

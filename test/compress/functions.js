@@ -3012,3 +3012,32 @@ issue_3366: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3371: {
+    options = {
+        functions: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a = function f() {
+                (function() {
+                    console.log(typeof f);
+                })();
+            };
+            while (a());
+        })();
+    }
+    expect: {
+        (function() {
+            function a() {
+                console.log(typeof a);
+            }
+            while (a());
+        })();
+    }
+    expect_stdout: "function"
+}
