@@ -1687,3 +1687,28 @@ try_increment: {
     }
     expect_stdout: "1"
 }
+
+unsafe_escaped: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            console.log(function(index) {
+                return a[index];
+            }(function(term) {
+                return a.indexOf(term);
+            }("PASS")));
+        })([ "PASS" ]);
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
