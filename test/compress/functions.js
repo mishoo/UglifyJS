@@ -3003,12 +3003,10 @@ issue_3366: {
         f();
     }
     expect: {
-        (function() {
-            function a() {}
-            (function() {
-                this && a && console.log("PASS");
-            })();
-        })();
+        void function() {
+            this && a && console.log("PASS");
+        }();
+        function a() {}
     }
     expect_stdout: "PASS"
 }
@@ -3040,4 +3038,30 @@ issue_3371: {
         })();
     }
     expect_stdout: "function"
+}
+
+class_iife: {
+    options = {
+        inline: true,
+        sequences: true,
+        toplevel: true,
+    }
+    input: {
+        var A = function() {
+            function B() {}
+            B.prototype.m = function() {
+                console.log("PASS");
+            };
+            return B;
+        }();
+        new A().m();
+    }
+    expect: {
+        var A = (B.prototype.m = function() {
+            console.log("PASS");
+        }, B);
+        function B() {}
+        new A().m();
+    }
+    expect_stdout: "PASS"
 }
