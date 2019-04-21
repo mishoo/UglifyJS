@@ -6157,3 +6157,24 @@ sub_property: {
     }
     expect_stdout: "PASS"
 }
+
+assign_undeclared: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var A = (console.log(42), function() {});
+        B = new A();
+        console.log(typeof B);
+    }
+    expect: {
+        B = new (console.log(42), function() {})();
+        console.log(typeof B);
+    }
+    expect_stdout: [
+        "42",
+        "object",
+    ]
+}
