@@ -289,3 +289,25 @@ increment_decrement_2: {
     }
     expect_stdout: "42"
 }
+
+issue_3375: {
+    options = {
+        assignments: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(typeof function(b) {
+            var a = b += 1;
+            --b;
+            return a;
+        }("object"));
+    }
+    expect: {
+        console.log(typeof function(b) {
+            var a = b += 1;
+            --b;
+            return a;
+        }("object"));
+    }
+    expect_stdout: "string"
+}

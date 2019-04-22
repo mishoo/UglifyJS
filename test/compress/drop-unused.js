@@ -2005,3 +2005,24 @@ issue_3233: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3375: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        var a = c = [], c = --b + ("function" == typeof f && f());
+        var a = c && c[a];
+        console.log(a, b);
+    }
+    expect: {
+        var b = 1;
+        var a = [], c = --b + ("function" == typeof f && f());
+        a = c && c[a];
+        console.log(a, b);
+    }
+    expect_stdout: "0 0"
+}
