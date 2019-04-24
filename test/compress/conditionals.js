@@ -1416,3 +1416,22 @@ issue_3271: {
     }
     expect_stdout: "1 1"
 }
+
+iife_condition: {
+    options = {
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        if (function() {
+            return console;
+        }())
+            console.log("PASS");
+    }
+    expect: {
+        !function() {
+            return console;
+        }() || console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}

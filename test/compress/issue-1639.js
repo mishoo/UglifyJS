@@ -1,4 +1,3 @@
-
 issue_1639_1: {
     options = {
         booleans: true,
@@ -12,7 +11,6 @@ issue_1639_1: {
     }
     input: {
         var a = 100, b = 10;
-
         var L1 = 5;
         while (--L1 > 0) {
             if ((--b), false) {
@@ -21,7 +19,6 @@ issue_1639_1: {
                 }
             }
         }
-
         console.log(a, b);
     }
     expect: {
@@ -29,7 +26,7 @@ issue_1639_1: {
             if (--b, 0) var ignore = 0;
         console.log(a, b);
     }
-    expect_stdout: true
+    expect_stdout: "100 6"
 }
 
 issue_1639_2: {
@@ -44,25 +41,23 @@ issue_1639_2: {
     }
     input: {
         var a = 100, b = 10;
-
         function f19() {
             if (++a, false)
                 if (a)
                     if (++a);
         }
         f19();
-
         console.log(a, b);
     }
     expect: {
         var a = 100, b = 10;
         function f19() {
-            ++a, 0;
+            ++a, 1;
         }
         f19(),
         console.log(a, b);
     }
-    expect_stdout: true
+    expect_stdout: "101 10"
 }
 
 issue_1639_3: {
@@ -84,5 +79,5 @@ issue_1639_3: {
         a++,
         console.log(a, b);
     }
-    expect_stdout: true
+    expect_stdout: "101 10"
 }
