@@ -942,3 +942,21 @@ issue_2929: {
     }
     expect_stdout: "PASS"
 }
+
+unsafe_string_replace: {
+    options = {
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        "foo".replace("f", function() {
+            console.log("PASS");
+        });
+    }
+    expect: {
+        "foo".replace("f", function() {
+            console.log("PASS");
+        });
+    }
+    expect_stdout: "PASS"
+}
