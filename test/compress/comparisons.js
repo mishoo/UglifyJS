@@ -345,3 +345,23 @@ is_boolean_var: {
     }
     expect_stdout: "1"
 }
+
+is_defined: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        console.log(function a() {
+            return void 0 === a;
+        }());
+    }
+    expect: {
+        console.log(function a() {
+            return a, false;
+        }());
+    }
+    expect_stdout: "false"
+    expect_warnings: [
+        "WARN: Expression always defined [test/compress/comparisons.js:2,19]",
+    ]
+}
