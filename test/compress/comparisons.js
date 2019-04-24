@@ -365,3 +365,18 @@ is_defined: {
         "WARN: Expression always defined [test/compress/comparisons.js:2,19]",
     ]
 }
+
+unsafe_indexOf: {
+    options = {
+        booleans: true,
+        comparisons: true,
+        unsafe: true,
+    }
+    input: {
+        if (Object.keys({ foo: 42 }).indexOf("foo") >= 0) console.log("PASS");
+    }
+    expect: {
+        if (~Object.keys({ foo: 42 }).indexOf("foo")) console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
