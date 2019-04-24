@@ -1712,3 +1712,21 @@ unsafe_escaped: {
     }
     expect_stdout: "PASS"
 }
+
+unsafe_string_replace: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        "foo".replace("f", function() {
+            console.log("PASS");
+        });
+    }
+    expect: {
+        "foo".replace("f", function() {
+            console.log("PASS");
+        });
+    }
+    expect_stdout: "PASS"
+}
