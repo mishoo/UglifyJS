@@ -6737,3 +6737,21 @@ drop_side_effect_free: {
     }
     expect_stdout: "123"
 }
+
+issue_3377: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f() {
+            return f[0], (f = 42);
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            return f[0], (f = 42);
+        }());
+    }
+    expect_stdout: "42"
+}
