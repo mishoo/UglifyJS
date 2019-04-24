@@ -820,8 +820,8 @@ unsafe_charAt_noop: {
     }
     expect: {
         console.log(
-            s.charAt(0),
-            "string".charAt(x),
+            s[0],
+            "string"[0 | x],
             (typeof x)[0]
         );
     }
