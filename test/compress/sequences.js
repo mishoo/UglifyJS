@@ -964,3 +964,39 @@ missing_link: {
         console.log(a);
     }
 }
+
+angularjs_chain: {
+    options = {
+        conditionals: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function nonComputedMember(left, right, context, create) {
+            var lhs = left();
+            if (create && create !== 1) {
+                if (lhs && lhs[right] == null) {
+                    lhs[right] = {};
+                }
+            }
+            var value = lhs != null ? lhs[right] : undefined;
+            if (context) {
+                return { context: lhs, name: right, value: value };
+            } else {
+                return value;
+            }
+        }
+    }
+    expect: {
+        function nonComputedMember(left, right, context, create) {
+            var lhs = left();
+            create && 1 !== create && lhs && null == lhs[right] && (lhs[right] = {});
+            var value = null != lhs ? lhs[right] : void 0;
+            return context ? {
+                context: lhs,
+                name: right,
+                value: value
+            } : value;
+        }
+    }
+}
