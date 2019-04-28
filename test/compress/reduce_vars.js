@@ -192,38 +192,35 @@ unsafe_evaluate: {
         unused: true,
     }
     input: {
-        function f0(){
-            var a = {
-                b:1
-            };
+        function f0() {
+            var a = { b: 1 };
             console.log(a.b + 3);
         }
-
-        function f1(){
+        function f1() {
             var a = {
-                b:{
-                    c:1
-                },
-                d:2
+                b: { c: 1 },
+                d: 2
             };
             console.log(a.b + 3, a.d + 4, a.b.c + 5, a.d.c + 6);
         }
+        f0();
+        f1();
     }
     expect: {
-        function f0(){
+        function f0() {
             console.log(4);
         }
-
-        function f1(){
+        function f1() {
             var a = {
-                b:{
-                    c:1
-                },
-                d:2
+                b: { c: 1 },
+                d: 2
             };
-            console.log(a.b + 3, 6, 6, 2..c + 6);
+            console.log(a.b + 3, 6, 6, NaN);
         }
+        f0();
+        f1();
     }
+    expect_stdout: true
 }
 
 unsafe_evaluate_side_effect_free_1: {
