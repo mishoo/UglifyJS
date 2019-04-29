@@ -1862,3 +1862,29 @@ join_expr: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3389: {
+    options = {
+        evaluate: true,
+        properties: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        (function() {
+            var a = "PASS";
+            if (delete b)
+                b = a[null] = 42;
+            console.log(a);
+        })();
+    }
+    expect: {
+        (function() {
+            var a = "PASS";
+            if (delete b)
+                b = a.null = 42;
+            console.log(a);
+        })();
+    }
+    expect_stdout: "PASS"
+}
