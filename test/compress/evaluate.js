@@ -246,7 +246,7 @@ unsafe_constant: {
     }
     expect: {
         console.log(
-            true.a,
+            void 0,
             false.a,
             null.a,
             (void 0).a
@@ -278,7 +278,7 @@ unsafe_object: {
             o + 1,
             2,
             o.b + 1,
-            1..b + 1
+            NaN
         );
     }
     expect_stdout: true
@@ -365,7 +365,7 @@ unsafe_object_repeated: {
             o + 1,
             2,
             o.b + 1,
-            1..b + 1
+            NaN
         );
     }
     expect_stdout: true
@@ -444,8 +444,8 @@ unsafe_integer_key: {
             2,
             2,
             ({0:1})[1] + 1,
-            1[1] + 1,
-            1["1"] + 1
+            NaN,
+            NaN
         );
     }
     expect_stdout: true
@@ -500,8 +500,8 @@ unsafe_float_key: {
             2,
             2,
             ({2.72:1})[3.14] + 1,
-            1[3.14] + 1,
-            1["3.14"] + 1
+            NaN,
+            NaN
         );
     }
     expect_stdout: true
@@ -635,12 +635,12 @@ unsafe_string_bad_index: {
     }
     expect: {
         console.log(
-            "1234".a + 1,
-            "1234"["a"] + 1,
-            "1234"[3.14] + 1
+            NaN,
+            NaN,
+            NaN
         );
     }
-    expect_stdout: true
+    expect_stdout: "NaN NaN NaN"
 }
 
 prototype_function: {
@@ -1729,4 +1729,31 @@ unsafe_string_replace: {
         });
     }
     expect_stdout: "PASS"
+}
+
+issue_3387_1: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(1 + (2 + "3"[4]));
+    }
+    expect: {
+        console.log(1 + (2 + "3"[4]));
+    }
+    expect_stdout: "NaN"
+}
+
+issue_3387_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(1 + (2 + "3"[4]));
+    }
+    expect: {
+        console.log(NaN);
+    }
+    expect_stdout: "NaN"
 }
