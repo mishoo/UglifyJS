@@ -59,9 +59,9 @@ do_screw_try_catch: {
     input: {
         good = function(e){
             return function(error){
-                try{
+                try {
                     e()
-                } catch(e) {
+                } catch (e) {
                     error(e)
                 }
             }
@@ -70,9 +70,9 @@ do_screw_try_catch: {
     expect: {
         good = function(n){
             return function(t){
-                try{
+                try {
                     n()
-                } catch(n) {
+                } catch (n) {
                     t(n)
                 }
             }
@@ -93,9 +93,9 @@ dont_screw_try_catch: {
     input: {
         bad = function(e){
             return function(error){
-                try{
+                try {
                     e()
-                } catch(e) {
+                } catch (e) {
                     error(e)
                 }
             }
@@ -104,9 +104,9 @@ dont_screw_try_catch: {
     expect: {
         bad = function(t){
             return function(n){
-                try{
+                try {
                     t()
-                } catch(t) {
+                } catch (t) {
                     n(t)
                 }
             }
@@ -137,7 +137,7 @@ do_screw_try_catch_undefined: {
     }
     expect: {
         function a(o){
-            try{
+            try {
                 throw "Stuff"
             } catch (o) {
                 console.log("caught: "+o)
@@ -172,7 +172,7 @@ dont_screw_try_catch_undefined: {
     }
     expect: {
         function a(n){
-            try{
+            try {
                 throw "Stuff"
             } catch (undefined) {
                 console.log("caught: " + undefined)

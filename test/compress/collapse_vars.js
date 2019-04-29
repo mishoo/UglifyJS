@@ -4194,7 +4194,7 @@ may_throw_2: {
                 var a = x();
                 ++b;
                 return b(a);
-            } catch(e) {}
+            } catch (e) {}
             console.log(b);
         }
         f(0);
@@ -4204,7 +4204,7 @@ may_throw_2: {
             try {
                 var a = x();
                 return (++b)(a);
-            } catch(e) {}
+            } catch (e) {}
             console.log(b);
         }
         f(0);
