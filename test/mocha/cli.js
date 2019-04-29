@@ -47,7 +47,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should give sensible error against invalid input source map", function(done) {
-        var command = uglifyjscmd + " test/mocha.js --source-map content=blah,url=inline";
+        var command = uglifyjscmd + " test/mocha.js --source-map content=blah,url=inline --verbose";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.deepEqual(stderr.split(/\n/).slice(0, 2), [
@@ -83,6 +83,7 @@ describe("bin/uglifyjs", function() {
             "test/input/issue-2082/sample.js",
             "--source-map", "content=test/input/issue-2082/sample.js.map",
             "--source-map", "url=inline",
+            "--verbose",
         ].join(" ");
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
@@ -202,7 +203,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should warn for missing inline source map", function(done) {
-        var command = uglifyjscmd + " test/input/issue-1323/sample.js --source-map content=inline,url=inline";
+        var command = uglifyjscmd + " test/input/issue-1323/sample.js --source-map content=inline,url=inline --warn";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, [
@@ -221,6 +222,7 @@ describe("bin/uglifyjs", function() {
             "test/input/issue-520/input.js",
             "test/input/issue-1323/sample.js",
             "--source-map", "content=inline,url=inline",
+            "--warn",
         ].join(" ");
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
@@ -466,7 +468,7 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
-    it("Should throw syntax error (catch(eval))", function(done) {
+    it("Should throw syntax error (catch (eval))", function(done) {
         var command = uglifyjscmd + ' test/input/invalid/try.js';
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
@@ -647,7 +649,7 @@ describe("bin/uglifyjs", function() {
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
-            assert.strictEqual(stderr, "Error parsing arguments for 'define': a-b\n");
+            assert.strictEqual(stderr, "ERROR: cannot parse arguments for 'define': a-b\n");
             done();
         });
     });

@@ -144,7 +144,7 @@ unused_var_in_catch: {
         function foo() {
             try {
                 foo();
-            } catch(ex) {
+            } catch (ex) {
                 var x = 10;
             }
         }
@@ -153,7 +153,7 @@ unused_var_in_catch: {
         function foo() {
             try {
                 foo();
-            } catch(ex) {}
+            } catch (ex) {}
         }
     }
 }
@@ -166,7 +166,7 @@ used_var_in_catch: {
         function foo() {
             try {
                 foo();
-            } catch(ex) {
+            } catch (ex) {
                 var x = 10;
             }
             return x;
@@ -176,7 +176,7 @@ used_var_in_catch: {
         function foo() {
             try {
                 foo();
-            } catch(ex) {
+            } catch (ex) {
                 var x = 10;
             }
             return x;
@@ -1156,7 +1156,7 @@ var_catch_toplevel: {
             try {
                 a++;
                 x();
-            } catch(a) {
+            } catch (a) {
                 if (a) var a;
                 var a = 10;
             }
@@ -1167,7 +1167,7 @@ var_catch_toplevel: {
         !function() {
             try {
                 x();
-            } catch(a) {
+            } catch (a) {
                 var a;
             }
         }();

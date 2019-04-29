@@ -63,7 +63,7 @@ if (program.configFile) {
     }
 }
 if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
-    fatal("ERROR: cannot write source map to STDOUT");
+    fatal("cannot write source map to STDOUT");
 }
 [
     "compress",
@@ -78,6 +78,15 @@ if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
         options[name] = program[name];
     }
 });
+if (program.verbose) {
+    options.warnings = "verbose";
+} else if (program.warn) {
+    options.warnings = true;
+}
+if (options.warnings) {
+    UglifyJS.AST_Node.log_function(print_error, options.warnings == "verbose");
+    delete options.warnings;
+}
 if (program.beautify) {
     options.output = typeof program.beautify == "object" ? program.beautify : {};
     if (!("beautify" in options.output)) {
@@ -124,7 +133,7 @@ if (program.parse) {
     if (!program.parse.acorn && !program.parse.spidermonkey) {
         options.parse = program.parse;
     } else if (program.sourceMap && program.sourceMap.content == "inline") {
-        fatal("ERROR: inline source map only works with built-in parser");
+        fatal("inline source map only works with built-in parser");
     }
 }
 if (~program.rawArgs.indexOf("--rename")) {
@@ -144,15 +153,8 @@ if (typeof program.sourceMap == "object" && "base" in program.sourceMap) {
         };
     }();
 }
-if (program.verbose) {
-    options.warnings = "verbose";
-} else if (program.warn) {
-    options.warnings = true;
-}
 if (program.self) {
-    if (program.args.length) {
-        print_error("WARN: Ignoring input files since --self was passed");
-    }
+    if (program.args.length) UglifyJS.AST_Node.warn("Ignoring input files since --self was passed");
     if (!options.wrap) options.wrap = "UglifyJS";
     simple_glob(UglifyJS.FILES).forEach(function(name) {
         files[convert_path(name)] = read_file(name);
@@ -180,12 +182,9 @@ function convert_ast(fn) {
 }
 
 function run() {
-    UglifyJS.AST_Node.warn_function = function(msg) {
-        print_error("WARN: " + msg);
-    };
     var content = program.sourceMap && program.sourceMap.content;
     if (content && content != "inline") {
-        print_error("INFO: Using input source map: " + content);
+        UglifyJS.AST_Node.info("Using input source map: " + content);
         options.sourceMap.content = read_file(content, content);
     }
     if (program.timings) options.timings = true;
@@ -293,7 +292,11 @@ function run() {
 }
 
 function fatal(message) {
-    if (message instanceof Error) message = message.stack.replace(/^\S*?Error:/, "ERROR:")
+    if (message instanceof Error) {
+        message = message.stack.replace(/^\S*?Error:/, "ERROR:")
+    } else {
+        message = "ERROR: " + message;
+    }
     print_error(message);
     process.exit(1);
 }
@@ -370,9 +373,9 @@ function parse_js(flag) {
                     });
                 }
             }));
-        } catch(ex) {
+        } catch (ex) {
             if (flag) {
-                fatal("Error parsing arguments for '" + flag + "': " + value);
+                fatal("cannot parse arguments for '" + flag + "': " + value);
             } else {
                 options[value] = null;
             }

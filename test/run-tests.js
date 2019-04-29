@@ -231,16 +231,15 @@ function run_compress_tests() {
                 });
                 return false;
             }
-            var options = U.defaults(test.options, {
-                warnings: false
-            });
             var warnings_emitted = [];
-            var original_warn_function = U.AST_Node.warn_function;
             if (test.expect_warnings) {
-                U.AST_Node.warn_function = function(text) {
-                    warnings_emitted.push("WARN: " + text);
-                };
-                if (!options.warnings) options.warnings = true;
+                var expected_warnings = make_code(test.expect_warnings, {
+                    beautify: false,
+                    quote_style: 2, // force double quote to match JSON
+                });
+                U.AST_Node.log_function(function(text) {
+                    warnings_emitted.push(text);
+                }, /"INFO: /.test(expected_warnings));
             }
             if (test.mangle && test.mangle.properties && test.mangle.properties.keep_quoted) {
                 var quoted_props = test.mangle.properties.reserved;
@@ -252,7 +251,7 @@ function run_compress_tests() {
                 input.figure_out_scope(test.mangle);
                 input.expand_names(test.mangle);
             }
-            var cmp = new U.Compressor(options, true);
+            var cmp = new U.Compressor(test.options, true);
             var output = cmp.compress(input);
             output.figure_out_scope(test.mangle);
             if (test.mangle) {
@@ -283,11 +282,6 @@ function run_compress_tests() {
                 return false;
             }
             if (test.expect_warnings) {
-                U.AST_Node.warn_function = original_warn_function;
-                var expected_warnings = make_code(test.expect_warnings, {
-                    beautify: false,
-                    quote_style: 2, // force double quote to match JSON
-                });
                 warnings_emitted = warnings_emitted.map(function(input) {
                     return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
                 });
