@@ -320,7 +320,7 @@ describe("sourcemaps", function() {
             var transformedMap = new SourceMapConsumer(result.map);
             var hasMappedSource = true;
 
-            for (let i = 0; i < result.code.length; i++) {
+            for (var i = 0; i < result.code.length; i++) {
                 var info = transformedMap.originalPositionFor({line: 1, column: i});
                 hasMappedSource = hasMappedSource && !!info.source;
             }
