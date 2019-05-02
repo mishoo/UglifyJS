@@ -219,8 +219,9 @@ function run_compress_tests() {
             var input_code = make_code(input);
             var input_formatted = make_code(test.input, {
                 beautify: true,
+                comments: "all",
+                keep_quoted_props: true,
                 quote_style: 3,
-                keep_quoted_props: true
             });
             try {
                 U.parse(input_code);
