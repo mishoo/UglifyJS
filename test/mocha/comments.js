@@ -260,6 +260,23 @@ describe("comments", function() {
         ].join("\n"));
     });
 
+    it("Should handle programmatic AST insertions gracefully", function() {
+        var ast = UglifyJS.parse([
+            "function f() {",
+            "    //foo",
+            "    bar;",
+            "    return;",
+            "}",
+        ].join("\n"));
+        ast.body[0].body[0] = new UglifyJS.AST_Throw({value: ast.body[0].body[0].body});
+        ast.body[0].body[1].value = new UglifyJS.AST_Number({value: 42});
+        assert.strictEqual(ast.print_to_string({comments: "all"}), [
+            "function f(){",
+            "//foo",
+            "throw bar;return 42}",
+        ].join("\n"));
+    });
+
     describe("comment before constant", function() {
         var js = 'function f() { /*c1*/ var /*c2*/ foo = /*c3*/ false; return foo; }';
 
