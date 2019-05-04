@@ -767,9 +767,6 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `unused` (default: `true`) -- drop unreferenced functions and variables (simple
   direct variable assignments do not count as references unless set to `"keep_assign"`)
 
-- `warnings` (default: `false`) -- display warnings when dropping unreachable
-  code or unused declarations etc.
-
 ## Mangle options
 
 - `eval` (default `false`) -- Pass `true` to mangle names visible in scopes
