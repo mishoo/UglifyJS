@@ -277,6 +277,43 @@ describe("comments", function() {
         ].join("\n"));
     });
 
+    it("Should not duplicate sourceMappingURL", function() {
+        var code = [
+            "//# sourceMappingURL=input.map",
+            "print(42);",
+            "//# sourceMappingURL=input.map",
+            "",
+            "//# sourceMappingURL=input.map",
+            "//# sourceMappingURL=input.map",
+            "",
+        ].join("\n");
+
+        var result = UglifyJS.minify(code, {
+            output: { comments: true },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "//# sourceMappingURL=input.map",
+            "print(42);",
+            "//# sourceMappingURL=input.map",
+            "//# sourceMappingURL=input.map",
+            "//# sourceMappingURL=input.map",
+        ].join("\n"));
+
+        result = UglifyJS.minify(code, {
+            output: { comments: true },
+            sourceMap: { url: "output.map" },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "//# sourceMappingURL=input.map",
+            "print(42);",
+            "//# sourceMappingURL=input.map",
+            "//# sourceMappingURL=input.map",
+            "//# sourceMappingURL=output.map",
+        ].join("\n"));
+    });
+
     describe("comment before constant", function() {
         var js = 'function f() { /*c1*/ var /*c2*/ foo = /*c3*/ false; return foo; }';
 

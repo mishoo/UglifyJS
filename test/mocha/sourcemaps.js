@@ -169,6 +169,18 @@ describe("sourcemaps", function() {
             map = JSON.parse(result.map);
             assert.ok(!("sourcesContent" in map));
         });
+        it("Should parse the correct sourceMappingURL", function() {
+            var result = UglifyJS.minify(read("./test/input/issue-3294/input.js"), {
+                compress: { toplevel: true },
+                sourceMap: {
+                    content: "inline",
+                    includeSources: true,
+                    url: "inline"
+                }
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code + "\n", readFileSync("test/input/issue-3294/output.js", "utf8"));
+        });
     });
 
     describe("sourceMapInline", function() {
