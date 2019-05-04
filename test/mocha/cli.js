@@ -713,7 +713,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + " test/input/enclose/input.js --enclose window,undefined:window --wrap exports";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
-            assert.strictEqual(stdout, '(function(window,undefined){(function(exports){function enclose(){console.log("test enclose")}enclose()})(typeof exports=="undefined"?exports={}:exports)})(window);\n');
+            assert.strictEqual(stdout, '(function(exports){(function(window,undefined){function enclose(){console.log("test enclose")}enclose()})(window)})(typeof exports=="undefined"?exports={}:exports);\n');
             done();
         });
     });

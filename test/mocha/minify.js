@@ -365,7 +365,7 @@ describe("minify", function() {
                 wrap: 'exports',
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code, '(function(window,undefined){(function(exports){function enclose(){console.log("test enclose")}enclose()})(typeof exports=="undefined"?exports={}:exports)})(window);');
+            assert.strictEqual(result.code, '(function(exports){(function(window,undefined){function enclose(){console.log("test enclose")}enclose()})(window)})(typeof exports=="undefined"?exports={}:exports);');
         });
     });
 });
