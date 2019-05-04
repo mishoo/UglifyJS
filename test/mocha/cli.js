@@ -114,13 +114,12 @@ describe("bin/uglifyjs", function() {
 
         var child = exec(command, function(err, stdout) {
             if (err) throw err;
-
-            assert.strictEqual(stdout, read("test/input/pr-3040/expect.js"));
+            assert.strictEqual(stdout, read("test/input/issue-3040/expect.js"));
             done();
         });
         setTimeout(function() {
-            fs.writeFileSync(mapFile, read("test/input/pr-3040/input.js.map"));
-            child.stdin.end(read("test/input/pr-3040/input.js"));
+            fs.writeFileSync(mapFile, read("test/input/issue-3040/input.js.map"));
+            child.stdin.end(read("test/input/issue-3040/input.js"));
         }, 1000);
     });
     it("Should work with --keep-fnames (mangle only)", function(done) {
