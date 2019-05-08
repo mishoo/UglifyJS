@@ -3,6 +3,7 @@ var semver = require("semver");
 var spawn = require("child_process").spawn;
 
 if (!process.env.UGLIFYJS_TEST_ALL) return;
+if (semver.satisfies(process.version, "0.12")) return;
 
 function run(command, args, done) {
     spawn(command, args, {
@@ -33,7 +34,6 @@ describe("test/benchmark.js", function() {
     });
 });
 
-if (semver.satisfies(process.version, "0.12")) return;
 describe("test/jetstream.js", function() {
     this.timeout(20 * 60 * 1000);
     [

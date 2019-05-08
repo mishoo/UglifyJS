@@ -31,7 +31,7 @@
     "semver": "~6.0.0"
   },
   "scripts": {
-    "test": "node test/run-tests.js"
+    "test": "node test/compress.js && node test/mocha.js"
   },
   "keywords": [
     "cli",
