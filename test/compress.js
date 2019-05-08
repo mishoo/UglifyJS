@@ -1,25 +1,32 @@
 #! /usr/bin/env node
 
-var U = require("./node");
-var path = require("path");
-var fs = require("fs");
 var assert = require("assert");
+var fs = require("fs");
+var path = require("path");
 var sandbox = require("./sandbox");
 var semver = require("semver");
+var U = require("./node");
 
-var tests_dir = path.dirname(module.filename);
 var failures = 0;
-var failed_files = {};
+var failed_files = Object.create(null);
 var minify_options = require("./ufuzz.json").map(JSON.stringify);
-
-run_compress_tests();
+var dir = path.resolve(path.dirname(module.filename), "compress");
+fs.readdirSync(dir).filter(function(name) {
+    return /\.js$/i.test(name);
+}).forEach(function(file) {
+    log("--- {file}", { file: file });
+    var tests = parse_test(path.resolve(dir, file));
+    for (var i in tests) if (!test_case(tests[i])) {
+        failures++;
+        failed_files[file] = 1;
+    }
+});
 if (failures) {
-    console.error("\n!!! Failed " + failures + " test cases.");
+    console.error();
+    console.error("!!! Failed " + failures + " test case(s).");
     console.error("!!! " + Object.keys(failed_files).join(", "));
     process.exit(1);
 }
-console.log();
-require("./mocha.js");
 
 /* -----[ utils ]----- */
 
@@ -46,11 +53,11 @@ function parse_test(file) {
             filename: file
         });
     } catch (e) {
-        console.log("Caught error while parsing tests in " + file + "\n");
-        console.log(e);
-        throw e;
+        console.error("Caught error while parsing tests in " + file);
+        console.error(e);
+        process.exit(1);
     }
-    var tests = {};
+    var tests = Object.create(null);
     var tw = new U.TreeWalker(function(node, descend) {
         if (node instanceof U.AST_LabeledStatement
             && tw.parent() instanceof U.AST_Toplevel) {
@@ -167,7 +174,17 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
         var options_formatted = JSON.stringify(options, null, 4);
         var result = U.minify(input_code, options);
         if (result.error) {
-            log("!!! failed input reminify\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n--ERROR---\n{error}\n\n", {
+            log([
+                "!!! failed input reminify",
+                "---INPUT---",
+                "{input}",
+                "---OPTIONS---",
+                "{options}",
+                "--ERROR---",
+                "{error}",
+                "",
+                "",
+            ].join("\n"), {
                 input: input_formatted,
                 options: options_formatted,
                 error: result.error,
@@ -179,7 +196,21 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
                 stdout = expect_stdout;
             }
             if (!sandbox.same_stdout(expect_stdout, stdout)) {
-                log("!!! failed running reminified input\n---INPUT---\n{input}\n---OPTIONS---\n{options}\n---OUTPUT---\n{output}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
+                log([
+                    "!!! failed running reminified input",
+                    "---INPUT---",
+                    "{input}",
+                    "---OPTIONS---",
+                    "{options}",
+                    "---OUTPUT---",
+                    "{output}",
+                    "---EXPECTED {expected_type}---",
+                    "{expected}",
+                    "---ACTUAL {actual_type}---",
+                    "{actual}",
+                    "",
+                    "",
+                ].join("\n"), {
                     input: input_formatted,
                     options: options_formatted,
                     output: result.code,
@@ -200,143 +231,186 @@ function run_code(code) {
     return typeof result == "string" ? result.replace(/\u001b\[\d+m/g, "") : result;
 }
 
-function run_compress_tests() {
-    var dir = path.resolve(tests_dir, "compress");
-    fs.readdirSync(dir).filter(function(name) {
-        return /\.js$/i.test(name);
-    }).forEach(function(file) {
-        log("--- {file}", { file: file });
-        function test_case(test) {
-            log("    Running test [{name}]", { name: test.name });
-            var output_options = test.beautify || {};
-            var expect;
-            if (test.expect) {
-                expect = make_code(to_toplevel(test.expect, test.mangle), output_options);
-            } else {
-                expect = test.expect_exact;
-            }
-            var input = to_toplevel(test.input, test.mangle);
-            var input_code = make_code(input);
-            var input_formatted = make_code(test.input, {
-                beautify: true,
-                comments: "all",
-                keep_quoted_props: true,
-                quote_style: 3,
-            });
-            try {
-                U.parse(input_code);
-            } catch (ex) {
-                log("!!! Cannot parse input\n---INPUT---\n{input}\n--PARSE ERROR--\n{error}\n\n", {
-                    input: input_formatted,
-                    error: ex,
-                });
-                return false;
-            }
-            var warnings_emitted = [];
-            if (test.expect_warnings) {
-                var expected_warnings = make_code(test.expect_warnings, {
-                    beautify: false,
-                    quote_style: 2, // force double quote to match JSON
-                });
-                U.AST_Node.log_function(function(text) {
-                    warnings_emitted.push(text);
-                }, /"INFO: /.test(expected_warnings));
-            }
-            if (test.mangle && test.mangle.properties && test.mangle.properties.keep_quoted) {
-                var quoted_props = test.mangle.properties.reserved;
-                if (!Array.isArray(quoted_props)) quoted_props = [];
-                test.mangle.properties.reserved = quoted_props;
-                U.reserve_quoted_keys(input, quoted_props);
-            }
-            if (test.rename) {
-                input.figure_out_scope(test.mangle);
-                input.expand_names(test.mangle);
-            }
-            var cmp = new U.Compressor(test.options, true);
-            var output = cmp.compress(input);
-            output.figure_out_scope(test.mangle);
-            if (test.mangle) {
-                output.compute_char_frequency(test.mangle);
-                output.mangle_names(test.mangle);
-                if (test.mangle.properties) {
-                    output = U.mangle_properties(output, test.mangle.properties);
-                }
-            }
-            output = make_code(output, output_options);
-            if (expect != output) {
-                log("!!! failed\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n---EXPECTED---\n{expected}\n\n", {
-                    input: input_formatted,
-                    output: output,
-                    expected: expect
-                });
-                return false;
-            }
-            // expect == output
-            try {
-                U.parse(output);
-            } catch (ex) {
-                log("!!! Test matched expected result but cannot parse output\n---INPUT---\n{input}\n---OUTPUT---\n{output}\n--REPARSE ERROR--\n{error}\n\n", {
-                    input: input_formatted,
-                    output: output,
-                    error: ex,
-                });
-                return false;
-            }
-            if (test.expect_warnings) {
-                warnings_emitted = warnings_emitted.map(function(input) {
-                    return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
-                });
-                var actual_warnings = JSON.stringify(warnings_emitted);
-                if (expected_warnings != actual_warnings) {
-                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED WARNINGS---\n{expected_warnings}\n---ACTUAL WARNINGS---\n{actual_warnings}\n\n", {
-                        input: input_formatted,
-                        expected_warnings: expected_warnings,
-                        actual_warnings: actual_warnings,
-                    });
-                    return false;
-                }
-            }
-            if (test.expect_stdout
-                && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-                var stdout = run_code(input_code);
-                if (test.expect_stdout === true) {
-                    test.expect_stdout = stdout;
-                }
-                if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
-                    log("!!! Invalid input or expected stdout\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                        input: input_formatted,
-                        expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
-                        expected: test.expect_stdout,
-                        actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                        actual: stdout,
-                    });
-                    return false;
-                }
-                stdout = run_code(output);
-                if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
-                    log("!!! failed\n---INPUT---\n{input}\n---EXPECTED {expected_type}---\n{expected}\n---ACTUAL {actual_type}---\n{actual}\n\n", {
-                        input: input_formatted,
-                        expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
-                        expected: test.expect_stdout,
-                        actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                        actual: stdout,
-                    });
-                    return false;
-                }
-                if (!reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        var tests = parse_test(path.resolve(dir, file));
-        for (var i in tests) if (tests.hasOwnProperty(i)) {
-            if (!test_case(tests[i])) {
-                failures++;
-                failed_files[file] = 1;
-            }
-        }
+function test_case(test) {
+    log("    Running test [{name}]", { name: test.name });
+    var output_options = test.beautify || {};
+    var expect;
+    if (test.expect) {
+        expect = make_code(to_toplevel(test.expect, test.mangle), output_options);
+    } else {
+        expect = test.expect_exact;
+    }
+    var input = to_toplevel(test.input, test.mangle);
+    var input_code = make_code(input);
+    var input_formatted = make_code(test.input, {
+        beautify: true,
+        comments: "all",
+        keep_quoted_props: true,
+        quote_style: 3,
     });
+    try {
+        U.parse(input_code);
+    } catch (ex) {
+        log([
+            "!!! Cannot parse input",
+            "---INPUT---",
+            "{input}",
+            "--PARSE ERROR--",
+            "{error}",
+            "",
+            "",
+        ].join("\n"), {
+            input: input_formatted,
+            error: ex,
+        });
+        return false;
+    }
+    var warnings_emitted = [];
+    if (test.expect_warnings) {
+        var expected_warnings = make_code(test.expect_warnings, {
+            beautify: false,
+            quote_style: 2, // force double quote to match JSON
+        });
+        U.AST_Node.log_function(function(text) {
+            warnings_emitted.push(text);
+        }, /"INFO: /.test(expected_warnings));
+    }
+    if (test.mangle && test.mangle.properties && test.mangle.properties.keep_quoted) {
+        var quoted_props = test.mangle.properties.reserved;
+        if (!Array.isArray(quoted_props)) quoted_props = [];
+        test.mangle.properties.reserved = quoted_props;
+        U.reserve_quoted_keys(input, quoted_props);
+    }
+    if (test.rename) {
+        input.figure_out_scope(test.mangle);
+        input.expand_names(test.mangle);
+    }
+    var cmp = new U.Compressor(test.options, true);
+    var output = cmp.compress(input);
+    output.figure_out_scope(test.mangle);
+    if (test.mangle) {
+        output.compute_char_frequency(test.mangle);
+        output.mangle_names(test.mangle);
+        if (test.mangle.properties) {
+            output = U.mangle_properties(output, test.mangle.properties);
+        }
+    }
+    output = make_code(output, output_options);
+    if (expect != output) {
+        log([
+            "!!! failed",
+            "---INPUT---",
+            "{input}",
+            "---OUTPUT---",
+            "{output}",
+            "---EXPECTED---",
+            "{expected}",
+            "",
+            "",
+        ].join("\n"), {
+            input: input_formatted,
+            output: output,
+            expected: expect
+        });
+        return false;
+    }
+    // expect == output
+    try {
+        U.parse(output);
+    } catch (ex) {
+        log([
+            "!!! Test matched expected result but cannot parse output",
+            "---INPUT---",
+            "{input}",
+            "---OUTPUT---",
+            "{output}",
+            "--REPARSE ERROR--",
+            "{error}",
+            "",
+            "",
+        ].join("\n"), {
+            input: input_formatted,
+            output: output,
+            error: ex,
+        });
+        return false;
+    }
+    if (test.expect_warnings) {
+        warnings_emitted = warnings_emitted.map(function(input) {
+            return input.split(process.cwd() + path.sep).join("").split(path.sep).join("/");
+        });
+        var actual_warnings = JSON.stringify(warnings_emitted);
+        if (expected_warnings != actual_warnings) {
+            log([
+                "!!! failed",
+                "---INPUT---",
+                "{input}",
+                "---EXPECTED WARNINGS---",
+                "{expected_warnings}",
+                "---ACTUAL WARNINGS---",
+                "{actual_warnings}",
+                "",
+                "",
+            ].join("\n"), {
+                input: input_formatted,
+                expected_warnings: expected_warnings,
+                actual_warnings: actual_warnings,
+            });
+            return false;
+        }
+    }
+    if (test.expect_stdout
+        && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
+        var stdout = run_code(input_code);
+        if (test.expect_stdout === true) {
+            test.expect_stdout = stdout;
+        }
+        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+            log([
+                "!!! Invalid input or expected stdout",
+                "---INPUT---",
+                "{input}",
+                "---EXPECTED {expected_type}---",
+                "{expected}",
+                "---ACTUAL {actual_type}---",
+                "{actual}",
+                "",
+                "",
+            ].join("\n"), {
+                input: input_formatted,
+                expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
+                expected: test.expect_stdout,
+                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                actual: stdout,
+            });
+            return false;
+        }
+        stdout = run_code(output);
+        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+            log([
+                "!!! failed",
+                "---INPUT---",
+                "{input}",
+                "---EXPECTED {expected_type}---",
+                "{expected}",
+                "---ACTUAL {actual_type}---",
+                "{actual}",
+                "",
+                "",
+            ].join("\n"), {
+                input: input_formatted,
+                expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
+                expected: test.expect_stdout,
+                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
+                actual: stdout,
+            });
+            return false;
+        }
+        if (!reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function tmpl() {
