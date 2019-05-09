@@ -797,6 +797,7 @@ assign_chain: {
 issue_1583: {
     options = {
         keep_fargs: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -1144,6 +1145,7 @@ var_catch_toplevel: {
     options = {
         conditionals: true,
         negate_iife: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,

@@ -2860,10 +2860,10 @@ issue_2437: {
                     result;
             }
             function detectFunc() {}
-            var req;
-            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
-            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
-            return req.onreadystatechange = null, result;
+            var req = new XMLHttpRequest();
+            return req.onreadystatechange = detectFunc,
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
+            req.onreadystatechange = null, result;
         }());
     }
 }
@@ -3064,4 +3064,52 @@ class_iife: {
         new A().m();
     }
     expect_stdout: "PASS"
+}
+
+issue_3400: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(f) {
+            console.log(f()()[0].p);
+        })(function() {
+            function g() {
+                function h(u) {
+                    var o = {
+                        p: u
+                    };
+                    return console.log(o[g]), o;
+                }
+                function e() {
+                    return [ 42 ].map(function(v) {
+                        return h(v);
+                    });
+                }
+                return e();
+            }
+            return g;
+        });
+    }
+    expect: {
+        void console.log(function g() {
+            function e() {
+                return [42].map(function(v) {
+                    return o = {
+                        p: v
+                    }, console.log(o[g]) , o;
+                    var o;
+                });
+            }
+            return e();
+        }()[0].p);
+    }
+    expect_stdout: [
+        "undefined",
+        "42",
+    ]
 }
