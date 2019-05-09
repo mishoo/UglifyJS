@@ -3497,10 +3497,10 @@ issue_2437_1: {
                 return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
                     result;
             }
-            var req, detectFunc = function(){};
-            (req = new XMLHttpRequest()).onreadystatechange = detectFunc;
-            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc;
-            return req.onreadystatechange = null, result;
+            var req = new XMLHttpRequest(), detectFunc = function(){};
+            return req.onreadystatechange = detectFunc,
+            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
+            req.onreadystatechange = null, result;
         }());
     }
 }
@@ -3545,8 +3545,8 @@ issue_2437_2: {
             if (xhrDesc)
                 return (req = new XMLHttpRequest()).onreadystatechange,
                     Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {});
-            var req;
-            (req = new XMLHttpRequest).onreadystatechange = function(){},
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function(){},
             req[SYMBOL_FAKE_ONREADYSTATECHANGE_1],
             req.onreadystatechange = null;
         }();
