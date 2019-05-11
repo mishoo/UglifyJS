@@ -490,6 +490,7 @@ issue_1758: {
 delete_seq_1: {
     options = {
         booleans: true,
+        evaluate: true,
         side_effects: true,
     }
     input: {
@@ -514,6 +515,7 @@ delete_seq_1: {
 delete_seq_2: {
     options = {
         booleans: true,
+        evaluate: true,
         side_effects: true,
     }
     input: {
@@ -538,6 +540,7 @@ delete_seq_2: {
 delete_seq_3: {
     options = {
         booleans: true,
+        evaluate: true,
         keep_infinity: true,
         side_effects: true,
     }
@@ -563,6 +566,7 @@ delete_seq_3: {
 delete_seq_4: {
     options = {
         booleans: true,
+        evaluate: true,
         sequences: true,
         side_effects: true,
     }
@@ -590,6 +594,7 @@ delete_seq_4: {
 delete_seq_5: {
     options = {
         booleans: true,
+        evaluate: true,
         keep_infinity: true,
         sequences: true,
         side_effects: true,
@@ -618,6 +623,7 @@ delete_seq_5: {
 delete_seq_6: {
     options = {
         booleans: true,
+        evaluate: true,
         side_effects: true,
     }
     input: {

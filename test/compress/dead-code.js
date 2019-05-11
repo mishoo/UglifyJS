@@ -960,3 +960,56 @@ unsafe_string_replace: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3402: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        functions: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var f = function f() {
+            f = 42;
+            console.log(typeof f);
+        };
+        "function" == typeof f && f();
+        "function" == typeof f && f();
+        console.log(typeof f);
+    }
+    expect: {
+        function f() {
+            console.log(typeof f);
+        }
+        f();
+        f();
+        console.log(typeof f);
+    }
+    expect_stdout: [
+        "function",
+        "function",
+        "function",
+    ]
+}
+
+issue_3406: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function f(a) {
+            return delete (f = a);
+        }());
+    }
+    expect: {
+        console.log(function f(a) {
+            return delete (0, a);
+        }());
+    }
+    expect_stdout: "true"
+}
