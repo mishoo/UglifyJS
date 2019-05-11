@@ -311,3 +311,39 @@ issue_3375: {
     }
     expect_stdout: "string"
 }
+
+issue_3402: {
+    options = {
+        assignments: true,
+        evaluate: true,
+        functions: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var f = function f() {
+            f = 42;
+            console.log(typeof f);
+        };
+        "function" == typeof f && f();
+        "function" == typeof f && f();
+        console.log(typeof f);
+    }
+    expect: {
+        function f() {
+            console.log(typeof f);
+        }
+        f();
+        f();
+        console.log(typeof f);
+    }
+    expect_stdout: [
+        "function",
+        "function",
+        "function",
+    ]
+}
