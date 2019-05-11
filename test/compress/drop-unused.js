@@ -1005,7 +1005,7 @@ issue_1715_4: {
 delete_assign_1: {
     options = {
         booleans: true,
-        side_effects: true,
+        evaluate: true,
         toplevel: true,
         unused: true,
     }
@@ -1024,7 +1024,7 @@ delete_assign_1: {
         console.log((1 / 0, !0));
         console.log((1 / 0, !0));
         console.log((NaN, !0));
-        console.log((0 / 0, !0));
+        console.log((NaN, !0));
     }
     expect_stdout: true
 }
@@ -1032,8 +1032,8 @@ delete_assign_1: {
 delete_assign_2: {
     options = {
         booleans: true,
+        evaluate: true,
         keep_infinity: true,
-        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -1052,7 +1052,7 @@ delete_assign_2: {
         console.log((Infinity, !0));
         console.log((1 / 0, !0));
         console.log((NaN, !0));
-        console.log((0 / 0, !0));
+        console.log((NaN, !0));
     }
     expect_stdout: true
 }
