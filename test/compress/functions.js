@@ -3113,3 +3113,38 @@ issue_3400: {
         "42",
     ]
 }
+
+issue_3402: {
+    options = {
+        evaluate: true,
+        functions: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var f = function f() {
+            f = 42;
+            console.log(typeof f);
+        };
+        "function" == typeof f && f();
+        "function" == typeof f && f();
+        console.log(typeof f);
+    }
+    expect: {
+        var f = function f() {
+            f = 42;
+            console.log(typeof f);
+        };
+        f();
+        f();
+        console.log(typeof f);
+    }
+    expect_stdout: [
+        "function",
+        "function",
+        "function",
+    ]
+}
