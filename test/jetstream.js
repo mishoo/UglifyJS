@@ -62,8 +62,17 @@ if (typeof phantom == "undefined") {
         if (debug) {
             console.log("http://localhost:" + port + "/");
         } else {
-            child_process.exec("npm install phantomjs-prebuilt@2.1.14 --no-save", function(error) {
-                if (error) throw error;
+            child_process.spawn(process.platform == "win32" ? "npm.cmd" : "npm", [
+                "install",
+                "phantomjs-prebuilt@2.1.14",
+                "--no-audit",
+                "--no-optional",
+                "--no-save",
+                "--no-update-notifier",
+            ], {
+                stdio: [ "ignore", 1, 2 ]
+            }).on("exit", function(code) {
+                if (code) throw new Error("npm install failed!");
                 var program = require("phantomjs-prebuilt").exec(process.argv[1], port);
                 program.stdout.pipe(process.stdout);
                 program.stderr.pipe(process.stderr);
