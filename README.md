@@ -664,8 +664,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `join_vars` (default: `true`) -- join consecutive `var` statements
 
-- `keep_fargs` (default: `true`) -- Prevents the compressor from discarding unused
-  function arguments.  You need this for code which relies on `Function.length`.
+- `keep_fargs` (default: `strict`) -- Discard unused function arguments. Code
+  which relies on `Function.length` will break if this is done indiscriminately,
+  i.e. when passing `true`. Pass `false` to always retain function arguments.
 
 - `keep_fnames` (default: `false`) -- Pass `true` to prevent the
   compressor from discarding function names.  Useful for code relying on

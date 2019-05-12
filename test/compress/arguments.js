@@ -405,6 +405,52 @@ issue_3273_global_strict_reduce_vars: {
     ]
 }
 
+issue_3273_keep_fargs_false: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+        reduce_vars: true,
+    }
+    input: {
+        (function() {
+            "use strict";
+            arguments[0]++;
+            console.log(arguments[0]);
+        })(0);
+    }
+    expect: {
+        (function(argument_0) {
+            "use strict";
+            argument_0++;
+            console.log(argument_0);
+        })(0);
+    }
+    expect_stdout: "1"
+}
+
+issue_3273_keep_fargs_strict: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        (function() {
+            "use strict";
+            arguments[0]++;
+            console.log(arguments[0]);
+        })(0);
+    }
+    expect: {
+        (function(argument_0) {
+            "use strict";
+            argument_0++;
+            console.log(argument_0);
+        })(0);
+    }
+    expect_stdout: "1"
+}
+
 issue_3282_1: {
     options = {
         arguments: true,
