@@ -6,10 +6,10 @@ module.exports = function(tasks) {
         var args = tasks.shift();
         console.log();
         console.log("\u001B[36m$> " + args.join(" ") + "\u001B[39m");
-        var result = child_process.spawn(process.argv[0], args, {
+        child_process.spawn(process.argv[0], args, {
             stdio: [ "ignore", 1, 2 ]
         }).on("exit", function(code) {
-            if (code != 0) process.exit(code);
+            if (code) process.exit(code);
             next();
         });
     })();
