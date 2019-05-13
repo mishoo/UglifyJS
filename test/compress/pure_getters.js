@@ -1161,3 +1161,29 @@ collapse_rhs_lhs: {
     }
     expect_stdout: "1 3"
 }
+
+drop_arguments: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            arguments.slice = function() {
+                console.log("PASS");
+            };
+            arguments[42];
+            arguments.length;
+            arguments.slice();
+        })();
+    }
+    expect: {
+        (function() {
+            arguments.slice = function() {
+                console.log("PASS");
+            };
+            arguments.slice();
+        })();
+    }
+    expect_stdout: "PASS"
+}
