@@ -673,3 +673,19 @@ issue_3371: {
     }
     expect_stdout: "PASS"
 }
+
+step: {
+    options = {
+        loops: true,
+        side_effects: true,
+    }
+    input: {
+        for (var i = 0; i < 42; "foo", i++, "bar");
+        console.log(i);
+    }
+    expect: {
+        for (var i = 0; i < 42; i++);
+        console.log(i);
+    }
+    expect_stdout: "42"
+}
