@@ -380,3 +380,20 @@ unsafe_indexOf: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3413: {
+    options = {
+        comparisons: true,
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        var b;
+        void 0 !== ("" < b || void 0) || console.log("PASS");
+    }
+    expect: {
+        var b;
+        void 0 !== ("" < b || void 0) || console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
