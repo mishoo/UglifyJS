@@ -12,3 +12,57 @@ console_log: {
         "% %s",
     ]
 }
+
+typeof_arguments: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var arguments;
+        console.log((typeof arguments).length);
+    }
+    expect: {
+        var arguments;
+        console.log((typeof arguments).length);
+    }
+    expect_stdout: "6"
+}
+
+typeof_arguments_assigned: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var arguments = void 0;
+        console.log((typeof arguments).length);
+    }
+    expect: {
+        console.log("undefined".length);
+    }
+    expect_stdout: "9"
+}
+
+toplevel_Infinity_NaN_undefined: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var Infinity = "foo";
+        var NaN = 42;
+        var undefined = null;
+        console.log(Infinity, NaN, undefined);
+    }
+    expect: {
+        console.log("foo", 42, null);
+    }
+    expect_stdout: "foo 42 null"
+}
