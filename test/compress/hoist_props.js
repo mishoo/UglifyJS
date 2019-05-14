@@ -862,3 +862,27 @@ issue_3071_3: {
     }
     expect_stdout: "2"
 }
+
+issue_3411: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        var c = 1;
+        !function f() {
+            var o = {
+                p: --c && f()
+            };
+            +o || console.log("PASS");
+        }();
+    }
+    expect: {
+        var c = 1;
+        !function f() {
+            var o_p = --c && f();
+            +{} || console.log("PASS");
+        }();
+    }
+    expect_stdout: "PASS"
+}
