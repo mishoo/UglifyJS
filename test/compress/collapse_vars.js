@@ -6178,3 +6178,22 @@ assign_undeclared: {
         "object",
     ]
 }
+
+Infinity_assignment: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        unsafe: true,
+    }
+    input: {
+        var Infinity;
+        Infinity = 42;
+        console.log(Infinity);
+    }
+    expect: {
+        var Infinity;
+        Infinity = 42;
+        console.log(Infinity);
+    }
+    expect_stdout: true
+}

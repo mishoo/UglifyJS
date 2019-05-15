@@ -1,34 +1,46 @@
-#! /usr/bin/env node
-
 var assert = require("assert");
+var child_process = require("child_process");
 var fs = require("fs");
 var path = require("path");
 var sandbox = require("./sandbox");
 var semver = require("semver");
 var U = require("./node");
 
-var failures = 0;
-var failed_files = Object.create(null);
-var minify_options = require("./ufuzz.json").map(JSON.stringify);
+var file = process.argv[2];
 var dir = path.resolve(path.dirname(module.filename), "compress");
-fs.readdirSync(dir).filter(function(name) {
-    return /\.js$/i.test(name);
-}).forEach(function(file) {
+if (file) {
+    var minify_options = require("./ufuzz.json").map(JSON.stringify);
     log("--- {file}", { file: file });
     var tests = parse_test(path.resolve(dir, file));
-    for (var i in tests) if (!test_case(tests[i])) {
-        failures++;
-        failed_files[file] = 1;
-    }
-});
-if (failures) {
-    console.error();
-    console.error("!!! Failed " + failures + " test case(s).");
-    console.error("!!! " + Object.keys(failed_files).join(", "));
-    process.exit(1);
+    process.exit(Object.keys(tests).filter(function(name) {
+        return !test_case(tests[name]);
+    }).length);
+} else {
+    var files = fs.readdirSync(dir).filter(function(name) {
+        return /\.js$/i.test(name);
+    });
+    var failures = 0;
+    var failed_files = Object.create(null);
+    (function next() {
+        var file = files.shift();
+        if (file) {
+            child_process.spawn(process.argv[0], [ process.argv[1], file ], {
+                stdio: [ "ignore", 1, 2 ]
+            }).on("exit", function(code) {
+                if (code) {
+                    failures += code;
+                    failed_files[file] = code;
+                }
+                next();
+            });
+        } else if (failures) {
+            console.error();
+            console.error("!!! Failed " + failures + " test case(s).");
+            console.error("!!! " + Object.keys(failed_files).join(", "));
+            process.exit(1);
+        }
+    })();
 }
-
-/* -----[ utils ]----- */
 
 function evaluate(code) {
     if (code instanceof U.AST_Node) code = make_code(code, { beautify: true });
@@ -160,7 +172,7 @@ function parse_test(file) {
 
 // Try to reminify original input with standard options
 // to see if it matches expect_stdout.
-function reminify(orig_options, input_code, input_formatted, expect_stdout) {
+function reminify(orig_options, input_code, input_formatted, stdout) {
     for (var i = 0; i < minify_options.length; i++) {
         var options = JSON.parse(minify_options[i]);
         if (options.compress) [
@@ -191,11 +203,12 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
             });
             return false;
         } else {
-            var stdout = run_code(result.code);
-            if (typeof expect_stdout != "string" && typeof stdout != "string" && expect_stdout.name == stdout.name) {
-                stdout = expect_stdout;
+            var expected = stdout[options.toplevel ? 1 : 0];
+            var actual = run_code(result.code, options.toplevel);
+            if (typeof expected != "string" && typeof actual != "string" && expected.name == actual.name) {
+                actual = expected;
             }
-            if (!sandbox.same_stdout(expect_stdout, stdout)) {
+            if (!sandbox.same_stdout(expected, actual)) {
                 log([
                     "!!! failed running reminified input",
                     "---INPUT---",
@@ -214,10 +227,10 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
                     input: input_formatted,
                     options: options_formatted,
                     output: result.code,
-                    expected_type: typeof expect_stdout == "string" ? "STDOUT" : "ERROR",
-                    expected: expect_stdout,
-                    actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                    actual: stdout,
+                    expected_type: typeof expected == "string" ? "STDOUT" : "ERROR",
+                    expected: expected,
+                    actual_type: typeof actual == "string" ? "STDOUT" : "ERROR",
+                    actual: actual,
                 });
                 return false;
             }
@@ -226,8 +239,8 @@ function reminify(orig_options, input_code, input_formatted, expect_stdout) {
     return true;
 }
 
-function run_code(code) {
-    var result = sandbox.run_code(code, true);
+function run_code(code, toplevel) {
+    var result = sandbox.run_code(code, toplevel);
     return typeof result == "string" ? result.replace(/\u001b\[\d+m/g, "") : result;
 }
 
@@ -359,13 +372,14 @@ function test_case(test) {
             return false;
         }
     }
-    if (test.expect_stdout
-        && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-        var stdout = run_code(input_code);
+    if (test.expect_stdout && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
+        var stdout = [ run_code(input_code), run_code(input_code, true) ];
+        var toplevel = test.options.toplevel;
+        var actual = stdout[toplevel ? 1 : 0];
         if (test.expect_stdout === true) {
-            test.expect_stdout = stdout;
+            test.expect_stdout = actual;
         }
-        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+        if (!sandbox.same_stdout(test.expect_stdout, actual)) {
             log([
                 "!!! Invalid input or expected stdout",
                 "---INPUT---",
@@ -380,13 +394,13 @@ function test_case(test) {
                 input: input_formatted,
                 expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
                 expected: test.expect_stdout,
-                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                actual: stdout,
+                actual_type: typeof actual == "string" ? "STDOUT" : "ERROR",
+                actual: actual,
             });
             return false;
         }
-        stdout = run_code(output);
-        if (!sandbox.same_stdout(test.expect_stdout, stdout)) {
+        actual = run_code(output, toplevel);
+        if (!sandbox.same_stdout(test.expect_stdout, actual)) {
             log([
                 "!!! failed",
                 "---INPUT---",
@@ -401,12 +415,12 @@ function test_case(test) {
                 input: input_formatted,
                 expected_type: typeof test.expect_stdout == "string" ? "STDOUT" : "ERROR",
                 expected: test.expect_stdout,
-                actual_type: typeof stdout == "string" ? "STDOUT" : "ERROR",
-                actual: stdout,
+                actual_type: typeof actual == "string" ? "STDOUT" : "ERROR",
+                actual: actual,
             });
             return false;
         }
-        if (!reminify(test.options, input_code, input_formatted, test.expect_stdout)) {
+        if (!reminify(test.options, input_code, input_formatted, stdout)) {
             return false;
         }
     }

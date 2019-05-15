@@ -52,32 +52,19 @@ function createContext() {
     return ctx;
 }
 
-var context;
-exports.run_code = function(code, reuse) {
+exports.run_code = function(code, toplevel) {
     var stdout = "";
     var original_write = process.stdout.write;
     process.stdout.write = function(chunk) {
         stdout += chunk;
     };
     try {
-        if (!reuse || !context) context = createContext();
-        vm.runInContext([
-            "!function() {",
-            code,
-            "}();",
-        ].join("\n"), context, { timeout: 5000 });
+        vm.runInContext(toplevel ? "(function(){" + code + "})()" : code, createContext(), { timeout: 5000 });
         return stdout;
     } catch (ex) {
         return ex;
     } finally {
         process.stdout.write = original_write;
-        if (!reuse || code.indexOf(".prototype") >= 0) {
-            context = null;
-        } else {
-            vm.runInContext(Object.keys(context).map(function(name) {
-                return "delete " + name;
-            }).join("\n"), context);
-        }
     }
 };
 
