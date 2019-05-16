@@ -66,3 +66,17 @@ toplevel_Infinity_NaN_undefined: {
     }
     expect_stdout: "foo 42 null"
 }
+
+log_global: {
+    input: {
+        console.log(function() {
+            return this;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            return this;
+        }());
+    }
+    expect_stdout: "[object global]"
+}
