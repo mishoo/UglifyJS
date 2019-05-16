@@ -1,29 +1,7 @@
 var semver = require("semver");
 var vm = require("vm");
 
-function safe_log(arg, level) {
-    if (arg) switch (typeof arg) {
-      case "function":
-        return arg.toString();
-      case "object":
-        if (/Error$/.test(arg.name)) return arg.toString();
-        arg.constructor.toString();
-        if (level--) for (var key in arg) {
-            var desc = Object.getOwnPropertyDescriptor(arg, key);
-            if (!desc || !desc.get) arg[key] = safe_log(arg[key], level);
-        }
-    }
-    return arg;
-}
-
-function log(msg) {
-    if (arguments.length == 1 && typeof msg == "string") return console.log("%s", msg);
-    return console.log.apply(console, [].map.call(arguments, function(arg) {
-        return safe_log(arg, 3);
-    }));
-}
-
-var func_toString = new vm.Script([
+var setupContext = new vm.Script([
     "[ Array, Boolean, Error, Function, Number, Object, RegExp, String ].forEach(function(f) {",
     "    f.toString = Function.prototype.toString;",
     "});",
@@ -44,12 +22,36 @@ var func_toString = new vm.Script([
     '        return "function(){}";',
     "    };",
     "}();",
+    "this;",
 ]).join("\n"));
 
 function createContext() {
     var ctx = vm.createContext(Object.defineProperty({}, "console", { value: { log: log } }));
-    func_toString.runInContext(ctx);
+    var global = setupContext.runInContext(ctx);
     return ctx;
+
+    function safe_log(arg, level) {
+        if (arg) switch (typeof arg) {
+        case "function":
+            return arg.toString();
+        case "object":
+            if (arg === global) return "[object global]";
+            if (/Error$/.test(arg.name)) return arg.toString();
+            arg.constructor.toString();
+            if (level--) for (var key in arg) {
+                var desc = Object.getOwnPropertyDescriptor(arg, key);
+                if (!desc || !desc.get) arg[key] = safe_log(arg[key], level);
+            }
+        }
+        return arg;
+    }
+
+    function log(msg) {
+        if (arguments.length == 1 && typeof msg == "string") return console.log("%s", msg);
+        return console.log.apply(console, [].map.call(arguments, function(arg) {
+            return safe_log(arg, 3);
+        }));
+    }
 }
 
 exports.run_code = function(code, toplevel) {
