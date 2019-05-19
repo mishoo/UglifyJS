@@ -1051,3 +1051,69 @@ function_name_mangle_ie8: {
     expect_exact: "(function(){console.log(typeof function o(){})})();"
     expect_stdout: "function"
 }
+
+issue_3420_1: {
+    options = {
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return function(a, b, c, d) {
+                return a + b;
+            };
+        }().length);
+    }
+    expect: {
+        console.log(function() {
+            return function(a, b, c, d) {
+                return a + b;
+            };
+        }().length);
+    }
+    expect_stdout: "4"
+}
+
+issue_3420_2: {
+    options = {
+        inline: true,
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return function(a, b, c, d) {
+                return a + b;
+            };
+        }().length);
+    }
+    expect: {
+        console.log(function(a, b, c, d) {
+            return a + b;
+        }.length);
+    }
+    expect_stdout: "4"
+}
+
+issue_3420_3: {
+    options = {
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function f(a, b, c, d) {
+                return a + b;
+            }
+            return f;
+        }().length);
+    }
+    expect: {
+        console.log(function(a, b, c, d) {
+            return a + b;
+        }.length);
+    }
+    expect_stdout: "4"
+}
