@@ -622,3 +622,157 @@ issue_3282_2_passes: {
     }
     expect_stdout: true
 }
+
+issue_3420_1: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        console.log(function() {
+            return function() {
+                return arguments[0];
+            };
+        }().length);
+    }
+    expect: {
+        console.log(function() {
+            return function() {
+                return arguments[0];
+            };
+        }().length);
+    }
+    expect_stdout: "0"
+}
+
+issue_3420_2: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        var foo = function() {
+            delete arguments[0];
+        };
+        foo();
+    }
+    expect: {
+        var foo = function() {
+            delete arguments[0];
+        };
+        foo();
+    }
+    expect_stdout: true
+}
+
+issue_3420_3: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        "use strict";
+        var foo = function() {
+            delete arguments[0];
+        };
+        foo();
+    }
+    expect: {
+        "use strict";
+        var foo = function() {
+            delete arguments[0];
+        };
+        foo();
+    }
+    expect_stdout: true
+}
+
+issue_3420_4: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        !function() {
+            console.log(arguments[0]);
+            delete arguments[0];
+            console.log(arguments[0]);
+        }(42);
+    }
+    expect: {
+        !function(argument_0) {
+            console.log(argument_0);
+            delete arguments[0];
+            console.log(arguments[0]);
+        }(42);
+    }
+    expect_stdout: [
+        "42",
+        "undefined",
+    ]
+}
+
+issue_3420_5: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        "use strict";
+        !function() {
+            console.log(arguments[0]);
+            delete arguments[0];
+            console.log(arguments[0]);
+        }(42);
+    }
+    expect: {
+        "use strict";
+        !function(argument_0) {
+            console.log(argument_0);
+            delete arguments[0];
+            console.log(arguments[0]);
+        }(42);
+    }
+    expect_stdout: [
+        "42",
+        "undefined",
+    ]
+}
+
+issue_3420_6: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        console.log(function() {
+            return delete arguments[0];
+        }());
+    }
+    expect: {
+        console.log(function() {
+            return delete arguments[0];
+        }());
+    }
+    expect_stdout: "true"
+}
+
+issue_3420_7: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        "use strict";
+        console.log(function() {
+            return delete arguments[0];
+        }());
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            return delete arguments[0];
+        }());
+    }
+    expect_stdout: "true"
+}
