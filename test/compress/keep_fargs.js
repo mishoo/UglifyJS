@@ -1117,3 +1117,41 @@ issue_3420_3: {
     }
     expect_stdout: "4"
 }
+
+issue_3423_1: {
+    options = {
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        function f(g) {
+            console.log(g.length);
+        }
+        f(function(a) {});
+    }
+    expect: {
+        function f(g) {
+            console.log(g.length);
+        }
+        f(function(a) {});
+    }
+    expect_stdout: "1"
+}
+
+issue_3423_2: {
+    options = {
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        new function(a) {
+            console.log(this.constructor.length);
+        }();
+    }
+    expect: {
+        new function(a) {
+            console.log(this.constructor.length);
+        }();
+    }
+    expect_stdout: "1"
+}
