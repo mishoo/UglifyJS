@@ -1187,3 +1187,23 @@ drop_arguments: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3427: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b) {
+            b.p = 42;
+        })(a || (a = {}));
+    }
+    expect: {}
+}

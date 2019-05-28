@@ -311,3 +311,19 @@ issue_3375: {
     }
     expect_stdout: "string"
 }
+
+issue_3427: {
+    options = {
+        assignments: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            a || (a = {});
+        })();
+    }
+    expect: {}
+}

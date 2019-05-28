@@ -2028,3 +2028,37 @@ issue_3375: {
     }
     expect_stdout: "0 0"
 }
+
+issue_3427_1: {
+    options = {
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            a = a || {};
+        })();
+    }
+    expect: {}
+}
+
+issue_3427_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        (function() {
+            var s = "PASS";
+            console.log(s = s || "FAIL");
+        })();
+    }
+    expect: {
+        (function() {
+            var s = "PASS";
+            console.log(s = s || "FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
