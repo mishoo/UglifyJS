@@ -327,3 +327,49 @@ issue_3427: {
     }
     expect: {}
 }
+
+issue_3429_1: {
+    options = {
+        assignments: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function(b) {
+            b && (b = a = "FAIL");
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function(b) {
+            b = b && (a = "FAIL");
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3429_2: {
+    options = {
+        assignments: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b) {
+            b || (b = a = "FAIL");
+        })(42);
+        console.log(a);
+    }
+    expect: {
+        var a;
+        (function(b) {
+            b = b || (a = "FAIL");
+        })(42);
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
