@@ -1,21 +1,19 @@
 var fs = require("fs");
 
 exports.FILES = [
-    "../lib/utils.js",
-    "../lib/ast.js",
-    "../lib/parse.js",
-    "../lib/transform.js",
-    "../lib/scope.js",
-    "../lib/output.js",
-    "../lib/compress.js",
-    "../lib/sourcemap.js",
-    "../lib/mozilla-ast.js",
-    "../lib/propmangle.js",
-    "../lib/minify.js",
-    "./exports.js",
-].map(function(file) {
-    return require.resolve(file);
-});
+    require.resolve("../lib/utils.js"),
+    require.resolve("../lib/ast.js"),
+    require.resolve("../lib/parse.js"),
+    require.resolve("../lib/transform.js"),
+    require.resolve("../lib/scope.js"),
+    require.resolve("../lib/output.js"),
+    require.resolve("../lib/compress.js"),
+    require.resolve("../lib/sourcemap.js"),
+    require.resolve("../lib/mozilla-ast.js"),
+    require.resolve("../lib/propmangle.js"),
+    require.resolve("../lib/minify.js"),
+    require.resolve("./exports.js"),
+];
 
 new Function("MOZ_SourceMap", "exports", function() {
     var code = exports.FILES.map(function(file) {
