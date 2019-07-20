@@ -783,6 +783,13 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `toplevel` (default `false`) -- Pass `true` to mangle names declared in the
   top level scope.
 
+- `leading_character_set` (default `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_`) -- Pass
+  a string of characters to be used at the start of, within, or at the end of
+  mangled names.
+
+- `trailing_character_set` (default `0123456789`) -- Pass a string of characters
+  only to be used within, or at the end of mangled names (never the start).
+
 Examples:
 
 ```javascript
