@@ -3148,3 +3148,30 @@ issue_3402: {
         "function",
     ]
 }
+
+issue_3444: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(h) {
+            return f;
+            function f() {
+                g();
+            }
+            function g() {
+                h("PASS");
+            }
+        })(console.log)();
+    }
+    expect: {
+        (function(h) {
+            return function() {
+                void h("PASS");
+            };
+        })(console.log)();
+    }
+    expect_stdout: "PASS"
+}
