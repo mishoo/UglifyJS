@@ -3149,6 +3149,27 @@ issue_3402: {
     ]
 }
 
+issue_3439: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(typeof function() {
+            return function(a) {
+                function a() {}
+                return a;
+            }(42);
+        }());
+    }
+    expect: {
+        console.log(typeof function(a) {
+            function a() {}
+            return a;
+        }(42));
+    }
+    expect_stdout: "function"
+}
+
 issue_3444: {
     options = {
         inline: true,

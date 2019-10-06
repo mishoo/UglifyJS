@@ -6197,3 +6197,43 @@ Infinity_assignment: {
     }
     expect_stdout: true
 }
+
+issue_3439_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function(a) {
+            function a() {}
+            return a;
+        }(42));
+    }
+    expect: {
+        console.log(typeof function(a) {
+            function a() {}
+            return a;
+        }(42));
+    }
+    expect_stdout: "function"
+}
+
+issue_3439_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            var a = 42;
+            function a() {}
+            return a;
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            return 42;
+        }());
+    }
+    expect_stdout: "number"
+}
