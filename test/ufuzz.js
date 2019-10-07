@@ -960,12 +960,12 @@ if (require.main !== module) {
 }
 
 function println(msg) {
-    if (typeof msg != "undefined") process.stdout.write(msg);
+    if (typeof msg != "undefined") process.stdout.write(typeof msg == "string" ? msg : msg.stack);
     process.stdout.write("\n");
 }
 
 function errorln(msg) {
-    if (typeof msg != "undefined") process.stderr.write(msg);
+    if (typeof msg != "undefined") process.stderr.write(typeof msg == "string" ? msg : msg.stack);
     process.stderr.write("\n");
 }
 
@@ -980,7 +980,7 @@ function try_beautify(code, toplevel, result, printfn) {
     });
     if (beautified.error) {
         printfn("// !!! beautify failed !!!");
-        printfn(beautified.error.stack);
+        printfn(beautified.error);
     } else if (sandbox.same_stdout(sandbox.run_code(beautified.code, toplevel), result)) {
         printfn("// (beautified)");
         printfn(beautified.code);
@@ -1007,7 +1007,7 @@ function log_suspects(minify_options, component) {
             var result = UglifyJS.minify(original_code, m);
             if (result.error) {
                 errorln("Error testing options." + component + "." + name);
-                errorln(result.error.stack);
+                errorln(result.error);
             } else {
                 var r = sandbox.run_code(result.code, m.toplevel);
                 return sandbox.same_stdout(original_result, r);
@@ -1029,7 +1029,7 @@ function log_rename(options) {
     var result = UglifyJS.minify(original_code, m);
     if (result.error) {
         errorln("Error testing options.rename");
-        errorln(result.error.stack);
+        errorln(result.error);
     } else {
         var r = sandbox.run_code(result.code, m.toplevel);
         if (sandbox.same_stdout(original_result, r)) {
@@ -1056,17 +1056,17 @@ function log(options) {
         errorln();
         errorln();
         errorln("original result:");
-        errorln(errored ? original_result.stack : original_result);
+        errorln(original_result);
         errorln("uglified result:");
-        errorln(typeof uglify_result == "string" ? uglify_result : uglify_result.stack);
+        errorln(uglify_result);
     } else {
         errorln("// !!! uglify failed !!!");
-        errorln(uglify_code.stack);
+        errorln(uglify_code);
         if (errored) {
             errorln();
             errorln();
             errorln("original stacktrace:");
-            errorln(original_result.stack);
+            errorln(original_result);
         }
     }
     errorln("minify(options):");
@@ -1115,7 +1115,7 @@ for (var round = 1; round <= num_iterations; round++) {
             println();
             println();
             println("original result:");
-            println(original_result.stack);
+            println(original_result);
             println();
         }
         if (!ok && isFinite(num_iterations)) {
