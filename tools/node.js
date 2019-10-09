@@ -46,7 +46,9 @@ function describe_ast() {
         if (ctor.SUBCLASSES.length > 0) {
             out.space();
             out.with_block(function() {
-                ctor.SUBCLASSES.forEach(function(ctor, i) {
+                ctor.SUBCLASSES.sort(function(a, b) {
+                    return a.TYPE < b.TYPE ? -1 : 1;
+                }).forEach(function(ctor, i) {
                     out.indent();
                     doitem(ctor);
                     out.newline();
