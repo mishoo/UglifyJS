@@ -181,6 +181,18 @@ describe("sourcemaps", function() {
             if (result.error) throw result.error;
             assert.strictEqual(result.code + "\n", readFileSync("test/input/issue-3294/output.js", "utf8"));
         });
+        it("Should work in presence of unrecognised annotations", function() {
+            var result = UglifyJS.minify(read("./test/input/issue-3441/input.js"), {
+                compress: false,
+                mangle: false,
+                sourceMap: {
+                    content: "inline",
+                },
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, '(function(){console.log("hello")}).call(this);');
+            assert.strictEqual(result.map, '{"version":3,"sources":["main.coffee"],"names":["console","log"],"mappings":"CAAA,WAAAA,QAAQC,IAAI"}');
+        });
     });
 
     describe("sourceMapInline", function() {
