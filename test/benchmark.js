@@ -13,15 +13,15 @@ if (!args.length) {
 }
 args.push("--timings");
 var urls = [
-    "https://code.jquery.com/jquery-3.2.1.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.9.0/math.js",
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js",
+    "https://code.jquery.com/jquery-3.4.1.js",
+    "https://code.angularjs.org/1.7.8/angular.js",
+    "https://unpkg.com/mathjs@6.2.3/dist/math.js",
     "https://unpkg.com/react@15.3.2/dist/react.js",
-    "http://builds.emberjs.com/tags/v2.11.0/ember.prod.js",
-    "https://cdn.jsdelivr.net/lodash/4.17.4/lodash.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.js",
-    "https://raw.githubusercontent.com/kangax/html-minifier/v3.5.7/dist/htmlminifier.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js",
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/ember.js/2.12.2/ember.prod.js",
+    "https://raw.githubusercontent.com/kangax/html-minifier/v4.0.0/dist/htmlminifier.js",
 ];
 var results = {};
 var remaining = 2 * urls.length;
