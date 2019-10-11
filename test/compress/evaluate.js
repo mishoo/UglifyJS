@@ -1757,34 +1757,3 @@ issue_3387_2: {
     }
     expect_stdout: "NaN"
 }
-
-iife_boolean_context: {
-    options = {
-        booleans: true,
-        evaluate: true,
-    }
-    input: {
-        console.log(function() {
-            return Object(1) || false;
-        }() ? "PASS" : "FAIL");
-        console.log(function() {
-            return [].length || true;
-        }() ? "PASS" : "FAIL");
-    }
-    expect: {
-        console.log(function() {
-            return Object(1);
-        }() ? "PASS" : "FAIL");
-        console.log(function() {
-            return [].length, 1;
-        }() ? "PASS" : "FAIL");
-    }
-    expect_stdout: [
-        "PASS",
-        "PASS",
-    ]
-    expect_warnings: [
-        "WARN: Dropping side-effect-free || [test/compress/evaluate.js:2,19]",
-        "WARN: Boolean || always true [test/compress/evaluate.js:5,19]",
-    ]
-}
