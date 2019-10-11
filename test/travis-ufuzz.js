@@ -15,7 +15,7 @@ if (process.argv[2] == "run") {
     var branch = process.argv[3] || "v" + require("../package.json").version;
     var repository = encodeURIComponent(process.argv[4] || "mishoo/UglifyJS2");
     var concurrency = process.argv[5] || 1;
-    var platform = process.argv[6] || "node/latest";
+    var platform = process.argv[6] || "latest";
     (function request() {
         setTimeout(request, (period + wait) / concurrency);
         var options = url.parse("https://api.travis-ci.org/repo/" + repository + "/requests");
@@ -37,7 +37,7 @@ if (process.argv[2] == "run") {
                 branch: branch,
                 config: {
                     cache: false,
-                    env: "NODEJS_VER=" + platform,
+                    env: "NODE=" + platform,
                     script: "node test/travis-ufuzz run"
                 }
             }

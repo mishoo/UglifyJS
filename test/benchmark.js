@@ -94,3 +94,6 @@ urls.forEach(function(url) {
         });
     });
 });
+setInterval(function() {
+    process.stderr.write("\0");
+}, 5 * 60 * 1000).unref();
