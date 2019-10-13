@@ -969,3 +969,47 @@ issue_3355_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3468: {
+    options = {
+        collapse_vars: true,
+        ie8: false,
+    }
+    input: {
+        var a = 42;
+        console.log(function a() {
+            a++;
+            return typeof a;
+        }());
+    }
+    expect: {
+        var a = 42;
+        console.log(function a() {
+            a++;
+            return typeof a;
+        }());
+    }
+    expect_stdout: "function"
+}
+
+issue_3468_ie8: {
+    options = {
+        collapse_vars: true,
+        ie8: true,
+    }
+    input: {
+        var a = 42;
+        console.log(function a() {
+            a++;
+            return typeof a;
+        }());
+    }
+    expect: {
+        var a = 42;
+        console.log(function a() {
+            a++;
+            return typeof a;
+        }());
+    }
+    expect_stdout: "function"
+}
