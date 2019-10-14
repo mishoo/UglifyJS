@@ -1013,3 +1013,71 @@ issue_3468_ie8: {
     }
     expect_stdout: "function"
 }
+
+issue_3471: {
+    options = {
+        ie8: false,
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var c = 1;
+        function f() {
+            var a = function g() {
+                --c && f();
+                g.p = 0;
+            };
+            for (var p in a)
+                a[p];
+        }
+        f();
+    }
+    expect: {
+        var c = 1;
+        (function f() {
+            function a() {
+                --c && f();
+                a.p = 0;
+            }
+            for (var p in a)
+                a[p];
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_3471_ie8: {
+    options = {
+        ie8: true,
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var c = 1;
+        function f() {
+            var a = function g() {
+                --c && f();
+                g.p = 0;
+            };
+            for (var p in a)
+                a[p];
+        }
+        f();
+    }
+    expect: {
+        var c = 1;
+        (function f() {
+            var a = function g() {
+                --c && f();
+                g.p = 0;
+            };
+            for (var p in a)
+                a[p];
+        })();
+    }
+    expect_stdout: true
+}
