@@ -1150,7 +1150,7 @@ issue_2620_3: {
 }
 
 issue_2620_4: {
-    rename = true,
+    rename = true
     options = {
         dead_code: true,
         evaluate: true,

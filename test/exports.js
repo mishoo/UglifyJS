@@ -8,6 +8,7 @@ exports["parse"] = parse;
 exports["push_uniq"] = push_uniq;
 exports["reserve_quoted_keys"] = reserve_quoted_keys;
 exports["string_template"] = string_template;
+exports["to_ascii"] = to_ascii;
 exports["tokenizer"] = tokenizer;
 exports["TreeTransformer"] = TreeTransformer;
 exports["TreeWalker"] = TreeWalker;
