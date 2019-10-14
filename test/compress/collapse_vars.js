@@ -4388,7 +4388,7 @@ replace_all_var: {
 }
 
 replace_all_var_scope: {
-    rename = true;
+    rename = true
     options = {
         collapse_vars: true,
         unused: true,

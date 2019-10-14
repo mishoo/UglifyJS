@@ -1081,3 +1081,111 @@ issue_3471_ie8: {
     }
     expect_stdout: true
 }
+
+issue_3473: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        var d = 42, a = 100, b = 10, c = 0;
+        (function b() {
+            try {
+                c++;
+            } catch (b) {}
+        })();
+        console.log(a, b, c);
+    }
+    expect: {
+        var d = 42, a = 100, b = 10, c = 0;
+        (function a() {
+            try {
+                c++;
+            } catch (a) {}
+        })();
+        console.log(a, b, c);
+    }
+    expect_stdout: "100 10 1"
+}
+
+issue_3473_ie8: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        var d = 42, a = 100, b = 10, c = 0;
+        (function b() {
+            try {
+                c++;
+            } catch (b) {}
+        })();
+        console.log(a, b, c);
+    }
+    expect: {
+        var d = 42, a = 100, b = 10, c = 0;
+        (function b() {
+            try {
+                c++;
+            } catch (b) {}
+        })();
+        console.log(a, b, c);
+    }
+    expect_stdout: "100 10 1"
+}
+
+issue_3473_toplevel: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        var d = 42, a = 100, b = 10, c = 0;
+        (function b() {
+            try {
+                c++;
+            } catch (b) {}
+        })();
+        console.log(a, b, c);
+    }
+    expect: {
+        var c = 42, o = 100, n = 10, t = 0;
+        (function c() {
+            try {
+                t++;
+            } catch (c) {}
+        })();
+        console.log(o, n, t);
+    }
+    expect_stdout: "100 10 1"
+}
+
+issue_3473_ie8_toplevel: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var d = 42, a = 100, b = 10, c = 0;
+        (function b() {
+            try {
+                c++;
+            } catch (b) {}
+        })();
+        console.log(a, b, c);
+    }
+    expect: {
+        var c = 42, o = 100, n = 10, t = 0;
+        (function n() {
+            try {
+                t++;
+            } catch (n) {}
+        })();
+        console.log(o, n, t);
+    }
+    expect_stdout: "100 10 1"
+}
