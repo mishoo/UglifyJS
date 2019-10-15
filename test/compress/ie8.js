@@ -1841,3 +1841,49 @@ issue_3484_2_ie8_toplevel: {
     }
     expect_stdout: "number number"
 }
+
+issue_3486: {
+    options = {
+        conditionals: true,
+        ie8: false,
+        reduce_vars: true,
+    }
+    input: {
+        (function a() {
+            (function a(a) {
+                console.log(a ? "FAIL" : "PASS");
+            })();
+        })();
+    }
+    expect: {
+        (function a() {
+            (function a(a) {
+                console.log(a ? "FAIL" : "PASS");
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3486_ie8: {
+    options = {
+        conditionals: true,
+        ie8: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function a() {
+            (function a(a) {
+                console.log(a ? "FAIL" : "PASS");
+            })();
+        })();
+    }
+    expect: {
+        (function a() {
+            (function a(a) {
+                console.log(a ? "FAIL" : "PASS");
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+}
