@@ -1683,3 +1683,161 @@ issue_3482_2_ie8: {
     }
     expect_stdout: "NaN NaN NaN"
 }
+
+issue_3484_1: {
+    options = {
+        ie8: false,
+        side_effects: true,
+        toplevel: false,
+    }
+    input: {
+        (function f() {})();
+        console.log(typeof f);
+    }
+    expect: {
+        console.log(typeof f);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3484_1_ie8: {
+    options = {
+        ie8: true,
+        side_effects: true,
+        toplevel: false,
+    }
+    input: {
+        (function f() {})();
+        // IE8: function
+        console.log(typeof f);
+    }
+    expect: {
+        (function f() {})();
+        console.log(typeof f);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3484_1_toplevel: {
+    options = {
+        ie8: false,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function f() {})();
+        console.log(typeof f);
+    }
+    expect: {
+        console.log(typeof f);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3484_1_ie8_toplevel: {
+    options = {
+        ie8: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (function f() {})();
+        // IE8: function
+        console.log(typeof f);
+    }
+    expect: {
+        (function f() {})();
+        console.log(typeof f);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3484_2: {
+    options = {
+        evaluate: true,
+        ie8: false,
+        reduce_vars: true,
+        toplevel: false,
+    }
+    input: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        console.log(typeof (1 / 0), typeof Infinity);
+    }
+    expect: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        console.log("number", "number");
+    }
+    expect_stdout: "number number"
+}
+
+issue_3484_2_ie8: {
+    options = {
+        evaluate: true,
+        ie8: true,
+        reduce_vars: true,
+        toplevel: false,
+    }
+    input: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        // IE8: number function
+        console.log(typeof (1 / 0), typeof Infinity);
+    }
+    expect: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        console.log("number", typeof Infinity);
+    }
+    expect_stdout: "number number"
+}
+
+issue_3484_2_toplevel: {
+    options = {
+        evaluate: true,
+        ie8: false,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        console.log(typeof (1 / 0), typeof Infinity);
+    }
+    expect: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        console.log("number", "number");
+    }
+    expect_stdout: "number number"
+}
+
+issue_3484_2_ie8_toplevel: {
+    options = {
+        evaluate: true,
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        // IE8: number function
+        console.log(typeof (1 / 0), typeof Infinity);
+    }
+    expect: {
+        (function Infinity() {
+            var Infinity;
+        })();
+        console.log("number", typeof Infinity);
+    }
+    expect_stdout: "number number"
+}
