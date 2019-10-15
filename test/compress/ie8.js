@@ -125,28 +125,36 @@ do_screw_try_catch_undefined: {
         ie8: false,
     }
     input: {
-        function a(b){
+        function a(b) {
             try {
-                throw 'Stuff';
+                throw "Stuff";
             } catch (undefined) {
-                console.log('caught: ' + undefined);
+                console.log("caught: " + undefined);
             }
-            console.log('undefined is ' + undefined);
+            console.log("undefined is " + undefined);
             return b === undefined;
-        };
+        }
+        console.log(a(42), a(void 0));
     }
     expect: {
-        function a(o){
+        function a(o) {
             try {
-                throw "Stuff"
+                throw "Stuff";
             } catch (o) {
-                console.log("caught: "+o)
+                console.log("caught: " + o);
             }
             console.log("undefined is " + void 0);
-            return void 0===o
+            return void 0 === o;
         }
+        console.log(a(42), a(void 0));
     }
-    expect_stdout: true
+    expect_stdout: [
+        "caught: Stuff",
+        "undefined is undefined",
+        "caught: Stuff",
+        "undefined is undefined",
+        "false true",
+    ]
 }
 
 dont_screw_try_catch_undefined: {
@@ -160,28 +168,37 @@ dont_screw_try_catch_undefined: {
         ie8: true,
     }
     input: {
-        function a(b){
+        function a(b) {
             try {
-                throw 'Stuff';
+                throw "Stuff";
             } catch (undefined) {
-                console.log('caught: ' + undefined);
+                console.log("caught: " + undefined);
             }
-            console.log('undefined is ' + undefined);
+            // IE8: undefined is Stuff
+            console.log("undefined is " + undefined);
             return b === undefined;
-        };
+        }
+        console.log(a(42), a(void 0));
     }
     expect: {
-        function a(n){
+        function a(n) {
             try {
-                throw "Stuff"
+                throw "Stuff";
             } catch (undefined) {
-                console.log("caught: " + undefined)
+                console.log("caught: " + undefined);
             }
             console.log("undefined is " + undefined);
-            return n === undefined
+            return n === undefined;
         }
+        console.log(a(42), a(void 0));
     }
-    expect_stdout: true
+    expect_stdout: [
+        "caught: Stuff",
+        "undefined is undefined",
+        "caught: Stuff",
+        "undefined is undefined",
+        "false true",
+    ]
 }
 
 reduce_vars: {
@@ -1560,4 +1577,109 @@ issue_3478_2_ie8_toplevel: {
         console.log(o);
     }
     expect_stdout: "PASS"
+}
+
+issue_3482_1: {
+    options = {
+        evaluate: true,
+        ie8: false,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (NaN) {
+            var a = +"a";
+        }
+        console.log(a, NaN, 0 / 0);
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (NaN) {
+            var a = 0 / 0;
+        }
+        console.log(a, NaN, NaN);
+    }
+    expect_stdout: "NaN NaN NaN"
+}
+
+issue_3482_1_ie8: {
+    options = {
+        evaluate: true,
+        ie8: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (NaN) {
+            var a = +"a";
+        }
+        // IE8: NaN 42 NaN
+        console.log(a, NaN, 0 / 0);
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (NaN) {
+            var a = 0 / 0;
+        }
+        console.log(a, NaN, 0 / 0);
+    }
+    expect_stdout: "NaN NaN NaN"
+}
+
+issue_3482_2: {
+    options = {
+        evaluate: true,
+        ie8: false,
+    }
+    input: {
+        (function() {
+            try {
+                throw 42;
+            } catch (NaN) {
+                a = +"a";
+            }
+        })();
+        console.log(a, NaN, 0 / 0);
+    }
+    expect: {
+        (function() {
+            try {
+                throw 42;
+            } catch (NaN) {
+                a = 0 / 0;
+            }
+        })();
+        console.log(a, NaN, NaN);
+    }
+    expect_stdout: "NaN NaN NaN"
+}
+
+issue_3482_2_ie8: {
+    options = {
+        evaluate: true,
+        ie8: true,
+    }
+    input: {
+        (function() {
+            try {
+                throw 42;
+            } catch (NaN) {
+                a = +"a";
+            }
+        })();
+        console.log(a, NaN, 0 / 0);
+    }
+    expect: {
+        (function() {
+            try {
+                throw 42;
+            } catch (NaN) {
+                a = 0 / 0;
+            }
+        })();
+        console.log(a, NaN, 0 / 0);
+    }
+    expect_stdout: "NaN NaN NaN"
 }
