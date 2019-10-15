@@ -1321,3 +1321,243 @@ issue_3475_ie8_toplevel: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3478_1: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        "aaaaaaaaaa";
+        (function f() {
+            (function f() {
+                var a;
+                console.log(typeof f);
+            })();
+        })();
+    }
+    expect: {
+        "aaaaaaaaaa";
+        (function a() {
+            (function a() {
+                var o;
+                console.log(typeof a);
+            })();
+        })();
+    }
+    expect_stdout: "function"
+}
+
+issue_3478_1_ie8: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        "aaaaaaaaaa";
+        (function f() {
+            (function f() {
+                var a;
+                console.log(typeof f);
+            })();
+        })();
+    }
+    expect: {
+        "aaaaaaaaaa";
+        (function f() {
+            (function f() {
+                var a;
+                console.log(typeof f);
+            })();
+        })();
+    }
+    expect_stdout: "function"
+}
+
+issue_3478_1_toplevel: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        "aaaaaaaaaa";
+        (function f() {
+            (function f() {
+                var a;
+                console.log(typeof f);
+            })();
+        })();
+    }
+    expect: {
+        "aaaaaaaaaa";
+        (function a() {
+            (function a() {
+                var o;
+                console.log(typeof a);
+            })();
+        })();
+    }
+    expect_stdout: "function"
+}
+
+issue_3478_1_ie8_toplevel: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        "aaaaaaaaaa";
+        (function f() {
+            (function f() {
+                var a;
+                console.log(typeof f);
+            })();
+        })();
+    }
+    expect: {
+        "aaaaaaaaaa";
+        (function o() {
+            (function o() {
+                var a;
+                console.log(typeof o);
+            })();
+        })();
+    }
+    expect_stdout: "function"
+}
+
+issue_3478_2: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        "bbbbbbb";
+        var c = "FAIL";
+        (function f() {
+            (function f() {
+                var b = function g() {
+                    f && (c = "PASS");
+                }();
+            })();
+        })();
+        console.log(c);
+    }
+    expect: {
+        "bbbbbbb";
+        var c = "FAIL";
+        (function b() {
+            (function n() {
+                var b = function b() {
+                    n && (c = "PASS");
+                }();
+            })();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3478_2_ie8: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        "bbbbbbb";
+        var c = "FAIL";
+        (function f() {
+            (function f() {
+                var b = function g() {
+                    f && (c = "PASS");
+                }();
+            })();
+        })();
+        console.log(c);
+    }
+    expect: {
+        "bbbbbbb";
+        var c = "FAIL";
+        (function f() {
+            (function f() {
+                var b = function n() {
+                    f && (c = "PASS");
+                }();
+            })();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3478_2_toplevel: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        "bbbbbbb";
+        var c = "FAIL";
+        (function f() {
+            (function f() {
+                var b = function g() {
+                    f && (c = "PASS");
+                }();
+            })();
+        })();
+        console.log(c);
+    }
+    expect: {
+        "bbbbbbb";
+        var o = "FAIL";
+        (function b() {
+            (function n() {
+                var b = function b() {
+                    n && (o = "PASS");
+                }();
+            })();
+        })();
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3478_2_ie8_toplevel: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        "bbbbbbb";
+        var c = "FAIL";
+        (function f() {
+            (function f() {
+                var b = function g() {
+                    f && (c = "PASS");
+                }();
+            })();
+        })();
+        console.log(c);
+    }
+    expect: {
+        "bbbbbbb";
+        var o = "FAIL";
+        (function c() {
+            (function c() {
+                var b = function n() {
+                    c && (o = "PASS");
+                }();
+            })();
+        })();
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}
