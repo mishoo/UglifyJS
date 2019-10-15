@@ -1189,3 +1189,135 @@ issue_3473_ie8_toplevel: {
     }
     expect_stdout: "100 10 1"
 }
+
+issue_3475: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        "ooooo ddddd";
+        var a = "FAIL";
+        try {
+            throw 42;
+        } catch (b) {
+            (function f() {
+                a = "PASS";
+            })();
+        }
+        console.log(a);
+    }
+    expect: {
+        "ooooo ddddd";
+        var a = "FAIL";
+        try {
+            throw 42;
+        } catch (o) {
+            (function o() {
+                a = "PASS";
+            })();
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3475_ie8: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        "ooooo ddddd";
+        var a = "FAIL";
+        try {
+            throw 42;
+        } catch (b) {
+            (function f() {
+                a = "PASS";
+            })();
+        }
+        console.log(a);
+    }
+    expect: {
+        "ooooo ddddd";
+        var a = "FAIL";
+        try {
+            throw 42;
+        } catch (b) {
+            (function f() {
+                a = "PASS";
+            })();
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3475_toplevel: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        "ooooo ddddd";
+        var a = "FAIL";
+        try {
+            throw 42;
+        } catch (b) {
+            (function f() {
+                a = "PASS";
+            })();
+        }
+        console.log(a);
+    }
+    expect: {
+        "ooooo ddddd";
+        var d = "FAIL";
+        try {
+            throw 42;
+        } catch (o) {
+            (function o() {
+                d = "PASS";
+            })();
+        }
+        console.log(d);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3475_ie8_toplevel: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        "ooooo ddddd";
+        var a = "FAIL";
+        try {
+            throw 42;
+        } catch (b) {
+            (function f() {
+                a = "PASS";
+            })();
+        }
+        console.log(a);
+    }
+    expect: {
+        "ooooo ddddd";
+        var o = "FAIL";
+        try {
+            throw 42;
+        } catch (d) {
+            (function c() {
+                o = "PASS";
+            })();
+        }
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}

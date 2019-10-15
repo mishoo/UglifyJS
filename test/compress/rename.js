@@ -579,7 +579,7 @@ function_do_catch_ie8: {
         console.log(b, c);
     }
     expect: {
-        var t = 1, u = 1, y = 0;
+        var u = 1, y = 1, a = 0;
         function c(c) {
             var d;
             do {
@@ -587,7 +587,7 @@ function_do_catch_ie8: {
                     try {
                         var e = void 0;
                     } catch (i) {
-                        --t && w("ddddddddeeeeeeegggggggggiiiiilllllllnnnnntuuuuuuuuyyyyyyy");
+                        --u && w("ddddddddeeeeeeegggggggggiiiiilllllllnnnnntuuuuuuuuyyyyyyy");
                         0;
                         0;
                         0;
@@ -596,18 +596,18 @@ function_do_catch_ie8: {
                         d[1];
                     } catch (l) {
                         var g;
-                        switch(function x() {
-                            y++;
+                        switch (function n() {
+                            a++;
                         }()) {
-                          case e + --g:
+                        case e + --g:
                         }
                     }
-                } catch (n) {}
+                } catch (t) {}
             } while (--d);
-            u--;
+            y--;
         }
         c();
-        console.log(u, y);
+        console.log(y, a);
     }
     expect_stdout: "0 1"
 }
