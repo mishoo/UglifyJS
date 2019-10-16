@@ -959,14 +959,19 @@ if (require.main !== module) {
     return;
 }
 
+function writeln(stream, msg) {
+    if (typeof msg != "undefined") {
+        stream.write(typeof msg == "string" ? msg : msg.stack || "" + msg);
+    }
+    stream.write("\n");
+}
+
 function println(msg) {
-    if (typeof msg != "undefined") process.stdout.write(typeof msg == "string" ? msg : msg.stack);
-    process.stdout.write("\n");
+    writeln(process.stdout, msg);
 }
 
 function errorln(msg) {
-    if (typeof msg != "undefined") process.stderr.write(typeof msg == "string" ? msg : msg.stack);
-    process.stderr.write("\n");
+    writeln(process.stderr, msg);
 }
 
 function try_beautify(code, toplevel, result, printfn) {
