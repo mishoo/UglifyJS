@@ -1,6 +1,6 @@
 cache:
   directories: tmp
-language: generic
+language: shell
 matrix:
   fast_finish: true
 env:
