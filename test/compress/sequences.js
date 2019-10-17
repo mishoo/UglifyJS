@@ -1006,3 +1006,66 @@ angularjs_chain: {
         }
     }
 }
+
+issue_3490_1: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        inline: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 42, c = "FAIL";
+        if ({
+            3: function() {
+                var a;
+                return (a && a.p) < this;
+            }(),
+        }) c = "PASS";
+        if (b) while ("" == typeof d);
+        console.log(c, b);
+    }
+    expect: {
+        var b = 42, c = "FAIL";
+        if (function() {
+            var a;
+            a && a.p;
+        }(), c = "PASS", b) while ("" == typeof d);
+        console.log(c, b);
+    }
+    expect_stdout: "PASS 42"
+}
+
+issue_3490_2: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var b = 42, c = "FAIL";
+        if ({
+            3: function() {
+                var a;
+                return (a && a.p) < this;
+            }(),
+        }) c = "PASS";
+        if (b) for (; "" == typeof d;);
+        console.log(c, b);
+    }
+    expect: {
+        var b = 42, c = "FAIL";
+        for (function() {
+            var a;
+        }(), c = "PASS", b; "" == typeof d;);
+        console.log(c, b);
+    }
+    expect_stdout: "PASS 42"
+}
