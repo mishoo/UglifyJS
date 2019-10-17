@@ -1887,3 +1887,75 @@ issue_3486_ie8: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3493: {
+    options = {
+        dead_code: true,
+        ie8: false,
+    }
+    input: {
+        var c = "PASS";
+        (function() {
+            try {
+                (function a() {
+                    throw {};
+                })();
+            } catch (a) {
+                a >>= 0;
+                a && (c = "FAIL");
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "PASS";
+        (function() {
+            try {
+                (function a() {
+                    throw {};
+                })();
+            } catch (a) {
+                a >>= 0;
+                a && (c = "FAIL");
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3493_ie8: {
+    options = {
+        dead_code: true,
+        ie8: true,
+    }
+    input: {
+        var c = "PASS";
+        (function() {
+            try {
+                (function a() {
+                    throw {};
+                })();
+            } catch (a) {
+                a >>= 0;
+                a && (c = "FAIL");
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "PASS";
+        (function() {
+            try {
+                (function a() {
+                    throw {};
+                })();
+            } catch (a) {
+                a >>= 0;
+                a && (c = "FAIL");
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
