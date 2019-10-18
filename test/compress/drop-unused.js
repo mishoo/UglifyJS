@@ -2062,3 +2062,22 @@ issue_3427_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3495: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f() {
+            f = 0;
+            var a = f.p;
+        }());
+    }
+    expect: {
+        console.log(void 0);
+    }
+    expect_stdout: "undefined"
+}
