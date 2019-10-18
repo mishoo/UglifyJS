@@ -2081,3 +2081,24 @@ issue_3495: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3497: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(function(b) {
+            (b += a).p = 0;
+        }());
+    }
+    expect: {
+        var a;
+        console.log(function(b) {
+            (b += a).p = 0;
+        }());
+    }
+    expect_stdout: "undefined"
+}
