@@ -6237,3 +6237,24 @@ issue_3439_2: {
     }
     expect_stdout: "number"
 }
+
+cond_sequence_return: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(n) {
+            var c = 0;
+            for (var k in [0, 1])
+                if (c++, k == n) return c;
+        }(1));
+    }
+    expect: {
+        console.log(function(n) {
+            var c = 0;
+            for (var k in [0, 1])
+                if (c++, k == n) return c;
+        }(1));
+    }
+    expect_stdout: "2"
+}
