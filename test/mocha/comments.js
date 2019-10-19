@@ -48,53 +48,84 @@ describe("comments", function() {
         }
     });
 
-    it("Should handle comment within return correctly", function() {
-        var result = UglifyJS.minify([
-            "function unequal(x, y) {",
-            "    return (",
-            "        // Either one",
-            "        x < y",
-            "        ||",
-            "        y < x",
-            "    );",
-            "}",
-        ].join("\n"), {
-            compress: false,
-            mangle: false,
-            output: {
-                beautify: true,
-                comments: "all",
-            },
+    describe("comment within return", function() {
+        it("Should handle leading return", function() {
+            var result = UglifyJS.minify([
+                "function unequal(x, y) {",
+                "    return (",
+                "        // Either one",
+                "        x < y",
+                "        ||",
+                "        y < x",
+                "    );",
+                "}",
+            ].join("\n"), {
+                compress: false,
+                mangle: false,
+                output: {
+                    beautify: true,
+                    comments: "all",
+                },
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, [
+                "function unequal(x, y) {",
+                "    // Either one",
+                "    return x < y || y < x;",
+                "}",
+            ].join("\n"));
         });
-        if (result.error) throw result.error;
-        assert.strictEqual(result.code, [
-            "function unequal(x, y) {",
-            "    // Either one",
-            "    return x < y || y < x;",
-            "}",
-        ].join("\n"));
-    });
 
-    it("Should handle comment folded into return correctly", function() {
-        var result = UglifyJS.minify([
-            "function f() {",
-            "    /* boo */ x();",
-            "    return y();",
-            "}",
-        ].join("\n"), {
-            mangle: false,
-            output: {
-                beautify: true,
-                comments: "all",
-            },
+        it("Should handle trailing return", function() {
+            var result = UglifyJS.minify([
+                "function unequal(x) {",
+                "    var y;",
+                "    return (",
+                "        // Either one",
+                "        x < y",
+                "        ||",
+                "        y < x",
+                "    );",
+                "}",
+            ].join("\n"), {
+                compress: false,
+                mangle: false,
+                output: {
+                    beautify: true,
+                    comments: "all",
+                },
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, [
+                "function unequal(x) {",
+                "    var y;",
+                "    // Either one",
+                "    return x < y || y < x;",
+                "}",
+            ].join("\n"));
         });
-        if (result.error) throw result.error;
-        assert.strictEqual(result.code, [
-            "function f() {",
-            "    /* boo */",
-            "    return x(), y();",
-            "}",
-        ].join("\n"));
+
+        it("Should handle comment folded into return", function() {
+            var result = UglifyJS.minify([
+                "function f() {",
+                "    /* boo */ x();",
+                "    return y();",
+                "}",
+            ].join("\n"), {
+                mangle: false,
+                output: {
+                    beautify: true,
+                    comments: "all",
+                },
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, [
+                "function f() {",
+                "    /* boo */",
+                "    return x(), y();",
+                "}",
+            ].join("\n"));
+        });
     });
 
     it("Should not drop comments after first OutputStream", function() {
