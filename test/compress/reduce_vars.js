@@ -4947,7 +4947,7 @@ defun_single_use_loop: {
         unused: true,
     }
     input: {
-        for (var x, i = 2; --i >= 0; ) {
+        for (var x, i = 2; --i >= 0;) {
             var y = x;
             x = f;
             console.log(x === y);
@@ -4955,7 +4955,7 @@ defun_single_use_loop: {
         function f() {};
     }
     expect: {
-        for (var x, i = 2; --i >= 0; ) {
+        for (var x, i = 2; --i >= 0;) {
             var y = x;
             x = f;
             console.log(x === y);
