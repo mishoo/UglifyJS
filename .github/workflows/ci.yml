@@ -1,0 +1,27 @@
+name: CI
+on: [ push, pull_request ]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        node: [ "0.10", 0.12, 4, 6, 8, 10, latest ]
+        script: [ compress, mocha, release/benchmark, release/jetstream ]
+    name: ${{ matrix.os }} ${{ matrix.node }} ${{ matrix.script }}
+    runs-on: ${{ matrix.os }}
+    env:
+      NODE: ${{ matrix.node }}
+      TYPE: ${{ matrix.script }}
+    steps:
+      - uses: actions/checkout@v1
+      - shell: bash
+        run: |
+          git clone --branch v1.5.2 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
+          . ~/.nvs/nvs.sh
+          nvs --version
+          nvs add node/$NODE
+          nvs use node/$NODE
+          node --version
+          npm --version --no-update-notifier
+          npm install --no-audit --no-optional --no-save --no-update-notifier
+          node test/$TYPE
