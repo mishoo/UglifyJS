@@ -16,8 +16,8 @@ jobs:
           git clone --branch v1.5.2 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
           . ~/.nvs/nvs.sh
           nvs --version
-          nvs add node/$NODE
-          nvs use node/$NODE
+          nvs add node
+          nvs use node
           node --version
           npm --version --no-update-notifier
           npm install --no-audit --no-optional --no-save --no-update-notifier
