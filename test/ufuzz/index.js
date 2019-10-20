@@ -1,4 +1,3 @@
-// ufuzz.js
 // derived from https://github.com/qfox/uglyfuzzer by Peter van der Zee
 "use strict";
 
@@ -6,11 +5,11 @@
 // bin/uglifyjs s.js -c && bin/uglifyjs s.js -c passes=3 && bin/uglifyjs s.js -c passes=3 -m
 // cat s.js | node && node s.js && bin/uglifyjs s.js -c | node && bin/uglifyjs s.js -c passes=3 | node && bin/uglifyjs s.js -c passes=3 -m | node
 
-require("../tools/exit");
+require("../../tools/exit");
 
-var UglifyJS = require("..");
+var UglifyJS = require("../..");
 var randomBytes = require("crypto").randomBytes;
-var sandbox = require("./sandbox");
+var sandbox = require("../sandbox");
 
 var MAX_GENERATED_TOPLEVELS_PER_RUN = 1;
 var MAX_GENERATION_RECURSION_DEPTH = 12;
@@ -1088,7 +1087,7 @@ var fallback_options = [ JSON.stringify({
     compress: false,
     mangle: false
 }) ];
-var minify_options = require("./ufuzz.json").map(JSON.stringify);
+var minify_options = require("./options.json").map(JSON.stringify);
 var original_code, original_result, errored;
 var uglify_code, uglify_result, ok;
 for (var round = 1; round <= num_iterations; round++) {
