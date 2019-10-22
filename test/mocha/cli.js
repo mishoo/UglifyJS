@@ -744,4 +744,36 @@ describe("bin/uglifyjs", function() {
             done();
         }).stdin.end(code);
     });
+    it("Should work with --mangle toplevel,regex='/^_startsWith/g;'", function(done) {
+        var command = uglifyjscmd + " test/input/name-regex/input.js -m toplevel,regex='/^_startsWith/g;'";
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, read("test/input/name-regex/output.js"));
+            done();
+        });
+    });
+    it("Should work without regex", function(done) {
+        var command = uglifyjscmd + " test/input/name-regex/input.js -m toplevel";
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "var d=\"asasas\";var a=\"dddddd\";\n");
+            done();
+        });
+    });
+    it("Should give error against non-regex input", function(done) {
+        var command = uglifyjscmd + " test/input/name-regex/input.js -m toplevel,regex=g";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stderr, "ERROR: Input is not a RegExp\n");
+            done();
+        });
+    });
+    it("Should give error against invalid input regex", function(done) {
+        var command = uglifyjscmd + " test/input/name-regex/input.js -m toplevel,regex=//";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(true, String(stderr).indexOf("not a supported option") != -1);
+            done();
+        });
+    });
 });

@@ -63,6 +63,7 @@ a double dash to prevent input files being used as option arguments:
                                               not used.
     -m, --mangle [options]      Mangle names/specify mangler options:
                                 `reserved`  List of names that should not be mangled.
+                                `regex` Only mangle matched identifiers.
     --mangle-props [options]    Mangle properties/specify mangler options:
                                 `builtins`  Mangle property names that overlaps
                                             with standard JavaScript globals.
@@ -218,6 +219,13 @@ comma-separated list of names.  For example:
     uglifyjs ... -m reserved=['$','require','exports']
 
 to prevent the `require`, `exports` and `$` names from being changed.
+
+If you want to mangle only the names matching a specific regex, use `regex` option.
+For example:
+
+    uglifyjs ... -m regex='/^sw/'
+
+to mangle only names that starts with `sw`
 
 ### CLI mangling property names (`--mangle-props`)
 
@@ -782,6 +790,9 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `toplevel` (default `false`) -- Pass `true` to mangle names declared in the
   top level scope.
+
+- `regex` (default `null`) -- Pass a RegExp literal to only mangle names matching
+  the regular expression.
 
 Examples:
 
