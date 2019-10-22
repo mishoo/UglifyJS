@@ -9,6 +9,14 @@ function read(path) {
 
 describe("bin/uglifyjs", function() {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
+    it("Should work with --mangle toplevel,regex='/^_startsWith/g;'", function(done) {
+        var command = uglifyjscmd + " test/input/name-regex/input.js -m toplevel,regex='/^_startsWith/g;'";
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, read("test/input/name-regex/output.js"));
+            done();
+        });
+    });
     it("Should produce a functional build when using --self", function(done) {
         this.timeout(30000);
         var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
