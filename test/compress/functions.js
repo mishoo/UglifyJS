@@ -3340,3 +3340,33 @@ issue_3506_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3512: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function(b) {
+            (function() {
+                b <<= this || 1;
+                b.a = "FAIL";
+            })();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function(b) {
+            (function() {
+                (b <<= this || 1).a = "FAIL";
+            })();
+        })(),
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
