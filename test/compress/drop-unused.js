@@ -2102,3 +2102,28 @@ issue_3497: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3515: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            this[c++] = 0;
+            var expr20 = !0;
+            for (var key20 in expr20);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            for (var key20 in !(this[c++] = 0));
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
