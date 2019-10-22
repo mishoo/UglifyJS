@@ -2103,7 +2103,7 @@ issue_3497: {
     expect_stdout: "undefined"
 }
 
-issue_3515: {
+issue_3515_1: {
     options = {
         collapse_vars: true,
         reduce_vars: true,
@@ -2126,4 +2126,63 @@ issue_3515: {
         console.log(c);
     }
     expect_stdout: "1"
+}
+
+issue_3515_2: {
+    options = {
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        function f() {
+            typeof b === "number";
+            delete a;
+        }
+        var b = f(a = "PASS");
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        function f() {
+            delete a;
+        }
+        f(a = "PASS");
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3515_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function() {
+            function f() {
+                c = "PASS";
+            }
+            var a = f();
+            var a = function g(b) {
+                b && (b.p = this);
+            }(a);
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function() {
+            function f() {
+                c = "PASS";
+            }
+            (function(b) {
+                b && (b.p = this);
+            })(f());
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
 }
