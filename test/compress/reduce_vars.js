@@ -6609,10 +6609,10 @@ issues_3267_1: {
     }
     expect: {
         !function(i) {
-            if (i)
+            if (Object())
                 return console.log("PASS");
             throw "FAIL";
-        }(Object());
+        }();
     }
     expect_stdout: "PASS"
 }

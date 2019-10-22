@@ -1193,6 +1193,7 @@ issue_3427: {
         assignments: true,
         collapse_vars: true,
         inline: true,
+        passes: 2,
         pure_getters: "strict",
         sequences: true,
         side_effects: true,
@@ -1206,4 +1207,5 @@ issue_3427: {
         })(a || (a = {}));
     }
     expect: {}
+    expect_stdout: true
 }
