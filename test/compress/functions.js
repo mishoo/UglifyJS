@@ -3066,7 +3066,7 @@ class_iife: {
     expect_stdout: "PASS"
 }
 
-issue_3400: {
+issue_3400_1: {
     options = {
         collapse_vars: true,
         inline: true,
@@ -3096,16 +3096,70 @@ issue_3400: {
         });
     }
     expect: {
-        void console.log(function g() {
-            function e() {
-                return [42].map(function(v) {
-                    return o = {
-                        p: v
-                    }, console.log(o[g]) , o;
-                    var o;
-                });
+        void console.log(function() {
+            function g() {
+                function h(u) {
+                    var o = {
+                        p: u
+                    };
+                    return console.log(o[g]), o;
+                }
+                function e() {
+                    return [ 42 ].map(function(v) {
+                        return h(v);
+                    });
+                }
+                return e();
             }
-            return e();
+            return g;
+        }()()[0].p);
+    }
+    expect_stdout: [
+        "undefined",
+        "42",
+    ]
+}
+
+issue_3400_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(f) {
+            console.log(f()()[0].p);
+        })(function() {
+            function g() {
+                function h(u) {
+                    var o = {
+                        p: u
+                    };
+                    return console.log(o[g]), o;
+                }
+                function e() {
+                    return [ 42 ].map(function(v) {
+                        return h(v);
+                    });
+                }
+                return e();
+            }
+            return g;
+        });
+    }
+    expect: {
+        void console.log(function g() {
+            return [ 42 ].map(function(v) {
+                return function(u) {
+                    var o = {
+                        p: u
+                    };
+                    return console.log(o[g]), o;
+                }(v);
+            });
         }()[0].p);
     }
     expect_stdout: [
@@ -3193,6 +3247,96 @@ issue_3444: {
                 void h("PASS");
             };
         })(console.log)();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3506_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function(b) {
+            (function(b) {
+                b && (a = "PASS");
+            })(b);
+        })(a);
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        !function(b) {
+            b && (a = "PASS");
+        }(a);
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3506_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function(b) {
+            (function(c) {
+                var d = 1;
+                for (;c && (a = "PASS") && 0 < --d;);
+            })(b);
+        })(a);
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        !function(c) {
+            var d = 1;
+            for (;c && (a = "PASS") && 0 < --d;);
+        }(a);
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3506_3: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        loops: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function(b) {
+            (function(c) {
+                var d = 1;
+                for (;c && (a = "PASS") && 0 < --d;);
+            })(b);
+        })(a);
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        !function(c) {
+            var d = 1;
+            for (;c && (a = "PASS") && 0 < --d;);
+        }(a);
+        console.log(a);
     }
     expect_stdout: "PASS"
 }
