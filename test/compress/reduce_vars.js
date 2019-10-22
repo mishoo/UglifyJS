@@ -6752,3 +6752,31 @@ issue_3377: {
     }
     expect_stdout: "42"
 }
+
+issue_3509: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function a() {
+            console.log("PASS");
+        }
+        try {
+        } catch (a) {
+            var a;
+        }
+        a();
+    }
+    expect: {
+        try {
+        } catch (a) {
+            var a;
+        }
+        (function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
