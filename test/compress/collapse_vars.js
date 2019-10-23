@@ -6258,3 +6258,41 @@ cond_sequence_return: {
     }
     expect_stdout: "2"
 }
+
+issue_3520: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        var b = function(c) {
+            for (var i = 2; --i >= 0;) {
+                (function f() {
+                    c = 0;
+                    var i = void 0;
+                    var f = f && f[i];
+                })();
+                a += b;
+                c && b++;
+            }
+        }(b = 1);
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        var b = function(c) {
+            for (var i = 2; --i >= 0;) {
+                (function() {
+                    c = 0;
+                    var f = f && f[void 0];
+                })();
+                a += b;
+                c && b++;
+            }
+        }(b = 1);
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
