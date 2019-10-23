@@ -2121,7 +2121,8 @@ issue_3515_1: {
     expect: {
         var c = 0;
         (function() {
-            for (var key20 in !(this[c++] = 0));
+            this[c++] = 0;
+            for (var key20 in !0);
         })();
         console.log(c);
     }
