@@ -1959,3 +1959,383 @@ issue_3493_ie8: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3523: {
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var f, g, h, i, j, k, l, m, n, o, p, q, r, s;
+        })();
+        try {
+            throw 0;
+        } catch (t) {
+            (function() {
+                (function t() {
+                    c = "PASS";
+                })();
+            })();
+            (function e() {
+                try {} catch (t) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var c, n, t, o, a, r, f, i, u, h, l, v, y, A;
+        })();
+        try {
+            throw 0;
+        } catch (n) {
+            (function() {
+                (function n() {
+                    c = "PASS";
+                })();
+            })();
+            (function c() {
+                try {} catch (c) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_ie8: {
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var f, g, h, i, j, k, l, m, n, o, p, q, r, s;
+        })();
+        try {
+            throw 0;
+        } catch (t) {
+            (function() {
+                (function t() {
+                    c = "PASS";
+                })();
+            })();
+            (function e() {
+                try {} catch (t) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var c, t, n, o, a, r, f, i, u, h, e, l, v, y;
+        })();
+        try {
+            throw 0;
+        } catch (t) {
+            (function() {
+                (function t() {
+                    c = "PASS";
+                })();
+            })();
+            (function e() {
+                try {} catch (t) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_toplevel: {
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var f, g, h, i, j, k, l, m, n, o, p, q, r, s;
+        })();
+        try {
+            throw 0;
+        } catch (t) {
+            (function() {
+                (function t() {
+                    c = "PASS";
+                })();
+            })();
+            (function e() {
+                try {} catch (t) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = 0, n, t = "FAIL";
+        (function() {
+            var c, n, t, o, r, a, f, i, u, h, l, v, y, A;
+        })();
+        try {
+            throw 0;
+        } catch (c) {
+            (function() {
+                (function c() {
+                    t = "PASS";
+                })();
+            })();
+            (function c() {
+                try {} catch (c) {}
+            })();
+        }
+        console.log(t);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_ie8_toplevel: {
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var f, g, h, i, j, k, l, m, n, o, p, q, r, s;
+        })();
+        try {
+            throw 0;
+        } catch (t) {
+            (function() {
+                (function t() {
+                    c = "PASS";
+                })();
+            })();
+            (function e() {
+                try {} catch (t) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = 0, n, t = "FAIL";
+        (function() {
+            var c, n, t, o, r, a, f, i, u, h, l, v, y, A;
+        })();
+        try {
+            throw 0;
+        } catch (o) {
+            (function() {
+                (function o() {
+                    t = "PASS";
+                })();
+            })();
+            (function r() {
+                try {} catch (o) {}
+            })();
+        }
+        console.log(t);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_rename: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: false,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var d, e, f, g, h, i, j, k, l, m, o, p, q, r;
+        })();
+        try {
+            throw 0;
+        } catch (e) {
+            (function() {
+                (function e() {
+                    c = "PASS";
+                })();
+            })();
+            (function d() {
+                try {
+                } catch (e) {
+                }
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var c, n, t, o, a, r, f, i, u, h, l, v, y, A;
+        })();
+        try {
+            throw 0;
+        } catch (n) {
+            (function() {
+                (function n() {
+                    c = "PASS";
+                })();
+            })();
+            (function c() {
+                try {} catch (c) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_rename_ie8: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: false,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var d, e, f, g, h, i, j, k, l, m, o, p, q, r;
+        })();
+        try {
+            throw 0;
+        } catch (e) {
+            (function() {
+                (function e() {
+                    c = "PASS";
+                })();
+            })();
+            (function d() {
+                try {
+                } catch (e) {
+                }
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var c, n, t, o, a, r, f, i, u, e, h, l, v, y;
+        })();
+        try {
+            throw 0;
+        } catch (e) {
+            (function() {
+                (function n() {
+                    c = "PASS";
+                })();
+            })();
+            (function d() {
+                try {} catch (e) {}
+            })();
+        }
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_rename_toplevel: {
+    rename = true
+    mangle = {
+        ie8: false,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var d, e, f, g, h, i, j, k, l, m, o, p, q, r;
+        })();
+        try {
+            throw 0;
+        } catch (e) {
+            (function() {
+                (function e() {
+                    c = "PASS";
+                })();
+            })();
+            (function d() {
+                try {
+                } catch (e) {
+                }
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = 0, n, t = "FAIL";
+        (function() {
+            var c, n, t, o, r, a, f, i, u, h, l, v, y, A;
+        })();
+        try {
+            throw 0;
+        } catch (c) {
+            (function() {
+                (function c() {
+                    t = "PASS";
+                })();
+            })();
+            (function c() {
+                try {} catch (c) {}
+            })();
+        }
+        console.log(t);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3523_rename_ie8_toplevel: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b, c = "FAIL";
+        (function() {
+            var d, e, f, g, h, i, j, k, l, m, o, p, q, r;
+        })();
+        try {
+            throw 0;
+        } catch (e) {
+            (function() {
+                (function e() {
+                    c = "PASS";
+                })();
+            })();
+            (function d() {
+                try {
+                } catch (e) {
+                }
+            })();
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = 0, n, t = "FAIL";
+        (function() {
+            var c, n, t, o, r, a, f, i, u, h, l, v, y, A;
+        })();
+        try {
+            throw 0;
+        } catch (o) {
+            (function() {
+                (function o() {
+                    t = "PASS";
+                })();
+            })();
+            (function r() {
+                try {} catch (o) {}
+            })();
+        }
+        console.log(t);
+    }
+    expect_stdout: "PASS"
+}
