@@ -1,3 +1,7 @@
+"use strict";
+
+require("../tools/exit");
+
 var assert = require("assert");
 var child_process = require("child_process");
 var fs = require("fs");
