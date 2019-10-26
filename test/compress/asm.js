@@ -96,7 +96,7 @@ asm_mixed: {
                 return +sum;
             }
             function geometricMean(start, end) {
-                return start |= 0, end |= 0, +exp(+logSum(start, end) / +(end - start | 0));
+                return start |= 0, end |= 0, +exp(logSum(start, end) / (end - start | 0));
             }
             var exp = stdlib.Math.exp, log = stdlib.Math.log, values = new stdlib.Float64Array(buffer);
             return { geometricMean: geometricMean };
