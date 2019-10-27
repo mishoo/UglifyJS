@@ -152,7 +152,7 @@ evaluate_2: {
     }
     input: {
         var x = "42", y = null;
-        console.log(
+        [
             x + 1 + 2,
             x * 1 * 2,
             +x + 1 + 2,
@@ -164,12 +164,14 @@ evaluate_2: {
             1 + (2 + ~x + 3),
             -y + (2 + ~x + 3),
             1 & (2 & x & 3),
-            1 + (2 + (x |= 0) + 3)
-        );
+            1 + (2 + (x |= 0) + 3),
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
         var x = "42", y = null;
-        console.log(
+        [
             x + 1 + 2,
             1 * x * 2,
             +x + 1 + 2,
@@ -181,10 +183,25 @@ evaluate_2: {
             2 + ~x + 3 + 1,
             2 + ~x + 3 - y,
             0 & x,
-            2 + (x |= 0) + 3 + 1
-        );
+            2 + (x |= 0) + 3 + 1,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "4212 84 45 14223 43 48 6 47 -36 -37 0 47"
+    expect_stdout: [
+        "string 4212",
+        "number 84",
+        "number 45",
+        "string 14223",
+        "number 43",
+        "number 48",
+        "number 6",
+        "number 47",
+        "number -36",
+        "number -37",
+        "number 0",
+        "number 47",
+    ]
 }
 
 evaluate_2_unsafe_math: {
@@ -194,7 +211,7 @@ evaluate_2_unsafe_math: {
     }
     input: {
         var x = "42", y = null;
-        console.log(
+        [
             x + 1 + 2,
             x * 1 * 2,
             +x + 1 + 2,
@@ -206,12 +223,14 @@ evaluate_2_unsafe_math: {
             1 + (2 + ~x + 3),
             -y + (2 + ~x + 3),
             1 & (2 & x & 3),
-            1 + (2 + (x |= 0) + 3)
-        );
+            1 + (2 + (x |= 0) + 3),
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
         var x = "42", y = null;
-        console.log(
+        [
             x + 1 + 2,
             2 * x,
             +x + 3,
@@ -223,10 +242,25 @@ evaluate_2_unsafe_math: {
             6 + ~x,
             5 + ~x - y,
             0 & x,
-            6 + (x |= 0)
-        );
+            6 + (x |= 0),
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "4212 84 45 14223 43 48 6 47 -36 -37 0 47"
+    expect_stdout: [
+        "string 4212",
+        "number 84",
+        "number 45",
+        "string 14223",
+        "number 43",
+        "number 48",
+        "number 6",
+        "number 47",
+        "number -36",
+        "number -37",
+        "number 0",
+        "number 47",
+    ]
 }
 
 evaluate_3: {
@@ -279,8 +313,8 @@ evaluate_5: {
         unsafe_math: false,
     }
     input: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             +a + 2 + 3,
             +a + 2 - 3,
             +a - 2 + 3,
@@ -292,12 +326,14 @@ evaluate_5: {
             2 + 3 + +a,
             2 + 3 - +a,
             2 - 3 + +a,
-            2 - 3 - +a
-        );
+            2 - 3 - +a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             +a + 2 + 3,
             +a + 2 - 3,
             a - 2 + 3,
@@ -309,10 +345,25 @@ evaluate_5: {
             +a + 5,
             5 - a,
             +a - 1,
-            -1 - a
-        );
+            -1 - a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "6 0 2 -4 6 0 4 -2 6 4 0 -2"
+    expect_stdout: [
+        "number 6",
+        "number 0",
+        "number 2",
+        "number -4",
+        "number 6",
+        "number 0",
+        "number 4",
+        "number -2",
+        "number 6",
+        "number 4",
+        "number 0",
+        "number -2",
+    ]
 }
 
 evaluate_5_unsafe_math: {
@@ -321,8 +372,8 @@ evaluate_5_unsafe_math: {
         unsafe_math: true,
     }
     input: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             +a + 2 + 3,
             +a + 2 - 3,
             +a - 2 + 3,
@@ -334,12 +385,14 @@ evaluate_5_unsafe_math: {
             2 + 3 + +a,
             2 + 3 - +a,
             2 - 3 + +a,
-            2 - 3 - +a
-        );
+            2 - 3 - +a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             +a + 5,
             +a + -1,
             a - -1,
@@ -351,10 +404,25 @@ evaluate_5_unsafe_math: {
             +a + 5,
             5 - a,
             +a - 1,
-            -1 - a
-        );
+            -1 - a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "6 0 2 -4 6 0 4 -2 6 4 0 -2"
+    expect_stdout: [
+        "number 6",
+        "number 0",
+        "number 2",
+        "number -4",
+        "number 6",
+        "number 0",
+        "number 4",
+        "number -2",
+        "number 6",
+        "number 4",
+        "number 0",
+        "number -2",
+    ]
 }
 
 evaluate_6: {
@@ -363,8 +431,8 @@ evaluate_6: {
         unsafe_math: false,
     }
     input: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             -a + 2 + 3,
             -a + 2 - 3,
             -a - 2 + 3,
@@ -376,27 +444,44 @@ evaluate_6: {
             2 + 3 + -a,
             2 + 3 - -a,
             2 - 3 + -a,
-            2 - 3 - -a
-        );
+            2 - 3 - -a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             2 - a + 3,
             2 - a - 3,
             -a - 2 + 3,
             -a - 2 - 3,
             2 - a + 3,
             2 - a - 3,
-            2 + a + 3,
-            2 + a - 3,
+            2 - -a + 3,
+            2 - -a - 3,
             5 - a,
-            5 + a,
+            5 - -a,
             -1 - a,
-            -1 + a
-        );
+            -1 - -a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "4 -2 0 -6 4 -2 6 0 4 6 -2 0"
+    expect_stdout: [
+        "number 4",
+        "number -2",
+        "number 0",
+        "number -6",
+        "number 4",
+        "number -2",
+        "number 6",
+        "number 0",
+        "number 4",
+        "number 6",
+        "number -2",
+        "number 0",
+    ]
 }
 
 evaluate_6_unsafe_math: {
@@ -405,8 +490,8 @@ evaluate_6_unsafe_math: {
         unsafe_math: true,
     }
     input: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             -a + 2 + 3,
             -a + 2 - 3,
             -a - 2 + 3,
@@ -418,27 +503,44 @@ evaluate_6_unsafe_math: {
             2 + 3 + -a,
             2 + 3 - -a,
             2 - 3 + -a,
-            2 - 3 - -a
-        );
+            2 - 3 - -a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
-        var a = true;
-        console.log(
+        var a = "1";
+        [
             5 - a,
             -1 - a,
             -a - -1,
             -a - 5,
             5 - a,
             -1 - a,
-            2 + a + 3,
-            -1 + a,
+            5 - -a,
+            -1 - -a,
             5 - a,
-            5 + a,
+            5 - -a,
             -1 - a,
-            -1 + a
-        );
+            -1 - -a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "4 -2 0 -6 4 -2 6 0 4 6 -2 0"
+    expect_stdout: [
+        "number 4",
+        "number -2",
+        "number 0",
+        "number -6",
+        "number 4",
+        "number -2",
+        "number 6",
+        "number 0",
+        "number 4",
+        "number 6",
+        "number -2",
+        "number 0",
+    ]
 }
 
 evaluate_7: {
@@ -448,7 +550,7 @@ evaluate_7: {
     }
     input: {
         var x = "42", y;
-        console.log(
+        [
             +x + 2 + (3 + !y),
             +x + 2 + (3 - !y),
             +x + 2 - (3 + !y),
@@ -456,12 +558,14 @@ evaluate_7: {
             +x - 2 + (3 + !y),
             +x - 2 + (3 - !y),
             +x - 2 - (3 + !y),
-            +x - 2 - (3 - !y)
-        );
+            +x - 2 - (3 - !y),
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
         var x = "42", y;
-        console.log(
+        [
             +x + 2 + (3 + !y),
             +x + 2 + (3 - !y),
             +x + 2 - (3 + !y),
@@ -469,10 +573,21 @@ evaluate_7: {
             x - 2 + (3 + !y),
             x - 2 + (3 - !y),
             x - 2 - (3 + !y),
-            x - 2 - (3 - !y)
-        );
+            x - 2 - (3 - !y),
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "48 46 40 42 44 42 36 38"
+    expect_stdout: [
+        "number 48",
+        "number 46",
+        "number 40",
+        "number 42",
+        "number 44",
+        "number 42",
+        "number 36",
+        "number 38",
+    ]
 }
 
 evaluate_7_unsafe_math: {
@@ -482,7 +597,7 @@ evaluate_7_unsafe_math: {
     }
     input: {
         var x = "42", y;
-        console.log(
+        [
             +x + 2 + (3 + !y),
             +x + 2 + (3 - !y),
             +x + 2 - (3 + !y),
@@ -490,12 +605,14 @@ evaluate_7_unsafe_math: {
             +x - 2 + (3 + !y),
             +x - 2 + (3 - !y),
             +x - 2 - (3 + !y),
-            +x - 2 - (3 - !y)
-        );
+            +x - 2 - (3 - !y),
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
     expect: {
         var x = "42", y;
-        console.log(
+        [
             +x + 5 + !y,
             +x + 5 - !y,
             +x + -1 - !y,
@@ -503,10 +620,21 @@ evaluate_7_unsafe_math: {
             x - -1 + !y,
             x - -1 - !y,
             x - 5 - !y,
-            x - 5 + !y
-        );
+            x - 5 + !y,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
     }
-    expect_stdout: "48 46 40 42 44 42 36 38"
+    expect_stdout: [
+        "number 48",
+        "number 46",
+        "number 40",
+        "number 42",
+        "number 44",
+        "number 42",
+        "number 36",
+        "number 38",
+    ]
 }
 
 NaN_redefined: {
@@ -572,4 +700,50 @@ unary_binary_parenthesis: {
         });
     }
     expect_stdout: true
+}
+
+issue_3531_1: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = "1";
+        console.log(typeof (a + 1 - .1 - .1 - .1));
+    }
+    expect: {
+        var a = "1";
+        console.log(typeof (a + 1 - (.2 + .1)));
+    }
+    expect_stdout: "number"
+}
+
+issue_3531_2: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log(1 - (2 - {}));
+    }
+    expect: {
+        console.log(-1 + +{});
+    }
+    expect_stdout: "NaN"
+}
+
+issue_3531_3: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = "3";
+        console.log(1 - (2 + a));
+    }
+    expect: {
+        var a = "3";
+        console.log(1 - (2 + a));
+    }
+    expect_stdout: "-22"
 }
