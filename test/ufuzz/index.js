@@ -1050,16 +1050,20 @@ function log_rename(options) {
     }
 }
 
+function orig_code(unsafe_math) {
+    return unsafe_math ? original_code.replace(/( - 0\.1){3}/g, " - 0.3") : original_code;
+}
+
 function log(options) {
+    options = JSON.parse(options);
     if (!ok) errorln("\n\n\n\n\n\n!!!!!!!!!!\n\n\n");
     errorln("//=============================================================");
     if (!ok) errorln("// !!!!!! Failed... round " + round);
     errorln("// original code");
-    try_beautify(original_code, false, original_result, errorln);
+    try_beautify(orig_code(options.compress.unsafe_math), options.toplevel, original_result, errorln);
     errorln();
     errorln();
     errorln("//-------------------------------------------------------------");
-    options = JSON.parse(options);
     if (typeof uglify_code == "string") {
         errorln("// uglified code");
         try_beautify(uglify_code, options.toplevel, uglify_result, errorln);
@@ -1103,7 +1107,7 @@ for (var round = 1; round <= num_iterations; round++) {
     var orig_result = [ sandbox.run_code(original_code) ];
     errored = typeof orig_result[0] != "string";
     if (!errored) {
-        orig_result.push(sandbox.run_code(original_code, true), sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3")));
+        orig_result.push(sandbox.run_code(original_code, true), sandbox.run_code(orig_code(true)));
     }
     (errored ? fallback_options : minify_options).forEach(function(options) {
         var o = JSON.parse(options);

@@ -713,7 +713,7 @@ issue_3531_1: {
     }
     expect: {
         var a = "1";
-        console.log(typeof (a + 1 - (.2 + .1)));
+        console.log(typeof (a + 1 - .3));
     }
     expect_stdout: "number"
 }
@@ -746,4 +746,22 @@ issue_3531_3: {
         console.log(1 - (2 + a));
     }
     expect_stdout: "-22"
+}
+
+issue_3536: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        var c = --a + ("23" - (b++, 1));
+        console.log(typeof c, a, b, c);
+    }
+    expect: {
+        var a = 100, b = 10;
+        var c = --a + ("23" - (b++, 1));
+        console.log(typeof c, a, b, c);
+    }
+    expect_stdout: "number 99 11 121"
 }
