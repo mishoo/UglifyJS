@@ -1,3 +1,6 @@
+setInterval(function() {
+    process.stderr.write("\0");
+}, 8 * 60 * 1000).unref();
 require("./run")([
     "-b",
     "-b braces",
