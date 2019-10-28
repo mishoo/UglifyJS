@@ -1050,17 +1050,13 @@ function log_rename(options) {
     }
 }
 
-function orig_code(unsafe_math) {
-    return unsafe_math ? original_code.replace(/( - 0\.1){3}/g, " - 0.3") : original_code;
-}
-
 function log(options) {
     options = JSON.parse(options);
     if (!ok) errorln("\n\n\n\n\n\n!!!!!!!!!!\n\n\n");
     errorln("//=============================================================");
     if (!ok) errorln("// !!!!!! Failed... round " + round);
     errorln("// original code");
-    try_beautify(orig_code(options.compress && options.compress.unsafe_math), options.toplevel, original_result, errorln);
+    try_beautify(original_code, options.toplevel, original_result, errorln);
     errorln();
     errorln();
     errorln("//-------------------------------------------------------------");
@@ -1106,17 +1102,18 @@ for (var round = 1; round <= num_iterations; round++) {
     original_code = createTopLevelCode();
     var orig_result = [ sandbox.run_code(original_code) ];
     errored = typeof orig_result[0] != "string";
-    if (!errored) {
-        orig_result.push(sandbox.run_code(original_code, true), sandbox.run_code(orig_code(true)));
-    }
+    if (!errored) orig_result.push(sandbox.run_code(original_code, true));
     (errored ? fallback_options : minify_options).forEach(function(options) {
         var o = JSON.parse(options);
         uglify_code = UglifyJS.minify(original_code, o);
-        original_result = orig_result[o.compress.unsafe_math ? 2 : o.toplevel ? 1 : 0];
+        original_result = orig_result[o.toplevel ? 1 : 0];
         if (!uglify_code.error) {
             uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code, o.toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
+            if (!ok && o.compress.unsafe_math) {
+                ok = sandbox.same_stdout(sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3")), uglify_result, o.toplevel);
+            }
         } else {
             uglify_code = uglify_code.error;
             if (errored) {
