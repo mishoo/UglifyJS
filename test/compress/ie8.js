@@ -2339,3 +2339,25 @@ issue_3523_rename_ie8_toplevel: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3542: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        var b = a++;
+        var c = b && function a() {} || b;
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        a++;
+        (function a() {});
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
