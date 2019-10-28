@@ -1060,7 +1060,7 @@ function log(options) {
     errorln("//=============================================================");
     if (!ok) errorln("// !!!!!! Failed... round " + round);
     errorln("// original code");
-    try_beautify(orig_code(options.compress.unsafe_math), options.toplevel, original_result, errorln);
+    try_beautify(orig_code(options.compress && options.compress.unsafe_math), options.toplevel, original_result, errorln);
     errorln();
     errorln();
     errorln("//-------------------------------------------------------------");
