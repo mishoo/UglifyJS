@@ -765,3 +765,19 @@ issue_3536: {
     }
     expect_stdout: "number 99 11 121"
 }
+
+issue_3539: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = -0 + -"";
+        console.log(0/a, 1/a, -1/a);
+    }
+    expect: {
+        var a = -0;
+        console.log(0/a, 1/a, -1/a);
+    }
+    expect_stdout: "NaN -Infinity Infinity"
+}
