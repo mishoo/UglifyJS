@@ -773,11 +773,11 @@ issue_3539: {
     }
     input: {
         var a = -0 + -"";
-        console.log(0/a, 1/a, -1/a);
+        console.log(a, 0/a, 1/a, -1/a);
     }
     expect: {
         var a = -0;
-        console.log(0/a, 1/a, -1/a);
+        console.log(a, 0/a, 1/a, -1/a);
     }
-    expect_stdout: "NaN -Infinity Infinity"
+    expect_stdout: "-0 NaN -Infinity Infinity"
 }

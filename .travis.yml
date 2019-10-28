@@ -1,7 +1,7 @@
 cache:
   directories: tmp
 language: shell
-matrix:
+jobs:
   fast_finish: true
 env:
   - NODE=0.10   TYPE=compress
