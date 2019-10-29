@@ -1013,3 +1013,32 @@ issue_3406: {
     }
     expect_stdout: "true"
 }
+
+function_assign: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function() {
+            var a = "PASS";
+            function h(c) {
+                return c;
+            }
+            h.p = function(b) {
+                return b;
+            }.p = a;
+            return h;
+        }().p);
+    }
+    expect: {
+        console.log(function() {
+            var a = "PASS";
+            function h(c) {
+                return c;
+            }
+            h.p = a;
+            return h;
+        }().p);
+    }
+    expect_stdout: "PASS"
+}

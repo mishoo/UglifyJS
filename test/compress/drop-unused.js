@@ -2187,3 +2187,37 @@ issue_3515_3: {
     }
     expect_stdout: "PASS"
 }
+
+function_assign: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = "PASS";
+            function g(b) {
+                return b;
+            }
+            g.p = a;
+            function h(c) {
+                return c;
+            }
+            h.p = a;
+            return h;
+        }().p);
+    }
+    expect: {
+        console.log(function() {
+            var a = "PASS";
+            function h(c) {
+                return c;
+            }
+            h.p = a;
+            return h;
+        }().p);
+    }
+    expect_stdout: "PASS"
+}
