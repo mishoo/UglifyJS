@@ -478,14 +478,13 @@ if (result.error) throw result.error;
 
 ## Minify options
 
-- `warnings` (default `false`) — pass `true` to return compressor warnings
-  in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
-
-- `parse` (default `{}`) — pass an object if you wish to specify some
-  additional [parse options](#parse-options).
-
 - `compress` (default `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compress options](#compress-options).
+
+- `ie8` (default `false`) -- set to `true` to support IE8.
+
+- `keep_fnames` (default: `false`) -- pass `true` to prevent discarding or mangling
+  of function names.  Useful for code relying on `Function.prototype.name`.
 
 - `mangle` (default `true`) — pass `false` to skip mangling names, or pass
   an object to specify [mangle options](#mangle-options) (see below).
@@ -493,27 +492,28 @@ if (result.error) throw result.error;
   - `mangle.properties` (default `false`) — a subcategory of the mangle option.
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
-- `output` (default `null`) — pass an object if you wish to specify
-  additional [output options](#output-options).  The defaults are optimized
-  for best compression.
-
-- `sourceMap` (default `false`) - pass an object if you wish to specify
-  [source map options](#source-map-options).
-
-- `toplevel` (default `false`) - set to `true` if you wish to enable top level
-  variable and function name mangling and to drop unused variables and functions.
-
-- `nameCache` (default `null`) - pass an empty object `{}` or a previously
+- `nameCache` (default `null`) -- pass an empty object `{}` or a previously
   used `nameCache` object if you wish to cache mangled variable and
   property names across multiple invocations of `minify()`. Note: this is
   a read/write property. `minify()` will read the name cache state of this
   object and update it during minification so that it may be
   reused or externally persisted by the user.
 
-- `ie8` (default `false`) - set to `true` to support IE8.
+- `output` (default `null`) — pass an object if you wish to specify
+  additional [output options](#output-options).  The defaults are optimized
+  for best compression.
 
-- `keep_fnames` (default: `false`) - pass `true` to prevent discarding or mangling
-  of function names.  Useful for code relying on `Function.prototype.name`.
+- `parse` (default `{}`) — pass an object if you wish to specify some
+  additional [parse options](#parse-options).
+
+- `sourceMap` (default `false`) -- pass an object if you wish to specify
+  [source map options](#source-map-options).
+
+- `toplevel` (default `false`) -- set to `true` if you wish to enable top level
+  variable and function name mangling and to drop unused variables and functions.
+
+- `warnings` (default `false`) — pass `true` to return compressor warnings
+  in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
 
 ## Minify options structure
 
@@ -681,6 +681,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 - `negate_iife` (default: `true`) -- negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the
   code generator would insert.
+
+- `objects` (default: `true`) -- compact duplicate keys in object literals.
 
 - `passes` (default: `1`) -- The maximum number of times to run compress.
   In some cases more than one pass leads to further compressed code.  Keep in
