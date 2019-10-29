@@ -1757,3 +1757,84 @@ issue_3387_2: {
     }
     expect_stdout: "NaN"
 }
+
+simple_function_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function sum(a, b) {
+            return a + b;
+        }
+        console.log(sum(1, 2) * sum(3, 4));
+    }
+    expect: {
+        console.log(21);
+    }
+    expect_stdout: "21"
+}
+
+simple_function_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var sum = function(a, b) {
+            return a + b;
+        }
+        console.log(sum(1, 2) * sum(3, 4));
+    }
+    expect: {
+        console.log(21);
+    }
+    expect_stdout: "21"
+}
+
+recursive_function_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function factorial(a) {
+            return a > 0 ? a * factorial(a - 1) : 1;
+        }
+        console.log(factorial(5));
+    }
+    expect: {
+        console.log(function factorial(a) {
+            return a > 0 ? a * factorial(a - 1) : 1;
+        }(5));
+    }
+    expect_stdout: "120"
+}
+
+recursive_function_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var factorial = function(a) {
+            return a > 0 ? a * factorial(a - 1) : 1;
+        }
+        console.log(factorial(5));
+    }
+    expect: {
+        var factorial = function(a) {
+            return a > 0 ? a * factorial(a - 1) : 1;
+        }
+        console.log(factorial(5));
+    }
+    expect_stdout: "120"
+}
