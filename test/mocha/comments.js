@@ -259,6 +259,30 @@ describe("comments", function() {
         assert.strictEqual(result.code, code);
     });
 
+    it("Should handle comments around parenthesis correctly", function() {
+        var code = [
+            "a();",
+            "/* foo */",
+            "(b())",
+            "/* bar */",
+            "c();",
+        ].join("\n");
+        var result = UglifyJS.minify(code, {
+            compress: false,
+            mangle: false,
+            output: {
+                comments: "all",
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "a();",
+            "/* foo */",
+            "b()",
+            "/* bar */;c();",
+        ].join("\n"));
+    });
+
     it("Should preserve comments around IIFE", function() {
         var result = UglifyJS.minify("/*a*/(/*b*/function(){/*c*/}/*d*/)/*e*/();", {
             compress: false,
