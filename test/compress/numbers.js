@@ -781,3 +781,139 @@ issue_3539: {
     }
     expect_stdout: "NaN -Infinity Infinity"
 }
+
+issue_3547_1: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        [
+            1/0 + "1" + 0,
+            1/0 + "1" - 0,
+            1/0 - "1" + 0,
+            1/0 - "1" - 0,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect: {
+        [
+            1/0 + "10",
+            NaN,
+            1/0,
+            1/0,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect_stdout: [
+        "string Infinity10",
+        "number NaN",
+        "number Infinity",
+        "number Infinity",
+    ]
+}
+
+issue_3547_2: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        [
+            "1" + 1/0 + 0,
+            "1" + 1/0 - 0,
+            "1" - 1/0 + 0,
+            "1" - 1/0 - 0,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect: {
+        [
+            "1" + 1/0 + 0,
+            NaN,
+            -1/0,
+            -1/0,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect_stdout: [
+        "string 1Infinity0",
+        "number NaN",
+        "number -Infinity",
+        "number -Infinity",
+    ]
+}
+
+issue_3547_3: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = "3";
+        [
+            a + "2" + 1,
+            a + "2" - 1,
+            a - "2" + 1,
+            a - "2" - 1,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect: {
+        var a = "3";
+        [
+            a + "21",
+            a + "2" - 1,
+            a - 1,
+            a - "2" - 1,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect_stdout: [
+        "string 321",
+        "number 31",
+        "number 2",
+        "number 0",
+    ]
+}
+
+issue_3547_4: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = "2";
+        [
+            "3" + a + 1,
+            "3" + a - 1,
+            "3" - a + 1,
+            "3" - a - 1,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect: {
+        var a = "2";
+        [
+            "3" + a + 1,
+            "3" + a - 1,
+            "3" - a + 1,
+            2 - a,
+        ].forEach(function(n) {
+            console.log(typeof n, n);
+        });
+    }
+    expect_stdout: [
+        "string 321",
+        "number 31",
+        "number 2",
+        "number 0",
+    ]
+}
