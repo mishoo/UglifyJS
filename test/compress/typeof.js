@@ -295,3 +295,117 @@ issue_2728_6: {
     }
     expect_stdout: "function undefined"
 }
+
+typeof_defined_1: {
+    options = {
+        side_effects: true,
+        typeofs: true,
+    }
+    input: {
+        "undefined" == typeof A && A;
+        "undefined" != typeof A && A;
+        "undefined" == typeof A || A;
+        "undefined" != typeof A || A;
+    }
+    expect: {
+        "undefined" == typeof A && A;
+        "undefined" != typeof A || A;
+    }
+}
+
+typeof_defined_2: {
+    options = {
+        side_effects: true,
+        typeofs: true,
+    }
+    input: {
+        "function" == typeof A && A;
+        "function" != typeof A && A;
+        "function" == typeof A || A;
+        "function" != typeof A || A;
+    }
+    expect: {
+        "function" != typeof A && A;
+        "function" == typeof A || A;
+    }
+}
+
+typeof_defined_3: {
+    options = {
+        side_effects: true,
+        typeofs: true,
+    }
+    input: {
+        "undefined" == typeof A && "undefined" == typeof B && (A, B);
+        "undefined" == typeof A && "undefined" != typeof B && (A, B);
+        "undefined" != typeof A && "undefined" == typeof B && (A, B);
+        "undefined" != typeof A && "undefined" != typeof B && (A, B);
+        "undefined" == typeof A && "undefined" == typeof B || (A, B);
+        "undefined" == typeof A && "undefined" != typeof B || (A, B);
+        "undefined" != typeof A && "undefined" == typeof B || (A, B);
+        "undefined" != typeof A && "undefined" != typeof B || (A, B);
+        "undefined" == typeof A || "undefined" == typeof B && (A, B);
+        "undefined" == typeof A || "undefined" != typeof B && (A, B);
+        "undefined" != typeof A || "undefined" == typeof B && (A, B);
+        "undefined" != typeof A || "undefined" != typeof B && (A, B);
+        "undefined" == typeof A || "undefined" == typeof B || (A, B);
+        "undefined" == typeof A || "undefined" != typeof B || (A, B);
+        "undefined" != typeof A || "undefined" == typeof B || (A, B);
+        "undefined" != typeof A || "undefined" != typeof B || (A, B);
+    }
+    expect: {
+        "undefined" == typeof A && "undefined" == typeof B && (A, B);
+        "undefined" == typeof A && "undefined" != typeof B && A;
+        "undefined" != typeof A && "undefined" == typeof B && B;
+        "undefined" == typeof A && "undefined" == typeof B || (A, B);
+        "undefined" == typeof A && "undefined" != typeof B || (A, B);
+        "undefined" != typeof A && "undefined" == typeof B || (A, B);
+        "undefined" != typeof A && "undefined" != typeof B || (A, B);
+        "undefined" == typeof A || "undefined" == typeof B && B;
+        "undefined" != typeof A || "undefined" == typeof B && (A, B);
+        "undefined" != typeof A || "undefined" != typeof B && A;
+        "undefined" == typeof A || "undefined" != typeof B || B;
+        "undefined" != typeof A || "undefined" == typeof B || A;
+        "undefined" != typeof A || "undefined" != typeof B || (A, B);
+    }
+}
+
+typeof_defined_4: {
+    options = {
+        side_effects: true,
+        typeofs: true,
+    }
+    input: {
+        "object" == typeof A && "object" == typeof B && (A, B);
+        "object" == typeof A && "object" != typeof B && (A, B);
+        "object" != typeof A && "object" == typeof B && (A, B);
+        "object" != typeof A && "object" != typeof B && (A, B);
+        "object" == typeof A && "object" == typeof B || (A, B);
+        "object" == typeof A && "object" != typeof B || (A, B);
+        "object" != typeof A && "object" == typeof B || (A, B);
+        "object" != typeof A && "object" != typeof B || (A, B);
+        "object" == typeof A || "object" == typeof B && (A, B);
+        "object" == typeof A || "object" != typeof B && (A, B);
+        "object" != typeof A || "object" == typeof B && (A, B);
+        "object" != typeof A || "object" != typeof B && (A, B);
+        "object" == typeof A || "object" == typeof B || (A, B);
+        "object" == typeof A || "object" != typeof B || (A, B);
+        "object" != typeof A || "object" == typeof B || (A, B);
+        "object" != typeof A || "object" != typeof B || (A, B);
+    }
+    expect: {
+        "object" == typeof A && "object" != typeof B && B;
+        "object" != typeof A && "object" == typeof B && A;
+        "object" != typeof A && "object" != typeof B && (A, B);
+        "object" == typeof A && "object" == typeof B || (A, B);
+        "object" == typeof A && "object" != typeof B || (A, B);
+        "object" != typeof A && "object" == typeof B || (A, B);
+        "object" != typeof A && "object" != typeof B || (A, B);
+        "object" == typeof A || "object" == typeof B && A;
+        "object" == typeof A || "object" != typeof B && (A, B);
+        "object" != typeof A || "object" != typeof B && B;
+        "object" == typeof A || "object" == typeof B || (A, B);
+        "object" == typeof A || "object" != typeof B || A;
+        "object" != typeof A || "object" == typeof B || B;
+    }
+}
