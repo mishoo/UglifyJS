@@ -161,6 +161,24 @@ ifs_6: {
     }
 }
 
+ifs_7: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        if (A); else;
+        if (A) while (B); else;
+        if (A); else while (C);
+        if (A) while (B); else while (C);
+    }
+    expect: {
+        A;
+        if (A) while (B);
+        if (!A) while (C);
+        if (A) while (B); else while (C);
+    }
+}
+
 cond_1: {
     options = {
         conditionals: true,
