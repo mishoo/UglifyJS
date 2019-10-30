@@ -1042,3 +1042,25 @@ function_assign: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3552: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            (1..p += 42) && (a = "FAIL");
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            (1..p += 42) && (a = "FAIL");
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
