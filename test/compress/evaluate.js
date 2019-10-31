@@ -1838,3 +1838,24 @@ recursive_function_2: {
     }
     expect_stdout: "120"
 }
+
+issue_3558: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a) {
+            return 1 + --a;
+        }
+        console.log(f(true), f(false));
+    }
+    expect: {
+        function f(a) {
+            return 1 + --a;
+        }
+        console.log(1, 0);
+    }
+    expect_stdout: "1 0"
+}
