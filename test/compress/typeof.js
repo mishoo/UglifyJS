@@ -409,3 +409,31 @@ typeof_defined_4: {
         "object" != typeof A || "object" == typeof B || B;
     }
 }
+
+emberjs_global: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        if_return: true,
+        passes: 2,
+        side_effects: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        if (typeof A === "object") {
+            a = A;
+        } else if (typeof B === "object") {
+            a = B;
+        } else {
+            throw new Error("PASS");
+        }
+    }
+    expect: {
+        if ("object" != typeof A && "object" != typeof B)
+            throw new Error("PASS");
+    }
+    expect_stdout: Error("PASS")
+}
