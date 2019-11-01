@@ -3370,3 +3370,33 @@ issue_3512: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3562: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b) {
+            f = function() {
+                console.log(b);
+            };
+            return "FAIL";
+        }
+        a = f(a);
+        f(a);
+    }
+    expect: {
+        var a = "PASS";
+        function f(b) {
+            f = function() {
+                console.log(b);
+            };
+            return "FAIL";
+        }
+        a = f(a);
+        f(a);
+    }
+    expect_stdout: "PASS"
+}
