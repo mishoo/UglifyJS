@@ -6348,3 +6348,42 @@ issue_3526_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3562: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(a) {
+            console.log("PASS", a);
+        }
+        function g(b) {
+            console.log("FAIL", b);
+        }
+        var h;
+        var c;
+        if (console) {
+            h = f;
+            c = "PASS";
+        } else {
+            h = g;
+            c = "FAIL";
+        }
+        h(c);
+    }
+    expect: {
+        function f(a) {
+            console.log("PASS", a);
+        }
+        function g(b) {
+            console.log("FAIL", b);
+        }
+        var h;
+        var c;
+        c = console ? (h = f, "PASS") : (h = g, "FAIL"),
+        h(c);
+    }
+    expect_stdout: "PASS PASS"
+}
