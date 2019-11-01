@@ -237,22 +237,39 @@ unsafe_constant: {
         unsafe: true,
     }
     input: {
-        console.log(
-            true.a,
-            false.a,
-            null.a,
-            undefined.a
-        );
+        console.log(true.a, false.a);
+        console.log(true.valueOf(), false.valueOf());
+        try {
+            console.log(null.a);
+        } catch (e) {
+            console.log("PASS");
+        }
+        try {
+            console.log(undefined.a);
+        } catch (e) {
+            console.log("PASS");
+        }
     }
     expect: {
-        console.log(
-            void 0,
-            false.a,
-            null.a,
-            (void 0).a
-        );
+        console.log(void 0, void 0);
+        console.log(true, false);
+        try {
+            console.log(null.a);
+        } catch (e) {
+            console.log("PASS");
+        }
+        try {
+            console.log((void 0).a);
+        } catch (e) {
+            console.log("PASS");
+        }
     }
-    expect_stdout: true
+    expect_stdout: [
+        "undefined undefined",
+        "true false",
+        "PASS",
+        "PASS",
+    ]
 }
 
 unsafe_object: {

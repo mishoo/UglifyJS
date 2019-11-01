@@ -36,6 +36,20 @@ regexp_2: {
     expect_stdout: '["PASS","pass"]'
 }
 
+regexp_properties: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(/abc/g.source, /abc/g.global, /abc/g.ignoreCase, /abc/g.lastIndex, /abc/g.multiline);
+    }
+    expect: {
+        console.log("abc", true, false, /abc/g.lastIndex, false);
+    }
+    expect_stdout: "abc true false 0 false"
+}
+
 issue_3434_1: {
     options = {
         evaluate: true,
