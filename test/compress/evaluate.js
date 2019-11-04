@@ -1876,3 +1876,27 @@ issue_3558: {
     }
     expect_stdout: "1 0"
 }
+
+issue_3568: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var a = 0;
+        function f(b) {
+            return b && b.p;
+        }
+        console.log(f(++a + f()));
+    }
+    expect: {
+        var a = 0;
+        function f(b) {
+            return b && b.p;
+        }
+        console.log(NaN);
+    }
+    expect_stdout: "NaN"
+}
