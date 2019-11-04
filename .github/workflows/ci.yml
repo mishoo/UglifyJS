@@ -14,6 +14,10 @@ jobs:
       TYPE: ${{ matrix.script }}
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: tmp
+          key: tmp ${{ matrix.script }}
       - shell: bash
         run: |
           git clone --branch v1.5.2 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
