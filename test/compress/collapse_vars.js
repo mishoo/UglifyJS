@@ -6387,3 +6387,51 @@ issue_3562: {
     }
     expect_stdout: "PASS PASS"
 }
+
+dot_throw_assign_sequence: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        try {
+            var b;
+            b[0] = (a = "PASS", 0);
+            a = 1 + a;
+        } catch (c) {
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        try {
+            var b;
+            b[0] = (a = "PASS", 0);
+            a = 1 + a;
+        } catch (c) {
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+call_assign_order: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b = 1, c = 0, log = console.log;
+        (function() {
+            a = b = "PASS";
+        })((b = "FAIL", c++));
+        log(a, b);
+    }
+    expect: {
+        var a, b = 1, c = 0, log = console.log;
+        (function() {
+            a = b = "PASS";
+        })((b = "FAIL", c++));
+        log(a, b);
+    }
+    expect_stdout: "PASS PASS"
+}
