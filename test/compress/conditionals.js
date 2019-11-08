@@ -1489,3 +1489,29 @@ angularjs_chain: {
         }
     }
 }
+
+issue_3576: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function(a) {
+            (a = -1) ? (a && (a.a = 0)) : (a && (a.a = 0));
+            a && a[c = "PASS"]++;
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(a) {
+            a = -1, a, a.a = 0;
+            a, a[c = "PASS"]++;
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
