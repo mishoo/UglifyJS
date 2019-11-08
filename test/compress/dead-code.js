@@ -1064,3 +1064,41 @@ issue_3552: {
     }
     expect_stdout: "PASS"
 }
+
+unreachable_assign: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(A = "P" + (A = "A" + (B = "S" + (A = B = "S"))), A, B);
+    }
+    expect: {
+        console.log(A = "P" + "A" + (B = "S" + "S"), A, B);
+    }
+    expect_stdout: "PASS PASS SS"
+}
+
+catch_return_assign: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return e = "PASS";
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return "PASS";
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+}
