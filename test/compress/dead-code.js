@@ -1102,3 +1102,30 @@ catch_return_assign: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3578: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = "FAIL", b, c;
+        try {
+            b = c.p = b = 0;
+        } catch (e) {
+            b += 42;
+            b && (a = "PASS");
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL", b, c;
+        try {
+            b = c.p = b = 0;
+        } catch (e) {
+            b += 42;
+            b && (a = "PASS");
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
