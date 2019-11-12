@@ -1427,13 +1427,13 @@ defun_inline_3: {
 
 defun_call: {
     options = {
-        inline: true,
+        evaluate: true,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
     input: {
-        function f() {
+        console.log(function f() {
             return g() + h(1) - h(g(), 2, 3);
             function g() {
                 return 4;
@@ -1441,21 +1441,17 @@ defun_call: {
             function h(a) {
                 return a;
             }
-        }
+        }());
     }
     expect: {
-        function f() {
-            return 4 + h(1) - h(4);
-            function h(a) {
-                return a;
-            }
-        }
+        console.log(1);
     }
+    expect_stdout: "1"
 }
 
 defun_redefine: {
     options = {
-        inline: true,
+        evaluate: true,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -1480,7 +1476,7 @@ defun_redefine: {
             (function() {
                 return 3;
             });
-            return 3 + 2;
+            return 5;
         }
         console.log(f());
     }
@@ -1517,7 +1513,7 @@ func_inline: {
 
 func_modified: {
     options = {
-        inline: true,
+        evaluate: true,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -1550,7 +1546,7 @@ func_modified: {
             (function() {
                 return 4;
             });
-            return 1 + 2 + 4;
+            return 7;
         }
         console.log(f());
     }
@@ -5516,9 +5512,7 @@ issue_2860_1: {
         }());
     }
     expect: {
-        console.log(function(a) {
-            return 1 ^ a;
-        }());
+        console.log(1);
     }
     expect_stdout: "1"
 }

@@ -892,9 +892,7 @@ issue_2860_1: {
         }());
     }
     expect: {
-        console.log(function(a) {
-            return 1 ^ a;
-        }());
+        console.log(1);
     }
     expect_stdout: "1"
 }

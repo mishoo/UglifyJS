@@ -1458,7 +1458,7 @@ collapse_vars_constants: {
         function f3(x) {
             var b = x.prop;
             sideeffect1();
-            return b + (function() { return -9; })();
+            return b + -9;
         }
     }
 }
@@ -5748,7 +5748,7 @@ issue_3215_1: {
         }());
     }
     expect: {
-        console.log("number");
+        console.log(typeof 42);
     }
     expect_stdout: "number"
 }

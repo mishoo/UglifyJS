@@ -166,9 +166,7 @@ duplicate_lambda_arg_name: {
         }());
     }
     expect: {
-        console.log(function long_name(long_name) {
-            return typeof long_name;
-        }());
+        console.log("undefined");
     }
     expect_stdout: "undefined"
 }

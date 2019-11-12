@@ -1900,3 +1900,24 @@ issue_3568: {
     }
     expect_stdout: "NaN"
 }
+
+conditional_function: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a) {
+            return a && "undefined" != typeof A ? A : 42;
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            return a && "undefined" != typeof A ? A : 42;
+        }
+        console.log(42, f(1));
+    }
+    expect_stdout: "42 42"
+}
