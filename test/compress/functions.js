@@ -2265,7 +2265,8 @@ issue_3054: {
             return { a: !0 };
         }
         console.log(function(b) {
-            return { a: !(b = !1) };
+            b = !1;
+            return f();
         }().a, f.call().a);
     }
     expect_stdout: "true true"
