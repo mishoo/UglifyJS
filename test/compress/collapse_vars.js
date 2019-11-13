@@ -6468,3 +6468,63 @@ issue_3573: {
     }
     expect_stdout: "1"
 }
+
+issue_3581_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS", b = "FAIL";
+        try {
+            b = "PASS";
+            if (a) throw 0;
+            b = 1 + b;
+            a = "FAIL";
+        } catch (e) {}
+        console.log(a, b);
+    }
+    expect: {
+        var a = "PASS", b = "FAIL";
+        try {
+            b = "PASS";
+            if (a) throw 0;
+            b = 1 + b;
+            a = "FAIL";
+        } catch (e) {}
+        console.log(a, b);
+    }
+    expect_stdout: "PASS PASS"
+}
+
+issue_3581_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        (function() {
+            var a = "PASS", b = "FAIL";
+            try {
+                b = "PASS";
+                if (a) return;
+                b = 1 + b;
+                a = "FAIL";
+            } finally {
+                console.log(a, b);
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var a = "PASS", b = "FAIL";
+            try {
+                b = "PASS";
+                if (a) return;
+                b = 1 + b;
+                a = "FAIL";
+            } finally {
+                console.log(a, b);
+            }
+        })();
+    }
+    expect_stdout: "PASS PASS"
+}
