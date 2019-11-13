@@ -261,13 +261,13 @@ drop_default_1: {
     }
     input: {
         switch (foo) {
-          case 'bar': baz();
+          case "bar": baz();
           default:
         }
     }
     expect: {
         switch (foo) {
-          case 'bar': baz();
+          case "bar": baz();
         }
     }
 }
@@ -279,14 +279,14 @@ drop_default_2: {
     }
     input: {
         switch (foo) {
-          case 'bar': baz(); break;
+          case "bar": baz(); break;
           default:
             break;
         }
     }
     expect: {
         switch (foo) {
-          case 'bar': baz();
+          case "bar": baz();
         }
     }
 }
@@ -298,7 +298,7 @@ keep_default: {
     }
     input: {
         switch (foo) {
-          case 'bar': baz();
+          case "bar": baz();
           default:
             something();
             break;
@@ -306,7 +306,7 @@ keep_default: {
     }
     expect: {
         switch (foo) {
-          case 'bar': baz();
+          case "bar": baz();
           default:
             something();
         }
@@ -347,21 +347,48 @@ issue_1663: {
     expect_stdout: true
 }
 
-drop_case: {
+drop_case_1: {
     options = {
         dead_code: true,
         switches: true,
     }
     input: {
         switch (foo) {
-          case 'bar': baz(); break;
-          case 'moo':
+          case "bar": baz(); break;
+          case "moo":
             break;
         }
     }
     expect: {
         switch (foo) {
-          case 'bar': baz();
+          case "bar": baz();
+        }
+    }
+}
+
+drop_case_2: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (foo) {
+          case "bar":
+            bar();
+            break;
+          default:
+          case "moo":
+            moo();
+            break;
+        }
+    }
+    expect: {
+        switch (foo) {
+          case "bar":
+            bar();
+            break;
+          default:
+            moo();
         }
     }
 }
@@ -373,14 +400,14 @@ keep_case: {
     }
     input: {
         switch (foo) {
-          case 'bar': baz(); break;
+          case "bar": baz(); break;
           case moo:
             break;
         }
     }
     expect: {
         switch (foo) {
-          case 'bar': baz(); break;
+          case "bar": baz(); break;
           case moo:
         }
     }
@@ -494,7 +521,7 @@ issue_1674: {
     expect_stdout: "PASS"
 }
 
-issue_1679: {
+issue_1679_1: {
     options = {
         dead_code: true,
         evaluate: true,
@@ -525,7 +552,6 @@ issue_1679: {
         function f() {
             switch (--b) {
               default:
-              case !function x() {}:
                 break;
               case b--:
                 switch (0) {
@@ -539,7 +565,53 @@ issue_1679: {
         f();
         console.log(a, b);
     }
-    expect_stdout: true
+    expect_stdout: "99 8"
+}
+
+issue_1679_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        passes: 2,
+        switches: true,
+    }
+    input: {
+        var a = 100, b = 10;
+        function f() {
+            switch (--b) {
+              default:
+              case !function x() {}:
+                break;
+              case b--:
+                switch (0) {
+                  default:
+                  case a--:
+                }
+                break;
+              case (a++):
+                break;
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        function f() {
+            switch (--b) {
+              case b--:
+                switch (0) {
+                  default:
+                  case a--:
+                }
+                break;
+              case (a++):
+            }
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: "99 8"
 }
 
 issue_1680_1: {
@@ -863,4 +935,66 @@ issue_1750: {
         console.log(a, b);
     }
     expect_stdout: "0 2"
+}
+
+drop_switch_1: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (foo) {
+          default:
+            break;
+          case "bar":
+            break;
+        }
+    }
+    expect: {
+        foo;
+    }
+}
+
+drop_switch_2: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (foo) {
+          default:
+          case "bar":
+            baz();
+        }
+    }
+    expect: {
+        foo;
+        baz();
+    }
+}
+
+drop_switch_3: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        console.log(function() {
+            switch (0) {
+              default:
+                return "PASS";
+              case 1:
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            switch (0) {
+              default:
+                return "PASS";
+              case 1:
+            }
+        }());
+    }
+    expect_stdout: "PASS"
 }
