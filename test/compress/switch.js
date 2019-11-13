@@ -393,6 +393,57 @@ drop_case_2: {
     }
 }
 
+drop_case_3: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        var c = "PASS";
+        switch ({}.p) {
+          default:
+          case void 0:
+            break;
+          case c = "FAIL":
+        }
+        console.log(c);
+    }
+    expect: {
+        var c = "PASS";
+        switch ({}.p) {
+          default:
+          case void 0:
+            break;
+          case c = "FAIL":
+        }
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+drop_case_4: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (0) {
+          case [ a, typeof b ]:
+          default:
+            var a;
+        }
+        console.log("PASS");
+    }
+    expect: {
+        switch (0) {
+          case [ a, typeof b ]:
+            var a;
+        }
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
 keep_case: {
     options = {
         dead_code: true,
@@ -521,7 +572,7 @@ issue_1674: {
     expect_stdout: "PASS"
 }
 
-issue_1679_1: {
+issue_1679: {
     options = {
         dead_code: true,
         evaluate: true,
@@ -552,53 +603,8 @@ issue_1679_1: {
         function f() {
             switch (--b) {
               default:
-                break;
-              case b--:
-                switch (0) {
-                  default:
-                  case a--:
-                }
-                break;
-              case (a++):
-            }
-        }
-        f();
-        console.log(a, b);
-    }
-    expect_stdout: "99 8"
-}
-
-issue_1679_2: {
-    options = {
-        dead_code: true,
-        evaluate: true,
-        passes: 2,
-        switches: true,
-    }
-    input: {
-        var a = 100, b = 10;
-        function f() {
-            switch (--b) {
-              default:
               case !function x() {}:
                 break;
-              case b--:
-                switch (0) {
-                  default:
-                  case a--:
-                }
-                break;
-              case (a++):
-                break;
-            }
-        }
-        f();
-        console.log(a, b);
-    }
-    expect: {
-        var a = 100, b = 10;
-        function f() {
-            switch (--b) {
               case b--:
                 switch (0) {
                   default:
@@ -995,6 +1001,30 @@ drop_switch_3: {
               case 1:
             }
         }());
+    }
+    expect_stdout: "PASS"
+}
+
+drop_switch_4: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        var a = "FAIL";
+        switch (0) {
+          default:
+          case a:
+            var b = a = "PASS";
+            break;
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        0;
+        var b = a = "PASS";
+        console.log(a);
     }
     expect_stdout: "PASS"
 }
