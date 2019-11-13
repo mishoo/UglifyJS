@@ -2346,7 +2346,7 @@ issue_3274: {
     }
     expect: {
         (function() {
-            for (var c; void 0, (c = 1..p) != c;)
+            for (var c; (c = 1..p) != c;)
                 console.log("FAIL");
             console.log("PASS");
         })();
