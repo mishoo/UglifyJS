@@ -1019,14 +1019,21 @@ delete_assign_1: {
         console.log(delete (a = 0 / 0));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((1 / 0, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((NaN, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "true",
+        "true",
+        "true",
+        "true",
+        "true",
+        "true",
+    ]
 }
 
 delete_assign_2: {
@@ -1047,14 +1054,21 @@ delete_assign_2: {
         console.log(delete (a = 0 / 0));
     }
     expect: {
-        console.log((void 0, !0));
-        console.log((void 0, !0));
-        console.log((Infinity, !0));
-        console.log((1 / 0, !0));
-        console.log((NaN, !0));
-        console.log((NaN, !0));
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
+        console.log(!0);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "true",
+        "true",
+        "true",
+        "true",
+        "true",
+        "true",
+    ]
 }
 
 drop_var: {
@@ -1635,7 +1649,7 @@ double_assign_2: {
     }
     expect: {
         for (var i = 0; i < 2; i++)
-            void 0, a = {}, console.log(a);
+            a = {}, console.log(a);
         var a;
     }
 }
@@ -1716,7 +1730,7 @@ issue_2768: {
     }
     expect: {
         var a = "FAIL";
-        var c = (d = a, 0, void (d && (a = "PASS")));
+        var c = (d = a, void (d && (a = "PASS")));
         var d;
         console.log(a, typeof c);
     }
