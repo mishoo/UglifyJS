@@ -1921,3 +1921,139 @@ conditional_function: {
     }
     expect_stdout: "42 42"
 }
+
+best_of_evaluate: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function d(x, y) {
+            return x / y;
+        }
+        console.log(0 / 3, 1 / 64, 4 / 7, 7 / 7);
+        console.log(d(0, 3), d(1, 64), d(4, 7), d(7, 7));
+    }
+    expect: {
+        function d(x, y) {
+            return x / y;
+        }
+        console.log(0, 1 / 64, 4 / 7, 1);
+        console.log(0, .015625, d(4, 7), 1);
+    }
+    expect_stdout: [
+        "0 0.015625 0.5714285714285714 1",
+        "0 0.015625 0.5714285714285714 1",
+    ]
+}
+
+eager_evaluate: {
+    options = {
+        evaluate: "eager",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function d(x, y) {
+            return x / y;
+        }
+        console.log(0 / 3, 1 / 64, 4 / 7, 7 / 7);
+        console.log(d(0, 3), d(1, 64), d(4, 7), d(7, 7));
+    }
+    expect: {
+        console.log(0, .015625, .5714285714285714, 1);
+        console.log(0, .015625, .5714285714285714, 1);
+    }
+    expect_stdout: [
+        "0 0.015625 0.5714285714285714 1",
+        "0 0.015625 0.5714285714285714 1",
+    ]
+}
+
+threshold_evaluate_default: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log(b("1"), b(2), b(b(b("ABCDEFGHIJK"))));
+    }
+    expect: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log("111", 6, b(b(b("ABCDEFGHIJK"))));
+    }
+    expect_stdout: "111 6 ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK"
+}
+
+threshold_evaluate_30: {
+    options = {
+        evaluate: 30,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log(b("1"), b(2), b(b(b("ABCDEFGHIJK"))));
+    }
+    expect: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log("111", 6, b(b("ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK")));
+    }
+    expect_stdout: "111 6 ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK"
+}
+
+threshold_evaluate_100: {
+    options = {
+        evaluate: 100,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log(b("1"), b(2), b(b(b("ABCDEFGHIJK"))));
+    }
+    expect: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log("111", 6, b("ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK"));
+    }
+    expect_stdout: "111 6 ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK"
+}
+
+threshold_evaluate_999: {
+    options = {
+        evaluate: 999,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function b(x) {
+            return x + x + x;
+        }
+        console.log(b("1"), b(2), b(b(b("ABCDEFGHIJK"))));
+    }
+    expect: {
+        console.log("111", 6, "ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK");
+    }
+    expect_stdout: "111 6 ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK"
+}
