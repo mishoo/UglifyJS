@@ -633,8 +633,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
 
 - `evaluate` (default: `true`) -- Evaluate expression for shorter constant
   representation. Pass `"eager"` to always replace function calls whenever
-  possible, or a positive integer to specify an upper bound for expansion in
-  number of characters.
+  possible, or a positive integer to specify an upper bound for each individual
+  evaluation in number of characters.
 
 - `expression` (default: `false`) -- Pass `true` to preserve completion values
   from terminal statements without `return`, e.g. in bookmarklets.
