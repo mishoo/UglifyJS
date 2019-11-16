@@ -689,3 +689,67 @@ step: {
     }
     expect_stdout: "42"
 }
+
+empty_for_in: {
+    options = {
+        loops: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var a in [ 1, 2, 3 ]) {
+            var b = a + 1;
+        }
+    }
+    expect: {}
+    expect_warnings: [
+        "WARN: Dropping unused variable b [test/compress/loops.js:2,16]",
+        "INFO: Dropping unused loop variable a [test/compress/loops.js:1,17]",
+    ]
+}
+
+empty_for_in_used: {
+    options = {
+        loops: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var a in [ 1, 2, 3 ]) {
+            var b = a + 1;
+        }
+        console.log(a);
+    }
+    expect: {
+        for (var a in [ 1, 2, 3 ]);
+        console.log(a);
+    }
+    expect_stdout: "2"
+    expect_warnings: [
+        "WARN: Dropping unused variable b [test/compress/loops.js:2,16]",
+    ]
+}
+
+empty_for_in_side_effects: {
+    options = {
+        loops: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var a in {
+            foo: console.log("PASS")
+        }) {
+            var b = a + "bar";
+        }
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    expect_warnings: [
+        "WARN: Dropping unused variable b [test/compress/loops.js:4,16]",
+        "INFO: Dropping unused loop variable a [test/compress/loops.js:1,17]",
+        "WARN: Side effects in object of for-in loop [test/compress/loops.js:1,17]",
+    ]
+}
