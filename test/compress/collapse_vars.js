@@ -6238,7 +6238,7 @@ issue_3439_2: {
     expect_stdout: "number"
 }
 
-cond_sequence_return: {
+cond_sequence_return_1: {
     options = {
         collapse_vars: true,
     }
@@ -6254,6 +6254,27 @@ cond_sequence_return: {
             var c = 0;
             for (var k in [0, 1])
                 if (c++, k == n) return c;
+        }(1));
+    }
+    expect_stdout: "2"
+}
+
+cond_sequence_return_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(n) {
+            var c = 0;
+            for (var k in [0, 1])
+                if (c += 1, k == n) return c;
+        }(1));
+    }
+    expect: {
+        console.log(function(n) {
+            var c = 0;
+            for (var k in [0, 1])
+                if (c += 1, k == n) return c;
         }(1));
     }
     expect_stdout: "2"
