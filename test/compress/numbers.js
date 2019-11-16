@@ -917,3 +917,17 @@ issue_3547_4: {
         "number 0",
     ]
 }
+
+unsafe_math_rounding: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log(4 / -3 + 1 === 1 / -3);
+    }
+    expect: {
+        console.log(false);
+    }
+    expect_stdout: "false"
+}
