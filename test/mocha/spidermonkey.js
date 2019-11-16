@@ -10,7 +10,9 @@ describe("spidermonkey export/import sanity test", function() {
         var command = uglifyjs + " --self -cm --wrap SpiderUglify -o spidermonkey | " +
             uglifyjs + " -p spidermonkey -cm";
 
-        exec(command, function(err, stdout) {
+        exec(command, {
+            maxBuffer: 1048576
+        }, function(err, stdout) {
             if (err) throw err;
 
             eval(stdout);
