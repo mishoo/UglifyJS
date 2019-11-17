@@ -2416,7 +2416,7 @@ issue_3297_2: {
                     doProcessOne({
                         param1: param1,
                         param2: param2,
-                    }, function () {
+                    }, function() {
                         processBulk(bulk);
                     });
                 };
@@ -2497,7 +2497,7 @@ issue_3297_3: {
                     doProcessOne({
                         param1: param1,
                         param2: param2,
-                    }, function () {
+                    }, function() {
                         processBulk(bulk);
                     });
                 };
@@ -2514,18 +2514,21 @@ issue_3297_3: {
         }).processBulk([1, 2, 3]);
     }
     expect: {
-        function function1(u) {
+        function function1(c) {
             return {
-                processBulk: function n(r) {
-                    var o, t = u();
-                    r && 0 < r.length && (o = {
-                        param1: r.shift(),
+                processBulk: function n(o) {
+                    var r, t, u = c();
+                    o && 0 < o.length && (r = {
+                        param1: o.shift(),
                         param2: {
-                            subparam1: t
+                            subparam1: u
                         }
                     },
-                    console.log(JSON.stringify(o)),
-                    n(r));
+                    t = function() {
+                        n(o);
+                    },
+                    console.log(JSON.stringify(r)),
+                    t());
                 }
             };
         }
@@ -3097,23 +3100,20 @@ issue_3400_1: {
         });
     }
     expect: {
-        void console.log(function() {
-            function g() {
-                function h(u) {
-                    var o = {
-                        p: u
-                    };
-                    return console.log(o[g]), o;
-                }
-                function e() {
-                    return [ 42 ].map(function(v) {
-                        return h(v);
-                    });
-                }
-                return e();
+        void console.log(function g() {
+            function h(u) {
+                var o = {
+                    p: u
+                };
+                return console.log(o[g]), o;
             }
-            return g;
-        }()()[0].p);
+            function e() {
+                return [ 42 ].map(function(v) {
+                    return h(v);
+                });
+            }
+            return e();
+        }()[0].p);
     }
     expect_stdout: [
         "undefined",
@@ -3154,12 +3154,10 @@ issue_3400_2: {
     expect: {
         void console.log(function g() {
             return [ 42 ].map(function(v) {
-                return function(u) {
-                    var o = {
-                        p: u
-                    };
-                    return console.log(o[g]), o;
-                }(v);
+                return o = {
+                    p: v
+                }, console.log(o[g]), o;
+                var o;
             });
         }()[0].p);
     }
@@ -3400,4 +3398,92 @@ issue_3562: {
         f(a);
     }
     expect_stdout: "PASS"
+}
+
+hoisted_inline: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            console.log("PASS");
+        }
+        function g() {
+            for (var console in [ 0 ])
+                h();
+        }
+        function h() {
+            f();
+        }
+        g();
+    }
+    expect: {
+        function f() {
+            console.log("PASS");
+        }
+        (function() {
+            for (var console in [ 0 ])
+                void f();
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+hoisted_single_use: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            for (var r in a) g(r);
+        }
+        function g(a) {
+            console.log(a);
+        }
+        function h(a) {
+            var g = a.bar;
+            g();
+            g();
+            i(a);
+        }
+        function i(b) {
+            f(b);
+        }
+        h({
+            bar: function() {
+                console.log("foo");
+            }
+        });
+    }
+    expect: {
+        function f(a) {
+            for (var r in a) g(r);
+        }
+        function g(a) {
+            console.log(a);
+        }
+        (function(a) {
+            var g = a.bar;
+            g();
+            g();
+            (function(b) {
+                f(b);
+            })(a);
+        })({
+            bar: function() {
+                console.log("foo");
+            }
+        });
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "bar",
+    ]
 }
