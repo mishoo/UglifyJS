@@ -2235,3 +2235,34 @@ function_assign: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3598: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        try {
+            (function() {
+                var b = void 0;
+                a = "PASS";
+                c.p = 0;
+                var c = b[!1];
+            })();
+        } catch (e) {}
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        try {
+            (function() {
+                a = "PASS";
+                var c = (void (c.p = 0))[!1];
+            })();
+        } catch (e) {}
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
