@@ -3487,3 +3487,84 @@ hoisted_single_use: {
         "bar",
     ]
 }
+
+pr_3592_1: {
+    options = {
+        inline: true,
+        reduce_funcs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function problem(w) {
+            return g.indexOf(w);
+        }
+        function unused(x) {
+            return problem(x);
+        }
+        function B(problem) {
+            return g[problem];
+        }
+        function A(y) {
+            return problem(y);
+        }
+        function main(z) {
+            return B(A(z));
+        }
+        var g = [ "PASS" ];
+        console.log(main("PASS"));
+    }
+    expect: {
+        function problem(w) {
+            return g.indexOf(w);
+        }
+        function B(problem) {
+            return g[problem];
+        }
+        var g = [ "PASS" ];
+        console.log((z = "PASS", B((y = z, problem(y)))));
+        var z, y;
+    }
+    expect_stdout: "PASS"
+}
+
+pr_3592_2: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function problem(w) {
+            return g.indexOf(w);
+        }
+        function unused(x) {
+            return problem(x);
+        }
+        function B(problem) {
+            return g[problem];
+        }
+        function A(y) {
+            return problem(y);
+        }
+        function main(z) {
+            return B(A(z));
+        }
+        var g = [ "PASS" ];
+        console.log(main("PASS"));
+    }
+    expect: {
+        function problem(w) {
+            return g.indexOf(w);
+        }
+        var g = [ "PASS" ];
+        console.log((z = "PASS", function(problem) {
+            return g[problem];
+        }((y = z, problem(y)))));
+        var z, y;
+    }
+    expect_stdout: "PASS"
+}
