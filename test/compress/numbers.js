@@ -870,7 +870,7 @@ issue_3547_3: {
             a + "21",
             a + "2" - 1,
             a - 1,
-            a - "2" - 1,
+            a - 3,
         ].forEach(function(n) {
             console.log(typeof n, n);
         });
@@ -904,7 +904,7 @@ issue_3547_4: {
         [
             "3" + a + 1,
             "3" + a - 1,
-            "3" - a + 1,
+            4 - a,
             2 - a,
         ].forEach(function(n) {
             console.log(typeof n, n);
@@ -930,4 +930,18 @@ unsafe_math_rounding: {
         console.log(false);
     }
     expect_stdout: "false"
+}
+
+issue_3593: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log((0 === this) - 1 - "1");
+    }
+    expect: {
+        console.log((0 === this) - 2);
+    }
+    expect_stdout: "-2"
 }
