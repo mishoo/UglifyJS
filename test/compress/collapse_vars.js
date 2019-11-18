@@ -6549,3 +6549,21 @@ issue_3581_2: {
     }
     expect_stdout: "PASS PASS"
 }
+
+issue_3596: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        console.log(function f() {
+            return f[[ ][f.undefined = 42, 0]] += !1;
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            return f[[ ][f.undefined = 42, 0]] += !1;
+        }());
+    }
+    expect_stdout: "42"
+}
