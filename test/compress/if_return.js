@@ -544,3 +544,32 @@ if_body_return_3: {
         "PASS",
     ]
 }
+
+issue_3600: {
+    options = {
+        if_return: true,
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            if ([ ][c++]); else return;
+            return void function() {
+                var b = --b, a = c = 42;
+                return c;
+            }();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            if ([][c++]) b = --b, c = 42;
+            var b;
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
