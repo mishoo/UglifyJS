@@ -3852,10 +3852,9 @@ issue_2436_9: {
     expect: {
         var o = console;
         console.log({
-            x: (c = o).a,
-            y: c.b,
+            x: o.a,
+            y: o.b,
         });
-        var c;
     }
     expect_stdout: true
 }
@@ -6566,4 +6565,30 @@ issue_3596: {
         }());
     }
     expect_stdout: "42"
+}
+
+local_value_replacement: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            (a = b) && g(a);
+        }
+        function g(c) {
+            console.log(c);
+        }
+        f("FAIL", "PASS");
+    }
+    expect: {
+        function f(a, b) {
+            (a = b) && g(a);
+        }
+        function g(c) {
+            console.log(c);
+        }
+        f("FAIL", "PASS");
+    }
+    expect_stdout: "PASS"
 }
