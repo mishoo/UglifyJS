@@ -3568,3 +3568,29 @@ pr_3592_2: {
     }
     expect_stdout: "PASS"
 }
+
+inline_use_strict: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            "use strict";
+            return function() {
+                "use strict";
+                var a = "foo";
+                a += "bar";
+                return a;
+            };
+        }()());
+    }
+    expect: {
+        console.log("foobar");
+    }
+    expect_stdout: "foobar"
+}
