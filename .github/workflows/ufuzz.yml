@@ -17,8 +17,8 @@ jobs:
         run: |
           git clone --branch v1.5.3 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
           . ~/.nvs/nvs.sh --version
-          nvs add node
-          nvs use node
+          nvs add 10
+          nvs use 10
           node --version
           npm --version --no-update-notifier
           npm install --no-audit --no-optional --no-save --no-update-notifier
