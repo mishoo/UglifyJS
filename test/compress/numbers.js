@@ -945,3 +945,37 @@ issue_3593: {
     }
     expect_stdout: "-2"
 }
+
+unsafe_math_swap_constant: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = 1, b = 2;
+        console.log(
+            a++ + b-- + 3,
+            a++ + b + 3,
+            a + b-- + 3,
+            a + b + 3,
+            a++ - b-- + 3,
+            a++ - b + 3,
+            a - b-- + 3,
+            a - b + 3
+        );
+    }
+    expect: {
+        var a = 1, b = 2;
+        console.log(
+            3 + a++ + b--,
+            a++ + b + 3,
+            a + b-- + 3,
+            a + b + 3,
+            3 + a++ - b--,
+            3 + a++ - b,
+            a - b-- + 3,
+            a - b + 3
+        );
+    }
+    expect_stdout: "6 6 7 6 6 8 9 10"
+}
