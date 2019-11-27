@@ -2057,3 +2057,107 @@ threshold_evaluate_999: {
     }
     expect_stdout: "111 6 ABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJKABCDEFGHIJK"
 }
+
+collapse_vars_regexp: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: true,
+        loops: false,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe_regexp: true,
+        unused: true,
+    }
+    input: {
+        function f1() {
+            var k = 9;
+            var rx = /[A-Z]+/;
+            return [rx, k];
+        }
+        function f2() {
+            var rx = /ab*/g;
+            return function(s) {
+                return rx.exec(s);
+            };
+        }
+        function f3() {
+            var rx = /ab*/g;
+            return function() {
+                return rx;
+            };
+        }
+        (function() {
+            var result;
+            var s = "acdabcdeabbb";
+            var rx = /ab*/g;
+            while (result = rx.exec(s))
+                console.log(result[0]);
+        })();
+        (function() {
+            var result;
+            var s = "acdabcdeabbb";
+            var rx = f2();
+            while (result = rx(s))
+                console.log(result[0]);
+        })();
+        (function() {
+            var result;
+            var s = "acdabcdeabbb";
+            var rx = f3();
+            while (result = rx().exec(s))
+                console.log(result[0]);
+        })();
+    }
+    expect: {
+        function f1() {
+            return [/[A-Z]+/, 9];
+        }
+        function f2() {
+            var rx = /ab*/g;
+            return function(s) {
+                return rx.exec(s);
+            };
+        }
+        function f3() {
+            var rx = /ab*/g;
+            return function() {
+                return rx;
+            };
+        }
+        (function() {
+            var result, rx = /ab*/g;
+            while (result = rx.exec("acdabcdeabbb"))
+                console.log(result[0]);
+        })();
+        (function() {
+            var result, rx = f2();
+            while (result = rx("acdabcdeabbb"))
+                console.log(result[0]);
+        })();
+        (function() {
+            var result, rx = f3();
+            while (result = rx().exec("acdabcdeabbb"))
+                console.log(result[0]);
+        })();
+    }
+    expect_stdout: [
+        "a",
+        "ab",
+        "abbb",
+        "a",
+        "ab",
+        "abbb",
+        "a",
+        "ab",
+        "abbb",
+    ]
+}
