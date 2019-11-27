@@ -1633,21 +1633,32 @@ collapse_vars_regexp: {
                 return rx.exec(s);
             };
         }
+        function f3() {
+            var rx = /ab*/g;
+            return function() {
+                return rx;
+            };
+        }
         (function() {
             var result;
-            var s = 'acdabcdeabbb';
+            var s = "acdabcdeabbb";
             var rx = /ab*/g;
-            while (result = rx.exec(s)) {
+            while (result = rx.exec(s))
                 console.log(result[0]);
-            }
         })();
         (function() {
             var result;
-            var s = 'acdabcdeabbb';
+            var s = "acdabcdeabbb";
             var rx = f2();
-            while (result = rx(s)) {
+            while (result = rx(s))
                 console.log(result[0]);
-            }
+        })();
+        (function() {
+            var result;
+            var s = "acdabcdeabbb";
+            var rx = f3();
+            while (result = rx().exec(s))
+                console.log(result[0]);
         })();
     }
     expect: {
@@ -1660,6 +1671,12 @@ collapse_vars_regexp: {
                 return rx.exec(s);
             };
         }
+        function f3() {
+            var rx = /ab*/g;
+            return function() {
+                return rx;
+            };
+        }
         (function() {
             var result, rx = /ab*/g;
             while (result = rx.exec("acdabcdeabbb"))
@@ -1670,8 +1687,23 @@ collapse_vars_regexp: {
             while (result = rx("acdabcdeabbb"))
                 console.log(result[0]);
         })();
+        (function() {
+            var result, rx = f3();
+            while (result = rx().exec("acdabcdeabbb"))
+                console.log(result[0]);
+        })();
     }
-    expect_stdout: true
+    expect_stdout: [
+        "a",
+        "ab",
+        "abbb",
+        "a",
+        "ab",
+        "abbb",
+        "a",
+        "ab",
+        "abbb",
+    ]
 }
 
 issue_1537: {
