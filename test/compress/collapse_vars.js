@@ -669,7 +669,7 @@ collapse_vars_throw: {
     expect_stdout: "13"
 }
 
-collapse_vars_switch: {
+collapse_vars_switch_1: {
     options = {
         booleans: true,
         collapse_vars: true,
@@ -719,6 +719,31 @@ collapse_vars_switch: {
             switch(x) { case 1: return 3 - x; }
         }
     }
+}
+
+collapse_vars_switch_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = 0;
+        (function(b) {
+            switch (b && [ b = 0, (c++, 0) ]) {
+              case c = 1 + c:
+            }
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function(b) {
+            switch (b && [ b = 0, (c++, 0) ]) {
+              case c = 1 + c:
+            }
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
 }
 
 collapse_vars_assignment: {
@@ -1234,7 +1259,7 @@ collapse_vars_try: {
     }
 }
 
-collapse_vars_array: {
+collapse_vars_array_1: {
     options = {
         booleans: true,
         collapse_vars: true,
@@ -1280,7 +1305,58 @@ collapse_vars_array: {
     }
 }
 
-collapse_vars_object: {
+collapse_vars_array_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return [ (b = a, b.g()) ];
+        }
+        console.log(f({
+            g: function() {
+                return "PASS";
+            }
+        })[0]);
+    }
+    expect: {
+        function f(a) {
+            return [ a.g() ];
+        }
+        console.log(f({
+            g: function() {
+                return "PASS";
+            }
+        })[0]);
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_vars_array_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return [ b = a, b, b ];
+        }
+        console.log(f().length);
+    }
+    expect: {
+        function f(a) {
+            var b;
+            return [ b = a, b, b ];
+        }
+        console.log(f().length);
+    }
+    expect_stdout: "3"
+}
+
+collapse_vars_object_1: {
     options = {
         booleans: true,
         collapse_vars: true,
@@ -1358,6 +1434,69 @@ collapse_vars_object: {
             }];
         }
     }
+}
+
+collapse_vars_object_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return {
+                p: (b = a, b.g())
+            };
+        }
+        console.log(f({
+            g: function() {
+                return "PASS";
+            }
+        }).p);
+    }
+    expect: {
+        function f(a) {
+            return {
+                p: a.g()
+            };
+        }
+        console.log(f({
+            g: function() {
+                return "PASS";
+            }
+        }).p);
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_vars_object_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return {
+                p: b = a,
+                q: b,
+                r: b,
+            };
+        }
+        console.log(f("PASS").r);
+    }
+    expect: {
+        function f(a) {
+            var b;
+            return {
+                p: b = a,
+                q: b,
+                r: b,
+            };
+        }
+        console.log(f("PASS").r);
+    }
+    expect_stdout: "PASS"
 }
 
 collapse_vars_eval_and_with: {
@@ -6623,4 +6762,46 @@ local_value_replacement: {
         f("FAIL", "PASS");
     }
     expect_stdout: "PASS"
+}
+
+array_in_object_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 2;
+        console.log({
+            p: [ a, a-- ],
+            q: a,
+        }.q, a);
+    }
+    expect: {
+        var a = 2;
+        console.log({
+            p: [ a, a-- ],
+            q: a,
+        }.q, a);
+    }
+    expect_stdout: "1 1"
+}
+
+array_in_object_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 2;
+        console.log({
+            p: [ a, (a--, 42) ],
+            q: a,
+        }.q, a);
+    }
+    expect: {
+        var a = 2;
+        console.log({
+            p: [ a, 42 ],
+            q: --a,
+        }.q, a);
+    }
+    expect_stdout: "1 1"
 }
