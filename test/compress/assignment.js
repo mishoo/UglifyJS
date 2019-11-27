@@ -290,26 +290,60 @@ increment_decrement_2: {
     expect_stdout: "42"
 }
 
-issue_3375: {
+issue_3375_1: {
     options = {
         assignments: true,
         reduce_vars: true,
     }
     input: {
-        console.log(typeof function(b) {
+        function p(o) {
+            console.log(typeof o, o);
+        }
+        p(function(b) {
             var a = b += 1;
             --b;
             return a;
         }("object"));
     }
     expect: {
-        console.log(typeof function(b) {
+        function p(o) {
+            console.log(typeof o, o);
+        }
+        p(function(b) {
             var a = b += 1;
             --b;
             return a;
         }("object"));
     }
-    expect_stdout: "string"
+    expect_stdout: "string object1"
+}
+
+issue_3375_2: {
+    options = {
+        assignments: true,
+        reduce_vars: true,
+    }
+    input: {
+        function p(o) {
+            console.log(typeof o, o);
+        }
+        p(function(b) {
+            var a = b -= 1;
+            --b;
+            return a;
+        }("object"));
+    }
+    expect: {
+        function p(o) {
+            console.log(typeof o, o);
+        }
+        p(function(b) {
+            var a = --b;
+            --b;
+            return a;
+        }("object"));
+    }
+    expect_stdout: "number NaN"
 }
 
 issue_3427: {
