@@ -1348,8 +1348,7 @@ collapse_vars_array_3: {
     }
     expect: {
         function f(a) {
-            var b;
-            return [ b = a, b, b ];
+            return [ a, a, a ];
         }
         console.log(f().length);
     }
@@ -1487,11 +1486,10 @@ collapse_vars_object_3: {
     }
     expect: {
         function f(a) {
-            var b;
             return {
-                p: b = a,
-                q: b,
-                r: b,
+                p: a,
+                q: a,
+                r: a,
             };
         }
         console.log(f("PASS").r);
@@ -6304,7 +6302,7 @@ assign_left: {
     }
     expect: {
         console.log(function(a, b) {
-            (b = a).p.q = "PASS";
+            a.p.q = "PASS";
             return a.p.q;
         }({p: {}}));
     }
@@ -6317,12 +6315,12 @@ sub_property: {
     }
     input: {
         console.log(function(a, b) {
-            return a[(b = a, b.length - 1)];
+            return a[b = a, b.length - 1];
         }([ "FAIL", "PASS" ]));
     }
     expect: {
         console.log(function(a, b) {
-            return a[(b = a).length - 1];
+            return a[a.length - 1];
         }([ "FAIL", "PASS" ]));
     }
     expect_stdout: "PASS"
@@ -6754,7 +6752,7 @@ local_value_replacement: {
     }
     expect: {
         function f(a, b) {
-            (a = b) && g(a);
+            b && g(b);
         }
         function g(c) {
             console.log(c);
@@ -6804,4 +6802,166 @@ array_in_object_2: {
         }.q, a);
     }
     expect_stdout: "1 1"
+}
+
+array_in_conditional: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 1, b = 2, c;
+        console.log(c && [ b = a ], a, b);
+    }
+    expect: {
+        var a = 1, b = 2, c;
+        console.log(c && [ b = a ], a, b);
+    }
+    expect_stdout: "undefined 1 2"
+}
+
+object_in_conditional: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 1, b = 2, c;
+        console.log(c && {
+            p: b = a
+        }, a, b);
+    }
+    expect: {
+        var a = 1, b = 2, c;
+        console.log(c && {
+            p: b = a
+        }, a, b);
+    }
+    expect_stdout: "undefined 1 2"
+}
+
+sequence_in_iife_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "foo", b = 42;
+        (function() {
+            var c = (b = a, b);
+        })();
+        console.log(a, b);
+    }
+    expect: {
+        var a = "foo", b = 42;
+        (function() {
+            var c = b = a;
+        })();
+        console.log(a, b);
+    }
+    expect_stdout: "foo foo"
+}
+
+sequence_in_iife_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo", b = 42;
+        (function() {
+            var c = (b = a, b);
+        })();
+        console.log(a, b);
+    }
+    expect: {
+        var a = "foo", b = 42;
+        console.log(a, a);
+    }
+    expect_stdout: "foo foo"
+}
+
+retain_assign: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 42, b, c = "FAIL";
+        b = a;
+        b++ && (c = "PASS");
+        console.log(c);
+    }
+    expect: {
+        var a = 42, b, c = "FAIL";
+        b = a;
+        b++ && (c = "PASS");
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+getter_side_effect: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function(a) {
+            var b;
+            (b = a) && {
+                get foo() {
+                    a = 0;
+                }
+            }.foo;
+            b && (c = "PASS");
+        })(42);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(a) {
+            var b;
+            (b = a) && {
+                get foo() {
+                    a = 0;
+                }
+            }.foo;
+            b && (c = "PASS");
+        })(42);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
+
+setter_side_effect: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var c = "FAIL";
+        (function(a) {
+            var b;
+            (b = a) && ({
+                set foo(v) {
+                    a = v;
+                }
+            }.foo = 0);
+            b && (c = "PASS");
+        })(42);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        (function(a) {
+            var b;
+            (b = a) && ({
+                set foo(v) {
+                    a = v;
+                }
+            }.foo = 0);
+            b && (c = "PASS");
+        })(42);
+        console.log(c);
+    }
+    expect_stdout: "PASS"
 }
