@@ -54,8 +54,8 @@ describe("Directives", function() {
         [
             [
                 '"use strict"\n',
-                [ "use strict"],
-                [ "use asm"]
+                [ "use strict" ],
+                [ "use asm" ]
             ],
             [
                 '"use\\\nstrict";',
@@ -80,8 +80,8 @@ describe("Directives", function() {
             [
                 // no ; or newline
                 '"use strict"',
-                [],
-                [ "use strict", "use\nstrict", "use \nstrict", "use asm" ]
+                [ "use strict" ],
+                [ "use\nstrict", "use \nstrict", "use asm" ]
             ],
             [
                 ';"use strict"',
@@ -116,8 +116,8 @@ describe("Directives", function() {
             ],
             [
                 'var foo = function() {"use strict"', // no ; or newline
-                [],
-                [ "use strict", "use\nstrict", "use \nstrict", "use asm" ]
+                [ "use strict" ],
+                [ "use\nstrict", "use \nstrict", "use asm" ]
             ],
             [
                 'var foo = function() {;"use strict"',
