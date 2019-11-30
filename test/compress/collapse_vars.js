@@ -6965,3 +6965,330 @@ setter_side_effect: {
     }
     expect_stdout: "PASS"
 }
+
+substitution_assign: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            f1 = b = a;
+            console.log(a, b);
+        }
+        function f2(a, b) {
+            a = 1 + (b = a);
+            console.log(a, b);
+        }
+        function f3(a, b) {
+            b = 1 + (b = a);
+            console.log(a, b);
+        }
+        f1(42, "foo");
+        f2(42, "foo");
+        f3(42, "foo");
+    }
+    expect: {
+        function f1(a, b) {
+            f1 = a;
+            console.log(a, a);
+        }
+        function f2(a, b) {
+            a = 1 + (b = a);
+            console.log(a, b);
+        }
+        function f3(a, b) {
+            b = 1 + (b = a);
+            console.log(a, b);
+        }
+        f1(42, "foo");
+        f2(42, "foo");
+        f3(42, "foo");
+    }
+    expect_stdout: [
+        "42 42",
+        "43 42",
+        "42 43",
+    ]
+}
+
+substitution_arithmetic: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            console.log((b = a) + a, b);
+        }
+        function f2(a, b) {
+            console.log(a - (b = a), b);
+        }
+        function f3(a, b) {
+            console.log(a / (b = a) + b, b);
+        }
+        f1(42, "foo");
+        f2(42, "foo");
+        f3(42, "foo");
+    }
+    expect: {
+        function f1(a, b) {
+            console.log(a + a, a);
+        }
+        function f2(a, b) {
+            console.log(a - a, a);
+        }
+        function f3(a, b) {
+            console.log(a / a + a, a);
+        }
+        f1(42, "foo");
+        f2(42, "foo");
+        f3(42, "foo");
+    }
+    expect_stdout: [
+        "84 42",
+        "0 42",
+        "43 42",
+    ]
+}
+
+substitution_logical_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            console.log((b = a) && a, b);
+        }
+        function f2(a, b) {
+            console.log(a && (b = a), b);
+        }
+        f1(42, "foo");
+        f1(null, true);
+        f2(42, "foo");
+        f2(null, true);
+    }
+    expect: {
+        function f1(a, b) {
+            console.log(a && a, a);
+        }
+        function f2(a, b) {
+            console.log(a && (b = a), b);
+        }
+        f1(42, "foo");
+        f1(null, true);
+        f2(42, "foo");
+        f2(null, true);
+    }
+    expect_stdout: [
+        "42 42",
+        "null null",
+        "42 42",
+        "null true"
+    ]
+}
+
+substitution_logical_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            console.log((b = a) && a && b);
+        }
+        function f2(a, b) {
+            console.log((b = a) && a || b);
+        }
+        function f3(a, b) {
+            console.log((b = a) || a && b);
+        }
+        function f4(a, b) {
+            console.log((b = a) || a || b);
+        }
+        f1(42, "foo");
+        f1(null, true);
+        f2(42, "foo");
+        f2(null, true);
+        f3(42, "foo");
+        f3(null, true);
+        f4(42, "foo");
+        f4(null, true);
+    }
+    expect: {
+        function f1(a, b) {
+            console.log(a && a && a);
+        }
+        function f2(a, b) {
+            console.log(a && a || a);
+        }
+        function f3(a, b) {
+            console.log(a || a && a);
+        }
+        function f4(a, b) {
+            console.log(a || a || a);
+        }
+        f1(42, "foo");
+        f1(null, true);
+        f2(42, "foo");
+        f2(null, true);
+        f3(42, "foo");
+        f3(null, true);
+        f4(42, "foo");
+        f4(null, true);
+    }
+    expect_stdout: [
+        "42",
+        "null",
+        "42",
+        "null",
+        "42",
+        "null",
+        "42",
+        "null",
+    ]
+}
+
+substitution_logical_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            console.log(a && (b = a) && b);
+        }
+        function f2(a, b) {
+            console.log(a && (b = a) || b);
+        }
+        function f3(a, b) {
+            console.log(a || (b = a) && b);
+        }
+        function f4(a, b) {
+            console.log(a || (b = a) || b);
+        }
+        f1(42, "foo");
+        f1(null, true);
+        f2(42, "foo");
+        f2(null, true);
+        f3(42, "foo");
+        f3(null, true);
+        f4(42, "foo");
+        f4(null, true);
+    }
+    expect: {
+        function f1(a, b) {
+            console.log(a && a && a);
+        }
+        function f2(a, b) {
+            console.log(a && (b = a) || b);
+        }
+        function f3(a, b) {
+            console.log(a || a && a);
+        }
+        function f4(a, b) {
+            console.log(a || a || a);
+        }
+        f1(42, "foo");
+        f1(null, true);
+        f2(42, "foo");
+        f2(null, true);
+        f3(42, "foo");
+        f3(null, true);
+        f4(42, "foo");
+        f4(null, true);
+    }
+    expect_stdout: [
+        "42",
+        "null",
+        "42",
+        "true",
+        "42",
+        "null",
+        "42",
+        "null",
+    ]
+}
+
+substitution_conditional: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            console.log((b = a) ? a : b, a, b);
+        }
+        function f2(a, b) {
+            console.log(a ? b = a : b, a, b);
+        }
+        function f3(a, b) {
+            console.log(a ? a : b = a, a, b);
+        }
+        f1("foo", "bar");
+        f1(null, true);
+        f2("foo", "bar");
+        f2(null, true);
+        f3("foo", "bar");
+        f3(null, true);
+    }
+    expect: {
+        function f1(a, b) {
+            console.log(a ? a : a, a, a);
+        }
+        function f2(a, b) {
+            console.log(a ? b = a : b, a, b);
+        }
+        function f3(a, b) {
+            console.log(a ? a : b = a, a, b);
+        }
+        f1("foo", "bar");
+        f1(null, true);
+        f2("foo", "bar");
+        f2(null, true);
+        f3("foo", "bar");
+        f3(null, true);
+    }
+    expect_stdout: [
+        "foo foo foo",
+        "null null null",
+        "foo foo foo",
+        "true null true",
+        "foo foo bar",
+        "null null null",
+    ]
+}
+
+substitution_unary: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function f1(a, b) {
+            console.log(typeof (b = a), a, b);
+        }
+        function f2(a, b) {
+            console.log(void (b = a), a, b);
+        }
+        function f3(a, b) {
+            console.log(delete (b = a), a, b);
+        }
+        f1(42, "foo");
+        f2(42, "foo");
+        f3(42, "foo");
+    }
+    expect: {
+        function f1(a, b) {
+            console.log(typeof a, a, a);
+        }
+        function f2(a, b) {
+            console.log(void a, a, a);
+        }
+        function f3(a, b) {
+            console.log(delete (b = a), a, b);
+        }
+        f1(42, "foo");
+        f2(42, "foo");
+        f3(42, "foo");
+    }
+    expect_stdout: [
+        "number 42 42",
+        "undefined 42 42",
+        "true 42 42",
+    ]
+}
