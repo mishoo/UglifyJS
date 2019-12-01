@@ -873,13 +873,13 @@ iife_func_side_effects: {
         function z() {
             console.log("z");
         }
-        (function(a, b) {
+        (function(b) {
             return function() {
                 console.log("FAIL");
             } + b();
-        })(x(), function() {
+        })((x(), function() {
             return y();
-        }, z());
+        }), z());
     }
     expect_stdout: [
         "x",

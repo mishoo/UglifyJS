@@ -1674,7 +1674,7 @@ if_increment: {
         }(0));
     }
     expect: {
-        console.log(function(a) {
+        console.log(function() {
             if (console)
                 return 1;
         }());
@@ -1696,7 +1696,7 @@ try_increment: {
         }(0));
     }
     expect: {
-        console.log(function(a) {
+        console.log(function() {
             try {
                 return 1;
             } catch (e) {}
