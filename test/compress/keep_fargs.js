@@ -1155,3 +1155,273 @@ issue_3423_2: {
     }
     expect_stdout: "1"
 }
+
+collapse_vars_repeated: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        comparisons: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_funs: true,
+        if_return: true,
+        join_vars: true,
+        keep_fargs: "strict",
+        loops: true,
+        properties: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function f1() {
+            var dummy = 3, a = 5, unused = 2, a = 1, a = 3;
+            return -a;
+        }
+        function f2(x) {
+            var a = 3, a = x;
+            return a;
+        }
+        (function(x) {
+             var a = "GOOD" + x, e = "BAD", k = "!", e = a;
+             console.log(e + k);
+        })("!"),
+        (function(x) {
+            var a = "GOOD" + x, e = "BAD" + x, k = "!", e = a;
+            console.log(e + k);
+        })("!");
+    }
+    expect: {
+        function f1() {
+            return -3;
+        }
+        function f2(x) {
+            return x;
+        }
+        (function() {
+             console.log("GOOD!!");
+        })(),
+        (function() {
+             console.log("GOOD!!");
+        })();
+    }
+    expect_stdout: true
+}
+
+chained_3: {
+    options = {
+        collapse_vars: true,
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            var c = a, c = b;
+            b++;
+            return c;
+        }(1, 2));
+    }
+    expect: {
+        console.log(function(b) {
+            var c = 1;
+            c = b;
+            b++;
+            return c;
+        }(2));
+    }
+    expect_stdout: "2"
+}
+
+replace_all_var_scope: {
+    rename = true
+    options = {
+        collapse_vars: true,
+        keep_fargs: "strict",
+        unused: true,
+    }
+    mangle = {}
+    input: {
+        var a = 100, b = 10;
+        (function(r, a) {
+            switch (~a) {
+            case (b += a):
+            case a++:
+            }
+        })(--b, a);
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100, b = 10;
+        (function(c) {
+            switch (~a) {
+            case (b += a):
+            case c++:
+            }
+        })((--b, a));
+        console.log(a, b);
+    }
+    expect_stdout: "100 109"
+}
+
+issue_1583: {
+    options = {
+        keep_fargs: "strict",
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function m(t) {
+            (function(e) {
+                t = e();
+            })(function() {
+                return (function(a) {
+                    return a;
+                })(function(a) {});
+            });
+        }
+    }
+    expect: {
+        function m(t) {
+            (function() {
+                (function() {
+                    return (function() {
+                        return function(a) {};
+                    })();
+                })();
+            })();
+        }
+    }
+}
+
+issues_3267_1: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(x) {
+            x();
+        })(function() {
+            (function(i) {
+                if (i)
+                    return console.log("PASS");
+                throw "FAIL";
+            })(Object());
+        });
+    }
+    expect: {
+        !function() {
+            if (Object())
+                return console.log("PASS");
+            throw "FAIL";
+        }();
+    }
+    expect_stdout: "PASS"
+}
+
+trailing_argument_side_effects: {
+    options = {
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        function f() {
+            return "FAIL";
+        }
+        console.log(function(a, b) {
+            return b || "PASS";
+        }(f()));
+    }
+    expect: {
+        function f() {
+            return "FAIL";
+        }
+        console.log(function(b) {
+            return b || "PASS";
+        }(void f()));
+    }
+    expect_stdout: "PASS"
+}
+
+recursive_iife_1: {
+    options = {
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(a, b) {
+            return b || f("FAIL", "PASS");
+        }());
+    }
+    expect: {
+        console.log(function f(a, b) {
+            return b || f("FAIL", "PASS");
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+recursive_iife_2: {
+    options = {
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(a, b) {
+            return b || f("FAIL", "PASS");
+        }(null, 0));
+    }
+    expect: {
+        console.log(function f(a, b) {
+            return b || f("FAIL", "PASS");
+        }(0, 0));
+    }
+    expect_stdout: "PASS"
+}
+
+recursive_iife_3: {
+    options = {
+        keep_fargs: false,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 1, c = "PASS";
+        (function() {
+            function f(b, d, e) {
+                a-- && f(null, 42, 0);
+                e && (c = "FAIL");
+                d && d.p;
+            }
+            var a_1 = f();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var a = 1, c = "PASS";
+        (function() {
+            (function f(b, d, e) {
+                a-- && f(null, 42, 0);
+                e && (c = "FAIL");
+                d && d.p;
+            })();
+        })();
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}

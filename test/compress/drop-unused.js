@@ -815,9 +815,9 @@ issue_1583: {
     }
     expect: {
         function m(t) {
-            (function() {
+            (function(e) {
                 (function() {
-                    return (function() {
+                    return (function(a) {
                         return function(a) {};
                     })();
                 })();
@@ -1329,7 +1329,7 @@ issue_2226_2: {
         }(1, 2));
     }
     expect: {
-        console.log(function(a) {
+        console.log(function(a, b) {
             return a += 2;
         }(1));
     }
@@ -1349,7 +1349,7 @@ issue_2226_3: {
         }(1, 2));
     }
     expect: {
-        console.log(function(a) {
+        console.log(function(a, b) {
             return a += 2;
         }(1));
     }
@@ -1702,11 +1702,11 @@ chained_3: {
         }(1, 2));
     }
     expect: {
-        console.log(function(b) {
+        console.log(function(a, b) {
             var c = b;
             b++;
             return c;
-        }(2));
+        }(0, 2));
     }
     expect_stdout: "2"
 }

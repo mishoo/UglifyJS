@@ -1051,7 +1051,6 @@ collapse_vars_repeated: {
              var a = "GOOD" + x, e = "BAD", k = "!", e = a;
              console.log(e + k);
         })("!"),
-
         (function(x) {
             var a = "GOOD" + x, e = "BAD" + x, k = "!", e = a;
             console.log(e + k);
@@ -1064,10 +1063,10 @@ collapse_vars_repeated: {
         function f2(x) {
             return x;
         }
-        (function() {
+        (function(x) {
              console.log("GOOD!!");
         })(),
-        (function() {
+        (function(x) {
              console.log("GOOD!!");
         })();
     }
@@ -2425,7 +2424,7 @@ issue_1858: {
         }(1));
     }
     expect: {
-        console.log(function() {
+        console.log(function(x) {
             var a = {}, b = a.b = 1;
             return a.b + b;
         }());
@@ -2569,12 +2568,12 @@ chained_3: {
         }(1, 2));
     }
     expect: {
-        console.log(function(b) {
+        console.log(function(a, b) {
             var c = 1;
             c = b;
             b++;
             return c;
-        }(2));
+        }(0, 2));
     }
     expect_stdout: "2"
 }
@@ -2845,7 +2844,7 @@ issue_2187_2: {
     }
     expect: {
         var b = 1;
-        console.log(function() {
+        console.log(function(a) {
             return b-- && ++b;
         }());
     }
@@ -2924,7 +2923,7 @@ issue_2203_2: {
         console.log({
             a: "FAIL",
             b: function() {
-                return function() {
+                return function(c) {
                     return (String, (Object, function() {
                         return this;
                     }())).a;
@@ -3081,7 +3080,7 @@ issue_2319_1: {
         }()));
     }
     expect: {
-        console.log(function() {
+        console.log(function(a) {
             return !function() {
                 return this;
             }();
@@ -3129,7 +3128,7 @@ issue_2319_3: {
     }
     expect: {
         "use strict";
-        console.log(function() {
+        console.log(function(a) {
             return !function() {
                 return this;
             }();
@@ -3594,7 +3593,7 @@ issue_2425_2: {
     }
     expect: {
         var a = 8;
-        (function(b) {
+        (function(b, c) {
             b.toString();
         })(--a, a |= 10);
         console.log(a);
@@ -3616,7 +3615,7 @@ issue_2425_3: {
     }
     expect: {
         var a = 8;
-        (function() {
+        (function(b, b) {
             (a |= 10).toString();
         })(--a);
         console.log(a);
@@ -4160,7 +4159,7 @@ issue_2436_13: {
         var a = "PASS";
         (function() {
             (function(b) {
-                (function() {
+                (function(b) {
                     a && (a.null = "FAIL");
                 })();
             })();
@@ -4264,11 +4263,11 @@ issue_2506: {
     expect: {
         var c = 0;
         function f0(bar) {
-            (function() {
-                (function() {
+            (function(Infinity_2) {
+                (function(NaN) {
                     if (false <= 0/0 & this >> 1 >= 0)
                         c++;
-                })(c++);
+                })(0, c++);
             })();
         }
         f0(false);
@@ -4566,20 +4565,20 @@ replace_all_var_scope: {
         var a = 100, b = 10;
         (function(r, a) {
             switch (~a) {
-            case (b += a):
-            case a++:
+              case (b += a):
+              case a++:
             }
         })(--b, a);
         console.log(a, b);
     }
     expect: {
         var a = 100, b = 10;
-        (function(c) {
+        (function(c, o) {
             switch (~a) {
-            case (b += a):
-            case c++:
+              case (b += a):
+              case o++:
             }
-        })((--b, a));
+        })(--b, a);
         console.log(a, b);
     }
     expect_stdout: "100 109"
