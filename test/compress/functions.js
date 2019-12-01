@@ -1279,7 +1279,7 @@ issue_2630_3: {
     expect: {
         var x = 2, a = 1;
         (function() {
-            (function f1() {
+            (function f1(a) {
                 f2();
                 --x >= 0 && f1({});
             })(a++);
