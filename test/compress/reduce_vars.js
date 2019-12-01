@@ -1599,7 +1599,7 @@ defun_label: {
     }
     expect: {
         !function() {
-            console.log(function(a) {
+            console.log(function() {
                 L: {
                     if (2) break L;
                     return 1;
@@ -1763,13 +1763,13 @@ iife_func_side_effects: {
         function z() {
             console.log("z");
         }
-        (function(a, b, c) {
+        (function(b) {
             return function() {
                 console.log("FAIL");
             } + b();
-        })(x(), function() {
+        })((x(), function() {
             return y();
-        }, z());
+        }), z());
     }
     expect_stdout: [
         "x",
@@ -1830,7 +1830,7 @@ issue_1595_3: {
         })(2);
     }
     expect: {
-        (function(a) {
+        (function() {
             return g(3);
         })();
     }
@@ -6602,7 +6602,7 @@ issues_3267_1: {
         });
     }
     expect: {
-        !function(i) {
+        !function() {
             if (Object())
                 return console.log("PASS");
             throw "FAIL";
