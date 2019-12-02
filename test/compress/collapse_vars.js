@@ -2578,6 +2578,23 @@ chained_3: {
     expect_stdout: "2"
 }
 
+chained_4: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "foo", b = 42;
+        var b = void (b = a);
+        console.log(a, b);
+    }
+    expect: {
+        var a = "foo", b = 42;
+        var b = void (b = a);
+        console.log(a, b);
+    }
+    expect_stdout: "foo undefined"
+}
+
 boolean_binary_1: {
     options = {
         collapse_vars: true,
