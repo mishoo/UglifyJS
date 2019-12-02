@@ -1425,3 +1425,33 @@ recursive_iife_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3619: {
+    options = {
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        var a = 1, b = "FAIL";
+        (function f(c, d) {
+            function g() {
+                d && (b = "PASS", 0 <= --a && g());
+                0 <= --a && f(0, "function");
+            }
+            g();
+        })();
+        console.log(b);
+    }
+    expect: {
+        var a = 1, b = "FAIL";
+        (function f(c, d) {
+            function g() {
+                d && (b = "PASS", 0 <= --a && g());
+                0 <= --a && f(0, "function");
+            }
+            g();
+        })();
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
