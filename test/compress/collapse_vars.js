@@ -7308,3 +7308,40 @@ substitution_unary: {
         "true 42 42",
     ]
 }
+
+issue_3626_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "foo", b = 42;
+        a.p && (b = a) && a;
+        console.log(a, b);
+    }
+    expect: {
+        var a = "foo", b = 42;
+        a.p && (b = a) && a;
+        console.log(a, b);
+    }
+    expect_stdout: "foo 42"
+}
+
+issue_3626_2: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+    }
+    input: {
+        var a = "foo", b = 42, c = null;
+        if (a && a.p)
+            if (b = a)
+                c++ + a;
+        console.log(a, b, c);
+    }
+    expect: {
+        var a = "foo", b = 42, c = null;
+        a && a.p && (b = a) && c++ + a;
+        console.log(a, b, c);
+    }
+    expect_stdout: "foo 42 null"
+}
