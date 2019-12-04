@@ -6774,3 +6774,30 @@ issue_3509: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3622: {
+    options = {
+        evaluate: true,
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var c = "FAIL";
+        !function(b, a) {
+            a && (c = "PASS");
+        }(42, this);
+        console.log(c);
+    }
+    expect: {
+        var c = "FAIL";
+        var a;
+        a = this,
+        !void (a && (c = "PASS")),
+        console.log(c);
+    }
+    expect_stdout: "PASS"
+}
