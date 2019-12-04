@@ -7345,3 +7345,57 @@ issue_3626_2: {
     }
     expect_stdout: "foo 42 null"
 }
+
+issue_3628_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "bar", b;
+        ({
+            get p() {
+                a = "foo";
+            },
+            q: b = a
+        }).p;
+        console.log(a, b);
+    }
+    expect: {
+        var a = "bar", b;
+        ({
+            get p() {
+                a = "foo";
+            },
+            q: b = a
+        }).p;
+        console.log(a, b);
+    }
+    expect_stdout: "foo bar"
+}
+
+issue_3628_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "bar", b;
+        ({
+            get p() {
+                a = "foo";
+            },
+            q: (b = a, 42)
+        }).p;
+        console.log(a, b);
+    }
+    expect: {
+        var a = "bar", b;
+        ({
+            get p() {
+                a = "foo";
+            },
+            q: (b = a, 42)
+        }).p;
+        console.log(a, b);
+    }
+    expect_stdout: "foo bar"
+}
