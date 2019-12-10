@@ -6801,3 +6801,49 @@ issue_3622: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3631_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var c = 0;
+        L: do {
+            for (;;) continue L;
+            var b = 1;
+        } while (b && c++);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        L: do {
+            for (;;) continue L;
+            var b = 1;
+        } while (b && c++);
+        console.log(c);
+    }
+    expect_stdout: "0"
+}
+
+issue_3631_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        L: for (var a = 1; a--; console.log(b)) {
+            for (;;) continue L;
+            var b = "FAIL";
+        }
+    }
+    expect: {
+        L: for (var a = 1; a--; console.log(b)) {
+            for (;;) continue L;
+            var b = "FAIL";
+        }
+    }
+    expect_stdout: "undefined"
+}
