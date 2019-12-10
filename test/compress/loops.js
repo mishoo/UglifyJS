@@ -879,3 +879,51 @@ loop_return: {
     }
     expect_stdout: "foo 42"
 }
+
+issue_3634_1: {
+    options = {
+        loops: true,
+    }
+    input: {
+        var b = 0;
+        L: while (++b < 2)
+            while (1)
+                if (b) break L;
+        console.log(b);
+    }
+    expect: {
+        var b = 0;
+        L: for (;++b < 2;)
+            for (;1;)
+                if (b) break L;
+        console.log(b);
+    }
+    expect_stdout: "1"
+}
+
+issue_3634_2: {
+    options = {
+        loops: true,
+    }
+    input: {
+        var b = 0;
+        L: while (++b < 2)
+            while (1)
+                if (!b)
+                    continue L;
+                else
+                    break L;
+        console.log(b);
+    }
+    expect: {
+        var b = 0;
+        L: for (;++b < 2;)
+            for (;1;)
+                if (!b)
+                    continue L;
+                else
+                    break L;
+        console.log(b);
+    }
+    expect_stdout: "1"
+}
