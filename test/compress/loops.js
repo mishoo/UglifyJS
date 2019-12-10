@@ -574,9 +574,11 @@ issue_2740_3: {
         console.log(x, y);
     }
     expect: {
-        L1: for (var x = 0; x < 3; x++)
-            for (var y = 0; y < 2; y++)
+        L1: for (var x = 0; x < 3; x++) {
+            var y = 0;
+            if (y < 2)
                 break L1;
+        }
         console.log(x, y);
     }
     expect_stdout: "0 0"
@@ -752,4 +754,128 @@ empty_for_in_side_effects: {
         "INFO: Dropping unused loop variable a [test/compress/loops.js:1,17]",
         "WARN: Side effects in object of for-in loop [test/compress/loops.js:1,17]",
     ]
+}
+
+issue_3631_1: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var c = 0;
+        L: do {
+            for (;;) continue L;
+            var b = 1;
+        } while (b && c++);
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        do {
+            var b;
+        } while (b && c++);
+        console.log(c);
+    }
+    expect_stdout: "0"
+}
+
+issue_3631_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        L: for (var a = 1; a--; console.log(b)) {
+            for (;;) continue L;
+            var b = "FAIL";
+        }
+    }
+    expect: {
+        for (var a = 1; a--; console.log(b))
+            var b;
+    }
+    expect_stdout: "undefined"
+}
+
+loop_if_break: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        function f(a, b) {
+            try {
+                while (a) {
+                    if (b) {
+                        break;
+                        var c = 42;
+                        console.log(c);
+                    } else {
+                        var d = false;
+                        throw d;
+                    }
+                }
+            } catch (e) {
+                console.log("E:", e);
+            }
+            console.log(a, b, c, d);
+        }
+        f(0, 0);
+        f(0, 1);
+        f(1, 0);
+        f(1, 1);
+    }
+    expect: {
+        function f(a, b) {
+            try {
+                for (;a && !b;) {
+                    var d = false;
+                    throw d;
+                    var c;
+                }
+            } catch (e) {
+                console.log("E:", e);
+            }
+            console.log(a, b, c, d);
+        }
+        f(0, 0);
+        f(0, 1);
+        f(1, 0);
+        f(1, 1);
+    }
+    expect_stdout: [
+        "0 0 undefined undefined",
+        "0 1 undefined undefined",
+        "E: false",
+        "1 0 undefined false",
+        "1 1 undefined undefined",
+    ]
+}
+
+loop_return: {
+    options = {
+        dead_code: true,
+        loops: true,
+    }
+    input: {
+        function f(a) {
+            while (a) return 42;
+            return "foo";
+        }
+        console.log(f(0), f(1));
+    }
+    expect: {
+        function f(a) {
+            if (a) return 42;
+            return "foo";
+        }
+        console.log(f(0), f(1));
+    }
+    expect_stdout: "foo 42"
 }
