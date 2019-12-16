@@ -12,17 +12,16 @@ function spawn(endTime) {
     ], {
         stdio: [ "ignore", "pipe", "pipe" ]
     }).on("exit", respawn);
-    var line = "";
+    var stdout = "";
     child.stdout.on("data", function(data) {
-        line += data;
+        stdout += data;
     });
-    child.stderr.once("data", function() {
-        process.exitCode = 1;
-    }).pipe(process.stdout);
+    var stderr = "";
+    child.stderr.on("data", trap).pipe(process.stdout);
     var keepAlive = setInterval(function() {
-        var end = line.lastIndexOf("\r");
-        console.log(line.slice(line.lastIndexOf("\r", end - 1) + 1, end));
-        line = line.slice(end + 1);
+        var end = stdout.lastIndexOf("\r");
+        console.log(stdout.slice(stdout.lastIndexOf("\r", end - 1) + 1, end));
+        stdout = stdout.slice(end + 1);
     }, ping);
     var timer = setTimeout(function() {
         clearInterval(keepAlive);
@@ -31,9 +30,17 @@ function spawn(endTime) {
     }, endTime - Date.now());
 
     function respawn() {
-        console.log(line);
+        console.log(stdout.replace(/[^\r\n]*\r/g, ""));
         clearInterval(keepAlive);
         clearTimeout(timer);
         spawn(endTime);
+    }
+
+    function trap(data) {
+        stderr += data;
+        if (~stderr.indexOf("\nminify(options):\n")) {
+            process.exitCode = 1;
+            child.stderr.removeListener("data", trap);
+        }
     }
 }

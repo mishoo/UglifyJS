@@ -1089,6 +1089,19 @@ function log(options) {
     }
 }
 
+function fuzzy_match(original, uglified) {
+    original = original.split(" ", 5);
+    uglified = uglified.split(" ", 5);
+    for (var i = 0; i < 5; i++) {
+        if (original[i] === uglified[i]) continue;
+        var a = +original[i];
+        var b = +uglified[i];
+        if (Math.abs((b - a) / a) < 1e-10) continue;
+        return false;
+    }
+    return true;
+}
+
 var fallback_options = [ JSON.stringify({
     compress: false,
     mangle: false
@@ -1111,8 +1124,12 @@ for (var round = 1; round <= num_iterations; round++) {
             uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code, o.toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
-            if (!ok && o.compress.unsafe_math) {
-                ok = sandbox.same_stdout(sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3")), uglify_result, o.toplevel);
+            if (!ok && typeof uglify_result == "string" && o.compress.unsafe_math) {
+                ok = fuzzy_match(original_result, uglify_result);
+                if (!ok) {
+                    var fuzzy_result = sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"));
+                    ok = sandbox.same_stdout(fuzzy_result, uglify_result, o.toplevel);
+                }
             }
         } else {
             uglify_code = uglify_code.error;
