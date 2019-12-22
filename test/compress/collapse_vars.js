@@ -7399,3 +7399,26 @@ issue_3628_2: {
     }
     expect_stdout: "foo bar"
 }
+
+issue_3641: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        try {
+            a = "foo";
+            b = (a += (A.p = 0, "bar")) % 0;
+        } catch (e) {}
+        console.log(a, b);
+    }
+    expect: {
+        var a, b;
+        try {
+            a = "foo";
+            b = (a += (A.p = 0, "bar")) % 0;
+        } catch (e) {}
+        console.log(a, b);
+    }
+    expect_stdout: "foo undefined"
+}
