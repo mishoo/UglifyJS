@@ -41,7 +41,7 @@ ifs_2: {
     }
     expect: {
         foo ? x() : bar ? y() : baz && z();
-        foo ? x() : bar ? y() : baz ? z() : t();
+        (foo ? x : bar ? y : baz ? z : t)();
     }
 }
 
@@ -289,7 +289,7 @@ cond_5: {
         }
     }
     expect: {
-        some_condition() && some_other_condition() ? do_something() : alternate();
+        (some_condition() && some_other_condition() ? do_something : alternate)();
         some_condition() && some_other_condition() && do_something();
     }
 }
@@ -661,6 +661,69 @@ cond_9: {
             x ? y(a, b, c) : y(d, e, f);
         }
     }
+}
+
+cond_10: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (1 == a) return "foo";
+            if (2 == a) return "foo";
+            if (3 == a) return "foo";
+            if (4 == a) return 42;
+            if (5 == a) return "foo";
+            if (6 == a) return "foo";
+            return "bar";
+        }
+        console.log(f(1), f(2), f(3), f(4), f(5), f(6), f(7));
+    }
+    expect: {
+        function f(a) {
+            return 1 == a || 2 == a || 3 == a ? "foo" : 4 == a ? 42 : 5 == a || 6 == a ? "foo" : "bar";
+        }
+        console.log(f(1), f(2), f(3), f(4), f(5), f(6), f(7));
+    }
+    expect_stdout: "foo foo foo 42 foo foo bar"
+}
+
+cond_11: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var o = {
+            p: "foo",
+            q: function() {
+                return this.p;
+            }
+        };
+        function f() {
+            return "bar";
+        }
+        function g(a) {
+            return a ? f() : o.q();
+        }
+        console.log(g(0), g(1));
+    }
+    expect: {
+        var o = {
+            p: "foo",
+            q: function() {
+                return this.p;
+            }
+        };
+        function f() {
+            return "bar";
+        }
+        function g(a) {
+            return a ? f() : o.q();
+        }
+        console.log(g(0), g(1));
+    }
+    expect_stdout: "foo bar"
 }
 
 ternary_boolean_consequent: {
