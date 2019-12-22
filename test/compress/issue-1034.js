@@ -30,7 +30,7 @@ non_hoisted_function_after_return: {
     }
     expect: {
         function foo(x) {
-            return x ? bar() : baz();
+            return (x ? bar : baz)();
             function bar() { return 7 }
             function baz() { return 8 }
         }
@@ -181,7 +181,7 @@ non_hoisted_function_after_return_strict: {
     expect: {
         "use strict";
         function foo(x) {
-            return x ? bar() : baz();
+            return (x ? bar : baz)();
             function bar() { return 7 }
             function baz() { return 8 }
         }
