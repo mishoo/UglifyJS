@@ -59,13 +59,13 @@ describe("String literals", function() {
 
     it("Should not throw error outside strict mode if string contains escaped octalIntegerLiteral", function() {
         var tests = [
-            ['"\\76";', ';">";'],
-            ['"\\0"', '"\\0";'],
-            ['"\\08"', '"\\x008";'],
-            ['"\\008"', '"\\x008";'],
-            ['"\\0008"', '"\\x008";'],
-            ['"use strict" === "use strict";\n"\\76";', '"use strict"==="use strict";">";'],
-            ['"use\\\n strict";\n"\\07";', ';"use strict";"\07";']
+            [ ';"\\76";', ';">";' ],
+            [ ';"\\0";', ';"\\0";' ],
+            [ ';"\\08"', ';"\\x008";' ],
+            [ ';"\\008"', ';"\\x008";' ],
+            [ ';"\\0008"', ';"\\x008";' ],
+            [ ';"use\\\n strict";\n"\\07";', ';"use strict";"\07";' ],
+            [ '"use strict" === "use strict";\n"\\76";', '"use strict"==="use strict";">";' ],
         ];
 
         for (var test in tests) {
@@ -75,8 +75,8 @@ describe("String literals", function() {
     });
 
     it("Should not throw error when digit is 8 or 9", function() {
-        assert.equal(UglifyJS.parse('"use strict";"\\08"').print_to_string(), '"use strict";"\\x008";');
-        assert.equal(UglifyJS.parse('"use strict";"\\09"').print_to_string(), '"use strict";"\\x009";');
+        assert.equal(UglifyJS.parse('"use strict";;"\\08"').print_to_string(), '"use strict";;"\\x008";');
+        assert.equal(UglifyJS.parse('"use strict";;"\\09"').print_to_string(), '"use strict";;"\\x009";');
     });
 
     it("Should not unescape unpaired surrogates", function() {
@@ -93,7 +93,7 @@ describe("String literals", function() {
         for (; i <= 0xFFFF; i++) {
             code.push("\\u" + i.toString(16));
         }
-        code = '"' + code.join() + '"';
+        code = ';"' + code.join() + '"';
         var normal = UglifyJS.minify(code, {
             compress: false,
             mangle: false,
