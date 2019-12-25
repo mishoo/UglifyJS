@@ -93,3 +93,41 @@ issue_3166: {
         }
     }
 }
+
+valid_after_invalid_1: {
+    input: {
+        console.log(typeof function() {
+            "use\x20strict";
+            "use strict";
+            return this;
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            "use\x20strict";
+            "use strict";
+            return this;
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+valid_after_invalid_2: {
+    options = {
+        directives: true,
+    }
+    input: {
+        console.log(typeof function() {
+            "use\x20strict";
+            "use strict";
+            return this;
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            "use strict";
+            return this;
+        }());
+    }
+    expect_stdout: "undefined"
+}

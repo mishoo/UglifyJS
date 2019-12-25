@@ -69,13 +69,13 @@ describe("Directives", function() {
             ],
             [
                 '"use \\\nstrict";"use strict";',
-                [],
-                [ "use strict", "use\nstrict", "use \nstrict", "use asm" ]
+                [ "use strict" ],
+                [ "use\nstrict", "use \nstrict", "use asm" ]
             ],
             [
                 '"\\76";',
-                [],
-                [ ">", "\\76" ]
+                [ "\\76" ],
+                [ ">" ]
             ],
             [
                 // no ; or newline
@@ -106,13 +106,13 @@ describe("Directives", function() {
             ],
             [
                 'function foo() {"use \\\nstrict";"use strict";',
-                [],
-                [ "use strict", "use\nstrict", "use \nstrict", "use asm" ]
+                [ "use strict" ],
+                [ "use\nstrict", "use \nstrict", "use asm" ]
             ],
             [
                 'var foo = function() {"\\76";',
-                [],
-                [ ">", "\\76" ]
+                [ "\\76" ],
+                [ ">" ]
             ],
             [
                 'var foo = function() {"use strict"', // no ; or newline
@@ -156,21 +156,24 @@ describe("Directives", function() {
             });
         });
     });
-    it("Should test EXPECT_DIRECTIVE RegExp", function() {
+    it("Should print semicolon to separate strings from directives", function() {
         [
-            [ "", true ],
-            [ "'test';", true ],
-            [ "'test';;", true ],
-            [ "'tests';\n", true ],
-            [ "'tests'", false ],
-            [ "'tests';   \n\t", true ],
-            [ "'tests';\n\n", true ],
-            [ "\n\n\"use strict\";\n\n", true ],
+            [ "", ';"";' ],
+            [ '"test";', '"test";;"";' ],
+            [ '"test";;', '"test";;"";' ],
+            [ '"tests";\n', '"tests";;"";' ],
+            [ '"tests"', '"tests";;"";' ],
+            [ '"tests";   \n\t', '"tests";;"";' ],
+            [ '"tests";\n\n', '"tests";;"";' ],
+            [ '\n\n"use strict";\n\n', '"use strict";;"";' ],
         ].forEach(function(test) {
+            var ast = UglifyJS.parse(test[0]);
+            ast.body.push(new UglifyJS.AST_SimpleStatement({
+                body: new UglifyJS.AST_String({ value: "" })
+            }));
             var out = UglifyJS.OutputStream();
-            out.print(test[0]);
-            out.print_string("", null, true);
-            assert.strictEqual(out.get() === test[0] + ';""', test[1], test[0]);
+            ast.print(out);
+            assert.strictEqual(out.get(), test[1], test[0]);
         });
     });
     it("Should only print 2 semicolons spread over 2 lines in beautify mode", function() {
@@ -178,8 +181,8 @@ describe("Directives", function() {
             '"use strict";',
             "'use strict';",
             '"use strict";',
-            '"use strict";;',
-            "'use strict';",
+            '"use strict";',
+            ";'use strict';",
             "console.log('use strict');"
         ].join(""), {
             compress: false,
@@ -201,19 +204,23 @@ describe("Directives", function() {
     it("Should not add double semicolons in non-scoped block statements to avoid strings becoming directives", function() {
         [
             [
-                '{"use\x20strict"}',
+                '"use strict";"use\\x20strict";',
+                '"use strict";"use\\x20strict";'
+            ],
+            [
+                '{"use\\x20strict"}',
                 '{"use strict"}'
             ],
             [
-                'function foo(){"use\x20strict";}', // Valid place for directives
-                'function foo(){"use strict"}'
+                'function foo(){"use\\x20strict";}', // Valid place for directives
+                'function foo(){"use\\x20strict"}'
             ],
             [
-                'try{"use\x20strict"}catch(e){}finally{"use\x20strict"}',
+                'try{"use\\x20strict"}catch(e){}finally{"use\\x20strict"}',
                 'try{"use strict"}catch(e){}finally{"use strict"}'
             ],
             [
-                'if(1){"use\x20strict"} else {"use strict"}',
+                'if(1){"use\\x20strict"} else {"use strict"}',
                 'if(1){"use strict"}else{"use strict"}'
             ]
         ].forEach(function(test) {
@@ -224,16 +231,6 @@ describe("Directives", function() {
             if (result.error) throw result.error;
             assert.strictEqual(result.code, test[1], test[0]);
         });
-    });
-    it("Should add double semicolon when relying on automatic semicolon insertion", function() {
-        var result = UglifyJS.minify('"use strict";"use\\x20strict";', {
-            compress: false,
-            output: {
-                semicolons: false
-            }
-        });
-        if (result.error) throw result.error;
-        assert.strictEqual(result.code, '"use strict";;"use strict"\n');
     });
     it("Should check quote style of directives", function() {
         [
@@ -249,9 +246,9 @@ describe("Directives", function() {
                 '"use strict";'
             ],
             [
-                '"\\\'use strict\\\'";', // Not a directive as it contains quotes
+                '"\\\'use strict\\\'";',
                 0,
-                ';"\'use strict\'";',
+                '"\\\'use strict\\\'";',
             ],
             [
                 "'\"use strict\"';",
@@ -273,7 +270,7 @@ describe("Directives", function() {
                 '"\'use strict\'";',
                 1,
                 // Intentionally causes directive breakage at cost of less logic, usage should be rare anyway
-                "'\\'use strict\\'';",
+                '"\'use strict\'";',
             ],
             [
                 "'\\'use strict\\'';", // Not a valid directive
@@ -305,7 +302,7 @@ describe("Directives", function() {
                 "'\"use strict\"';",
                 2,
                 // Intentionally causes directive breakage at cost of less logic, usage should be rare anyway
-                '"\\\"use strict\\\"";',
+                "'\"use strict\"';",
             ],
             [
                 '"\\"use strict\\"";', // Not a valid directive
@@ -353,8 +350,7 @@ describe("Directives", function() {
             [
                 // Nothing gets optimised in the compressor because "use asm" is the first statement
                 '"use asm";"use\\x20strict";1+1;',
-                // Yet, the parser noticed that "use strict" wasn't a directive
-                '"use asm";;"use strict";1+1;',
+                '"use asm";"use\\x20strict";1+1;'
             ],
             [
                 'function f(){ "use strict" }',
