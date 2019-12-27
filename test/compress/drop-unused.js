@@ -699,18 +699,6 @@ iife: {
     }
 }
 
-drop_value: {
-    options = {
-        side_effects: true,
-    }
-    input: {
-        (1, [2, foo()], 3, {a:1, b:bar()});
-    }
-    expect: {
-        foo(), bar();
-    }
-}
-
 issue_1539: {
     options = {
         collapse_vars: true,
