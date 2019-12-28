@@ -166,3 +166,69 @@ asm_nested_functions: {
     }
     expect_exact: '0;function a(){"use asm";0.0}0;function b(){0;function c(){"use asm";0.0}0;function d(){0}0}0;'
 }
+
+issue_3636_1: {
+    mangle = {}
+    input: {
+        function n(stdlib, foreign, buffer) {
+            "use asm";
+            function add(x, y) {
+                x = x | 0;
+                y = y | 0;
+                return x + y | 0;
+            }
+            return {
+                add: add
+            };
+        }
+        console.log(new n().add("foo", 42));
+    }
+    expect: {
+        function n(o, e, u) {
+            "use asm";
+            function d(n, o) {
+                n = n | 0;
+                o = o | 0;
+                return n + o | 0;
+            }
+            return {
+                add: d
+            };
+        }
+        console.log(new n().add("foo", 42));
+    }
+    expect_stdout: "42"
+}
+
+issue_3636_2: {
+    mangle = {}
+    input: {
+        var n = function(stdlib, foreign, buffer) {
+            "use asm";
+            function add(x, y) {
+                x = x | 0;
+                y = y | 0;
+                return x + y | 0;
+            }
+            return {
+                add: add
+            };
+        };
+        console.log(new n().add("foo", 42));
+    }
+    expect: {
+        var n = function(n, o, e) {
+            "use asm";
+            function r(n, o) {
+                n = n | 0;
+                o = o | 0;
+                return n + o | 0;
+            }
+            return {
+                add: r
+            };
+        };
+        console.log(new n().add("foo", 42));
+    }
+    expect_stdout: "42"
+}
