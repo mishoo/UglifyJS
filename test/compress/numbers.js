@@ -91,7 +91,7 @@ evaluate_1: {
     expect: {
         console.log(
             x + 1 + 2,
-            1 * x * 2,
+            2 * x,
             +x + 1 + 2,
             1 + x + 2 + 3,
             3 | x,
@@ -173,7 +173,7 @@ evaluate_2: {
         var x = "42", y = null;
         [
             x + 1 + 2,
-            1 * x * 2,
+            2 * x,
             +x + 1 + 2,
             1 + x + 2 + 3,
             3 | x,
@@ -978,4 +978,82 @@ unsafe_math_swap_constant: {
         );
     }
     expect_stdout: "6 6 7 6 6 8 9 10"
+}
+
+identity_1: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        0 + a;
+        a + 0;
+        0 - a;
+        a - 0;
+        1 * a;
+        a * 1;
+        1 / a;
+        a / 1;
+    }
+    expect: {
+        0 + a;
+        a + 0;
+        -a;
+        +a;
+        +a;
+        +a;
+        1 / a;
+        +a;
+    }
+}
+
+identity_2: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        0 + !a;
+        !a + 0;
+        0 - !a;
+        !a - 0;
+        1 * !a;
+        !a * 1;
+        1 / !a;
+        !a / 1;
+    }
+    expect: {
+        +!a;
+        +!a;
+        -!a;
+        +!a;
+        +!a;
+        +!a;
+        1 / !a;
+        +!a;
+    }
+}
+
+identity_3: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        0 + --a;
+        --a + 0;
+        0 - --a;
+        --a - 0;
+        1 * --a;
+        --a * 1;
+        1 / --a;
+        --a / 1;
+    }
+    expect: {
+        --a;
+        --a;
+        - --a;
+        --a;
+        --a;
+        --a;
+        1 / --a;
+        --a;
+    }
 }

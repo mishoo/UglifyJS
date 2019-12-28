@@ -664,7 +664,7 @@ issue_2519: {
     }
     expect: {
         function testFunc() {
-            return 1 * ((6 + 5) / 2);
+            return +((6 + 5) / 2);
         }
         console.log(testFunc());
     }
