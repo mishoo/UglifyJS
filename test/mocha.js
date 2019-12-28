@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 var config = {
-    limit: 5000,
+    limit: 10000,
     timeout: function(limit) {
         this.limit = limit;
     }
@@ -55,11 +55,11 @@ process.nextTick(function run() {
         var elapsed = Date.now();
         var timer;
         var done = function() {
-            reset();
             elapsed = Date.now() - elapsed;
             if (elapsed > task.limit) {
                 throw new Error("Timed out: " + elapsed + "ms > " + task.limit + "ms");
             }
+            reset();
             log_titles(console.log, task.titles, green('\u221A '));
             process.nextTick(run);
         };
