@@ -59,7 +59,7 @@ if (program.configFile) {
     if (options.mangle && options.mangle.properties && options.mangle.properties.regex) {
         options.mangle.properties.regex = UglifyJS.parse(options.mangle.properties.regex, {
             expression: true
-        }).getValue();
+        }).value;
     }
 }
 if (!program.output && program.sourceMap && program.sourceMap.url != "inline") {
@@ -370,7 +370,7 @@ function parse_js(flag) {
                 if (!(node instanceof UglifyJS.AST_Sequence)) throw node;
 
                 function to_string(value) {
-                    return value instanceof UglifyJS.AST_Constant ? value.getValue() : value.print_to_string({
+                    return value instanceof UglifyJS.AST_Constant ? value.value : value.print_to_string({
                         quote_keys: true
                     });
                 }
