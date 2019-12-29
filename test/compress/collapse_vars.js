@@ -7422,3 +7422,45 @@ issue_3641: {
     }
     expect_stdout: "foo undefined"
 }
+
+issue_3651: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b = "PASS";
+        try {
+            a = function() {
+                try {
+                    var c = 1;
+                    while (0 < --c);
+                } catch (e) {} finally {
+                    throw 42;
+                }
+            }();
+            b = "FAIL";
+            a.p;
+        } catch (e) {
+            console.log(b);
+        }
+    }
+    expect: {
+        var a, b = "PASS";
+        try {
+            a = function() {
+                try {
+                    var c = 1;
+                    while (0 < --c);
+                } catch (e) {} finally {
+                    throw 42;
+                }
+            }();
+            b = "FAIL";
+            a.p;
+        } catch (e) {
+            console.log(b);
+        }
+    }
+    expect_stdout: "PASS"
+}
