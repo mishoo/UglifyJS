@@ -997,7 +997,7 @@ identity_1: {
     expect: {
         0 + a;
         a + 0;
-        -a;
+        0 - a;
         +a;
         +a;
         +a;
@@ -1023,7 +1023,7 @@ identity_2: {
     expect: {
         +!a;
         +!a;
-        -!a;
+        0 - !a;
         +!a;
         +!a;
         +!a;
@@ -1049,11 +1049,50 @@ identity_3: {
     expect: {
         --a;
         --a;
-        - --a;
+        0 - --a;
         --a;
         --a;
         --a;
         1 / --a;
         --a;
     }
+}
+
+issue_3653: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(0 - (console && 0));
+        console.log(0 + (0 - (console && 0)));
+        console.log(0 - (0 - (console && 0)));
+        console.log(1 * (0 - (console && 0)));
+        console.log(1 / (0 - (console && 0)));
+        console.log((0 - (console && 0)) + 0);
+        console.log((0 - (console && 0)) - 0);
+        console.log((0 - (console && 0)) * 1);
+        console.log((0 - (console && 0)) / 1);
+    }
+    expect: {
+        console.log(0 - (console && 0));
+        console.log(0 - (console && 0));
+        console.log(0 - (0 - (console && 0)));
+        console.log(0 - (console && 0));
+        console.log(1 / (0 - (console && 0)));
+        console.log(0 - (console && 0));
+        console.log(0 - (console && 0));
+        console.log(0 - (console && 0));
+        console.log(0 - (console && 0));
+    }
+    expect_stdout: [
+        "0",
+        "0",
+        "0",
+        "0",
+        "Infinity",
+        "0",
+        "0",
+        "0",
+        "0",
+    ]
 }
