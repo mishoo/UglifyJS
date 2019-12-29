@@ -1075,14 +1075,53 @@ issue_3653: {
     }
     expect: {
         console.log(0 - (console && 0));
-        console.log(0 - (console && 0));
+        console.log(0 - (console && 0) + 0);
         console.log(0 - (0 - (console && 0)));
         console.log(0 - (console && 0));
         console.log(1 / (0 - (console && 0)));
+        console.log(0 - (console && 0) + 0);
         console.log(0 - (console && 0));
         console.log(0 - (console && 0));
         console.log(0 - (console && 0));
-        console.log(0 - (console && 0));
+    }
+    expect_stdout: [
+        "0",
+        "0",
+        "0",
+        "0",
+        "Infinity",
+        "0",
+        "0",
+        "0",
+        "0",
+    ]
+}
+
+issue_3655: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(0 + 0 * -[].length);
+        console.log(0 + (0 + 0 * -[].length));
+        console.log(0 - (0 + 0 * -[].length));
+        console.log(1 * (0 + 0 * -[].length));
+        console.log(1 / (0 + 0 * -[].length));
+        console.log((0 + 0 * -[].length) + 0);
+        console.log((0 + 0 * -[].length) - 0);
+        console.log((0 + 0 * -[].length) * 1);
+        console.log((0 + 0 * -[].length) / 1);
+    }
+    expect: {
+        console.log(0 + 0 * -[].length);
+        console.log(0 + 0 * -[].length);
+        console.log(0 - (0 + 0 * -[].length));
+        console.log(0 + 0 * -[].length);
+        console.log(1 / (0 + 0 * -[].length));
+        console.log(0 + 0 * -[].length);
+        console.log(0 + 0 * -[].length);
+        console.log(0 + 0 * -[].length);
+        console.log(0 + 0 * -[].length);
     }
     expect_stdout: [
         "0",
