@@ -6,7 +6,7 @@ while_becomes_for: {
         while (foo()) bar();
     }
     expect: {
-        for (; foo(); ) bar();
+        for (;foo();) bar();
     }
 }
 
@@ -19,7 +19,7 @@ drop_if_break_1: {
             if (foo()) break;
     }
     expect: {
-        for (; !foo(););
+        for (;!foo(););
     }
 }
 
@@ -32,7 +32,7 @@ drop_if_break_2: {
             if (foo()) break;
     }
     expect: {
-        for (; bar() && !foo(););
+        for (;bar() && !foo(););
     }
 }
 
@@ -70,7 +70,7 @@ drop_if_break_4: {
         }
     }
     expect: {
-        for (; bar() && (x(), y(), !foo());) z(), k();
+        for (;bar() && (x(), y(), !foo());) z(), k();
     }
 }
 
@@ -82,7 +82,7 @@ drop_if_else_break_1: {
         for (;;) if (foo()) bar(); else break;
     }
     expect: {
-        for (; foo(); ) bar();
+        for (;foo();) bar();
     }
 }
 
@@ -97,7 +97,7 @@ drop_if_else_break_2: {
         }
     }
     expect: {
-        for (; bar() && foo();) baz();
+        for (;bar() && foo();) baz();
     }
 }
 
@@ -114,7 +114,7 @@ drop_if_else_break_3: {
         }
     }
     expect: {
-        for (; bar() && foo();) {
+        for (;bar() && foo();) {
             baz();
             stuff1();
             stuff2();
@@ -138,7 +138,7 @@ drop_if_else_break_4: {
         }
     }
     expect: {
-        for (; bar() && (x(), y(), foo());) baz(), z(), k();
+        for (;bar() && (x(), y(), foo());) baz(), z(), k();
     }
 }
 
@@ -523,13 +523,13 @@ issue_2740_1: {
         loops: true,
     }
     input: {
-        for (; ; ) break;
-        for (a(); ; ) break;
-        for (; b(); ) break;
-        for (c(); d(); ) break;
-        for (; ; e()) break;
-        for (f(); ; g()) break;
-        for (; h(); i()) break;
+        for (;;) break;
+        for (a();;) break;
+        for (;b();) break;
+        for (c(); d();) break;
+        for (;;e()) break;
+        for (f();; g()) break;
+        for (;h(); i()) break;
         for (j(); k(); l()) break;
     }
     expect: {
@@ -670,7 +670,7 @@ issue_3371: {
             function a() {
                 console.log("PASS");
             }
-            for (; a(); );
+            for (;a(););
         })();
     }
     expect_stdout: "PASS"
