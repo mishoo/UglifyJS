@@ -110,3 +110,24 @@ issue_2737_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3658: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function f() {
+            console || f();
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            console || f();
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
