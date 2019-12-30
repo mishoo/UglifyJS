@@ -86,3 +86,27 @@ issue_3465_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_2737_2: {
+    options = {
+        booleans: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(bar) {
+            for (;bar();) break;
+        })(function qux() {
+            return console.log("PASS"), qux;
+        });
+    }
+    expect: {
+        (function(bar) {
+            for (;bar();) break;
+        })(function() {
+            return console.log("PASS"), 1;
+        });
+    }
+    expect_stdout: "PASS"
+}

@@ -1911,14 +1911,14 @@ issue_2737_2: {
     }
     input: {
         (function(bar) {
-            for (;bar(); ) break;
+            for (;bar();) break;
         })(function qux() {
             return console.log("PASS"), qux;
         });
     }
     expect: {
         (function(bar) {
-            for (;bar(); ) break;
+            for (;bar();) break;
         })(function qux() {
             return console.log("PASS"), qux;
         });
