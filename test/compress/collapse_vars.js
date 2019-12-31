@@ -5863,8 +5863,8 @@ issue_2974: {
         var c = 0;
         (function(b) {
             var a = 2;
-            for (; b.null = -4, c++, b.null && --a > 0;);
-        })(!0),
+            for (;c++, (!0).null && --a > 0;);
+        })(),
         console.log(c);
     }
     expect_stdout: "1"

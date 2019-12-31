@@ -103,6 +103,7 @@ if_return: {
         booleans: true,
         conditionals: true,
         if_return: true,
+        passes: 2,
         sequences: true,
         side_effects: true,
     }
