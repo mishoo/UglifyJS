@@ -266,12 +266,7 @@ issue_2084: {
     }
     expect: {
         var c = 0;
-        !function() {
-            var c;
-            c = 1 + (c = -1),
-            c = 1 + (c = 0),
-            0 !== 23..toString() && (c = 1 + c);
-        }(),
+        23..toString(),
         console.log(c);
     }
     expect_stdout: "0"

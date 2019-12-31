@@ -2254,3 +2254,84 @@ issue_3598: {
     }
     expect_stdout: "PASS"
 }
+
+self_assign: {
+    options = {
+        passes: 2,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function d(a) {
+            a = a;
+        }
+        function e(a, b) {
+            a = b;
+            b = a;
+        }
+        function f(a, b, c) {
+            a = b;
+            b = c;
+            c = a;
+        }
+        function g(a, b, c) {
+            a = a * b + c;
+        }
+    }
+    expect: {
+        function d(a) {}
+        function e(a, b) {}
+        function f(a, b, c) {}
+        function g(a, b, c) {}
+    }
+}
+
+function_argument_reference: {
+    options = {
+        keep_fargs: false,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 1, b = 42;
+        function f(a) {
+            b <<= a;
+        }
+        f();
+        console.log(a, b);
+    }
+    expect: {
+        var a = 1, b = 42;
+        function f(a) {
+            b <<= a;
+        }
+        f();
+        console.log(a, b);
+    }
+    expect_stdout: "1 42"
+}
+
+function_parameter_ie8: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            function f() {
+                console.log("PASS");
+            }
+            f(a = 1 + a);
+        })();
+    }
+    expect: {
+        (function() {
+            (function f() {
+                console.log("PASS");
+            })(0);
+        })();
+    }
+    expect_stdout: "PASS"
+}
