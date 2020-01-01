@@ -2335,3 +2335,23 @@ function_parameter_ie8: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3664: {
+    options = {
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a, b = (a = (a = [ b && console.log("FAIL") ]).p = 0, 0);
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var b = ([ b && console.log("FAIL") ].p = 0, 0);
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
