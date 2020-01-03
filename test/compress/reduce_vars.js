@@ -6847,3 +6847,34 @@ issue_3631_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3666: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            var a = "FAIL";
+        } finally {
+            for (;!a;)
+                var c = a++;
+            var a = "PASS", b = c = "PASS";
+        }
+        console.log(a, b);
+    }
+    expect: {
+        try {
+            var a = "FAIL";
+        } finally {
+            for (;!a;)
+                a++;
+            var b = a = "PASS";
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "PASS PASS"
+}
