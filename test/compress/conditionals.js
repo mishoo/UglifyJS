@@ -1578,3 +1578,34 @@ issue_3576: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3668: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                var undefined = typeof f;
+                if (!f) return undefined;
+                return;
+            } catch (e) {
+                return "FAIL";
+            }
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            try {
+                var undefined = typeof f;
+                return f ? void 0 : undefined;
+            } catch (e) {
+                return "FAIL";
+            }
+        }
+        console.log(f());
+    }
+    expect_stdout: "undefined"
+}
