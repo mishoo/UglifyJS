@@ -1090,9 +1090,10 @@ function log(options) {
 }
 
 function fuzzy_match(original, uglified) {
-    original = original.split(" ", 5);
-    uglified = uglified.split(" ", 5);
-    for (var i = 0; i < 5; i++) {
+    uglified = uglified.split(" ");
+    var i = uglified.length;
+    original = original.split(" ", i);
+    while (--i >= 0) {
         if (original[i] === uglified[i]) continue;
         var a = +original[i];
         var b = +uglified[i];
@@ -1128,7 +1129,7 @@ for (var round = 1; round <= num_iterations; round++) {
                 ok = fuzzy_match(original_result, uglify_result);
                 if (!ok) {
                     var fuzzy_result = sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"));
-                    ok = sandbox.same_stdout(fuzzy_result, uglify_result, o.toplevel);
+                    ok = sandbox.same_stdout(fuzzy_result, uglify_result);
                 }
             }
         } else {
