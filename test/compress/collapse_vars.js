@@ -7464,3 +7464,30 @@ issue_3651: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3671: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        try {
+            a++;
+            A += 0;
+            a = 1 + a;
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = 0;
+        try {
+            a++;
+            A += 0;
+            a = 1 + a;
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "1"
+}
