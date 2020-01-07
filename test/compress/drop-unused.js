@@ -2355,3 +2355,23 @@ issue_3664: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3673: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (a = [ a ]).p = 42;
+        console.log("PASS");
+    }
+    expect: {
+        var a;
+        (a = [ a ]).p = 42;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
