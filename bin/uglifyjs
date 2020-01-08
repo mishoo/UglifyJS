@@ -36,6 +36,7 @@ program.option("-c, --compress [options]", "Enable compressor/specify compressor
 program.option("-m, --mangle [options]", "Mangle names/specify mangler options.", parse_js());
 program.option("--mangle-props [options]", "Mangle properties/specify mangler options.", parse_js());
 program.option("-b, --beautify [options]", "Beautify output/specify output options.", parse_js());
+program.option("-O, --output-opts [options]", "Output options (beautify disabled).", parse_js());
 program.option("-o, --output <file>", "Output file (default STDOUT).");
 program.option("--comments [filter]", "Preserve copyright comments in the output.");
 program.option("--config-file <file>", "Read minify() options from JSON file.");
@@ -92,6 +93,10 @@ if (program.beautify) {
     if (!("beautify" in options.output)) {
         options.output.beautify = true;
     }
+}
+if (program.outputOpts) {
+    if (program.beautify) fatal("--beautify cannot be used with --output-opts");
+    options.output = typeof program.outputOpts == "object" ? program.outputOpts : {};
 }
 if (program.comments) {
     if (typeof options.output != "object") options.output = {};
