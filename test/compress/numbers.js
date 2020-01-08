@@ -1135,3 +1135,35 @@ issue_3655: {
         "0",
     ]
 }
+
+issue_3676_1: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = [];
+        console.log(false - (a - (a[1] = 42)));
+    }
+    expect: {
+        var a = [];
+        console.log(false - (a - (a[1] = 42)));
+    }
+    expect_stdout: "NaN"
+}
+
+issue_3676_2: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a;
+        console.log(false - ((a = []) - (a[1] = 42)));
+    }
+    expect: {
+        var a;
+        console.log(false - ((a = []) - (a[1] = 42)));
+    }
+    expect_stdout: "NaN"
+}
