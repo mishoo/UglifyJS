@@ -87,6 +87,7 @@ a double dash to prevent input files being used as option arguments:
                                 `wrap_iife`  Wrap IIFEs in parenthesis. Note: you may
                                              want to disable `negate_iife` under
                                              compressor options.
+    -O, --output-opts [options] Specify output options (`beautify` disabled by default).
     -o, --output <file>         Output file path (default STDOUT). Specify `ast` or
                                 `spidermonkey` to write UglifyJS or SpiderMonkey AST
                                 as JSON to STDOUT respectively.
