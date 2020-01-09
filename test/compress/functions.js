@@ -3700,3 +3700,88 @@ pr_3595_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3679_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var f = function() {};
+            f.g = function() {
+                console.log("PASS");
+            };
+            f.g();
+        })();
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3679_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            "use strict";
+            var f = function() {};
+            f.g = function() {
+                console.log("PASS");
+            };
+            f.g();
+        })();
+    }
+    expect: {
+        (function() {
+            "use strict";
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3679_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        functions: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var f = function() {};
+            f.p = "PASS";
+            f.g = function() {
+                console.log(f.p);
+            };
+            f.g();
+        })();
+    }
+    expect: {
+        (function() {
+            function f() {};
+            f.p = "PASS";
+            (f.g = function() {
+                console.log(f.p);
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+}
