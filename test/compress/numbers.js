@@ -1075,11 +1075,11 @@ issue_3653: {
     }
     expect: {
         console.log(0 - (console && 0));
-        console.log(0 - (console && 0) + 0);
+        console.log(0 - (console && 0));
         console.log(0 - (0 - (console && 0)));
         console.log(0 - (console && 0));
         console.log(1 / (0 - (console && 0)));
-        console.log(0 - (console && 0) + 0);
+        console.log(0 - (console && 0));
         console.log(0 - (console && 0));
         console.log(0 - (console && 0));
         console.log(0 - (console && 0));
@@ -1166,4 +1166,52 @@ issue_3676_2: {
         console.log(false - ((a = []) - (a[1] = 42)));
     }
     expect_stdout: "NaN"
+}
+
+issue_3682_1: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = -0;
+        console.log(1 / (a - 1 + 1));
+    }
+    expect: {
+        var a = -0;
+        console.log(1 / (a - 1 + 1));
+    }
+    expect_stdout: "Infinity"
+}
+
+issue_3682_2: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = -0, b = 1;
+        console.log(1 / (a - (b - b)));
+    }
+    expect: {
+        var a = -0, b = 1;
+        console.log(1 / (a - (b - b)));
+    }
+    expect_stdout: "-Infinity"
+}
+
+issue_3682_3: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = -0, b = 1, c = -1;
+        console.log(1 / (a - (+b + +c)));
+    }
+    expect: {
+        var a = -0, b = 1, c = -1;
+        console.log(1 / (a - (+b + +c)));
+    }
+    expect_stdout: "-Infinity"
 }
