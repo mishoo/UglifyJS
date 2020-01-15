@@ -1215,3 +1215,21 @@ issue_3682_3: {
     }
     expect_stdout: "-Infinity"
 }
+
+issue_3684: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(1 / (-1 * (0 & console) + 0));
+        console.log(1 / ((0 & console) / -1 + 0));
+    }
+    expect: {
+        console.log(1 / (-1 * (0 & console) + 0));
+        console.log(1 / ((0 & console) / -1 + 0));
+    }
+    expect_stdout: [
+        "Infinity",
+        "Infinity",
+    ]
+}
