@@ -16,6 +16,7 @@ holes_and_undefined: {
 constant_join: {
     options = {
         evaluate: true,
+        strings: true,
         unsafe: true,
     }
     input: {
@@ -65,6 +66,7 @@ constant_join: {
 constant_join_2: {
     options = {
         evaluate: true,
+        strings: true,
         unsafe: true,
     }
     input: {
@@ -94,9 +96,11 @@ constant_join_2: {
 constant_join_3: {
     options = {
         evaluate: true,
+        strings: true,
         unsafe: true,
     }
     input: {
+        var foo, bar, baz;
         var a = [ null ].join();
         var b = [ , ].join();
         var c = [ , 1, , 3 ].join();
@@ -111,6 +115,7 @@ constant_join_3: {
         var l = [ foo, bar + "baz" ].join("");
     }
     expect: {
+        var foo, bar, baz;
         var a = "";
         var b = "";
         var c = ",1,,3";

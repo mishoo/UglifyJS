@@ -26,7 +26,9 @@ concat_1: {
 }
 
 concat_2: {
-    options = {}
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             1 + (2 + 3),
@@ -55,7 +57,9 @@ concat_2: {
 }
 
 concat_3: {
-    options = {}
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             1 + 2 + (3 + 4 + 5),
@@ -84,7 +88,9 @@ concat_3: {
 }
 
 concat_4: {
-    options = {}
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             1 + "2" + (3 + 4 + 5),
@@ -113,7 +119,9 @@ concat_4: {
 }
 
 concat_5: {
-    options = {}
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             "1" + 2 + (3 + 4 + 5),
@@ -142,7 +150,9 @@ concat_5: {
 }
 
 concat_6: {
-    options = {}
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             "1" + "2" + (3 + 4 + 5),
@@ -171,6 +181,9 @@ concat_6: {
 }
 
 concat_7: {
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             "" + 1,
@@ -197,6 +210,9 @@ concat_7: {
 }
 
 concat_8: {
+    options = {
+        strings: true,
+    }
     input: {
         console.log(
             1 + "",
@@ -220,4 +236,21 @@ concat_8: {
         );
     }
     expect_stdout: true
+}
+
+issue_3689: {
+    options = {
+        strings: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a + ("" + (a[0] = 0));
+        }([]));
+    }
+    expect: {
+        console.log(function(a) {
+            return a + ("" + (a[0] = 0));
+        }([]));
+    }
+    expect_stdout: "00"
 }
