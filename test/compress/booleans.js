@@ -131,3 +131,25 @@ issue_3658: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3690: {
+    options = {
+        booleans: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            return function() {
+                return a = [ this ];
+            }() ? "PASS" : "FAIL";
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            return function() {
+                return 1;
+            }() ? "PASS" : "FAIL";
+        }());
+    }
+    expect_stdout: "PASS"
+}
