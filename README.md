@@ -736,6 +736,8 @@ If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.u
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
 
+- `strings` (default: `true`) -- compact string concatenations.
+
 - `switches` (default: `true`) -- de-duplicate and remove unreachable `switch` branches
 
 - `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or

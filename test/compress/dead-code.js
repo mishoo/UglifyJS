@@ -830,6 +830,7 @@ issue_3552: {
 unreachable_assign: {
     options = {
         dead_code: true,
+        strings: true,
     }
     input: {
         console.log(A = "P" + (A = "A" + (B = "S" + (A = B = "S"))), A, B);
