@@ -910,15 +910,23 @@ call: {
             console.log(this === b ? "bar" : "baz");
         };
         (a, b)();
+        (a, b).c();
         (a, b.c)();
+        (a, b)["c"]();
+        (a, b["c"])();
         (a, function() {
             console.log(this === a);
         })();
         new (a, b)();
+        new (a, b).c();
         new (a, b.c)();
+        new (a, b)["c"]();
+        new (a, b["c"])();
         new (a, function() {
             console.log(this === a);
         })();
+        console.log(typeof (a, b).c);
+        console.log(typeof (a, b)["c"]);
     }
     expect: {
         var a = function() {
@@ -931,23 +939,39 @@ call: {
             console.log(this === b ? "bar" : "baz");
         },
         b(),
+        b.c(),
         (a, b.c)(),
+        b["c"](),
+        (a, b["c"])(),
         function() {
             console.log(this === a);
         }(),
         new b(),
         new b.c(),
+        new b.c(),
+        new b["c"](),
+        new b["c"](),
         new function() {
             console.log(this === a);
-        }();
+        }(),
+        console.log((a, typeof b.c)),
+        console.log((a, typeof b["c"]));
     }
     expect_stdout: [
         "foo",
+        "bar",
+        "baz",
+        "bar",
         "baz",
         "true",
         "foo",
         "baz",
+        "baz",
+        "baz",
+        "baz",
         "false",
+        "function",
+        "function",
     ]
 }
 
