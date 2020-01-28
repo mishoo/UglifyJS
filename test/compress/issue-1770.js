@@ -46,7 +46,7 @@ mangle_props: {
             obj[1/0],
             obj["Infinity"],
             obj[-1/0],
-            obj[-1/0],
+            obj[-(1/0)],
             obj["-Infinity"],
             obj[null],
             obj["null"]

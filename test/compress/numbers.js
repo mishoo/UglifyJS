@@ -669,6 +669,9 @@ issue_1710: {
 }
 
 unary_binary_parenthesis: {
+    options = {
+        evaluate: true,
+    }
     input: {
         var v = [ 0, 1, NaN, Infinity, null, undefined, true, false, "", "foo", /foo/ ];
         v.forEach(function(x) {
@@ -1232,4 +1235,19 @@ issue_3684: {
         "Infinity",
         "Infinity",
     ]
+}
+
+issue_3695: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        var a = [];
+        console.log(+(a * (a[0] = false)));
+    }
+    expect: {
+        var a = [];
+        console.log(+(a * (a[0] = false)));
+    }
+    expect_stdout: "NaN"
 }
