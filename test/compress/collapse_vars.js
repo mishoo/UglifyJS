@@ -7491,3 +7491,170 @@ issue_3671: {
     }
     expect_stdout: "1"
 }
+
+call_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        (function(a) {
+            a = console;
+            (function() {})();
+            a.log("PASS");
+        })();
+    }
+    expect: {
+        (function(a) {
+            (function() {})();
+            (a = console).log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+call_1_symbol: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a) {
+            function f() {}
+            a = console;
+            f();
+            a.log(typeof f);
+        })();
+    }
+    expect: {
+        (function(a) {
+            function f() {}
+            f();
+            (a = console).log(typeof f);
+        })();
+    }
+    expect_stdout: "function"
+}
+
+call_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        (function(a) {
+            a = console;
+            (function() {
+                return 42;
+                console.log("FAIL");
+            })();
+            a.log("PASS");
+        })();
+    }
+    expect: {
+        (function(a) {
+            (function() {
+                return 42;
+                console.log("FAIL");
+            })();
+            (a = console).log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+call_2_symbol: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a) {
+            function f() {
+                return 42;
+                console.log("FAIL");
+            }
+            a = console;
+            f();
+            a.log(typeof f);
+        })();
+    }
+    expect: {
+        (function(a) {
+            function f() {
+                return 42;
+                console.log("FAIL");
+            }
+            f();
+            (a = console).log(typeof f);
+        })();
+    }
+    expect_stdout: "function"
+}
+
+call_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        (function(a) {
+            a = console;
+            (function() {
+                a = {
+                    log: function() {
+                        console.log("PASS");
+                    }
+                }
+            })();
+            a.log("FAIL");
+        })();
+    }
+    expect: {
+        (function(a) {
+            a = console;
+            (function() {
+                a = {
+                    log: function() {
+                        console.log("PASS");
+                    }
+                }
+            })();
+            a.log("FAIL");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+call_3_symbol: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a) {
+            function f() {
+                a = {
+                    log: function() {
+                        console.log(typeof f);
+                    }
+                }
+            }
+            a = console;
+            f();
+            a.log("FAIL");
+        })();
+    }
+    expect: {
+        (function(a) {
+            function f() {
+                a = {
+                    log: function() {
+                        console.log(typeof f);
+                    }
+                }
+            }
+            a = console;
+            f();
+            a.log("FAIL");
+        })();
+    }
+    expect_stdout: "function"
+}
