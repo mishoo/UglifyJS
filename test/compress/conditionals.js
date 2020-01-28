@@ -294,6 +294,45 @@ cond_5: {
     }
 }
 
+cond_6: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        x ? a : b;
+        x ? a : a;
+
+        x ? y ? a : b : c;
+        x ? y ? a : a : b;
+        x ? y ? a : b : b;
+        x ? y ? a : b : a;
+        x ? y ? a : a : a;
+
+        x ? a : y ? b : c;
+        x ? a : y ? a : b;
+        x ? a : y ? b : b;
+        x ? a : y ? b : a;
+        x ? a : y ? a : a;
+    }
+    expect: {
+        x ? a : b;
+        x, a;
+
+        x ? y ? a : b : c;
+        x ? (y, a) : b;
+        x && y ? a : b;
+        !x || y ? a : b;
+        x && y, a;
+
+        x ? a : y ? b : c;
+        x || y ? a : b;
+        x ? a : (y, b);
+        !x && y ? b : a;
+        !x && y, a;
+    }
+}
+
 cond_7: {
     options = {
         conditionals: true,
@@ -724,6 +763,24 @@ cond_11: {
         console.log(g(0), g(1));
     }
     expect_stdout: "foo bar"
+}
+
+cond_12: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        x ? y && a : a;
+        x ? y || a : a;
+        x ? a : y && a;
+        x ? a : y || a;
+    }
+    expect: {
+        (!x || y) && a;
+        x && y || a;
+        (x || y) && a;
+        !x && y || a;
+    }
 }
 
 ternary_boolean_consequent: {
