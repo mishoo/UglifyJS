@@ -7658,3 +7658,79 @@ call_3_symbol: {
     }
     expect_stdout: "function"
 }
+
+issue_3698_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log;
+        var a, b = 0, c = 0;
+        (function() {
+            a = b;
+        })(b++, (b++, c++));
+        log(a, b, c);
+    }
+    expect: {
+        var log = console.log;
+        var a, b = 0, c = 0;
+        (function() {
+            a = b;
+        })(b++, (b++, c++));
+        log(a, b, c);
+    }
+    expect_stdout: "2 2 1"
+}
+
+issue_3698_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        var log = console.log;
+        var a, b = 0, c = 0, d = 1;
+        (function f() {
+            a = b;
+            d-- && f();
+        })(b++, (b++, c++));
+        log(a, b, c, d);
+    }
+    expect: {
+        var log = console.log;
+        var a, b = 0, c = 0, d = 1;
+        (function f() {
+            a = b;
+            d-- && f();
+        })(b++, (b++, c++));
+        log(a, b, c, d);
+    }
+    expect_stdout: "2 2 1 -1"
+}
+
+issue_3698_3: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        (function f(c) {
+            {
+                b++;
+                var bar_1 = (b = 1 + b, c = 0);
+                a-- && f();
+            }
+        })();
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b = 0;
+        (function f(c) {
+            var bar_1 = (b = 1 + ++b, c = 0);
+            a-- && f();
+        })();
+        console.log(b);
+    }
+    expect_stdout: "2"
+}
