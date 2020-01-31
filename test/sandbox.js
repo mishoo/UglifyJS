@@ -54,14 +54,15 @@ function createContext() {
     }
 }
 
-exports.run_code = function(code, toplevel) {
+exports.run_code = function(code, toplevel, timeout) {
+    timeout = timeout || 5000;
     var stdout = "";
     var original_write = process.stdout.write;
     process.stdout.write = function(chunk) {
         stdout += chunk;
     };
     try {
-        vm.runInContext(toplevel ? "(function(){" + code + "})()" : code, createContext(), { timeout: 5000 });
+        vm.runInContext(toplevel ? "(function(){" + code + "})()" : code, createContext(), { timeout: timeout });
         return stdout;
     } catch (ex) {
         return ex;
