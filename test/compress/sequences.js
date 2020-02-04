@@ -1093,3 +1093,22 @@ issue_3490_2: {
     }
     expect_stdout: "PASS 42"
 }
+
+issue_3703: {
+    options = {
+        evaluate: true,
+        sequences: true,
+        unsafe: true,
+    }
+    input: {
+        var a = "FAIL";
+        while ((a = "PASS", 0).foo = 0);
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        while (a = "PASS", (0).foo = 0);
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
