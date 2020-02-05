@@ -2361,3 +2361,40 @@ issue_3542: {
     }
     expect_stdout: "1"
 }
+
+issue_3703: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            var b;
+            function g() {
+                a = "FAIL";
+            }
+            var c = g;
+            function h() {
+                f;
+            }
+            a ? b |= c : b.p;
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            var b;
+            var c = function g() {
+                a = "FAIL";
+            };
+            a ? b |= c : b.p;
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
