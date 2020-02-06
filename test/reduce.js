@@ -1,5 +1,5 @@
 var U = require("./node");
-var MAP = U.MAP;
+var List = U.List;
 var run_code = require("./sandbox").run_code;
 
 // Reduce a ufuzz-style `console.log` based test case by iteratively replacing
@@ -144,7 +144,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     if (node.body[0] instanceof U.AST_Break) {
                         if (node instanceof U.AST_Do) {
                             CHANGED = true;
-                            return MAP.skip;
+                            return List.skip;
                         }
                         expr = node.condition; // AST_While - fall through
                     }
@@ -269,7 +269,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     || parent instanceof U.AST_Switch && parent.expression != node) {
                     node.start._permute++;
                     CHANGED = true;
-                    return MAP.skip;
+                    return List.skip;
                 }
 
                 // replace or skip statement
@@ -290,7 +290,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     }
                     node.start._permute++;
                     CHANGED = true;
-                    return MAP.skip;
+                    return List.skip;
                 }
             }
 
@@ -300,7 +300,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             });
             newNode.start._permute = ++node.start._permute;
             CHANGED = true;
-            return in_list ? MAP.skip : newNode;
+            return in_list ? List.skip : newNode;
         });
 
         for (var pass = 1; pass <= 3; ++pass) {
