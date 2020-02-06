@@ -10,6 +10,7 @@ require("../../tools/exit");
 var UglifyJS = require("../..");
 var randomBytes = require("crypto").randomBytes;
 var sandbox = require("../sandbox");
+var reduce_test = require("../reduce");
 
 var MAX_GENERATED_TOPLEVELS_PER_RUN = 1;
 var MAX_GENERATION_RECURSION_DEPTH = 12;
@@ -1051,6 +1052,7 @@ function log_rename(options) {
 }
 
 function log(options) {
+    var options_copy = JSON.parse(options);
     options = JSON.parse(options);
     if (!ok) errorln("\n\n\n\n\n\n!!!!!!!!!!\n\n\n");
     errorln("//=============================================================");
@@ -1069,6 +1071,18 @@ function log(options) {
         errorln(original_result);
         errorln("uglified result:");
         errorln(uglify_result);
+        errorln("//-------------------------------------------------------------");
+        var reduced = reduce_test(original_code, options_copy, {
+            verbose: false,
+        }).code;
+        if (reduced) {
+            errorln();
+            errorln("// reduced test case (output will differ)");
+            errorln();
+            errorln(reduced);
+            errorln();
+            errorln("//-------------------------------------------------------------");
+        }
     } else {
         errorln("// !!! uglify failed !!!");
         errorln(uglify_code);

@@ -54,6 +54,7 @@ program.option("--toplevel", "Compress and/or mangle variables in toplevel scope
 program.option("--verbose", "Print diagnostic messages.");
 program.option("--warn", "Print warning messages.");
 program.option("--wrap <name>", "Embed everything as a function with “exports” corresponding to “name” globally.");
+program.option("--reduce-test", "Reduce a standalone `console.log` based test case.");
 program.arguments("[files...]").parseArgv(process.argv);
 if (program.configFile) {
     options = JSON.parse(read_file(program.configFile));
@@ -215,7 +216,15 @@ function run() {
     } catch (ex) {
         fatal(ex);
     }
-    var result = UglifyJS.minify(files, options);
+    if (program.reduceTest) {
+        // load on demand - assumes dev tree checked out
+        var reduce_test = require("../test/reduce");
+        var testcase = files[0] || files[Object.keys(files)[0]];
+        var result = reduce_test(testcase, options, {verbose: true});
+    }
+    else {
+        var result = UglifyJS.minify(files, options);
+    }
     if (result.error) {
         var ex = result.error;
         if (ex.name == "SyntaxError") {
