@@ -116,10 +116,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 ][ ((node.start._permute += step) * steps | 0) % 3 ];
             }
             else if (node instanceof U.AST_BlockStatement) {
-                if (node.body.length === 1) {
+                if (in_list) {
                     node.start._permute++;
                     CHANGED = true;
-                    return node.body[0];  // each child is an AST_Statement
+                    return List.splice(node.body);
                 }
             }
             else if (node instanceof U.AST_Call) {
@@ -274,19 +274,12 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
                 // replace or skip statement
                 if (node instanceof U.AST_Statement) {
-                    if (node instanceof U.AST_BlockStatement
-                        && ( parent instanceof U.AST_IterationStatement
-                            || parent instanceof U.AST_Switch)) {
-                        // don't drop the block of a switch or loop
-                        return;
-                    }
-                    if (node instanceof U.AST_LabeledStatement) {
-                        if (node.body instanceof U.AST_Statement) {
-                            // replace labelled statement with its non-labelled body
-                            node.start._permute = REPLACEMENTS.length;
-                            CHANGED = true;
-                            return node.body;
-                        }
+                    if (node instanceof U.AST_LabeledStatement
+                        && node.body instanceof U.AST_Statement) {
+                        // replace labelled statement with its non-labelled body
+                        node.start._permute = REPLACEMENTS.length;
+                        CHANGED = true;
+                        return node.body;
                     }
                     node.start._permute++;
                     CHANGED = true;
