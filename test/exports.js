@@ -1,8 +1,8 @@
 exports["Compressor"] = Compressor;
 exports["defaults"] = defaults;
 exports["JS_Parse_Error"] = JS_Parse_Error;
+exports["List"] = List;
 exports["mangle_properties"] = mangle_properties;
-exports["MAP"] = MAP;
 exports["minify"] = minify;
 exports["OutputStream"] = OutputStream;
 exports["parse"] = parse;
