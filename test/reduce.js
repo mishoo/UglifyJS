@@ -1,6 +1,6 @@
 var U = require("./node");
 var List = U.List;
-var run_code = require("./sandbox").run_code;
+var sandbox = require("./sandbox");
 
 // Reduce a ufuzz-style `console.log` based test case by iteratively replacing
 // AST nodes with various permutations. Each AST_Statement in the tree is also
@@ -19,16 +19,18 @@ var run_code = require("./sandbox").run_code;
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
     minify_options = minify_options || { compress: {}, mangle: false };
     reduce_options = reduce_options || {};
-    var timeout = 1500; // start with a low timeout
     var max_iterations = reduce_options.max_iterations || 1000;
+    var max_timeout = reduce_options.max_timeout || 15000;
     var verbose = reduce_options.verbose;
     var minify_options_json = JSON.stringify(minify_options);
-    var reduced = false;
+    var timeout = 1000; // start with a low timeout
+    var differs;
 
     if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
 
     // the initial timeout to assess the viability of the test case must be large
-    if (producesDifferentResultWhenMinified(testcase, minify_options, 5000)) {
+    if (differs = producesDifferentResultWhenMinified(testcase, minify_options, max_timeout)) {
+        if (differs.error) return differs;
         // Replace expressions with constants that will be parsed into
         // AST_Nodes as required.  Each AST_Node has its own permutation count,
         // so these replacements can't be shared.
@@ -323,18 +325,17 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     console.error("*** Discarding permutation and continuing.");
                 }
                 if (code) {
-                    var differs = producesDifferentResultWhenMinified(code, minify_options, timeout);
-                    if (differs) {
-                        if (differs.timed_out) {
+                    var diff = producesDifferentResultWhenMinified(code, minify_options, timeout);
+                    if (diff) {
+                        if (diff.timed_out) {
                             // can't trust the validity of `code_ast` and `code` when timed out.
                             // no harm done - just ignore latest change and continue iterating.
-                            if (timeout < 5000) timeout += 100;
+                            if (timeout < max_timeout) timeout += 250;
                         } else {
                             // latest permutation is valid, so use it as the basis of new changes
                             testcase_ast = code_ast;
                             testcase = code;
-                            var testcase_unminified_result = differs.unminified_result;
-                            var testcase_minified_result = differs.minified_result;
+                            differs = diff;
                         }
                     }
                 }
@@ -344,16 +345,15 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 console.error("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
-        reduced = true;
-        testcase += "\n// output: " + testcase_unminified_result
-            + "\n// minify: " + testcase_minified_result
+        testcase += "\n// output: " + differs.unminified_result
+            + "\n// minify: " + differs.minified_result
             + "\n// options: " + minify_options_json;
     } else {
         // same stdout result produced when minified
         testcase = "// Can't reproduce test failure with minify options provided:"
             + "\n// " + minify_options_json;
     }
-    var result = U.minify(testcase, {
+    var result = U.minify(testcase.replace(/\u001b\[\d+m/g, ""), {
         compress: false,
         mangle: false,
         output: {
@@ -362,21 +362,22 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             comments: true,
         }
     });
-    result.reduced = reduced;
     return result;
 };
 
 function producesDifferentResultWhenMinified(code, minify_options, timeout) {
-    var toplevel = undefined;
-    var unminified_result = run_code(code, toplevel, timeout);
+    var minified = U.minify(code, minify_options);
+    if (minified.error) return minified;
+    var toplevel = minify_options.toplevel;
+    var unminified_result = sandbox.run_code(code, toplevel, timeout);
     if (/timed out/i.test(unminified_result)) return false;
     if (/^\s*$|Error/.test(unminified_result)) return false;
 
-    var minified_result = run_code(U.minify(code, minify_options).code, toplevel, timeout);
+    var minified_result = sandbox.run_code(minified.code, toplevel, timeout);
     if (/timed out/i.test(minified_result)) return { timed_out: true };
     if (/^\s*$/.test(minified_result)) return false;
 
-    return unminified_result !== minified_result ? {
+    return !sandbox.same_stdout(unminified_result, minified_result) ? {
         unminified_result: unminified_result,
         minified_result: minified_result,
     } : false;

@@ -77,8 +77,9 @@ function strip_func_ids(text) {
 
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
     if (typeof expected != typeof actual) return false;
-    if (typeof expected != "string") {
-        if (expected.name != actual.name) return false;
+    if (typeof expected == "object" && typeof expected.name == "string" && typeof expected.message == "string") {
+        if (expected.name !== actual.name) return false;
+        if (typeof actual.message != "string") return false;
         expected = expected.message.slice(expected.message.lastIndexOf("\n") + 1);
         actual = actual.message.slice(actual.message.lastIndexOf("\n") + 1);
     }
