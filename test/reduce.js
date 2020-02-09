@@ -52,11 +52,12 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (CHANGED) return;
 
             // quick ignores
-            if (node instanceof U.AST_Toplevel) return;
             if (node instanceof U.AST_Accessor) return;
             if (node instanceof U.AST_Directive) return;
-            // if (node instanceof U.AST_Var) return;
-            // if (node instanceof U.AST_VarDef) return;
+            if (node instanceof U.AST_Label) return;
+            if (node instanceof U.AST_LabelRef) return;
+            if (node instanceof U.AST_SymbolDeclaration) return;
+            if (node instanceof U.AST_Toplevel) return;
 
             var parent = tt.parent();
 
@@ -85,12 +86,17 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 CHANGED = true;
                 return null;
             }
+            if ((parent instanceof U.AST_For || parent instanceof U.AST_ForIn)
+                && parent.init === node && node instanceof U.AST_Var) {
+                // preserve for (var ...)
+                return node;
+            }
 
             // node specific permutations with no parent logic
 
             if (node instanceof U.AST_Array) {
                 var expr = node.elements[0];
-                if (expr) {
+                if (expr && !(expr instanceof U.AST_Hole)) {
                     node.start._permute++;
                     CHANGED = true;
                     return expr;
@@ -151,12 +157,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                         expr = node.condition; // AST_While - fall through
                     }
                 }
-                if (expr) {
+                if (expr && (expr !== node.body || !has_loopcontrol(expr, node, parent))) {
                     CHANGED = true;
-                    return expr instanceof U.AST_Statement ? expr : new U.AST_SimpleStatement({
-                        body: expr,
-                        start: {},
-                    });
+                    return to_statement(expr);
                 }
             }
             else if (node instanceof U.AST_PropAccess) {
@@ -177,12 +180,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     node.body,
                 ][ (node.start._permute * steps | 0) % 4 ];
                 node.start._permute += step;
-                if (expr) {
+                if (expr && (expr !== node.body || !has_loopcontrol(expr, node, parent))) {
                     CHANGED = true;
-                    return expr instanceof U.AST_Statement ? expr : new U.AST_SimpleStatement({
-                        body: expr,
-                        start: {},
-                    });
+                    return to_statement(expr);
                 }
             }
             else if (node instanceof U.AST_ForIn) {
@@ -192,12 +192,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     node.body,
                 ][ (node.start._permute * steps | 0) % 3 ];
                 node.start._permute += step;
-                if (expr) {
+                if (expr && (expr !== node.body || !has_loopcontrol(expr, node, parent))) {
                     CHANGED = true;
-                    return expr instanceof U.AST_Statement ? expr : new U.AST_SimpleStatement({
-                        body: expr,
-                        start: {},
-                    });
+                    return to_statement(expr);
                 }
             }
             else if (node instanceof U.AST_If) {
@@ -224,15 +221,15 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 var expr = [
                     node.expression,                         // switch expression
                     node.body[0] && node.body[0].expression, // first case expression or undefined
-                    node.body[0] && node.body[0].body[0],    // first case body statement or undefined
-                ][ (node.start._permute * steps | 0) % 3 ];
+                    node.body[0] && node.body[0],            // first case body or undefined
+                ][ (node.start._permute * steps | 0) % 4 ];
                 node.start._permute += step;
-                if (expr) {
+                if (expr && (!(expr instanceof U.AST_Statement) || !has_loopcontrol(expr, node, parent))) {
                     CHANGED = true;
-                    return expr instanceof U.AST_Statement ? expr : new U.AST_SimpleStatement({
-                        body: expr,
+                    return expr instanceof U.AST_SwitchBranch ? new U.AST_BlockStatement({
+                        body: expr.body.slice(),
                         start: {},
-                    });
+                    }) : to_statement(expr);
                 }
             }
             else if (node instanceof U.AST_Try) {
@@ -277,7 +274,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 // replace or skip statement
                 if (node instanceof U.AST_Statement) {
                     if (node instanceof U.AST_LabeledStatement
-                        && node.body instanceof U.AST_Statement) {
+                        && node.body instanceof U.AST_Statement
+                        && !has_loopcontrol(node.body, node.body, node)) {
                         // replace labelled statement with its non-labelled body
                         node.start._permute = REPLACEMENTS.length;
                         CHANGED = true;
@@ -287,15 +285,46 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     CHANGED = true;
                     return List.skip;
                 }
+
+                // remove this node unless its the sole element of a (transient) sequence
+                if (!(parent instanceof U.AST_Sequence) || parent.expressions.length > 1) {
+                    node.start._permute++;
+                    CHANGED = true;
+                    return List.skip;
+                }
             }
 
-            // replace or remove this node depending on whether it's in a list
+            // replace this node
             var newNode = new U.parse(REPLACEMENTS[node.start._permute % REPLACEMENTS.length | 0], {
                 expression: true,
             });
+            if (is_statement(node)) {
+                newNode = new U.AST_SimpleStatement({
+                    body: newNode,
+                    start: {},
+                });
+            }
             newNode.start._permute = ++node.start._permute;
             CHANGED = true;
-            return in_list ? List.skip : newNode;
+            return newNode;
+        }, function(node, in_list) {
+            if (node instanceof U.AST_Sequence) {
+                // expand single-element sequence
+                if (node.expressions.length == 1) return node.expressions[0];
+            }
+            else if (node instanceof U.AST_Try) {
+                // expand orphaned try block
+                if (!node.bcatch && !node.bfinally) return new U.AST_BlockStatement({
+                    body: node.body,
+                    start: {}
+                });
+            }
+            else if (node instanceof U.AST_Var) {
+                // remove empty var statement
+                if (node.definitions.length == 0) return in_list ? List.skip : new U.AST_EmptyStatement({
+                    start: {}
+                });
+            }
         });
 
         for (var pass = 1; pass <= 3; ++pass) {
@@ -321,22 +350,28 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     // AST is not well formed.
                     // no harm done - just log the error, ignore latest change and continue iterating.
                     console.error("*** Error generating code from AST.");
-                    console.error(ex.stack);
+                    console.error(ex);
                     console.error("*** Discarding permutation and continuing.");
+                    continue;
                 }
-                if (code) {
-                    var diff = producesDifferentResultWhenMinified(code, minify_options, timeout);
-                    if (diff) {
-                        if (diff.timed_out) {
-                            // can't trust the validity of `code_ast` and `code` when timed out.
-                            // no harm done - just ignore latest change and continue iterating.
-                            if (timeout < max_timeout) timeout += 250;
-                        } else {
-                            // latest permutation is valid, so use it as the basis of new changes
-                            testcase_ast = code_ast;
-                            testcase = code;
-                            differs = diff;
-                        }
+                var diff = producesDifferentResultWhenMinified(code, minify_options, timeout);
+                if (diff) {
+                    if (diff.timed_out) {
+                        // can't trust the validity of `code_ast` and `code` when timed out.
+                        // no harm done - just ignore latest change and continue iterating.
+                        if (timeout < max_timeout) timeout += 250;
+                    } else if (diff.error) {
+                        // something went wrong during minify() - could be malformed AST or genuine bug.
+                        // no harm done - just log code & error, ignore latest change and continue iterating.
+                        console.error("*** Error during minification.");
+                        console.error(code);
+                        console.error(diff.error);
+                        console.error("*** Discarding permutation and continuing.");
+                    } else {
+                        // latest permutation is valid, so use it as the basis of new changes
+                        testcase_ast = code_ast;
+                        testcase = code;
+                        differs = diff;
                     }
                 }
             }
@@ -364,6 +399,31 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     });
     return result;
 };
+
+function has_loopcontrol(body, loop, label) {
+    var found = false;
+    var tw = new U.TreeWalker(function(node) {
+        if (found) return true;
+        if (node instanceof U.AST_LoopControl && this.loopcontrol_target(node) === loop) {
+            return found = true;
+        }
+    });
+    if (label instanceof U.AST_LabeledStatement) tw.push(label);
+    tw.push(loop);
+    body.walk(tw);
+    return found;
+}
+
+function is_statement(node) {
+    return node instanceof U.AST_Statement && !(node instanceof U.AST_Function);
+}
+
+function to_statement(node) {
+    return is_statement(node) ? node : new U.AST_SimpleStatement({
+        body: node,
+        start: {},
+    });
+}
 
 function producesDifferentResultWhenMinified(code, minify_options, timeout) {
     var minified = U.minify(code, minify_options);

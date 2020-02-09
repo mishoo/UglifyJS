@@ -57,4 +57,10 @@ describe("test/reduce.js", function() {
         assert.ok(err instanceof Error);
         assert.strictEqual(err.stack.split(/\n/)[0], "DefaultsError: `unsafe_regex` is not a supported option");
     });
+    it("Should report on test case with invalid syntax", function() {
+        var result = reduce_test("var 0 = 1;");
+        var err = result.error;
+        assert.ok(err instanceof Error);
+        assert.strictEqual(err.stack.split(/\n/)[0], "SyntaxError: Name expected");
+    });
 });
