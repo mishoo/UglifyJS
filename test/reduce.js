@@ -56,7 +56,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (node instanceof U.AST_Directive) return;
             if (node instanceof U.AST_Label) return;
             if (node instanceof U.AST_LabelRef) return;
-            if (node instanceof U.AST_SymbolDeclaration) return;
+            if (!in_list && node instanceof U.AST_SymbolDeclaration) return;
             if (node instanceof U.AST_Toplevel) return;
 
             var parent = tt.parent();
@@ -79,12 +79,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     && ["++", "--", "delete"].indexOf(parent.operator) >= 0) {
                 // ignore lvalues
                 return;
-            }
-            if (parent instanceof U.AST_If && parent.alternative === node) {
-                // retain the if statement and drop its else block
-                node.start._permute++;
-                CHANGED = true;
-                return null;
             }
             if ((parent instanceof U.AST_For || parent instanceof U.AST_ForIn)
                 && parent.init === node && node instanceof U.AST_Var) {
@@ -131,7 +125,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 }
             }
             else if (node instanceof U.AST_Call) {
-                if (/^console/.test(node.print_to_string())) return node;
                 var expr = [
                     node.expression,
                     node.args[0],
@@ -198,14 +191,16 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 }
             }
             else if (node instanceof U.AST_If) {
-                var body = [
+                var expr = [
+                    node.condition,
                     node.body,
                     node.alternative,
-                ][ (node.start._permute++) % 2 ];
-                if (body) {
-                    // replace if statement with its then block or the else block
+                ][ (node.start._permute * steps | 0) % 3 ];
+                node.start._permute += step;
+                if (expr) {
+                    // replace if statement with its condition, then block or else block
                     CHANGED = true;
-                    return body;
+                    return to_statement(expr);
                 }
             }
             else if (node instanceof U.AST_Object) {
@@ -316,13 +311,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 // expand orphaned try block
                 if (!node.bcatch && !node.bfinally) return new U.AST_BlockStatement({
                     body: node.body,
-                    start: {}
+                    start: {},
                 });
             }
             else if (node instanceof U.AST_Var) {
                 // remove empty var statement
                 if (node.definitions.length == 0) return in_list ? List.skip : new U.AST_EmptyStatement({
-                    start: {}
+                    start: {},
                 });
             }
         });
@@ -367,6 +362,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                         console.error(code);
                         console.error(diff.error);
                         console.error("*** Discarding permutation and continuing.");
+                    } else if (is_error(diff.unminified_result)
+                        && is_error(diff.minified_result)
+                        && diff.unminified_result.name == diff.minified_result.name) {
+                        // ignore difference in error messages caused by minification
                     } else {
                         // latest permutation is valid, so use it as the basis of new changes
                         testcase_ast = code_ast;
@@ -414,6 +413,10 @@ function has_loopcontrol(body, loop, label) {
     return found;
 }
 
+function is_error(result) {
+    return typeof result == "object" && typeof result.name == "string" && typeof result.message == "string";
+}
+
 function is_statement(node) {
     return node instanceof U.AST_Statement && !(node instanceof U.AST_Function);
 }
@@ -428,14 +431,13 @@ function to_statement(node) {
 function producesDifferentResultWhenMinified(code, minify_options, timeout) {
     var minified = U.minify(code, minify_options);
     if (minified.error) return minified;
+
     var toplevel = minify_options.toplevel;
     var unminified_result = sandbox.run_code(code, toplevel, timeout);
     if (/timed out/i.test(unminified_result)) return false;
-    if (/^\s*$|Error/.test(unminified_result)) return false;
 
     var minified_result = sandbox.run_code(minified.code, toplevel, timeout);
     if (/timed out/i.test(minified_result)) return { timed_out: true };
-    if (/^\s*$/.test(minified_result)) return false;
 
     return !sandbox.same_stdout(unminified_result, minified_result) ? {
         unminified_result: unminified_result,
