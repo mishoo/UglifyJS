@@ -1,8 +1,26 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
+var fs = require("fs");
 var reduce_test = require("../reduce");
 
+function read(path) {
+    return fs.readFileSync(path, "utf8");
+}
+
 describe("test/reduce.js", function() {
+    it("Should reduce test case", function() {
+        this.timeout(30000);
+        var result = reduce_test(read("test/input/reduce/input.js"), {
+            compress: {
+                unsafe_math: true,
+            },
+            mangle: false,
+        }, {
+            verbose: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, read("test/input/reduce/output.js"));
+    });
     it("Should handle test cases with --toplevel", function() {
         var result = reduce_test([
             "var Infinity = 42;",
