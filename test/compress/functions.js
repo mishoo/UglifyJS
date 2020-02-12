@@ -1276,7 +1276,7 @@ issue_2630_3: {
         (function() {
             (function f1(a) {
                 f2();
-                --x >= 0 && f1({});
+                --x >= 0 && f1();
             })(a++);
             function f2() {
                 a++;
