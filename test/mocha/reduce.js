@@ -9,7 +9,7 @@ function read(path) {
 
 describe("test/reduce.js", function() {
     it("Should reduce test case", function() {
-        this.timeout(30000);
+        this.timeout(60000);
         var result = reduce_test(read("test/input/reduce/input.js"), {
             compress: {
                 unsafe_math: true,
