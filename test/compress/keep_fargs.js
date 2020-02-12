@@ -728,7 +728,7 @@ issue_2630_3: {
         (function() {
             (function f1() {
                 f2();
-                --x >= 0 && f1({});
+                --x >= 0 && f1();
             })(a++);
             function f2() {
                 a++;
@@ -1369,7 +1369,7 @@ recursive_iife_1: {
     }
     expect: {
         console.log(function f(a, b) {
-            return b || f("FAIL", "PASS");
+            return b || f(0, "PASS");
         }());
     }
     expect_stdout: "PASS"
@@ -1388,7 +1388,7 @@ recursive_iife_2: {
     }
     expect: {
         console.log(function f(a, b) {
-            return b || f("FAIL", "PASS");
+            return b || f(0, "PASS");
         }(0, 0));
     }
     expect_stdout: "PASS"
@@ -1416,7 +1416,7 @@ recursive_iife_3: {
         var a = 1, c = "PASS";
         (function() {
             (function f(b, d, e) {
-                a-- && f(null, 42, 0);
+                a-- && f(0, 42, 0);
                 e && (c = "FAIL");
                 d && d.p;
             })();

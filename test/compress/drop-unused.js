@@ -1191,10 +1191,10 @@ issue_2105_1: {
     input: {
         !function(factory) {
             factory();
-        }( function() {
+        }(function() {
             return function(fn) {
                 fn()().prop();
-            }( function() {
+            }(function() {
                 function bar() {
                     var quux = function() {
                         console.log("PASS");
@@ -1205,7 +1205,7 @@ issue_2105_1: {
                     return { prop: foo };
                 }
                 return bar;
-            } );
+            });
         });
     }
     expect: {
@@ -1235,10 +1235,10 @@ issue_2105_2: {
     input: {
         !function(factory) {
             factory();
-        }( function() {
+        }(function() {
             return function(fn) {
                 fn()().prop();
-            }( function() {
+            }(function() {
                 function bar() {
                     var quux = function() {
                         console.log("PASS");
@@ -1249,11 +1249,49 @@ issue_2105_2: {
                     return { prop: foo };
                 }
                 return bar;
-            } );
+            });
         });
     }
     expect: {
         console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2105_3: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !function(factory) {
+            factory();
+        }(function() {
+            return function(fn) {
+                fn()().prop();
+            }(function() {
+                function bar() {
+                    var quux = function() {
+                        console.log("PASS");
+                    }, foo = function() {
+                        console.log;
+                        quux();
+                    };
+                    return { prop: foo };
+                }
+                return bar;
+            });
+        });
+    }
+    expect: {
+        !void void {
+            prop: function() {
+                console.log;
+                void console.log("PASS");
+            }
+        }.prop();
     }
     expect_stdout: "PASS"
 }
@@ -2330,7 +2368,7 @@ function_parameter_ie8: {
         (function() {
             (function f() {
                 console.log("PASS");
-            })(0);
+            })();
         })();
     }
     expect_stdout: "PASS"
