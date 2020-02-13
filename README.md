@@ -848,8 +848,8 @@ can pass additional arguments that control the code output:
   statement.
 
 - `comments` (default `false`) -- pass `true` or `"all"` to preserve all
-  comments, `"some"` to preserve some comments, a regular expression string
-  (e.g. `/^!/`) or a function.
+  comments, `"some"` to preserve some comments (i.e. `/@preserve|@license|@cc_on/i`), a regular expression string
+  (e.g. `/^!/`), or a function that returns a *truthy/falsy* value that will be converted to `boolean` (e.g. `(_, comment) => preserveComment(comment.value)` where `preserveComment` is a user-defined function).
 
 - `indent_level` (default `4`)
 
