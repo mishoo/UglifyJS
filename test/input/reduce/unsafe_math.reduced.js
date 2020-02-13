@@ -11,5 +11,12 @@ var a_1 = f0();
 
 console.log(b);
 // output: -19
+// 
 // minify: -4
-// options: {"compress":{"unsafe_math":true},"mangle":false}
+// 
+// options: {
+//   "compress": {
+//     "unsafe_math": true
+//   },
+//   "mangle": false
+// }
