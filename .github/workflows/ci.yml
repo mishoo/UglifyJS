@@ -5,7 +5,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        node: [ "0.10", 0.12, 4, 6, 8, 10, latest ]
+        node: [ '0.10', 0.12, 4, 6, 8, 10, latest, chakracore ]
         script: [ compress, mocha, release/benchmark, release/jetstream ]
     name: ${{ matrix.os }} ${{ matrix.node }} ${{ matrix.script }}
     runs-on: ${{ matrix.os }}
@@ -19,6 +19,7 @@ jobs:
           path: tmp
           key: tmp ${{ matrix.script }}
       - name: Perform tests
+        continue-on-error: ${{ matrix.node == 'chakracore' && matrix.script == 'compress' }}
         shell: bash
         run: |
           git clone --branch v1.5.3 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
