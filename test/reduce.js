@@ -22,7 +22,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var max_iterations = reduce_options.max_iterations || 1000;
     var max_timeout = reduce_options.max_timeout || 15000;
     var verbose = reduce_options.verbose;
-    var minify_options_json = JSON.stringify(minify_options);
+    var minify_options_json = JSON.stringify(minify_options, null, 2);
     var timeout = 1000; // start with a low timeout
     var differs;
 
@@ -256,6 +256,15 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 CHANGED = true;
                 return node.expression;
             }
+            else if (node instanceof U.AST_LabeledStatement) {
+                if (node.body instanceof U.AST_Statement
+                    && !has_loopcontrol(node.body, node.body, node)) {
+                    // replace labelled statement with its non-labelled body
+                    node.start._permute = REPLACEMENTS.length;
+                    CHANGED = true;
+                    return node.body;
+                }
+            }
 
             if (in_list) {
                 // special case to drop object properties and switch branches
@@ -268,14 +277,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
                 // replace or skip statement
                 if (node instanceof U.AST_Statement) {
-                    if (node instanceof U.AST_LabeledStatement
-                        && node.body instanceof U.AST_Statement
-                        && !has_loopcontrol(node.body, node.body, node)) {
-                        // replace labelled statement with its non-labelled body
-                        node.start._permute = REPLACEMENTS.length;
-                        CHANGED = true;
-                        return node.body;
-                    }
                     node.start._permute++;
                     CHANGED = true;
                     return List.skip;
@@ -379,13 +380,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 console.error("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
-        testcase += "\n// output: " + differs.unminified_result
-            + "\n// minify: " + differs.minified_result
-            + "\n// options: " + minify_options_json;
+        testcase += "\n// output: " + to_comment(differs.unminified_result)
+            + "\n// minify: " + to_comment(differs.minified_result)
+            + "\n// options: " + to_comment(minify_options_json);
     } else {
         // same stdout result produced when minified
         testcase = "// Can't reproduce test failure with minify options provided:"
-            + "\n// " + minify_options_json;
+            + "\n// " + to_comment(minify_options_json);
     }
     var result = U.minify(testcase.replace(/\u001b\[\d+m/g, ""), {
         compress: false,
@@ -398,6 +399,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     });
     return result;
 };
+
+function to_comment(value) {
+    return ("" + value).replace(/\n/g, "\n// ");
+}
 
 function has_loopcontrol(body, loop, label) {
     var found = false;
