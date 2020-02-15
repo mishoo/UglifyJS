@@ -24,12 +24,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var verbose = reduce_options.verbose;
     var minify_options_json = JSON.stringify(minify_options, null, 2);
     var timeout = 1000; // start with a low timeout
+    var result_cache = Object.create(null);
     var differs;
 
     if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
 
     // the initial timeout to assess the viability of the test case must be large
-    if (differs = producesDifferentResultWhenMinified(testcase, minify_options, max_timeout)) {
+    if (differs = producesDifferentResultWhenMinified(result_cache, testcase, minify_options, max_timeout)) {
         if (differs.error) return differs;
         // Replace expressions with constants that will be parsed into
         // AST_Nodes as required.  Each AST_Node has its own permutation count,
@@ -399,12 +400,15 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     console.error("*** Discarding permutation and continuing.");
                     continue;
                 }
-                var diff = producesDifferentResultWhenMinified(code, minify_options, timeout);
+                var diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, timeout);
                 if (diff) {
                     if (diff.timed_out) {
                         // can't trust the validity of `code_ast` and `code` when timed out.
                         // no harm done - just ignore latest change and continue iterating.
-                        if (timeout < max_timeout) timeout += 250;
+                        if (timeout < max_timeout) {
+                            timeout += 250;
+                            result_cache = Object.create(null);
+                        }
                     } else if (diff.error) {
                         // something went wrong during minify() - could be malformed AST or genuine bug.
                         // no harm done - just log code & error, ignore latest change and continue iterating.
@@ -437,7 +441,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         testcase = "// Can't reproduce test failure with minify options provided:"
             + "\n// " + to_comment(minify_options_json);
     }
-    var result = U.minify(testcase.replace(/\u001b\[\d+m/g, ""), {
+    return U.minify(testcase.replace(/\u001b\[\d+m/g, ""), {
         compress: false,
         mangle: false,
         output: {
@@ -446,7 +450,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             comments: true,
         }
     });
-    return result;
 };
 
 function to_comment(value) {
@@ -515,15 +518,19 @@ function to_statement(node) {
     });
 }
 
-function producesDifferentResultWhenMinified(code, minify_options, timeout) {
+function run_code(result_cache, code, toplevel, timeout) {
+    return result_cache[code] || (result_cache[code] = sandbox.run_code(code, toplevel, timeout));
+}
+
+function producesDifferentResultWhenMinified(result_cache, code, minify_options, timeout) {
     var minified = U.minify(code, minify_options);
     if (minified.error) return minified;
 
     var toplevel = minify_options.toplevel;
-    var unminified_result = sandbox.run_code(code, toplevel, timeout);
+    var unminified_result = run_code(result_cache, code, toplevel, timeout);
     if (/timed out/i.test(unminified_result)) return false;
 
-    var minified_result = sandbox.run_code(minified.code, toplevel, timeout);
+    var minified_result = run_code(result_cache, minified.code, toplevel, timeout);
     if (/timed out/i.test(minified_result)) return { timed_out: true };
 
     return !sandbox.same_stdout(unminified_result, minified_result) ? {
@@ -531,5 +538,4 @@ function producesDifferentResultWhenMinified(code, minify_options, timeout) {
         minified_result: minified_result,
     } : false;
 }
-
 Error.stackTraceLimit = Infinity;
