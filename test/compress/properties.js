@@ -817,6 +817,29 @@ issue_2208_5: {
     expect_stdout: "42"
 }
 
+issue_2208_6: {
+    options = {
+        inline: true,
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        a = 42;
+        console.log(("FAIL", {
+            p: function() {
+                return this.a;
+            }
+        }.p)());
+    }
+    expect: {
+        a = 42;
+        console.log(function() {
+            return this.a;
+        }());
+    }
+    expect_stdout: "42"
+}
+
 issue_2256: {
     options = {
         side_effects: true,
