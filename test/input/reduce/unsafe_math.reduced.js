@@ -1,13 +1,10 @@
 var b = 0;
 
-function f0() {
-    var expr2 = (0 - 1 - .1 - .1).toString();
-    for (var key2 in expr2) {
-        --b;
-    }
-}
+var expr2 = (0 - 1 - .1 - .1).toString();
 
-var a_1 = f0();
+for (var key2 in expr2) {
+    --b;
+}
 
 console.log(b);
 // output: -19
