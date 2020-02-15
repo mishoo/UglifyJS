@@ -848,8 +848,14 @@ can pass additional arguments that control the code output:
   statement.
 
 - `comments` (default `false`) -- pass `true` or `"all"` to preserve all
-  comments, `"some"` to preserve some comments, a regular expression string
-  (e.g. `/^!/`) or a function.
+  comments, `"some"` to preserve multi-line comments that contain `@cc_on`,
+  `@license`, or `@preserve` (case-insensitive), a regular expression string
+  (e.g. `/^!/`), or a function which returns `boolean`, e.g.
+  ```js
+  function(node, comment) {
+      return comment.value.indexOf("@type " + node.TYPE) >= 0;
+  }
+  ```
 
 - `indent_level` (default `4`)
 
