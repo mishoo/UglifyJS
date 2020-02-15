@@ -61,9 +61,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
             var parent = tt.parent();
 
-            // ignore call expressions
-            if (parent instanceof U.AST_Call && parent.expression === node) return;
-
             // ensure that the _permute prop is a number.
             // can not use `node.start._permute |= 0;` as it will erase fractional part.
             if (typeof node.start._permute === "undefined") node.start._permute = 0;
@@ -128,10 +125,42 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 var expr = [
                     node.expression,
                     node.args[0],
-                ][ node.start._permute++ % 2 ];
+                    null,  // intentional
+                ][ ((node.start._permute += step) * steps | 0) % 3 ];
                 if (expr) {
                     CHANGED = true;
                     return expr;
+                }
+                if (node.expression instanceof U.AST_Function) {
+                    // hoist and return expressions from the IIFE function expression
+                    var body = node.expression.body;
+                    node.expression.body = [];
+                    var seq = [];
+                    body.forEach(function(node) {
+                        var expr = expr instanceof U.AST_Exit ? node.value : node.body;
+                        if (expr instanceof U.AST_Node && !is_statement(expr)) {
+                            // collect expressions from each statements' body
+                            seq.push(expr);
+                        }
+                    });
+                    CHANGED = true;
+                    return to_sequence(seq);
+                }
+            }
+            else if (node instanceof U.AST_Defun) {
+                switch (((node.start._permute += step) * steps | 0) % 2) {
+                  case 0:
+                    CHANGED = true;
+                    return List.skip;
+                  case 1:
+                    if (!has_exit(node)) {
+                        // hoist function declaration body
+                        var body = node.body;
+                        node.body = [];
+                        body.push(node); // retain function with empty body to be dropped later
+                        CHANGED = true;
+                        return List.splice(body);
+                    }
                 }
             }
             else if (node instanceof U.AST_DWLoop) {
@@ -212,6 +241,18 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     return expr;
                 }
             }
+            else if (node instanceof U.AST_SimpleStatement) {
+                if (node.body instanceof U.AST_Call && node.body.expression instanceof U.AST_Function) {
+                    // hoist simple statement IIFE function expression body
+                    node.start._permute++;
+                    if (!has_exit(node.body.expression)) {
+                        var body = node.body.expression.body;
+                        node.body.expression.body = [];
+                        CHANGED = true;
+                        return List.splice(body);
+                    }
+                }
+            }
             else if (node instanceof U.AST_Switch) {
                 var expr = [
                     node.expression,                         // switch expression
@@ -256,6 +297,14 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 CHANGED = true;
                 return node.expression;
             }
+            else if (node instanceof U.AST_Var) {
+                if (node.definitions.length == 1 && node.definitions[0].value) {
+                    // first declaration value
+                    node.start._permute++;
+                    CHANGED = true;
+                    return to_statement(node.definitions[0].value);
+                }
+            }
             else if (node instanceof U.AST_LabeledStatement) {
                 if (node.body instanceof U.AST_Statement
                     && !has_loopcontrol(node.body, node.body, node)) {
@@ -291,7 +340,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
 
             // replace this node
-            var newNode = new U.parse(REPLACEMENTS[node.start._permute % REPLACEMENTS.length | 0], {
+            var newNode = U.parse(REPLACEMENTS[node.start._permute % REPLACEMENTS.length | 0], {
                 expression: true,
             });
             if (is_statement(node)) {
@@ -404,6 +453,21 @@ function to_comment(value) {
     return ("" + value).replace(/\n/g, "\n// ");
 }
 
+function has_exit(fn) {
+    var found = false;
+    var tw = new U.TreeWalker(function(node) {
+        if (found) return found;
+        if (node instanceof U.AST_Exit) {
+            return found = true;
+        }
+        if (node instanceof U.AST_Scope && node !== fn) {
+            return true; // don't descend into nested functions
+        }
+    });
+    fn.walk(tw);
+    return found;
+}
+
 function has_loopcontrol(body, loop, label) {
     var found = false;
     var tw = new U.TreeWalker(function(node) {
@@ -424,6 +488,24 @@ function is_error(result) {
 
 function is_statement(node) {
     return node instanceof U.AST_Statement && !(node instanceof U.AST_Function);
+}
+
+function merge_sequence(array, node) {
+    if (node instanceof U.AST_Sequence) {
+        array.push.apply(array, node.expressions);
+    } else {
+        array.push(node);
+    }
+    return array;
+}
+
+function to_sequence(expressions) {
+    if (expressions.length == 0) return new U.AST_Number({value: 0, start: {}});
+    if (expressions.length == 1) return expressions[0];
+    return new U.AST_Sequence({
+        expressions: expressions.reduce(merge_sequence, []),
+        start: {},
+    });
 }
 
 function to_statement(node) {
