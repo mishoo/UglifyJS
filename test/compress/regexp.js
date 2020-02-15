@@ -186,3 +186,72 @@ issue_3434_3: {
         /\nfo\n[\n]o\bbb/;
     }
 }
+
+issue_3434_4: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        [
+            [ "", RegExp("") ],
+            [ "/", RegExp("/") ],
+            [ "//", RegExp("//") ],
+            [ "\/", RegExp("\\/") ],
+            [ "///", RegExp("///") ],
+            [ "/\/", RegExp("/\\/") ],
+            [ "\//", RegExp("\\//") ],
+            [ "\\/", RegExp("\\\\/") ],
+            [ "////", RegExp("////") ],
+            [ "//\/", RegExp("//\\/") ],
+            [ "/\//", RegExp("/\\//") ],
+            [ "/\\/", RegExp("/\\\\/") ],
+            [ "\///", RegExp("\\///") ],
+            [ "\/\/", RegExp("\\/\\/") ],
+            [ "\\//", RegExp("\\\\//") ],
+            [ "\\\/", RegExp("\\\\\\/") ],
+        ].forEach(function(test) {
+            console.log(test[1].test("\\"), test[1].test(test[0]));
+        });
+    }
+    expect: {
+        [
+            [ "", /(?:)/ ],
+            [ "/", /\// ],
+            [ "//", /\/\// ],
+            [ "/", /\// ],
+            [ "///", /\/\/\// ],
+            [ "//", /\/\// ],
+            [ "//", /\/\// ],
+            [ "\\/", /\\\// ],
+            [ "////", /\/\/\/\// ],
+            [ "///", /\/\/\// ],
+            [ "///", /\/\/\// ],
+            [ "/\\/", /\/\\\// ],
+            [ "///", /\/\/\// ],
+            [ "//", /\/\// ],
+            [ "\\//", /\\\/\// ],
+            [ "\\/", /\\\// ],
+        ].forEach(function(test) {
+            console.log(test[1].test("\\"), test[1].test(test[0]));
+        });
+    }
+    expect_stdout: [
+        "true true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+        "false true",
+    ]
+}
