@@ -2,6 +2,7 @@ var assert = require("assert");
 var exec = require("child_process").exec;
 var fs = require("fs");
 var reduce_test = require("../reduce");
+var semver = require("semver");
 
 function read(path) {
     return fs.readFileSync(path, "utf8");
@@ -43,7 +44,6 @@ describe("test/reduce.js", function() {
             "// {",
             '//   "toplevel": true',
             "// }",
-            "",
         ].join("\n"));
     });
     it("Should handle test result of NaN", function() {
@@ -55,7 +55,6 @@ describe("test/reduce.js", function() {
             '//   "compress": {},',
             '//   "mangle": false',
             "// }",
-            "",
         ].join("\n"));
     });
     it("Should print correct output for irreducible test case", function() {
@@ -128,6 +127,35 @@ describe("test/reduce.js", function() {
             "// 1.6",
             "// 2.4000000000000004",
             "// ",
+            "// options: {",
+            '//   "compress": {',
+            '//     "unsafe_math": true',
+            "//   },",
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
+    it("Should reduce infinite loops with reasonable performance", function() {
+        if (semver.satisfies(process.version, "0.10")) return;
+        this.timeout(120000);
+        var code = [
+            "var a = 9007199254740992, b = 1;",
+            "",
+            "while (a++ + (1 - b) < a) {",
+            "    0;",
+            "}",
+        ].join("\n");
+        var result = reduce_test(code, {
+            compress: {
+                unsafe_math: true,
+            },
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code.replace(/ timed out after [0-9]+ms/, " timed out."), [
+            code,
+            "// output: ",
+            "// minify: Error: Script execution timed out.",
             "// options: {",
             '//   "compress": {',
             '//     "unsafe_math": true',
