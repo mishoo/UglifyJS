@@ -1,6 +1,7 @@
 var crypto = require("crypto");
 var U = require("./node");
 var List = U.List;
+var os = require("os");
 var sandbox = require("./sandbox");
 
 // Reduce a ufuzz-style `console.log` based test case by iteratively replacing
@@ -29,6 +30,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     // the initial timeout to assess the viability of the test case must be large
     var differs = producesDifferentResultWhenMinified(result_cache, testcase, minify_options, max_timeout);
 
+    if (verbose) {
+        console.error("// Node.js " + process.version + " on " + os.platform() + " " + os.arch());
+    }
     if (!differs) {
         // same stdout result produced when minified
         return {
