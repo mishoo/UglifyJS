@@ -1,3 +1,4 @@
+var crypto = require("crypto");
 var U = require("./node");
 var List = U.List;
 var sandbox = require("./sandbox");
@@ -17,21 +18,32 @@ var sandbox = require("./sandbox");
 // Returns a `minify` result object with an additonal boolean property `reduced`.
 
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
+    if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
     minify_options = minify_options || { compress: {}, mangle: false };
     reduce_options = reduce_options || {};
     var max_iterations = reduce_options.max_iterations || 1000;
-    var max_timeout = reduce_options.max_timeout || 15000;
+    var max_timeout = reduce_options.max_timeout || 10000;
     var verbose = reduce_options.verbose;
     var minify_options_json = JSON.stringify(minify_options, null, 2);
-    var timeout = 1000; // start with a low timeout
     var result_cache = Object.create(null);
-    var differs;
-
-    if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
-
     // the initial timeout to assess the viability of the test case must be large
-    if (differs = producesDifferentResultWhenMinified(result_cache, testcase, minify_options, max_timeout)) {
-        if (differs.error) return differs;
+    var differs = producesDifferentResultWhenMinified(result_cache, testcase, minify_options, max_timeout);
+
+    if (!differs) {
+        // same stdout result produced when minified
+        return {
+            code: "// Can't reproduce test failure with minify options provided:"
+                + "\n// " + to_comment(minify_options_json)
+        };
+    } else if (differs.timed_out) {
+        return {
+            code: "// Can't reproduce test failure within " + max_timeout + "ms:"
+                + "\n// " + to_comment(minify_options_json)
+        };
+    } else if (differs.error) {
+        return differs;
+    } else {
+        max_timeout = Math.min(100 * differs.elapsed, max_timeout);
         // Replace expressions with constants that will be parsed into
         // AST_Nodes as required.  Each AST_Node has its own permutation count,
         // so these replacements can't be shared.
@@ -400,15 +412,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     console.error("*** Discarding permutation and continuing.");
                     continue;
                 }
-                var diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, timeout);
+                var diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout);
                 if (diff) {
                     if (diff.timed_out) {
                         // can't trust the validity of `code_ast` and `code` when timed out.
                         // no harm done - just ignore latest change and continue iterating.
-                        if (timeout < max_timeout) {
-                            timeout += 250;
-                            result_cache = Object.create(null);
-                        }
                     } else if (diff.error) {
                         // something went wrong during minify() - could be malformed AST or genuine bug.
                         // no harm done - just log code & error, ignore latest change and continue iterating.
@@ -433,23 +441,23 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 console.error("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
-        testcase += "\n// output: " + to_comment(differs.unminified_result)
-            + "\n// minify: " + to_comment(differs.minified_result)
-            + "\n// options: " + to_comment(minify_options_json);
-    } else {
-        // same stdout result produced when minified
-        testcase = "// Can't reproduce test failure with minify options provided:"
-            + "\n// " + to_comment(minify_options_json);
+        testcase = U.minify(testcase, {
+            compress: false,
+            mangle: false,
+            output: {
+                beautify: true,
+                braces: true,
+                comments: true,
+            },
+        });
+        testcase.code += [
+            "",
+            "// output: " + to_comment(differs.unminified_result),
+            "// minify: " + to_comment(differs.minified_result),
+            "// options: " + to_comment(minify_options_json),
+        ].join("\n").replace(/\u001b\[\d+m/g, "");
+        return testcase;
     }
-    return U.minify(testcase.replace(/\u001b\[\d+m/g, ""), {
-        compress: false,
-        mangle: false,
-        output: {
-            beautify: true,
-            braces: true,
-            comments: true,
-        }
-    });
 };
 
 function to_comment(value) {
@@ -489,6 +497,10 @@ function is_error(result) {
     return typeof result == "object" && typeof result.name == "string" && typeof result.message == "string";
 }
 
+function is_timed_out(result) {
+    return is_error(result) && /timed out/.test(result);
+}
+
 function is_statement(node) {
     return node instanceof U.AST_Statement && !(node instanceof U.AST_Function);
 }
@@ -519,23 +531,30 @@ function to_statement(node) {
 }
 
 function run_code(result_cache, code, toplevel, timeout) {
-    return result_cache[code] || (result_cache[code] = sandbox.run_code(code, toplevel, timeout));
+    var key = crypto.createHash("sha1").update(code).digest("base64");
+    return result_cache[key] || (result_cache[key] = sandbox.run_code(code, toplevel, timeout));
 }
 
-function producesDifferentResultWhenMinified(result_cache, code, minify_options, timeout) {
+function producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout) {
     var minified = U.minify(code, minify_options);
     if (minified.error) return minified;
 
     var toplevel = minify_options.toplevel;
-    var unminified_result = run_code(result_cache, code, toplevel, timeout);
-    if (/timed out/i.test(unminified_result)) return false;
-
+    var elapsed = Date.now();
+    var unminified_result = run_code(result_cache, code, toplevel, max_timeout);
+    elapsed = Date.now() - elapsed;
+    var timeout = Math.min(100 * elapsed, max_timeout);
     var minified_result = run_code(result_cache, minified.code, toplevel, timeout);
-    if (/timed out/i.test(minified_result)) return { timed_out: true };
 
-    return !sandbox.same_stdout(unminified_result, minified_result) ? {
+    if (sandbox.same_stdout(unminified_result, minified_result)) {
+        return is_timed_out(unminified_result) && is_timed_out(minified_result) && {
+            timed_out: true,
+        };
+    }
+    return {
         unminified_result: unminified_result,
         minified_result: minified_result,
-    } : false;
+        elapsed: elapsed,
+    };
 }
 Error.stackTraceLimit = Infinity;
