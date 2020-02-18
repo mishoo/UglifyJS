@@ -255,3 +255,171 @@ issue_3434_4: {
         "false true",
     ]
 }
+
+exec: {
+    options = {
+        evaluate: true,
+        loops: true,
+        unsafe: true,
+    }
+    input: {
+        while (/a/.exec("AAA"))
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect: {
+        for (;null;)
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+exec_global: {
+    options = {
+        evaluate: true,
+        loops: true,
+        unsafe: true,
+    }
+    input: {
+        while (/a/g.exec("AAA"))
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect: {
+        for (;null;)
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+test: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        while (/a/.test("AAA"))
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect: {
+        while (false)
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+test_global: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        while (/a/g.test("AAA"))
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect: {
+        while (false)
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+var_exec: {
+    options = {
+        evaluate: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var r = /a/;
+        while (r.exec("AAA"))
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect: {
+        var r = /a/;
+        for (;null;)
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+var_exec_global: {
+    options = {
+        evaluate: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var r = /a/g;
+        while (r.exec("aaa"))
+            console.log("PASS");
+    }
+    expect: {
+        var r = /a/g;
+        for (;r.exec("aaa");)
+            console.log("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+var_test: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var r = /a/;
+        while (r.test("AAA"))
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect: {
+        var r = /a/;
+        while (false)
+            console.log("FAIL");
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+var_test_global: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var r = /a/g;
+        while (r.test("aaa"))
+            console.log("PASS");
+    }
+    expect: {
+        var r = /a/g;
+        while (r.test("aaa"))
+            console.log("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
