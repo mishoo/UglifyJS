@@ -84,6 +84,7 @@ wrongly_optimized: {
     options = {
         booleans: true,
         conditionals: true,
+        dead_code: true,
         evaluate: true,
         expression: true,
     }
@@ -99,8 +100,8 @@ wrongly_optimized: {
         function func() {
             foo();
         }
-        // TODO: optimize to `func(), bar()`
-        if (func(), 1) bar();
+        func(), 1;
+        bar();
     }
 }
 

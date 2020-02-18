@@ -16,7 +16,6 @@ wrongly_optimized: {
         function func() {
             foo();
         }
-        // TODO: optimize to `func(), bar()`
-        (func(), 1) && bar();
+        func(), 1, bar();
     }
 }

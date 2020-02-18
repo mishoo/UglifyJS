@@ -423,3 +423,53 @@ var_test_global: {
         "PASS",
     ]
 }
+
+lazy_boolean: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        /b/.exec({}) && console.log("PASS");
+        /b/.test({}) && console.log("PASS");
+        /b/g.exec({}) && console.log("PASS");
+        /b/g.test({}) && console.log("PASS");
+    }
+    expect: {
+        console.log("PASS");
+        console.log("PASS");
+        console.log("PASS");
+        console.log("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+reset_state_between_evaluate: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        unsafe: true,
+    }
+    input: {
+        console.log(function() {
+            for (var a in /[abc4]/g.exec("a"))
+                return "PASS";
+            return "FAIL";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            for (var a in /[abc4]/g.exec("a"))
+                return "PASS";
+            return "FAIL";
+        }());
+    }
+    expect_stdout: "PASS"
+}
