@@ -743,6 +743,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return " /[abc4]/.test(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
       case p++:
+        return " /[abc4]/g.exec(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
+      case p++:
         return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) +
             ") || " + rng(10) + ").toString()[" +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "] ";
