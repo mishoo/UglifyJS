@@ -51,7 +51,7 @@ describe("minify", function() {
             "var a=n(3),b=r(12);",
             'c("qux",a,b),o(11);',
         ].join(""));
-        assert.strictEqual(run_code(compressed), run_code(original));
+        assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
 
     it("Should work with nameCache", function() {
@@ -84,7 +84,7 @@ describe("minify", function() {
             "var a=n(3),b=r(12);",
             'c("qux",a,b),o(11);',
         ].join(""));
-        assert.strictEqual(run_code(compressed), run_code(original));
+        assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
 
     it("Should avoid cached names when mangling top-level variables", function() {
@@ -113,7 +113,7 @@ describe("minify", function() {
             '"xxyyy";var y={y:2,a:3},a=4;',
             'console.log(x.x,y.y,y.a,a);',
         ].join(""));
-        assert.strictEqual(run_code(compressed), run_code(original));
+        assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
 
     it("Should avoid cached names when mangling inner-scoped variables", function() {
@@ -137,7 +137,7 @@ describe("minify", function() {
             'var o=function(o,n){console.log("extend");o();n()};function n(){console.log("A")}',
             'var e=function(n){function e(){console.log("B")}o(e,n);return e}(n);',
         ].join(""));
-        assert.strictEqual(run_code(compressed), run_code(original));
+        assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
 
     it("Should not parse invalid use of reserved words", function() {

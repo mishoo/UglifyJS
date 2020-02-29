@@ -207,8 +207,9 @@ function reminify(orig_options, input_code, input_formatted, stdout) {
             });
             return false;
         } else {
-            var expected = stdout[options.toplevel ? 1 : 0];
-            var actual = run_code(result.code, options.toplevel);
+            var toplevel = sandbox.has_toplevel(options);
+            var expected = stdout[toplevel ? 1 : 0];
+            var actual = run_code(result.code, toplevel);
             if (typeof expected != "string" && typeof actual != "string" && expected.name == actual.name) {
                 actual = expected;
             }
@@ -378,7 +379,10 @@ function test_case(test) {
     }
     if (test.expect_stdout && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
         var stdout = [ run_code(input_code), run_code(input_code, true) ];
-        var toplevel = test.options.toplevel;
+        var toplevel = sandbox.has_toplevel({
+            compress: test.options,
+            mangle: test.mangle
+        });
         var actual = stdout[toplevel ? 1 : 0];
         if (test.expect_stdout === true) {
             test.expect_stdout = actual;
