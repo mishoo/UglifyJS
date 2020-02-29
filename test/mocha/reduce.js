@@ -31,6 +31,19 @@ describe("test/reduce.js", function() {
         if (result.error) throw result.error;
         assert.strictEqual(result.code, read("test/input/reduce/label.reduced.js"));
     });
+    it("Should retain setter arguments", function() {
+        var result = reduce_test(read("test/input/reduce/setter.js"), {
+            compress: {
+                keep_fargs: false,
+                unsafe: true,
+            },
+            mangle: false,
+        }, {
+            verbose: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, read("test/input/reduce/setter.reduced.js"));
+    });
     it("Should handle test cases with --toplevel", function() {
         var result = reduce_test([
             "var Infinity = 42;",
