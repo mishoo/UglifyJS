@@ -46,6 +46,44 @@ describe("test/reduce.js", function() {
             "// }",
         ].join("\n"));
     });
+    it("Should handle test cases with --compress toplevel", function() {
+        var result = reduce_test([
+            "var NaN = 42;",
+            "console.log(NaN);",
+        ].join("\n"), {
+            compress: {
+                toplevel: true,
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure with minify options provided:",
+            "// {",
+            '//   "compress": {',
+            '//     "toplevel": true',
+            "//   }",
+            "// }",
+        ].join("\n"));
+    });
+    it("Should handle test cases with --mangle toplevel", function() {
+        var result = reduce_test([
+            "var undefined = 42;",
+            "console.log(undefined);",
+        ].join("\n"), {
+            mangle: {
+                toplevel: true,
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure with minify options provided:",
+            "// {",
+            '//   "mangle": {',
+            '//     "toplevel": true',
+            "//   }",
+            "// }",
+        ].join("\n"));
+    });
     it("Should handle test result of NaN", function() {
         var result = reduce_test("throw 0 / 0;");
         if (result.error) throw result.error;

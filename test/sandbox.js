@@ -87,3 +87,8 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 } : function(expected, actual) {
     return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
+exports.has_toplevel = function(options) {
+    return options.toplevel
+        || options.mangle && options.mangle.toplevel
+        || options.compress && options.compress.toplevel;
+};

@@ -543,7 +543,7 @@ function producesDifferentResultWhenMinified(result_cache, code, minify_options,
     var minified = U.minify(code, minify_options);
     if (minified.error) return minified;
 
-    var toplevel = minify_options.toplevel;
+    var toplevel = sandbox.has_toplevel(minify_options);
     var elapsed = Date.now();
     var unminified_result = run_code(result_cache, code, toplevel, max_timeout);
     elapsed = Date.now() - elapsed;
