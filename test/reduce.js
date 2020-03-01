@@ -75,8 +75,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (node instanceof U.AST_LabelRef) return;
             if (!in_list && node instanceof U.AST_SymbolDeclaration) return;
             if (node instanceof U.AST_Toplevel) return;
-
             var parent = tt.parent();
+            if (node instanceof U.AST_SymbolFunarg && parent instanceof U.AST_Accessor) return;
 
             // ensure that the _permute prop is a number.
             // can not use `node.start._permute |= 0;` as it will erase fractional part.
