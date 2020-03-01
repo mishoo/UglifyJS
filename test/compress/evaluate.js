@@ -2161,3 +2161,16 @@ collapse_vars_regexp: {
         "abbb",
     ]
 }
+
+issue_3738: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(1 / (0 + ([] - 1) % 1));
+    }
+    expect: {
+        console.log(1 / (0 + ([] - 1) % 1));
+    }
+    expect_stdout: "Infinity"
+}
