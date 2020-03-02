@@ -44,30 +44,37 @@ function test(original, estree, description) {
             try_beautify(transformed.code);
         }
         console.log("!!!!!! Failed... round", round);
-        process.exit(1);
+        return false;
     }
+    return true;
 }
 
 var num_iterations = ufuzz.num_iterations;
+var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
+minify_options.unshift(null);
 for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
     var code = ufuzz.createTopLevelCode();
-    var uglified = UglifyJS.minify(code, {
-        compress: false,
-        mangle: false,
-        output: {
-            ast: true
+    minify_options.forEach(function(options) {
+        var input = options ? UglifyJS.minify(code, JSON.parse(options)).code : code;
+        var uglified = UglifyJS.minify(input, {
+            compress: false,
+            mangle: false,
+            output: {
+                ast: true
+            }
+        });
+        var ok = test(uglified.code, uglified.ast.to_mozilla_ast(), "AST_Node.to_mozilla_ast()");
+        try {
+            ok = test(uglified.code, acorn.parse(input), "acorn.parse()") && ok;
+        } catch (e) {
+            console.log("//=============================================================");
+            console.log("// acorn parser failed... round", round);
+            console.log(e);
+            console.log("// original code");
+            console.log(input);
         }
+        if (!ok) process.exit(1);
     });
-    test(uglified.code, uglified.ast.to_mozilla_ast(), "AST_Node.to_mozilla_ast()");
-    try {
-        test(uglified.code, acorn.parse(code), "acorn.parse()");
-    } catch (e) {
-        console.log("//=============================================================");
-        console.log("// acorn parser failed... round", round);
-        console.log(e);
-        console.log("// original code");
-        console.log(code);
-    }
 }
 console.log();
