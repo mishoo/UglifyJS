@@ -4,10 +4,10 @@ jobs:
   test:
     strategy:
       matrix:
+        node: [ "0.10", "0.12", 4, 6, 8, 10, latest ]
         os: [ ubuntu-latest, windows-latest ]
-        node: [ "0.10", 0.12, 4, 6, 8, 10, latest ]
         script: [ compress, mocha, release/benchmark, release/jetstream ]
-    name: ${{ matrix.os }} ${{ matrix.node }} ${{ matrix.script }}
+    name: ${{ matrix.node }} ${{ matrix.os }} ${{ matrix.script }}
     runs-on: ${{ matrix.os }}
     env:
       NODE: ${{ matrix.node }}
