@@ -1,3 +1,4 @@
+// (beautified)
 var b = 0;
 
 var expr2 = (0 - 1 - .1 - .1).toString();

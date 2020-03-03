@@ -53,8 +53,8 @@ describe("test/reduce.js", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
-            "// Can't reproduce test failure with minify options provided:",
-            "// {",
+            "// Can't reproduce test failure",
+            "// minify options: {",
             '//   "toplevel": true',
             "// }",
         ].join("\n"));
@@ -70,8 +70,8 @@ describe("test/reduce.js", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
-            "// Can't reproduce test failure with minify options provided:",
-            "// {",
+            "// Can't reproduce test failure",
+            "// minify options: {",
             '//   "compress": {',
             '//     "toplevel": true',
             "//   }",
@@ -89,8 +89,8 @@ describe("test/reduce.js", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
-            "// Can't reproduce test failure with minify options provided:",
-            "// {",
+            "// Can't reproduce test failure",
+            "// minify options: {",
             '//   "mangle": {',
             '//     "toplevel": true',
             "//   }",
@@ -101,11 +101,8 @@ describe("test/reduce.js", function() {
         var result = reduce_test("throw 0 / 0;");
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
-            "// Can't reproduce test failure with minify options provided:",
-            "// {",
-            '//   "compress": {},',
-            '//   "mangle": false',
-            "// }",
+            "// Can't reproduce test failure",
+            "// minify options: {}",
         ].join("\n"));
     });
     it("Should print correct output for irreducible test case", function() {
@@ -121,6 +118,7 @@ describe("test/reduce.js", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
+            "// (beautified)",
             "console.log(function f(a) {",
             "    return f.length;",
             "}());",
@@ -169,6 +167,7 @@ describe("test/reduce.js", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
+            "// (beautified)",
             code,
             "// output: 0.8",
             "// 1.6",
@@ -189,11 +188,41 @@ describe("test/reduce.js", function() {
     it("Should reduce infinite loops with reasonable performance", function() {
         if (semver.satisfies(process.version, "0.10")) return;
         this.timeout(120000);
+        var result = reduce_test("while (/9/.test(1 - .8));", {
+            compress: {
+                unsafe_math: true,
+            },
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code.replace(/ timed out after [0-9]+ms/, " timed out."), [
+            "// (beautified)",
+            "while (/9/.test(1 - .8)) {}",
+            "// output: Error: Script execution timed out.",
+            "// minify: ",
+            "// options: {",
+            '//   "compress": {',
+            '//     "unsafe_math": true',
+            "//   },",
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
+    it("Should ignore difference in Error.message", function() {
+        var result = reduce_test("null[function() {\n}];");
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, (semver.satisfies(process.version, "0.10") ? [
+            "// Can't reproduce test failure",
+            "// minify options: {}",
+        ] : [
+            "// No differences except in error message",
+            "// minify options: {}",
+        ]).join("\n"));
+    });
+    it("Should report trailing whitespace difference in stringified format", function() {
         var code = [
-            "var a = 9007199254740992, b = 1;",
-            "",
-            "while (a++ + (1 - b) < a) {",
-            "    0;",
+            "for (var a in (1 - .8).toString()) {",
+            "    console.log();",
             "}",
         ].join("\n");
         var result = reduce_test(code, {
@@ -203,14 +232,16 @@ describe("test/reduce.js", function() {
             mangle: false,
         });
         if (result.error) throw result.error;
-        assert.strictEqual(result.code.replace(/ timed out after [0-9]+ms/, " timed out."), [
+        assert.strictEqual(result.code, [
+            "// (beautified)",
             code,
-            "// output: ",
-            "// minify: Error: Script execution timed out.",
+            "// (stringified)",
+            '// output: "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n"',
+            '// minify: "\\n\\n\\n"',
             "// options: {",
             '//   "compress": {',
             '//     "unsafe_math": true',
-            "//   },",
+            '//   },',
             '//   "mangle": false',
             "// }",
         ].join("\n"));
