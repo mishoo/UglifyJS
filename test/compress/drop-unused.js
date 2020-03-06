@@ -2413,3 +2413,34 @@ issue_3673: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3746: {
+    options = {
+        keep_fargs: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        try {
+            A;
+        } catch (e) {
+            var e;
+        }
+        (function f(a) {
+            e = a;
+        })();
+        console.log("PASS");
+    }
+    expect: {
+        try {
+            A;
+        } catch (e) {
+            var e;
+        }
+        (function(a) {
+            e = a;
+        })();
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
