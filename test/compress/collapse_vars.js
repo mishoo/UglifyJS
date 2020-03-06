@@ -7765,3 +7765,44 @@ issue_3700: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3744: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f(a) {
+            ({
+                get p() {
+                    switch (1) {
+                      case 0:
+                        f((a = 2, 3));
+                      case 1:
+                        console.log(function g(b) {
+                            return b || "PASS";
+                        }());
+                    }
+                }
+            }).p;
+        })();
+    }
+    expect: {
+        (function f(a) {
+            ({
+                get p() {
+                    switch (1) {
+                      case 0:
+                        f();
+                      case 1:
+                        console.log(b || "PASS");
+                    }
+                    var b;
+                }
+            }).p;
+        })();
+    }
+    expect_stdout: "PASS"
+}
