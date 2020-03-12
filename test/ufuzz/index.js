@@ -1012,7 +1012,7 @@ function log_suspects(minify_options, component) {
     var defs = default_options[component];
     var suspects = Object.keys(defs).filter(function(name) {
         var flip = name == "keep_fargs";
-        if (flip ? name in options : (name in options ? options : defs)[name]) {
+        if (flip === !(name in options ? options : defs)[name]) {
             var m = JSON.parse(JSON.stringify(minify_options));
             var o = JSON.parse(JSON.stringify(options));
             o[name] = flip;
@@ -1036,20 +1036,29 @@ function log_suspects(minify_options, component) {
     }
 }
 
-function log_rename(options) {
-    var m = JSON.parse(options);
-    m.rename = false;
-    var result = UglifyJS.minify(original_code, m);
-    if (result.error) {
-        errorln("Error testing options.rename");
-        errorln(result.error);
-    } else {
-        var r = sandbox.run_code(result.code, sandbox.has_toplevel(m));
-        if (sandbox.same_stdout(original_result, r)) {
-            errorln("Suspicious options:");
-            errorln("  rename");
-            errorln();
+function log_suspects_global(options) {
+    var o = {};
+    UglifyJS.minify("", o);
+    var suspects = Object.keys(o).filter(function(component) {
+      return typeof o[component] != "object";
+    }).filter(function(component) {
+        var m = JSON.parse(options);
+        m[component] = false;
+        var result = UglifyJS.minify(original_code, m);
+        if (result.error) {
+            errorln("Error testing options." + component);
+            errorln(result.error);
+        } else {
+            var r = sandbox.run_code(result.code, sandbox.has_toplevel(m));
+            return sandbox.same_stdout(original_result, r);
         }
+    });
+    if (suspects.length > 0) {
+        errorln("Suspicious options:");
+        suspects.forEach(function(name) {
+            errorln("  " + name);
+        });
+        errorln();
     }
 }
 
@@ -1099,7 +1108,7 @@ function log(options) {
     errorln();
     if (!ok && typeof uglify_code == "string") {
         Object.keys(default_options).forEach(log_suspects.bind(null, JSON.parse(options)));
-        log_rename(options);
+        log_suspects_global(options);
         errorln("!!!!!! Failed... round " + round);
     }
 }
