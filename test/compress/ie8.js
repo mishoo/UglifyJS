@@ -2398,3 +2398,25 @@ issue_3703: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3750: {
+    options = {
+        evaluate: true,
+        ie8: true,
+    }
+    input: {
+        (function(a) {
+            return function a() {
+                return a && console.log("PASS");
+            }();
+        })();
+    }
+    expect: {
+        (function(a) {
+            return function a() {
+                return a && console.log("PASS");
+            }();
+        })();
+    }
+    expect_stdout: "PASS"
+}
