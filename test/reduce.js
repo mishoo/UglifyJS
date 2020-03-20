@@ -20,7 +20,7 @@ var sandbox = require("./sandbox");
 
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
     if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
-    minify_options = minify_options || { compress: {}, mangle: false };
+    minify_options = minify_options || {};
     reduce_options = reduce_options || {};
     var max_iterations = reduce_options.max_iterations || 1000;
     var max_timeout = reduce_options.max_timeout || 10000;
@@ -36,16 +36,29 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     if (!differs) {
         // same stdout result produced when minified
         return {
-            code: "// Can't reproduce test failure with minify options provided:"
-                + "\n// " + to_comment(minify_options_json)
+            code: [
+                "// Can't reproduce test failure",
+                "// minify options: " + to_comment(minify_options_json)
+            ].join("\n")
         };
     } else if (differs.timed_out) {
         return {
-            code: "// Can't reproduce test failure within " + max_timeout + "ms:"
-                + "\n// " + to_comment(minify_options_json)
+            code: [
+                "// Can't reproduce test failure within " + max_timeout + "ms",
+                "// minify options: " + to_comment(minify_options_json)
+            ].join("\n")
         };
     } else if (differs.error) {
         return differs;
+    } else if (is_error(differs.unminified_result)
+        && is_error(differs.minified_result)
+        && differs.unminified_result.name == differs.minified_result.name) {
+        return {
+            code: [
+                "// No differences except in error message",
+                "// minify options: " + to_comment(minify_options_json)
+            ].join("\n")
+        };
     } else {
         max_timeout = Math.min(100 * differs.elapsed, max_timeout);
         // Replace expressions with constants that will be parsed into
@@ -71,6 +84,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             // quick ignores
             if (node instanceof U.AST_Accessor) return;
             if (node instanceof U.AST_Directive) return;
+            if (!in_list && node instanceof U.AST_EmptyStatement) return;
             if (node instanceof U.AST_Label) return;
             if (node instanceof U.AST_LabelRef) return;
             if (!in_list && node instanceof U.AST_SymbolDeclaration) return;
@@ -112,10 +126,25 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
             else if (node instanceof U.AST_Binary) {
                 CHANGED = true;
-                return [
+                var permute = ((node.start._permute += step) * steps | 0) % 4;
+                var expr = [
                     node.left,
                     node.right,
-                ][ ((node.start._permute += step) * steps | 0) % 2 ];
+                ][ permute & 1 ];
+                if (permute < 2) return expr;
+                // wrap with console.log()
+                return new U.AST_Call({
+                    expression: new U.AST_Dot({
+                        expression: new U.AST_SymbolRef({
+                            name: "console",
+                            start: {},
+                        }),
+                        property: "log",
+                        start: {},
+                    }),
+                    args: [ expr ],
+                    start: {},
+                });
             }
             else if (node instanceof U.AST_Catch || node instanceof U.AST_Finally) {
                 // drop catch or finally block
@@ -357,15 +386,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
 
             // replace this node
-            var newNode = U.parse(REPLACEMENTS[node.start._permute % REPLACEMENTS.length | 0], {
+            var newNode = is_statement(node) ? new U.AST_EmptyStatement({
+                start: {},
+            }) : U.parse(REPLACEMENTS[node.start._permute % REPLACEMENTS.length | 0], {
                 expression: true,
             });
-            if (is_statement(node)) {
-                newNode = new U.AST_SimpleStatement({
-                    body: newNode,
-                    start: {},
-                });
-            }
             newNode.start._permute = ++node.start._permute;
             CHANGED = true;
             return newNode;
@@ -445,27 +470,60 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 console.error("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
-        testcase = U.minify(testcase, {
-            compress: false,
-            mangle: false,
-            output: {
-                beautify: true,
-                braces: true,
-                comments: true,
-            },
-        });
-        testcase.code += [
-            "",
-            "// output: " + to_comment(differs.unminified_result),
-            "// minify: " + to_comment(differs.minified_result),
-            "// options: " + to_comment(minify_options_json),
-        ].join("\n").replace(/\u001b\[\d+m/g, "");
+        testcase = try_beautify(result_cache, testcase, minify_options, differs.unminified_result, max_timeout);
+        var lines = [ "" ];
+        var unminified_result = strip_color_codes(differs.unminified_result);
+        var minified_result = strip_color_codes(differs.minified_result);
+        if (trim_trailing_whitespace(unminified_result) == trim_trailing_whitespace(minified_result)) {
+            lines.push(
+                "// (stringified)",
+                "// output: " + JSON.stringify(unminified_result),
+                "// minify: " + JSON.stringify(minified_result)
+            );
+        } else {
+            lines.push(
+                "// output: " + to_comment(unminified_result),
+                "// minify: " + to_comment(minified_result)
+            );
+        }
+        lines.push("// options: " + to_comment(minify_options_json));
+        testcase.code += lines.join("\n");
         return testcase;
     }
 };
 
+function strip_color_codes(value) {
+    return ("" + value).replace(/\u001b\[\d+m/g, "");
+}
+
 function to_comment(value) {
     return ("" + value).replace(/\n/g, "\n// ");
+}
+
+function trim_trailing_whitespace(value) {
+    return ("" + value).replace(/\s+$/, "");
+}
+
+function try_beautify(result_cache, testcase, minify_options, expected, timeout) {
+    var result = U.minify(testcase, {
+        compress: false,
+        mangle: false,
+        output: {
+            beautify: true,
+            braces: true,
+            comments: true,
+        },
+    });
+    if (result.error) return {
+        code: testcase,
+    };
+    var toplevel = sandbox.has_toplevel(minify_options);
+    var actual = run_code(result_cache, result.code, toplevel, timeout);
+    if (!sandbox.same_stdout(expected, actual)) return {
+        code: testcase,
+    };
+    result.code = "// (beautified)\n" + result.code;
+    return result;
 }
 
 function has_exit(fn) {

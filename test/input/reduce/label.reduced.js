@@ -1,8 +1,7 @@
+// (beautified)
 var o = this;
 
-for (var k in o) {
-    0;
-}
+for (var k in o) {}
 
 var a;
 

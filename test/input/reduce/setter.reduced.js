@@ -1,3 +1,4 @@
+// (beautified)
 console.log(function f(a) {
     ({
         set p(v) {
