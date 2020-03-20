@@ -89,6 +89,22 @@ describe("sourcemaps", function() {
         assert.strictEqual(result.code, code);
         assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI","sourceRoot":"//foo.bar/"}');
     });
+    it("Should produce same source map with DOS or UNIX line endings", function() {
+        var code = [
+            'console.log("\\',
+            'hello",',
+            '"world");',
+        ];
+        var dos = UglifyJS.minify(code.join("\r\n"), {
+            sourceMap: true,
+        });
+        if (dos.error) throw dos.error;
+        var unix = UglifyJS.minify(code.join("\n"), {
+            sourceMap: true,
+        });
+        if (unix.error) throw unix.error;
+        assert.strictEqual(dos.map, unix.map);
+    });
 
     describe("inSourceMap", function() {
         it("Should read the given string filename correctly when sourceMapIncludeSources is enabled", function() {
