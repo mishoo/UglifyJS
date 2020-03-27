@@ -13,3 +13,4 @@ exports["to_ascii"] = to_ascii;
 exports["tokenizer"] = tokenizer;
 exports["TreeTransformer"] = TreeTransformer;
 exports["TreeWalker"] = TreeWalker;
+exports["vlq_decode"] = vlq_decode;

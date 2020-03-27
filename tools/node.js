@@ -15,13 +15,13 @@ exports.FILES = [
     require.resolve("./exports.js"),
 ];
 
-new Function("MOZ_SourceMap", "exports", function() {
+new Function("exports", function() {
     var code = exports.FILES.map(function(file) {
         return fs.readFileSync(file, "utf8");
     });
     code.push("exports.describe_ast = " + describe_ast.toString());
     return code.join("\n\n");
-}())(require("source-map"), exports);
+}())(exports);
 
 function describe_ast() {
     var out = OutputStream({ beautify: true });
