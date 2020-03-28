@@ -245,7 +245,7 @@ describe("bin/uglifyjs", function() {
             if (err) throw err;
             assert.strictEqual(stdout, [
                 "var Foo=function Foo(){console.log(1+2)};new Foo;var bar=function(){function foo(bar){return bar}return foo}();",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwidGVzdC9pbnB1dC9pc3N1ZS0xMzIzL3NhbXBsZS5qcyJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFNBQUFBLE1BQWdCQyxRQUFRQyxJQUFJLEVBQUUsSUFBTyxJQUFJRixJQ0FuRCxJQUFJRyxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwidGVzdC9pbnB1dC9pc3N1ZS0xMzIzL3NhbXBsZS5qcyJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFNBQUVBLE1BQWNDLFFBQVFDLElBQUksRUFBRSxJQUFPLElBQUlGLElDQW5ELElBQUlHLElBQU0sV0FDTixTQUFTQyxJQUFLRCxLQUNWLE9BQU9BLElBR1gsT0FBT0MsSUFMRCJ9",
                 "",
             ].join("\n"));
             var stderrLines = stderr.split("\n");
@@ -587,7 +587,7 @@ describe("bin/uglifyjs", function() {
         });
 
         function read_map() {
-            var map = JSON.parse(read("./test/input/issue-1236/simple.js.map"));
+            var map = JSON.parse(read("test/input/issue-1236/simple.js.map"));
             delete map.sourcesContent;
             return JSON.stringify(map).replace(/"/g, '\\"');
         }

@@ -1,10 +1,9 @@
 var assert = require("assert");
-var readFileSync = require("fs").readFileSync;
-var SourceMapConsumer = require("source-map").SourceMapConsumer;
+var fs = require("fs");
 var UglifyJS = require("../node");
 
 function read(path) {
-    return readFileSync(path, "utf8");
+    return fs.readFileSync(path, "utf8");
 }
 
 function source_map(code) {
@@ -44,7 +43,7 @@ function prepare_map(sourceMap) {
         }
     });
     if (result.error) throw result.error;
-    return new SourceMapConsumer(result.map);
+    return JSON.parse(result.map);
 }
 
 describe("sourcemaps", function() {
@@ -87,7 +86,7 @@ describe("sourcemaps", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, code);
-        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI","sourceRoot":"//foo.bar/"}');
+        assert.strictEqual(result.map, '{"version":3,"sourceRoot":"//foo.bar/","sources":["0"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI"}');
     });
     it("Should produce same source map with DOS or UNIX line endings", function() {
         var code = [
@@ -108,9 +107,9 @@ describe("sourcemaps", function() {
 
     describe("inSourceMap", function() {
         it("Should read the given string filename correctly when sourceMapIncludeSources is enabled", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-1236/simple.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-1236/simple.js"), {
                 sourceMap: {
-                    content: read("./test/input/issue-1236/simple.js.map"),
+                    content: read("test/input/issue-1236/simple.js.map"),
                     filename: "simple.min.js",
                     includeSources: true
                 }
@@ -122,7 +121,7 @@ describe("sourcemaps", function() {
             assert.equal(map.sourcesContent[0], 'let foo = x => "foo " + x;\nconsole.log(foo("bar"));');
         });
         it("Should process inline source map", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-520/input.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-520/input.js"), {
                 compress: { toplevel: true },
                 sourceMap: {
                     content: "inline",
@@ -131,10 +130,10 @@ describe("sourcemaps", function() {
                 }
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code + "\n", readFileSync("test/input/issue-520/output.js", "utf8"));
+            assert.strictEqual(result.code + "\n", read("test/input/issue-520/output.js"));
         });
         it("Should warn for missing inline source map", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-1323/sample.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-1323/sample.js"), {
                 mangle: false,
                 sourceMap: {
                     content: "inline"
@@ -146,8 +145,8 @@ describe("sourcemaps", function() {
         });
         it("Should handle multiple input and inline source map", function() {
             var result = UglifyJS.minify([
-                read("./test/input/issue-520/input.js"),
-                read("./test/input/issue-1323/sample.js"),
+                read("test/input/issue-520/input.js"),
+                read("test/input/issue-1323/sample.js"),
             ], {
                 sourceMap: {
                     content: "inline",
@@ -163,7 +162,7 @@ describe("sourcemaps", function() {
             assert.deepEqual(result.warnings, [ "WARN: inline source map not found: 1" ]);
         });
         it("Should drop source contents for includeSources=false", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-520/input.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-520/input.js"), {
                 compress: false,
                 mangle: false,
                 sourceMap: {
@@ -186,7 +185,7 @@ describe("sourcemaps", function() {
             assert.ok(!("sourcesContent" in map));
         });
         it("Should parse the correct sourceMappingURL", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-3294/input.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-3294/input.js"), {
                 compress: { toplevel: true },
                 sourceMap: {
                     content: "inline",
@@ -195,10 +194,10 @@ describe("sourcemaps", function() {
                 }
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code + "\n", readFileSync("test/input/issue-3294/output.js", "utf8"));
+            assert.strictEqual(result.code + "\n", read("test/input/issue-3294/output.js"));
         });
         it("Should work in presence of unrecognised annotations", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-3441/input.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-3441/input.js"), {
                 compress: false,
                 mangle: false,
                 sourceMap: {
@@ -230,7 +229,7 @@ describe("sourcemaps", function() {
             assert.strictEqual(code, "var a=function(n){return n};");
         });
         it("Should work with max_line_len", function() {
-            var result = UglifyJS.minify(read("./test/input/issue-505/input.js"), {
+            var result = UglifyJS.minify(read("test/input/issue-505/input.js"), {
                 compress: {
                     directives: false,
                 },
@@ -242,7 +241,7 @@ describe("sourcemaps", function() {
                 }
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code, read("./test/input/issue-505/output.js"));
+            assert.strictEqual(result.code, read("test/input/issue-505/output.js"));
         });
         it("Should work with unicode characters", function() {
             var code = [
@@ -281,29 +280,33 @@ describe("sourcemaps", function() {
         it("Should copy over original sourcesContent", function() {
             var orig = get_map();
             var map = prepare_map(orig);
-            assert.equal(map.sourceContentFor("index.js"), orig.sourcesContent[0]);
+            assert.strictEqual(map.sources.length, 1);
+            assert.strictEqual(map.sources[0], "index.js");
+            assert.strictEqual(map.sourcesContent.length, 1);
+            assert.equal(map.sourcesContent[0], orig.sourcesContent[0]);
         });
         it("Should copy sourcesContent if sources are relative", function() {
             var relativeMap = get_map();
             relativeMap.sources = ['./index.js'];
             var map = prepare_map(relativeMap);
-            assert.notEqual(map.sourcesContent, null);
-            assert.equal(map.sourcesContent.length, 1);
-            assert.equal(map.sourceContentFor("index.js"), relativeMap.sourcesContent[0]);
+            assert.strictEqual(map.sources.length, 1);
+            assert.strictEqual(map.sources[0], "./index.js");
+            assert.strictEqual(map.sourcesContent.length, 1);
+            assert.equal(map.sourcesContent[0], relativeMap.sourcesContent[0]);
         });
         it("Should not have invalid mappings from inputSourceMap", function() {
             var map = prepare_map(get_map());
             // The original source has only 2 lines, check that mappings don't have more lines
             var msg = "Mapping should not have higher line number than the original file had";
-            map.eachMapping(function(mapping) {
-                assert.ok(mapping.originalLine <= 2, msg);
-            });
-            map.allGeneratedPositionsFor({
-                source: "index.js",
-                line: 1,
-                column: 1
-            }).forEach(function(pos) {
-                assert.ok(pos.line <= 2, msg);
+            var lines = map.mappings.split(/;/);
+            assert.ok(lines.length <= 2, msg);
+            var indices = [ 0, 0, 1, 0, 0];
+            lines.forEach(function(segments) {
+                indices[0] = 0;
+                segments.split(/,/).forEach(function(segment) {
+                    UglifyJS.vlq_decode(indices, segment);
+                    assert.ok(indices[2] <= 2, msg);
+                });
             });
         });
     });
