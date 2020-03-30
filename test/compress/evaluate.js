@@ -2174,3 +2174,19 @@ issue_3738: {
     }
     expect_stdout: "Infinity"
 }
+
+issue_3755: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        unsafe: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log((/4/.exec(1 + (!0 - 5 / "23")) || 0).p);
+    }
+    expect: {
+        console.log((/4/.exec(!0 - 5 / "23" + 1), 0).p);
+    }
+    expect_stdout: "undefined"
+}
