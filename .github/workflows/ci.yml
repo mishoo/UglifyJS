@@ -22,10 +22,17 @@ jobs:
         shell: bash
         run: |
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          . ~/.nvs/nvs.sh --version || . ~/.nvs/nvs.sh --version || . ~/.nvs/nvs.sh --version
+          cd ~/.nvs
+          . ./nvs.sh || { git clean -xdf && . ./nvs.sh; } || { git clean -xdf && . ./nvs.sh; }
+          cd -
+          nvs --version
           nvs add $NODE || nvs add $NODE || nvs add $NODE
           nvs use $NODE
           node --version
-          npm --version --no-update-notifier
-          npm install --no-audit --no-optional --no-save --no-update-notifier
+          npm config set audit false
+          npm config set optional false
+          npm config set save false
+          npm config set update-notifier false
+          npm --version
+          npm install || npm install || npm install
           node test/$TYPE
