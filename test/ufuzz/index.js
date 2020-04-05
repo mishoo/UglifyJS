@@ -704,6 +704,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
         }
         VAR_NAMES.length = nameLenBefore;
+        if (canThrow && rng(8) == 0 && !/^new /.test(s[0])) s[s.length - 1] += "()";
         return filterDirective(s).join("\n");
       case p++:
       case p++:
