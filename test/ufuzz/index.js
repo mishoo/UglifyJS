@@ -704,7 +704,6 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
         }
         VAR_NAMES.length = nameLenBefore;
-        if (canThrow && rng(8) == 0 && !/^new /.test(s[0])) s[s.length - 1] += "()";
         return filterDirective(s).join("\n");
       case p++:
       case p++:
@@ -773,6 +772,12 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
       case p++:
+        if (rng(16) == 0) {
+            var name = getVarName();
+            var fn = name + "." + getDotKey();
+            called[name] = true;
+            return name + " && " + "typeof " + fn + ' == "function" && --_calls_ >= 0 && ' + fn + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
+        }
         var name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
         called[name] = true;
         return "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
