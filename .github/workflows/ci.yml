@@ -22,12 +22,13 @@ jobs:
         shell: bash
         run: |
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          cd ~/.nvs
-          chmod a+x ./nvs.sh
-          while !(./nvs.sh --version); do git clean -xdf; done;
-          while !(./nvs.sh add $NODE); do echo "'nvs add $NODE' failed - retrying..."; done;
-          ./nvs.sh use $NODE
-          cd -
+          while !(. ~/.nvs/nvs.sh add $NODE); do
+            cd ~/.nvs
+            git clean -xdf
+            cd -
+          done
+          . ~/.nvs/nvs.sh --version
+          nvs use $NODE
           node --version
           npm config set audit false
           npm config set optional false

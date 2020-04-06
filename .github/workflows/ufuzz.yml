@@ -16,12 +16,13 @@ jobs:
         shell: bash
         run: |
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          cd ~/.nvs
-          chmod a+x ./nvs.sh
-          while !(./nvs.sh --version); do git clean -xdf; done;
-          while !(./nvs.sh add 10); do echo "'nvs add 10' failed - retrying..."; done;
-          ./nvs.sh use 10
-          cd -
+          while !(. ~/.nvs/nvs.sh add 10); do
+            cd ~/.nvs
+            git clean -xdf
+            cd -
+          done
+          . ~/.nvs/nvs.sh --version
+          nvs use 10
           node --version
           npm config set audit false
           npm config set optional false
