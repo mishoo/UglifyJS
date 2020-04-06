@@ -23,16 +23,16 @@ jobs:
         run: |
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
           cd ~/.nvs
-          . ./nvs.sh || { git clean -xdf && . ./nvs.sh; } || { git clean -xdf && . ./nvs.sh; }
+          chmod a+x ./nvs.sh
+          while !(./nvs.sh --version); do git clean -xdf; done;
+          while !(./nvs.sh add $NODE); do echo "'nvs add $NODE' failed - retrying..."; done;
+          ./nvs.sh use $NODE
           cd -
-          nvs --version
-          nvs add $NODE || nvs add $NODE || nvs add $NODE
-          nvs use $NODE
           node --version
           npm config set audit false
           npm config set optional false
           npm config set save false
           npm config set update-notifier false
           npm --version
-          npm install || npm install || npm install
+          while !(npm install); do echo "'npm install' failed - retrying..."; done;
           node test/$TYPE
