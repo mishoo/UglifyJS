@@ -16,7 +16,7 @@ jobs:
         shell: bash
         run: |
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          while !(. ~/.nvs/nvs.sh add 10); do
+          while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add 10 && nvs use 10'; do
             cd ~/.nvs
             git clean -xdf
             cd -
@@ -29,5 +29,5 @@ jobs:
           npm config set save false
           npm config set update-notifier false
           npm --version
-          while !(npm install); do echo "'npm install' failed - retrying..."; done;
+          while !(npm install); do echo "'npm install' failed - retrying..."; done
           node test/ufuzz/job 3600000
