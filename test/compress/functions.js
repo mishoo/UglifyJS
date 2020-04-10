@@ -3928,3 +3928,89 @@ preserve_binding_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3770: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function f(a, a) {
+                var b = function() {
+                    return a || "PASS";
+                }();
+                console.log(b);
+            }
+            f("FAIL");
+        })();
+    }
+    expect: {
+        (function() {
+            b = a || "PASS",
+            console.log(b);
+            var a, b;
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3771: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            function f(a) {
+                var a = f(1234);
+            }
+            f();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function f(a) {
+                f();
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3772: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return a;
+        }
+        var b = f();
+        function g() {
+            console.log(f());
+        }
+        g();
+    }
+    expect: {
+        var a = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
