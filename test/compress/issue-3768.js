@@ -9,12 +9,12 @@ mangle: {
         })();
     }
     expect: {
-        var o = eval, e = 42;
+        var e = eval, x = 42;
         (function() {
-            console.log(o("typeof x"));
+            console.log(e("typeof x"));
         })();
     }
-    expect_stdout: "undefined"
+    expect_stdout: true
 }
 
 compress: {
@@ -49,7 +49,7 @@ compress: {
         console.log(function() {
             var a = 42;
             return eval("typeof a");
-        }(), eval("typeof a"), function(eval) {
+        }(), (0, eval)("typeof a"), function(eval) {
             var a = false;
             return eval("typeof a");
         }(eval), function(f) {
@@ -65,4 +65,64 @@ compress: {
         }(eval));
     }
     expect_stdout: "number undefined boolean string undefined"
+}
+
+call_arg_1: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        var z = "foo";
+        (function() {
+            var z = false;
+            (function(e) {
+                var z = 42;
+                e("console.log(typeof z)");
+            })(eval);
+        })();
+    }
+    expect: {
+        var z = "foo";
+        (function() {
+            var o = false;
+            (function(o) {
+                var a = 42;
+                o("console.log(typeof z)");
+            })(eval);
+        })();
+    }
+    expect_stdout: true
+}
+
+call_arg_2: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        function eval() {
+            console.log("PASS");
+        }
+        var z = "foo";
+        (function() {
+            var z = false;
+            (function(e) {
+                var z = 42;
+                e("console.log(typeof z)");
+            })(eval);
+        })();
+    }
+    expect: {
+        function n() {
+            console.log("PASS");
+        }
+        var o = "foo";
+        (function() {
+            var o = false;
+            (function(o) {
+                var n = 42;
+                o("console.log(typeof z)");
+            })(n);
+        })();
+    }
+    expect_stdout: "PASS"
 }

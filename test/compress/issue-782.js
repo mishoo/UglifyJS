@@ -8,7 +8,7 @@ remove_sequence: {
         (0, 1, _decorators.logThis)();
     }
     expect: {
-        eval();
+        (0, eval)();
         logThis();
         (0, _decorators.logThis)();
     }
