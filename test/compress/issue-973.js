@@ -53,20 +53,23 @@ this_binding_conditionals: {
 this_binding_collapse_vars: {
     options = {
         collapse_vars: true,
-        toplevel: true,
         unused: true,
     }
     input: {
-        "use strict";
-        var c = a; c();
-        var d = a.b; d();
-        var e = eval; e();
+        function f() {
+            "use strict";
+            var c = a; c();
+            var d = a.b; d();
+            var e = eval; e();
+        }
     }
     expect: {
-        "use strict";
-        a();
-        (0, a.b)();
-        (0, eval)();
+        function f() {
+            "use strict";
+            a();
+            (0, a.b)();
+            (0, eval)();
+        }
     }
 }
 
@@ -97,7 +100,7 @@ this_binding_side_effects: {
         (function(foo) {
             foo();
             (0, foo.bar)();
-            eval("console.log(foo);");
+            (0, eval)("console.log(foo);");
         }());
         (function(foo) {
             "use strict";
@@ -144,7 +147,7 @@ this_binding_sequences: {
             return eval("this");
         }()),
         console.log(typeof function() {
-            return eval("this");
+            return (0, eval)("this");
         }()),
         console.log(typeof function() {
             "use strict";
