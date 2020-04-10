@@ -26,7 +26,7 @@ warn: {
         }().length);
     }
     expect_warnings: [
-        "WARN: Function.prototype.caller not supported [test/compress/issue-2719.js:5,19]",
         "WARN: Function.prototype.arguments not supported [test/compress/issue-2719.js:5,19]",
+        "WARN: Function.prototype.caller not supported [test/compress/issue-2719.js:5,19]",
     ]
 }
