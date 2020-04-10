@@ -1,6 +1,6 @@
 function f(x) {
     return g(x);
     function g(x) {
-        return x + 1;
+        return x + x;
     }
 }

@@ -674,7 +674,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + " test/input/rename/input.js --rename";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
-            assert.strictEqual(stdout, "function f(a){return b(a);function b(c){return c+1}}\n");
+            assert.strictEqual(stdout, "function f(a){return b(a);function b(c){return c+c}}\n");
             done();
         });
     });
@@ -682,7 +682,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + " test/input/rename/input.js -mc passes=2 --no-rename";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
-            assert.strictEqual(stdout, "function f(n){return function(n){return n+1}(n)}\n");
+            assert.strictEqual(stdout, "function f(n){return function(n){return n+n}(n)}\n");
             done();
         });
     });
@@ -690,7 +690,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + " test/input/rename/input.js -mc passes=2";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
-            assert.strictEqual(stdout, "function f(n){return n+1}\n");
+            assert.strictEqual(stdout, "function f(n){return n+n}\n");
             done();
         });
     });
@@ -698,7 +698,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + " test/input/rename/input.js -c passes=2";
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
-            assert.strictEqual(stdout, "function f(x){return function(x){return x+1}(x)}\n");
+            assert.strictEqual(stdout, "function f(x){return function(x){return x+x}(x)}\n");
             done();
         });
     });

@@ -1020,9 +1020,7 @@ issue_2616: {
     }
     expect: {
         var c = "FAIL";
-        !function(NaN) {
-            (true << NaN) - 0/0 || (c = "PASS");
-        }([]);
+        (true << []) - NaN || (c = "PASS");
         console.log(c);
     }
     expect_stdout: "PASS"
@@ -1607,7 +1605,31 @@ duplicate_argnames_2: {
     }
     expect: {
         var a = "PASS";
-        console, b && (a = "FAIL");
+        console, void 0 && (a = "FAIL");
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+duplicate_argnames_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        function f(b, b, b) {
+            b && (a = "PASS");
+        }
+        f(null, 0, console, "42".toString());
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        b = console, "42".toString(), b && (a = "PASS");
         var b;
         console.log(a);
     }
@@ -1766,8 +1788,7 @@ inline_2: {
     }
     expect: {
         console.log(1);
-        a = 2, console.log(a);
-        var a;
+        console.log(2);
         (function(b) {
             var c = b;
             console.log(c);
@@ -1800,8 +1821,7 @@ inline_3: {
     }
     expect: {
         console.log(1);
-        a = 2, console.log(a);
-        var a;
+        console.log(2);
         b = 3, c = b, console.log(c);
         var b, c;
     }
@@ -1832,8 +1852,7 @@ inline_true: {
     }
     expect: {
         console.log(1);
-        a = 2, console.log(a);
-        var a;
+        console.log(2);
         b = 3, c = b, console.log(c);
         var b, c;
     }
@@ -1897,7 +1916,24 @@ duplicate_arg_var_2: {
         }("PA"));
     }
     expect: {
-        console.log((b = "PA", b + "SS"));
+        console.log("PA" + "SS");
+    }
+    expect_stdout: "PASS"
+}
+
+duplicate_arg_var_3: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(function(b) {
+            return b + "SS";
+            var b;
+        }("PA", "42".toString()));
+    }
+    expect: {
+        console.log((b = "PA", "42".toString(), b + "SS"));
         var b;
     }
     expect_stdout: "PASS"
@@ -2045,10 +2081,8 @@ issue_3016_1: {
     expect: {
         var b = 1;
         do {
-            a = 3,
-            a[b];
+            3[b];
         } while(0);
-        var a;
         console.log(b);
     }
     expect_stdout: "1"
@@ -2556,10 +2590,9 @@ cross_references_2: {
     options = {
         collapse_vars: true,
         evaluate: true,
-        hoist_props: true,
         inline: true,
-        passes: 4,
-        pure_getters: true,
+        passes: 6,
+        properties: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -3685,9 +3718,7 @@ pr_3595_3: {
         var g = [ "PASS" ];
         console.log(function(problem) {
             return g[problem];
-        }(function(arg) {
-            return g.indexOf(arg);
-        }("PASS")));
+        }(g.indexOf("PASS")));
     }
     expect_stdout: "PASS"
 }

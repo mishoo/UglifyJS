@@ -2289,11 +2289,10 @@ redefine_farg_2: {
         console.log(f([]), g([]), h([]));
     }
     expect: {
-        console.log((a = [], typeof a), "number",function(a, b) {
+        console.log(typeof [], "number",function(a, b) {
             a = b;
             return typeof a;
         }([]));
-        var a;
     }
     expect_stdout: "object number undefined"
 }
