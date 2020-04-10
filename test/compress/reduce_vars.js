@@ -6510,17 +6510,17 @@ issue_3240_3: {
     }
     expect: {
         (function() {
-            (function f(b) {
+            f();
+            function f(b) {
                 if (!f.a) f.a = 0;
                 console.log(f.a.toString());
-                var g = function() {
+                (function() {
                     (b ? function() {} : function() {
                         f.a++;
                         f(1);
                     })();
-                };
-                g();
-            })();
+                })();
+            }
         })();
     }
     expect_stdout: [
@@ -6554,7 +6554,8 @@ issue_3240_4: {
     }
     expect: {
         (function() {
-            (function f(b) {
+            f();
+            function f(b) {
                 if (!f.a) f.a = 0;
                 console.log(f.a.toString());
                 (function() {
@@ -6563,7 +6564,7 @@ issue_3240_4: {
                         f(1);
                     })();
                 })();
-            })();
+            }
         })();
     }
     expect_stdout: [
@@ -6871,4 +6872,43 @@ issue_3666: {
         console.log(a, b);
     }
     expect_stdout: "PASS PASS"
+}
+
+issue_3774: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var f = function() {
+            function g() {
+                if (!g.p) {
+                    g.p = 1;
+                    console.log("PASS");
+                }
+            }
+            return function() {
+                g();
+            };
+        }();
+        f();
+        f();
+    }
+    expect: {
+        var f = function() {
+            function g() {
+                if (!g.p) {
+                    g.p = 1;
+                    console.log("PASS");
+                }
+            }
+            return function() {
+                g();
+            };
+        }();
+        f();
+        f();
+    }
+    expect_stdout: "PASS"
 }
