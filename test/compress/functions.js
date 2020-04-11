@@ -4014,3 +4014,51 @@ issue_3772: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3777_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            ff && ff(NaN);
+            function ff(a) {
+                var a = console.log("PASS");
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            ff && ff(NaN);
+            function ff(a) {
+                var a = console.log("PASS");
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3777_2: {
+    options = {
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        ff(ff.p);
+        function ff(a) {
+            var a = console.log("PASS");
+        }
+    }
+    expect: {
+        ff(ff.p);
+        function ff(a) {
+            var a = console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
