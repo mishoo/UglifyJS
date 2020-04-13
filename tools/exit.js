@@ -5,7 +5,7 @@ process.exit = function() {
     process.once("uncaughtException", function() {
         (function callback() {
             if (process.stdout.bufferSize || process.stderr.bufferSize) {
-                setImmediate(callback);
+                setTimeout(callback, 1);
             } else {
                 exit.apply(process, args);
             }

@@ -4,9 +4,12 @@ jobs:
   test:
     strategy:
       matrix:
-        node: [ "0.10", "0.12", "4", "6", "8", "10", latest ]
+        node: [ "0.8", "0.10", "0.12", "4", "6", "8", "10", "12", latest ]
         os: [ ubuntu-latest, windows-latest ]
         script: [ compress, mocha, release/benchmark, release/jetstream ]
+        exclude:
+          - node: "0.8"
+            script: release/jetstream
     name: ${{ matrix.node }} ${{ matrix.os }} ${{ matrix.script }}
     runs-on: ${{ matrix.os }}
     env:
@@ -33,6 +36,7 @@ jobs:
           npm config set audit false
           npm config set optional false
           npm config set save false
+          npm config set strict-ssl false
           npm config set update-notifier false
           npm --version
           while !(npm install); do echo "'npm install' failed - retrying..."; done
