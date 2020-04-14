@@ -186,7 +186,7 @@ describe("test/reduce.js", function() {
         ].join("\n"));
     });
     it("Should reduce infinite loops with reasonable performance", function() {
-        if (semver.satisfies(process.version, "0.10")) return;
+        if (semver.satisfies(process.version, "<=0.10")) return;
         this.timeout(120000);
         var result = reduce_test("while (/9/.test(1 - .8));", {
             compress: {
@@ -211,7 +211,7 @@ describe("test/reduce.js", function() {
     it("Should ignore difference in Error.message", function() {
         var result = reduce_test("null[function() {\n}];");
         if (result.error) throw result.error;
-        assert.strictEqual(result.code, (semver.satisfies(process.version, "0.10") ? [
+        assert.strictEqual(result.code, (semver.satisfies(process.version, "<=0.10") ? [
             "// Can't reproduce test failure",
             "// minify options: {}",
         ] : [

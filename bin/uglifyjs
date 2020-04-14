@@ -337,7 +337,7 @@ function simple_glob(glob) {
                 .replace(/\?/g, "[^/\\\\]") + "$";
             var mod = process.platform === "win32" ? "i" : "";
             var rx = new RegExp(pattern, mod);
-            var results = entries.filter(function(name) {
+            var results = entries.sort().filter(function(name) {
                 return rx.test(name);
             }).map(function(name) {
                 return path.join(dir, name);

@@ -27,6 +27,7 @@ jobs:
           npm config set audit false
           npm config set optional false
           npm config set save false
+          npm config set strict-ssl false
           npm config set update-notifier false
           npm --version
           while !(npm install); do echo "'npm install' failed - retrying..."; done

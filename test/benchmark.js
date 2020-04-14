@@ -5,12 +5,11 @@
 
 var createHash = require("crypto").createHash;
 var fetch = require("./fetch");
-var fork = require("child_process").fork;
+var spawn = require("child_process").spawn;
 var zlib = require("zlib");
 var args = process.argv.slice(2);
-if (!args.length) {
-    args.push("-mc");
-}
+args.unshift("bin/uglifyjs");
+if (!args.length) args.push("-mc");
 args.push("--timings");
 var urls = [
     "https://code.jquery.com/jquery-3.4.1.js",
@@ -70,18 +69,20 @@ urls.forEach(function(url) {
     };
     fetch(url, function(err, res) {
         if (err) throw err;
-        var uglifyjs = fork("bin/uglifyjs", args, { silent: true });
+        var uglifyjs = spawn(process.argv[0], args, { silent: true });
         res.on("data", function(data) {
             results[url].input += data.length;
         }).pipe(uglifyjs.stdin);
+        var sha1 = createHash("sha1");
         uglifyjs.stdout.on("data", function(data) {
             results[url].output += data.length;
         }).pipe(zlib.createGzip({
             level: zlib.Z_BEST_COMPRESSION
         })).on("data", function(data) {
             results[url].gzip += data.length;
-        }).pipe(createHash("sha1")).on("data", function(data) {
-            results[url].sha1 = data.toString("hex");
+            sha1.update(data);
+        }).on("end", function() {
+            results[url].sha1 = sha1.digest("hex");
             done();
         });
         uglifyjs.stderr.setEncoding("utf8");

@@ -8,15 +8,14 @@ if (typeof phantom == "undefined") {
     require("../tools/exit");
     var args = process.argv.slice(2);
     var debug = args.indexOf("--debug");
-    if (debug >= 0) {
+    if (debug < 0) {
+        debug = false;
+    } else {
         args.splice(debug, 1);
         debug = true;
-    } else {
-        debug = false;
     }
-    if (!args.length) {
-        args.push("-mcb", "beautify=false,webkit");
-    }
+    args.unshift("bin/uglifyjs");
+    if (!args.length) args.push("-mcb", "beautify=false,webkit");
     args.push("--timings");
     var child_process = require("child_process");
     var fetch = require("./fetch");
@@ -39,7 +38,7 @@ if (typeof phantom == "undefined") {
                 });
                 if (/\.js$/.test(url)) {
                     var stderr = "";
-                    var uglifyjs = child_process.fork("bin/uglifyjs", args, {
+                    var uglifyjs = child_process.spawn(process.argv[0], args, {
                         silent: true
                     }).on("exit", function(code) {
                         console.log("uglifyjs", url.slice(site.length + 1), args.join(" "));
