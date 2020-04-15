@@ -277,6 +277,12 @@ describe("sourcemaps", function() {
     });
 
     describe("input sourcemaps", function() {
+        it("Should not modify input source map", function() {
+            var orig = get_map();
+            var original = JSON.stringify(orig);
+            var map = prepare_map(orig);
+            assert.strictEqual(JSON.stringify(orig), original);
+        });
         it("Should copy over original sourcesContent", function() {
             var orig = get_map();
             var map = prepare_map(orig);
