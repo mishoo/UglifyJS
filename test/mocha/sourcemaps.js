@@ -7,11 +7,13 @@ function read(path) {
 }
 
 function source_map(code) {
-    return JSON.parse(UglifyJS.minify(code, {
+    var result = UglifyJS.minify(code, {
         compress: false,
         mangle: false,
         sourceMap: true,
-    }).map);
+    });
+    if (result.error) throw result.error;
+    return JSON.parse(result.map);
 }
 
 function get_map() {
@@ -64,6 +66,40 @@ describe("sourcemaps", function() {
             "});",
         ].join("\n"));
         assert.deepEqual(map.names, [ "enabled", "x" ]);
+    });
+    it("Should work with sourceMap.names=true", function() {
+        var result = UglifyJS.minify([
+            "var obj = {",
+            "    p: a,",
+            "    q: b",
+            "};",
+        ].join("\n"), {
+            compress: false,
+            mangle: false,
+            sourceMap: {
+                names: true,
+            },
+        });
+        if (result.error) throw result.error;
+        var map = JSON.parse(result.map);
+        assert.deepEqual(map.names, [ "obj", "p", "a", "q", "b" ]);
+    });
+    it("Should work with sourceMap.names=false", function() {
+        var result = UglifyJS.minify([
+            "var obj = {",
+            "    p: a,",
+            "    q: b",
+            "};",
+        ].join("\n"), {
+            compress: false,
+            mangle: false,
+            sourceMap: {
+                names: false,
+            },
+        });
+        if (result.error) throw result.error;
+        var map = JSON.parse(result.map);
+        assert.deepEqual(map.names, []);
     });
     it("Should mark array/object literals", function() {
         var result = UglifyJS.minify([
