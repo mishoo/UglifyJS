@@ -2444,3 +2444,21 @@ issue_3746: {
     }
     expect_stdout: "PASS"
 }
+
+join_vars_assign: {
+    options = {
+        join_vars: true,
+        unused: true,
+    }
+    input: {
+        var y, x;
+        x = Object("PAS");
+        y = Object("S");
+        console.log(x + y);
+    }
+    expect: {
+        var x = Object("PAS"), y = Object("S");
+        console.log(x + y);
+    }
+    expect_stdout: "PASS"
+}
