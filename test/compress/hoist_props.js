@@ -767,18 +767,17 @@ issue_3071_1: {
             var obj = {};
             obj.one = 1;
             obj.two = 2;
-            console.log(obj.one);
+            console.log(obj.one, obj.two);
         })();
     }
     expect: {
-        console.log(1);
+        console.log(1, 2);
     }
-    expect_stdout: "1"
+    expect_stdout: "1 2"
 }
 
 issue_3071_2: {
     options = {
-        evaluate: true,
         hoist_props: true,
         inline: true,
         join_vars: true,
@@ -793,19 +792,18 @@ issue_3071_2: {
             obj = {};
             obj.one = 1;
             obj.two = 2;
-            console.log(obj.one);
+            console.log(obj.one, obj.two);
             var obj;
         })();
     }
     expect: {
-        console.log(1);
+        console.log(1, 2);
     }
-    expect_stdout: "1"
+    expect_stdout: "1 2"
 }
 
 issue_3071_2_toplevel: {
     options = {
-        evaluate: true,
         hoist_props: true,
         inline: true,
         join_vars: true,
@@ -821,14 +819,14 @@ issue_3071_2_toplevel: {
             obj = {};
             obj.one = 1;
             obj.two = 2;
-            console.log(obj.one);
+            console.log(obj.one, obj.two);
             var obj;
         })();
     }
     expect: {
-        console.log(1);
+        console.log(1, 2);
     }
-    expect_stdout: "1"
+    expect_stdout: "1 2"
 }
 
 issue_3071_3: {

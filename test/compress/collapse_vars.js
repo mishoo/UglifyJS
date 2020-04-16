@@ -804,7 +804,7 @@ collapse_vars_assignment: {
         function log(x) { return console.log(x), x; }
         function f0(c) {
             var a = 3 / c;
-            return a = a;
+            return a;
         }
         function f1(c) {
             return 1 - 3 / c;
@@ -2012,6 +2012,7 @@ issue_1631_3: {
         join_vars: true,
         sequences: true,
         side_effects: true,
+        unused: true,
     }
     input: {
         function g() {
@@ -2031,8 +2032,8 @@ issue_1631_3: {
             function f() {
                 return a = 2, 4;
             }
-            var a = 0, b = 1, t = f();
-            return b = a + t;
+            var a = 0, t = f();
+            return a + t;
         }
         console.log(g());
     }
