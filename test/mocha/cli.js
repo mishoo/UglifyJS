@@ -109,9 +109,12 @@ describe("bin/uglifyjs", function() {
         }
         var command = [
             uglifyjscmd,
-            "--source-map", "content=" + mapFile,
-            "--source-map", "includeSources=true",
-            "--source-map", "url=inline",
+            "--beautify",
+            "--source-map", [
+                "content=" + mapFile,
+                "includeSources",
+                "url=inline",
+            ].join(","),
         ].join(" ");
 
         var child = exec(command, function(err, stdout) {
