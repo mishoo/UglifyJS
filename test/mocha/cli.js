@@ -2,6 +2,7 @@ var assert = require("assert");
 var exec = require("child_process").exec;
 var fs = require("fs");
 var run_code = require("../sandbox").run_code;
+var to_ascii = require("../node").to_ascii;
 
 function read(path) {
     return fs.readFileSync(path, "utf8");
@@ -47,6 +48,62 @@ describe("bin/uglifyjs", function() {
             assert.strictEqual(stdout, "/*@preserve*/\n\n");
             done();
         });
+    });
+    it("Should work with --source-map names=true", function(done) {
+        exec([
+            uglifyjscmd,
+            "--beautify",
+            "--source-map", [
+                "names=true",
+                "url=inline",
+            ].join(","),
+        ].join(" "), function(err, stdout) {
+            if (err) throw err;
+            var expected = [
+                "var obj = {",
+                "    p: a,",
+                "    q: b",
+                "};",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,",
+            ].join("\n")
+            assert.strictEqual(stdout.slice(0, expected.length), expected);
+            var map = JSON.parse(to_ascii(stdout.slice(expected.length).trim()));
+            assert.deepEqual(map.names, [ "obj", "p", "a", "q", "b" ]);
+            done();
+        }).stdin.end([
+            "var obj = {",
+            "    p: a,",
+            "    q: b",
+            "};",
+        ].join("\n"));
+    });
+    it("Should work with --source-map names=false", function(done) {
+        exec([
+            uglifyjscmd,
+            "--beautify",
+            "--source-map", [
+                "names=false",
+                "url=inline",
+            ].join(","),
+        ].join(" "), function(err, stdout) {
+            if (err) throw err;
+            var expected = [
+                "var obj = {",
+                "    p: a,",
+                "    q: b",
+                "};",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,",
+            ].join("\n")
+            assert.strictEqual(stdout.slice(0, expected.length), expected);
+            var map = JSON.parse(to_ascii(stdout.slice(expected.length).trim()));
+            assert.deepEqual(map.names, []);
+            done();
+        }).stdin.end([
+            "var obj = {",
+            "    p: a,",
+            "    q: b",
+            "};",
+        ].join("\n"));
     });
     it("Should give sensible error against invalid input source map", function(done) {
         var command = uglifyjscmd + " test/mocha.js --source-map content=blah,url=inline --verbose";
