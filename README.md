@@ -126,6 +126,7 @@ a double dash to prevent input files being used as option arguments:
                                 `includeSources`  Pass this flag if you want to include
                                                   the content of source files in the
                                                   source map as sourcesContent property.
+                                `names` Include symbol names in the source map.
                                 `root`  Path to the original source to be included in
                                         the source map.
                                 `url`  If specified, path to the source map to append in
@@ -158,6 +159,9 @@ Additional options:
   in source map file.
 
 - `--source-map "root='<URL>'"` to pass the URL where the original files can be found.
+
+- `--source-map "names=false"` to omit symbol names if you want to reduce size
+  of the source map file.
 
 - `--source-map "url='<URL>'"` to specify the URL where the source map can be found.
   Otherwise UglifyJS assumes HTTP `X-SourceMap` is being used and will omit the
@@ -592,6 +596,9 @@ var result = UglifyJS.minify({"compiled.js": "compiled code"}, {
 ```
 
 If you're using the `X-SourceMap` header instead, you can just omit `sourceMap.url`.
+
+If you wish to reduce file size of the source map, set option `sourceMap.names`
+to be `false` and all symbol names will be omitted.
 
 ## Parse options
 
