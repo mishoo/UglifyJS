@@ -1156,7 +1156,7 @@ for (var round = 1; round <= num_iterations; round++) {
             uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code, toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
-            if (!ok && typeof uglify_result == "string" && o.compress.unsafe_math) {
+            if (!ok && typeof uglify_result == "string" && o.compress && o.compress.unsafe_math) {
                 ok = fuzzy_match(original_result, uglify_result);
                 if (!ok) {
                     var fuzzy_result = sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"), toplevel);

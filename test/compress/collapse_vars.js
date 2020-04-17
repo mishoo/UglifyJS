@@ -804,7 +804,7 @@ collapse_vars_assignment: {
         function log(x) { return console.log(x), x; }
         function f0(c) {
             var a = 3 / c;
-            return a;
+            return a = a;
         }
         function f1(c) {
             return 1 - 3 / c;
