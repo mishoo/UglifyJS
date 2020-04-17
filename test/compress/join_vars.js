@@ -663,3 +663,122 @@ issue_3788: {
         "PASS",
     ]
 }
+
+issue_3789_1: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        try {
+            c;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+        try {} catch (c) {
+            var a;
+            c = 0;
+        }
+    }
+    expect: {
+        try {
+            c;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+        try {} catch (c) {
+            var a;
+            c = 0;
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3789_2: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        try {
+            c;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+        try {} catch (c) {
+            try {} catch (c) {
+                var a;
+                c = 0;
+            }
+        }
+    }
+    expect: {
+        try {
+            c;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+        try {} catch (c) {
+            try {} catch (c) {
+                var a;
+                c = 0;
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3791_1: {
+    options = {
+        collapse_vars: true,
+        join_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        switch (a) {
+          case console:
+        }
+        var a = a;
+        console.log(a);
+    }
+    expect: {
+        var a;
+        switch (a = "PASS") {
+          case console:
+        }
+        var a = a;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3791_2: {
+    options = {
+        collapse_vars: true,
+        join_vars: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return b = a || g;
+            function g() {
+                return b;
+            }
+        }
+        console.log(typeof f()());
+    }
+    expect: {
+        function f(a) {
+            var b;
+            return b = a || g;
+            function g() {
+                return b;
+            }
+        }
+        console.log(typeof f()());
+    }
+    expect_stdout: "function"
+}
