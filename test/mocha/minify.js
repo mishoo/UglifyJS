@@ -9,18 +9,30 @@ function read(path) {
 
 describe("minify", function() {
     it("Should test basic sanity of minify with default options", function() {
-        var js = 'function foo(bar) { if (bar) return 3; else return 7; var u = not_called(); }';
+        var js = "function foo(bar) { if (bar) return 3; else return 7; var u = not_called(); }";
         var result = UglifyJS.minify(js);
-        assert.strictEqual(result.code, 'function foo(n){return n?3:7}');
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, "function foo(n){return n?3:7}");
     });
-
+    it("Should not mutate minify `options`", function() {
+        var options = {
+            compress: true,
+            mangle: false,
+            output: {},
+        };
+        var value = JSON.stringify(options);
+        var result = UglifyJS.minify("print(6 * 7);", options);
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, "print(42);");
+        assert.strictEqual(JSON.stringify(options), value);
+    })
     it("Should skip inherited keys from `files`", function() {
         var files = Object.create({ skip: this });
         files[0] = "alert(1 + 1)";
         var result = UglifyJS.minify(files);
+        if (result.error) throw result.error;
         assert.strictEqual(result.code, "alert(2);");
     });
-
     it("Should work with mangle.cache", function() {
         var cache = {};
         var original = "";
@@ -53,7 +65,6 @@ describe("minify", function() {
         ].join(""));
         assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
-
     it("Should work with nameCache", function() {
         var cache = {};
         var original = "";
@@ -86,7 +97,6 @@ describe("minify", function() {
         ].join(""));
         assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
-
     it("Should avoid cached names when mangling top-level variables", function() {
         var cache = {};
         var original = "";
@@ -115,7 +125,6 @@ describe("minify", function() {
         ].join(""));
         assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
-
     it("Should avoid cached names when mangling inner-scoped variables", function() {
         var cache = {};
         var original = "";
@@ -139,7 +148,6 @@ describe("minify", function() {
         ].join(""));
         assert.strictEqual(run_code(compressed, true), run_code(original, true));
     });
-
     it("Should not parse invalid use of reserved words", function() {
         assert.strictEqual(UglifyJS.minify("function enum(){}").error, undefined);
         assert.strictEqual(UglifyJS.minify("function static(){}").error, undefined);
@@ -155,7 +163,6 @@ describe("minify", function() {
                 }});
             assert.strictEqual(result.code, 'var foo={"x":1,y:2,"z":3};');
         });
-
         it("Should preserve quote styles when quote_style is 3", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
             var result = UglifyJS.minify(js, {
@@ -165,7 +172,6 @@ describe("minify", function() {
                 }});
             assert.strictEqual(result.code, 'var foo={"x":1,y:2,\'z\':3};');
         });
-
         it("Should not preserve quotes in object literals when disabled", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
             var result = UglifyJS.minify(js, {
