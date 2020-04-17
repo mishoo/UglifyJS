@@ -764,20 +764,22 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         return createObjectLiteral(recurmax, stmtDepth, canThrow) + "." + getDotKey();
       case p++:
         var name = getVarName();
-        return name + " && " + name + "[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]";
+        var s = name + "[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]";
+        return canThrow && rng(8) == 0 ? s : name + " && " + s;
       case p++:
         var name = getVarName();
-        return name + " && " + name + "." + getDotKey();
+        var s = name + "." + getDotKey();
+        return canThrow && rng(8) == 0 ? s : name + " && " + s;
+      case p++:
+      case p++:
+        var name = getVarName();
+        var s = name + "." + getDotKey();
+        s = "typeof " + s + ' == "function" && --_calls_ >= 0 && ' + s + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
+        return canThrow && rng(8) == 0 ? s : name + " && " + s;
       case p++:
       case p++:
       case p++:
       case p++:
-        if (rng(16) == 0) {
-            var name = getVarName();
-            var fn = name + "." + getDotKey();
-            called[name] = true;
-            return name + " && " + "typeof " + fn + ' == "function" && --_calls_ >= 0 && ' + fn + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
-        }
         var name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
         called[name] = true;
         return "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
