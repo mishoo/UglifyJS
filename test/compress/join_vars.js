@@ -782,3 +782,36 @@ issue_3791_2: {
     }
     expect_stdout: "function"
 }
+
+issue_3795: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        join_vars: true,
+        loops: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        function f(b) {
+            for (var i = 1; b && i; --i) return 0;
+            a = "PASS";
+        }
+        var c = f(a = "");
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function(b) {
+            a = "";
+            a = "PASS";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
