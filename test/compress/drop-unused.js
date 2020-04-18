@@ -2488,3 +2488,25 @@ drop_duplicated_var_catch: {
         }
     }
 }
+
+issue_3802: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        a += 0;
+        var a = function() {};
+        console.log(typeof a);
+    }
+    expect: {
+        var a = 0;
+        a += 0;
+        a = function() {};
+        console.log(typeof a);
+    }
+    expect_stdout: "function"
+}
