@@ -22,8 +22,10 @@ issue_1639_1: {
         console.log(a, b);
     }
     expect: {
-        for (var a = 100, b = 10, L1 = 5; --L1 > 0;)
-            if (--b, 0) var ignore = 0;
+        for (var a = 100, b = 10, L1 = 5; --L1 > 0;) {
+            var ignore;
+            --b;
+        }
         console.log(a, b);
     }
     expect_stdout: "100 6"
