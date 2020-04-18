@@ -2444,3 +2444,23 @@ issue_3746: {
     }
     expect_stdout: "PASS"
 }
+
+drop_duplicated_side_effects: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        for (var i = 1; i--;)
+            var a = 0, b = ++a;
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        for (var i = 1; i--;)
+            a = 0, ++a;
+        console.log(a);
+    }
+    expect_stdout: "1"
+}

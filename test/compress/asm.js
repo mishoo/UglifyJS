@@ -91,8 +91,7 @@ asm_mixed: {
         function no_asm_GeometricMean(stdlib, foreign, buffer) {
             function logSum(start, end) {
                 start |= 0, end |= 0;
-                var sum = 0, p = 0, q = 0;
-                for (p = start << 3, q = end << 3; (0 | p) < (0 | q); p = p + 8 | 0) sum += +log(values[p >> 3]);
+                for (var sum = 0, p = 0, q = 0, p = start << 3, q = end << 3; (0 | p) < (0 | q); p = p + 8 | 0) sum += +log(values[p >> 3]);
                 return +sum;
             }
             function geometricMean(start, end) {
