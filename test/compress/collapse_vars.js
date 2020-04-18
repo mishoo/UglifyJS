@@ -2205,8 +2205,8 @@ var_defs: {
     }
     expect: {
         var f1 = function(x, y) {
-            var r = x + y, a = r * r - r, b = 7;
-            console.log(a + b);
+            var r = x + y, z = r * r - r, b = 7;
+            console.log(z + b);
         };
         f1("1", 0);
     }
@@ -2700,8 +2700,8 @@ toplevel_single_reference: {
     }
     expect: {
         for (var b in x) {
-            var a;
-            b(a = b);
+            var a = b;
+            b(b);
         }
     }
 }
@@ -4244,8 +4244,7 @@ issue_2497: {
             if (true)
                 for (var i = 0; i < 1; ++i)
                     for (var k = 0; k < 1; ++k) {
-                        value = 1;
-                        value = value ? value + 1 : 0;
+                        value = (value = 1) ? value + 1 : 0;
                     }
             else
                 for (i = 0; i < 1; ++i)
@@ -7804,6 +7803,122 @@ issue_3744: {
                 }
             }).p;
         })();
+    }
+    expect_stdout: "PASS"
+}
+
+assign_value_def: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            while (1) {
+                var b = a[0], c = a[1];
+                d = b;
+                e = c;
+                if (c[0] - e[0] > c[1] - d[1]) break;
+                return "PASS";
+            }
+            var d, e;
+            return "FAIL";
+        }
+        console.log(f([
+            [ 1, 2 ],
+            [ 3, 4 ],
+        ]));
+    }
+    expect: {
+        function f(a) {
+            while (1) {
+                var b = a[0], c = a[1];
+                if (c[0] - c[0] > c[1] - b[1]) break;
+                return "PASS";
+            }
+            return "FAIL";
+        }
+        console.log(f([
+            [ 1, 2 ],
+            [ 3, 4 ],
+        ]));
+    }
+    expect_stdout: "PASS"
+}
+
+join_vars_value_def: {
+    options = {
+        collapse_vars: true,
+        join_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            while (1) {
+                var b = a[0], c = a[1];
+                d = b;
+                e = c;
+                if (c[0] - e[0] > c[1] - d[1]) break;
+                return "PASS";
+            }
+            var d, e;
+            return "FAIL";
+        }
+        console.log(f([
+            [ 1, 2 ],
+            [ 3, 4 ],
+        ]));
+    }
+    expect: {
+        function f(a) {
+            while (1) {
+                var b = a[0], c = a[1];
+                if (c[0] - c[0] > c[1] - b[1]) break;
+                return "PASS";
+            }
+            return "FAIL";
+        }
+        console.log(f([
+            [ 1, 2 ],
+            [ 3, 4 ],
+        ]));
+    }
+    expect_stdout: "PASS"
+}
+
+var_value_def: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            while (1) {
+                var b = a[0], c = a[1], d = b, e = c;
+                if (c[0] - e[0] > c[1] - d[1]) break;
+                return "PASS";
+            }
+            var d, e;
+            return "FAIL";
+        }
+        console.log(f([
+            [ 1, 2 ],
+            [ 3, 4 ],
+        ]));
+    }
+    expect: {
+        function f(a) {
+            while (1) {
+                var b = a[0], c = a[1];
+                if (c[0] - c[0] > c[1] - b[1]) break;
+                return "PASS";
+            }
+            return "FAIL";
+        }
+        console.log(f([
+            [ 1, 2 ],
+            [ 3, 4 ],
+        ]));
     }
     expect_stdout: "PASS"
 }
