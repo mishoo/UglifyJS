@@ -66,8 +66,8 @@ function infer_options(options) {
 }
 
 exports.default_options = function() {
-    var defs = {};
-    Object.keys(infer_options({ 0: 0 })).forEach(function(component) {
+    var defs = infer_options({ 0: 0 });
+    Object.keys(defs).forEach(function(component) {
         var options = {};
         options[component] = { 0: 0 };
         if (options = infer_options(options)) {

@@ -1045,10 +1045,8 @@ function log_suspects(minify_options, component) {
 }
 
 function log_suspects_global(options) {
-    var o = {};
-    UglifyJS.minify("", o);
-    var suspects = Object.keys(o).filter(function(component) {
-      return typeof o[component] != "object";
+    var suspects = Object.keys(default_options).filter(function(component) {
+      return typeof default_options[component] != "object";
     }).filter(function(component) {
         var m = JSON.parse(options);
         m[component] = false;
@@ -1115,7 +1113,10 @@ function log(options) {
     errorln(JSON.stringify(JSON.parse(options), null, 2));
     errorln();
     if (!ok && typeof uglify_code == "string") {
-        Object.keys(default_options).forEach(log_suspects.bind(null, JSON.parse(options)));
+        Object.keys(default_options).filter(function(component) {
+          var defs = default_options[component];
+          return defs && typeof defs == "object";
+        }).forEach(log_suspects.bind(null, JSON.parse(options)));
         log_suspects_global(options);
         errorln("!!!!!! Failed... round " + round);
     }
