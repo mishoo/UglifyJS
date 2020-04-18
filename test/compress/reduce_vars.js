@@ -5434,8 +5434,7 @@ lvalues_def_1: {
     }
     expect: {
         var b = 1;
-        var a = b++;
-        b = NaN;
+        var a = b++, b = NaN;
         console.log(a, b);
     }
     expect_stdout: "1 NaN"
@@ -5454,8 +5453,7 @@ lvalues_def_2: {
     }
     expect: {
         var b = 1;
-        var a = b += 1;
-        b = NaN;
+        var a = b += 1, b = NaN;
         console.log(a, b);
     }
     expect_stdout: "2 NaN"
@@ -6867,9 +6865,9 @@ issue_3666: {
         } finally {
             for (;!a;)
                 a++;
-            var b = a = "PASS";
+            a = "PASS";
         }
-        console.log(a, b);
+        console.log(a, "PASS");
     }
     expect_stdout: "PASS PASS"
 }
