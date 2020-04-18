@@ -803,8 +803,7 @@ collapse_vars_assignment: {
     expect: {
         function log(x) { return console.log(x), x; }
         function f0(c) {
-            var a = 3 / c;
-            return a = a;
+            return 3 / c;
         }
         function f1(c) {
             return 1 - 3 / c;
@@ -2205,8 +2204,8 @@ var_defs: {
     }
     expect: {
         var f1 = function(x, y) {
-            var r = x + y, a = r * r - r, b = 7;
-            console.log(a + b);
+            var r = x + y, z = r * r - r, b = 7;
+            console.log(z + b);
         };
         f1("1", 0);
     }
@@ -2665,8 +2664,8 @@ double_def_1: {
         a();
     }
     expect: {
-        var a;
-        (a = (a = x) && y)();
+        var a = x;
+        (a = a && y)();
     }
 }
 
@@ -7918,6 +7917,40 @@ var_value_def: {
             [ 1, 2 ],
             [ 3, 4 ],
         ]));
+    }
+    expect_stdout: "PASS"
+}
+
+mangleable_var: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b = a(), c = a(), d = b;
+            return c.p(c, d);
+        }
+        console.log(f(function() {
+            return {
+                p: function() {
+                    return "PASS"
+                },
+            };
+        }));
+    }
+    expect: {
+        function f(a) {
+            var b = a(), c = a();
+            return c.p(c, b);
+        }
+        console.log(f(function() {
+            return {
+                p: function() {
+                    return "PASS";
+                }
+            };
+        }));
     }
     expect_stdout: "PASS"
 }
