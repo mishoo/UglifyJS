@@ -1384,7 +1384,7 @@ hoist_decl: {
     }
     expect: {
         var a, b;
-        x() ? y() : z();
+        (x() ? y : z)();
     }
 }
 

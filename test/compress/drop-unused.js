@@ -1173,6 +1173,7 @@ var_catch_toplevel: {
                 x();
             } catch (a) {
                 var a;
+                var a;
             }
         }();
     }
