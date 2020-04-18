@@ -1173,7 +1173,6 @@ var_catch_toplevel: {
                 x();
             } catch (a) {
                 var a;
-                var a;
             }
         }();
     }
@@ -2464,4 +2463,28 @@ drop_duplicated_side_effects: {
         console.log(a);
     }
     expect_stdout: "1"
+}
+
+drop_duplicated_var_catch: {
+    options = {
+        unused: true,
+    }
+    input: {
+        function f() {
+            try {
+                x();
+            } catch (a) {
+                var a, a;
+            }
+        }
+    }
+    expect: {
+        function f() {
+            try {
+                x();
+            } catch (a) {
+                var a;
+            }
+        }
+    }
 }
