@@ -23,12 +23,29 @@ program.parse = undefined;
 if (process.argv.indexOf("ast") >= 0) program.helpInformation = UglifyJS.describe_ast;
 else if (process.argv.indexOf("options") >= 0) program.helpInformation = function() {
     var text = [];
+    var toplevels = [];
+    var padding = "";
     var options = UglifyJS.default_options();
-    for (var option in options) {
-        text.push("--" + (option == "output" ? "beautify" : option == "sourceMap" ? "source-map" : option) + " options:");
-        text.push(format_object(options[option]));
-        text.push("");
+    for (var name in options) {
+        var option = options[name];
+        if (option && typeof option == "object") {
+            text.push("--" + ({
+                output: "beautify",
+                sourceMap: "source-map",
+            }[name] || name) + " options:");
+            text.push(format_object(option));
+            text.push("");
+        } else {
+            if (padding.length < name.length) padding = Array(name.length + 1).join(" ");
+            toplevels.push([ {
+                keep_fnames: "keep-fnames",
+                nameCache: "name-cache",
+            }[name] || name, option ]);
+        }
     }
+    toplevels.forEach(function(tokens) {
+        text.push("--" + tokens[0] + padding.slice(tokens[0].length - 2) + tokens[1]);
+    });
     return text.join("\n");
 };
 program.option("-p, --parse <options>", "Specify parser options.", parse_js());
