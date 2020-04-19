@@ -815,3 +815,84 @@ issue_3795: {
     }
     expect_stdout: "PASS"
 }
+
+if_body: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a;
+        if (x)
+            var b;
+        else
+            var c;
+    }
+    expect: {
+        var a, b, c;
+        if (x);
+        else;
+    }
+}
+
+if_switch: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a;
+        if (x) switch (y) {
+          case 1:
+            var b;
+          default:
+            var c;
+        }
+    }
+    expect: {
+        var a, b, c;
+        if (x) switch (y) {
+          case 1:
+          default:
+        }
+    }
+}
+
+loop_body_1: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a;
+        for (;x;)
+            var b;
+    }
+    expect: {
+        for (var a, b; x;);
+    }
+}
+
+loop_body_2: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        for (var a; x;)
+            var b;
+    }
+    expect: {
+        for (var a, b; x;);
+    }
+}
+
+loop_body_3: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a;
+        for (var b; x;)
+            var c;
+    }
+    expect: {
+        for (var a, b, c; x;);
+    }
+}

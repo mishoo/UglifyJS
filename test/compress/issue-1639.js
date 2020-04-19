@@ -22,8 +22,7 @@ issue_1639_1: {
         console.log(a, b);
     }
     expect: {
-        for (var a = 100, b = 10, L1 = 5; --L1 > 0;) {
-            var ignore;
+        for (var a = 100, b = 10, L1 = 5, ignore; --L1 > 0;) {
             --b;
         }
         console.log(a, b);
