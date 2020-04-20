@@ -1666,3 +1666,96 @@ issue_3668: {
     }
     expect_stdout: "undefined"
 }
+
+conditional_assignments_1: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(a, b, c, d) {
+            a = b;
+            if (c) a = d;
+            return a;
+        }
+        function g(a, b, c, d) {
+            a = b;
+            if (c); else a = d;
+            return a;
+        }
+        console.log(f(0, "FAIL", 1, "PASS"), g(0, "PASS", 1, "FAIL"));
+    }
+    expect: {
+        function f(a, b, c, d) {
+            return a = c ? d : b, a;
+        }
+        function g(a, b, c, d) {
+            return a = c ? b : d, a;
+        }
+        console.log(f(0, "FAIL", 1, "PASS"), g(0, "PASS", 1, "FAIL"));
+    }
+    expect_stdout: "PASS PASS"
+}
+
+conditional_assignments_2: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f1(b, c, d) {
+            a = b;
+            if (c) a = d;
+            return a;
+        }
+        function f2(a, c, d) {
+            a = b;
+            if (c) a = d;
+            return a;
+        }
+        function f3(a, b, d) {
+            a = b;
+            if (c) a = d;
+            return a;
+        }
+        function f4(a, b, c) {
+            a = b;
+            if (c) a = d;
+            return a;
+        }
+    }
+    expect: {
+        function f1(b, c, d) {
+            return a = c ? d : b, a;
+        }
+        function f2(a, c, d) {
+            return a = b, c && (a = d), a;
+        }
+        function f3(a, b, d) {
+            return a = b, c && (a = d), a;
+        }
+        function f4(a, b, c) {
+            return a = b, c && (a = d), a;
+        }
+    }
+}
+
+conditional_assignments_3: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        console.log(function(a, b) {
+            a = "PASS";
+            if (b) a = a;
+            return a;
+        }(0, 1));
+    }
+    expect: {
+        console.log(function(a, b) {
+            return a = "PASS", b && (a = a), a;
+        }(0, 1));
+    }
+    expect_stdout: "PASS"
+}
