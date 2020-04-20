@@ -896,3 +896,96 @@ loop_body_3: {
         for (var a, b, c; x;);
     }
 }
+
+conditional_assignments_1: {
+    options = {
+        conditionals: true,
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        function f(b, c, d) {
+            var a = b;
+            if (c) a = d;
+            return a;
+        }
+        function g(b, c, d) {
+            var a = b;
+            if (c); else a = d;
+            return a;
+        }
+        console.log(f("FAIL", 1, "PASS"), g("PASS", 1, "FAIL"));
+    }
+    expect: {
+        function f(b, c, d) {
+            var a = c ? d : b;
+            return a;
+        }
+        function g(b, c, d) {
+            var a = c ? b : d;
+            return a;
+        }
+        console.log(f("FAIL", 1, "PASS"), g("PASS", 1, "FAIL"));
+    }
+    expect_stdout: "PASS PASS"
+}
+
+conditional_assignments_2: {
+    options = {
+        conditionals: true,
+        join_vars: true,
+        sequences: true,
+    }
+    input: {
+        function f1(c, d) {
+            var a = b;
+            if (c) a = d;
+            return a;
+        }
+        function f2(b, d) {
+            var a = b;
+            if (c) a = d;
+            return a;
+        }
+        function f3(b, c) {
+            var a = b;
+            if (c) a = d;
+            return a;
+        }
+    }
+    expect: {
+        function f1(c, d) {
+            var a = b;
+            return c && (a = d), a;
+        }
+        function f2(b, d) {
+            var a = b;
+            return c && (a = d), a;
+        }
+        function f3(b, c) {
+            var a = b;
+            return c && (a = d), a;
+        }
+    }
+}
+
+conditional_assignments_3: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        console.log(function(b) {
+            var a = "PASS";
+            if (b) a = a;
+            return a;
+        }(0, 1));
+    }
+    expect: {
+        console.log(function(b) {
+            var a = "PASS";
+            return b && (a = a), a;
+        }(0, 1));
+    }
+    expect_stdout: "PASS"
+}
