@@ -1759,3 +1759,37 @@ conditional_assignments_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3808_1: {
+    options = {
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        var a;
+        a = "PASS", [] + "" && (a = "FAIL");
+        console.log(a);
+    }
+    expect: {
+        var a;
+        a = [] + "" ? "FAIL" : "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3808_2: {
+    options = {
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        var a;
+        console.log((a = "PASS", [] + "" && (a = "FAIL")), a);
+    }
+    expect: {
+        var a;
+        console.log((a = "PASS", [] + "" && (a = "FAIL")), a);
+    }
+    expect_stdout: " PASS"
+}
