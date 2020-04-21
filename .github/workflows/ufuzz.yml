@@ -1,7 +1,7 @@
 name: Fuzzing
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/7 * * * *"
 jobs:
   ufuzz:
     strategy:
@@ -31,4 +31,4 @@ jobs:
           npm config set update-notifier false
           npm --version
           while !(npm install); do echo "'npm install' failed - retrying..."; done
-          node test/ufuzz/job 2700000
+          node test/ufuzz/job 3600000
