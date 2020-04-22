@@ -1,7 +1,7 @@
 name: Fuzzing
 on:
   schedule:
-    - cron: "*/7 * * * *"
+    - cron: "*/8 * * * *"
 jobs:
   ufuzz:
     strategy:
