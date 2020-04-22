@@ -97,6 +97,66 @@ dead_code_constant_boolean_should_warn_more: {
     node_version: "<=4"
 }
 
+trim_try: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {
+            var a;
+        } catch (e) {
+            console.log("FAIL");
+        } finally {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a;
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
+
+trim_finally_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {
+            console.log("PASS");
+        } finally {
+            var a;
+        }
+    }
+    expect: {
+        console.log("PASS");
+        var a;
+    }
+    expect_stdout: "PASS"
+}
+
+trim_finally_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {
+            console.log("PASS");
+        } catch (e) {
+        } finally {
+            var a;
+        }
+    }
+    expect: {
+        try {
+            console.log("PASS");
+            var a;
+        } catch (e) {
+        }
+    }
+    expect_stdout: "PASS"
+}
+
 try_catch_finally: {
     options = {
         conditionals: true,
@@ -130,10 +190,7 @@ try_catch_finally: {
             a = 3;
             console.log("PASS");
         }();
-        try {
-            console.log(a);
-        } finally {
-        }
+        console.log(a);
     }
     expect_stdout: [
         "PASS",
