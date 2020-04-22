@@ -46,7 +46,7 @@ simple_statement_is_not_a_directive: {
 drop_lone_use_strict: {
     options = {
         directives: true,
-        side_effects: true,
+        unused: true,
     }
     input: {
         function f1() {
@@ -66,10 +66,8 @@ drop_lone_use_strict: {
         function f1() {
         }
         function f2() {
-            "use strict";
-            function f3() {
-            }
         }
+        (function() {})();
     }
 }
 
