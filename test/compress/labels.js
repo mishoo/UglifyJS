@@ -3,6 +3,7 @@ labels_1: {
         conditionals: true,
         dead_code: true,
         if_return: true,
+        unused: true,
     }
     input: {
         out: {
@@ -21,6 +22,7 @@ labels_2: {
         conditionals: true,
         dead_code: true,
         if_return: true,
+        unused: true,
     }
     input: {
         out: {
@@ -61,6 +63,7 @@ labels_4: {
         conditionals: true,
         dead_code: true,
         if_return: true,
+        unused: true,
     }
     input: {
         out: for (var i = 0; i < 5; ++i) {
@@ -105,6 +108,9 @@ labels_5: {
 }
 
 labels_6: {
+    options = {
+        dead_code: true,
+    }
     input: {
         out: break out;
     };
@@ -159,6 +165,7 @@ labels_9: {
         conditionals: true,
         dead_code: true,
         if_return: true,
+        unused: true,
     }
     input: {
         out: while (foo) {
