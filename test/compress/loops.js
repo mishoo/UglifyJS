@@ -549,6 +549,7 @@ issue_2740_2: {
         dead_code: true,
         loops: true,
         passes: 2,
+        unused: true,
     }
     input: {
         L1: while (x()) {
@@ -564,6 +565,7 @@ issue_2740_3: {
     options = {
         dead_code: true,
         loops: true,
+        unused: true,
     }
     input: {
         L1: for (var x = 0; x < 3; x++) {
@@ -589,6 +591,7 @@ issue_2740_4: {
         dead_code: true,
         loops: true,
         passes: 2,
+        unused: true,
     }
     input: {
         L1: for (var x = 0; x < 3; x++) {
@@ -613,6 +616,7 @@ issue_2740_5: {
         dead_code: true,
         loops: true,
         passes: 2,
+        unused: true,
     }
     input: {
         L1: for (var x = 0; x < 3; x++) {
@@ -763,6 +767,7 @@ issue_3631_1: {
         loops: true,
         reduce_vars: true,
         toplevel: true,
+        unused: true,
     }
     input: {
         var c = 0;
@@ -789,6 +794,7 @@ issue_3631_2: {
         loops: true,
         reduce_vars: true,
         toplevel: true,
+        unused: true,
     }
     input: {
         L: for (var a = 1; a--; console.log(b)) {
