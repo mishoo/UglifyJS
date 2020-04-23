@@ -223,6 +223,25 @@ unsafe_evaluate: {
     expect_stdout: true
 }
 
+unsafe_evaluate_defun: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function f() {}
+            return ++f;
+        }());
+    }
+    expect: {
+        console.log(NaN);
+    }
+    expect_stdout: "NaN"
+}
+
 unsafe_evaluate_side_effect_free_1: {
     options = {
         evaluate: true,
