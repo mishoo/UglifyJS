@@ -435,3 +435,25 @@ emberjs_global: {
     }
     expect_stdout: Error("PASS")
 }
+
+issue_3817: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        typeofs: true,
+    }
+    input: {
+        if ("A" == typeof A || !console.log("PASS")) switch (false) {
+          case "undefined" == typeof A:
+            console.log("FAIL");
+        }
+    }
+    expect: {
+        if ("A" == typeof A || !console.log("PASS")) switch (false) {
+          case "undefined" == typeof A:
+            console.log("FAIL");
+        }
+    }
+    expect_stdout: "PASS"
+}
