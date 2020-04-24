@@ -1,5 +1,5 @@
 var crypto = require("crypto");
-var U = require("./node");
+var U = require("..");
 var List = U.List;
 var os = require("os");
 var sandbox = require("./sandbox");
@@ -24,6 +24,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     reduce_options = reduce_options || {};
     var max_iterations = reduce_options.max_iterations || 1000;
     var max_timeout = reduce_options.max_timeout || 10000;
+    var warnings = [];
+    var log = reduce_options.log || function(msg) {
+        warnings.push(msg);
+    };
     var verbose = reduce_options.verbose;
     var minify_options_json = JSON.stringify(minify_options, null, 2);
     var result_cache = Object.create(null);
@@ -31,7 +35,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var differs = producesDifferentResultWhenMinified(result_cache, testcase, minify_options, max_timeout);
 
     if (verbose) {
-        console.error("// Node.js " + process.version + " on " + os.platform() + " " + os.arch());
+        log("// Node.js " + process.version + " on " + os.platform() + " " + os.arch());
     }
     if (!differs) {
         // same stdout result produced when minified
@@ -39,16 +43,19 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             code: [
                 "// Can't reproduce test failure",
                 "// minify options: " + to_comment(minify_options_json)
-            ].join("\n")
+            ].join("\n"),
+            warnings: warnings,
         };
     } else if (differs.timed_out) {
         return {
             code: [
                 "// Can't reproduce test failure within " + max_timeout + "ms",
                 "// minify options: " + to_comment(minify_options_json)
-            ].join("\n")
+            ].join("\n"),
+            warnings: warnings,
         };
     } else if (differs.error) {
+        differs.warnings = warnings;
         return differs;
     } else if (is_error(differs.unminified_result)
         && is_error(differs.minified_result)
@@ -57,7 +64,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             code: [
                 "// No differences except in error message",
                 "// minify options: " + to_comment(minify_options_json)
-            ].join("\n")
+            ].join("\n"),
+            warnings: warnings,
         };
     } else {
         max_timeout = Math.min(100 * differs.elapsed, max_timeout);
@@ -414,10 +422,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 // only difference detected is in error message, so expose that and try again
                 testcase_ast.transform(new U.TreeTransformer(function(node, descend) {
                     if (node.TYPE == "Call" && node.expression.print_to_string() == "console.log") {
-                        return new U.AST_Sequence({
-                            expressions: node.args,
-                            start: {},
-                        });
+                        return to_sequence(node.args);
                     }
                     if (node instanceof U.AST_Catch) {
                         descend(node, this);
@@ -443,11 +448,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 node.start._permute = 0;
             }));
             for (var c = 0; c < max_iterations; ++c) {
-                if (verbose) {
-                    if (pass == 1 && c % 25 == 0) {
-                        console.error("// reduce test pass "
-                            + pass + ", iteration " + c + ": " + testcase.length + " bytes");
-                    }
+                if (verbose && pass == 1 && c % 25 == 0) {
+                    log("// reduce test pass " + pass + ", iteration " + c + ": " + testcase.length + " bytes");
                 }
                 var CHANGED = false;
                 var code_ast = testcase_ast.clone(true).transform(tt);
@@ -457,9 +459,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 } catch (ex) {
                     // AST is not well formed.
                     // no harm done - just log the error, ignore latest change and continue iterating.
-                    console.error("*** Error generating code from AST.");
-                    console.error(ex);
-                    console.error("*** Discarding permutation and continuing.");
+                    log("*** Error generating code from AST.");
+                    log(ex.stack);
+                    log("*** Discarding permutation and continuing.");
                     continue;
                 }
                 var diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout);
@@ -470,10 +472,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     } else if (diff.error) {
                         // something went wrong during minify() - could be malformed AST or genuine bug.
                         // no harm done - just log code & error, ignore latest change and continue iterating.
-                        console.error("*** Error during minification.");
-                        console.error(code);
-                        console.error(diff.error);
-                        console.error("*** Discarding permutation and continuing.");
+                        log("*** Error during minification.");
+                        log(code);
+                        log(diff.error.stack);
+                        log("*** Discarding permutation and continuing.");
                     } else if (is_error(diff.unminified_result)
                         && is_error(diff.minified_result)
                         && diff.unminified_result.name == diff.minified_result.name) {
@@ -489,7 +491,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
             if (c == 0) break;
             if (verbose) {
-                console.error("// reduce test pass " + pass + ": " + testcase.length + " bytes");
+                log("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
         testcase = try_beautify(result_cache, testcase, minify_options, differs.unminified_result, max_timeout);
@@ -510,6 +512,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         }
         lines.push("// options: " + to_comment(minify_options_json));
         testcase.code += lines.join("\n");
+        testcase.warnings = warnings;
         return testcase;
     }
 };

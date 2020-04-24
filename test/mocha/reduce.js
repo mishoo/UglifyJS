@@ -252,7 +252,8 @@ describe("test/reduce.js", function() {
             "try{",
             "null[function(){}]",
             "}catch(e){",
-            "for(var i in e.toString())a++",
+            "for(var i in e.toString())",
+            "a++,console.log()",
             "}",
             "console.log(a);",
         ].join("");
@@ -264,6 +265,7 @@ describe("test/reduce.js", function() {
             },
         });
         if (result.error) throw result.error;
+        assert.deepEqual(result.warnings, []);
         assert.strictEqual(result.code.replace(/function \(/g, "function("), (semver.satisfies(process.version, "<=0.10") ? [
             "// Can't reproduce test failure",
             "// minify options: {",
