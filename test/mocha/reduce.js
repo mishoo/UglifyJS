@@ -246,4 +246,52 @@ describe("test/reduce.js", function() {
             "// }",
         ].join("\n"));
     });
+    it("Should reduce test case which differs only in Error.message", function() {
+        var code = [
+            "var a=0;",
+            "try{",
+            "null[function(){}]",
+            "}catch(e){",
+            "for(var i in e.toString())a++",
+            "}",
+            "console.log(a);",
+        ].join("");
+        var result = reduce_test(code, {
+            compress: false,
+            mangle: false,
+            output: {
+                beautify: true,
+            },
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code.replace(/function \(/g, "function("), (semver.satisfies(process.version, "<=0.10") ? [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "compress": false,',
+            '//   "mangle": false,',
+            '//   "output": {',
+            '//     "beautify": true',
+            "//   }",
+            "// }",
+        ] : [
+            [
+                "try{",
+                "null[function(){}]",
+                "}catch(e){",
+                "console.log(e)",
+                "}",
+            ].join(""),
+            "// output: TypeError: Cannot read property 'function(){}' of null",
+            "// ",
+            "// minify: TypeError: Cannot read property 'function() {}' of null",
+            "// ",
+            "// options: {",
+            '//   "compress": false,',
+            '//   "mangle": false,',
+            '//   "output": {',
+            '//     "beautify": true',
+            "//   }",
+            "// }",
+        ]).join("\n"));
+    });
 });
