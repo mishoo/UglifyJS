@@ -125,40 +125,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 }
             }
             else if (node instanceof U.AST_Binary) {
-                CHANGED = true;
                 var permute = ((node.start._permute += step) * steps | 0) % 4;
                 var expr = [
                     node.left,
                     node.right,
                 ][ permute & 1 ];
-                if (permute < 2) return expr;
-                // wrap with console.log()
-                return new U.AST_Call({
-                    expression: new U.AST_Dot({
-                        expression: new U.AST_SymbolRef({
-                            name: "console",
-                            start: {},
-                        }),
-                        property: "log",
-                        start: {},
-                    }),
-                    args: [ expr ],
-                    start: {},
-                });
-            }
-            else if (node instanceof U.AST_Catch || node instanceof U.AST_Finally) {
-                // drop catch or finally block
-                node.start._permute++;
                 CHANGED = true;
-                return null;
-            }
-            else if (node instanceof U.AST_Conditional) {
-                CHANGED = true;
-                return [
-                    node.condition,
-                    node.consequent,
-                    node.alternative,
-                ][ ((node.start._permute += step) * steps | 0) % 3 ];
+                return permute < 2 ? expr : wrap_with_console_log(expr);
             }
             else if (node instanceof U.AST_BlockStatement) {
                 if (in_list) {
@@ -193,12 +166,26 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     return to_sequence(seq);
                 }
             }
+            else if (node instanceof U.AST_Catch) {
+                // drop catch block
+                node.start._permute++;
+                CHANGED = true;
+                return null;
+            }
+            else if (node instanceof U.AST_Conditional) {
+                CHANGED = true;
+                return [
+                    node.condition,
+                    node.consequent,
+                    node.alternative,
+                ][ ((node.start._permute += step) * steps | 0) % 3 ];
+            }
             else if (node instanceof U.AST_Defun) {
                 switch (((node.start._permute += step) * steps | 0) % 2) {
                   case 0:
                     CHANGED = true;
                     return List.skip;
-                  case 1:
+                  default:
                     if (!has_exit(node)) {
                         // hoist function declaration body
                         var body = node.body;
@@ -230,15 +217,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     return to_statement(expr);
                 }
             }
-            else if (node instanceof U.AST_PropAccess) {
-                var expr = [
-                    node.expression,
-                    node.property instanceof U.AST_Node && node.property,
-                ][ node.start._permute++ % 2 ];
-                if (expr) {
-                    CHANGED = true;
-                    return expr;
-                }
+            else if (node instanceof U.AST_Finally) {
+                // drop finally block
+                node.start._permute++;
+                CHANGED = true;
+                return null;
             }
             else if (node instanceof U.AST_For) {
                 var expr = [
@@ -283,6 +266,16 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 var expr = node.properties[0] instanceof U.AST_ObjectKeyVal && node.properties[0].value;
                 if (expr) {
                     node.start._permute++;
+                    CHANGED = true;
+                    return expr;
+                }
+            }
+            else if (node instanceof U.AST_PropAccess) {
+                var expr = [
+                    node.expression,
+                    node.property instanceof U.AST_Node && node.property,
+                ][ node.start._permute++ % 2 ];
+                if (expr) {
                     CHANGED = true;
                     return expr;
                 }
@@ -414,8 +407,36 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
         });
 
+        var diff_error_message;
         for (var pass = 1; pass <= 3; ++pass) {
             var testcase_ast = U.parse(testcase);
+            if (diff_error_message === testcase) {
+                // only difference detected is in error message, so expose that and try again
+                testcase_ast.transform(new U.TreeTransformer(function(node, descend) {
+                    if (node.TYPE == "Call" && node.expression.print_to_string() == "console.log") {
+                        return new U.AST_Sequence({
+                            expressions: node.args,
+                            start: {},
+                        });
+                    }
+                    if (node instanceof U.AST_Catch) {
+                        descend(node, this);
+                        node.body.unshift(new U.AST_SimpleStatement({
+                            body: wrap_with_console_log(new U.AST_SymbolRef(node.argname)),
+                            start: {},
+                        }));
+                        return node;
+                    }
+                }));
+                var code = testcase_ast.print_to_string();
+                if (diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout)) {
+                    testcase = code;
+                    differs = diff;
+                } else {
+                    testcase_ast = U.parse(testcase);
+                }
+            }
+            diff_error_message = null;
             testcase_ast.walk(new U.TreeWalker(function(node) {
                 // unshare start props to retain visit data between iterations
                 node.start = JSON.parse(JSON.stringify(node.start));
@@ -457,6 +478,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                         && is_error(diff.minified_result)
                         && diff.unminified_result.name == diff.minified_result.name) {
                         // ignore difference in error messages caused by minification
+                        diff_error_message = testcase;
                     } else {
                         // latest permutation is valid, so use it as the basis of new changes
                         testcase_ast = code_ast;
@@ -588,6 +610,22 @@ function to_sequence(expressions) {
 function to_statement(node) {
     return is_statement(node) ? node : new U.AST_SimpleStatement({
         body: node,
+        start: {},
+    });
+}
+
+function wrap_with_console_log(node) {
+    // wrap with console.log()
+    return new U.AST_Call({
+        expression: new U.AST_Dot({
+            expression: new U.AST_SymbolRef({
+                name: "console",
+                start: {},
+            }),
+            property: "log",
+            start: {},
+        }),
+        args: [ node ],
         start: {},
     });
 }
