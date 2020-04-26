@@ -1031,7 +1031,7 @@ function log_suspects(minify_options, component) {
                 errorln(result.error);
             } else {
                 var r = sandbox.run_code(result.code, sandbox.has_toplevel(m));
-                return sandbox.same_stdout(original_result, r);
+                return !sandbox.same_stdout(uglify_result, r);
             }
         }
     });
@@ -1056,7 +1056,7 @@ function log_suspects_global(options) {
             errorln(result.error);
         } else {
             var r = sandbox.run_code(result.code, sandbox.has_toplevel(m));
-            return sandbox.same_stdout(original_result, r);
+            return !sandbox.same_stdout(uglify_result, r);
         }
     });
     if (suspects.length > 0) {
