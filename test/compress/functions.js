@@ -4062,3 +4062,49 @@ issue_3777_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3821_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var a = 0;
+        console.log(function(b) {
+            return +a + b;
+        }(--a));
+    }
+    expect: {
+        var a = 0;
+        console.log(function(b) {
+            return +a + b;
+        }(--a));
+    }
+    expect_stdout: "-2"
+}
+
+issue_3821_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(g, b) {
+            return g(), b;
+        }
+        console.log(f(function() {
+            a = "FAIL";
+        }, a));
+    }
+    expect: {
+        var a = "PASS";
+        function f(g, b) {
+            return g(), b;
+        }
+        console.log(f(function() {
+            a = "FAIL";
+        }, a));
+    }
+    expect_stdout: "PASS"
+}
