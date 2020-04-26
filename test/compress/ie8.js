@@ -2420,3 +2420,28 @@ issue_3750: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3823: {
+    options = {
+        ie8: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var i = 0; i < 1; i++) {
+            var a = a ? function f() {
+                f;
+            } : 0;
+            console.log("PASS", typeof f);
+        }
+    }
+    expect: {
+        for (var i = 0; i < 1; i++) {
+            (function f() {
+                f;
+            });
+            console.log("PASS", typeof f);
+        }
+    }
+    expect_stdout: "PASS undefined"
+}
