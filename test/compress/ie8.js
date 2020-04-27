@@ -2445,3 +2445,18 @@ issue_3823: {
     }
     expect_stdout: "PASS undefined"
 }
+
+issue_3825: {
+    options = {
+        ie8: true,
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        console.log({}[void (0..length ? 1 : 2)]);
+    }
+    expect: {
+        console.log({}[void 0]);
+    }
+    expect_stdout: "undefined"
+}
