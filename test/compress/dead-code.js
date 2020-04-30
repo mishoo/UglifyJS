@@ -949,3 +949,205 @@ issue_3578: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3830_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var o = {
+            set p(v) {
+                o = o.p = o = v;
+            }
+        };
+        o.p = "PASS";
+        console.log(o);
+    }
+    expect: {
+        var o = {
+            set p(v) {
+                o = o.p = o = v;
+            }
+        };
+        o.p = "PASS";
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3830_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = o[a] = a = v;
+            }
+        };
+        o[a] = "PASS";
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = o[a] = a = v;
+            }
+        };
+        o[a] = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3830_3: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            return a;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = o[f()] = a = v;
+            }
+        };
+        o[f()] = "PASS";
+        console.log(a);
+    }
+    expect: {
+        function f() {
+            return a;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = o[f()] = a = v;
+            }
+        };
+        o[f()] = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3830_4: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            return o;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = f()[a] = a = v;
+            }
+        };
+        f()[a] = "PASS";
+        console.log(a);
+    }
+    expect: {
+        function f() {
+            return o;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = f()[a] = a = v;
+            }
+        };
+        f()[a] = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3830_5: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            return o;
+        }
+        function g() {
+            return a;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = f()[g()] = a = v;
+            }
+        };
+        f()[g()] = "PASS";
+        console.log(a);
+    }
+    expect: {
+        function f() {
+            return o;
+        }
+        function g() {
+            return a;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                a = f()[g()] = a = v;
+            }
+        };
+        f()[g()] = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3830_6: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            return o;
+        }
+        function g() {
+            return a;
+        }
+        function h(v) {
+            a = f()[g()] = a = v;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                h(v);
+            }
+        };
+        o.FAIL = "PASS";
+        console.log(a);
+    }
+    expect: {
+        function f() {
+            return o;
+        }
+        function g() {
+            return a;
+        }
+        function h(v) {
+            a = f()[g()] = a = v;
+        }
+        var a = "FAIL";
+        var o = {
+            set FAIL(v) {
+                h(v);
+            }
+        };
+        o.FAIL = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
