@@ -2877,7 +2877,7 @@ issue_2437: {
     }
 }
 
-issue_2485: {
+issue_2485_1: {
     options = {
         functions: true,
         reduce_funcs: true,
@@ -2913,6 +2913,54 @@ issue_2485: {
                 return function(arg) {
                     return arg.reduce(n, 0);
                 }(arg);
+            }
+            bar.baz = function(arg) {
+                var n = runSumAll(arg);
+                return (n.get = 1), n;
+            };
+            return bar;
+        };
+        var bar = foo({});
+        console.log(bar.baz([1, 2, 3]));
+    }
+    expect_stdout: "6"
+}
+
+issue_2485_2: {
+    options = {
+        functions: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(bar) {
+            var n = function(a, b) {
+                return a + b;
+            };
+            var sumAll = function(arg) {
+                return arg.reduce(n, 0);
+            };
+            var runSumAll = function(arg) {
+                return sumAll(arg);
+            };
+            bar.baz = function(arg) {
+                var n = runSumAll(arg);
+                return (n.get = 1), n;
+            };
+            return bar;
+        };
+        var bar = foo({});
+        console.log(bar.baz([1, 2, 3]));
+    }
+    expect: {
+        var foo = function(bar) {
+            function n(a, b) {
+                return a + b;
+            }
+            function runSumAll(arg) {
+                return arg.reduce(n, 0);
             }
             bar.baz = function(arg) {
                 var n = runSumAll(arg);
@@ -3113,9 +3161,7 @@ issue_3400_1: {
                 return console.log(o[g]), o;
             }
             function e() {
-                return [ 42 ].map(function(v) {
-                    return h(v);
-                });
+                return [ 42 ].map(h);
             }
             return e();
         }()[0].p);
@@ -3130,7 +3176,7 @@ issue_3400_2: {
     options = {
         collapse_vars: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -3158,11 +3204,11 @@ issue_3400_2: {
     }
     expect: {
         void console.log(function g() {
-            return [ 42 ].map(function(v) {
-                return o = {
-                    p: v
-                }, console.log(o[g]), o;
-                var o;
+            return [ 42 ].map(function(u) {
+                var o = {
+                    p: u
+                };
+                return console.log(o[g]), o;
             });
         }()[0].p);
     }
@@ -3568,8 +3614,8 @@ pr_3592_2: {
         var g = [ "PASS" ];
         console.log((z = "PASS", function(problem) {
             return g[problem];
-        }((y = z, problem(y)))));
-        var z, y;
+        }(problem(z))));
+        var z;
     }
     expect_stdout: "PASS"
 }
@@ -3635,9 +3681,7 @@ pr_3595_1: {
         }
         console.log((arg = "PASS", function(problem) {
             return g[problem];
-        }(function(arg) {
-            return problem(arg);
-        }(arg))));
+        }(problem(arg))));
         var arg;
     }
     expect_stdout: "PASS"
@@ -3678,9 +3722,7 @@ pr_3595_2: {
         }
         console.log(function(problem) {
             return g[problem];
-        }(function(arg) {
-            return problem(arg);
-        }("PASS")));
+        }(problem("PASS")));
     }
     expect_stdout: "PASS"
 }
@@ -4107,4 +4149,444 @@ issue_3821_2: {
         }, a));
     }
     expect_stdout: "PASS"
+}
+
+substitude: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {};
+        function f(a) {
+            return a === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect: {
+        var o = {};
+        function f(a) {
+            return a === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return f;
+            },
+            function() {
+                "use strict";
+                return f;
+            },
+            function() {
+                return f;
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+substitude_arguments: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {};
+        function f() {
+            return arguments[0] === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect: {
+        var o = {};
+        function f() {
+            return arguments[0] === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+substitude_drop_fargs: {
+    options = {
+        inline: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {};
+        function f(a) {
+            return a === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect: {
+        var o = {};
+        function f(a) {
+            return a === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return f;
+            },
+            function() {
+                "use strict";
+                return f;
+            },
+            function() {
+                return f;
+            },
+            function() {
+                return f;
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
+
+substitude_this: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {};
+        function f(a) {
+            return a === o ? this === o : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect: {
+        var o = {};
+        function f(a) {
+            return a === o ? this === o : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "false",
+        "false",
+        "false",
+        "false",
+        "false",
+        "false",
+        "false",
+        "false",
+    ]
+}
+
+substitude_use_strict: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {};
+        function f(a) {
+            "use strict";
+            return a === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return function(b) {
+                    return f(b);
+                };
+            },
+            function() {
+                "use strict";
+                return function(c) {
+                    return f(c);
+                };
+            },
+            function() {
+                return function(c) {
+                    "use strict";
+                    return f(c);
+                };
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect: {
+        var o = {};
+        function f(a) {
+            "use strict";
+            return a === o ? "PASS" : "FAIL";
+        }
+        [
+            function() {
+                return f;
+            },
+            function() {
+                return f;
+            },
+            function() {
+                "use strict";
+                return f;
+            },
+            function() {
+                return f;
+            },
+            function() {
+                return function(d, e) {
+                    return f(d, e);
+                };
+            },
+        ].forEach(function(g) {
+            console.log(g()(o));
+            console.log(g().call(o, o));
+        });
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
 }

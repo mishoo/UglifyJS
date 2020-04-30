@@ -4589,7 +4589,7 @@ perf_8: {
     expect_stdout: "348150"
 }
 
-issue_2485: {
+issue_2485_1: {
     options = {
         reduce_funcs: true,
         reduce_vars: true,
@@ -4624,6 +4624,53 @@ issue_2485: {
                 return function(arg) {
                     return arg.reduce(n, 0);
                 }(arg);
+            };
+            bar.baz = function(arg) {
+                var n = runSumAll(arg);
+                return (n.get = 1), n;
+            };
+            return bar;
+        };
+        var bar = foo({});
+        console.log(bar.baz([1, 2, 3]));
+    }
+    expect_stdout: "6"
+}
+
+issue_2485_2: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var foo = function(bar) {
+            var n = function(a, b) {
+                return a + b;
+            };
+            var sumAll = function(arg) {
+                return arg.reduce(n, 0);
+            };
+            var runSumAll = function(arg) {
+                return sumAll(arg);
+            };
+            bar.baz = function(arg) {
+                var n = runSumAll(arg);
+                return (n.get = 1), n;
+            };
+            return bar;
+        };
+        var bar = foo({});
+        console.log(bar.baz([1, 2, 3]));
+    }
+    expect: {
+        var foo = function(bar) {
+            var n = function(a, b) {
+                return a + b;
+            };
+            var runSumAll = function(arg) {
+                    return arg.reduce(n, 0);
             };
             bar.baz = function(arg) {
                 var n = runSumAll(arg);
