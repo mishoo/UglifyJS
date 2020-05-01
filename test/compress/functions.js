@@ -4590,3 +4590,50 @@ substitude_use_strict: {
         "PASS",
     ]
 }
+
+issue_3833: {
+    options = {
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            return function() {
+                while (a);
+                console.log("PASS");
+            }();
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            while (a);
+            console.log("PASS");
+        })();
+        var a;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3835: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function f() {
+            return function() {
+                return f();
+            }();
+        })();
+    }
+    expect: {
+        (function f() {
+            return f();
+        })();
+    }
+    expect_stdout: true
+}
