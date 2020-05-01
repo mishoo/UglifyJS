@@ -41,7 +41,7 @@ if (typeof phantom == "undefined") {
                     var uglifyjs = child_process.spawn(process.argv[0], args, {
                         silent: true
                     }).on("exit", function(code) {
-                        console.log("uglifyjs", url.slice(site.length + 1), args.join(" "));
+                        console.log("uglifyjs", url.slice(site.length + 1), args.slice(1).join(" "));
                         console.log(stderr);
                         if (code) throw new Error("uglifyjs failed with code " + code);
                     });
