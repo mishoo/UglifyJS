@@ -4151,7 +4151,7 @@ issue_3821_2: {
     expect_stdout: "PASS"
 }
 
-substitude: {
+substitute: {
     options = {
         inline: true,
         reduce_vars: true,
@@ -4189,8 +4189,7 @@ substitude: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect: {
@@ -4218,25 +4217,56 @@ substitude: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect_stdout: [
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 2",
+    ]
+}
+
+substitute_add_farg: {
+    options = {
+        inline: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        function f(g) {
+            console.log(g.length);
+            g(null, "FAIL");
+        }
+        f(function() {
+            return function(a, b) {
+                return function(c) {
+                    do {
+                        console.log("PASS");
+                    } while (c);
+                }(a, b);
+            };
+        }());
+    }
+    expect: {
+        function f(g) {
+            console.log(g.length);
+            g(null, "FAIL");
+        }
+        f(function(c, argument_1) {
+            do {
+                console.log("PASS");
+            } while (c);
+        });
+    }
+    expect_stdout: [
+        "2",
         "PASS",
     ]
 }
 
-substitude_arguments: {
+substitute_arguments: {
     options = {
         inline: true,
         reduce_vars: true,
@@ -4244,7 +4274,7 @@ substitude_arguments: {
     }
     input: {
         var o = {};
-        function f() {
+        function f(a) {
             return arguments[0] === o ? "PASS" : "FAIL";
         }
         [
@@ -4274,13 +4304,12 @@ substitude_arguments: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect: {
         var o = {};
-        function f() {
+        function f(a) {
             return arguments[0] === o ? "PASS" : "FAIL";
         }
         [
@@ -4310,25 +4339,19 @@ substitude_arguments: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect_stdout: [
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 2",
     ]
 }
 
-substitude_drop_fargs: {
+substitute_drop_farg: {
     options = {
         inline: true,
         keep_fargs: false,
@@ -4367,8 +4390,7 @@ substitude_drop_fargs: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o));
         });
     }
     expect: {
@@ -4394,25 +4416,19 @@ substitude_drop_fargs: {
                 return f;
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o));
         });
     }
     expect_stdout: [
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
+        "PASS PASS",
+        "PASS PASS",
+        "PASS PASS",
+        "PASS PASS",
+        "PASS PASS",
     ]
 }
 
-substitude_this: {
+substitute_this: {
     options = {
         inline: true,
         reduce_vars: true,
@@ -4450,8 +4466,7 @@ substitude_this: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect: {
@@ -4486,25 +4501,19 @@ substitude_this: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect_stdout: [
-        "false",
-        "true",
-        "false",
-        "false",
-        "false",
-        "false",
-        "false",
-        "false",
-        "false",
-        "false",
+        "false true 1",
+        "false false 1",
+        "false false 1",
+        "false false 1",
+        "false false 2",
     ]
 }
 
-substitude_use_strict: {
+substitute_use_strict: {
     options = {
         inline: true,
         reduce_vars: true,
@@ -4543,8 +4552,7 @@ substitude_use_strict: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect: {
@@ -4573,21 +4581,15 @@ substitude_use_strict: {
                 };
             },
         ].forEach(function(g) {
-            console.log(g()(o));
-            console.log(g().call(o, o));
+            console.log(g()(o), g().call(o, o), g().length);
         });
     }
     expect_stdout: [
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
-        "PASS",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 1",
+        "PASS PASS 2",
     ]
 }
 
@@ -4636,4 +4638,25 @@ issue_3835: {
         })();
     }
     expect_stdout: true
+}
+
+issue_3836: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function() {
+            return function() {
+                for (var a in 0)
+                    console.log(k);
+            }(console.log("PASS"));
+        })();
+    }
+    expect: {
+        (function() {
+            for (var a in 0)
+                console.log(k);
+        })(console.log("PASS"));
+    }
+    expect_stdout: "PASS"
 }
