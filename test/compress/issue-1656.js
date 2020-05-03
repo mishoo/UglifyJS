@@ -35,11 +35,7 @@ f7: {
         console.log(a, b);
     }
     expect_exact: [
-        "var b = 10;",
-        "",
-        "!function() {",
-        "    b = 100;",
-        "}(), console.log(100, b);",
+        "console.log(100, 100);",
     ]
-    expect_stdout: true
+    expect_stdout: "100 100"
 }

@@ -6976,3 +6976,33 @@ issue_3774: {
     }
     expect_stdout: "PASS"
 }
+
+flatten_iife: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        while (!console);
+        a++;
+        (function() {
+            while (!console);
+            a = "PASS";
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a;
+        while (!console);
+        0;
+        (function() {
+            while (!console);
+            a = "PASS";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
