@@ -7006,3 +7006,30 @@ flatten_iife: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3844: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(function() {
+            if (!console) switch (A = 0) {
+              case console.log("FAIL"):
+                return;
+            }
+            return typeof A;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (!console) switch (A = 0) {
+              case console.log("FAIL"):
+                return;
+            }
+            return typeof A;
+        }());
+    }
+    expect_stdout: "undefined"
+}
