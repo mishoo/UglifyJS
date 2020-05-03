@@ -2489,7 +2489,7 @@ drop_duplicated_var_catch: {
     }
 }
 
-issue_3802: {
+issue_3802_1: {
     options = {
         functions: true,
         reduce_vars: true,
@@ -2506,6 +2506,28 @@ issue_3802: {
         var a = 0;
         a += 0;
         a = function() {};
+        console.log(typeof a);
+    }
+    expect_stdout: "function"
+}
+
+issue_3802_2: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        a += 0;
+        var a = function() {};
+        console.log(typeof a);
+    }
+    expect: {
+        0;
+        function a() {};
         console.log(typeof a);
     }
     expect_stdout: "function"
