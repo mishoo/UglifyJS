@@ -1,4 +1,4 @@
-UglifyJS 3
+UglifyJS 2
 ==========
 
 UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit.
