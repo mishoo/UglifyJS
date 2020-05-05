@@ -1151,3 +1151,20 @@ issue_3830_6: {
     }
     expect_stdout: "PASS"
 }
+
+redundant_assignments: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = a = "PASS", b = "FAIL";
+        b = b = "PASS";
+        console.log(a, b);
+    }
+    expect: {
+        var a = "PASS", b = "FAIL";
+        b = "PASS";
+        console.log(a, b);
+    }
+    expect_stdout: "PASS PASS"
+}
