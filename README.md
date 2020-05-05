@@ -4,8 +4,8 @@ UglifyJS 3
 UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit.
 
 #### Note:
-- **`uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage) that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
-- **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS2/tree/v2.x)**.
+- **`uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage) that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
+- **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
 - `uglify-js` only supports JavaScript (ECMAScript 5).
 - To minify ECMAScript 2015 or above, transpile using tools like [Babel](https://babeljs.io/).
 
@@ -913,7 +913,7 @@ can pass additional arguments that control the code output:
 
 - `wrap_iife` (default `false`) -- pass `true` to wrap immediately invoked
   function expressions. See
-  [#640](https://github.com/mishoo/UglifyJS2/issues/640) for more details.
+  [#640](https://github.com/mishoo/UglifyJS/issues/640) for more details.
 
 # Miscellaneous
 
@@ -1072,8 +1072,8 @@ var result = UglifyJS.minify(ast, {
 ### Working with Uglify AST
 
 Transversal and transformation of the native AST can be performed through
-[`TreeWalker`](https://github.com/mishoo/UglifyJS2/blob/master/lib/ast.js) and
-[`TreeTransformer`](https://github.com/mishoo/UglifyJS2/blob/master/lib/transform.js)
+[`TreeWalker`](https://github.com/mishoo/UglifyJS/blob/master/lib/ast.js) and
+[`TreeTransformer`](https://github.com/mishoo/UglifyJS/blob/master/lib/transform.js)
 respectively.
 
 ### ESTree / SpiderMonkey AST
