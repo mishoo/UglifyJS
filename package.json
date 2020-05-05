@@ -11,7 +11,7 @@
     "Alex Lam <alexlamsl@gmail.com>",
     "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)"
   ],
-  "repository": "mishoo/UglifyJS2",
+  "repository": "mishoo/UglifyJS",
   "main": "tools/node.js",
   "bin": {
     "uglifyjs": "bin/uglifyjs"
