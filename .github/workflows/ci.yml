@@ -9,6 +9,8 @@ jobs:
         script: [ compress, mocha, release/benchmark, release/jetstream ]
         exclude:
           - node: "0.8"
+            script: release/benchmark
+          - node: "0.8"
             script: release/jetstream
     name: ${{ matrix.node }} ${{ matrix.os }} ${{ matrix.script }}
     runs-on: ${{ matrix.os }}
