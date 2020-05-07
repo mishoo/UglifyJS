@@ -2366,7 +2366,7 @@ function_parameter_ie8: {
     }
     expect: {
         (function() {
-            (function f() {
+            (function() {
                 console.log("PASS");
             })();
         })();

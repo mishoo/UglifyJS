@@ -2389,7 +2389,7 @@ issue_3703: {
         var a = "PASS";
         (function() {
             var b;
-            var c = function g() {
+            var c = function() {
                 a = "FAIL";
             };
             a ? b |= c : b.p;
