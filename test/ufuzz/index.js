@@ -1141,6 +1141,14 @@ var fallback_options = [ JSON.stringify({
     mangle: false
 }) ];
 var minify_options = require("./options.json").map(JSON.stringify);
+var sort_globals = [
+    "Object.keys(this).sort().forEach(function(name) {",
+    "    var value = this[name];",
+    "    delete this[name];",
+    "    this[name] = value;",
+    "});",
+    "",
+].join("\n");
 var original_code, original_result, errored;
 var uglify_code, uglify_result, ok;
 for (var round = 1; round <= num_iterations; round++) {
@@ -1159,6 +1167,11 @@ for (var round = 1; round <= num_iterations; round++) {
             uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code, toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
+            // ignore declaration order of global variables
+            if (!ok && !toplevel) {
+                ok = sandbox.same_stdout(sandbox.run_code(sort_globals + original_code), sandbox.run_code(sort_globals + uglify_code));
+            }
+            // ignore numerical imprecision caused by `unsafe_math`
             if (!ok && typeof uglify_result == "string" && o.compress && o.compress.unsafe_math) {
                 ok = fuzzy_match(original_result, uglify_result);
                 if (!ok) {
