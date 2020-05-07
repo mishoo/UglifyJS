@@ -4660,3 +4660,24 @@ issue_3836: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3852: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            return function(b) {
+                return b && (b[0] = 0), "PASS";
+            }(a);
+        }(42));
+    }
+    expect: {
+        console.log(function(a) {
+            return a && (a[0] = 0), "PASS";
+        }(42));
+    }
+    expect_stdout: "PASS"
+}
