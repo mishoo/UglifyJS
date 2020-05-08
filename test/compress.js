@@ -14,6 +14,7 @@ var file = process.argv[2];
 var dir = path.resolve(path.dirname(module.filename), "compress");
 if (file) {
     var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
+    U.AST_Node.enable_validation();
     log("--- {file}", { file: file });
     var tests = parse_test(path.resolve(dir, file));
     process.exit(Object.keys(tests).filter(function(name) {
