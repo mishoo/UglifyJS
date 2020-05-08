@@ -680,3 +680,29 @@ issue_3325_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3858: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        var f = function(a) {
+            return /*@__PURE__*/ function(b) {
+                console.log(b);
+            }(a);
+        };
+        f("PASS");
+    }
+    expect: {
+        var f = function(a) {
+            return function() {
+                console.log(a);
+            }();
+        };
+        f("PASS");
+    }
+    expect_stdout: "PASS"
+}
