@@ -1020,7 +1020,7 @@ function log_suspects(minify_options, component) {
     var defs = default_options[component];
     var suspects = Object.keys(defs).filter(function(name) {
         var flip = name == "keep_fargs";
-        if (flip === !(name in options ? options : defs)[name]) {
+        if (flip !== (name in options ? options : defs)[name]) {
             var m = JSON.parse(JSON.stringify(minify_options));
             var o = JSON.parse(JSON.stringify(options));
             o[name] = flip;
