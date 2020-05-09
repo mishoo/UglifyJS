@@ -1161,6 +1161,7 @@ for (var round = 1; round <= num_iterations; round++) {
     (errored ? fallback_options : minify_options).forEach(function(options) {
         var o = JSON.parse(options);
         var toplevel = sandbox.has_toplevel(o);
+        o.validate = true;
         uglify_code = UglifyJS.minify(original_code, o);
         original_result = orig_result[toplevel ? 1 : 0];
         if (!uglify_code.error) {
@@ -1181,9 +1182,7 @@ for (var round = 1; round <= num_iterations; round++) {
             }
         } else {
             uglify_code = uglify_code.error;
-            if (errored) {
-                ok = uglify_code.name == original_result.name;
-            }
+            ok = sandbox.same_stdout(original_result, uglify_result);
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
         else if (errored) {

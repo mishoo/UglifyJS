@@ -24,11 +24,22 @@ function try_beautify(code) {
     }
 }
 
-function test(original, estree, description) {
-    var transformed = UglifyJS.minify(UglifyJS.AST_Node.from_mozilla_ast(estree), {
+function validate(ast) {
+    try {
+        ast.walk(new UglifyJS.TreeWalker(function(node) {
+            node.validate();
+        }));
+    } catch (e) {
+        return { error: e };
+    }
+    return UglifyJS.minify(ast, {
         compress: false,
-        mangle: false
+        mangle: false,
     });
+}
+
+function test(original, estree, description) {
+    var transformed = validate(UglifyJS.AST_Node.from_mozilla_ast(estree));
     if (transformed.error || original !== transformed.code) {
         console.log("//=============================================================");
         console.log("// !!!!!! Failed... round", round);
