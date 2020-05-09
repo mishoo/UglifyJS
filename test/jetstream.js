@@ -14,9 +14,9 @@ if (typeof phantom == "undefined") {
         args.splice(debug, 1);
         debug = true;
     }
-    args.unshift("bin/uglifyjs");
     if (!args.length) args.push("-mcb", "beautify=false,webkit");
-    args.push("--timings");
+    args.unshift("bin/uglifyjs");
+    args.push("--validate", "--timings");
     var child_process = require("child_process");
     var fetch = require("./fetch");
     var http = require("http");

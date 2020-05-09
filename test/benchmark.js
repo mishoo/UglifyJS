@@ -8,9 +8,9 @@ var fetch = require("./fetch");
 var spawn = require("child_process").spawn;
 var zlib = require("zlib");
 var args = process.argv.slice(2);
-args.unshift("bin/uglifyjs");
 if (!args.length) args.push("-mc");
-args.push("--timings");
+args.unshift("bin/uglifyjs");
+args.push("--validate", "--timings");
 var urls = [
     "https://code.jquery.com/jquery-3.4.1.js",
     "https://code.angularjs.org/1.7.8/angular.js",
