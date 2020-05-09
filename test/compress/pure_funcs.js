@@ -706,3 +706,79 @@ issue_3858: {
     }
     expect_stdout: "PASS"
 }
+
+inline_pure_call_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function(a) {
+            return /*@__PURE__*/ function(b) {
+                console.log(b);
+            }(a);
+        };
+        f("PASS");
+    }
+    expect: {}
+}
+
+inline_pure_call_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function(a) {
+            return /*@__PURE__*/ function(b) {
+                console.log(b);
+            }(a);
+        };
+        var a = f("PASS");
+    }
+    expect: {}
+}
+
+inline_pure_call_3: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        keep_fargs: "strict",
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function(a) {
+            return /*@__PURE__*/ function(b) {
+                console.log(b);
+            }(a);
+        };
+        var a = f("PASS");
+        console.log(a);
+    }
+    expect: {
+        var a = function() {
+            console.log("PASS");
+        }();
+        console.log(a);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
