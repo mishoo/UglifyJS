@@ -7054,3 +7054,24 @@ issue_3866: {
     }
     expect_stdout: "PASS"
 }
+
+void_side_effects: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = void console.log("PASS");
+        console.log(a);
+    }
+    expect: {
+        console.log("PASS");
+        console.log(void 0);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}

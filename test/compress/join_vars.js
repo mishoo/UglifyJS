@@ -785,11 +785,12 @@ issue_3791_2: {
 
 issue_3795: {
     options = {
+        booleans: true,
         collapse_vars: true,
-        conditionals: true,
         dead_code: true,
         evaluate: true,
         join_vars: true,
+        keep_fargs: "strict",
         loops: true,
         passes: 2,
         reduce_vars: true,
@@ -798,22 +799,21 @@ issue_3795: {
     }
     input: {
         var a = "FAIL";
-        function f(b) {
-            for (var i = 1; b && i; --i) return 0;
+        function f(b, c) {
+            for (var i = 5; c && i; --i) return -1;
             a = "PASS";
         }
-        var c = f(a = "");
-        console.log(a);
+        var d = f(a = 42, d);
+        console.log(a, d);
     }
     expect: {
-        var a = "FAIL";
-        (function(b) {
-            a = "";
+        var a = "FAIL", d = function() {
+            if (a = 42, d) return -1;
             a = "PASS";
-        })();
-        console.log(a);
+        }();
+        console.log(a, d);
     }
-    expect_stdout: "PASS"
+    expect_stdout: "PASS undefined"
 }
 
 if_body: {
