@@ -14,7 +14,6 @@ var file = process.argv[2];
 var dir = path.resolve(path.dirname(module.filename), "compress");
 if (file) {
     var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
-    U.AST_Node.enable_validation();
     log("--- {file}", { file: file });
     var tests = parse_test(path.resolve(dir, file));
     process.exit(Object.keys(tests).filter(function(name) {
@@ -189,6 +188,7 @@ function reminify(orig_options, input_code, input_formatted, stdout) {
             }
         });
         var options_formatted = JSON.stringify(options, null, 4);
+        options.validate = true;
         var result = U.minify(input_code, options);
         if (result.error) {
             log([
@@ -252,6 +252,7 @@ function run_code(code, toplevel) {
 
 function test_case(test) {
     log("    Running test [{name}]", { name: test.name });
+    U.AST_Node.enable_validation();
     var output_options = test.beautify || {};
     var expect;
     if (test.expect) {
