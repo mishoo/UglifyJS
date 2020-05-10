@@ -18,6 +18,7 @@ var sandbox = require("./sandbox");
 // will produce different output from the code minified with `minify_options`.
 // Returns a `minify` result object with an additonal boolean property `reduced`.
 
+Error.stackTraceLimit = Infinity;
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
     if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
     minify_options = minify_options || {};
@@ -31,11 +32,16 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var verbose = reduce_options.verbose;
     var minify_options_json = JSON.stringify(minify_options, null, 2);
     var result_cache = Object.create(null);
+    var test_for_diff = compare_run_code;
     // the initial timeout to assess the viability of the test case must be large
-    var differs = producesDifferentResultWhenMinified(result_cache, testcase, minify_options, max_timeout);
+    var differs = test_for_diff(testcase, minify_options, result_cache, max_timeout);
 
     if (verbose) {
         log("// Node.js " + process.version + " on " + os.platform() + " " + os.arch());
+    }
+    if (differs.error && [ "DefaultsError", "SyntaxError" ].indexOf(differs.error.name) < 0) {
+        test_for_diff = test_minify;
+        differs = test_for_diff(testcase, minify_options, result_cache, max_timeout);
     }
     if (!differs) {
         // same stdout result produced when minified
@@ -434,7 +440,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     }
                 }));
                 var code = testcase_ast.print_to_string();
-                if (diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout)) {
+                if (diff = test_for_diff(code, minify_options, result_cache, max_timeout)) {
                     testcase = code;
                     differs = diff;
                 } else {
@@ -464,7 +470,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     log("*** Discarding permutation and continuing.");
                     continue;
                 }
-                var diff = producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout);
+                var diff = test_for_diff(code, minify_options, result_cache, max_timeout);
                 if (diff) {
                     if (diff.timed_out) {
                         // can't trust the validity of `code_ast` and `code` when timed out.
@@ -494,21 +500,25 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 log("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
-        testcase = try_beautify(result_cache, testcase, minify_options, differs.unminified_result, max_timeout);
+        testcase = try_beautify(testcase, minify_options, differs.unminified_result, result_cache, max_timeout);
         var lines = [ "" ];
-        var unminified_result = strip_color_codes(differs.unminified_result);
-        var minified_result = strip_color_codes(differs.minified_result);
-        if (trim_trailing_whitespace(unminified_result) == trim_trailing_whitespace(minified_result)) {
-            lines.push(
-                "// (stringified)",
-                "// output: " + JSON.stringify(unminified_result),
-                "// minify: " + JSON.stringify(minified_result)
-            );
+        if (isNaN(max_timeout)) {
+            lines.push("// minify error: " + to_comment(strip_color_codes(differs.minified_result.stack)));
         } else {
-            lines.push(
-                "// output: " + to_comment(unminified_result),
-                "// minify: " + to_comment(minified_result)
-            );
+            var unminified_result = strip_color_codes(differs.unminified_result);
+            var minified_result = strip_color_codes(differs.minified_result);
+            if (trim_trailing_whitespace(unminified_result) == trim_trailing_whitespace(minified_result)) {
+                lines.push(
+                    "// (stringified)",
+                    "// output: " + JSON.stringify(unminified_result),
+                    "// minify: " + JSON.stringify(minified_result)
+                );
+            } else {
+                lines.push(
+                    "// output: " + to_comment(unminified_result),
+                    "// minify: " + to_comment(minified_result)
+                );
+            }
         }
         lines.push("// options: " + to_comment(minify_options_json));
         testcase.code += lines.join("\n");
@@ -529,7 +539,7 @@ function trim_trailing_whitespace(value) {
     return ("" + value).replace(/\s+$/, "");
 }
 
-function try_beautify(result_cache, testcase, minify_options, expected, timeout) {
+function try_beautify(testcase, minify_options, expected, result_cache, timeout) {
     var result = U.minify(testcase, {
         compress: false,
         mangle: false,
@@ -543,10 +553,16 @@ function try_beautify(result_cache, testcase, minify_options, expected, timeout)
         code: testcase,
     };
     var toplevel = sandbox.has_toplevel(minify_options);
-    var actual = run_code(result_cache, result.code, toplevel, timeout);
-    if (!sandbox.same_stdout(expected, actual)) return {
-        code: testcase,
-    };
+    if (isNaN(timeout)) {
+        if (!U.minify(result.code, minify_options).error) return {
+            code: testcase,
+        };
+    } else {
+        var actual = run_code(result.code, toplevel, result_cache, timeout);
+        if (!sandbox.same_stdout(expected, actual)) return {
+            code: testcase,
+        };
+    }
     result.code = "// (beautified)\n" + result.code;
     return result;
 }
@@ -633,21 +649,21 @@ function wrap_with_console_log(node) {
     });
 }
 
-function run_code(result_cache, code, toplevel, timeout) {
+function run_code(code, toplevel, result_cache, timeout) {
     var key = crypto.createHash("sha1").update(code).digest("base64");
     return result_cache[key] || (result_cache[key] = sandbox.run_code(code, toplevel, timeout));
 }
 
-function producesDifferentResultWhenMinified(result_cache, code, minify_options, max_timeout) {
+function compare_run_code(code, minify_options, result_cache, max_timeout) {
     var minified = U.minify(code, minify_options);
     if (minified.error) return minified;
 
     var toplevel = sandbox.has_toplevel(minify_options);
     var elapsed = Date.now();
-    var unminified_result = run_code(result_cache, code, toplevel, max_timeout);
+    var unminified_result = run_code(code, toplevel, result_cache, max_timeout);
     elapsed = Date.now() - elapsed;
     var timeout = Math.min(100 * elapsed, max_timeout);
-    var minified_result = run_code(result_cache, minified.code, toplevel, timeout);
+    var minified_result = run_code(minified.code, toplevel, result_cache, timeout);
 
     if (sandbox.same_stdout(unminified_result, minified_result)) {
         return is_timed_out(unminified_result) && is_timed_out(minified_result) && {
@@ -660,4 +676,10 @@ function producesDifferentResultWhenMinified(result_cache, code, minify_options,
         elapsed: elapsed,
     };
 }
-Error.stackTraceLimit = Infinity;
+
+function test_minify(code, minify_options) {
+    var minified = U.minify(code, minify_options);
+    return minified.error && {
+        minified_result: minified.error,
+    };
+}
