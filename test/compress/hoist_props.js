@@ -912,3 +912,31 @@ issue_3440: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3868: {
+    options = {
+        hoist_props: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        (function(t) {
+            t = {};
+            ({
+                get p() {},
+                q: (console.log("PASS"), +t),
+            }).r;
+        })();
+    }
+    expect: {
+        (function(t) {
+            t = {};
+            ({
+                get p() {},
+                q: (console.log("PASS"), +t),
+            }).r;
+        })();
+    }
+    expect_stdout: "PASS"
+}
