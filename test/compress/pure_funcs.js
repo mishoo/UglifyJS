@@ -782,3 +782,28 @@ inline_pure_call_3: {
         "undefined",
     ]
 }
+
+inline_pure_call_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = /*@__PURE__*/ function() {
+            return console.log("PASS"), 42;
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = function() {
+            return console.log("PASS"), 42;
+        }();
+        console.log(a);
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+}
