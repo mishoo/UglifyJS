@@ -7033,3 +7033,24 @@ issue_3844: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3866: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            {
+                return "PASS";
+                var a = 0;
+            }
+            return --a;
+        }());
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
