@@ -940,3 +940,35 @@ issue_3868: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3871: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            do {
+                var b = {
+                    get null() {
+                        c;
+                    }
+                };
+            } while (!b);
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            do {
+                var b = {
+                    get null() {
+                        c;
+                    }
+                };
+            } while (!b);
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
