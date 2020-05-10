@@ -1197,11 +1197,10 @@ toplevel_on_loops_1: {
         while (x);
     }
     expect: {
-        function bar() {
-            console.log("bar:", --x);
-        }
         var x = 3;
-        for (;bar(), x;);
+        for (;function() {
+            console.log("bar:", --x);
+        }(), x;);
     }
     expect_stdout: true
 }
@@ -1254,10 +1253,9 @@ toplevel_on_loops_2: {
         while (x);
     }
     expect: {
-        function bar() {
+        for (;;) (function() {
             console.log("bar:");
-        }
-        for (;;) bar();
+        })();
     }
 }
 
@@ -4231,13 +4229,12 @@ issue_2450_4: {
     }
     expect: {
         var a;
-        function f(b) {
-            console.log(a === b);
-            a = b;
-        }
         function g() {}
         for (var i = 3; --i >= 0;)
-            f(g);
+            (function(b) {
+                console.log(a === b);
+                a = b;
+            })(g);
     }
     expect_stdout: [
         "false",
@@ -4338,14 +4335,13 @@ perf_1: {
         console.log(sum);
     }
     expect: {
-        function indirect_foo(x, y, z) {
-            return function(x, y, z) {
-                return x < y ? x * y + z : x * z - y;
-            }(x, y, z);
-        }
         var sum = 0;
         for (var i = 0; i < 100; ++i)
-            sum += indirect_foo(i, i + 1, 3 * i);
+            sum += function(x, y, z) {
+                return function(x, y, z) {
+                    return x < y ? x * y + z : x * z - y;
+                }(x, y, z);
+            }(i, i + 1, 3 * i);
         console.log(sum);
     }
     expect_stdout: "348150"
@@ -4406,14 +4402,13 @@ perf_3: {
         console.log(sum);
     }
     expect: {
-        var indirect_foo = function(x, y, z) {
-            return function(x, y, z) {
-                return x < y ? x * y + z : x * z - y;
-            }(x, y, z);
-        }
         var sum = 0;
         for (var i = 0; i < 100; ++i)
-            sum += indirect_foo(i, i + 1, 3 * i);
+            sum += function(x, y, z) {
+                return function(x, y, z) {
+                    return x < y ? x * y + z : x * z - y;
+                }(x, y, z);
+            }(i, i + 1, 3 * i);
         console.log(sum);
     }
     expect_stdout: "348150"
@@ -4475,14 +4470,13 @@ perf_5: {
         console.log(sum);
     }
     expect: {
-        function indirect_foo(x, y, z) {
-            return function(x, y, z) {
-                return x < y ? x * y + z : x * z - y;
-            }(x, y, z);
-        }
         var sum = 0;
         for (var i = 0; i < 100; ++i)
-            sum += indirect_foo(i, i + 1, 3 * i);
+            sum += function(x, y, z) {
+                return function(x, y, z) {
+                    return x < y ? x * y + z : x * z - y;
+                }(x, y, z);
+            }(i, i + 1, 3 * i);
         console.log(sum);
     }
     expect_stdout: "348150"
@@ -4543,14 +4537,13 @@ perf_7: {
         console.log(sum);
     }
     expect: {
-        var indirect_foo = function(x, y, z) {
-            return function(x, y, z) {
-                return x < y ? x * y + z : x * z - y;
-            }(x, y, z);
-        }
         var sum = 0;
         for (var i = 0; i < 100; ++i)
-            sum += indirect_foo(i, i + 1, 3 * i);
+            sum += function(x, y, z) {
+                return function(x, y, z) {
+                    return x < y ? x * y + z : x * z - y;
+                }(x, y, z);
+            }(i, i + 1, 3 * i);
         console.log(sum);
     }
     expect_stdout: "348150"
@@ -7053,25 +7046,4 @@ issue_3866: {
         console.log("PASS");
     }
     expect_stdout: "PASS"
-}
-
-void_side_effects: {
-    options = {
-        evaluate: true,
-        reduce_vars: true,
-        toplevel: true,
-        unused: true,
-    }
-    input: {
-        var a = void console.log("PASS");
-        console.log(a);
-    }
-    expect: {
-        console.log("PASS");
-        console.log(void 0);
-    }
-    expect_stdout: [
-        "PASS",
-        "undefined",
-    ]
 }

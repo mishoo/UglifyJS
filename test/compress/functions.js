@@ -3514,10 +3514,9 @@ hoisted_single_use: {
     }
     expect: {
         function f(a) {
-            for (var r in a) g(r);
-        }
-        function g(a) {
-            console.log(a);
+            for (var r in a) (function(a) {
+                console.log(a);
+            })(r);
         }
         (function(a) {
             var g = a.bar;

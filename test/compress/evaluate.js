@@ -2190,3 +2190,139 @@ issue_3755: {
     }
     expect_stdout: "undefined"
 }
+
+void_side_effects: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = void console.log("PASS");
+        console.log(a);
+    }
+    expect: {
+        console.log("PASS");
+        console.log(void 0);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
+
+no_returns: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function() {
+            console.log("PASS");
+        }();
+        console.log(a);
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+        console.log(void 0);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
+
+void_returns: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            function g(b) {
+                if (b) console.log("FAIL");
+            }
+            while (1) {
+                console.log("PASS");
+                try {
+                    if (console) return;
+                } catch (e) {
+                    return g(e);
+                }
+            }
+        }();
+        console.log(a);
+    }
+    expect: {
+        (function() {
+            function g(b) {
+                if (b) console.log("FAIL");
+            }
+            while (1) {
+                console.log("PASS");
+                try {
+                    if (console) return;
+                } catch (e) {
+                    return g(e);
+                }
+            }
+        })();
+        console.log(void 0);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
+
+void_returns_recursive: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            function g(b) {
+                return f();
+            }
+            while (1) {
+                console.log("PASS");
+                try {
+                    if (console) return;
+                } catch (e) {
+                    return g(e);
+                }
+            }
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = function f() {
+            function g(b) {
+                return f();
+            }
+            while (1) {
+                console.log("PASS");
+                try {
+                    if (console) return;
+                } catch (e) {
+                    return g();
+                }
+            }
+        }();
+        console.log(a);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
