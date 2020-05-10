@@ -93,6 +93,36 @@ self_comparison_2: {
     expect_stdout: "false true"
 }
 
+self_comparison_3: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var b = a;
+            a = null;
+            return b;
+        }
+        for (var i = 0; i < 2; i++)
+            console.log(f() === f());
+    }
+    expect: {
+        var a;
+        function f() {
+            var b = a;
+            a = null;
+            return b;
+        }
+        for (var i = 0; i < 2; i++)
+            console.log(f() === f());
+    }
+    expect_stdout: [
+        "false",
+        "true",
+    ]
+}
+
 issue_2857_1: {
     options = {
         comparisons: true,
