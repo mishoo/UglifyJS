@@ -1181,8 +1181,8 @@ for (var round = 1; round <= num_iterations; round++) {
                 }
             }
         } else {
-            uglify_code = uglify_result = uglify_code.error;
-            ok = sandbox.same_stdout(original_result, uglify_result);
+            uglify_code = uglify_code.error;
+            ok = errored && uglify_code.name == original_result.name;
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
         else if (errored) {
