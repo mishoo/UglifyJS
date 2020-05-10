@@ -573,3 +573,24 @@ issue_3600: {
     }
     expect_stdout: "1"
 }
+
+iife_if_return_simple: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        inline: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            if (console)
+                return console.log("PASS");
+            console.log("FAIL");
+        })();
+    }
+    expect: {
+        console ? console.log("PASS") : console.log("FAIL");
+    }
+    expect_stdout: "PASS"
+}
