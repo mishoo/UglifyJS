@@ -7047,3 +7047,24 @@ issue_3866: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3880: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            while (a.var ^= 1);
+            console.log("PASS");
+        })(function() {});
+    }
+    expect: {
+        (function(a) {
+            while (a.var ^= 1);
+            console.log("PASS");
+        })(function() {});
+    }
+    expect_stdout: "PASS"
+}
