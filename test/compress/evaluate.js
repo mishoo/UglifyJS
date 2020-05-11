@@ -2369,3 +2369,29 @@ issue_3878_2: {
     }
     expect_stdout: "NaN"
 }
+
+issue_3882: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            return console.log(a++), a && this;
+        }
+        var b = f();
+        console.log(b);
+    }
+    expect: {
+        var b = function(a) {
+            return console.log(a++), a && this;
+        }();
+        console.log(b);
+    }
+    expect_stdout: [
+        "NaN",
+        "NaN",
+    ]
+}
