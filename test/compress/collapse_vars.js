@@ -7954,3 +7954,28 @@ mangleable_var: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3884: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 100, b = 1;
+        {
+            a++ + a || a;
+            b <<= a;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        var a = 100;
+        ++a;
+        console.log(a, 32);
+    }
+    expect_stdout: "101 32"
+}
