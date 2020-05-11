@@ -2326,3 +2326,46 @@ void_returns_recursive: {
         "undefined",
     ]
 }
+
+issue_3878_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = function(a) {
+            return (a = 0) == (a && this > (a += 0));
+        }();
+        console.log(b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var b = function(a) {
+            return (a = 0) == (a && this > (a += 0));
+        }();
+        console.log(b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3878_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "foo";
+        a++ + a;
+        a && a;
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        a++ + a;
+        a;
+        console.log(a);
+    }
+    expect_stdout: "NaN"
+}
