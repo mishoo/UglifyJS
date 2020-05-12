@@ -1136,6 +1136,37 @@ function fuzzy_match(original, uglified) {
     return true;
 }
 
+function skip_infinite_recursion(orig, toplevel) {
+    var code = orig;
+    var tries = [];
+    var offset = 0;
+    var re = /(?:(?:^|[\s{};])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
+    var match;
+    while (match = re.exec(code)) {
+        if (/}\s*finally\s*$/.test(match[0])) {
+            tries.shift();
+            continue;
+        }
+        if (tries.length && tries[0].catch) tries.shift();
+        var index = match.index + match[0].length + 1;
+        if (/(?:^|[\s{};])try\s*$/.test(match[0])) {
+            tries.unshift({ try: index - offset });
+            continue;
+        }
+        tries[0].catch = index;
+        var insert = "throw " + match[1] + ".ufuzz_skip || (" + match[1] + ".ufuzz_skip = " + tries[0].try + "), " + match[1] + ";";
+        var new_code = code.slice(0, index) + insert + code.slice(index);
+        var result = sandbox.run_code(new_code, toplevel);
+        if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
+            offset += insert.length;
+            code = new_code;
+        } else if (result.name == "RangeError" && result.message == "Maximum call stack size exceeded") {
+            index = result.ufuzz_skip;
+            return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
+        }
+    }
+}
+
 var fallback_options = [ JSON.stringify({
     compress: false,
     mangle: false
@@ -1178,6 +1209,14 @@ for (var round = 1; round <= num_iterations; round++) {
                 if (!ok) {
                     var fuzzy_result = sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"), toplevel);
                     ok = sandbox.same_stdout(fuzzy_result, uglify_result);
+                }
+            }
+            // ignore difference in depth of termination caused by infinite recursion
+            if (!ok) {
+                var orig_skipped = skip_infinite_recursion(original_code, toplevel);
+                var uglify_skipped = skip_infinite_recursion(uglify_code, toplevel);
+                if (orig_skipped && uglify_skipped) {
+                    ok = sandbox.same_stdout(sandbox.run_code(orig_skipped, toplevel), sandbox.run_code(uglify_skipped, toplevel));
                 }
             }
         } else {
