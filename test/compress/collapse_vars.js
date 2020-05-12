@@ -7979,3 +7979,39 @@ issue_3884: {
     }
     expect_stdout: "101 32"
 }
+
+issue_3891: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        function log(a) {
+            console.log(typeof a);
+        }
+        log(function f() {
+            try {
+                do {
+                    var b = function() {}();
+                } while (f = 0, b.p);
+            } catch (e) {
+                var f;
+                b;
+            }
+        });
+    }
+    expect: {
+        function log(a) {
+            console.log(typeof a);
+        }
+        log(function() {
+            try {
+                do {} while ((void 0).p);
+            } catch (e) {}
+        });
+    }
+    expect_stdout: "function"
+}
