@@ -2395,3 +2395,26 @@ issue_3882: {
         "NaN",
     ]
 }
+
+issue_3887: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(b) {
+            try {
+                b-- && console.log("PASS");
+            } catch (a_2) {}
+        })(1);
+    }
+    expect: {
+        (function(b) {
+            try {
+                b-- && console.log("PASS");
+            } catch (a_2) {}
+        })(1);
+    }
+    expect_stdout: "PASS"
+}
