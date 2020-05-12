@@ -2460,3 +2460,32 @@ issue_3825: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3889: {
+    options = {
+        evaluate: true,
+        ie8: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            a = 0;
+            (function a() {
+                var a;
+                console.log(a);
+            })();
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            a = 0;
+            (function a() {
+                var a;
+                console.log(a);
+            })();
+        }
+        f();
+    }
+    expect_stdout: "undefined"
+}
