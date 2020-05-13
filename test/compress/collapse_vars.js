@@ -8015,3 +8015,38 @@ issue_3891: {
     }
     expect_stdout: "function"
 }
+
+issue_3894: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function log(msg) {
+            console.log(msg ? "FAIL" : "PASS");
+        }
+        var a, c;
+        (function(b) {
+            a = c = 0,
+            log(b);
+        })(-0);
+        log(a);
+        log(c);
+    }
+    expect: {
+        function log(msg) {
+            console.log(msg ? "FAIL" : "PASS");
+        }
+        var a, c;
+        void log(-(a = c = 0));
+        log(a);
+        log(c);
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+}
