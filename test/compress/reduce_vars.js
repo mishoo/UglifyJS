@@ -7068,3 +7068,30 @@ issue_3880: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3894: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function log(msg) {
+            console.log(msg ? "FAIL" : "PASS");
+        }
+        var a;
+        (function(b) {
+            a = 0,
+            log(b);
+        })(-0);
+    }
+    expect: {
+        function log(msg) {
+            console.log(msg ? "FAIL" : "PASS");
+        }
+        var a;
+        void log(-(a = 0));
+    }
+    expect_stdout: "PASS"
+}
