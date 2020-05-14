@@ -8050,3 +8050,37 @@ issue_3894: {
         "PASS",
     ]
 }
+
+issue_3897: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            function f(b) {
+                b = a = 1 + a;
+                a = 1 + a;
+                console.log(b);
+            }
+            f();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (function() {
+            function f(b) {
+                b = a = 1 + a;
+                a = 1 + a;
+                console.log(b);
+            }
+            f();
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
