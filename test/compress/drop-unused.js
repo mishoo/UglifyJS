@@ -2527,7 +2527,40 @@ issue_3802_2: {
     }
     expect: {
         0;
-        function a() {};
+        var a = function() {};
+        console.log(typeof a);
+    }
+    expect_stdout: "function"
+}
+
+issue_3899: {
+    options = {
+        assignments: true,
+        evaluate: true,
+        functions: true,
+        inline: true,
+        join_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        a = a + 1;
+        var a = function f(b) {
+            return function() {
+                return b;
+            };
+        }(2);
+        console.log(typeof a);
+    }
+    expect: {
+        ++a;
+        var a = function() {
+            return 2;
+        };
         console.log(typeof a);
     }
     expect_stdout: "function"
