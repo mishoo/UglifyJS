@@ -2418,3 +2418,29 @@ issue_3887: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3903: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b, c) {
+            return console, c;
+        }
+        var d = f(f(), a = a);
+        console.log(d);
+    }
+    expect: {
+        var a = "PASS";
+        function f(b, c) {
+            return console, c;
+        }
+        var d = f(f(), a = a);
+        console.log(d);
+    }
+    expect_stdout: "PASS"
+}
