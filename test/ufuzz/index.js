@@ -1018,6 +1018,7 @@ function log_suspects(minify_options, component) {
     if (!options) return;
     if (typeof options != "object") options = {};
     var defs = default_options[component];
+    var toplevel = sandbox.has_toplevel(minify_options);
     var suspects = Object.keys(defs).filter(function(name) {
         var flip = name == "keep_fargs";
         if (flip !== (name in options ? options : defs)[name]) {
@@ -1030,7 +1031,7 @@ function log_suspects(minify_options, component) {
                 errorln("Error testing options." + component + "." + name);
                 errorln(result.error);
             } else {
-                var r = sandbox.run_code(result.code, sandbox.has_toplevel(m));
+                var r = sandbox.run_code(result.code, toplevel);
                 return !sandbox.same_stdout(uglify_result, r);
             }
         }
@@ -1044,7 +1045,7 @@ function log_suspects(minify_options, component) {
     }
 }
 
-function log_suspects_global(options) {
+function log_suspects_global(options, toplevel) {
     var suspects = Object.keys(default_options).filter(function(component) {
       return typeof default_options[component] != "object";
     }).filter(function(component) {
@@ -1055,7 +1056,7 @@ function log_suspects_global(options) {
             errorln("Error testing options." + component);
             errorln(result.error);
         } else {
-            var r = sandbox.run_code(result.code, sandbox.has_toplevel(m));
+            var r = sandbox.run_code(result.code, toplevel);
             return !sandbox.same_stdout(uglify_result, r);
         }
     });
@@ -1117,7 +1118,7 @@ function log(options) {
           var defs = default_options[component];
           return defs && typeof defs == "object";
         }).forEach(log_suspects.bind(null, JSON.parse(options)));
-        log_suspects_global(options);
+        log_suspects_global(options, toplevel);
         errorln("!!!!!! Failed... round " + round);
     }
 }
