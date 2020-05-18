@@ -2444,3 +2444,22 @@ issue_3903: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3905: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        unused: true,
+    }
+    input: {
+        (function(a, a) {
+            return console.log(a = 0), a && console.log("FAIL");
+        })("foo", 42);
+    }
+    expect: {
+        (function(a, a) {
+            return console.log(a = 0), a && console.log("FAIL");
+        })("foo", 42);
+    }
+    expect_stdout: "0"
+}
