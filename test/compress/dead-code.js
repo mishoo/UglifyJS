@@ -1168,3 +1168,28 @@ redundant_assignments: {
     }
     expect_stdout: "PASS PASS"
 }
+
+self_assignments: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = "PASS", b = 0, l = [ "FAIL", "PASS" ], o = { p: "PASS" };
+        a = a;
+        l[0] = l[0];
+        l[b] = l[b];
+        l[b++] = l[b++];
+        o.p = o.p;
+        console.log(a, b, l[0], o.p);
+    }
+    expect: {
+        var a = "PASS", b = 0, l = [ "FAIL", "PASS" ], o = { p: "PASS" };
+        a;
+        l[0];
+        l[b];
+        l[b++] = l[b++];
+        o.p;
+        console.log(a, b, l[0], o.p);
+    }
+    expect_stdout: "PASS 2 PASS PASS"
+}
