@@ -8084,3 +8084,27 @@ issue_3897: {
         "2",
     ]
 }
+
+issue_3908: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        if (console) {
+            var o = {
+                p: !1
+            }, a = o;
+        }
+        console.log("PASS");
+    }
+    expect: {
+        console && 0;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
