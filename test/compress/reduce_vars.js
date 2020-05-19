@@ -905,7 +905,7 @@ use_before_var: {
     }
     expect: {
         function f(){
-            console.log(t);
+            console.log(void 0);
             var t = 1;
         }
     }
@@ -981,12 +981,12 @@ inner_var_for_1: {
     expect: {
         function f() {
             var a = 1;
-            x(1, b, d);
-            for (var b = 2, c = 3; x(1, b, 3, d); x(1, b, 3, d)) {
+            x(1, void 0, d);
+            for (var b = 2, c = 3; x(1, 2, 3, d); x(1, 2, 3, d)) {
                 var d = 4, e = 5;
-                x(1, b, 3, d, e);
+                x(1, 2, 3, d, e);
             }
-            x(1, b, 3, d, e);
+            x(1, 2, 3, d, e);
         }
     }
 }
@@ -1521,9 +1521,7 @@ func_inline: {
     expect: {
         function f() {
             console.log(1 + h());
-            var h = function() {
-                return 2;
-            };
+            var h;
         }
     }
 }
@@ -2372,8 +2370,7 @@ delay_def: {
             return;
         }
         function g() {
-            return a;
-            var a = 1;
+            return;
         }
         console.log(f(), g());
     }
@@ -2395,7 +2392,7 @@ delay_def_lhs: {
     expect: {
         console.log(function() {
             long_name++;
-            return long_name;
+            return NaN;
             var long_name;
         }());
     }
@@ -2651,11 +2648,9 @@ var_assign_5: {
     }
     expect: {
         !function() {
-            var a;
             !function(b) {
-                a = 2,
-                console.log(a, b);
-            }(a);
+                console.log(2, void 0);
+            }();
         }();
     }
     expect_stdout: "2 undefined"
@@ -4725,7 +4720,7 @@ escape_conditional: {
         function bar() {}
         (function() {
             var thing = baz();
-            if (thing !== (thing = baz()))
+            if (thing !== baz())
                 console.log("FAIL");
             else
                 console.log("PASS");
@@ -4763,7 +4758,7 @@ escape_sequence: {
         function bar() {}
         (function() {
             var thing = baz();
-            if (thing !== (thing = baz()))
+            if (thing !== baz())
                 console.log("FAIL");
             else
                 console.log("PASS");
@@ -4808,7 +4803,7 @@ escape_throw: {
         function foo() {}
         (function() {
             var thing = baz();
-            if (thing !== (thing = baz()))
+            if (thing !== baz())
                 console.log("FAIL");
             else
                 console.log("PASS");
@@ -4845,7 +4840,7 @@ escape_local_conditional: {
         }
         (function() {
             var thing = baz();
-            if (thing !== (thing = baz()))
+            if (thing !== baz())
                 console.log("PASS");
             else
                 console.log("FAIL");
@@ -4882,7 +4877,7 @@ escape_local_sequence: {
         }
         (function() {
             var thing = baz();
-            if (thing !== (thing = baz()))
+            if (thing !== baz())
                 console.log("PASS");
             else
                 console.log("FAIL");
@@ -4926,7 +4921,7 @@ escape_local_throw: {
         }
         (function() {
             var thing = baz();
-            if (thing !== (thing = baz()))
+            if (thing !== baz())
                 console.log("PASS");
             else
                 console.log("FAIL");
@@ -4980,11 +4975,7 @@ inverted_var: {
         console.log(1, 2, 3, 4, 5, function c() {
             c = 6;
             return c;
-        }(), 7, function() {
-            c = 8;
-            return c;
-            var c = "foo";
-        }());
+        }(), 7, 8);
     }
     expect_stdout: true
 }
@@ -5180,9 +5171,7 @@ defun_var_3: {
         var a = 42, b;
     }
     expect: {
-        function a() {}
-        console.log(typeof a, "function");
-        var a = 42;
+        console.log("function", "function");
     }
     expect_stdout: "function function"
 }

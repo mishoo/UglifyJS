@@ -306,8 +306,6 @@ issue_2298: {
     expect: {
         !function() {
             (function() {
-                var a = undefined;
-                var undefined = a++;
                 try {
                     !function() {
                         (void 0)[1] = "foo";

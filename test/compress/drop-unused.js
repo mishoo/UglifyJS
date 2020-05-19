@@ -1729,7 +1729,7 @@ chained_3: {
     }
     expect: {
         console.log(function(a, b) {
-            var c = b;
+            var c = 2;
             b++;
             return c;
         }(0, 2));
@@ -2557,11 +2557,71 @@ issue_3899: {
         console.log(typeof a);
     }
     expect: {
-        ++a;
+        0;
         var a = function() {
             return 2;
         };
         console.log(typeof a);
     }
     expect_stdout: "function"
+}
+
+cross_scope_assign_chain: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b = 0;
+        (function() {
+            a = b;
+            a++;
+            while (b++);
+        })();
+        console.log(a ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a, b = 0;
+        (function() {
+            a = b;
+            a++;
+            while (b++);
+        })();
+        console.log(a ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+assign_if_assign_read: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            var b;
+            do {
+                b = "FAIL";
+                if (Array.isArray(a)) {
+                    b = a[0];
+                    console.log(b);
+                }
+            } while (!console);
+        })([ "PASS" ]);
+    }
+    expect: {
+        (function(a) {
+            var b;
+            do {
+                "FAIL";
+                if (Array.isArray(a)) {
+                    b = a[0];
+                    console.log(b);
+                }
+            } while (!console);
+        })([ "PASS" ]);
+    }
+    expect_stdout: "PASS"
 }

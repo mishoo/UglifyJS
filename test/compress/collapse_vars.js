@@ -3001,8 +3001,6 @@ issue_2298: {
     expect: {
         !function() {
             (function() {
-                var a = undefined;
-                var undefined = a++;
                 try {
                     !function(b) {
                         (void 0)[1] = "foo";
@@ -3836,20 +3834,19 @@ issue_2436_3: {
         }(o));
     }
     expect: {
-        var o = {
-            a: 1,
-            b: 2,
-        };
         console.log(function(c) {
-            o = {
+            ({
                 a: 3,
                 b: 4,
-            };
+            });
             return {
                 x: c.a,
                 y: c.b,
             };
-        }(o));
+        }({
+            a: 1,
+            b: 2,
+        }));
     }
     expect_stdout: true
 }
@@ -4071,16 +4068,15 @@ issue_2436_10: {
         }(o).join(" "));
     }
     expect: {
-        var o = {
-            a: 1,
-            b: 2,
-        };
         function f(n) {
-            o = { b: 3 };
+            ({ b: 3 });
             return n;
         }
         console.log([
-            (c = o).a,
+            (c = {
+                a: 1,
+                b: 2,
+            }).a,
             f(c.b),
             c.b,
         ].join(" "));
