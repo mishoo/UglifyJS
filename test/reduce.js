@@ -4,19 +4,17 @@ var List = U.List;
 var os = require("os");
 var sandbox = require("./sandbox");
 
-// Reduce a ufuzz-style `console.log` based test case by iteratively replacing
-// AST nodes with various permutations. Each AST_Statement in the tree is also
-// speculatively dropped to determine whether it is needed.  If the altered
-// tree and the last known good tree produce the same non-nil error-free output
-// after being run, then the permutation survives to the next generation and
-// is the basis for subsequent iterations.  The test case is reduced as a
-// consequence of complex expressions being replaced with simpler ones.
-// This function assumes that the testcase will not result in a parse or
-// runtime Error.  Note that a reduced test case will have different runtime
-// output - it is not functionally equivalent to the original. The only criteria
-// is that once the generated reduced test case is run without minification, it
-// will produce different output from the code minified with `minify_options`.
-// Returns a `minify` result object with an additonal boolean property `reduced`.
+// Reduce a test case by iteratively replacing AST nodes with various
+// permutations. Each AST_Statement in the tree is also speculatively dropped
+// to determine whether it is needed.  If the altered tree and the last known
+// good tree produce the same output after being run, then the permutation
+// survives to the next generation and is the basis for subsequent iterations.
+// The test case is reduced as a consequence of complex expressions being
+// replaced with simpler ones.  Note that a reduced test case will have
+// different runtime output - it is not functionally equivalent to the
+// original. The only criteria is that once the generated reduced test case is
+// run without minification, it will produce different output from the code
+// minified with `minify_options`.  Returns a `minify` result object.
 
 Error.stackTraceLimit = Infinity;
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
