@@ -29,7 +29,7 @@ jobs:
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
           while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add $NODE && nvs use $NODE'; do
             cd ~/.nvs
-            git clean -xdf
+            while !(git clean -xdf); do echo "'git clean' failed - retrying..."; done
             cd -
           done
           . ~/.nvs/nvs.sh --version
