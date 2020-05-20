@@ -1026,8 +1026,11 @@ function log_suspects(minify_options, component) {
             var o = JSON.parse(JSON.stringify(options));
             o[name] = flip;
             m[component] = o;
+            m.validate = true;
             var result = UglifyJS.minify(original_code, m);
-            if (result.error) {
+            if (typeof uglify_code != "string") {
+                return !sandbox.same_stdout(uglify_code, result.error);
+            } else if (result.error) {
                 errorln("Error testing options." + component + "." + name);
                 errorln(result.error);
             } else {
@@ -1051,8 +1054,11 @@ function log_suspects_global(options, toplevel) {
     }).filter(function(component) {
         var m = JSON.parse(options);
         m[component] = false;
+        m.validate = true;
         var result = UglifyJS.minify(original_code, m);
-        if (result.error) {
+        if (typeof uglify_code != "string") {
+            return !sandbox.same_stdout(uglify_code, result.error);
+        } else if (result.error) {
             errorln("Error testing options." + component);
             errorln(result.error);
         } else {
@@ -1075,7 +1081,37 @@ function log(options) {
     errorln("//=============================================================");
     if (!ok) errorln("// !!!!!! Failed... round " + round);
     errorln("// original code");
-    try_beautify(original_code, toplevel, original_result, errorln);
+    var beautified = UglifyJS.minify(original_code, {
+        compress: false,
+        mangle: false,
+        output: {
+            beautify: true,
+            braces: true,
+        },
+    });
+    if (beautified.error) {
+        errorln("// !!! beautify failed !!!");
+        errorln(beautified.error);
+        errorln("//");
+        errorln(original_code);
+    } else {
+        var uglified = UglifyJS.minify(beautified.code, JSON.parse(options));
+        var expected, actual;
+        if (typeof uglify_code != "string" || uglified.error) {
+            expected = uglify_code;
+            actual = uglified.error;
+        } else {
+            expected = uglify_result;
+            actual = sandbox.run_code(uglified.code, toplevel);
+        }
+        if (sandbox.same_stdout(expected, actual)) {
+            errorln("// (beautified)");
+            errorln(beautified.code);
+        } else {
+            errorln("//");
+            errorln(original_code);
+        }
+    }
     errorln();
     errorln();
     errorln("//-------------------------------------------------------------");
@@ -1113,7 +1149,7 @@ function log(options) {
     errorln("minify(options):");
     errorln(JSON.stringify(JSON.parse(options), null, 2));
     errorln();
-    if (!ok && typeof uglify_code == "string") {
+    if (!ok) {
         Object.keys(default_options).filter(function(component) {
           var defs = default_options[component];
           return defs && typeof defs == "object";
