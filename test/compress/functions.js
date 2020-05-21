@@ -4680,3 +4680,28 @@ issue_3852: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3911: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return function() {
+                if (a) (a++, b += a);
+                f();
+            };
+        }
+        var a = f, b;
+        console.log("PASS");
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
