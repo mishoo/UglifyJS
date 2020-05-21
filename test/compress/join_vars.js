@@ -1023,3 +1023,35 @@ issue_3856: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3916: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var o = {};
+        o.p = "PASS";
+        o.__proto__ = 42;
+        o.q = "FAIL";
+        o.__proto__ = {
+            p: "FAIL",
+            q: "PASS",
+        };
+        o.__proto__ = "foo";
+        console.log(typeof o.__proto__, o.p, delete o.q, o.q);
+    }
+    expect: {
+        var o = {
+            p: "PASS",
+            __proto__: 42,
+            q: "FAIL",
+        };
+        o.__proto__ = {
+            p: "FAIL",
+            q: "PASS",
+        };
+        o.__proto__ = "foo";
+        console.log(typeof o.__proto__, o.p, delete o.q, o.q);
+    }
+    expect_stdout: "object PASS true PASS"
+}
