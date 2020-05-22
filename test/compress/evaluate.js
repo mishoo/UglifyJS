@@ -2463,3 +2463,25 @@ issue_3905: {
     }
     expect_stdout: "0"
 }
+
+issue_3920: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function(b) {
+            return (b[b = 0] = 0) >= (b ? 0 : 1);
+        }("foo");
+        console.log(a);
+    }
+    expect: {
+        var a = function(b) {
+            return (b[b = 0] = 0) >= (b ? 0 : 1);
+        }("foo");
+        console.log(a);
+    }
+    expect_stdout: "false"
+}
