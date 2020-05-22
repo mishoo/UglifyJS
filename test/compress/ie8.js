@@ -2489,3 +2489,36 @@ issue_3889: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3918: {
+    options = {
+        conditionals: true,
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        if (console.log("PASS")) {
+            var a = function f() {
+                f.p;
+                try {
+                    console.log("FAIL");
+                } catch (e) {}
+            }, b = a;
+        }
+    }
+    expect: {
+        var a;
+        console.log("PASS") && (a = function f() {
+            f.p;
+            try {
+                console.log("FAIL");
+            } catch (o) {}
+        }, a);
+    }
+    expect_stdout: "PASS"
+}
