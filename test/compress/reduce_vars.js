@@ -7095,3 +7095,30 @@ issue_3894: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3922: {
+    options = {
+        evaluate: true,
+        keep_fargs: "strict",
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            var b;
+            b && b[c];
+            a |= this;
+            console.log("PASS");
+            var c = a.undefined;
+        })();
+    }
+    expect: {
+        (function() {
+            0;
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
