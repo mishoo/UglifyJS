@@ -1177,19 +1177,19 @@ function skip_infinite_recursion(orig, toplevel) {
     var code = orig;
     var tries = [];
     var offset = 0;
-    var re = /(?:(?:^|[\s{};])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
+    var re = /(?:(?:^|[\s{});])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
     var match;
     while (match = re.exec(code)) {
         if (/}\s*finally\s*$/.test(match[0])) {
             tries.shift();
             continue;
         }
-        if (tries.length && tries[0].catch) tries.shift();
         var index = match.index + match[0].length + 1;
-        if (/(?:^|[\s{};])try\s*$/.test(match[0])) {
+        if (/(?:^|[\s{});])try\s*$/.test(match[0])) {
             tries.unshift({ try: index - offset });
             continue;
         }
+        while (tries.length && tries[0].catch) tries.shift();
         tries[0].catch = index;
         var insert = "throw " + match[1] + ".ufuzz_skip || (" + match[1] + ".ufuzz_skip = " + tries[0].try + "), " + match[1] + ";";
         var new_code = code.slice(0, index) + insert + code.slice(index);
