@@ -1,5 +1,6 @@
 name: Fuzzing
 on:
+  pull_request:
   schedule:
     - cron: "*/8 * * * *"
 jobs:
