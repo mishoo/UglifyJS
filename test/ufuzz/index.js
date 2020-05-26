@@ -1177,7 +1177,7 @@ function skip_infinite_recursion(orig, toplevel) {
     var code = orig;
     var tries = [];
     var offset = 0;
-    var re = /(?:(?:^|[\s{});])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
+    var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
     var match;
     while (match = re.exec(code)) {
         if (/}\s*finally\s*$/.test(match[0])) {
@@ -1185,7 +1185,7 @@ function skip_infinite_recursion(orig, toplevel) {
             continue;
         }
         var index = match.index + match[0].length + 1;
-        if (/(?:^|[\s{});])try\s*$/.test(match[0])) {
+        if (/(?:^|[\s{}):;])try\s*$/.test(match[0])) {
             tries.unshift({ try: index - offset });
             continue;
         }
