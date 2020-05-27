@@ -8108,3 +8108,37 @@ issue_3908: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3927: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        console.log(function(b) {
+            try {
+                try {
+                    if (a + (b = "PASS", true)) return;
+                    b.p;
+                } finally {
+                    return b;
+                }
+            } catch (e) {
+            }
+        }());
+    }
+    expect: {
+        var a = 0;
+        console.log(function(b) {
+            try {
+                try {
+                    if (a + (b = "PASS", true)) return;
+                    b.p;
+                } finally {
+                    return b;
+                }
+            } catch (e) {}
+        }());
+    }
+    expect_stdout: "PASS"
+}
