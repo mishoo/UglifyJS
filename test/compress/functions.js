@@ -4705,3 +4705,44 @@ issue_3911: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3929: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var abc = function f() {
+                (function() {
+                    switch (f) {
+                    default:
+                        var abc = 0;
+                    case 0:
+                        abc.p;
+                    }
+                    console.log(typeof f);
+                })();
+            };
+            typeof abc && abc();
+        })();
+    }
+    expect: {
+        (function() {
+            var abc = function f() {
+                (function() {
+                    switch (f) {
+                    default:
+                        var abc = 0;
+                    case 0:
+                        abc.p;
+                    }
+                    console.log(typeof f);
+                })();
+            };
+            typeof abc && abc();
+        })();
+    }
+    expect_stdout: "function"
+}
