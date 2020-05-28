@@ -2485,3 +2485,62 @@ issue_3920: {
     }
     expect_stdout: "false"
 }
+
+inlined_increment_prefix: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            ++a;
+        })();
+        console.log(a += 0);
+    }
+    expect: {
+        var a = 0;
+        void ++a;
+        console.log(a += 0);
+    }
+    expect_stdout: "1"
+}
+
+inlined_increment_postfix: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            a++;
+        })();
+        console.log(a += 0);
+    }
+    expect: {
+        var a = 0;
+        void a++;
+        console.log(a += 0);
+    }
+    expect_stdout: "1"
+}
+
+compound_assignment_to_property: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        1 + (0..p >>= 0) && console.log("PASS");
+    }
+    expect: {
+        1 + (0..p >>= 0),
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}

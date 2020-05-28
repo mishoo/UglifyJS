@@ -2724,8 +2724,8 @@ issue_1814_1: {
     expect: {
         !function() {
             !function(a) {
-                console.log(a++, 42);
-            }(0);
+                console.log(0, 42);
+            }();
         }();
     }
     expect_stdout: "0 42"
@@ -2751,8 +2751,8 @@ issue_1814_2: {
     expect: {
         !function() {
             !function(a) {
-                console.log("321", a++);
-            }(0);
+                console.log("321", 0);
+            }();
         }();
     }
     expect_stdout: "321 0"
