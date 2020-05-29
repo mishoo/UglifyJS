@@ -2503,7 +2503,7 @@ inlined_increment_prefix: {
     expect: {
         var a = 0;
         void ++a;
-        console.log(a += 0);
+        console.log(1);
     }
     expect_stdout: "1"
 }
@@ -2525,7 +2525,7 @@ inlined_increment_postfix: {
     expect: {
         var a = 0;
         void a++;
-        console.log(a += 0);
+        console.log(1);
     }
     expect_stdout: "1"
 }
@@ -2541,6 +2541,116 @@ compound_assignment_to_property: {
     expect: {
         1 + (0..p >>= 0),
         console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_2208_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        a = 42;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect: {
+        a = 42;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_postfix: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        a = 41;
+        a++;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect: {
+        a = 41;
+        a++;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect_stdout: "42"
+}
+
+issue_2208_prefix: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        a = 43;
+        --a;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect: {
+        a = 43;
+        --a;
+        console.log({
+            p: function() {
+                return function() {
+                    return this.a;
+                }();
+            }
+        }.p());
+    }
+    expect_stdout: "42"
+}
+
+issue_3933: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            a && (b ^= 1) && console.log("PASS");
+        })(1);
+    }
+    expect: {
+        (function(a, b) {
+            1, (b ^= 1), console.log("PASS");
+        })();
     }
     expect_stdout: "PASS"
 }
