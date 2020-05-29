@@ -236,7 +236,7 @@ collapse_vars_lvalues_drop_assign: {
     }
 }
 
-collapse_vars_misc1: {
+collapse_vars_misc: {
     options = {
         collapse_vars: true,
         dead_code: true,

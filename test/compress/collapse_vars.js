@@ -917,7 +917,7 @@ collapse_vars_lvalues_drop_assign: {
     }
 }
 
-collapse_vars_misc1: {
+collapse_vars_misc: {
     options = {
         booleans: true,
         collapse_vars: true,
@@ -971,8 +971,8 @@ collapse_vars_misc1: {
         function f7() { var b = window.a * window.z; return b + b }
         function f8() { var b = window.a * window.z; return b + (5 + b) }
         function f9() { var b = window.a * window.z; return bar() || b }
-        function f10(x) { var a = 5; return a += 3; }
-        function f11(x) { var a = 5; return a += 2; }
+        function f10(x) { return 8; }
+        function f11(x) { return 7; }
     }
 }
 
