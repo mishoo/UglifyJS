@@ -2654,3 +2654,18 @@ issue_3933: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3935: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(function f(a) {
+            return a++;
+        }());
+    }
+    expect: {
+        console.log(NaN);
+    }
+    expect_stdout: "NaN"
+}
