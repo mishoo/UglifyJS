@@ -2669,3 +2669,24 @@ issue_3935: {
     }
     expect_stdout: "NaN"
 }
+
+issue_3937: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var a = 123;
+        (a++ + (b = a))[b] ? 0 ? a : b : 0 ? a : b;
+        console.log(a, b);
+    }
+    expect: {
+        var a = 123;
+        (a++ + (b = a))[b], 0, b;
+        console.log(a, b);
+    }
+    expect_stdout: "124 124"
+}
