@@ -2336,6 +2336,7 @@ issue_3274: {
         inline: true,
         join_vars: true,
         loops: true,
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }

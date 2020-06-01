@@ -2412,9 +2412,9 @@ issue_3887: {
     expect: {
         (function(b) {
             try {
-                b-- && console.log("PASS");
+                1, console.log("PASS");
             } catch (a_2) {}
-        })(1);
+        })();
     }
     expect_stdout: "PASS"
 }
@@ -2478,10 +2478,10 @@ issue_3920: {
         console.log(a);
     }
     expect: {
-        var a = function(b) {
-            return (b[b = 0] = 0) >= (b ? 0 : 1);
-        }("foo");
-        console.log(a);
+        (function(b) {
+            "foo"[0] = 0;
+        })();
+        console.log(false);
     }
     expect_stdout: "false"
 }
