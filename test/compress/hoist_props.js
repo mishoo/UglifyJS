@@ -972,3 +972,26 @@ issue_3871: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3945: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f() {
+            o.p;
+            var o = {
+                q: 0,
+            };
+        }
+    }
+    expect: {
+        function f() {
+            o.p;
+            var o = {
+                q: 0,
+            };
+        }
+    }
+}
