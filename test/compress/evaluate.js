@@ -2690,3 +2690,32 @@ issue_3937: {
     }
     expect_stdout: "124 124"
 }
+
+issue_3944: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function f() {
+                while (function() {
+                    var a = 0 == (b && b.p), b = console.log(a);
+                }());
+                f;
+            }
+            f();
+        })();
+    }
+    expect: {
+        void function f() {
+            while (a = 0 == (a = void 0), console.log(a), void 0);
+            var a;
+            f;
+        }();
+    }
+    expect_stdout: "false"
+}
