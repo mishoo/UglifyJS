@@ -973,7 +973,7 @@ issue_3871: {
     expect_stdout: "PASS"
 }
 
-issue_3945: {
+issue_3945_1: {
     options = {
         hoist_props: true,
         reduce_vars: true,
@@ -994,4 +994,25 @@ issue_3945: {
             };
         }
     }
+}
+
+issue_3945_2: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        console.log(typeof o);
+        var o = {
+            p: 0,
+        };
+    }
+    expect: {
+        console.log(typeof o);
+        var o = {
+            p: 0,
+        };
+    }
+    expect_stdout: "undefined"
 }
