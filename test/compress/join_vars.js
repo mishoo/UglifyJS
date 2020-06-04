@@ -808,9 +808,9 @@ issue_3795: {
     }
     expect: {
         var a = "FAIL", d = function() {
-            if (a = 42, d) return -1;
+            if (void 0) return -1;
             a = "PASS";
-        }();
+        }(a = 42);
         console.log(a, d);
     }
     expect_stdout: "PASS undefined"

@@ -2285,7 +2285,7 @@ issue_3598: {
         try {
             (function() {
                 a = "PASS";
-                var c = (void (c.p = 0))[!1];
+                (void ((void 0).p = 0))[!1];
             })();
         } catch (e) {}
         console.log(a);
@@ -2557,10 +2557,9 @@ issue_3899: {
         console.log(typeof a);
     }
     expect: {
-        0;
-        var a = function() {
+        function a() {
             return 2;
-        };
+        }
         console.log(typeof a);
     }
     expect_stdout: "function"
@@ -2624,4 +2623,32 @@ assign_if_assign_read: {
         })([ "PASS" ]);
     }
     expect_stdout: "PASS"
+}
+
+issue_3951: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = console.log("PASS");
+        console.log(a);
+        a = "0";
+        console.log(a.p = 0);
+        a && a;
+    }
+    expect: {
+        var a = console.log("PASS");
+        console.log(a);
+        a = "0";
+        console.log(a.p = 0);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+        "0",
+    ]
 }

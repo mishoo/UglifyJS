@@ -407,3 +407,57 @@ issue_3429_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_3949_1: {
+    options = {
+        assignments: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 42;
+        function f() {
+            var b = a;
+            b = b >> 2;
+            return 100 + b;
+        }
+        console.log(f());
+    }
+    expect: {
+        var a = 42;
+        function f() {
+            var b = a;
+            b >>= 2;
+            return 100 + b;
+        }
+        console.log(f());
+    }
+    expect_stdout: "110"
+}
+
+issue_3949_2: {
+    options = {
+        assignments: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 42;
+        function f() {
+            var b = a;
+            b = 5 & b;
+            return 100 + b;
+        }
+        console.log(f());
+    }
+    expect: {
+        var a = 42;
+        function f() {
+            var b = a;
+            b &= 5;
+            return 100 + b;
+        }
+        console.log(f());
+    }
+    expect_stdout: "100"
+}

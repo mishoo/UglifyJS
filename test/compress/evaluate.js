@@ -1579,9 +1579,9 @@ issue_2968_1: {
     expect: {
         var c = "FAIL";
         (function() {
-            b = -(a = 42),
-            void ((a <<= 0) && (a[(c = "PASS", 0 >>> (b += 1))] = 0));
-            var a, b;
+            a = 42,
+            void ((a <<= 0) && (a[(c = "PASS", 0)] = 0));
+            var a;
         })();
         console.log(c);
     }
@@ -2341,10 +2341,7 @@ issue_3878_1: {
         console.log(b ? "PASS" : "FAIL");
     }
     expect: {
-        var b = function(a) {
-            return (a = 0) == (a && this > (a += 0));
-        }();
-        console.log(b ? "PASS" : "FAIL");
+        console.log(true ? "PASS" : "FAIL");
     }
     expect_stdout: "PASS"
 }
@@ -2435,12 +2432,11 @@ issue_3903: {
         console.log(d);
     }
     expect: {
-        var a = "PASS";
         function f(b, c) {
             return console, c;
         }
-        var d = f(f(), a = a);
-        console.log(d);
+        f(f(), "PASS");
+        console.log("PASS");
     }
     expect_stdout: "PASS"
 }
@@ -2649,7 +2645,7 @@ issue_3933: {
     }
     expect: {
         (function(a, b) {
-            1, (b ^= 1), console.log("PASS");
+            1, 1, console.log("PASS");
         })();
     }
     expect_stdout: "PASS"
