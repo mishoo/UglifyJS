@@ -1520,8 +1520,7 @@ func_inline: {
     }
     expect: {
         function f() {
-            console.log(1 + h());
-            var h;
+            console.log(1 + (void 0)());
         }
     }
 }
@@ -2671,8 +2670,8 @@ var_assign_6: {
     }
     expect: {
         !function() {
-            var a = function(){}(a = 1);
-            console.log(a);
+            (function(){}());
+            console.log(void 0);
         }();
     }
     expect_stdout: "undefined"
@@ -7108,6 +7107,169 @@ issue_3922: {
             0;
             console.log("PASS");
         })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_3949_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function f(a) {
+            var a = void (a = 0, g);
+            function g() {
+                console.log(typeof a);
+            }
+            g();
+        })();
+    }
+    expect: {
+        (function f(a) {
+            var a = void (a = 0, g);
+            function g() {
+                console.log(typeof a);
+            }
+            g();
+        })();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3949_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f(a) {
+            var a = void (a = 0, g);
+            function g() {
+                console.log(typeof a);
+            }
+            g();
+        })();
+    }
+    expect: {
+        (function(a) {
+            a = void (a = 0, g);
+            function g() {
+                console.log(typeof a);
+            }
+            g();
+        })();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3949_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {}
+        for (var a, i = 3; 0 <= --i; ) {
+            a = f;
+            console.log(a === b);
+            var b = a;
+        }
+    }
+    expect: {
+        function f() {}
+        for (var a, i = 3; 0 <= --i; ) {
+            a = f;
+            console.log(a === b);
+            var b = a;
+        }
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "true",
+    ]
+}
+
+issue_3949_4: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {}
+        for (var a, i = 3; 0 <= --i; ) {
+            a = f;
+            console.log(a === b);
+            var b = a;
+        }
+    }
+    expect: {
+        function f() {}
+        for (var a, i = 3; 0 <= --i; ) {
+            a = f;
+            console.log(a === b);
+            var b = a;
+        }
+    }
+    expect_stdout: [
+        "false",
+        "true",
+        "true",
+    ]
+}
+
+local_assignment_lambda: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        function f() {
+            a = "PASS";
+            console.log(a);
+        }
+        f();
+        f();
+    }
+    expect: {
+        function f() {
+            console.log("PASS");
+        }
+        f(),
+        f();
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
+
+local_assignment_loop: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        do {
+            a = "PASS";
+            console.log(a);
+        } while (!console);
+    }
+    expect: {
+        do {
+            console.log("PASS");
+        } while (!console);
     }
     expect_stdout: "PASS"
 }

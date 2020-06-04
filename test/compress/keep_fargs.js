@@ -306,6 +306,7 @@ issue_2298: {
     expect: {
         !function() {
             (function() {
+                0;
                 try {
                     !function() {
                         (void 0)[1] = "foo";
