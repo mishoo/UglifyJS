@@ -2652,3 +2652,41 @@ issue_3951: {
         "0",
     ]
 }
+
+issue_3956: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            function f(b) {
+                console.log(b);
+                a = 1;
+            }
+            var c = f(c += 0);
+            (function(d) {
+                console.log(d);
+            })(console.log(a) ^ 1, c);
+        })();
+    }
+    expect: {
+        var c, d;
+        c += 0,
+        console.log(NaN),
+        d = 1 ^ console.log(1),
+        console.log(d);
+    }
+    expect_stdout: [
+        "NaN",
+        "1",
+        "1",
+    ]
+}
