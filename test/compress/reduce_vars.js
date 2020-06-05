@@ -7273,3 +7273,53 @@ local_assignment_loop: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3957_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            while (a += console.log(a = 0))
+                a = 0;
+        }
+        f("FAIL");
+    }
+    expect: {
+        function f(a) {
+            while (a += console.log(a = 0))
+                a = 0;
+        }
+        f("FAIL");
+    }
+    expect_stdout: [
+        "0",
+        "0",
+    ]
+}
+
+issue_3957_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            while (a += console.log(a = 0))
+                a = 0;
+        }
+        f("FAIL");
+    }
+    expect: {
+        function f(a) {
+            while (a += console.log(a = 0))
+                a = 0;
+        }
+        f("FAIL");
+    }
+    expect_stdout: [
+        "0",
+        "0",
+    ]
+}

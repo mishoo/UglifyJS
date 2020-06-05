@@ -2715,3 +2715,23 @@ issue_3944: {
     }
     expect_stdout: "false"
 }
+
+issue_3953: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        function f(a) {
+            (a += 0 * (a = 0)) && console.log("PASS");
+        }
+        f(1);
+    }
+    expect: {
+        function f(a) {
+            (a += 0 * (a = 0)) && console.log("PASS");
+        }
+        f(1);
+    }
+    expect_stdout: "PASS"
+}
