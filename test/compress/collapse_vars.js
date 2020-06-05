@@ -6888,6 +6888,30 @@ sequence_in_iife_2: {
     }
     expect: {
         var a = "foo", b = 42;
+        b = a;
+        console.log(a, b);
+    }
+    expect_stdout: "foo foo"
+}
+
+sequence_in_iife_3: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo", b = 42;
+        (function() {
+            var c = (b = a, b);
+        })();
+        console.log(a, b);
+    }
+    expect: {
+        var a = "foo";
         console.log(a, a);
     }
     expect_stdout: "foo foo"
