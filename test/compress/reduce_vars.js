@@ -7323,3 +7323,38 @@ issue_3957_2: {
         "0",
     ]
 }
+
+issue_3958: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b) {
+            (function(c) {
+                console.log(c[0] = 1);
+            })(a = b);
+            --a;
+        })([]);
+        console.log(a);
+    }
+    expect: {
+        var a;
+        (function(b) {
+            (function(c) {
+                console.log(c[0] = 1);
+            })(a = []);
+            --a;
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "1",
+        "0",
+    ]
+}
