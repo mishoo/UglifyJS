@@ -249,7 +249,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with `--output-opts`", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1482/input.js -O';
+        var command = uglifyjscmd + ' test/input/issue-1482/input.js -O ascii_only';
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, read("test/input/issue-1482/default.js"));
@@ -257,7 +257,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should fail when both --beautify & --output-opts are specified", function(done) {
-        var command = uglifyjscmd + " test/input/issue-520/input.js -bO";
+        var command = uglifyjscmd + " test/input/issue-520/input.js -bO ascii_only";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stderr, "ERROR: --beautify cannot be used with --output-opts\n");
@@ -717,7 +717,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + " test/input/issue-3315/input.js --config-file test/input/issue-3315/config.json";
         exec(command, function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, 'function f(){"aaaaaaaaaa";var a={prop:1,a:2};return a.prop+a.a}\n');
+            assert.strictEqual(stdout, 'function f(){"aaaaaaaaaa";var a={prop:1,t:2};return a.prop+a.t}\n');
             done();
         });
     });
