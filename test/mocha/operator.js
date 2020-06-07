@@ -486,4 +486,19 @@ describe("operator", function() {
             assert.strictEqual(UglifyJS.parse(exp[0]).print_to_string(), exp[1] + ";");
         });
     });
+    it("Should preserve space between /regex/ and `in`", function() {
+        [
+            "/regex/ in {}",
+            "/regex/g in {}",
+            "0 + /regex/ in {}",
+            "0 + /regex/g in {}",
+        ].forEach(function(exp) {
+            var code = UglifyJS.parse(exp).print_to_string();
+            try {
+                assert.strictEqual(UglifyJS.parse(code).print_to_string(), code);
+            } catch (ex) {
+                assert.fail("Failed to reparse: " + exp + "\n" + ex);
+            }
+        });
+    });
 });

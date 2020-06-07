@@ -8164,3 +8164,34 @@ issue_3927: {
     }
     expect_stdout: "PASS"
 }
+
+operator_in: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function log(msg) {
+            console.log(msg);
+        }
+        var a = "FAIL";
+        try {
+            a = "PASS";
+            0 in null;
+            log("FAIL", a);
+        } catch (e) {}
+        log(a);
+    }
+    expect: {
+        function log(msg) {
+            console.log(msg);
+        }
+        var a = "FAIL";
+        try {
+            a = "PASS";
+            0 in null;
+            log("FAIL", a);
+        } catch (e) {}
+        log(a);
+    }
+    expect_stdout: "PASS"
+}

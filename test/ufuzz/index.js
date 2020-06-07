@@ -168,7 +168,7 @@ var VALUES = [
     "this",
 ];
 
-var BINARY_OPS_NO_COMMA = [
+var BINARY_OPS = [
     " + ", // spaces needed to disambiguate with ++ cases (could otherwise cause syntax errors)
     " - ",
     "/",
@@ -190,9 +190,14 @@ var BINARY_OPS_NO_COMMA = [
     "%",
     "&&",
     "||",
-    "^" ];
-
-var BINARY_OPS = [","].concat(BINARY_OPS_NO_COMMA);
+    "^",
+    ",",
+];
+BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
+BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
+BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
+BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
+BINARY_OPS.push(" in ");
 
 var ASSIGNMENTS = [
     "=",
@@ -879,7 +884,7 @@ function createNestedBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
 }
 function _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
     return "(" + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow)
-        + createBinaryOp(noComma) + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
+        + createBinaryOp(noComma, canThrow) + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
 }
 function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
     // intentionally generate more hardcore ops
@@ -929,9 +934,12 @@ function createValue() {
     return VALUES[rng(VALUES.length)];
 }
 
-function createBinaryOp(noComma) {
-    if (noComma) return BINARY_OPS_NO_COMMA[rng(BINARY_OPS_NO_COMMA.length)];
-    return BINARY_OPS[rng(BINARY_OPS.length)];
+function createBinaryOp(noComma, canThrow) {
+    var op;
+    do {
+        op = BINARY_OPS[rng(BINARY_OPS.length)];
+    } while (noComma && op == "," || !canThrow && op == " in ");
+    return op;
 }
 
 function createAssignment() {

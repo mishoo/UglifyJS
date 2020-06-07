@@ -274,3 +274,26 @@ drop_value: {
         foo(), bar();
     }
 }
+
+operator_in: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        try {
+            "foo" in true;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            0 in true;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
