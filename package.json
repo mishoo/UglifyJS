@@ -22,9 +22,6 @@
     "tools",
     "LICENSE"
   ],
-  "dependencies": {
-    "commander": "~2.20.3"
-  },
   "devDependencies": {
     "acorn": "~7.1.0",
     "semver": "~6.3.0"
