@@ -136,7 +136,7 @@ relational: {
         side_effects :true,
     }
     input: {
-        foo() in foo();
+        foo() in new foo();
         foo() instanceof bar();
         foo() < "bar";
         bar() > foo();
