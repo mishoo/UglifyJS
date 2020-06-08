@@ -1181,7 +1181,7 @@ function fuzzy_match(original, uglified) {
     return true;
 }
 
-function skip_infinite_recursion(orig, toplevel) {
+function patch_try_catch(orig, toplevel) {
     var code = orig;
     var tries = [];
     var offset = 0;
@@ -1198,15 +1198,23 @@ function skip_infinite_recursion(orig, toplevel) {
             continue;
         }
         while (tries.length && tries[0].catch) tries.shift();
-        tries[0].catch = index;
-        var insert = "throw " + match[1] + ".ufuzz_skip || (" + match[1] + ".ufuzz_skip = " + tries[0].try + "), " + match[1] + ";";
+        tries[0].catch = index - offset;
+        var insert = "throw " + [
+            match[1] + ".ufuzz_var || (" + match[1] + '.ufuzz_var = "' + match[1] + '")',
+            match[1] + ".ufuzz_try || (" + match[1] + ".ufuzz_try = " + tries[0].try + ")",
+            match[1] + ".ufuzz_catch || (" + match[1] + ".ufuzz_catch = " + tries[0].catch + ")",
+            match[1],
+        ].join(", ") + ";";
         var new_code = code.slice(0, index) + insert + code.slice(index);
         var result = sandbox.run_code(new_code, toplevel);
         if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
             offset += insert.length;
             code = new_code;
+        } else if (result.name == "TypeError" && /'in'/.test(result.message)) {
+            index = result.ufuzz_catch;
+            return orig.slice(0, index) + result.ufuzz_var + ' = new Error("invalid `in`");' + orig.slice(index);
         } else if (result.name == "RangeError" && result.message == "Maximum call stack size exceeded") {
-            index = result.ufuzz_skip;
+            index = result.ufuzz_try;
             return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
         }
     }
@@ -1256,10 +1264,11 @@ for (var round = 1; round <= num_iterations; round++) {
                     ok = sandbox.same_stdout(fuzzy_result, uglify_result);
                 }
             }
+            // ignore difference in error message caused by `in`
             // ignore difference in depth of termination caused by infinite recursion
             if (!ok) {
-                var orig_skipped = skip_infinite_recursion(original_code, toplevel);
-                var uglify_skipped = skip_infinite_recursion(uglify_code, toplevel);
+                var orig_skipped = patch_try_catch(original_code, toplevel);
+                var uglify_skipped = patch_try_catch(uglify_code, toplevel);
                 if (orig_skipped && uglify_skipped) {
                     ok = sandbox.same_stdout(sandbox.run_code(orig_skipped, toplevel), sandbox.run_code(uglify_skipped, toplevel));
                 }
