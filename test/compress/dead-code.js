@@ -1193,3 +1193,24 @@ self_assignments: {
     }
     expect_stdout: "PASS 2 PASS PASS"
 }
+
+issue_3967: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = "FAIL";
+        try {
+            a = 0 in (a = "PASS");
+        } catch (e) {}
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        try {
+            a = 0 in (a = "PASS");
+        } catch (e) {}
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
