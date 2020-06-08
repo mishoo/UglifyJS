@@ -7977,7 +7977,7 @@ mangleable_var: {
     expect_stdout: "PASS"
 }
 
-issue_3884: {
+issue_3884_1: {
     options = {
         collapse_vars: true,
         evaluate: true,
@@ -7995,9 +7995,33 @@ issue_3884: {
         console.log(a, b);
     }
     expect: {
-        var a = 100;
-        ++a;
-        console.log(a, 32);
+        var a = 100, b = 1;
+        b <<= ++a;
+        console.log(a, b);
+    }
+    expect_stdout: "101 32"
+}
+
+issue_3884_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 100, b = 1;
+        {
+            a++ + a || a;
+            b <<= a;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        console.log(101, 32);
     }
     expect_stdout: "101 32"
 }
@@ -8194,4 +8218,27 @@ operator_in: {
         log(a);
     }
     expect_stdout: "PASS"
+}
+
+issue_3971: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0 == typeof f, b = 0;
+        {
+            var a = void (a++ + (b |= a));
+        }
+        console.log(b);
+    }
+    expect: {
+        var a = 0 == typeof f, b = 0;
+        var a = void (b |= ++a);
+        console.log(b);
+    }
+    expect_stdout: "1"
 }
