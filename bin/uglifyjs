@@ -40,6 +40,7 @@ while (args.length) {
     } else if (arg[1] == "-") {
         process_option(arg.slice(2));
     } else [].forEach.call(arg.slice(1), function(letter, index, arg) {
+        if (!(letter in short_forms)) fatal("invalid option -" + letter);
         process_option(short_forms[letter], index + 1 < arg.length);
     });
 }
