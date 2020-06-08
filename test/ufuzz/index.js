@@ -1188,23 +1188,28 @@ function patch_try_catch(orig, toplevel) {
     var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
     var match;
     while (match = re.exec(code)) {
-        if (/}\s*finally\s*$/.test(match[0])) {
-            tries.shift();
-            continue;
-        }
         var index = match.index + match[0].length + 1;
         if (/(?:^|[\s{}):;])try\s*$/.test(match[0])) {
             tries.unshift({ try: index - offset });
             continue;
         }
-        while (tries.length && tries[0].catch) tries.shift();
-        tries[0].catch = index - offset;
-        var insert = "throw " + [
-            match[1] + ".ufuzz_var || (" + match[1] + '.ufuzz_var = "' + match[1] + '")',
-            match[1] + ".ufuzz_try || (" + match[1] + ".ufuzz_try = " + tries[0].try + ")",
-            match[1] + ".ufuzz_catch || (" + match[1] + ".ufuzz_catch = " + tries[0].catch + ")",
-            match[1],
-        ].join(", ") + ";";
+        var insert;
+        if (/}\s*finally\s*$/.test(match[0])) {
+            tries.shift();
+            insert = 'if (typeof UFUZZ_ERROR == "object") throw UFUZZ_ERROR;';
+        } else {
+            while (tries.length && tries[0].catch) tries.shift();
+            tries[0].catch = index - offset;
+            insert = [
+                "if (!" + match[1] + ".ufuzz_var) {",
+                    match[1] + '.ufuzz_var = "' + match[1] + '";',
+                    match[1] + ".ufuzz_try = " + tries[0].try + ";",
+                    match[1] + ".ufuzz_catch = " + tries[0].catch + ";",
+                    "UFUZZ_ERROR = " + match[1] + ";",
+                "}",
+                "throw " + match[1] + ";",
+            ].join("\n");
+        }
         var new_code = code.slice(0, index) + insert + code.slice(index);
         var result = sandbox.run_code(new_code, toplevel);
         if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
