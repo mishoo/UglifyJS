@@ -8242,3 +8242,41 @@ issue_3971: {
     }
     expect_stdout: "1"
 }
+
+issue_3976: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            console.log("FAIL");
+        }
+        (function(a) {
+            function g() {
+                if ((a = 0) || f(0)) {
+                    f();
+                } else {
+                    f();
+                }
+                if (h(a = 0));
+            }
+            function h() {
+                g();
+            }
+        })();
+        console.log("PASS");
+    }
+    expect: {
+        function f() {
+            console.log("FAIL");
+        }
+        void 0;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
