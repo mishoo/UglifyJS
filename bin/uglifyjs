@@ -112,7 +112,7 @@ function process_option(name, no_value) {
                 "  --verbose                                Print diagnostic messages.",
                 "  --warn                                   Print warning messages.",
                 "  --wrap <name>                            Embed everything as a function with “exports” corresponding to “name” globally.",
-                "  --reduce-test                            Reduce a standalone test case.",
+                "  --reduce-test                            Reduce a standalone test case (assumes cloned repository).",
             ].join("\n"));
         }
         process.exit();
@@ -303,7 +303,7 @@ function run() {
     }
     var result;
     if (specified["reduce-test"]) {
-        // load on demand - assumes dev tree checked out
+        // load on demand - assumes cloned repository
         var reduce_test = require("../test/reduce");
         if (Object.keys(files).length != 1) fatal("can only test on a single file");
         result = reduce_test(files[Object.keys(files)[0]], options, {
