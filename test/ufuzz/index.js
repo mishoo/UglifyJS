@@ -1182,45 +1182,60 @@ function fuzzy_match(original, uglified) {
 }
 
 function patch_try_catch(orig, toplevel) {
-    var code = orig;
-    var tries = [];
-    var offset = 0;
+    var stack = [ {
+        code: orig,
+        index: 0,
+        offset: 0,
+        tries: [],
+    } ];
     var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
-    var match;
-    while (match = re.exec(code)) {
-        var index = match.index + match[0].length + 1;
-        if (/(?:^|[\s{}):;])try\s*$/.test(match[0])) {
-            tries.unshift({ try: index - offset });
-            continue;
-        }
-        var insert;
-        if (/}\s*finally\s*$/.test(match[0])) {
-            tries.shift();
-            insert = 'if (typeof UFUZZ_ERROR == "object") throw UFUZZ_ERROR;';
-        } else {
-            while (tries.length && tries[0].catch) tries.shift();
-            tries[0].catch = index - offset;
-            insert = [
-                "if (!" + match[1] + ".ufuzz_var) {",
-                    match[1] + '.ufuzz_var = "' + match[1] + '";',
-                    match[1] + ".ufuzz_try = " + tries[0].try + ";",
-                    match[1] + ".ufuzz_catch = " + tries[0].catch + ";",
-                    "UFUZZ_ERROR = " + match[1] + ";",
-                "}",
-                "throw " + match[1] + ";",
-            ].join("\n");
-        }
-        var new_code = code.slice(0, index) + insert + code.slice(index);
-        var result = sandbox.run_code(new_code, toplevel);
-        if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
-            offset += insert.length;
-            code = new_code;
-        } else if (result.name == "TypeError" && /'in'/.test(result.message)) {
-            index = result.ufuzz_catch;
-            return orig.slice(0, index) + result.ufuzz_var + ' = new Error("invalid `in`");' + orig.slice(index);
-        } else if (result.name == "RangeError" && result.message == "Maximum call stack size exceeded") {
-            index = result.ufuzz_try;
-            return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
+    while (stack.length) {
+        var code = stack[0].code;
+        var offset = stack[0].offset;
+        var tries = stack[0].tries;
+        var match;
+        re.lastIndex = stack.shift().index;
+        while (match = re.exec(code)) {
+            var index = match.index + match[0].length + 1;
+            if (/(?:^|[\s{}):;])try\s*$/.test(match[0])) {
+                tries.unshift({ try: index - offset });
+                continue;
+            }
+            var insert;
+            if (/}\s*finally\s*$/.test(match[0])) {
+                tries.shift();
+                insert = 'if (typeof UFUZZ_ERROR == "object") throw UFUZZ_ERROR;';
+            } else {
+                while (tries.length && tries[0].catch) tries.shift();
+                tries[0].catch = index - offset;
+                insert = [
+                    "if (!" + match[1] + ".ufuzz_var) {",
+                        match[1] + '.ufuzz_var = "' + match[1] + '";',
+                        match[1] + ".ufuzz_try = " + tries[0].try + ";",
+                        match[1] + ".ufuzz_catch = " + tries[0].catch + ";",
+                        "UFUZZ_ERROR = " + match[1] + ";",
+                    "}",
+                    "throw " + match[1] + ";",
+                ].join("\n");
+            }
+            var new_code = code.slice(0, index) + insert + code.slice(index);
+            var result = sandbox.run_code(new_code, toplevel);
+            if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
+                if (match[1]) stack.push({
+                    code: code,
+                    index: index,
+                    offset: offset,
+                    tries: JSON.parse(JSON.stringify(tries)),
+                });
+                offset += insert.length;
+                code = new_code;
+            } else if (result.name == "TypeError" && /'in'/.test(result.message)) {
+                index = result.ufuzz_catch;
+                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("invalid `in`");' + orig.slice(index);
+            } else if (result.name == "RangeError" && result.message == "Maximum call stack size exceeded") {
+                index = result.ufuzz_try;
+                return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
+            }
         }
     }
 }
