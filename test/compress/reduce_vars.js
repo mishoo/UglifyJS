@@ -7358,3 +7358,28 @@ issue_3958: {
         "0",
     ]
 }
+
+issue_3974: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            var a = 0 in 0;
+            0 && a;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            var a = 0 in 0;
+            0 && a;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
