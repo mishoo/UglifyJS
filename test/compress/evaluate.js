@@ -2735,3 +2735,27 @@ issue_3953: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3988: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        function f(b) {
+            return ("" + (b &= 0))[b && this];
+        }
+        var a = f();
+        console.log(a);
+    }
+    expect: {
+        var a = function(b) {
+            return ("" + (b &= 0))[b && this];
+        }();
+        console.log(a);
+    }
+    expect_stdout: "0"
+}
