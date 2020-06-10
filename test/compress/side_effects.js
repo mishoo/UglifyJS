@@ -297,3 +297,33 @@ operator_in: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3983: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            g && g();
+        }
+        f();
+        function g() {
+            0 ? a : 0;
+        }
+        var b = a;
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
