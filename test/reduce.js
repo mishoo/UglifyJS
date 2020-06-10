@@ -438,7 +438,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     }
                 }));
                 var code = testcase_ast.print_to_string();
-                if (diff = test_for_diff(code, minify_options, result_cache, max_timeout)) {
+                var diff = test_for_diff(code, minify_options, result_cache, max_timeout);
+                if (diff && !diff.timed_out && !diff.error) {
                     testcase = code;
                     differs = diff;
                 } else {

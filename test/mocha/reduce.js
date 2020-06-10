@@ -296,4 +296,18 @@ describe("test/reduce.js", function() {
             "// }",
         ]).join("\n"));
     });
+    it("Should handle corner cases when intermediate case differs only in Error.message", function() {
+        if (semver.satisfies(process.version, "<=0.10")) return;
+        var result = reduce_test(read("test/input/reduce/diff_error.js"), {
+            compress: {
+                keep_fargs: false,
+                unsafe: true,
+            },
+            mangle: false,
+        }, {
+            verbose: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, read("test/input/reduce/diff_error.reduced.js"));
+    });
 });
