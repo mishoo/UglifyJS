@@ -2755,3 +2755,37 @@ issue_3962_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_3986: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        (function() {
+            try {
+                throw 42;
+            } catch (e) {
+                a++;
+            }
+            b = b && 0;
+        })(b *= a);
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b = 0;
+        (function() {
+            try {
+                throw 42;
+            } catch (e) {
+                a++;
+            }
+            b = b && 0;
+        })(b *= a);
+        console.log(b);
+    }
+    expect_stdout: "0"
+}
