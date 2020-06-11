@@ -1,5 +1,0 @@
-build: off
-matrix:
-  fast_finish: true
-test_script:
-  - echo No longer in use
