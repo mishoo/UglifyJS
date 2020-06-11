@@ -1169,29 +1169,131 @@ redundant_assignments: {
     expect_stdout: "PASS PASS"
 }
 
-self_assignments: {
+self_assignments_1: {
     options = {
         dead_code: true,
     }
     input: {
-        var a = "PASS", b = 0, l = [ "FAIL", "PASS" ], o = { p: "PASS" };
+        var a = "PASS";
         a = a;
-        l[0] = l[0];
-        l[b] = l[b];
-        l[b++] = l[b++];
-        o.p = o.p;
-        console.log(a, b, l[0], o.p);
+        console.log(a);
     }
     expect: {
-        var a = "PASS", b = 0, l = [ "FAIL", "PASS" ], o = { p: "PASS" };
+        var a = "PASS";
         a;
-        l[0];
-        l[b];
-        l[b++] = l[b++];
-        o.p;
-        console.log(a, b, l[0], o.p);
+        console.log(a);
     }
-    expect_stdout: "PASS 2 PASS PASS"
+    expect_stdout: "PASS"
+}
+
+self_assignments_2: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "q", o = {
+            p: "PASS",
+        };
+        o.p = o.p;
+        o[a] = o[a];
+        console.log(o.p, o[a]);
+    }
+    expect: {
+        var a = "q", o = {
+            p: "PASS",
+        };
+        console.log(o.p, o[a]);
+    }
+    expect_stdout: "PASS undefined"
+}
+
+self_assignments_3: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "q", o = {
+            p: "FAIL",
+            get q() {
+                return "PASS";
+            },
+            set q(v) {
+                this.p = v;
+            },
+        };
+        o.p = o.p;
+        o[a] = o[a];
+        console.log(o.p, o[a]);
+    }
+    expect: {
+        var a = "q", o = {
+            p: "FAIL",
+            get q() {
+                return "PASS";
+            },
+            set q(v) {
+                this.p = v;
+            },
+        };
+        o.p = o.p;
+        o[a] = o[a];
+        console.log(o.p, o[a]);
+    }
+    expect_stdout: "PASS PASS"
+}
+
+self_assignments_4: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var i = 0, l = [ "PASS" ];
+        l[0] = l[0];
+        l[i] = l[i];
+        console.log(l[0], i);
+    }
+    expect: {
+        var i = 0, l = [ "PASS" ];
+        console.log(l[0], i);
+    }
+    expect_stdout: "PASS 0"
+}
+
+self_assignments_5: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        passes: 3,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var i = 0, l = [ "FAIL", "PASS" ];
+        l[0] = l[0];
+        l[i] = l[i];
+        l[i++] = l[i++];
+        console.log(l[0], i);
+    }
+    expect: {
+        var i = 0, l = [ "FAIL", "PASS" ];
+        l[0] = l[1];
+        console.log(l[0], 2);
+    }
+    expect_stdout: "PASS 2"
 }
 
 issue_3967: {
