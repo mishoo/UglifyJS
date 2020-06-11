@@ -1290,10 +1290,35 @@ self_assignments_5: {
     }
     expect: {
         var i = 0, l = [ "FAIL", "PASS" ];
+        l[0];
+        l[0];
         l[0] = l[1];
         console.log(l[0], 2);
     }
     expect_stdout: "PASS 2"
+}
+
+self_assignments_6: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            p: "PASS",
+        };
+        console.log(o.p = o.p);
+    }
+    expect: {
+        var o = {
+            p: "PASS",
+        };
+        console.log(o.p);
+    }
+    expect_stdout: "PASS"
 }
 
 issue_3967: {
