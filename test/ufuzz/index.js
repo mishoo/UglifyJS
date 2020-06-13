@@ -768,6 +768,10 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createObjectLiteral(recurmax, stmtDepth, canThrow) + "." + getDotKey();
       case p++:
+        return createValue() + " in " + createArrayLiteral(recurmax, stmtDepth, canThrow);
+      case p++:
+        return createValue() + " in " + createObjectLiteral(recurmax, stmtDepth, canThrow);
+      case p++:
         var name = getVarName();
         var s = name + "[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]";
         return canThrow && rng(8) == 0 ? s : name + " && " + s;
