@@ -1229,7 +1229,7 @@ function patch_try_catch(orig, toplevel) {
             var new_code = code.slice(0, index) + insert + code.slice(index);
             var result = sandbox.run_code(new_code, toplevel);
             if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
-                if (match[1]) stack.push({
+                if (!stack.filled && match[1]) stack.push({
                     code: code,
                     index: index,
                     offset: offset,
@@ -1245,6 +1245,7 @@ function patch_try_catch(orig, toplevel) {
                 return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
             }
         }
+        stack.filled = true;
     }
 }
 
