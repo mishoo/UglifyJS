@@ -558,34 +558,45 @@ unsafe_array: {
         unsafe: true,
     }
     input: {
-        console.log(
-            [1, , 3][1],
-            [1, 2, 3, a] + 1,
-            [1, 2, 3, 4] + 1,
-            [1, 2, 3, a][0] + 1,
-            [1, 2, 3, 4][0] + 1,
-            [1, 2, 3, 4][6 - 5] + 1,
-            [1, , 3, 4][6 - 5] + 1,
-            [[1, 2], [3, 4]][0] + 1,
-            [[1, 2], [3, 4]][6 - 5][1] + 1,
-            [[1, 2], , [3, 4]][6 - 5][1] + 1
-        );
+        var a = "PASS";
+        Array.prototype[1] = a;
+        console.log([1, , 3][1]);
+        console.log([1, 2, 3, a] + 1);
+        console.log([1, 2, 3, 4] + 1);
+        console.log([1, 2, 3, a][0] + 1);
+        console.log([1, 2, 3, 4][0] + 1);
+        console.log([1, 2, 3, 4][6 - 5] + 1);
+        console.log([1, , 3, 4][6 - 5] + 1);
+        console.log([[1, 2], [3, 4]][0] + 1);
+        console.log([[1, 2], [3, 4]][6 - 5][1] + 1);
+        console.log([[1, 2], , [3, 4]][6 - 5][1] + 1);
     }
     expect: {
-        console.log(
-            void 0,
-            [1, 2, 3, a] + 1,
-            "1,2,3,41",
-            [1, 2, 3, a][0] + 1,
-            2,
-            3,
-            NaN,
-            "1,21",
-            5,
-            (void 0)[1] + 1
-        );
+        var a = "PASS";
+        Array.prototype[1] = a;
+        console.log([1, , 3][1]);
+        console.log([1, 2, 3, a] + 1);
+        console.log("1,2,3,41");
+        console.log([1, 2, 3, a][0] + 1);
+        console.log(2);
+        console.log(3);
+        console.log([1, , 3, 4][1] + 1);
+        console.log("1,21");
+        console.log(5);
+        console.log([[1, 2], , [3, 4]][1][1] + 1);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "PASS",
+        "1,2,3,PASS1",
+        "1,2,3,41",
+        "2",
+        "2",
+        "3",
+        "PASS1",
+        "1,21",
+        "5",
+        "A1",
+    ]
 }
 
 unsafe_string: {
