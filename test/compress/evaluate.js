@@ -560,6 +560,8 @@ unsafe_array: {
     input: {
         var a = "PASS";
         Array.prototype[1] = a;
+        console.log([, ].length);
+        console.log("" + [, , ]);
         console.log([1, , 3][1]);
         console.log([1, 2, 3, a] + 1);
         console.log([1, 2, 3, 4] + 1);
@@ -574,6 +576,8 @@ unsafe_array: {
     expect: {
         var a = "PASS";
         Array.prototype[1] = a;
+        console.log([, ].length);
+        console.log("" + [, , ]);
         console.log([1, , 3][1]);
         console.log([1, 2, 3, a] + 1);
         console.log("1,2,3,41");
@@ -586,6 +590,8 @@ unsafe_array: {
         console.log([[1, 2], , [3, 4]][1][1] + 1);
     }
     expect_stdout: [
+        "1",
+        ",PASS",
         "PASS",
         "1,2,3,PASS1",
         "1,2,3,41",
@@ -2769,4 +2775,40 @@ issue_3988: {
         console.log(a);
     }
     expect_stdout: "0"
+}
+
+operator_in: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        Object.prototype.PASS = 0;
+        console.log(0 in [ 1 ]);
+        console.log(0 in [ , ]);
+        console.log(0 / 0 in { NaN: 2 });
+        console.log("PASS" in { });
+        console.log("FAIL" in { });
+        console.log("toString" in { });
+        console.log("toString" in { toString: 3 });
+    }
+    expect: {
+        Object.prototype.PASS = 0;
+        console.log(true);
+        console.log(0 in [ , ]);
+        console.log(true);
+        console.log("PASS" in { });
+        console.log("FAIL" in { });
+        console.log("toString" in { });
+        console.log(true);
+    }
+    expect_stdout: [
+        "true",
+        "false",
+        "true",
+        "true",
+        "false",
+        "true",
+        "true",
+    ]
 }
