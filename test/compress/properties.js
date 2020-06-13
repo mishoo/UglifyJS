@@ -1046,16 +1046,22 @@ array_hole: {
         side_effects: true,
     }
     input: {
-        console.log(
-            [ 1, 2, , 3][1],
-            [ 1, 2, , 3][2],
-            [ 1, 2, , 3][3]
-        );
+        Array.prototype[2] = "PASS";
+        console.log([ 1, 2, , 3 ][1]);
+        console.log([ 1, 2, , 3 ][2]);
+        console.log([ 1, 2, , 3 ][3]);
     }
     expect: {
-        console.log(2, void 0, 3);
+        Array.prototype[2] = "PASS";
+        console.log(2);
+        console.log([ , , , ][2]);
+        console.log(3);
     }
-    expect_stdout: "2 undefined 3"
+    expect_stdout: [
+        "2",
+        "PASS",
+        "3",
+    ]
 }
 
 new_this: {
