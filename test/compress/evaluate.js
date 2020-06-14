@@ -2812,3 +2812,24 @@ operator_in: {
         "true",
     ]
 }
+
+issue_3997: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = function f(b) {
+            return b[b += this] = b;
+        }(0);
+        console.log(typeof a);
+    }
+    expect: {
+        var a = function f(b) {
+            return b[b += this] = b;
+        }(0);
+        console.log(typeof a);
+    }
+    expect_stdout: "string"
+}
