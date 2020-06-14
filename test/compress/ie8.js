@@ -2223,13 +2223,13 @@ issue_3523_rename_ie8: {
     expect: {
         var a = 0, b, c = "FAIL";
         (function() {
-            var c, n, t, o, a, r, f, i, u, e, h, l, v, y;
+            var c, n, t, o, a, r, e, f, i, u, h, l, v, y;
         })();
         try {
             throw 0;
         } catch (e) {
             (function() {
-                (function n() {
+                (function e() {
                     c = "PASS";
                 })();
             })();
@@ -2521,4 +2521,41 @@ issue_3918: {
         }, a);
     }
     expect_stdout: "PASS"
+}
+
+issue_3999: {
+    rename = true
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        (function() {
+            (function f() {
+                for (var i = 0; i < 2; i++)
+                    try {
+                        f[0];
+                    } catch (f) {
+                        var f = 0;
+                        console.log(i);
+                    }
+            })();
+        })(typeof f);
+    }
+    expect: {
+        (function() {
+            (function f() {
+                for (var c = 0; c < 2; c++)
+                    try {
+                        f[0];
+                    } catch (f) {
+                        var f = 0;
+                        console.log(c);
+                    }
+            })();
+        })(typeof f);
+    }
+    expect_stdout: [
+        "0",
+        "1",
+    ]
 }
