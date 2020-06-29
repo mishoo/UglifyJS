@@ -4747,3 +4747,34 @@ issue_3929: {
     }
     expect_stdout: "function"
 }
+
+issue_4006: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            (function(b, c) {
+                for (var k in console.log(c), 0)
+                    return b += 0;
+            })(0, --a);
+            return a ? 0 : --a;
+        })();
+    }
+    expect: {
+        var a = 0;
+        (function(c) {
+            for (var k in console.log(c), 0)
+                return;
+        })(--a), a || --a;
+    }
+    expect_stdout: "-1"
+}
