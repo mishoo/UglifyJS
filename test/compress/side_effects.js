@@ -298,7 +298,7 @@ operator_in: {
     expect_stdout: "PASS"
 }
 
-issue_3983: {
+issue_3983_1: {
     options = {
         collapse_vars: true,
         conditionals: true,
@@ -323,7 +323,71 @@ issue_3983: {
     }
     expect: {
         var a = "PASS";
+        g();
+        function g() {}
         console.log(a);
     }
     expect_stdout: "PASS"
+}
+
+issue_3983_2: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            g && g();
+        }
+        f();
+        function g() {
+            0 ? a : 0;
+        }
+        var b = a;
+        console.log(a);
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4008: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b, b) {
+            console.log(b);
+        }
+        f && f(a && a[a]);
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        function f(b, b) {
+            console.log(b);
+        }
+        f(a[a]);
+        console.log(a);
+    }
+    expect_stdout: [
+        "undefined",
+        "PASS",
+    ]
 }
