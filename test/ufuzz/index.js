@@ -1232,7 +1232,7 @@ function patch_try_catch(orig, toplevel) {
             if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
                 if (!stack.filled && match[1]) stack.push({
                     code: code,
-                    index: index,
+                    index: index && index - 1,
                     offset: offset,
                     tries: JSON.parse(JSON.stringify(tries)),
                 });
