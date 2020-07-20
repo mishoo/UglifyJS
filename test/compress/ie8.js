@@ -2544,12 +2544,12 @@ issue_3999: {
     expect: {
         (function() {
             (function f() {
-                for (var c = 0; c < 2; c++)
+                for (var o = 0; o < 2; o++)
                     try {
                         f[0];
                     } catch (f) {
                         var f = 0;
-                        console.log(c);
+                        console.log(o);
                     }
             })();
         })(typeof f);
@@ -2592,4 +2592,45 @@ issue_4001: {
         console.log((a = 42, void f()[42], void function a() {}));
     }
     expect_stdout: "undefined"
+}
+
+issue_4015: {
+    rename = true
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var n, a = 0, b;
+        function f() {
+            try {
+                throw 0;
+            } catch (b) {
+                (function g() {
+                    (function b() {
+                        a++;
+                    })();
+                })();
+            }
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        var n, o = 0, c;
+        function t() {
+            try {
+                throw 0;
+            } catch (c) {
+                (function n() {
+                    (function c() {
+                        o++;
+                    })();
+                })();
+            }
+        }
+        t();
+        console.log(o);
+    }
+    expect_stdout: "1"
 }
