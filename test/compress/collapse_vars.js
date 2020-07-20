@@ -8280,3 +8280,40 @@ issue_3976: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4012: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        (function(a) {
+            try {
+                throw 2;
+            } catch (b) {
+                a = "PASS";
+                if (--b)
+                    return;
+                if (3);
+            } finally {
+                console.log(a);
+            }
+        })();
+    }
+    expect: {
+        (function(a) {
+            try {
+                throw 2;
+            } catch (b) {
+                a = "PASS";
+                if (--b)
+                    return;
+                if (3);
+            } finally {
+                console.log(a);
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+}
