@@ -1137,18 +1137,6 @@ function log(options) {
         errorln(original_result);
         errorln("uglified result:");
         errorln(uglify_result);
-        errorln("//-------------------------------------------------------------");
-        var reduced = reduce_test(original_code, JSON.parse(options), {
-            verbose: false,
-        }).code;
-        if (reduced) {
-            errorln();
-            errorln("// reduced test case (output will differ)");
-            errorln();
-            errorln(reduced);
-            errorln();
-            errorln("//-------------------------------------------------------------");
-        }
     } else {
         errorln("// !!! uglify failed !!!");
         errorln(uglify_code);
@@ -1158,6 +1146,18 @@ function log(options) {
             errorln("original stacktrace:");
             errorln(original_result);
         }
+    }
+    errorln("//-------------------------------------------------------------");
+    var reduced = reduce_test(original_code, JSON.parse(options), {
+        verbose: false,
+    }).code;
+    if (reduced) {
+        errorln();
+        errorln("// reduced test case (output will differ)");
+        errorln();
+        errorln(reduced);
+        errorln();
+        errorln("//-------------------------------------------------------------");
     }
     errorln("minify(options):");
     errorln(JSON.stringify(JSON.parse(options), null, 2));
