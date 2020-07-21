@@ -2718,7 +2718,7 @@ issue_3962_1: {
                 0..toString();
             } while (0);
             if (c) console.log("PASS");
-        })((a--, 1));
+        }((a--, 1)), 0);
         void 0;
     }
     expect_stdout: "PASS"
@@ -2751,7 +2751,7 @@ issue_3962_2: {
                 0..toString();
             } while (0);
             if (c) console.log("PASS");
-        })((a--, 1));
+        }((a--, 1)), 0);
     }
     expect_stdout: "PASS"
 }
@@ -2788,4 +2788,28 @@ issue_3986: {
         console.log(b);
     }
     expect_stdout: "0"
+}
+
+issue_4017: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        console.log(function f() {
+            var b = c &= 0;
+            var c = a++ + (A = a);
+            var d = c && c[f];
+        }());
+    }
+    expect: {
+        var a = 0;
+        console.log(function() {
+            c &= 0;
+            var c = (a++, A = a, 0);
+        }());
+    }
+    expect_stdout: "undefined"
 }
