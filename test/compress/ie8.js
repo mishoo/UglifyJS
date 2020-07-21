@@ -2634,3 +2634,30 @@ issue_4015: {
     }
     expect_stdout: "1"
 }
+
+issue_4019: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        var a = function() {
+            try {
+                console.log("FAIL");
+            } catch (b) {}
+        }, a = (console.log(a.length), ++a);
+    }
+    expect: {
+        var o = function() {
+            try {
+                console.log("FAIL");
+            } catch (o) {}
+        }, o = (console.log(o.length), ++o);
+    }
+    expect_stdout: "0"
+}
