@@ -1729,7 +1729,7 @@ chained_3: {
     }
     expect: {
         console.log(function(a, b) {
-            var c = 2;
+            var c = b;
             b++;
             return c;
         }(0, 2));
