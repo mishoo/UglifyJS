@@ -2813,3 +2813,38 @@ issue_4017: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4025: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0, b = 0, c = 0, d = a++;
+        try {
+            var e = console.log(c), f = b;
+        } finally {
+            var d = b = 1, d = c + 1;
+            c = 0;
+        }
+        console.log(a, b, d);
+    }
+    expect: {
+        var d, c = 0;
+        try {
+            console.log(c);
+        } finally {
+            d = c + 1;
+            c = 0;
+        }
+        console.log(1, 1, d);
+    }
+    expect_stdout: [
+        "0",
+        "1 1 1",
+    ]
+}
