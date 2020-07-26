@@ -1016,3 +1016,28 @@ issue_3945_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4023: {
+    options = {
+        comparisons: true,
+        hoist_props: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a = function() {
+                return { p: 0 };
+            }();
+            return console.log("undefined" != typeof a);
+        }
+        f();
+    }
+    expect: {
+        console.log(void 0 !== {});
+    }
+    expect_stdout: "true"
+}
