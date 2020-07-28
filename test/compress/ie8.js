@@ -2661,3 +2661,33 @@ issue_4019: {
     }
     expect_stdout: "0"
 }
+
+issue_4028: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        function a() {
+            try {
+                A;
+            } catch (e) {}
+        }
+        var b = a += a;
+        console.log(typeof b);
+    }
+    expect: {
+        function a() {
+            try {
+                A;
+            } catch (a) {}
+        }
+        var b = a += a;
+        console.log(typeof b);
+    }
+    expect_stdout: "string"
+}
