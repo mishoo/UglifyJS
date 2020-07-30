@@ -269,6 +269,7 @@ function test_case(test) {
         quote_style: 3,
     });
     try {
+        input.validate_ast();
         U.parse(input_code);
     } catch (ex) {
         log([
@@ -315,8 +316,8 @@ function test_case(test) {
             output = U.mangle_properties(output, test.mangle.properties);
         }
     }
-    output = make_code(output, output_options);
-    if (expect != output) {
+    var output_code = make_code(output, output_options);
+    if (expect != output_code) {
         log([
             "!!! failed",
             "---INPUT---",
@@ -329,14 +330,15 @@ function test_case(test) {
             "",
         ].join("\n"), {
             input: input_formatted,
-            output: output,
+            output: output_code,
             expected: expect
         });
         return false;
     }
     // expect == output
     try {
-        U.parse(output);
+        output.validate_ast();
+        U.parse(output_code);
     } catch (ex) {
         log([
             "!!! Test matched expected result but cannot parse output",
@@ -350,7 +352,7 @@ function test_case(test) {
             "",
         ].join("\n"), {
             input: input_formatted,
-            output: output,
+            output: output_code,
             error: ex,
         });
         return false;
@@ -409,7 +411,7 @@ function test_case(test) {
             });
             return false;
         }
-        actual = run_code(output, toplevel);
+        actual = run_code(output_code, toplevel);
         if (!sandbox.same_stdout(test.expect_stdout, actual)) {
             log([
                 "!!! failed",

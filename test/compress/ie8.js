@@ -2691,3 +2691,26 @@ issue_4028: {
     }
     expect_stdout: "string"
 }
+
+issue_2737: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            a();
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect: {
+        (function(a) {
+            a();
+        })(function f() {
+            console.log(typeof f);
+        });
+    }
+    expect_stdout: "function"
+}

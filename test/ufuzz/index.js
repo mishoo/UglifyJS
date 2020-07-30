@@ -1148,7 +1148,9 @@ function log(options) {
         }
     }
     errorln("//-------------------------------------------------------------");
-    var reduced = reduce_test(original_code, JSON.parse(options), {
+    var reduce_options = JSON.parse(options);
+    reduce_options.validate = true;
+    var reduced = reduce_test(original_code, reduce_options, {
         verbose: false,
     }).code;
     if (reduced) {

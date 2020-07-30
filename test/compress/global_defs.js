@@ -12,6 +12,20 @@ must_replace: {
     }
 }
 
+repeated_nodes: {
+    options = {
+        global_defs: {
+            "@N": "rand()",
+        },
+    }
+    input: {
+        console.log(N, N);
+    }
+    expect: {
+        console.log(rand(), rand());
+    }
+}
+
 keyword: {
     options = {
         global_defs: {
