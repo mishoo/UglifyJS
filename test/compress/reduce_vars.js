@@ -7383,3 +7383,26 @@ issue_3974: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4030: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        {
+            delete (a = "PASS");
+            A = "PASS";
+        }
+        console.log(A);
+    }
+    expect: {
+        A = "PASS";
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
