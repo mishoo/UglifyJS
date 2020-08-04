@@ -2833,3 +2833,39 @@ issue_3997: {
     }
     expect_stdout: "string"
 }
+
+issue_4035: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            var b = --a;
+            console.log(delete (0 + b));
+            console.log(delete (1 * b));
+            console.log(delete (b + 0));
+            console.log(delete (b - 0));
+            console.log(delete (b / 1));
+        })();
+    }
+    expect: {
+        var a = 0;
+        (function() {
+            var b = --a;
+            console.log((0 + b, true));
+            console.log((1 * b, true));
+            console.log((0 + b, true));
+            console.log((b - 0, true));
+            console.log((b / 1, true));
+        })();
+    }
+    expect_stdout: [
+        "true",
+        "true",
+        "true",
+        "true",
+        "true",
+    ]
+}
