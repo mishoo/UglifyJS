@@ -2,7 +2,7 @@ name: Fuzzing
 on:
   pull_request:
   schedule:
-    - cron: "*/8 * * * *"
+    - cron: "0,8,15,23,30,38,45,53 * * * *"
 jobs:
   ufuzz:
     strategy:
