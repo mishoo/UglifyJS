@@ -8375,3 +8375,19 @@ issue_4038: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4040: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = console.log("PASS") && a.p;
+        delete NaN;
+    }
+    expect: {
+        var a = console.log("PASS") && a.p;
+        delete NaN;
+    }
+    expect_stdout: "PASS"
+}
