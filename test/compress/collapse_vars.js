@@ -8317,3 +8317,61 @@ issue_4012: {
     }
     expect_stdout: "PASS"
 }
+
+global_assign: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        this.A = "FAIL";
+        A = "PASS";
+        B = "FAIL";
+        console.log(A);
+    }
+    expect: {
+        this.A = "FAIL";
+        A = "PASS";
+        B = "FAIL";
+        console.log(A);
+    }
+    expect_stdout: "PASS"
+}
+
+global_read: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        a = this.A;
+        A = 1;
+        a ? console.log("FAIL") : console.log("PASS");
+    }
+    expect: {
+        var a = 0;
+        a = this.A;
+        A = 1;
+        a ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4038: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        a = this;
+        a = a.A;
+        A = 1;
+        a ? console.log("FAIL") : console.log("PASS");
+    }
+    expect: {
+        var a = 0;
+        a = (a = this).A;
+        A = 1;
+        a ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
