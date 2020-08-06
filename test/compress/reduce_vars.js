@@ -7402,7 +7402,27 @@ issue_4030: {
     }
     expect: {
         A = "PASS";
-        console.log("PASS");
+        console.log(A);
+    }
+    expect_stdout: "PASS"
+}
+
+global_assign: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        this.A = "PASS";
+        console.log(A);
+    }
+    expect: {
+        A = "FAIL";
+        this.A = "PASS";
+        console.log(A);
     }
     expect_stdout: "PASS"
 }

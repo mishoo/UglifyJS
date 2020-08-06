@@ -1175,7 +1175,8 @@ function log(options) {
 }
 
 function sort_globals(code) {
-    return "var " + sandbox.run_code("throw Object.keys(this).sort();" + code).join(",") + ";" + code;
+    var globals = sandbox.run_code("throw Object.keys(this).sort();" + code);
+    return globals.length ? "var " + globals.join(",") + ";" + code : code;
 }
 
 function fuzzy_match(original, uglified) {
