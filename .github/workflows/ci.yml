@@ -22,7 +22,7 @@ jobs:
       TYPE: ${{ matrix.script }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: tmp
           key: tmp ${{ matrix.script }}
