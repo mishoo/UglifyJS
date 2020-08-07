@@ -4,8 +4,9 @@ on:
   schedule:
     - cron: "*/5 * * * *"
 env:
+  BASE_URL: https://api.github.com/repos/${{ github.repository }}
   CAUSE: ${{ github.event_name }}
-  DATA_URL: https://api.github.com/repos/${{ github.repository }}/actions/workflows/ufuzz.yml/runs?status=
+  TOKEN: ${{ github.token }}
 jobs:
   ufuzz:
     strategy:
@@ -19,15 +20,6 @@ jobs:
       - name: Perform fuzzing
         shell: bash
         run: |
-          if [[ $CAUSE != "schedule" ]]; then
-            PERIOD=1800000
-          elif (( `curl -s ${DATA_URL}queued | tr -d '\040\011\012\015' | awk -F"queued" '{print NF-1}'` > 3 )); then
-            echo "too many jobs in queue - exiting..."
-            exit
-          else
-            RUNNING=`curl -s ${DATA_URL}in_progress | tr -d '\040\011\012\015' | awk -F"in_progress" '{print NF-1}'`
-            PERIOD=$(( 3600000 * 10 / (RUNNING > 5 ? RUNNING : 5) ))
-          fi
           git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
           while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add 8 && nvs use 8'; do
             cd ~/.nvs
@@ -44,4 +36,12 @@ jobs:
           npm config set update-notifier false
           npm --version
           while !(npm install); do echo "'npm install' failed - retrying..."; done
-          node test/ufuzz/job $PERIOD
+          PERIOD=1800000
+          if [[ $CAUSE == "schedule" ]]; then
+            PERIOD=$(( 3600 * `node test/ufuzz/actions $BASE_URL $TOKEN` ))
+          fi
+          if (( $PERIOD == 0 )); then
+            echo "too many jobs in queue - exiting..."
+          else
+            node test/ufuzz/job $PERIOD
+          fi
