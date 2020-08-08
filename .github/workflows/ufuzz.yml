@@ -38,10 +38,10 @@ jobs:
           while !(npm install); do echo "'npm install' failed - retrying..."; done
           PERIOD=1800000
           if [[ $CAUSE == "schedule" ]]; then
-            PERIOD=$(( 3600 * `node test/ufuzz/actions $BASE_URL $TOKEN` ))
+            PERIOD=`node test/ufuzz/actions $BASE_URL $TOKEN`
           fi
           if (( $PERIOD == 0 )); then
-            echo "too many jobs in queue - exiting..."
+            echo "too many jobs in queue - skipping..."
           else
             node test/ufuzz/job $PERIOD
           fi
