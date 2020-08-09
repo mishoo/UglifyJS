@@ -212,17 +212,16 @@ Example:
 To enable the mangler you need to pass `--mangle` (`-m`).  The following
 (comma-separated) options are supported:
 
-- `toplevel` (default `false`) -- mangle names declared in the top level scope.
+- `eval` (default `false`) -- mangle names visible in scopes where `eval` or
+  `with` are used.
 
-- `eval` (default `false`) -- mangle names visible in scopes where `eval` or `with` are used.
+- `reserved` (default: `[]`) -- when mangling is enabled but you want to
+  prevent certain names from being mangled, you can declare those names with
+  `--mangle reserved` — pass a comma-separated list of names.  For example:
 
-When mangling is enabled but you want to prevent certain names from being
-mangled, you can declare those names with `--mangle reserved` — pass a
-comma-separated list of names.  For example:
+      uglifyjs ... -m reserved=['$','require','exports']
 
-    uglifyjs ... -m reserved=['$','require','exports']
-
-to prevent the `require`, `exports` and `$` names from being changed.
+  to prevent the `require`, `exports` and `$` names from being changed.
 
 ### CLI mangling property names (`--mangle-props`)
 
@@ -657,8 +656,8 @@ to be `false` and all symbol names will be omitted.
 - `hoist_props` (default: `true`) -- hoist properties from constant object and
   array literals into regular variables subject to a set of constraints. For example:
   `var o={p:1, q:2}; f(o.p, o.q);` is converted to `f(1, 2);`. Note: `hoist_props`
-  works best with `mangle` enabled, the `compress` option `passes` set to `2` or higher,
-  and the `compress` option `toplevel` enabled.
+  works best with `toplevel` and `mangle` enabled, alongside with `compress` option
+  `passes` set to `2` or higher.
 
 - `hoist_vars` (default: `false`) -- hoist `var` declarations (this is `false`
   by default because it seems to increase the size of the output in general)
@@ -1157,3 +1156,19 @@ To allow for better optimizations, the compiler makes various assumptions:
 - Object properties can be added, removed and modified (not prevented with
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
+- When `toplevel` is enabled, UglifyJS effectively assumes input code is wrapped
+  within `function(){ ... }`, thus forbids aliasing of declared global variables:
+  ```js
+  A = "FAIL";
+  var B = "FAIL";
+  // can be `global`, `self`, `window` etc.
+  var top = function() {
+      return this;
+  }();
+  // "PASS"
+  top.A = "PASS";
+  console.log(A);
+  // "FAIL" after compress and/or mangle
+  top.B = "PASS";
+  console.log(B);
+  ```
