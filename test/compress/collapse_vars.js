@@ -8391,3 +8391,59 @@ issue_4040: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4047_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        console.log(+function(a) {
+            b = a;
+            (a >>= 0) && console.log("PASS");
+        }(--b + (0 !== typeof A)));
+    }
+    expect: {
+        var b = 1;
+        var a;
+        console.log((a = --b + ((a = 0) !== typeof A), +void ((a >>= 0) && console.log("PASS"))));
+    }
+    expect_stdout: [
+        "PASS",
+        "NaN",
+    ]
+}
+
+issue_4047_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = 1;
+        console.log(+function(a) {
+            b = a;
+            (a >>= 0) && console.log("PASS");
+        }(--b + (0 !== typeof A)));
+    }
+    expect: {
+        var a;
+        console.log((a = +(0 !== typeof A), +void ((a >>= 0) && console.log("PASS"))));
+    }
+    expect_stdout: [
+        "PASS",
+        "NaN",
+    ]
+}
