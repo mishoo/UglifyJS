@@ -1341,3 +1341,24 @@ issue_3967: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4051: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {
+            delete (A = A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            delete (A = A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
