@@ -8447,3 +8447,22 @@ issue_4047_2: {
         "NaN",
     ]
 }
+
+issue_4051: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        try {
+            var a = (b = b.p, "FAIL"), b = b;
+        } catch (e) {}
+        console.log(a);
+    }
+    expect: {
+        try {
+            var a = (b = b.p, "FAIL"), b = b;
+        } catch (e) {}
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+}
