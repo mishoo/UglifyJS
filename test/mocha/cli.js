@@ -330,7 +330,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should fail with invalid syntax", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/simple.js';
+        var command = uglifyjscmd + " test/input/invalid/simple.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             var lines = stderr.split(/\n/);
@@ -342,7 +342,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should fail with correct marking of tabs", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/tab.js';
+        var command = uglifyjscmd + " test/input/invalid/tab.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             var lines = stderr.split(/\n/);
@@ -354,7 +354,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should fail with correct marking at start of line", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/eof.js';
+        var command = uglifyjscmd + " test/input/invalid/eof.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             var lines = stderr.split(/\n/);
@@ -366,7 +366,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should fail with a missing loop body", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/loop-no-body.js';
+        var command = uglifyjscmd + " test/input/invalid/loop-no-body.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             var lines = stderr.split(/\n/);
@@ -378,7 +378,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (5--)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/assign_1.js';
+        var command = uglifyjscmd + " test/input/invalid/assign_1.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -392,7 +392,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (Math.random() /= 2)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/assign_2.js';
+        var command = uglifyjscmd + " test/input/invalid/assign_2.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -406,7 +406,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (++this)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/assign_3.js';
+        var command = uglifyjscmd + " test/input/invalid/assign_3.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -420,7 +420,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (++null)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/assign_4.js';
+        var command = uglifyjscmd + " test/input/invalid/assign_4.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -434,7 +434,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (a.=)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/dot_1.js';
+        var command = uglifyjscmd + " test/input/invalid/dot_1.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -448,7 +448,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (%.a)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/dot_2.js';
+        var command = uglifyjscmd + " test/input/invalid/dot_2.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -462,7 +462,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (a./();)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/dot_3.js';
+        var command = uglifyjscmd + " test/input/invalid/dot_3.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -476,7 +476,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error ({%: 1})", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/object.js';
+        var command = uglifyjscmd + " test/input/invalid/object.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -490,7 +490,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (delete x)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/delete.js';
+        var command = uglifyjscmd + " test/input/invalid/delete.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -504,7 +504,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (function g(arguments))", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/function_1.js';
+        var command = uglifyjscmd + " test/input/invalid/function_1.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -518,7 +518,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (function eval())", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/function_2.js';
+        var command = uglifyjscmd + " test/input/invalid/function_2.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -532,7 +532,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (iife arguments())", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/function_3.js';
+        var command = uglifyjscmd + " test/input/invalid/function_3.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -546,7 +546,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (catch (eval))", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/try.js';
+        var command = uglifyjscmd + " test/input/invalid/try.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -560,7 +560,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (var eval)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/var.js';
+        var command = uglifyjscmd + " test/input/invalid/var.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -574,7 +574,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (else)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/else.js';
+        var command = uglifyjscmd + " test/input/invalid/else.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -588,7 +588,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (return)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/return.js';
+        var command = uglifyjscmd + " test/input/invalid/return.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -602,7 +602,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (for-in init)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/for-in_1.js';
+        var command = uglifyjscmd + " test/input/invalid/for-in_1.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -616,7 +616,7 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (for-in var)", function(done) {
-        var command = uglifyjscmd + ' test/input/invalid/for-in_2.js';
+        var command = uglifyjscmd + " test/input/invalid/for-in_2.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -626,6 +626,18 @@ describe("bin/uglifyjs", function() {
                 "     ^",
                 "ERROR: Only one variable declaration allowed in for..in loop"
             ].join("\n"));
+            done();
+        });
+    });
+    it("Should throw syntax error (switch defaults)", function(done) {
+        var command = uglifyjscmd + " test/input/invalid/switch.js";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            var lines = stderr.split(/\n/);
+            assert.strictEqual(lines[0], "Parse error at test/input/invalid/switch.js:3,2");
+            assert.strictEqual(lines[1], "  default:");
+            assert.strictEqual(lines[2], "  ^");
+            assert.strictEqual(lines[3], "ERROR: More than one default clause in switch statement");
             done();
         });
     });
