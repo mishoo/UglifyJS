@@ -40,7 +40,7 @@ function createContext() {
             arg.constructor.toString();
             if (level--) for (var key in arg) {
                 var desc = Object.getOwnPropertyDescriptor(arg, key);
-                if (!desc || !desc.get) arg[key] = safe_log(arg[key], level);
+                if (!desc || !desc.get && !desc.set) arg[key] = safe_log(arg[key], level);
             }
         }
         return arg;
