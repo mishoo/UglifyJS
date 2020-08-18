@@ -80,3 +80,21 @@ log_global: {
     }
     expect_stdout: "[object global]"
 }
+
+issue_4054: {
+    input: {
+        console.log({
+            set p(v) {
+                throw "FAIL";
+            },
+        });
+    }
+    expect: {
+        console.log({
+            set p(v) {
+                throw "FAIL";
+            },
+        });
+    }
+    expect_stdout: "{ p: [Setter] }"
+}
