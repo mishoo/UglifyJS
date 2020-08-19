@@ -22,15 +22,14 @@ function read(url, callback) {
     });
 }
 
-var queued = 0, total = 0;
-var earliest, latest;
+var queued = 0, total = 0, earliest, now = Date.now();
 process.on("beforeExit", function() {
     if (queued > 3) {
         process.stdout.write("0");
-    } else if (total < 2) {
-        process.stdout.write("3600000");
+    } else if (now - earliest > 0 && total > 1) {
+        process.stdout.write(Math.min(20 * (now - earliest) / (total - 1), 6300000).toFixed(0));
     } else {
-        process.stdout.write(Math.min(20 * (latest - earliest) / (total - 1), 5400000).toFixed(0));
+        process.stdout.write("3600000");
     }
 });
 read(base + "/actions/workflows/ufuzz.yml/runs?event=schedule", function(reply) {
@@ -41,9 +40,9 @@ read(base + "/actions/workflows/ufuzz.yml/runs?event=schedule", function(reply) 
             reply.jobs.forEach(function(job) {
                 if (job.status == "queued") queued++;
                 total++;
+                if (!job.started_at) return;
                 var start = new Date(job.started_at);
                 if (!(earliest < start)) earliest = start;
-                if (!(latest > start)) latest = start;
             });
         });
     });
