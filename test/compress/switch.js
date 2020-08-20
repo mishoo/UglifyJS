@@ -1,5 +1,6 @@
 constant_switch_1: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -19,6 +20,7 @@ constant_switch_1: {
 
 constant_switch_2: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -39,6 +41,7 @@ constant_switch_2: {
 
 constant_switch_3: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -60,6 +63,7 @@ constant_switch_3: {
 
 constant_switch_4: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -86,6 +90,7 @@ constant_switch_4: {
 
 constant_switch_5: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -120,6 +125,7 @@ constant_switch_5: {
 
 constant_switch_6: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -154,6 +160,7 @@ constant_switch_6: {
 
 constant_switch_7: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -197,6 +204,7 @@ constant_switch_7: {
 
 constant_switch_8: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -226,6 +234,7 @@ constant_switch_8: {
 
 constant_switch_9: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -315,6 +324,7 @@ keep_default: {
 
 issue_1663: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -551,6 +561,7 @@ issue_441_2: {
 
 issue_1674: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         side_effects: true,
@@ -876,6 +887,7 @@ beautify: {
 
 issue_1758: {
     options = {
+        conditionals: true,
         dead_code: true,
         switches: true,
     }
@@ -898,15 +910,16 @@ issue_1758: {
 
 issue_2535: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         switches: true,
     }
     input: {
         switch(w(), 42) {
-            case 13: x();
-            case 42: y();
-            default: z();
+          case 13: x();
+          case 42: y();
+          default: z();
         }
     }
     expect: {
@@ -919,6 +932,7 @@ issue_2535: {
 
 issue_1750: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         switches: true,
@@ -963,6 +977,7 @@ drop_switch_1: {
 
 drop_switch_2: {
     options = {
+        conditionals: true,
         dead_code: true,
         switches: true,
     }
@@ -1007,6 +1022,7 @@ drop_switch_3: {
 
 drop_switch_4: {
     options = {
+        conditionals: true,
         dead_code: true,
         switches: true,
     }
@@ -1027,4 +1043,110 @@ drop_switch_4: {
         console.log(a);
     }
     expect_stdout: "PASS"
+}
+
+drop_switch_5: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (A) {
+          case B:
+            x();
+          default:
+        }
+        switch (C) {
+          default:
+            y();
+          case D:
+        }
+    }
+    expect: {
+        A === B && x();
+        C !== D && y();
+    }
+}
+
+drop_switch_6: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (A) {
+          case B:
+          default:
+            x();
+        }
+        switch (C) {
+          default:
+          case D:
+            y();
+        }
+    }
+    expect: {
+        A === B;
+        x();
+        C !== D;
+        y();
+    }
+}
+
+drop_switch_7: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (A) {
+          case B:
+            w();
+          default:
+            x();
+        }
+        switch (C) {
+          default:
+            y();
+          case D:
+            z();
+        }
+    }
+    expect: {
+        A === B && w();
+        x();
+        C !== D && y();
+        z();
+    }
+}
+
+drop_switch_8: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        switch (A) {
+          case B:
+            w();
+            break;
+          default:
+            x();
+        }
+        switch (C) {
+          default:
+            y();
+            break;
+          case D:
+            z();
+        }
+    }
+    expect: {
+        (A === B ? w : x)();
+        (C !== D ? y : z)();
+    }
 }
