@@ -2031,6 +2031,7 @@ issue_1670_4: {
 
 issue_1670_5: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         keep_fargs: false,
@@ -2062,6 +2063,7 @@ issue_1670_5: {
 
 issue_1670_6: {
     options = {
+        conditionals: true,
         dead_code: true,
         evaluate: true,
         keep_fargs: false,
