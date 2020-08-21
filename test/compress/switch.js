@@ -1150,3 +1150,34 @@ drop_switch_8: {
         (C !== D ? y : z)();
     }
 }
+
+issue_4059: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        switches: true,
+    }
+    input: {
+        switch (0) {
+          default:
+          case 1:
+            break;
+          case a:
+            break;
+            var a;
+        }
+        console.log("PASS");
+    }
+    expect: {
+        switch (0) {
+          default:
+            break;
+          case a:
+            break;
+            var a;
+        }
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
