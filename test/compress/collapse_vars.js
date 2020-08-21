@@ -1599,7 +1599,7 @@ collapse_vars_constants: {
     }
 }
 
-collapse_vars_arguments: {
+collapse_vars_arguments_1: {
     options = {
         booleans: true,
         collapse_vars: true,
@@ -1634,6 +1634,78 @@ collapse_vars_arguments: {
         })();
     }
     expect_stdout: true
+}
+
+collapse_vars_arguments_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function log(a, b) {
+            console.log(b);
+        }
+        function f(c) {
+            var d = arguments[0];
+            c = "FAIL";
+            log(c, d);
+        }
+        f();
+        f("PASS");
+    }
+    expect: {
+        function log(a, b) {
+            console.log(b);
+        }
+        function f(c) {
+            var d = arguments[0];
+            log(c = "FAIL", d);
+        }
+        f();
+        f("PASS");
+    }
+    expect_stdout: [
+        "undefined",
+        "PASS",
+    ]
+}
+
+collapse_vars_arguments_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function log(a, b) {
+            console.log(b);
+        }
+        function f(c) {
+            var args = arguments;
+            console.log(c);
+            var d = args[0];
+            c = "FAIL";
+            log(c, d);
+        }
+        f();
+        f("PASS");
+    }
+    expect: {
+        function log(a, b) {
+            console.log(b);
+        }
+        function f(c) {
+            var args = arguments;
+            console.log(c);
+            var d = args[0];
+            log(c = "FAIL", d);
+        }
+        f();
+        f("PASS");
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+        "PASS",
+        "PASS",
+    ]
 }
 
 collapse_vars_short_circuit: {
