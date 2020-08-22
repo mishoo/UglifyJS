@@ -312,9 +312,7 @@ function test_case(test) {
     if (test.mangle) {
         output.compute_char_frequency(test.mangle);
         output.mangle_names(test.mangle);
-        if (test.mangle.properties) {
-            output = U.mangle_properties(output, test.mangle.properties);
-        }
+        if (test.mangle.properties) U.mangle_properties(output, test.mangle.properties);
     }
     var output_code = make_code(output, output_options);
     if (expect != output_code) {
