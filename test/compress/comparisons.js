@@ -123,6 +123,29 @@ self_comparison_3: {
     ]
 }
 
+self_comparison_4: {
+    options = {
+        booleans: true,
+        comparisons: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {};
+        console.log(o == o, o != o);
+        console.log(o === o, o !== o);
+    }
+    expect: {
+        console.log(!0, !1);
+        console.log(!0, !1);
+    }
+    expect_stdout: [
+        "true false",
+        "true false",
+    ]
+}
+
 issue_2857_1: {
     options = {
         comparisons: true,
