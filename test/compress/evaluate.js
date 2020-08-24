@@ -2869,3 +2869,28 @@ issue_4035: {
         "true",
     ]
 }
+
+issue_4067: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        (function(a) {
+            (function(b) {
+                b[0] += 0;
+                console.log(+a);
+            })(a);
+        })([]);
+    }
+    expect: {
+        (function(a) {
+            (function(b) {
+                b[0] += 0;
+                console.log(+a);
+            })(a);
+        })([]);
+    }
+    expect_stdout: "NaN"
+}
