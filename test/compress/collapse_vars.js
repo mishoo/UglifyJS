@@ -8538,3 +8538,25 @@ issue_4051: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4070: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function f() {
+            function g() {}
+            g.p++;
+            return f.p = g.p;
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            function g() {}
+            return f.p = ++g.p;
+        }());
+    }
+    expect_stdout: "NaN"
+}
