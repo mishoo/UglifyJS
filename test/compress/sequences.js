@@ -877,7 +877,7 @@ for_init_var: {
     expect_stdout: "PASS"
 }
 
-forin: {
+forin_1: {
     options = {
         sequences: true,
     }
@@ -893,6 +893,49 @@ forin: {
             console.log(o[a]);
     }
     expect_stdout: "PASS"
+}
+
+forin_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            p: 1,
+            q: 2,
+        };
+        var k = "k";
+        for ((console.log("exp"), o)[function() {
+            console.log("prop");
+            return k;
+        }()] in function() {
+            console.log("obj");
+            return o;
+        }())
+            console.log(o.k, o[o.k]);
+    }
+    expect: {
+        var o = {
+            p: 1,
+            q: 2,
+        };
+        for ((console.log("exp"), o)[console.log("prop"), "k"] in console.log("obj"), o)
+            console.log(o.k, o[o.k]);
+    }
+    expect_stdout: [
+        "obj",
+        "exp",
+        "prop",
+        "p 1",
+        "exp",
+        "prop",
+        "q 2",
+    ]
 }
 
 call: {
