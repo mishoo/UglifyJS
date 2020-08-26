@@ -2894,3 +2894,17 @@ issue_4067: {
     }
     expect_stdout: "NaN"
 }
+
+issue_4077: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log((a = []) - (a[0]++, 1) || "PASS");
+    }
+    expect: {
+        console.log((a = []) - (a[0]++, 1) || "PASS");
+    }
+    expect_stdout: "PASS"
+}
