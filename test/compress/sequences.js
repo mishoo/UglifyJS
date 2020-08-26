@@ -1155,3 +1155,25 @@ issue_3703: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4079: {
+    options = {
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        try {
+            typeof (0, A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            A;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
