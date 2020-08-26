@@ -496,11 +496,16 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
-        var optElementVar = "";
-        if (rng(5) > 1) {
-            optElementVar = "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[key" + loop + "]; ";
-        }
-        return "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; " + label.target + " for (var key" + loop + " in expr" + loop + ") {" + optElementVar + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}}";
+        var key = rng(10) ? "key" + loop : getVarName();
+        return [
+            "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ",
+            label.target + " for (",
+            /^key/.test(key) ? "var " : "",
+            key + " in expr" + loop + ") {",
+            rng(5) > 1 ? "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; " : "",
+            createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+            "}}",
+        ].join("");
       case STMT_SEMI:
         return use_strict && rng(20) === 0 ? '"use strict";' : ";";
       case STMT_EXPR:

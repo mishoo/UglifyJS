@@ -756,7 +756,37 @@ empty_for_in_side_effects: {
     expect_warnings: [
         "WARN: Dropping unused variable b [test/compress/loops.js:4,16]",
         "INFO: Dropping unused loop variable a [test/compress/loops.js:1,17]",
-        "WARN: Side effects in object of for-in loop [test/compress/loops.js:1,17]",
+        "WARN: Side effects in object of for-in loop [test/compress/loops.js:2,17]",
+    ]
+}
+
+empty_for_in_prop_init: {
+    options = {
+        loops: true,
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        console.log(function f() {
+            var a = "bar";
+            for ((a, f)[a] in console.log("foo"));
+            return a;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a = "bar";
+            console.log("foo");
+            return a;
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    expect_warnings: [
+        "INFO: Dropping unused loop variable f [test/compress/loops.js:3,21]",
+        "WARN: Side effects in object of for-in loop [test/compress/loops.js:3,30]",
     ]
 }
 
