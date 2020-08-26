@@ -963,3 +963,25 @@ issue_3634_2: {
     }
     expect_stdout: "1"
 }
+
+issue_4075: {
+    options = {
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function() {
+            for (a in { PASS: 0 });
+        })()
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function() {
+            for (a in { PASS: 0 });
+        })()
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
