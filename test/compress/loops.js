@@ -985,3 +985,27 @@ issue_4075: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4082: {
+    options = {
+        keep_fargs: "strict",
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function(a) {
+            for (a in "foo")
+                var b;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function(a) {
+            for (a in "foo");
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
