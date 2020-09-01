@@ -1009,3 +1009,31 @@ issue_4082: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4084: {
+    options = {
+        keep_fargs: "strict",
+        loops: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function f(a) {
+                var b = a++;
+                for (a in "foo");
+            }
+            f();
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            (function() {
+                0;
+            })();
+            return typeof a;
+        }());
+    }
+    expect_stdout: "undefined"
+}
