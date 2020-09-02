@@ -1,9 +1,3 @@
-var o = this;
-
-for (var k in o) L17060: {
-    a++;
+UNUSED: {
+    console.log(0 - .1 - .1 - .1);
 }
-
-var a;
-
-console.log(k);

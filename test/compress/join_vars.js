@@ -277,8 +277,8 @@ join_object_assignments_forin: {
     }
     expect: {
         console.log(function() {
-            var o = { a: "PASS" };
-            for (var a in o)
+            var o = { a: "PASS" }, a;
+            for (a in o)
                 return o[a];
         }());
     }

@@ -1,15 +1,12 @@
 // (beautified)
-var o = this;
-
-for (var k in o) {}
-
-var a;
-
-console.log(k);
-// output: a
+console.log(0 - 1 - .1 - .1);
+// output: -1.2000000000000002
 // 
-// minify: k
+// minify: -1.2
 // 
 // options: {
+//   "compress": {
+//     "unsafe_math": true
+//   },
 //   "mangle": false
 // }
