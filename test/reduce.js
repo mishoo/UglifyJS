@@ -112,19 +112,18 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             // no structural AST changes before this point.
             if (node.start._permute >= REPLACEMENTS.length) return;
 
-            if (parent instanceof U.AST_Assign
-                    && parent.left === node
-                || parent instanceof U.AST_Unary
-                    && parent.expression === node
-                    && ["++", "--", "delete"].indexOf(parent.operator) >= 0) {
-                // ignore lvalues
+            // ignore lvalues
+            if (parent instanceof U.AST_Assign && parent.left === node) return;
+            if (parent instanceof U.AST_Unary && parent.expression === node) switch (parent.operator) {
+              case "++":
+              case "--":
+              case "delete":
                 return;
             }
-            if ((parent instanceof U.AST_For || parent instanceof U.AST_ForIn)
-                && parent.init === node && node instanceof U.AST_Var) {
-                // preserve for (var ...)
-                return node;
-            }
+            // preserve for (var xxx; ...)
+            if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Var) return node;
+            // preserve for (xxx in ...)
+            if (parent instanceof U.AST_ForIn && parent.init === node) return node;
 
             // node specific permutations with no parent logic
 
