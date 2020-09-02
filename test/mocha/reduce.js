@@ -24,6 +24,9 @@ describe("test/reduce.js", function() {
     });
     it("Should eliminate unreferenced labels", function() {
         var result = reduce_test(read("test/input/reduce/label.js"), {
+            compress: {
+                unsafe_math: true,
+            },
             mangle: false,
         }, {
             verbose: false,
