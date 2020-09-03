@@ -1483,8 +1483,7 @@ issue_2663_2: {
     }
     expect: {
         (function() {
-            var i;
-            for (i in { a: 1, b: 2, c: 3 })
+            for (var i in { a: 1, b: 2, c: 3 })
                 j = i, console.log(j);
             var j;
         })();

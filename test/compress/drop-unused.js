@@ -2848,3 +2848,60 @@ issue_4025: {
         "1 1 1",
     ]
 }
+
+forin_var_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var k;
+        for (k in [ 1, 2 ])
+            console.log(k);
+        for (k in { PASS: 3 })
+            console.log(k);
+        console.log(k);
+    }
+    expect: {
+        for (var k in [ 1, 2 ])
+            console.log(k);
+        for (k in { PASS: 3 })
+            console.log(k);
+        console.log(k);
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "PASS",
+        "PASS",
+    ]
+}
+
+forin_var_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            switch (0) {
+              case function() {
+                    for (a in 0);
+                }:
+                var b = 0;
+            }
+            for (var c = 0; a;);
+            var a;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            switch (0) {
+              case function() {
+                    for (a in 0);
+                }:
+            }
+            for (; a;);
+            var a;
+        }());
+    }
+    expect_stdout: "undefined"
+}
