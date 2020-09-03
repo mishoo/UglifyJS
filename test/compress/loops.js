@@ -1037,3 +1037,54 @@ issue_4084: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4091_1: {
+    options = {
+        loops: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw "FAIL";
+        } catch (e) {
+            for (var e in 42);
+        }
+        console.log(e && e);
+    }
+    expect: {
+        try {
+            throw "FAIL";
+        } catch (e) {
+            var e;
+        }
+        console.log(e && e);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4091_2: {
+    options = {
+        loops: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw "FAIL";
+        } catch (e) {
+            for (e in 42);
+            var e;
+        }
+        console.log(e && e);
+    }
+    expect: {
+        try {
+            throw "FAIL";
+        } catch (e) {
+            var e;
+        }
+        console.log(e && e);
+    }
+    expect_stdout: "undefined"
+}
