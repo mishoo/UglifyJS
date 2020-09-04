@@ -637,6 +637,22 @@ evaluate_7_unsafe_math: {
     ]
 }
 
+evaluate_8_unsafe_math: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        var a = [ "42" ];
+        console.log(a * (1 / 7));
+    }
+    expect: {
+        var a = [ "42" ];
+        console.log(+a / 7);
+    }
+    expect_stdout: "6"
+}
+
 NaN_redefined: {
     options = {
         evaluate: true,
