@@ -27,7 +27,7 @@ process.on("beforeExit", function() {
     if (queued > 3) {
         process.stdout.write("0");
     } else if (now - earliest > 0 && total > 1) {
-        process.stdout.write(Math.min(20 * (now - earliest) / (total - 1), 6300000).toFixed(0));
+        process.stdout.write(Math.min(20 * (now - earliest) / (total - 1), 18000000).toFixed(0));
     } else {
         process.stdout.write("3600000");
     }
