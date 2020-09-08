@@ -1624,8 +1624,34 @@ defun_label: {
     expect_stdout: true
 }
 
-double_reference: {
+double_reference_1: {
     options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var g = function g() {
+                g();
+            };
+            g();
+        }
+    }
+    expect: {
+        function f() {
+            var g = function g() {
+                g();
+            };
+            g();
+        }
+    }
+}
+
+double_reference_2: {
+    options = {
+        functions: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -1645,6 +1671,60 @@ double_reference: {
             })();
         }
     }
+}
+
+double_reference_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var x = function f() {
+            return f;
+        };
+        function g() {
+            return x();
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        var x = function f() {
+            return f;
+        };
+        function g() {
+            return x();
+        }
+        console.log(g() === g());
+    }
+    expect_stdout: "true"
+}
+
+double_reference_4: {
+    options = {
+        comparisons: true,
+        functions: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var x = function f() {
+            return f;
+        };
+        function g() {
+            return x();
+        }
+        console.log(g() === g());
+    }
+    expect: {
+        console.log(true);
+    }
+    expect_stdout: "true"
 }
 
 iife_arguments_1: {
@@ -1686,8 +1766,35 @@ iife_arguments_2: {
     }
     expect: {
         (function() {
-            console.log(function f() {
+            var x = function f() {
                 return f;
+            };
+            console.log(x() === arguments[0]);
+        })();
+    }
+    expect_stdout: true
+}
+
+iife_arguments_3: {
+    options = {
+        functions: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var x = function f() {
+                return f;
+            };
+            console.log(x() === arguments[0]);
+        })();
+    }
+    expect: {
+        (function() {
+            console.log(function x() {
+                return x;
             }() === arguments[0]);
         })();
     }
