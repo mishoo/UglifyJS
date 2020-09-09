@@ -23,8 +23,8 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "acorn": "~7.1.0",
-    "semver": "~6.3.0"
+    "acorn": "~8.0.1",
+    "semver": "~7.3.2"
   },
   "scripts": {
     "test": "node test/compress.js && node test/mocha.js"
