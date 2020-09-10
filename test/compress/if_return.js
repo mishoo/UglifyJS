@@ -594,3 +594,72 @@ iife_if_return_simple: {
     }
     expect_stdout: "PASS"
 }
+
+nested_if_break: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        for (var i = 0; i < 3; i++)
+            L1: if ("number" == typeof i) {
+                if (0 === i) break L1;
+                console.log(i);
+            }
+    }
+    expect: {
+        for (var i = 0; i < 3; i++)
+            L1: if ("number" == typeof i)
+                if (0 !== i) console.log(i);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+    ]
+}
+
+nested_if_continue: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        join_vars: true,
+        loops: true,
+    }
+    input: {
+        function f(n) {
+            var i = 0;
+            do {
+                if ("number" == typeof n) {
+                    if (0 === n) {
+                        console.log("even", i);
+                        continue;
+                    }
+                    if (1 === n) {
+                        console.log("odd", i);
+                        continue;
+                    }
+                    i++;
+                }
+            } while (0 <= (n -= 2));
+        }
+        f(37);
+        f(42);
+    }
+    expect: {
+        function f(n) {
+            for (var i = 0;
+                "number" == typeof n
+                    && (0 !== n
+                        ? 1 !== n
+                            ? i++
+                            : console.log("odd", i)
+                        : console.log("even", i)),
+                0 <= (n -= 2););
+        }
+        f(37);
+        f(42);
+    }
+    expect_stdout: [
+        "odd 18",
+        "even 21",
+    ]
+}
