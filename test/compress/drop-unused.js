@@ -1997,7 +1997,7 @@ issue_3146_4: {
     expect_stdout: "PASS"
 }
 
-issue_3192: {
+issue_3192_1: {
     options = {
         unused: true,
     }
@@ -2023,6 +2023,26 @@ issue_3192: {
         "foo foo",
         "foo bar",
     ]
+}
+
+issue_3192_2: {
+    options = {
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function(a) {
+            console.log(a = "foo", arguments[0]);
+        })("bar");
+    }
+    expect: {
+        "use strict";
+        (function() {
+            console.log("foo", arguments[0]);
+        })("bar");
+    }
+    expect_stdout: "foo bar"
 }
 
 issue_3233: {
