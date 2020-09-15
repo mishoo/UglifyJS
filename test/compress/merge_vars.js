@@ -182,6 +182,35 @@ switch_branch: {
     expect_stdout: "PASS"
 }
 
+try_branch: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = "FAIL", c;
+            try {
+                a && F();
+            } catch (e) {
+                c = b;
+            }
+            return c || "PASS";
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            var b = "FAIL", c;
+            try {
+                a && F();
+            } catch (e) {
+                c = b;
+            }
+            return c || "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
 read_before_assign_1: {
     options = {
         inline: true,
