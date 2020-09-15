@@ -76,6 +76,43 @@ merge_toplevel: {
     ]
 }
 
+segment: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "foo";
+        console.log(a);
+        for (var c, i = 0; i < 1; i++) {
+            var b = "bar";
+            console.log(b);
+            c = "baz";
+            console.log(c);
+        }
+        var d = "moo";
+        console.log(d);
+    }
+    expect: {
+        var d = "foo";
+        console.log(d);
+        for (var c, i = 0; i < 1; i++) {
+            var c = "bar";
+            console.log(c);
+            c = "baz";
+            console.log(c);
+        }
+        var d = "moo";
+        console.log(d);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+        "moo",
+    ]
+}
+
 init_scope_vars: {
     options = {
         merge_vars: true,
