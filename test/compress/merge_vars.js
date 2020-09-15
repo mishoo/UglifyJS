@@ -324,3 +324,129 @@ issue_4103: {
         "NaN",
     ]
 }
+
+issue_4107: {
+    options = {
+        keep_fargs: "strict",
+        merge_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function f(b, b, c) {
+                var d = 1 && a, a = console || c;
+                console.log(typeof a);
+            }
+            f();
+        })();
+        console.log(typeof a);
+    }
+    expect: {
+        (function() {
+            (function(c) {
+                var a = console || c;
+                console.log(typeof a);
+            })();
+        })();
+        console.log(typeof a);
+    }
+    expect_stdout: [
+        "object",
+        "undefined",
+    ]
+}
+
+issue_4109: {
+    options = {
+        ie8: true,
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "foo";
+        try {
+            throw "bar";
+        } catch (e) {
+            console.log(e);
+        } finally {
+            var o = a;
+            for (var k in o);
+            (function() {
+                a++;
+            });
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        try {
+            throw "bar";
+        } catch (e) {
+            console.log(e);
+        } finally {
+            var o = a;
+            for (var k in o);
+            (function() {
+                a++;
+            });
+        }
+        console.log(a);
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+}
+
+issue_4110: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        while (a)
+            var c;
+        var b, a = c += b = a;
+        console.log(b);
+    }
+    expect: {
+        while (a)
+            var c;
+        var b, a = c += b = a;
+        console.log(b);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4111: {
+    options = {
+        join_vars: true,
+        loops: true,
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        if (a)
+            a = 0;
+        else
+            for (var b = 0; --b && ++a < 2;) {
+                var o = console, k;
+                for (k in o);
+            }
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        if (a)
+            a = 0;
+        else
+            for (var b = 0; --b && ++a < 2;) {
+                var o = console, k;
+                for (k in o);
+            }
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
