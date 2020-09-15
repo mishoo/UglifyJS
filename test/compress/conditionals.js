@@ -783,6 +783,28 @@ cond_12: {
     }
 }
 
+cond_13: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        x ? y(a) : z(a);
+        x ? y.f(a) : z.f(a);
+        x ? y.f(a) : z.g(a);
+        x ? y.f()(a) : z.g()(a);
+        x ? y.f.u(a) : z.g.u(a);
+        x ? y.f().u(a) : z.g().u(a);
+    }
+    expect: {
+        (x ? y : z)(a);
+        (x ? y : z).f(a);
+        x ? y.f(a) : z.g(a);
+        (x ? y.f() : z.g())(a);
+        (x ? y.f : z.g).u(a);
+        (x ? y.f() : z.g()).u(a);
+    }
+}
+
 ternary_boolean_consequent: {
     options = {
         booleans: true,
