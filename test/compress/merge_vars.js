@@ -231,3 +231,30 @@ read_before_assign_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4103: {
+    options = {
+        merge_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a) {
+            console.log(a);
+        }
+        var b = 0;
+        var c = f(b++ + (c %= 1 >> console.log(c = 0)));
+        b;
+    }
+    expect: {
+        function f(a) {
+            console.log(a);
+        }
+        var b = 0;
+        var c = f(b++ + (c %= 1 >> console.log(c = 0)));
+    }
+    expect_stdout: [
+        "0",
+        "NaN",
+    ]
+}
