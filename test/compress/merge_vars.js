@@ -450,3 +450,39 @@ issue_4111: {
     }
     expect_stdout: "2"
 }
+
+issue_4112: {
+    options = {
+        functions: true,
+        merge_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            try {
+                throw 42;
+            } catch (e) {
+                var o = e;
+                for (e in o);
+                var a = function() {};
+                console.log;
+                return a;
+            }
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            try {
+                throw 42;
+            } catch (e) {
+                var a = e;
+                for (e in a);
+                a = function() {};
+                console.log;
+                return a;
+            }
+        }());
+    }
+    expect_stdout: "function"
+}
