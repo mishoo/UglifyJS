@@ -2176,6 +2176,7 @@ issue_1670_6: {
         keep_fargs: false,
         reduce_funcs: true,
         reduce_vars: true,
+        sequences: true,
         side_effects: true,
         switches: true,
         unused: true,
@@ -2193,10 +2194,9 @@ issue_1670_6: {
         })(1);
     }
     expect: {
-        (function(a) {
-            a = 1;
-            console.log(a);
-        })(1);
+        (function() {
+            console.log(1);
+        })();
     }
     expect_stdout: "1"
 }
