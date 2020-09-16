@@ -486,3 +486,29 @@ issue_4112: {
     }
     expect_stdout: "function"
 }
+
+issue_4115: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        L: {
+            var o = typeof console;
+            for (var k in o)
+                break L;
+            var a = 0;
+        }
+        console.log(typeof a);
+    }
+    expect: {
+        L: {
+            var o = typeof console;
+            for (var k in o)
+                break L;
+            var a = 0;
+        }
+        console.log(typeof a);
+    }
+    expect_stdout: "undefined"
+}
