@@ -2908,3 +2908,55 @@ issue_4077: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4119_1: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var a, b;
+        b = a = [];
+        a[0] += 0;
+        if (+b + 1) {
+            console.log("FAIL");
+        } else {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a, b;
+        b = a = [];
+        a[0] += 0;
+        +b + 1 ? console.log("FAIL") : console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4119_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        var a;
+        (function(b) {
+            a[0] += 0;
+            console.log(+b + 1 ? "FAIL" : "PASS");
+        })(a = []);
+    }
+    expect: {
+        var a;
+        (function(b) {
+            a[0] += 0;
+            console.log(+b + 1 ? "FAIL" : "PASS");
+        })(a = []);
+    }
+    expect_stdout: "PASS"
+}
