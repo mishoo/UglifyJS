@@ -238,6 +238,41 @@ concat_8: {
     expect_stdout: true
 }
 
+concat_9: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+        strings: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "foo";
+        console.log(
+            12 + (34 + a),
+            null + (34 + a),
+            12 + (null + a),
+            false + (34 + a),
+            12 + (false + a),
+            "bar" + (34 + a),
+            12 + ("bar" + a)
+        );
+    }
+    expect: {
+        var a = "foo";
+        console.log(
+            "1234" + a,
+            "null34" + a,
+            "12null" + a,
+            !1 + (34 + a),
+            12 + (!1 + a),
+            "bar34" + a,
+            "12bar" + a
+        );
+    }
+    expect_stdout: true
+}
+
 issue_3689: {
     options = {
         strings: true,
