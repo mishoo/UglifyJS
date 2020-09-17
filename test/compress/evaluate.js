@@ -2960,3 +2960,57 @@ issue_4119_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4119_3: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var a, b;
+        b = a = {
+            p: 42,
+        };
+        delete a.p;
+        console.log(b.p ? "FAIL" : "PASS");
+    }
+    expect: {
+        var a, b;
+        b = a = {
+            p: 42,
+        };
+        delete a.p;
+        console.log(b.p ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4119_4: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b;
+        b = a = {
+            p: 42,
+        };
+        delete a.p;
+        console.log(!b ? "FAIL" : "PASS");
+    }
+    expect: {
+        var a, b;
+        b = a = {
+            p: 42,
+        };
+        delete a.p;
+        console.log((b, 0, "PASS"));
+    }
+    expect_stdout: "PASS"
+}
