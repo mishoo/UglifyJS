@@ -245,6 +245,31 @@ unsafe_builtin_2: {
     expect_stdout: "object PASS PASS"
 }
 
+unsafe_builtin_3: {
+    options = {
+        conditionals: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var o = {};
+        if (42 < Math.random())
+            o.p = "FAIL";
+        else
+            o.p = "PASS";
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {};
+        o.p = 42 < Math.random() ? "FAIL" : "PASS";
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: "p PASS"
+}
+
 unsafe_string_replace: {
     options = {
         side_effects: true,

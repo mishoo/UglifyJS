@@ -688,6 +688,8 @@ to be `false` and all symbol names will be omitted.
 - `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops
   when we can statically determine the condition.
 
+- `merge_vars` (default: `true`) -- combine and reuse variables.
+
 - `negate_iife` (default: `true`) -- negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the
   code generator would insert.
