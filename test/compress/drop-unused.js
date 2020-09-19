@@ -1730,7 +1730,7 @@ chained_3: {
     expect: {
         console.log(function(a, b) {
             var c = b;
-            b++;
+            +b;
             return c;
         }(0, 2));
     }
@@ -2737,7 +2737,7 @@ issue_3962_1: {
                 0..toString();
             } while (0);
             if (c) console.log("PASS");
-        }((a--, 1)), 0);
+        }(1), 0);
         void 0;
     }
     expect_stdout: "PASS"
@@ -2770,7 +2770,7 @@ issue_3962_2: {
                 0..toString();
             } while (0);
             if (c) console.log("PASS");
-        }((a--, 1)), 0);
+        }(1), 0);
     }
     expect_stdout: "PASS"
 }
@@ -2853,11 +2853,11 @@ issue_4025: {
         console.log(a, b, d);
     }
     expect: {
-        var d, c = 0;
+        var c = 0;
         try {
             console.log(c);
         } finally {
-            d = c + 1;
+            var d = c + 1;
             c = 0;
         }
         console.log(1, 1, d);

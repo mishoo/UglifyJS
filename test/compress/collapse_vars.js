@@ -62,18 +62,18 @@ collapse_vars_side_effects_1: {
     expect: {
         function f1() {
             var s = "abcdef", i = 2;
-            console.log.bind(console)(s.charAt(i++), s.charAt(i++), s.charAt(4), 7);
+            console.log.bind(console)(s.charAt(i++), s.charAt(+i), s.charAt(4), 7);
         }
         function f2() {
             var s = "abcdef", i = 2;
-            console.log.bind(console)(s.charAt(i++), 5, s.charAt(i++), s.charAt(i++), 7);
+            console.log.bind(console)(s.charAt(i++), 5, s.charAt(i++), s.charAt(+i), 7);
         }
         function f3() {
             var s = "abcdef",
                 i = 2,
                 log = console.log.bind(console),
                 x = s.charAt(i++),
-                y = s.charAt(i++);
+                y = s.charAt(+i);
             log(x, s.charAt(4), y, 7);
         }
         function f4() {
@@ -3073,7 +3073,6 @@ issue_2298: {
     expect: {
         !function() {
             (function() {
-                0;
                 try {
                     !function(b) {
                         (void 0)[1] = "foo";
