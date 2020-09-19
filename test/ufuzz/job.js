@@ -2,14 +2,16 @@ var child_process = require("child_process");
 
 var ping = 5 * 60 * 1000;
 var period = +process.argv[2];
-var endTime = Date.now() + period;
+var endTime = period < 0 ? period : Date.now() + period;
 for (var i = 0; i < 2; i++) spawn(endTime);
 
 function spawn(endTime) {
-    var child = child_process.spawn("node", [
+    var args = [
         "--max-old-space-size=2048",
         "test/ufuzz"
-    ], {
+    ];
+    if (endTime < 0) args.push(-endTime);
+    var child = child_process.spawn("node", args, {
         stdio: [ "ignore", "pipe", "pipe" ]
     }).on("exit", respawn);
     var stdout = "";
@@ -23,6 +25,7 @@ function spawn(endTime) {
         console.log(stdout.slice(stdout.lastIndexOf("\r", end - 1) + 1, end));
         stdout = stdout.slice(end + 1);
     }, ping);
+    if (endTime < 0) return;
     var timer = setTimeout(function() {
         clearInterval(keepAlive);
         child.removeListener("exit", respawn);
@@ -32,6 +35,7 @@ function spawn(endTime) {
     function respawn() {
         console.log(stdout.replace(/[^\r\n]*\r/g, ""));
         clearInterval(keepAlive);
+        if (endTime < 0) return;
         clearTimeout(timer);
         spawn(endTime);
     }
