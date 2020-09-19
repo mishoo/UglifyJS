@@ -120,7 +120,7 @@ modified: {
     expect: {
         function f0() {
             var b = 2;
-            b++;
+            +b;
             console.log(2);
             console.log(4);
         }
@@ -5590,7 +5590,7 @@ lvalues_def_1: {
     }
     expect: {
         var b = 1;
-        var a = b++, b = NaN;
+        var a = +b, b = NaN;
         console.log(a, b);
     }
     expect_stdout: "1 NaN"
