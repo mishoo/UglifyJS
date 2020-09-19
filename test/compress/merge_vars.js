@@ -344,8 +344,8 @@ issue_4107: {
     }
     expect: {
         (function() {
-            (function(c) {
-                var a = console || c;
+            (function(a) {
+                a = console || a;
                 console.log(typeof a);
             })();
         })();
@@ -511,4 +511,2086 @@ issue_4115: {
         console.log(typeof a);
     }
     expect_stdout: "undefined"
+}
+
+cross_branch_1_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            console.log(x);
+            y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            if (a)
+                y = "foo";
+            console.log(y);
+            y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_2: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+            }
+            y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                console.log(y);
+            }
+            y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_3: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                console.log(y);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_4: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a)
+                console.log(x);
+            y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a)
+                console.log(y);
+            y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_5: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_6: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a) {
+                console.log(y);
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_7: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_8: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            y = "foo";
+            console.log(y);
+            if (a) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_1_9: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            y = "bar";
+            if (a)
+                console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect: {
+        var a;
+        function f() {
+            var y, y;
+            y = "foo";
+            console.log(y);
+            y = "bar";
+            if (a)
+                console.log(y);
+        }
+        a = 0;
+        f();
+        a = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                if (b)
+                    x = "foo";
+                console.log(x);
+            }
+            y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                if (b)
+                    y = "foo";
+                console.log(y);
+            }
+            y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "undefined",
+        "bar",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_2: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                if (b)
+                    console.log(x);
+            }
+            y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                if (b)
+                    console.log(y);
+            }
+            y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "bar",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_3: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                if (b)
+                    x = "foo";
+                console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                if (b)
+                    y = "foo";
+                console.log(y);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+        "bar",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_4: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                if (b) {
+                    x = "foo";
+                    console.log(x);
+                }
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                if (b) {
+                    y = "foo";
+                    console.log(y);
+                }
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "bar",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_5: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                if (b)
+                    console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                if (b)
+                    console.log(y);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "bar",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_6: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                if (b) {
+                    console.log(x);
+                    y = "bar";
+                }
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                if (b) {
+                    console.log(x);
+                    y = "bar";
+                }
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_7: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+                if (b)
+                    y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+                if (b)
+                    y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_8: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                if (b)
+                    console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                if (b)
+                    console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "bar",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_9: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                if (b)
+                    y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                if (b)
+                    y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_10: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                if (b)
+                    console.log(x);
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a) {
+                if (b)
+                    console.log(y);
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_11: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                if (b) {
+                    console.log(x);
+                    y = "bar";
+                }
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                if (b) {
+                    console.log(x);
+                    y = "bar";
+                }
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_12: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                if (b)
+                    y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                if (b)
+                    y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_13: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                if (b) {
+                    y = "bar";
+                    console.log(y);
+                }
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a) {
+                console.log(y);
+                if (b) {
+                    y = "bar";
+                    console.log(y);
+                }
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_14: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                y = "bar";
+                if (b)
+                    console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a) {
+                console.log(y);
+                y = "bar";
+                if (b)
+                    console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_15: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a) {
+                if (b)
+                    y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a) {
+                if (b)
+                    y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "undefined",
+        "foo",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2a_16: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a) {
+                y = "bar";
+                if (b)
+                    console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            y = "foo";
+            console.log(y);
+            if (a) {
+                y = "bar";
+                if (b)
+                    console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "foo",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            if (b)
+                console.log(x);
+            y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a)
+                y = "foo";
+            if (b)
+                console.log(y);
+            y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "bar",
+        "bar",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_2: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            if (b) {
+                console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            if (b) {
+                console.log(x);
+                y = "bar";
+            }
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_3: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            if (b) {
+                console.log(x);
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a)
+                y = "foo";
+            if (b) {
+                console.log(y);
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_4: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            console.log(x);
+            if (b)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            console.log(x);
+            if (b)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+        "foo",
+        "undefined",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_5: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            console.log(x);
+            if (b) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a)
+                y = "foo";
+            console.log(y);
+            if (b) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_6: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+            }
+            if (b)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+            }
+            if (b)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_7: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+            }
+            if (b) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                console.log(y);
+            }
+            if (b) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_8: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a)
+                x = "foo";
+            console.log(x);
+            y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a)
+                y = "foo";
+            console.log(y);
+            y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_9: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+            }
+            y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                console.log(y);
+            }
+            y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_10: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            if (a) {
+                x = "foo";
+                console.log(x);
+                y = "bar";
+            }
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            if (a) {
+                y = "foo";
+                console.log(y);
+                y = "bar";
+            }
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_11: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a)
+                console.log(x);
+            if (b)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a)
+                console.log(x);
+            if (b)
+                y = "bar";
+            console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "foo",
+        "undefined",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_12: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a)
+                console.log(x);
+            if (b) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a)
+                console.log(y);
+            if (b) {
+                y = "bar";
+                console.log(y);
+            }
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_13: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a)
+                console.log(x);
+            y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var y, y;
+            y = "foo";
+            if (a)
+                console.log(y);
+            y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_14: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                y = "bar";
+            }
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            if (a) {
+                console.log(x);
+                y = "bar";
+            }
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+        "foo",
+        "bar",
+    ]
+}
+
+cross_branch_2b_15: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a)
+                y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect: {
+        var a, b;
+        function f() {
+            var x, y;
+            x = "foo";
+            console.log(x);
+            if (a)
+                y = "bar";
+            if (b)
+                console.log(y);
+        }
+        a = 0, b = 0;
+        f();
+        a = 1, b = 0;
+        f();
+        a = 0, b = 1;
+        f();
+        a = 1, b = 1;
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "foo",
+        "undefined",
+        "foo",
+        "bar",
+    ]
 }
