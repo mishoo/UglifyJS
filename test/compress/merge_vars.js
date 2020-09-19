@@ -2594,3 +2594,71 @@ cross_branch_2b_15: {
         "bar",
     ]
 }
+
+issue_4126_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            try {
+                console.log("PASS");
+            } catch (e) {
+                var b = a;
+            } finally {
+                var c = b;
+            }
+            console.log(c);
+        }
+        f("FAIL");
+    }
+    expect: {
+        function f(a) {
+            try {
+                console.log("PASS");
+            } catch (e) {
+                var c = a;
+            } finally {
+                var c = c;
+            }
+            console.log(c);
+        }
+        f("FAIL");
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
+
+issue_4126_2: {
+    options = {
+        inline: true,
+        merge_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            var a = function() {
+                var b = 0;
+                function f() {
+                    b;
+                }
+                THROW(b);
+            }();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            var a = (b = 0, void THROW(b));
+        } catch (e) {
+            console.log(a);
+        }
+        function f() {}
+        var b;
+    }
+    expect_stdout: "undefined"
+}
