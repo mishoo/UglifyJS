@@ -2662,3 +2662,42 @@ issue_4126_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4130: {
+    options = {
+        merge_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 2;
+        while (a)
+            try {
+                console.log(a);
+            } catch (e) {
+                var b = 0;
+            } finally {
+                b && console.log("FAIL");
+                var c = --a;
+                for (var k in c)
+                    c;
+            }
+    }
+    expect: {
+        var a = 2;
+        while (a)
+            try {
+                console.log(a);
+            } catch (e) {
+                var b = 0;
+            } finally {
+                b && console.log("FAIL");
+                var c = --a;
+                for (var k in c);
+            }
+    }
+    expect_stdout: [
+        "2",
+        "1",
+    ]
+}
