@@ -2924,3 +2924,24 @@ forin_var_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4133: {
+    options = {
+        evaluate: true,
+        merge_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        var b = [ a-- ], c = b && b[c];
+        console.log(a);
+    }
+    expect: {
+        var b = 1;
+        console.log(0);
+    }
+    expect_stdout: "0"
+}
