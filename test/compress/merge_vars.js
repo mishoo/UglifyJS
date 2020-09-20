@@ -2701,3 +2701,40 @@ issue_4130: {
         "1",
     ]
 }
+
+issue_4135: {
+    options = {
+        evaluate: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        --b;
+        a++;
+        if (!a)
+            var c = function() {
+                var d = 0;
+                function f() {
+                    d && d.p;
+                }
+                f();
+                this;
+            }(a++);
+        console.log(a, b, c);
+    }
+    expect: {
+        var a = 0;
+        0;
+        a++;
+        if (!a)
+            c = (a++, c = 0, void (c && c.p));
+        var c;
+        console.log(a, -1, c);
+    }
+    expect_stdout: "1 -1 undefined"
+}
