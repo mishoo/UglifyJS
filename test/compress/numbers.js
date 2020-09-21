@@ -91,7 +91,7 @@ evaluate_1: {
     expect: {
         console.log(
             x + 1 + 2,
-            2 * x,
+            2 * +x,
             +x + 1 + 2,
             1 + x + 2 + 3,
             3 | x,
@@ -130,7 +130,7 @@ evaluate_1_unsafe_math: {
     expect: {
         console.log(
             x + 1 + 2,
-            2 * x,
+            2 * +x,
             +x + 3,
             1 + x + 2 + 3,
             3 | x,
@@ -148,45 +148,52 @@ evaluate_1_unsafe_math: {
 evaluate_2: {
     options = {
         evaluate: true,
+        reduce_vars: true,
         unsafe_math: false,
     }
     input: {
-        var x = "42", y = null;
-        [
-            x + 1 + 2,
-            x * 1 * 2,
-            +x + 1 + 2,
-            1 + x + 2 + 3,
-            1 | x | 2 | 3,
-            1 + x-- + 2 + 3,
-            1 + (x*y + 2) + 3,
-            1 + (2 + x + 3),
-            1 + (2 + ~x + 3),
-            -y + (2 + ~x + 3),
-            1 & (2 & x & 3),
-            1 + (2 + (x |= 0) + 3),
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var x = "" + num, y = null;
+            [
+                x + 1 + 2,
+                x * 1 * 2,
+                +x + 1 + 2,
+                1 + x + 2 + 3,
+                1 | x | 2 | 3,
+                1 + x-- + 2 + 3,
+                1 + (x*y + 2) + 3,
+                1 + (2 + x + 3),
+                1 + (2 + ~x + 3),
+                -y + (2 + ~x + 3),
+                1 & (2 & x & 3),
+                1 + (2 + (x |= 0) + 3),
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect: {
-        var x = "42", y = null;
-        [
-            x + 1 + 2,
-            2 * x,
-            +x + 1 + 2,
-            1 + x + 2 + 3,
-            3 | x,
-            1 + x-- + 2 + 3,
-            x*y + 2 + 1 + 3,
-            1 + (2 + x + 3),
-            2 + ~x + 3 + 1,
-            2 + ~x + 3 - y,
-            0 & x,
-            2 + (x |= 0) + 3 + 1,
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var x = "" + num, y = null;
+            [
+                x + "12",
+                2 * x,
+                +x + 1 + 2,
+                1 + x + "23",
+                3 | x,
+                1 + x-- + 2 + 3,
+                x*y + 2 + 1 + 3,
+                2 + x + 3 + 1,
+                2 + ~x + 3 + 1,
+                2 + ~x + 3,
+                0 & x,
+                2 + (x |= 0) + 3 + 1,
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect_stdout: [
         "string 4212",
@@ -207,45 +214,52 @@ evaluate_2: {
 evaluate_2_unsafe_math: {
     options = {
         evaluate: true,
+        reduce_vars: true,
         unsafe_math: true,
     }
     input: {
-        var x = "42", y = null;
-        [
-            x + 1 + 2,
-            x * 1 * 2,
-            +x + 1 + 2,
-            1 + x + 2 + 3,
-            1 | x | 2 | 3,
-            1 + x-- + 2 + 3,
-            1 + (x*y + 2) + 3,
-            1 + (2 + x + 3),
-            1 + (2 + ~x + 3),
-            -y + (2 + ~x + 3),
-            1 & (2 & x & 3),
-            1 + (2 + (x |= 0) + 3),
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var x = "" + num, y = null;
+            [
+                x + 1 + 2,
+                x * 1 * 2,
+                +x + 1 + 2,
+                1 + x + 2 + 3,
+                1 | x | 2 | 3,
+                1 + x-- + 2 + 3,
+                1 + (x*y + 2) + 3,
+                1 + (2 + x + 3),
+                1 + (2 + ~x + 3),
+                -y + (2 + ~x + 3),
+                1 & (2 & x & 3),
+                1 + (2 + (x |= 0) + 3),
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect: {
-        var x = "42", y = null;
-        [
-            x + 1 + 2,
-            2 * x,
-            +x + 3,
-            1 + x + 2 + 3,
-            3 | x,
-            6 + x--,
-            x*y + 6,
-            1 + (2 + x + 3),
-            6 + ~x,
-            5 + ~x - y,
-            0 & x,
-            6 + (x |= 0),
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var x = "" + num, y = null;
+            [
+                x + "12",
+                2 * x,
+                +x + 3,
+                1 + x + "23",
+                3 | x,
+                6 + x--,
+                x*y + 6,
+                6 + x,
+                6 + ~x,
+                5 + ~x,
+                0 & x,
+                6 + (x |= 0),
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect_stdout: [
         "string 4212",
@@ -310,45 +324,52 @@ evaluate_4: {
 evaluate_5: {
     options = {
         evaluate: true,
+        reduce_vars: true,
         unsafe_math: false,
     }
     input: {
-        var a = "1";
-        [
-            +a + 2 + 3,
-            +a + 2 - 3,
-            +a - 2 + 3,
-            +a - 2 - 3,
-            2 + +a + 3,
-            2 + +a - 3,
-            2 - +a + 3,
-            2 - +a - 3,
-            2 + 3 + +a,
-            2 + 3 - +a,
-            2 - 3 + +a,
-            2 - 3 - +a,
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var a = "" + num;
+            [
+                +a + 2 + 3,
+                +a + 2 - 3,
+                +a - 2 + 3,
+                +a - 2 - 3,
+                2 + +a + 3,
+                2 + +a - 3,
+                2 - +a + 3,
+                2 - +a - 3,
+                2 + 3 + +a,
+                2 + 3 - +a,
+                2 - 3 + +a,
+                2 - 3 - +a,
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(1);
     }
     expect: {
-        var a = "1";
-        [
-            +a + 2 + 3,
-            +a + 2 - 3,
-            a - 2 + 3,
-            a - 2 - 3,
-            +a + 2 + 3,
-            +a + 2 - 3,
-            2 - a + 3,
-            2 - a - 3,
-            +a + 5,
-            5 - a,
-            +a - 1,
-            -1 - a,
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var a = "" + num;
+            [
+                +a + 2 + 3,
+                +a + 2 - 3,
+                a - 2 + 3,
+                a - 2 - 3,
+                +a + 2 + 3,
+                +a + 2 - 3,
+                2 - a + 3,
+                2 - a - 3,
+                +a + 5,
+                5 - a,
+                +a - 1,
+                -1 - a,
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(1);
     }
     expect_stdout: [
         "number 6",
@@ -369,45 +390,52 @@ evaluate_5: {
 evaluate_5_unsafe_math: {
     options = {
         evaluate: true,
+        reduce_vars: true,
         unsafe_math: true,
     }
     input: {
-        var a = "1";
-        [
-            +a + 2 + 3,
-            +a + 2 - 3,
-            +a - 2 + 3,
-            +a - 2 - 3,
-            2 + +a + 3,
-            2 + +a - 3,
-            2 - +a + 3,
-            2 - +a - 3,
-            2 + 3 + +a,
-            2 + 3 - +a,
-            2 - 3 + +a,
-            2 - 3 - +a,
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var a = "" + num;
+            [
+                +a + 2 + 3,
+                +a + 2 - 3,
+                +a - 2 + 3,
+                +a - 2 - 3,
+                2 + +a + 3,
+                2 + +a - 3,
+                2 - +a + 3,
+                2 - +a - 3,
+                2 + 3 + +a,
+                2 + 3 - +a,
+                2 - 3 + +a,
+                2 - 3 - +a,
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(1);
     }
     expect: {
-        var a = "1";
-        [
-            +a + 5,
-            +a + -1,
-            a - -1,
-            a - 5,
-            +a + 5,
-            +a + -1,
-            5 - a,
-            -1 - a,
-            +a + 5,
-            5 - a,
-            +a - 1,
-            -1 - a,
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num) {
+            var a = "" + num;
+            [
+                +a + 5,
+                +a + -1,
+                a - -1,
+                a - 5,
+                +a + 5,
+                +a + -1,
+                5 - a,
+                -1 - a,
+                +a + 5,
+                5 - a,
+                +a - 1,
+                -1 - a,
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(1);
     }
     expect_stdout: [
         "number 6",
@@ -546,37 +574,44 @@ evaluate_6_unsafe_math: {
 evaluate_7: {
     options = {
         evaluate: true,
+        reduce_vars: true,
         unsafe_math: false,
     }
     input: {
-        var x = "42", y;
-        [
-            +x + 2 + (3 + !y),
-            +x + 2 + (3 - !y),
-            +x + 2 - (3 + !y),
-            +x + 2 - (3 - !y),
-            +x - 2 + (3 + !y),
-            +x - 2 + (3 - !y),
-            +x - 2 - (3 + !y),
-            +x - 2 - (3 - !y),
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num, y) {
+            var x = "" + num;
+            [
+                +x + 2 + (3 + !y),
+                +x + 2 + (3 - !y),
+                +x + 2 - (3 + !y),
+                +x + 2 - (3 - !y),
+                +x - 2 + (3 + !y),
+                +x - 2 + (3 - !y),
+                +x - 2 - (3 + !y),
+                +x - 2 - (3 - !y),
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect: {
-        var x = "42", y;
-        [
-            +x + 2 + (3 + !y),
-            +x + 2 + (3 - !y),
-            +x + 2 - (3 + !y),
-            +x + 2 - (3 - !y),
-            x - 2 + (3 + !y),
-            x - 2 + (3 - !y),
-            x - 2 - (3 + !y),
-            x - 2 - (3 - !y),
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num, y) {
+            var x = "" + num;
+            [
+                +x + 2 + (3 + !y),
+                +x + 2 + (3 - !y),
+                +x + 2 - (3 + !y),
+                +x + 2 - (3 - !y),
+                x - 2 + (3 + !y),
+                x - 2 + (3 - !y),
+                x - 2 - (3 + !y),
+                x - 2 - (3 - !y),
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect_stdout: [
         "number 48",
@@ -593,37 +628,44 @@ evaluate_7: {
 evaluate_7_unsafe_math: {
     options = {
         evaluate: true,
+        reduce_vars: true,
         unsafe_math: true,
     }
     input: {
-        var x = "42", y;
-        [
-            +x + 2 + (3 + !y),
-            +x + 2 + (3 - !y),
-            +x + 2 - (3 + !y),
-            +x + 2 - (3 - !y),
-            +x - 2 + (3 + !y),
-            +x - 2 + (3 - !y),
-            +x - 2 - (3 + !y),
-            +x - 2 - (3 - !y),
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num, y) {
+            var x = "" + num;
+            [
+                +x + 2 + (3 + !y),
+                +x + 2 + (3 - !y),
+                +x + 2 - (3 + !y),
+                +x + 2 - (3 - !y),
+                +x - 2 + (3 + !y),
+                +x - 2 + (3 - !y),
+                +x - 2 - (3 + !y),
+                +x - 2 - (3 - !y),
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect: {
-        var x = "42", y;
-        [
-            +x + 5 + !y,
-            +x + 5 - !y,
-            +x + -1 - !y,
-            +x + -1 + !y,
-            x - -1 + !y,
-            x - -1 - !y,
-            x - 5 - !y,
-            x - 5 + !y,
-        ].forEach(function(n) {
-            console.log(typeof n, n);
-        });
+        function f(num, y) {
+            var x = "" + num;
+            [
+                +x + 5 + !y,
+                +x + 5 - !y,
+                +x + -1 - !y,
+                +x + -1 + !y,
+                x - -1 + !y,
+                x - -1 - !y,
+                x - 5 - !y,
+                x - 5 + !y,
+            ].forEach(function(n) {
+                console.log(typeof n, n);
+            });
+        }
+        f(42);
     }
     expect_stdout: [
         "number 48",
@@ -1266,4 +1308,17 @@ issue_3695: {
         console.log(+(a * (a[0] = false)));
     }
     expect_stdout: "NaN"
+}
+
+issue_4137: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(+(A = []) * (A[0] = 1));
+    }
+    expect: {
+        console.log(+(A = []) * (A[0] = 1));
+    }
+    expect_stdout: "0"
 }
