@@ -2415,7 +2415,7 @@ redefine_farg_2: {
         console.log(typeof [], "number",function(a, b) {
             a = b;
             return typeof a;
-        }([]));
+        }());
     }
     expect_stdout: "object number undefined"
 }
