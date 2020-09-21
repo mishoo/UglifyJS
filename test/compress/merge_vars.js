@@ -2738,3 +2738,31 @@ issue_4135: {
     }
     expect_stdout: "1 -1 undefined"
 }
+
+issue_4139: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            console.log;
+        } catch (e) {
+            var a, arguments = 0;
+        } finally {
+            a = typeof arguments;
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            console.log;
+        } catch (e) {
+            var a, arguments = 0;
+        } finally {
+            a = typeof arguments;
+            console.log(a);
+        }
+    }
+    expect_stdout: "object"
+}
