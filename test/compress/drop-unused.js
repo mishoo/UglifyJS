@@ -2945,3 +2945,23 @@ issue_4133: {
     }
     expect_stdout: "0"
 }
+
+issue_4144: {
+    options = {
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            var b = console, c = ++b;
+        })(console.log("PASS"), 0);
+    }
+    expect: {
+        (function(b) {
+            b = console,
+            ++b;
+        })(console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+}
