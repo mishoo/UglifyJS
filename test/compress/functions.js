@@ -2676,7 +2676,7 @@ cross_references_3: {
                 };
                 return Math.square(n) + Math.cube(n);
             };
-        }(Math)(2));
+        }()(2));
         console.log(Math.square(3), Math.cube(3));
     }
     expect_stdout: [
