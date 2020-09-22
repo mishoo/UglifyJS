@@ -1322,3 +1322,16 @@ issue_4137: {
     }
     expect_stdout: "0"
 }
+
+issue_4142: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log("" + +(0 === console));
+    }
+    expect: {
+        console.log("" + +(0 === console));
+    }
+    expect_stdout: "0"
+}
