@@ -2965,3 +2965,30 @@ issue_4144: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4146: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            function g() {}
+            var a = g;
+            var c = b;
+            c.p;
+            console.log(typeof a);
+        }
+        f("FAIL", 42);
+    }
+    expect: {
+        (function(a, b) {
+            a = function () {};
+            var c = b;
+            c.p;
+            console.log(typeof a);
+        })(0, 42);
+    }
+    expect_stdout: "function"
+}
