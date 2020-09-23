@@ -1,8 +1,11 @@
 name: CI
 on:
-  pull_request:
   push:
     branches: [ master ]
+  workflow_run:
+    branches-ignore: [ master ]
+    types: [ requested ]
+    workflows: [ Fuzzing ]
 jobs:
   test:
     strategy:
