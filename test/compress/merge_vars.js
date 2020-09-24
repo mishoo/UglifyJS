@@ -2766,3 +2766,37 @@ issue_4139: {
     }
     expect_stdout: "object"
 }
+
+lambda_reuse: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b, f = function() {
+            console.log(a);
+        };
+        f();
+        a = "PASS";
+        b = "FAIL";
+        f();
+        if (console.log(typeof b))
+            console.log(b);
+    }
+    expect: {
+        var a, b, f = function() {
+            console.log(a);
+        };
+        f();
+        a = "PASS";
+        b = "FAIL";
+        f();
+        if (console.log(typeof b))
+            console.log(b);
+    }
+    expect_stdout: [
+        "undefined",
+        "PASS",
+        "string",
+    ]
+}
