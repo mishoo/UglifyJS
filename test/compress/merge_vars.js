@@ -2800,3 +2800,25 @@ lambda_reuse: {
         "string",
     ]
 }
+
+conditional_write: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "FAIL", b;
+        if (console)
+            a = "PASS";
+        b = [a, 42].join();
+        console.log(b);
+    }
+    expect: {
+        var b = "FAIL", b;
+        if (console)
+            b = "PASS";
+        b = [b, 42].join();
+        console.log(b);
+    }
+    expect_stdout: "PASS,42"
+}
