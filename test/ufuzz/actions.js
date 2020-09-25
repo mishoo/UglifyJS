@@ -1,32 +1,42 @@
-require("../../tools/exit");
-
 var get = require("https").get;
 var parse = require("url").parse;
-var base = process.argv[2];
-var token = process.argv[3];
-var queued = 0, total = 0, earliest, now = Date.now();
-process.on("beforeExit", function() {
-    if (queued > 3) {
-        process.stdout.write("0");
-    } else {
-        var average = total > 2 && (now - earliest) / (total - 1);
-        process.stdout.write(Math.min(Math.max(20 * average, 2700000), 18000000).toFixed(0));
-    }
-});
-read(base + "/actions/workflows/ufuzz.yml/runs?event=schedule", function(reply) {
-    check(reply, "workflow_runs").filter(function(workflow) {
-        return /^(in_progress|queued|)$/.test(workflow.status);
-    }).forEach(function(workflow) {
-        read(workflow.jobs_url, function(reply) {
-            check(reply, "jobs").forEach(function(job) {
-                if (job.status == "queued") queued++;
-                total++;
-                var start = Date.parse(job.started_at);
-                if (!(earliest < start)) earliest = start;
-            });
+
+var base, token, run_number, eldest = true;
+exports.init = function(url, auth, num) {
+    base = url;
+    token = auth;
+    run_number = num;
+};
+exports.should_stop = function(callback) {
+    read(base + "/actions/runs?per_page=100", function(reply) {
+        if (!reply || !Array.isArray(reply.workflow_runs)) return;
+        var runs = reply.workflow_runs.filter(function(workflow) {
+            return workflow.status != "completed";
+        }).sort(function(a, b) {
+            return b.run_number - a.run_number;
         });
+        if (runs.length < 10) return;
+        var found = false, remaining = 20;
+        (function next() {
+            if (!runs.length) return;
+            var workflow = runs.pop();
+            if (workflow.run_number == run_number) found = true;
+            read(workflow.jobs_url, function(reply) {
+                if (!reply || !Array.isArray(reply.jobs)) return;
+                if (!reply.jobs.every(function(job) {
+                    if (job.status == "completed") return true;
+                    remaining--;
+                    return found;
+                })) return;
+                if (remaining >= 0) {
+                    next();
+                } else {
+                    callback();
+                }
+            });
+        })();
     });
-});
+};
 
 function read(url, callback) {
     var options = parse(url);
@@ -43,8 +53,4 @@ function read(url, callback) {
             callback(JSON.parse(chunks.join("")));
         });
     });
-}
-
-function check(reply, field) {
-    return reply && Array.isArray(reply[field]) ? reply[field] : [];
 }

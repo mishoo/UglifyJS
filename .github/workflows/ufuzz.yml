@@ -6,6 +6,7 @@ on:
 env:
   BASE_URL: https://api.github.com/repos/${{ github.repository }}
   CAUSE: ${{ github.event_name }}
+  RUN_NUM: ${{ github.run_number }}
   TOKEN: ${{ github.token }}
 jobs:
   ufuzz:
@@ -36,12 +37,8 @@ jobs:
           npm config set update-notifier false
           npm --version
           while !(npm install); do echo "'npm install' failed - retrying..."; done
-          PERIOD=-5000
           if [[ $CAUSE == "schedule" ]]; then
-            PERIOD=`node test/ufuzz/actions $BASE_URL $TOKEN`
-          fi
-          if (( $PERIOD == 0 )); then
-            echo "too many jobs in queue - skipping..."
+            node test/ufuzz/job $BASE_URL $TOKEN $RUN_NUM
           else
-            node test/ufuzz/job $PERIOD
+            node test/ufuzz/job 5000
           fi
