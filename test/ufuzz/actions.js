@@ -15,18 +15,17 @@ exports.should_stop = function(callback) {
         }).sort(function(a, b) {
             return b.run_number - a.run_number;
         });
-        if (runs.length < 10) return;
         var found = false, remaining = 20;
         (function next() {
             if (!runs.length) return;
             var workflow = runs.pop();
-            if (workflow.run_number == run_number) found = true;
+            if (workflow.event == "schedule" && workflow.run_number == run_number) found = true;
             read(workflow.jobs_url, function(reply) {
                 if (!reply || !Array.isArray(reply.jobs)) return;
                 if (!reply.jobs.every(function(job) {
                     if (job.status == "completed") return true;
                     remaining--;
-                    return found;
+                    return found || workflow.event != "schedule";
                 })) return;
                 if (remaining >= 0) {
                     next();
