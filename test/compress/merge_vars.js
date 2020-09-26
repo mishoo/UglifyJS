@@ -2822,3 +2822,41 @@ conditional_write: {
     }
     expect_stdout: "PASS,42"
 }
+
+issue_4155: {
+    options = {
+        inline: true,
+        merge_vars: true,
+    }
+    input: {
+        (function() {
+            try {
+                throw "PASS";
+            } catch (e) {
+                var a;
+                (function() {
+                    console.log(e, a);
+                })(a = NaN);
+            }
+            var e = function() {};
+            e && console.log(typeof e);
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                throw "PASS";
+            } catch (e) {
+                var a;
+                a = NaN,
+                void console.log(e, a);
+            }
+            var e = function() {};
+            e && console.log(typeof e);
+        })();
+    }
+    expect_stdout: [
+        "PASS NaN",
+        "function",
+    ]
+}

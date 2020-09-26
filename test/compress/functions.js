@@ -4777,3 +4777,34 @@ issue_4006: {
     }
     expect_stdout: "-1"
 }
+
+issue_4155: {
+    options = {
+        functions: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a;
+            (function() {
+                console.log(a);
+            })(a);
+            var b = function() {};
+            b && console.log(typeof b);
+        })();
+    }
+    expect: {
+        (function() {
+            void console.log(b);
+            var b = function() {};
+            b && console.log(typeof b);
+        })();
+    }
+    expect_stdout: [
+        "undefined",
+        "function",
+    ]
+}
