@@ -4808,3 +4808,24 @@ issue_4155: {
         "function",
     ]
 }
+
+issue_4159: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 42, c = function(b) {
+            (b = a) && console.log(a++, b);
+        }(c = a);
+    }
+    expect: {
+        var a = 42;
+        (b = a) && console.log(a++, b);
+        var b;
+    }
+    expect_stdout: "42 42"
+}
