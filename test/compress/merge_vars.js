@@ -2617,9 +2617,9 @@ issue_4126_1: {
             try {
                 console.log("PASS");
             } catch (e) {
-                var c = a;
+                var b = a;
             } finally {
-                var c = c;
+                var c = b;
             }
             console.log(c);
         }
@@ -2859,4 +2859,72 @@ issue_4155: {
         "PASS NaN",
         "function",
     ]
+}
+
+issue_4157_1: {
+    options = {
+        dead_code: true,
+        loops: true,
+        merge_vars: true,
+    }
+    input: {
+        (function() {
+            try {
+                for (var a = "FAIL"; a; a++)
+                    return;
+                var b = 0;
+            } finally {
+                console.log(b);
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                var a = "FAIL";
+                if (a)
+                    return;
+                var b = 0;
+            } finally {
+                console.log(b);
+            }
+        })();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4157_2: {
+    options = {
+        dead_code: true,
+        loops: true,
+        merge_vars: true,
+    }
+    input: {
+        (function() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                for (var a = e; a; a++)
+                    return;
+                var b = 0;
+            } finally {
+                console.log(b);
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                var a = e;
+                if (a)
+                    return;
+                var b = 0;
+            } finally {
+                console.log(b);
+            }
+        })();
+    }
+    expect_stdout: "undefined"
 }
