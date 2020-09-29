@@ -38,6 +38,10 @@ exports.should_stop = function(callback) {
 };
 
 function read(url, callback) {
+    var done = function(reply) {
+        done = function() {};
+        callback(reply);
+    };
     var options = parse(url);
     options.headers = {
         "Authorization": "Token " + token,
@@ -49,7 +53,15 @@ function read(url, callback) {
         response.on("data", function(chunk) {
             chunks.push(chunk);
         }).on("end", function() {
-            callback(JSON.parse(chunks.join("")));
+            var reply;
+            try {
+                reply = JSON.parse(chunks.join(""))
+            } catch (e) {}
+            done(reply);
+        }).on("error", function() {
+            done();
         });
+    }).on("error", function() {
+        done();
     });
 }
