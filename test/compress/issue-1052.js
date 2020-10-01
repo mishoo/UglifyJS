@@ -16,7 +16,7 @@ multiple_functions: {
         ( function() {
             // NOTE: other compression steps will reduce this
             // down to just `window`.
-            if ( window );
+            if ( !window );
             function f() {}
             function g() {}
         } )();
@@ -38,7 +38,7 @@ single_function: {
     }
     expect: {
         ( function() {
-            if ( window );
+            if ( !window );
             function f() {}
         } )();
     }
@@ -67,7 +67,7 @@ deeply_nested: {
             // NOTE: other compression steps will reduce this
             // down to just `window`.
             if ( window )
-                if (document);
+                if ( !document );
             function f() {}
             function g() {}
             function h() {}

@@ -663,3 +663,88 @@ nested_if_continue: {
         "even 21",
     ]
 }
+
+nested_if_return: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f() {
+            if (A) {
+                if (B)
+                    return B;
+                if (C)
+                    return D;
+                if (E)
+                    return F;
+                if (G)
+                    return H;
+                if (I) {
+                    if (J)
+                        return K;
+                    return;
+                }
+                if (L) {
+                    if (M)
+                        return;
+                    return N;
+                }
+            }
+        }
+    }
+    expect: {
+        function f() {
+            if (A)
+                return B || (C ? D : E ? F : G ? H : I ? J ? K : void 0 : L && !M ? N : void 0);
+        }
+    }
+}
+
+issue_866_1: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: false,
+    };
+    input: {
+        function f(a) {
+            if (a)
+                return "";
+            console.log(a);
+        }
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                return "";
+            console.log(a);
+        }
+    }
+}
+
+issue_866_2: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+    }
+    input: {
+        (function() {
+            if (a)
+                if (b)
+                    c;
+                else
+                    return d;
+        })();
+    }
+    expect: {
+        (function() {
+            if (a) {
+                if (!b)
+                    return d;
+                c;
+            }
+        })();
+    }
+}
