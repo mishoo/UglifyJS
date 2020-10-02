@@ -57,7 +57,13 @@ function run() {
     function respawn() {
         console.log(stdout.replace(/[^\r\n]*\r/g, ""));
         clearInterval(log);
-        if (!iterations) spawn();
+        if (!iterations) {
+            spawn();
+        } else if (process.exitCode) {
+            tasks.forEach(function(kill) {
+                kill();
+            });
+        }
     }
 
     function trap(data) {
