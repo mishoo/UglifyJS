@@ -2992,3 +2992,34 @@ issue_4146: {
     }
     expect_stdout: "function"
 }
+
+single_use_catch_redefined: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+        }
+        console.log(g());
+    }
+    expect: {
+        var a = 1;
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+        }
+        console.log(g());
+    }
+    expect_stdout: true
+}

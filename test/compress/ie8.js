@@ -2714,3 +2714,108 @@ issue_2737: {
     }
     expect_stdout: "function"
 }
+
+single_use_catch_redefined: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+        }
+        console.log(g());
+    }
+    expect: {
+        var a = 1;
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+        }
+        console.log(g());
+    }
+    expect_stdout: true
+}
+
+single_use_inline_catch_redefined: {
+    options = {
+        ie8: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+        }
+        console.log(g());
+    }
+    expect: {
+        var a = 1;
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+        }
+        console.log(g());
+    }
+    expect_stdout: true
+}
+
+direct_inline_catch_redefined: {
+    options = {
+        ie8: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        function f() {
+            return a;
+        }
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+            console.log(a, f(), g());
+        }
+        console.log(a, f(), g());
+    }
+    expect: {
+        var a = 1;
+        function f() {
+            return a;
+        }
+        try {
+            throw 2;
+        } catch (a) {
+            function g() {
+                return a;
+            }
+            console.log(a, f(), g());
+        }
+        console.log(a, a, g());
+    }
+    expect_stdout: true
+}
