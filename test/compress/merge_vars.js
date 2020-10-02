@@ -2928,3 +2928,83 @@ issue_4157_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4168: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        var o = {
+            f: function(a, b, c) {
+                var d = a.d;
+                var e = b.e;
+                var f = c.f;
+                this.g(arguments);
+                if (d)
+                    console.log(e, f);
+            },
+            g: function(args) {
+                console.log(args[0], args[1], args[2]);
+            },
+        };
+        o.f("PASS", true, 42);
+    }
+    expect: {
+        var o = {
+            f: function(a, b, c) {
+                var d = a.d;
+                var e = b.e;
+                var f = c.f;
+                this.g(arguments);
+                if (d)
+                    console.log(e, f);
+            },
+            g: function(args) {
+                console.log(args[0], args[1], args[2]);
+            },
+        };
+        o.f("PASS", true, 42);
+    }
+    expect_stdout: "PASS true 42"
+}
+
+issue_4168_use_strict: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        "use strict";
+        var o = {
+            f: function(a, b, c) {
+                var d = a.d;
+                var e = b.e;
+                var f = c.f;
+                this.g(arguments);
+                if (d)
+                    console.log(e, f);
+            },
+            g: function(args) {
+                console.log(args[0], args[1], args[2]);
+            },
+        };
+        o.f("PASS", true, 42);
+    }
+    expect: {
+        "use strict";
+        var o = {
+            f: function(d, e, f) {
+                var d = d.d;
+                var e = e.e;
+                var f = f.f;
+                this.g(arguments);
+                if (d)
+                    console.log(e, f);
+            },
+            g: function(args) {
+                console.log(args[0], args[1], args[2]);
+            },
+        };
+        o.f("PASS", true, 42);
+    }
+    expect_stdout: "PASS true 42"
+}
