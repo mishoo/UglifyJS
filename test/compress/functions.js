@@ -4892,3 +4892,71 @@ direct_inline_catch_redefined: {
     }
     expect_stdout: true
 }
+
+issue_4171_1: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                while (a)
+                    var e = function() {};
+            } catch (e) {
+                return function() {
+                    return e;
+                };
+            }
+        }(!console));
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                while (a)
+                    var e = function() {};
+            } catch (e) {
+                return function() {
+                    return e;
+                };
+            }
+        }(!console));
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4171_2: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                while (a);
+            } catch (e) {
+                return function() {
+                    return e;
+                };
+            } finally {
+                var e = function() {};
+            }
+        }(!console));
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                while (a);
+            } catch (e) {
+                return function() {
+                    return e;
+                };
+            } finally {
+                function e() {}
+            }
+        }(!console));
+    }
+    expect_stdout: "undefined"
+}
