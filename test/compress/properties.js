@@ -1123,11 +1123,7 @@ new_this: {
             }
         }.f(42);
     }
-    expect: {
-        new function(a) {
-            this.a = a;
-        }(42);
-    }
+    expect: {}
 }
 
 issue_2513: {
