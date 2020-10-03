@@ -4960,3 +4960,30 @@ issue_4171_2: {
     }
     expect_stdout: "undefined"
 }
+
+catch_defun: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (a) {
+            function f() {
+                return typeof a;
+            }
+        }
+        console.log(f());
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (o) {
+            function t() {
+                return typeof o;
+            }
+        }
+        console.log(t());
+    }
+    expect_stdout: true
+}
