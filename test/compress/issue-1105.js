@@ -151,15 +151,18 @@ Infinity_not_in_with_scope: {
         unused: true,
     }
     input: {
-        var o = { Infinity: 'oInfinity' };
+        var o = { Infinity: "FAIL" };
         var vInfinity = "Infinity";
         vInfinity = Infinity;
+        console.log(vInfinity);
     }
     expect: {
-        var o = { Infinity: 'oInfinity' }
-        var vInfinity = "Infinity"
-        vInfinity = 1/0
+        var o = { Infinity: "FAIL" };
+        var vInfinity = "Infinity";
+        vInfinity = 1/0;
+        console.log(vInfinity);
     }
+    expect_stdout: "Infinity"
 }
 
 Infinity_in_with_scope: {
@@ -167,15 +170,18 @@ Infinity_in_with_scope: {
         unused: true,
     }
     input: {
-        var o = { Infinity: 'oInfinity' };
+        var o = { Infinity: "PASS" };
         var vInfinity = "Infinity";
         with (o) { vInfinity = Infinity; }
+        console.log(vInfinity);
     }
     expect: {
-        var o = { Infinity: 'oInfinity' }
-        var vInfinity = "Infinity"
-        with (o) vInfinity = Infinity
+        var o = { Infinity: "PASS" };
+        var vInfinity = "Infinity";
+        with (o) vInfinity = Infinity;
+        console.log(vInfinity);
     }
+    expect_stdout: "PASS"
 }
 
 assorted_Infinity_NaN_undefined_in_with_scope: {

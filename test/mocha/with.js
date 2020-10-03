@@ -17,7 +17,7 @@ describe("With", function() {
         var ast = UglifyJS.parse("with(e) {f(1, 2)}");
         ast.figure_out_scope();
         assert.equal(ast.uses_with, true);
-        assert.equal(ast.body[0].expression.scope.uses_with, true);
-        assert.equal(ast.body[0].body.body[0].body.expression.scope.uses_with, true);
+        assert.equal(ast.body[0].expression.scope.resolve().uses_with, true);
+        assert.equal(ast.body[0].body.body[0].body.expression.scope.resolve().uses_with, true);
     });
 });
