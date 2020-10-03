@@ -342,7 +342,18 @@ function run() {
         }
         fatal(ex);
     } else if (output == "ast") {
-        if (!options.compress && !options.mangle) result.ast.figure_out_scope({});
+        if (!options.compress && !options.mangle) {
+            var toplevel = result.ast;
+            if (!(toplevel instanceof UglifyJS.AST_Toplevel)) {
+                if (!(toplevel instanceof UglifyJS.AST_Statement)) toplevel = new UglifyJS.AST_SimpleStatement({
+                    body: toplevel,
+                });
+                toplevel = new UglifyJS.AST_Toplevel({
+                    body: [ toplevel ],
+                });
+            }
+            toplevel.figure_out_scope({});
+        }
         print(JSON.stringify(result.ast, function(key, value) {
             if (value) switch (key) {
               case "thedef":
