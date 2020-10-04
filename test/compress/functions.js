@@ -4987,3 +4987,41 @@ catch_defun: {
     }
     expect_stdout: true
 }
+
+catch_no_argname: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return a;
+        }
+        try {
+            throw a;
+        } catch {
+            function g() {
+                return a;
+            }
+            console.log(a, f(), g());
+        }
+        console.log(a, f(), g());
+    }
+    expect: {
+        var a = "PASS";
+        try {
+            throw a;
+        } catch {
+            console.log(a, a, a);
+        }
+        console.log(a, a, a);
+    }
+    expect_stdout: [
+        "PASS PASS PASS",
+        "PASS PASS PASS",
+    ]
+    node_version: ">=10"
+}
