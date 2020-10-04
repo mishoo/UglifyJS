@@ -466,7 +466,7 @@ issue_4112: {
                 var o = e;
                 for (e in o);
                 var a = function() {};
-                console.log;
+                console.log(typeof a);
                 return a;
             }
         }());
@@ -479,12 +479,15 @@ issue_4112: {
                 var a = e;
                 for (e in a);
                 a = function() {};
-                console.log;
+                console.log(typeof a);
                 return a;
             }
         }());
     }
-    expect_stdout: "function"
+    expect_stdout: [
+        "function",
+        "function",
+    ]
 }
 
 issue_4115: {

@@ -2993,6 +2993,38 @@ issue_4146: {
     expect_stdout: "function"
 }
 
+var_catch_redefined: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        try {
+            throw "PASS";
+        } catch (a) {
+            function f() {
+                return a;
+            }
+            console.log(a);
+        }
+        f();
+    }
+    expect: {
+        var a = "FAIL";
+        try {
+            throw "PASS";
+        } catch (a) {
+            function f() {
+                return a;
+            }
+            console.log(a);
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
 single_use_catch_redefined: {
     options = {
         reduce_vars: true,
