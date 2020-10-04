@@ -416,3 +416,20 @@ issue_4008: {
         "PASS",
     ]
 }
+
+trim_new: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        new function(a) {
+            console.log(a);
+        }("PASS");
+    }
+    expect: {
+        (function(a) {
+            console.log(a);
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+}
