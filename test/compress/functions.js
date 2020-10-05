@@ -5025,3 +5025,54 @@ catch_no_argname: {
     ]
     node_version: ">=10"
 }
+
+issue_4186: {
+    options = {
+        conditionals: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            return function() {
+                function f() {
+                    if (1)
+                        g();
+                    else
+                        (function() {
+                            return f;
+                        });
+                }
+                return f;
+                function g() {
+                    if (1) {
+                        if (0)
+                            h;
+                        else
+                            h();
+                        var key = 0;
+                    }
+                }
+                function h() {
+                    return factory;
+                }
+            };
+        }()());
+    }
+    expect: {
+        console.log(typeof function() {
+            return function f() {
+                1 ? void (1 && (0 ? h : h(), 0)) : function() {
+                    return f;
+                };
+            };
+            function h() {
+                return factory;
+            }
+        }());
+    }
+    expect_stdout: "function"
+}
