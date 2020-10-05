@@ -201,7 +201,7 @@ evaluate: {
     }
 }
 
-issue_1532: {
+issue_1532_1: {
     options = {
         evaluate: true,
         loops: true,
@@ -210,18 +210,56 @@ issue_1532: {
         function f(x, y) {
             do {
                 if (x) break;
-                foo();
+                console.log(y);
             } while (false);
         }
+        f(null, "PASS");
+        f(42, "FAIL");
+    }
+    expect: {
+        function f(x, y) {
+            for (; !x && (console.log(y), false););
+        }
+        f(null, "PASS");
+        f(42, "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_1532_2: {
+    options = {
+        evaluate: true,
+        loops: true,
+    }
+    input: {
+        function f(x, y) {
+            do {
+                if (x) {
+                    console.log(x);
+                    break;
+                }
+                console.log(y);
+            } while (false);
+        }
+        f(null, "PASS");
+        f(42, "FAIL");
     }
     expect: {
         function f(x, y) {
             do {
-                if (x) break;
-                foo();
-            } while (false);
+                if (x) {
+                    console.log(x);
+                    break;
+                }
+            } while (console.log(y), false);
         }
+        f(null, "PASS");
+        f(42, "FAIL");
     }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
 }
 
 issue_186: {
