@@ -3055,3 +3055,33 @@ single_use_catch_redefined: {
     }
     expect_stdout: true
 }
+
+issue_4184: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a = function() {}, b = [ a, 1 && b, a = {} ];
+            try {
+                throw 42;
+            } catch (a) {
+                {
+                    console.log(a);
+                }
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var b = [ function() {}, 1 && b, {} ];
+            try {
+                throw 42;
+            } catch (a) {
+                console.log(a);
+            }
+        })();
+    }
+    expect_stdout: "42"
+}
