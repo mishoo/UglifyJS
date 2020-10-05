@@ -1126,3 +1126,74 @@ issue_4091_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4182_1: {
+    options = {
+        loops: true,
+    }
+    input: {
+        (function() {
+            do {
+                try {
+                    return;
+                } finally {
+                    continue;
+                }
+                console.log("FAIL");
+            } while (0);
+            console.log("PASS");
+        })();
+    }
+    expect: {
+        (function() {
+            do {
+                try {
+                    return;
+                } finally {
+                    continue;
+                }
+                console.log("FAIL");
+            } while (0);
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4182_2: {
+    options = {
+        loops: true,
+    }
+    input: {
+        (function() {
+            L: do {
+                do {
+                    try {
+                        return;
+                    } finally {
+                        continue L;
+                    }
+                    console.log("FAIL");
+                } while (0);
+                console.log("FAIL");
+            } while (0);
+            console.log("PASS");
+        })();
+    }
+    expect: {
+        (function() {
+            L: do {
+                do {
+                    try {
+                        return;
+                    } finally {
+                        continue L;
+                    }
+                } while (console.log("FAIL"), 0);
+                console.log("FAIL");
+            } while (0);
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
