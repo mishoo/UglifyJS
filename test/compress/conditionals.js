@@ -1159,7 +1159,7 @@ issue_1645_2: {
     expect_stdout: true
 }
 
-condition_symbol_matches_consequent: {
+condition_matches_consequent: {
     options = {
         conditionals: true,
     }
@@ -1186,6 +1186,35 @@ condition_symbol_matches_consequent: {
         console.log(foo(3, null), foo(0, 7), foo(true, false), bar());
     }
     expect_stdout: "3 7 true 4"
+}
+
+condition_matches_alternative: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function foo(x, y) {
+            return x.p ? y[0] : x.p;
+        }
+        function bar() {
+            return g ? h : g;
+        }
+        var g = 4;
+        var h = 5;
+        console.log(foo({ p: 3 }, [ null ]), foo({ p: 0 }, [ 7 ]), foo({ p: true } , [ false ]), bar());
+    }
+    expect: {
+        function foo(x, y) {
+            return x.p && y[0];
+        }
+        function bar() {
+            return g && h;
+        }
+        var g = 4;
+        var h = 5;
+        console.log(foo({ p: 3 }, [ null ]), foo({ p: 0 }, [ 7 ]), foo({ p: true } , [ false ]), bar());
+    }
+    expect_stdout: "null 0 false 5"
 }
 
 delete_conditional_1: {
