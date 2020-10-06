@@ -499,7 +499,26 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 log("// reduce test pass " + pass + ": " + testcase.length + " bytes");
             }
         }
-        testcase = try_beautify(testcase, minify_options, differs.unminified_result, result_cache, max_timeout);
+        var beautified = U.minify(testcase, {
+            compress: false,
+            mangle: false,
+            output: {
+                beautify: true,
+                braces: true,
+                comments: true,
+            },
+        });
+        testcase = {
+            code: testcase,
+        };
+        if (!beautified.error) {
+            diff = test_for_diff(beautified.code, minify_options, result_cache, max_timeout);
+            if (diff && !diff.timed_out && !diff.error) {
+                testcase = beautified;
+                testcase.code = "// (beautified)\n" + testcase.code;
+                differs = diff;
+            }
+        }
         var lines = [ "" ];
         if (isNaN(max_timeout)) {
             lines.push("// minify error: " + to_comment(strip_color_codes(differs.minified_result.stack)));
@@ -536,34 +555,6 @@ function to_comment(value) {
 
 function trim_trailing_whitespace(value) {
     return ("" + value).replace(/\s+$/, "");
-}
-
-function try_beautify(testcase, minify_options, expected, result_cache, timeout) {
-    var result = U.minify(testcase, {
-        compress: false,
-        mangle: false,
-        output: {
-            beautify: true,
-            braces: true,
-            comments: true,
-        },
-    });
-    if (result.error) return {
-        code: testcase,
-    };
-    var toplevel = sandbox.has_toplevel(minify_options);
-    if (isNaN(timeout)) {
-        if (!U.minify(result.code, minify_options).error) return {
-            code: testcase,
-        };
-    } else {
-        var actual = run_code(result.code, toplevel, result_cache, timeout).result;
-        if (!sandbox.same_stdout(expected, actual)) return {
-            code: testcase,
-        };
-    }
-    result.code = "// (beautified)\n" + result.code;
-    return result;
 }
 
 function has_exit(fn) {

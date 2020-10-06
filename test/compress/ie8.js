@@ -2819,3 +2819,43 @@ direct_inline_catch_redefined: {
     }
     expect_stdout: true
 }
+
+issue_4186: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {
+            (function NaN() {
+                var a = 1;
+                while (a--)
+                    try {} finally {
+                        console.log(0/0);
+                        var b;
+                    }
+            })(f);
+        }
+        f();
+        NaN;
+    }
+    expect: {
+        (function() {
+            (function NaN() {
+                var n = 1;
+                while (n--)
+                    console.log(0/0);
+            })();
+        })();
+        NaN;
+    }
+    expect_stdout: "NaN"
+}
