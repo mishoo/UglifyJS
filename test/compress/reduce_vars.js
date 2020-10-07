@@ -7535,3 +7535,69 @@ global_assign: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4188_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            try {
+                while (A)
+                    var a = function() {}, b = a;
+            } catch (a) {
+                console.log(function() {
+                    return typeof a;
+                }(), typeof b);
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                while (A)
+                    var a = function() {}, b = a;
+            } catch (a) {
+                console.log(function() {
+                    return typeof a;
+                }(), typeof b);
+            }
+        })();
+    }
+    expect_stdout: "object undefined"
+}
+
+issue_4188_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            try {
+                throw 42;
+            } catch (a) {
+                console.log(function() {
+                    return typeof a;
+                }(), typeof b);
+            }
+            while (!console)
+                var a = function() {}, b = a;
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                throw 42;
+            } catch (a) {
+                console.log(function() {
+                    return typeof a;
+                }(), typeof b);
+            }
+            while (!console)
+                var a = function() {}, b = a;
+        })();
+    }
+    expect_stdout: "number undefined"
+}
