@@ -346,9 +346,8 @@ collapse_vars_if: {
             return "x" != "Bar" + x / 4 ? g9 : g5;
         }
         function f3(x) {
-            if (x) {
+            if (x)
                 return 1;
-            }
             return 2;
         }
     }
@@ -4192,9 +4191,8 @@ issue_2436_11: {
             if (isCollection(arg1)) {
                 var size = arg1, max = arg2, min = 0, res = _randomDataForMatrix(size.valueOf(), min, max, _randomInt);
                 return size && true === size.isMatrix ? matrix(res) : res;
-            } else {
+            } else
                 return _randomInt(min = arg1, max = arg2);
-            }
         }
     }
 }
@@ -4310,9 +4308,8 @@ issue_2497: {
         function sample() {
             if (true)
                 for (var i = 0; i < 1; ++i)
-                    for (var k = 0; k < 1; ++k) {
+                    for (var k = 0; k < 1; ++k)
                         value = (value = 1) ? value + 1 : 0;
-                    }
             else
                 for (i = 0; i < 1; ++i)
                     for (k = 0; k < 1; ++k)

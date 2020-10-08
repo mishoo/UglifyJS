@@ -848,9 +848,8 @@ collapse_vars_1_true: {
     }
     expect: {
         function f(a, b) {
-            for (;;) {
+            for (;;)
                 if (a.g() || b.p) break;
-            }
         }
     }
 }

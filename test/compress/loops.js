@@ -547,8 +547,8 @@ dead_code_condition: {
         console.log(a);
     }
     expect: {
-        var c;
         var a = 0, b = 5;
+        var c;
         a += 1, 0,
         console.log(a);
     }
@@ -1194,6 +1194,31 @@ issue_4182_2: {
             } while (0);
             console.log("PASS");
         })();
+    }
+    expect_stdout: "PASS"
+}
+
+do_continue: {
+    options = {
+        loops: true,
+    }
+    input: {
+        try {
+            do {
+                continue;
+            } while ([ A ]);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            do {
+                continue;
+            } while ([ A ]);
+        } catch (e) {
+            console.log("PASS");
+        }
     }
     expect_stdout: "PASS"
 }
