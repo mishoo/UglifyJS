@@ -275,6 +275,7 @@ var CANNOT_RETURN = true;
 var NO_DEFUN = false;
 var DEFUN_OK = true;
 var DONT_STORE = true;
+var NO_CONST = true;
 
 var VAR_NAMES = [
     "a",
@@ -312,6 +313,7 @@ var TYPEOF_OUTCOMES = [
     "crap",
 ];
 
+var block_vars = [];
 var unique_vars = [];
 var loops = 0;
 var funcs = 0;
@@ -374,33 +376,66 @@ function filterDirective(s) {
     return s;
 }
 
+function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
+    var block_len = block_vars.length;
+    var var_len = VAR_NAMES.length;
+    var consts = [];
+    unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
+    while (!rng(block_vars.length > block_len ? 10 : 100)) {
+        var name = createVarName(MANDATORY, DONT_STORE);
+        consts.push(name);
+        block_vars.push(name);
+    }
+    unique_vars.length -= 6;
+    fn(function() {
+        var s = [];
+        if (consts.length) {
+            var save = VAR_NAMES;
+            VAR_NAMES = VAR_NAMES.filter(function(name) {
+                return consts.indexOf(name) < 0;
+            });
+            var len = VAR_NAMES.length;
+            s.push("const " + consts.map(function(name) {
+                var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
+                VAR_NAMES.push(name);
+                return name + " = " + value;
+            }).join(", ") + ";");
+            VAR_NAMES = save.concat(VAR_NAMES.slice(len));
+        }
+        return s.join("\n");
+    });
+    block_vars.length = block_len;
+    if (consts.length) VAR_NAMES.splice(var_len, consts.length);
+}
+
 function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ";"; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
-    var namesLenBefore = VAR_NAMES.length;
+    var s = [];
     var name;
-    if (allowDefun || rng(5) > 0) {
-        name = "f" + funcs++;
-    } else {
-        unique_vars.push("a", "b", "c");
-        name = createVarName(MANDATORY, !allowDefun);
-        unique_vars.length -= 3;
-    }
-    var s = [
-        "function " + name + "(" + createParams() + "){",
-        strictMode()
-    ];
-    if (rng(5) === 0) {
-        // functions with functions. lower the recursion to prevent a mess.
-        s.push(createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), DEFUN_OK, canThrow, stmtDepth));
-    } else {
-        // functions with statements
-        s.push(createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
-    }
-    s.push("}", "");
-    s = filterDirective(s).join("\n");
+    createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+        var namesLenBefore = VAR_NAMES.length;
+        if (allowDefun || rng(5) > 0) {
+            name = "f" + funcs++;
+        } else {
+            unique_vars.push("a", "b", "c");
+            name = createVarName(MANDATORY, !allowDefun);
+            unique_vars.length -= 3;
+        }
+        s.push("function " + name + "(" + createParams() + "){", strictMode());
+        s.push(defns());
+        if (rng(5) === 0) {
+            // functions with functions. lower the recursion to prevent a mess.
+            s.push(createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), DEFUN_OK, canThrow, stmtDepth));
+        } else {
+            // functions with statements
+            s.push(_createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
+        }
+        s.push("}", "");
+        s = filterDirective(s).join("\n");
 
-    VAR_NAMES.length = namesLenBefore;
+        VAR_NAMES.length = namesLenBefore;
+    });
 
     if (!allowDefun) {
         // avoid "function statements" (decl inside statements)
@@ -414,12 +449,21 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     return s + ";";
 }
 
-function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
+function _createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
     if (--recurmax < 0) { return ";"; }
     var s = "";
     while (--n > 0) {
         s += createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "\n";
     }
+    return s;
+}
+
+function createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
+    var s = "";
+    createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+        s += defns() + "\n";
+        s += _createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
+    });
     return s;
 }
 
@@ -496,7 +540,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
-        var key = rng(10) ? "key" + loop : getVarName();
+        var key = rng(10) ? "key" + loop : getVarName(NO_CONST);
         return [
             "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ",
             label.target + " for (",
@@ -571,13 +615,18 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             // the catch var should only be accessible in the catch clause...
             // we have to do go through some trouble here to prevent leaking it
             var nameLenBefore = VAR_NAMES.length;
-            var catchName = createVarName(MANDATORY);
-            var freshCatchName = VAR_NAMES.length !== nameLenBefore;
-            if (!catch_redef) unique_vars.push(catchName);
-            s += " catch (" + catchName + ") { " + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + " }";
-            // remove catch name
-            if (!catch_redef) unique_vars.pop();
-            if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1);
+            createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+                var catchName = createVarName(MANDATORY);
+                var freshCatchName = VAR_NAMES.length !== nameLenBefore;
+                if (!catch_redef) unique_vars.push(catchName);
+                s += " catch (" + catchName + ") { ";
+                s += defns() + "\n";
+                s += _createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
+                s += " }";
+                // remove catch name
+                if (!catch_redef) unique_vars.pop();
+                if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1);
+            });
         }
         if (n !== 0) s += " finally { " + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + " }";
         return s;
@@ -597,7 +646,7 @@ function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotR
         if (hadDefault || rng(5) > 0) {
             s.push(
                 "case " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ":",
-                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                _createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
                 rng(10) > 0 ? " break;" : "/* fall-through */",
                 ""
             );
@@ -605,7 +654,7 @@ function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotR
             hadDefault = true;
             s.push(
                 "default:",
-                createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                _createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
                 ""
             );
         }
@@ -653,7 +702,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return getVarName();
       case p++:
-        return getVarName() + createAssignment() + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
+        return getVarName(NO_CONST) + createAssignment() + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:
@@ -699,19 +748,22 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             );
             break;
           default:
-            var instantiate = rng(4) ? "new " : "";
-            s.push(
-                instantiate + "function " + name + "(){",
-                strictMode()
-            );
-            if (instantiate) for (var i = rng(4); --i >= 0;) {
-                if (rng(2)) s.push("this." + getDotKey(true) + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ";");
-                else  s.push("this[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]" + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ";");
-            }
-            s.push(
-                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                rng(2) == 0 ? "}" : "}()"
-            );
+            createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+                var instantiate = rng(4) ? "new " : "";
+                s.push(
+                    instantiate + "function " + name + "(){",
+                    strictMode(),
+                    defns()
+                );
+                if (instantiate) for (var i = rng(4); --i >= 0;) {
+                    if (rng(2)) s.push("this." + getDotKey(true) + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ";");
+                    else  s.push("this[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]" + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ";");
+                }
+                s.push(
+                    _createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                    rng(2) == 0 ? "}" : "}()"
+                );
+            });
             break;
         }
         VAR_NAMES.length = nameLenBefore;
@@ -861,13 +913,16 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
         do {
             prop2 = getDotKey();
         } while (prop1 == prop2);
-        s = [
-            "set " + prop1 + "(" + createVarName(MANDATORY) + "){",
-            strictMode(),
-            createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-            "this." + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
-            "},"
-        ];
+        createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+            s = [
+                "set " + prop1 + "(" + createVarName(MANDATORY) + "){",
+                strictMode(),
+                defns(),
+                _createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                "this." + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
+                "},"
+            ];
+        });
     }
     VAR_NAMES.length = namesLenBefore;
     return filterDirective(s).join("\n");
@@ -906,7 +961,7 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
       case 1:
         return "(" + createUnarySafePrefix() + "(" + _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + "))";
       case 2:
-        assignee = getVarName();
+        assignee = getVarName(NO_CONST);
         return "(" + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
       case 3:
         assignee = getVarName();
@@ -968,9 +1023,10 @@ function createUnaryPostfix() {
     return UNARY_POSTFIX[rng(UNARY_POSTFIX.length)];
 }
 
-function getVarName() {
+function getVarName(noConst) {
     // try to get a generated name reachable from current scope. default to just `a`
-    return VAR_NAMES[INITIAL_NAMES_LEN + rng(VAR_NAMES.length - INITIAL_NAMES_LEN)] || "a";
+    var name = VAR_NAMES[INITIAL_NAMES_LEN + rng(VAR_NAMES.length - INITIAL_NAMES_LEN)];
+    return !name || noConst && block_vars.indexOf(name) >= 0 ? "a" : name;
 }
 
 function createVarName(maybe, dontStore) {
@@ -980,7 +1036,7 @@ function createVarName(maybe, dontStore) {
         do {
             name = VAR_NAMES[rng(VAR_NAMES.length)];
             if (suffix) name += "_" + suffix;
-        } while (unique_vars.indexOf(name) >= 0);
+        } while (unique_vars.indexOf(name) >= 0 || block_vars.indexOf(name) >= 0);
         if (suffix && !dontStore) VAR_NAMES.push(name);
         return name;
     }
@@ -1258,10 +1314,6 @@ function patch_try_catch(orig, toplevel) {
     }
 }
 
-var fallback_options = [ JSON.stringify({
-    compress: false,
-    mangle: false
-}) ];
 var minify_options = require("./options.json").map(JSON.stringify);
 var original_code, original_result, errored;
 var uglify_code, uglify_result, ok;
@@ -1269,10 +1321,19 @@ for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
 
     original_code = createTopLevelCode();
-    var orig_result = [ sandbox.run_code(original_code) ];
+    var orig_result = [ sandbox.run_code(original_code), sandbox.run_code(original_code, true) ];
     errored = typeof orig_result[0] != "string";
-    if (!errored) orig_result.push(sandbox.run_code(original_code, true));
-    (errored ? fallback_options : minify_options).forEach(function(options) {
+    if (errored) {
+        println("//=============================================================");
+        println("// original code");
+        try_beautify(original_code, false, orig_result[0], println);
+        println();
+        println();
+        println("original result:");
+        println(orig_result[0]);
+        println();
+    }
+    minify_options.forEach(function(options) {
         var o = JSON.parse(options);
         var toplevel = sandbox.has_toplevel(o);
         o.validate = true;
@@ -1294,6 +1355,8 @@ for (var round = 1; round <= num_iterations; round++) {
                     ok = sandbox.same_stdout(fuzzy_result, uglify_result);
                 }
             }
+            // ignore difference in error message caused by Temporal Dead Zone
+            if (!ok && errored) ok = uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError";
             // ignore difference in error message caused by `in`
             // ignore difference in depth of termination caused by infinite recursion
             if (!ok) {
@@ -1308,16 +1371,6 @@ for (var round = 1; round <= num_iterations; round++) {
             ok = errored && uglify_code.name == original_result.name;
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
-        else if (errored) {
-            println("//=============================================================");
-            println("// original code");
-            try_beautify(original_code, toplevel, original_result, println);
-            println();
-            println();
-            println("original result:");
-            println(original_result);
-            println();
-        }
         if (!ok && isFinite(num_iterations)) {
             println();
             process.exit(1);

@@ -55,14 +55,15 @@ ifs_3_should_warn: {
     }
     input: {
         var x, y;
-        if (x && !(x + "1") && y) { // 1
+        // 1
+        if (x && !(x + "1") && y) {
             var qq;
             foo();
         } else {
             bar();
         }
-
-        if (x || !!(x + "1") || y) { // 2
+        // 2
+        if (x || !!(x + "1") || y) {
             foo();
         } else {
             var jj;
@@ -71,9 +72,27 @@ ifs_3_should_warn: {
     }
     expect: {
         var x, y;
-        var qq; bar();          // 1
-        var jj; foo();          // 2
+        // 1
+        var qq; bar();
+        // 2
+        foo(); var jj;
     }
+    expect_warnings: [
+        "WARN: + in boolean context always true [test/compress/conditionals.js:3,18]",
+        "WARN: Boolean && always false [test/compress/conditionals.js:3,12]",
+        "WARN: Condition left of && always false [test/compress/conditionals.js:3,12]",
+        "WARN: Condition always false [test/compress/conditionals.js:3,12]",
+        "WARN: Dropping unreachable code [test/compress/conditionals.js:3,34]",
+        "WARN: Declarations in unreachable code! [test/compress/conditionals.js:4,12]",
+        "WARN: + in boolean context always true [test/compress/conditionals.js:10,19]",
+        "WARN: Boolean || always true [test/compress/conditionals.js:10,12]",
+        "WARN: Condition left of || always true [test/compress/conditionals.js:10,12]",
+        "WARN: Condition always true [test/compress/conditionals.js:10,12]",
+        "WARN: Dropping unreachable code [test/compress/conditionals.js:12,15]",
+        "WARN: Declarations in unreachable code! [test/compress/conditionals.js:13,12]",
+        "WARN: Dropping side-effect-free statement [test/compress/conditionals.js:3,12]",
+        "WARN: Dropping side-effect-free statement [test/compress/conditionals.js:10,12]",
+    ]
 }
 
 ifs_4: {

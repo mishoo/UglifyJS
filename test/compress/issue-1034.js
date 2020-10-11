@@ -90,13 +90,13 @@ non_hoisted_function_after_return_2a: {
         "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:7,16]",
         "WARN: Dropping unused variable a [test/compress/issue-1034.js:4,20]",
         "WARN: Dropping unused function nope [test/compress/issue-1034.js:11,21]",
-        "INFO: pass 0: last_count: Infinity, count: 36",
+        "INFO: pass 0: last_count: Infinity, count: 35",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:9,12]",
         "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:9,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:12,12]",
         "INFO: Dropping unused variable b [test/compress/issue-1034.js:7,20]",
         "INFO: Dropping unused variable c [test/compress/issue-1034.js:9,16]",
-        "INFO: pass 1: last_count: 36, count: 18",
+        "INFO: pass 1: last_count: 35, count: 18",
     ]
 }
 
@@ -248,13 +248,13 @@ non_hoisted_function_after_return_2a_strict: {
         "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:8,16]",
         "WARN: Dropping unused variable a [test/compress/issue-1034.js:5,20]",
         "WARN: Dropping unused function nope [test/compress/issue-1034.js:12,21]",
-        "INFO: pass 0: last_count: Infinity, count: 47",
+        "INFO: pass 0: last_count: Infinity, count: 46",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:10,12]",
         "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:10,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:13,12]",
         "INFO: Dropping unused variable b [test/compress/issue-1034.js:8,20]",
         "INFO: Dropping unused variable c [test/compress/issue-1034.js:10,16]",
-        "INFO: pass 1: last_count: 47, count: 29",
+        "INFO: pass 1: last_count: 46, count: 29",
     ]
 }
 

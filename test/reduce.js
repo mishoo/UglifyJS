@@ -121,7 +121,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 return;
             }
             // preserve for (var xxx; ...)
-            if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Var) return node;
+            if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Definitions) return node;
             // preserve for (xxx in ...)
             if (parent instanceof U.AST_ForIn && parent.init === node) return node;
 
@@ -145,7 +145,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 return permute < 2 ? expr : wrap_with_console_log(expr);
             }
             else if (node instanceof U.AST_BlockStatement) {
-                if (in_list) {
+                if (in_list && node.body.filter(function(node) {
+                    return node instanceof U.AST_Const;
+                }).length == 0) {
                     node.start._permute++;
                     CHANGED = true;
                     return List.splice(node.body);
@@ -410,7 +412,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     start: {},
                 });
             }
-            else if (node instanceof U.AST_Var) {
+            else if (node instanceof U.AST_Definitions) {
                 // remove empty var statement
                 if (node.definitions.length == 0) return in_list ? List.skip : new U.AST_EmptyStatement({
                     start: {},
