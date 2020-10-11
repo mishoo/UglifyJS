@@ -513,6 +513,7 @@ catch_ie8_2: {
     options = {
         dead_code: true,
         ie8: true,
+        passes: 2,
         toplevel: true,
         unused: true,
     }
@@ -664,4 +665,63 @@ drop_unused: {
         console.log(f());
     }
     expect_stdout: "undefined"
+}
+
+legacy_scope: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        {
+            const a = 42;
+        }
+        var a;
+    }
+    expect: {
+        {
+            const a = 42;
+        }
+        var a;
+    }
+    expect_stdout: true
+}
+
+issue_4191_1: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        {
+            const a = function() {};
+        }
+        console.log(typeof a);
+    }
+    expect: {
+        {
+            const a = function() {};
+        }
+        console.log(typeof a);
+    }
+    expect_stdout: true
+}
+
+issue_4191_2: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        const a = function() {};
+        console.log(typeof a, a());
+    }
+    expect: {
+        function a() {};
+        console.log(typeof a, a());
+    }
+    expect_stdout: "function undefined"
 }
