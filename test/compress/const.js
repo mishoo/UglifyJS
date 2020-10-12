@@ -725,3 +725,25 @@ issue_4191_2: {
     }
     expect_stdout: "function undefined"
 }
+
+issue_4193: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {} catch (e) {
+            var a;
+        } finally {
+            const a = 0;
+        }
+        console.log(a);
+    }
+    expect: {
+        var a;
+        {
+            const a = 0;
+        }
+        console.log(a);
+    }
+    expect_stdout: true
+}
