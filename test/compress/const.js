@@ -909,3 +909,24 @@ issue_4205: {
     }
     expect_stdout: true
 }
+
+issue_4207: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        {
+            const a = function() {};
+            console.log(a.length);
+        }
+    }
+    expect: {
+        {
+            const a = function() {};
+            console.log(a.length);
+        }
+    }
+    expect_stdout: "0"
+}
