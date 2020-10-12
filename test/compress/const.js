@@ -747,3 +747,32 @@ issue_4193: {
     }
     expect_stdout: true
 }
+
+issue_4195: {
+    mangle = {
+        ie8: true,
+    }
+    input: {
+        console.log(function f(a) {
+            (function a() {
+                {
+                    const b = f, a = 0;
+                    b;
+                }
+            })();
+            a && f;
+        }());
+    }
+    expect: {
+        console.log(function f(o) {
+            (function o() {
+                {
+                    const n = f, o = 0;
+                    n;
+                }
+            })();
+            o && f;
+        }());
+    }
+    expect_stdout: "undefined"
+}
