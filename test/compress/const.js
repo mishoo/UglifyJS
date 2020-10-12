@@ -840,3 +840,35 @@ issue_4198: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4202: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        {
+            const o = {};
+            (function() {
+                function f() {
+                    o.p = 42;
+                }
+                f(f);
+            })();
+            console.log(o.p++);
+        }
+    }
+    expect: {
+        {
+            const o = {};
+            (function() {
+                function f() {
+                    o.p = 42;
+                }
+                f(f);
+            })();
+            console.log(o.p++);
+        }
+    }
+    expect_stdout: "42"
+}
