@@ -776,3 +776,32 @@ issue_4195: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4197: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        try {
+            const b = function() {
+                a = 1;
+                b[1];
+            }();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = 0;
+        try {
+            const b = function() {
+                a = 1;
+                b[1];
+            }();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "1"
+}
