@@ -872,3 +872,40 @@ issue_4202: {
     }
     expect_stdout: "42"
 }
+
+issue_4205: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = function(b) {
+            var c = function() {
+                switch (0) {
+                  case a:
+                    return 0;
+                  case b:
+                  case console.log("PASS"):
+                }
+            }();
+            {
+                const b = c;
+            }
+        }();
+    }
+    expect: {
+        var a = function(b) {
+            var c = function() {
+                switch (0) {
+                  case a:
+                    return 0;
+                  case b:
+                  case console.log("PASS"):
+                }
+            }();
+            {
+                const b = c;
+            }
+        }();
+    }
+    expect_stdout: true
+}
