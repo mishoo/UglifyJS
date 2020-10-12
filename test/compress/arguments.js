@@ -783,3 +783,27 @@ issue_3420_7: {
     }
     expect_stdout: "true"
 }
+
+issue_4200: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+    }
+    input: {
+        var o = {
+            get p() {
+                return arguments[0];
+            },
+        };
+        console.log(o.p);
+    }
+    expect: {
+        var o = {
+            get p() {
+                return arguments[0];
+            },
+        };
+        console.log(o.p);
+    }
+    expect_stdout: "undefined"
+}
