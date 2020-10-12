@@ -805,3 +805,38 @@ issue_4197: {
     }
     expect_stdout: "1"
 }
+
+issue_4198: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            try {
+                throw "PASS";
+            } catch (e) {
+                {
+                    const e = "FAIL";
+                }
+                return function() {
+                    return e;
+                }();
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            try {
+                throw "PASS";
+            } catch (e) {
+                {
+                    const e = "FAIL";
+                }
+                return function() {
+                    return e;
+                }();
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+}
