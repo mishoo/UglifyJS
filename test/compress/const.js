@@ -963,3 +963,49 @@ issue_4210: {
     }
     expect_stdout: true
 }
+
+issue_4212_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log({
+            get b() {
+                const a = 0;
+                return a /= 0;
+            }
+        }.b);
+    }
+    expect: {
+        console.log({
+            get b() {
+                const a = 0;
+                return a /= 0;
+            }
+        }.b);
+    }
+    expect_stdout: true
+}
+
+issue_4212_2: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        console.log({
+            get b() {
+                const a = 0;
+                return a /= 0;
+            }
+        }.b);
+    }
+    expect: {
+        console.log({
+            get b() {
+                const a = 0;
+                return a /= 0;
+            }
+        }.b);
+    }
+    expect_stdout: true
+}

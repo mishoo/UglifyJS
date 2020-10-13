@@ -899,21 +899,22 @@ function getDotKey(assign) {
 function createAccessor(recurmax, stmtDepth, canThrow) {
     var namesLenBefore = VAR_NAMES.length;
     var s;
-    var prop1 = getDotKey();
-    if (rng(2) == 0) {
-        s = [
-            "get " + prop1 + "(){",
-            strictMode(),
-            createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-            createStatement(recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth, STMT_RETURN_ETC),
-            "},"
-        ];
-    } else {
-        var prop2;
-        do {
-            prop2 = getDotKey();
-        } while (prop1 == prop2);
-        createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+    createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
+        var prop1 = getDotKey();
+        if (rng(2) == 0) {
+            s = [
+                "get " + prop1 + "(){",
+                strictMode(),
+                defns(),
+                _createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                createStatement(recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth, STMT_RETURN_ETC),
+                "},"
+            ];
+        } else {
+            var prop2;
+            do {
+                prop2 = getDotKey();
+            } while (prop1 == prop2);
             s = [
                 "set " + prop1 + "(" + createVarName(MANDATORY) + "){",
                 strictMode(),
@@ -922,8 +923,8 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
                 "this." + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
                 "},"
             ];
-        });
-    }
+        }
+    });
     VAR_NAMES.length = namesLenBefore;
     return filterDirective(s).join("\n");
 }
