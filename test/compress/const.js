@@ -931,6 +931,30 @@ issue_4207: {
     expect_stdout: "0"
 }
 
+issue_4218: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        {
+            const a = function() {};
+            var b = 0 * a;
+        }
+        console.log(typeof a, b);
+    }
+    expect: {
+        {
+            const a = function() {};
+            var b = 0 * a;
+        }
+        console.log(typeof a, b);
+    }
+    expect_stdout: true
+}
+
 issue_4210: {
     options = {
         reduce_vars: true,
