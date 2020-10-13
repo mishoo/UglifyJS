@@ -3014,3 +3014,36 @@ issue_4119_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4214: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            return function() {
+                try {
+                    return a;
+                } finally {
+                    var b = 0;
+                }
+            }(a++ && this());
+        }
+        var c = f();
+        console.log(c);
+    }
+    expect: {
+        var c = function(a) {
+            return function() {
+                try {
+                    return a;
+                } finally {}
+            }(a++ && this());
+        }();
+        console.log(c);
+    }
+    expect_stdout: "NaN"
+}
