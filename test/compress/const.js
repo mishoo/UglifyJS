@@ -930,3 +930,36 @@ issue_4207: {
     }
     expect_stdout: "0"
 }
+
+issue_4210: {
+    options = {
+        reduce_vars: true,
+    }
+    input: {
+        (function() {
+            try {
+                throw 42;
+            } catch (e) {
+                const a = typeof e;
+                console.log(a);
+            } finally {
+                return a = "foo";
+            }
+        })();
+        console.log(typeof a);
+    }
+    expect: {
+        (function() {
+            try {
+                throw 42;
+            } catch (e) {
+                const a = typeof e;
+                console.log(a);
+            } finally {
+                return a = "foo";
+            }
+        })();
+        console.log(typeof a);
+    }
+    expect_stdout: true
+}
