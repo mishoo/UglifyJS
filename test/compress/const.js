@@ -1009,3 +1009,26 @@ issue_4212_2: {
     }
     expect_stdout: true
 }
+
+issue_4216: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+    }
+    input: {
+        if (a = 0) {
+            const a = 0;
+        }
+        console.log(typeof a);
+    }
+    expect: {
+        a = 0;
+        {
+            const a = void 0;
+        }
+        console.log(typeof a);
+    }
+    expect_stdout: true
+}
