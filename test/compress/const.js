@@ -1056,3 +1056,51 @@ issue_4216: {
     }
     expect_stdout: true
 }
+
+skip_braces: {
+    beautify = {
+        beautify: true,
+        braces: true,
+    }
+    input: {
+        if (console)
+            const a = 42;
+        else
+            const b = null;
+        console.log(typeof a, typeof b);
+    }
+    expect_exact: [
+        "if (console) const a = 42; else const b = null;",
+        "",
+        "console.log(typeof a, typeof b);",
+    ]
+    expect_stdout: true
+}
+
+issue_4220: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        sequences: true,
+        toplevel: true,
+    }
+    input: {
+        if (console) {
+            var o = console;
+            for (var k in o);
+        } else {
+            const a = 0;
+        }
+        console.log(typeof a);
+    }
+    expect: {
+        if (console) {
+            var o;
+            for (var k in console);
+        } else {
+            const a = 0;
+        }
+        console.log(typeof a);
+    }
+    expect_stdout: true
+}
