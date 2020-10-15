@@ -1104,3 +1104,33 @@ issue_4220: {
     }
     expect_stdout: true
 }
+
+issue_4222: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        {
+            const a = function() {
+                return function() {};
+            };
+            var b = a();
+        }
+        b();
+        console.log(typeof a);
+    }
+    expect: {
+        {
+            const a = function() {
+                return function() {};
+            };
+            var b = a();
+        }
+        b();
+        console.log(typeof a);
+    }
+    expect_stdout: true
+}
