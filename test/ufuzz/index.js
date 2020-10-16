@@ -331,6 +331,7 @@ function strictMode() {
 
 function createTopLevelCode() {
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
+    block_vars.length = 0;
     unique_vars.length = 0;
     loops = 0;
     funcs = 0;

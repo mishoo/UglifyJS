@@ -48,8 +48,10 @@ function run() {
         stderr = "";
         child.stderr.on("data", trap).pipe(process.stdout);
         log = setInterval(function() {
+            stdout = stdout.replace(/[^\r\n]+\r(?=[^\r\n]+\r)/g, "");
             var end = stdout.lastIndexOf("\r");
-            console.log(stdout.slice(stdout.lastIndexOf("\r", end - 1) + 1, end));
+            if (end < 0) return;
+            console.log(stdout.slice(0, end));
             stdout = stdout.slice(end + 1);
         }, 5 * 60 * 1000);
     }
