@@ -381,32 +381,43 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
     var block_len = block_vars.length;
     var var_len = VAR_NAMES.length;
     var consts = [];
+    var lets = [];
     unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
     while (!rng(block_vars.length > block_len ? 10 : 100)) {
         var name = createVarName(MANDATORY, DONT_STORE);
-        consts.push(name);
+        if (rng(2)) {
+            consts.push(name);
+        } else {
+            lets.push(name);
+        }
         block_vars.push(name);
     }
     unique_vars.length -= 6;
     fn(function() {
-        var s = [];
-        if (consts.length) {
-            var save = VAR_NAMES;
-            VAR_NAMES = VAR_NAMES.filter(function(name) {
-                return consts.indexOf(name) < 0;
-            });
-            var len = VAR_NAMES.length;
-            s.push("const " + consts.map(function(name) {
-                var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
-                VAR_NAMES.push(name);
-                return name + " = " + value;
-            }).join(", ") + ";");
-            VAR_NAMES = save.concat(VAR_NAMES.slice(len));
+        if (rng(2)) {
+            return createDefinitions("const", consts) + "\n" + createDefinitions("let", lets) + "\n";
+        } else {
+            return createDefinitions("let", lets) + "\n" + createDefinitions("const", consts) + "\n";
         }
-        return s.join("\n");
     });
     block_vars.length = block_len;
-    if (consts.length) VAR_NAMES.splice(var_len, consts.length);
+    if (consts.length || lets.length) VAR_NAMES.splice(var_len, consts.length + lets.length);
+
+    function createDefinitions(type, names) {
+        if (!names.length) return "";
+        var save = VAR_NAMES;
+        VAR_NAMES = VAR_NAMES.filter(function(name) {
+            return names.indexOf(name) < 0;
+        });
+        var len = VAR_NAMES.length;
+        var s = type + " " + names.map(function(name) {
+            var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
+            VAR_NAMES.push(name);
+            return name + " = " + value;
+        }).join(", ") + ";";
+        VAR_NAMES = save.concat(VAR_NAMES.slice(len));
+        return s;
+    }
 }
 
 function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
