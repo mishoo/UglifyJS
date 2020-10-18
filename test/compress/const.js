@@ -1134,3 +1134,20 @@ issue_4222: {
     }
     expect_stdout: true
 }
+
+issue_4225: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        const a = void typeof b;
+        const b = 42;
+        console.log(a, b);
+    }
+    expect: {
+        const a = void b;
+        const b = 42;
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
