@@ -840,3 +840,34 @@ issue_4225: {
     expect_stdout: true
     node_version: ">=4"
 }
+
+issue_4229: {
+    options = {
+        ie8: true,
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (function f() {
+                f;
+                let f;
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (function f() {
+                f;
+                let f;
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
