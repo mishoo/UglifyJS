@@ -1045,3 +1045,23 @@ issue_4225: {
     }
     expect_stdout: true
 }
+
+issue_4229: {
+    options = {
+        ie8: true,
+        side_effects: true,
+    }
+    input: {
+        (function f() {
+            f;
+            const f = 42;
+        })();
+    }
+    expect: {
+        (function f() {
+            f;
+            const f = 42;
+        })();
+    }
+    expect_stdout: true
+}
