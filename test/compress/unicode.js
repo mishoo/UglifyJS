@@ -1,3 +1,37 @@
+ascii_only_false: {
+    options = {}
+    beautify = {
+        ascii_only: false,
+    }
+    input: {
+        console.log(
+            "\x000\x001\x007\x008\x00",
+            "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
+            "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f",
+            "\x20\x21\x22\x23 ... \x7d\x7e\x7f\x80\x81 ... \xfe\xff\u0fff\uffff"
+        );
+    }
+    expect_exact: 'console.log("\\x000\\x001\\x007\\x008\\0","\\0\x01\x02\x03\x04\x05\x06\x07\\b\\t\\n\\v\\f\\r\x0e\x0f","\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f",\' !"# ... }~\x7f\x80\x81 ... \xfe\xff\u0fff\uffff\');'
+    expect_stdout: true
+}
+
+ascii_only_true: {
+    options = {}
+    beautify = {
+        ascii_only: true,
+    }
+    input: {
+        console.log(
+            "\x000\x001\x007\x008\x00",
+            "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
+            "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f",
+            "\x20\x21\x22\x23 ... \x7d\x7e\x7f\x80\x81 ... \xfe\xff\u0fff\uffff"
+        );
+    }
+    expect_exact: 'console.log("\\x000\\x001\\x007\\x008\\0","\\0\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\b\\t\\n\\v\\f\\r\\x0e\\x0f","\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f",\' !"# ... }~\\x7f\\x80\\x81 ... \\xfe\\xff\\u0fff\\uffff\');'
+    expect_stdout: true
+}
+
 unicode_parse_variables: {
     options = {}
     input: {
@@ -140,4 +174,36 @@ issue_2569: {
         new RegExp("[\udc42-\udcaa\udd74-\udd96\ude45-\ude4f\udea3-\udecc]");
     }
     expect_exact: 'new RegExp("[\\udc42-\\udcaa\\udd74-\\udd96\\ude45-\\ude4f\\udea3-\\udecc]");'
+}
+
+surrogate_pair: {
+    beautify = {
+        ascii_only: false,
+    }
+    input: {
+        var \u{2f800} = {
+            \u{2f801}: "\u{100000}",
+        };
+        \u{2f800}.\u{2f802} = "\u{100001}";
+        console.log(typeof \u{2f800}, \u{2f800}.\u{2f801}, \u{2f800}["\u{2f802}"]);
+    }
+    expect_exact: 'var \ud87e\udc00={"\ud87e\udc01":"\udbc0\udc00"};\ud87e\udc00.\ud87e\udc02="\udbc0\udc01";console.log(typeof \ud87e\udc00,\ud87e\udc00.\ud87e\udc01,\ud87e\udc00["\ud87e\udc02"]);'
+    expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
+    node_version: ">=4"
+}
+
+surrogate_pair_ascii: {
+    beautify = {
+        ascii_only: true,
+    }
+    input: {
+        var \u{2f800} = {
+            \u{2f801}: "\u{100000}",
+        };
+        \u{2f800}.\u{2f802} = "\u{100001}";
+        console.log(typeof \u{2f800}, \u{2f800}.\u{2f801}, \u{2f800}["\u{2f802}"]);
+    }
+    expect_exact: 'var \\u{2f800}={"\\ud87e\\udc01":"\\udbc0\\udc00"};\\u{2f800}.\\u{2f802}="\\udbc0\\udc01";console.log(typeof \\u{2f800},\\u{2f800}.\\u{2f801},\\u{2f800}["\\ud87e\\udc02"]);'
+    expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
+    node_version: ">=4"
 }
