@@ -1,60 +1,23 @@
-mangle_catch_1: {
-    mangle = {}
-    input: {
-        try {
-            throw "eeeee";
-        } catch (c) {
-            const e = typeof d;
-        }
-        console.log(typeof a, typeof b);
-    }
-    expect: {
-        try {
-            throw "eeeee";
-        } catch (e) {
-            const o = typeof d;
-        }
-        console.log(typeof a, typeof b);
-    }
-    expect_stdout: "undefined undefined"
-}
-
-mangle_catch_2: {
-    mangle = {}
-    input: {
-        console.log(function f() {
-            try {} catch (e) {
-                const f = 0;
-            }
-        }());
-    }
-    expect: {
-        console.log(function o() {
-            try {} catch (c) {
-                const o = 0;
-            }
-        }());
-    }
-    expect_stdout: "undefined"
-}
-
 retain_block: {
     options = {}
     input: {
+        "use strict";
         {
-            const a = "FAIL";
+            let a = "FAIL";
         }
         var a = "PASS";
         console.log(a);
     }
     expect: {
+        "use strict";
         {
-            const a = "FAIL";
+            let a = "FAIL";
         }
         var a = "PASS";
         console.log(a);
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 if_dead_branch: {
@@ -64,23 +27,26 @@ if_dead_branch: {
         evaluate: true,
     }
     input: {
+        "use strict";
         console.log(function() {
             if (0) {
-                const a = 0;
+                let a = 0;
             }
             return typeof a;
         }());
     }
     expect: {
+        "use strict";
         console.log(function() {
             0;
             {
-                const a = void 0;
+                let a;
             }
             return typeof a;
         }());
     }
     expect_stdout: "undefined"
+    node_version: ">=4"
 }
 
 merge_vars_1: {
@@ -89,13 +55,15 @@ merge_vars_1: {
         toplevel: true,
     }
     input: {
-        const a = console;
+        "use strict";
+        let a = console;
         console.log(typeof a);
         var b = typeof a;
         console.log(b);
     }
     expect: {
-        const a = console;
+        "use strict";
+        let a = console;
         console.log(typeof a);
         var b = typeof a;
         console.log(b);
@@ -104,6 +72,7 @@ merge_vars_1: {
         "object",
         "object",
     ]
+    node_version: ">=4"
 }
 
 merge_vars_2: {
@@ -113,26 +82,29 @@ merge_vars_2: {
         toplevel: true,
     }
     input: {
+        "use strict";
         var a = 0;
         (function() {
             var b = function f() {
-                const c = a && f;
+                let c = a && f;
                 c.var += 0;
             }();
             console.log(b);
         })(1 && --a);
     }
     expect: {
+        "use strict";
         var a = 0;
         1 && --a,
         b = function f() {
-            const c = a && f;
+            let c = a && f;
             c.var += 0;
         }(),
         void console.log(b);
         var b;
     }
     expect_stdout: "undefined"
+    node_version: ">=4"
 }
 
 merge_vars_3: {
@@ -141,8 +113,9 @@ merge_vars_3: {
         toplevel: true,
     }
     input: {
+        "use strict";
         {
-            const a = 0;
+            let a = 0;
             var b = console;
             console.log(typeof b);
         }
@@ -150,31 +123,40 @@ merge_vars_3: {
         console.log(typeof a);
     }
     expect: {
+        "use strict";
         {
-            const a = 0;
+            let a = 0;
             var b = console;
             console.log(typeof b);
         }
         var a = 1;
         console.log(typeof a);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "object",
+        "number",
+    ]
+    node_version: ">=4"
 }
 
 use_before_init_1: {
     options = {
+        evaluate: true,
         reduce_vars: true,
         toplevel: true,
     }
     input: {
+        "use strict";
         a = "foo";
-        const a = "bar";
+        let a = "bar";
     }
     expect: {
+        "use strict";
         a = "foo";
-        const a = "bar";
+        let a = "bar";
     }
     expect_stdout: true
+    node_version: ">=4"
 }
 
 use_before_init_2: {
@@ -183,22 +165,25 @@ use_before_init_2: {
         unused: true,
     }
     input: {
+        "use strict";
         try {
             a = "foo";
         } catch (e) {
             console.log("PASS");
         }
-        const a = "bar";
+        let a = "bar";
     }
     expect: {
+        "use strict";
         try {
             a = "foo";
         } catch (e) {
             console.log("PASS");
         }
-        const a = "bar";
+        let a = "bar";
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 use_before_init_3: {
@@ -206,22 +191,25 @@ use_before_init_3: {
         side_effects: true,
     }
     input: {
+        "use strict";
         try {
             a;
         } catch (e) {
             console.log("PASS");
         }
-        const a = 42;
+        let a = 42;
     }
     expect: {
+        "use strict";
         try {
             a;
         } catch (e) {
             console.log("PASS");
         }
-        const a = 42;
+        let a = 42;
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 use_before_init_4: {
@@ -229,22 +217,25 @@ use_before_init_4: {
         reduce_vars: true,
     }
     input: {
+        "use strict";
         try {
             console.log(a);
         } catch (e) {
             console.log("PASS");
         }
-        const a = "FAIL";
+        let a = "FAIL";
     }
     expect: {
+        "use strict";
         try {
             console.log(a);
         } catch (e) {
             console.log("PASS");
         }
-        const a = "FAIL";
+        let a = "FAIL";
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 collapse_block: {
@@ -254,18 +245,21 @@ collapse_block: {
         unsafe: true,
     }
     input: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
     }
     expect: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
     }
     expect_stdout: "object"
+    node_version: ">=4"
 }
 
 reduce_block_1: {
@@ -273,18 +267,21 @@ reduce_block_1: {
         reduce_vars: true,
     }
     input: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
     }
     expect: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
     }
     expect_stdout: "object"
+    node_version: ">=4"
 }
 
 reduce_block_2: {
@@ -292,20 +289,26 @@ reduce_block_2: {
         reduce_vars: true,
     }
     input: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
         console.log(typeof a);
     }
     expect: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
         console.log(typeof a);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "object",
+        "undefined",
+    ]
+    node_version: ">=4"
 }
 
 reduce_block_2_toplevel: {
@@ -314,20 +317,26 @@ reduce_block_2_toplevel: {
         toplevel: true,
     }
     input: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
         console.log(typeof a);
     }
     expect: {
+        "use strict";
         {
-            const a = typeof console;
+            let a = typeof console;
             console.log(a);
         }
         console.log(typeof a);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "object",
+        "undefined",
+    ]
+    node_version: ">=4"
 }
 
 hoist_props: {
@@ -336,22 +345,25 @@ hoist_props: {
         reduce_vars: true,
     }
     input: {
+        "use strict";
         {
-            const o = {
+            let o = {
                 p: "PASS",
             };
             console.log(o.p);
         }
     }
     expect: {
+        "use strict";
         {
-            const o = {
+            let o = {
                 p: "PASS",
             };
             console.log(o.p);
         }
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 loop_block_1: {
@@ -359,18 +371,21 @@ loop_block_1: {
         loops: true,
     }
     input: {
+        "use strict";
         do {
-            const o = console;
+            let o = console;
             console.log(typeof o.log);
         } while (!console);
     }
     expect: {
+        "use strict";
         do {
-            const o = console;
+            let o = console;
             console.log(typeof o.log);
         } while (!console);
     }
     expect_stdout: "function"
+    node_version: ">=4"
 }
 
 loop_block_2: {
@@ -378,22 +393,25 @@ loop_block_2: {
         loops: true,
     }
     input: {
+        "use strict";
         do {
-            const o = {};
+            let o = {};
             (function() {
                 console.log(typeof this, o.p++);
             })();
         } while (!console);
     }
     expect: {
+        "use strict";
         do {
-            const o = {};
+            let o = {};
             (function() {
                 console.log(typeof this, o.p++);
             })();
         } while (!console);
     }
-    expect_stdout: "object NaN"
+    expect_stdout: "undefined NaN"
+    node_version: ">=4"
 }
 
 do_continue: {
@@ -401,10 +419,11 @@ do_continue: {
         loops: true,
     }
     input: {
+        "use strict";
         try {
             do {
                 {
-                    const a = 0;
+                    let a = 0;
                     continue;
                 }
             } while ([ A ]);
@@ -413,9 +432,10 @@ do_continue: {
         }
     }
     expect: {
+        "use strict";
         try {
             do {
-                const a = 0;
+                let a = 0;
                 continue;
             } while ([ A ]);
         } catch (e) {
@@ -423,50 +443,7 @@ do_continue: {
         }
     }
     expect_stdout: "PASS"
-}
-
-catch_ie8_1: {
-    options = {
-        ie8: true,
-        unused: true,
-    }
-    input: {
-        try {} catch (a) {}
-        console.log(function a() {
-            const a = 0;
-        }());
-    }
-    expect: {
-        try {} catch (a) {}
-        console.log(function a() {
-        }());
-    }
-    expect_stdout: "undefined"
-}
-
-catch_ie8_2: {
-    options = {
-        dead_code: true,
-        ie8: true,
-        passes: 2,
-        toplevel: true,
-        unused: true,
-    }
-    input: {
-        try {} catch (a) {
-            const b = 0;
-        }
-        try {} catch (b) {}
-        console.log(function() {
-            return this;
-        }().b);
-    }
-    expect: {
-        console.log(function() {
-            return this;
-        }().b);
-    }
-    expect_stdout: "undefined"
+    node_version: ">=4"
 }
 
 dead_block_after_return: {
@@ -474,24 +451,27 @@ dead_block_after_return: {
         dead_code: true,
     }
     input: {
+        "use strict";
         (function(a) {
             console.log(a);
             return;
             {
-                const a = 0;
+                let a = "FAIL";
             }
-        })();
+        })("PASS");
     }
     expect: {
+        "use strict";
         (function(a) {
             console.log(a);
             return;
             {
-                const a = void 0;
+                let a;
             }
-        })();
+        })("PASS");
     }
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 do_if_continue_1: {
@@ -499,11 +479,12 @@ do_if_continue_1: {
         if_return: true,
     }
     input: {
+        "use strict";
         do {
             if (console) {
                 console.log("PASS");
                 {
-                    const a = 0;
+                    let a = 0;
                     var b;
                     continue;
                 }
@@ -511,18 +492,20 @@ do_if_continue_1: {
         } while (b);
     }
     expect: {
+        "use strict";
         do {
             if (!console);
             else {
                 console.log("PASS");
                 {
-                    const a = 0;
+                    let a = 0;
                     var b;
                 }
             }
         } while (b);
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 do_if_continue_2: {
@@ -530,11 +513,12 @@ do_if_continue_2: {
         if_return: true,
     }
     input: {
+        "use strict";
         do {
             if (console) {
-                console.log("PASS");
+                console.log("FAIL");
                 {
-                    const a = 0;
+                    let a = 0;
                     A = 0;
                     continue;
                 }
@@ -542,18 +526,20 @@ do_if_continue_2: {
         } while (A);
     }
     expect: {
+        "use strict";
         do {
             if (!console);
             else {
-                console.log("PASS");
+                console.log("FAIL");
                 {
-                    const a = 0;
+                    let a = 0;
                     A = 0;
                 }
             }
         } while (A);
     }
-    expect_stdout: "PASS"
+    expect_stdout: ReferenceError("A is not defined")
+    node_version: ">=4"
 }
 
 drop_unused: {
@@ -563,40 +549,23 @@ drop_unused: {
         unused: true,
     }
     input: {
+        "use strict";
         function f(a) {
-            const b = a, c = b;
+            let b = a, c = b;
             0 && c.p++;
         }
         console.log(f());
     }
     expect: {
+        "use strict";
         function f(a) {
-            const b = a;
+            let b = a;
             b;
         }
         console.log(f());
     }
     expect_stdout: "undefined"
-}
-
-legacy_scope: {
-    options = {
-        toplevel: true,
-        unused: true,
-    }
-    input: {
-        {
-            const a = 42;
-        }
-        var a;
-    }
-    expect: {
-        {
-            const a = 42;
-        }
-        var a;
-    }
-    expect_stdout: true
+    node_version: ">=4"
 }
 
 issue_4191: {
@@ -606,69 +575,21 @@ issue_4191: {
         unused: true,
     }
     input: {
+        "use strict";
         {
-            const a = function() {};
+            let a = function() {};
         }
         console.log(typeof a);
     }
     expect: {
+        "use strict";
         {
-            const a = function() {};
+            let a = function() {};
         }
         console.log(typeof a);
-    }
-    expect_stdout: true
-}
-
-issue_4193: {
-    options = {
-        dead_code: true,
-    }
-    input: {
-        try {} catch (e) {
-            var a;
-        } finally {
-            const a = 0;
-        }
-        console.log(a);
-    }
-    expect: {
-        var a;
-        {
-            const a = 0;
-        }
-        console.log(a);
-    }
-    expect_stdout: true
-}
-
-issue_4195: {
-    mangle = {
-        ie8: true,
-    }
-    input: {
-        console.log(function f(a) {
-            (function a() {
-                {
-                    const b = f, a = 0;
-                    b;
-                }
-            })();
-            a && f;
-        }());
-    }
-    expect: {
-        console.log(function f(o) {
-            (function o() {
-                {
-                    const n = f, o = 0;
-                    n;
-                }
-            })();
-            o && f;
-        }());
     }
     expect_stdout: "undefined"
+    node_version: ">=4"
 }
 
 issue_4197: {
@@ -676,9 +597,10 @@ issue_4197: {
         collapse_vars: true,
     }
     input: {
+        "use strict";
         var a = 0;
         try {
-            const b = function() {
+            let b = function() {
                 a = 1;
                 b[1];
             }();
@@ -687,9 +609,10 @@ issue_4197: {
         }
     }
     expect: {
+        "use strict";
         var a = 0;
         try {
-            const b = function() {
+            let b = function() {
                 a = 1;
                 b[1];
             }();
@@ -698,41 +621,7 @@ issue_4197: {
         }
     }
     expect_stdout: "1"
-}
-
-issue_4198: {
-    options = {
-        reduce_vars: true,
-    }
-    input: {
-        console.log(function() {
-            try {
-                throw "PASS";
-            } catch (e) {
-                {
-                    const e = "FAIL";
-                }
-                return function() {
-                    return e;
-                }();
-            }
-        }());
-    }
-    expect: {
-        console.log(function() {
-            try {
-                throw "PASS";
-            } catch (e) {
-                {
-                    const e = "FAIL";
-                }
-                return function() {
-                    return e;
-                }();
-            }
-        }());
-    }
-    expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 issue_4202: {
@@ -741,8 +630,9 @@ issue_4202: {
         toplevel: true,
     }
     input: {
+        "use strict";
         {
-            const o = {};
+            let o = {};
             (function() {
                 function f() {
                     o.p = 42;
@@ -753,8 +643,9 @@ issue_4202: {
         }
     }
     expect: {
+        "use strict";
         {
-            const o = {};
+            let o = {};
             (function() {
                 function f() {
                     o.p = 42;
@@ -765,43 +656,7 @@ issue_4202: {
         }
     }
     expect_stdout: "42"
-}
-
-issue_4205: {
-    options = {
-        collapse_vars: true,
-    }
-    input: {
-        var a = function(b) {
-            var c = function() {
-                switch (0) {
-                  case a:
-                    return 0;
-                  case b:
-                  case console.log("PASS"):
-                }
-            }();
-            {
-                const b = c;
-            }
-        }();
-    }
-    expect: {
-        var a = function(b) {
-            var c = function() {
-                switch (0) {
-                  case a:
-                    return 0;
-                  case b:
-                  case console.log("PASS"):
-                }
-            }();
-            {
-                const b = c;
-            }
-        }();
-    }
-    expect_stdout: true
+    node_version: ">=4"
 }
 
 issue_4207: {
@@ -811,18 +666,21 @@ issue_4207: {
         unused: true,
     }
     input: {
+        "use strict";
         {
-            const a = function() {};
+            let a = function() {};
             console.log(a.length);
         }
     }
     expect: {
+        "use strict";
         {
-            const a = function() {};
+            let a = function() {};
             console.log(a.length);
         }
     }
     expect_stdout: "0"
+    node_version: ">=4"
 }
 
 issue_4218: {
@@ -833,32 +691,36 @@ issue_4218: {
         unused: true,
     }
     input: {
+        "use strict";
+        var a;
         {
-            const a = function() {};
+            let a = function() {};
             var b = 0 * a;
         }
         console.log(typeof a, b);
     }
     expect: {
-        {
-            const a = function() {};
-            var b = 0 * a;
-        }
-        console.log(typeof a, b);
+        "use strict";
+        var b = 0 * function() {};
+        console.log(typeof void 0, b);
     }
-    expect_stdout: true
+    expect_stdout: "undefined NaN"
+    node_version: ">=4"
 }
 
 issue_4210: {
     options = {
         reduce_vars: true,
+        varify: true,
     }
     input: {
+        "use strict";
+        var a;
         (function() {
             try {
                 throw 42;
             } catch (e) {
-                const a = typeof e;
+                let a = typeof e;
                 console.log(a);
             } finally {
                 return a = "foo";
@@ -867,11 +729,13 @@ issue_4210: {
         console.log(typeof a);
     }
     expect: {
+        "use strict";
+        var a;
         (function() {
             try {
                 throw 42;
             } catch (e) {
-                const a = typeof e;
+                let a = typeof e;
                 console.log(a);
             } finally {
                 return a = "foo";
@@ -879,7 +743,11 @@ issue_4210: {
         })();
         console.log(typeof a);
     }
-    expect_stdout: true
+    expect_stdout: [
+        "number",
+        "string",
+    ]
+    node_version: ">=4"
 }
 
 issue_4212_1: {
@@ -887,22 +755,25 @@ issue_4212_1: {
         dead_code: true,
     }
     input: {
+        "use strict";
         console.log({
             get b() {
-                const a = 0;
+                let a = 0;
                 return a /= 0;
             }
         }.b);
     }
     expect: {
+        "use strict";
         console.log({
             get b() {
-                const a = 0;
-                return a /= 0;
+                let a = 0;
+                return a / 0;
             }
         }.b);
     }
-    expect_stdout: true
+    expect_stdout: "NaN"
+    node_version: ">=4"
 }
 
 issue_4212_2: {
@@ -910,45 +781,25 @@ issue_4212_2: {
         reduce_vars: true,
     }
     input: {
+        "use strict";
         console.log({
             get b() {
-                const a = 0;
+                let a = 0;
                 return a /= 0;
             }
         }.b);
     }
     expect: {
+        "use strict";
         console.log({
             get b() {
-                const a = 0;
+                let a = 0;
                 return a /= 0;
             }
         }.b);
     }
-    expect_stdout: true
-}
-
-issue_4216: {
-    options = {
-        collapse_vars: true,
-        conditionals: true,
-        dead_code: true,
-        evaluate: true,
-    }
-    input: {
-        if (a = 0) {
-            const a = 0;
-        }
-        console.log(typeof a);
-    }
-    expect: {
-        a = 0;
-        {
-            const a = void 0;
-        }
-        console.log(typeof a);
-    }
-    expect_stdout: true
+    expect_stdout: "NaN"
+    node_version: ">=4"
 }
 
 skip_braces: {
@@ -957,76 +808,17 @@ skip_braces: {
         braces: true,
     }
     input: {
+        "use strict";
         if (console)
-            const a = 42;
-        else
-            const b = null;
-        console.log(typeof a, typeof b);
+            let a = console.log(typeof a);
     }
     expect_exact: [
-        "if (console) const a = 42; else const b = null;",
+        '"use strict";',
         "",
-        "console.log(typeof a, typeof b);",
+        "if (console) let a = console.log(typeof a);",
     ]
     expect_stdout: true
-}
-
-issue_4220: {
-    options = {
-        collapse_vars: true,
-        conditionals: true,
-        sequences: true,
-        toplevel: true,
-    }
-    input: {
-        if (console) {
-            var o = console;
-            for (var k in o);
-        } else {
-            const a = 0;
-        }
-        console.log(typeof a);
-    }
-    expect: {
-        if (console) {
-            var o;
-            for (var k in console);
-        } else {
-            const a = 0;
-        }
-        console.log(typeof a);
-    }
-    expect_stdout: true
-}
-
-issue_4222: {
-    options = {
-        inline: true,
-        reduce_vars: true,
-        toplevel: true,
-        unused: true,
-    }
-    input: {
-        {
-            const a = function() {
-                return function() {};
-            };
-            var b = a();
-        }
-        b();
-        console.log(typeof a);
-    }
-    expect: {
-        {
-            const a = function() {
-                return function() {};
-            };
-            var b = a();
-        }
-        b();
-        console.log(typeof a);
-    }
-    expect_stdout: true
+    node_version: ">=4"
 }
 
 issue_4225: {
@@ -1034,14 +826,17 @@ issue_4225: {
         side_effects: true,
     }
     input: {
-        const a = void typeof b;
-        const b = 42;
+        "use strict";
+        let a = void typeof b;
+        let b = 42;
         console.log(a, b);
     }
     expect: {
-        const a = void b;
-        const b = 42;
+        "use strict";
+        let a = void b;
+        let b = 42;
         console.log(a, b);
     }
     expect_stdout: true
+    node_version: ">=4"
 }

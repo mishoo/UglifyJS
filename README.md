@@ -784,6 +784,9 @@ to be `false` and all symbol names will be omitted.
 - `unused` (default: `true`) -- drop unreferenced functions and variables (simple
   direct variable assignments do not count as references unless set to `"keep_assign"`)
 
+- `varify` (default: `true`) -- convert block-scoped declaractions into `var`
+  whenever safe to do so
+
 ## Mangle options
 
 - `eval` (default `false`) -- Pass `true` to mangle names visible in scopes
