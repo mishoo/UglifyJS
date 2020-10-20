@@ -871,3 +871,25 @@ issue_4229: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4231: {
+    options = {
+        ie8: true,
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        typeof a == 0;
+        console.log(typeof function a() {
+            let a;
+        });
+    }
+    expect: {
+        "use strict";
+        console.log(typeof function a() {
+            let a;
+        });
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}

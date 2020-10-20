@@ -438,7 +438,7 @@ catch_ie8_1: {
     }
     expect: {
         try {} catch (a) {}
-        console.log(function a() {
+        console.log(function() {
         }());
     }
     expect_stdout: "undefined"
@@ -1064,4 +1064,23 @@ issue_4229: {
         })();
     }
     expect_stdout: true
+}
+
+issue_4231: {
+    options = {
+        ie8: true,
+        side_effects: true,
+    }
+    input: {
+        typeof a == 0;
+        console.log(typeof function a() {
+            const a = 0;
+        });
+    }
+    expect: {
+        console.log(typeof function a() {
+            const a = 0;
+        });
+    }
+    expect_stdout: "function"
 }
