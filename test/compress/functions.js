@@ -5076,3 +5076,42 @@ issue_4186: {
     }
     expect_stdout: "function"
 }
+
+issue_4233: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            try {
+                var a = function() {};
+                try {
+                    throw 42;
+                } catch (a) {
+                    (function() {
+                        console.log(typeof a);
+                    })();
+                    var a;
+                }
+            } catch (e) {}
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                var a = function() {};
+                try {
+                    throw 42;
+                } catch (a) {
+                    (function() {
+                        console.log(typeof a);
+                    })();
+                    var a;
+                }
+            } catch (e) {}
+        })();
+    }
+    expect_stdout: "number"
+}
