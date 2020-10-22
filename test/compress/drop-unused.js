@@ -3085,3 +3085,30 @@ issue_4184: {
     }
     expect_stdout: "42"
 }
+
+issue_4235: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        (function() {
+            {
+                const f = 0;
+            }
+            (function f() {
+                var f = console.log(f);
+            })();
+        })();
+    }
+    expect: {
+        (function() {
+            f = console.log(f),
+            void 0;
+            var f;
+        })();
+    }
+    expect_stdout: "undefined"
+}
