@@ -2859,3 +2859,21 @@ issue_4186: {
     }
     expect_stdout: "NaN"
 }
+
+issue_4235: {
+    options = {
+        ie8: true,
+        unused: true,
+    }
+    input: {
+        try {} catch (e) {}
+        console.log(function e() {
+            var e = 0;
+        }());
+    }
+    expect: {
+        try {} catch (e) {}
+        console.log(function e() {}());
+    }
+    expect_stdout: "undefined"
+}
