@@ -60,7 +60,7 @@ if (typeof phantom == "undefined") {
         var port = server.address().port;
         if (debug) {
             console.log("http://localhost:" + port + "/");
-        } else {
+        } else (function install() {
             child_process.spawn(process.platform == "win32" ? "npm.cmd" : "npm", [
                 "install",
                 "phantomjs-prebuilt@2.1.14",
@@ -71,7 +71,10 @@ if (typeof phantom == "undefined") {
             ], {
                 stdio: [ "ignore", 1, 2 ]
             }).on("exit", function(code) {
-                if (code) throw new Error("npm install failed!");
+                if (code) {
+                    console.log("npm install failed with code", code);
+                    return install();
+                }
                 var program = require("phantomjs-prebuilt").exec(process.argv[1], port);
                 program.stdout.pipe(process.stdout);
                 program.stderr.pipe(process.stderr);
@@ -82,7 +85,7 @@ if (typeof phantom == "undefined") {
                     process.exit(0);
                 });
             });
-        }
+        })();
     });
     server.timeout = 0;
 } else {
