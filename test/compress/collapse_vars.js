@@ -8556,3 +8556,24 @@ issue_4070: {
     }
     expect_stdout: "NaN"
 }
+
+issue_4242: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            if (console)
+                var a = function(){}, b = (!1 === console || a)();
+        }());
+    }
+    expect: {
+        console.log(function() {
+            console && (!1 === console || function(){})();
+        }());
+    }
+    expect_stdout: "undefined"
+}
