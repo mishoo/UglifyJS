@@ -1222,3 +1222,35 @@ do_continue: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4240: {
+    options = {
+        loops: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            function f() {
+                var o = { PASS: 42 };
+                for (a in o);
+            }
+            (function() {
+                if (f());
+            })();
+            console.log(a);
+        })();
+    }
+    expect: {
+        (function(a) {
+            (function() {
+                if (function() {
+                    for (a in { PASS: 42 });
+                }());
+            })();
+            console.log(a);
+        })();
+    }
+    expect_stdout: "PASS"
+}
