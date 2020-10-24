@@ -3011,3 +3011,84 @@ issue_4168_use_strict: {
     }
     expect_stdout: "PASS true 42"
 }
+
+issue_4237_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            do {
+                var b = a++;
+                if (b)
+                    return "FAIL";
+                continue;
+                var c = 42;
+            } while ("undefined" != typeof c);
+            return "PASS";
+        }(0));
+    }
+    expect: {
+        console.log(function(a) {
+            do {
+                var b = a++;
+                if (b)
+                    return "FAIL";
+                continue;
+                var c = 42;
+            } while ("undefined" != typeof c);
+            return "PASS";
+        }(0));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4237_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        merge_vars: true,
+        switches: true,
+    }
+    input: {
+        console.log(function(a) {
+            do {
+                switch (0) {
+                  case 0:
+                    var b = a++;
+                  default:
+                    while (b)
+                        return "FAIL";
+                }
+                try {
+                    var c = 0;
+                } finally {
+                    continue;
+                }
+                var d = 0;
+            } while ("undefined" != typeof d);
+            return "PASS";
+        }(0));
+    }
+    expect: {
+        console.log(function(a) {
+            do {
+                switch (0) {
+                  case 0:
+                    var b = a++;
+                    if (b)
+                        return "FAIL";
+                }
+                try {
+                    var c = 0;
+                } finally {
+                    continue;
+                }
+                var d = 0;
+            } while ("undefined" != typeof d);
+            return "PASS";
+        }(0));
+    }
+    expect_stdout: "PASS"
+}
