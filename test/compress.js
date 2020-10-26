@@ -386,7 +386,7 @@ function test_case(test) {
             mangle: test.mangle
         });
         var actual = stdout[toplevel ? 1 : 0];
-        if (test.expect_stdout === true) {
+        if (test.expect_stdout === true || test.expect_stdout instanceof Error && test.expect_stdout.name === actual.name) {
             test.expect_stdout = actual;
         }
         if (!sandbox.same_stdout(test.expect_stdout, actual)) {
