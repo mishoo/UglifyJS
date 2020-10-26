@@ -893,3 +893,26 @@ issue_4231: {
     expect_stdout: "function"
     node_version: ">=4"
 }
+
+issue_4245: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        "use strict";
+        let a = f();
+        function f() {
+            typeof a;
+        }
+    }
+    expect: {
+        "use strict";
+        let a = f();
+        function f() {
+            a,
+            1;
+        }
+    }
+    expect_stdout: ReferenceError("a is not defined")
+    node_version: ">=4"
+}

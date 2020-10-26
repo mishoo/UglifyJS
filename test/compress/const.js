@@ -1084,3 +1084,23 @@ issue_4231: {
     }
     expect_stdout: "function"
 }
+
+issue_4245: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        const a = f();
+        function f() {
+            typeof a;
+        }
+    }
+    expect: {
+        const a = f();
+        function f() {
+            a,
+            1;
+        }
+    }
+    expect_stdout: true
+}
