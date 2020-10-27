@@ -276,7 +276,9 @@ function convert_ast(fn) {
 function run() {
     var content = options.sourceMap && options.sourceMap.content;
     if (content && content != "inline") {
-        UglifyJS.AST_Node.info("Using input source map: " + content);
+        UglifyJS.AST_Node.info("Using input source map: {content}", {
+            content : content,
+        });
         options.sourceMap.content = read_file(content, content);
     }
     try {

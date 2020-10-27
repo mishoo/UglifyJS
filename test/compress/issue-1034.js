@@ -39,7 +39,7 @@ non_hoisted_function_after_return: {
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:4,16]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:7,16]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:10,12]",
-        "WARN: Dropping unused function UnusedFunction [test/compress/issue-1034.js:11,21]"
+        "WARN: Dropping unused function UnusedFunction [test/compress/issue-1034.js:11,21]",
     ]
 }
 
@@ -84,15 +84,12 @@ non_hoisted_function_after_return_2a: {
         }
     }
     expect_warnings: [
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:4,16]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:4,16]",
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:7,16]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:7,16]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:4,16]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:7,16]",
         "WARN: Dropping unused variable a [test/compress/issue-1034.js:4,20]",
         "WARN: Dropping unused function nope [test/compress/issue-1034.js:11,21]",
         "INFO: pass 0: last_count: Infinity, count: 35",
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:9,12]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:9,12]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:9,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:12,12]",
         "INFO: Dropping unused variable b [test/compress/issue-1034.js:7,20]",
         "INFO: Dropping unused variable c [test/compress/issue-1034.js:9,16]",
@@ -138,10 +135,7 @@ non_hoisted_function_after_return_2b: {
         }
     }
     expect_warnings: [
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:6,16]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:6,16]",
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:8,12]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:8,12]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:8,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:12,12]",
     ]
 }
@@ -242,15 +236,12 @@ non_hoisted_function_after_return_2a_strict: {
     }
     expect_stdout: "5 6"
     expect_warnings: [
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:5,16]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:5,16]",
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:8,16]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:8,16]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:5,16]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:8,16]",
         "WARN: Dropping unused variable a [test/compress/issue-1034.js:5,20]",
         "WARN: Dropping unused function nope [test/compress/issue-1034.js:12,21]",
         "INFO: pass 0: last_count: Infinity, count: 46",
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:10,12]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:10,12]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:10,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:13,12]",
         "INFO: Dropping unused variable b [test/compress/issue-1034.js:8,20]",
         "INFO: Dropping unused variable c [test/compress/issue-1034.js:10,16]",
@@ -301,10 +292,7 @@ non_hoisted_function_after_return_2b_strict: {
     }
     expect_stdout: "5 6"
     expect_warnings: [
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:7,16]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:7,16]",
-        "WARN: Dropping unreachable code [test/compress/issue-1034.js:9,12]",
-        "WARN: Declarations in unreachable code! [test/compress/issue-1034.js:9,12]",
+        "WARN: Dropping initialization in unreachable code [test/compress/issue-1034.js:9,12]",
         "WARN: Dropping unreachable code [test/compress/issue-1034.js:13,12]",
     ]
 }

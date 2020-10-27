@@ -61,8 +61,6 @@ dead_code_2_should_warn: {
     expect_stdout: true
     expect_warnings: [
         "WARN: Dropping unreachable code [test/compress/dead-code.js:8,12]",
-        "WARN: Declarations in unreachable code! [test/compress/dead-code.js:10,16]",
-        "WARN: Dropping unreachable code [test/compress/dead-code.js:10,16]",
     ]
     node_version: "<=4"
 }
@@ -103,11 +101,9 @@ dead_code_constant_boolean_should_warn_more: {
         "WARN: + in boolean context always true [test/compress/dead-code.js:1,33]",
         "WARN: Boolean || always true [test/compress/dead-code.js:1,16]",
         "WARN: Dropping unreachable code [test/compress/dead-code.js:1,45]",
-        "WARN: Declarations in unreachable code! [test/compress/dead-code.js:3,12]",
         "WARN: Boolean expression always true [test/compress/dead-code.js:6,47]",
         "WARN: Boolean && always false [test/compress/dead-code.js:6,28]",
         "WARN: Dropping unreachable code [test/compress/dead-code.js:6,63]",
-        "WARN: Declarations in unreachable code! [test/compress/dead-code.js:9,12]",
         "WARN: Dropping side-effect-free statement [test/compress/dead-code.js:1,15]",
         "WARN: Dropping side-effect-free statement [test/compress/dead-code.js:6,28]",
     ]

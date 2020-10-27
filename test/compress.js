@@ -315,6 +315,7 @@ function test_case(test) {
         if (test.mangle.properties) U.mangle_properties(output, test.mangle.properties);
     }
     var output_code = make_code(output, output_options);
+    U.AST_Node.log_function();
     if (expect != output_code) {
         log([
             "!!! failed",
