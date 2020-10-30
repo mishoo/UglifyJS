@@ -1369,7 +1369,12 @@ for (var round = 1; round <= num_iterations; round++) {
                 }
             }
             // ignore difference in error message caused by Temporal Dead Zone
-            if (!ok && errored) ok = uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError";
+            if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
+            // ignore spurious time-outs
+            if (!ok && errored && /timed out/.test(original_result.message) && !/timed out/.test(uglify_result.message)) {
+                if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = sandbox.run_code(original_code, toplevel, 10000);
+                ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
+            }
             // ignore difference in error message caused by `in`
             // ignore difference in depth of termination caused by infinite recursion
             if (!ok) {
