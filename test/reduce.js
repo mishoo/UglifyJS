@@ -593,7 +593,7 @@ function is_error(result) {
 }
 
 function is_timed_out(result) {
-    return is_error(result) && /timed out/.test(result);
+    return is_error(result) && /timed out/.test(result.message);
 }
 
 function is_statement(node) {
