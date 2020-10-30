@@ -2877,3 +2877,30 @@ issue_4235: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4250: {
+    options = {
+        ie8: true,
+        loops: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f() {
+            (function() {
+                for (f in "f");
+            })();
+            return f;
+            var f;
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            (function() {
+                for (f in "f");
+            })();
+            return f;
+            var f;
+        }());
+    }
+    expect_stdout: "0"
+}
