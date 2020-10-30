@@ -1104,3 +1104,34 @@ issue_4245: {
     }
     expect_stdout: true
 }
+
+issue_4248: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        try {
+            (function() {
+                a = "PASS";
+                b[a];
+                const b = 0;
+            })();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = "FAIL";
+        try {
+            (function() {
+                a = "PASS";
+                b[a];
+                const b = 0;
+            })();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "PASS"
+}

@@ -916,3 +916,37 @@ issue_4245: {
     expect_stdout: ReferenceError("a is not defined")
     node_version: ">=4"
 }
+
+issue_4248: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        try {
+            (function() {
+                "use strict";
+                a = "PASS";
+                b[a];
+                let b;
+            })();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = "FAIL";
+        try {
+            (function() {
+                "use strict";
+                a = "PASS";
+                b[a];
+                let b;
+            })();
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

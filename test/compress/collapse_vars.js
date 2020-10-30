@@ -8577,3 +8577,28 @@ issue_4242: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4248: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0;
+        try {
+            a = 1;
+            b[1];
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = 0;
+        try {
+            a = 1;
+            b[1];
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "1"
+}
