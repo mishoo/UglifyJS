@@ -3124,3 +3124,25 @@ issue_4253: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4255: {
+    options = {
+        dead_code: true,
+        loops: true,
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        L: for (var a = 2; --a;)
+            for (var b = 0; console.log(b); --b)
+                break L;
+    }
+    expect: {
+        L: for (var a = 2; --a;) {
+            var b = 0;
+            if (console.log(b))
+                break L;
+        }
+    }
+    expect_stdout: "0"
+}
