@@ -1999,7 +1999,7 @@ issue_1606: {
             var a, b;
             function g(){};
             b = 2;
-            x(b);
+            x(2);
         }
     }
 }
