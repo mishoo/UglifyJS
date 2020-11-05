@@ -5115,3 +5115,29 @@ issue_4233: {
     }
     expect_stdout: "number"
 }
+
+issue_4259: {
+    options = {
+        collapse_vars: true,
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function b() {
+            var c = b;
+            for (b in c);
+        };
+        a();
+        console.log(typeof a);
+    }
+    expect: {
+        function a() {
+            for (a in a);
+        }
+        a();
+        console.log(typeof a);
+    }
+    expect_stdout: "function"
+}
