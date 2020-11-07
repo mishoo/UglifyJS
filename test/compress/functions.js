@@ -2081,7 +2081,7 @@ issue_3016_1: {
         var b = 1;
         do {
             3[b];
-        } while(0);
+        } while (0);
         console.log(b);
     }
     expect_stdout: "1"
@@ -2112,7 +2112,7 @@ issue_3016_2: {
         do {
             a = 3,
             a[b];
-        } while(0);
+        } while (0);
         var a;
         console.log(b);
     }
@@ -2145,7 +2145,7 @@ issue_3016_2_ie8: {
         do {
             a = 3,
             a[b];
-        } while(0);
+        } while (0);
         var a;
         console.log(b);
     }
@@ -2175,7 +2175,7 @@ issue_3016_3: {
         var b = 1;
         do {
             console.log((a = void 0, a ? "FAIL" : a = "PASS"));
-        } while(b--);
+        } while (b--);
         var a;
     }
     expect_stdout: [
@@ -2208,7 +2208,7 @@ issue_3016_3_ie8: {
         var b = 1;
         do {
             console.log((a = void 0, a ? "FAIL" : a = "PASS"));
-        } while(b--);
+        } while (b--);
         var a;
     }
     expect_stdout: [
@@ -5140,4 +5140,46 @@ issue_4259: {
         console.log(typeof a);
     }
     expect_stdout: "function"
+}
+
+issue_4261: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw 42;
+        } catch (e) {
+            (function() {
+                function f() {
+                    e.p;
+                }
+                function g() {
+                    while (f());
+                }
+                (function() {
+                    while (console.log(g()));
+                })();
+            })();
+        }
+    }
+    expect: {
+        try {
+            throw 42;
+        } catch (e) {
+            (function() {
+                function g() {
+                    while (void e.p);
+                }
+                (function() {
+                    while (console.log(g()));
+                })();
+            })();
+        }
+    }
+    expect_stdout: true
 }

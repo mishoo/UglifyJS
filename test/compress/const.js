@@ -1135,3 +1135,43 @@ issue_4248: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4261: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        {
+            const a = 42;
+            (function() {
+                function f() {
+                    console.log(a);
+                }
+                function g() {
+                    while (f());
+                }
+                (function() {
+                    while (g());
+                })();
+            })();
+        }
+    }
+    expect: {
+        {
+            const a = 42;
+            (function() {
+                function g() {
+                    while (void console.log(a));
+                }
+                (function() {
+                    while (g());
+                })();
+            })();
+        }
+    }
+    expect_stdout: "42"
+}
