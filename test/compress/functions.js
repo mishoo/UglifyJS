@@ -5183,3 +5183,34 @@ issue_4261: {
     }
     expect_stdout: true
 }
+
+issue_4265: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        inline: true,
+        sequences: true,
+    }
+    input: {
+        function f() {
+            console;
+            if ([ function() {
+                return this + console.log(a);
+                a;
+                var a;
+            }() ]);
+            return 0;
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            return console, function() {
+                return console.log(a);
+                var a;
+            }(), 0;
+        }
+        f();
+    }
+    expect_stdout: "undefined"
+}
