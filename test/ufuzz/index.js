@@ -913,14 +913,18 @@ function getDotKey(assign) {
     return key;
 }
 
-function createObjectFunction(type, recurmax, stmtDepth, canThrow) {
+function createObjectKey(recurmax, stmtDepth, canThrow) {
+    return rng(10) ? KEYS[rng(KEYS.length)] : "[" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + "]";
+}
+
+function createObjectFunction(recurmax, stmtDepth, canThrow) {
     var namesLenBefore = VAR_NAMES.length;
     var s;
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-        switch (type) {
-          case "get":
+        switch (rng(3)) {
+          case 0:
             s = [
-                "get " + getDotKey() + "(){",
+                "get " + createObjectKey(recurmax, stmtDepth, canThrow) + "(){",
                 strictMode(),
                 defns(),
                 _createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
@@ -928,8 +932,8 @@ function createObjectFunction(type, recurmax, stmtDepth, canThrow) {
                 "},",
             ];
             break;
-          case "set":
-            var prop1 = getDotKey();
+          case 1:
+            var prop1 = createObjectKey(recurmax, stmtDepth, canThrow);
             var prop2;
             do {
                 prop2 = getDotKey();
@@ -945,7 +949,7 @@ function createObjectFunction(type, recurmax, stmtDepth, canThrow) {
             break;
           default:
             s = [
-                type + "(" + createParams(NO_DUPLICATE) + "){",
+                createObjectKey(recurmax, stmtDepth, canThrow) + "(" + createParams(NO_DUPLICATE) + "){",
                 strictMode(),
                 defns(),
                 _createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
@@ -961,21 +965,15 @@ function createObjectFunction(type, recurmax, stmtDepth, canThrow) {
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var obj = ["({"];
-    for (var i = rng(6); --i >= 0;) switch (rng(50)) {
+    for (var i = rng(6); --i >= 0;) switch (rng(30)) {
       case 0:
-        obj.push(createObjectFunction("get", recurmax, stmtDepth, canThrow));
+        obj.push(createObjectFunction(recurmax, stmtDepth, canThrow));
         break;
       case 1:
-        obj.push(createObjectFunction("set", recurmax, stmtDepth, canThrow));
-        break;
-      case 2:
-        obj.push(createObjectFunction(KEYS[rng(KEYS.length)], recurmax, stmtDepth, canThrow));
-        break;
-      case 3:
         obj.push(getVarName() + ",");
         break;
       default:
-        obj.push(KEYS[rng(KEYS.length)] + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "),");
+        obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "),");
         break;
     }
     obj.push("})");
