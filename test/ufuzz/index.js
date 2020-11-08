@@ -276,6 +276,7 @@ var NO_DEFUN = false;
 var DEFUN_OK = true;
 var DONT_STORE = true;
 var NO_CONST = true;
+var NO_DUPLICATE = true;
 
 var VAR_NAMES = [
     "a",
@@ -356,11 +357,15 @@ function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
     return s;
 }
 
-function createParams() {
+function createParams(noDuplicate) {
+    var len = unique_vars.length;
     var params = [];
     for (var n = rng(4); --n >= 0;) {
-        params.push(createVarName(MANDATORY));
+        var name = createVarName(MANDATORY);
+        if (noDuplicate) unique_vars.push(name);
+        params.push(name);
     }
+    unique_vars.length = len;
     return params.join(", ");
 }
 
@@ -908,21 +913,23 @@ function getDotKey(assign) {
     return key;
 }
 
-function createAccessor(recurmax, stmtDepth, canThrow) {
+function createObjectFunction(type, recurmax, stmtDepth, canThrow) {
     var namesLenBefore = VAR_NAMES.length;
     var s;
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-        var prop1 = getDotKey();
-        if (rng(2) == 0) {
+        switch (type) {
+          case "get":
             s = [
-                "get " + prop1 + "(){",
+                "get " + getDotKey() + "(){",
                 strictMode(),
                 defns(),
                 _createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 createStatement(recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth, STMT_RETURN_ETC),
-                "},"
+                "},",
             ];
-        } else {
+            break;
+          case "set":
+            var prop1 = getDotKey();
             var prop2;
             do {
                 prop2 = getDotKey();
@@ -933,8 +940,18 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
                 defns(),
                 _createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "this." + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
-                "},"
+                "},",
             ];
+            break;
+          default:
+            s = [
+                type + "(" + createParams(NO_DUPLICATE) + "){",
+                strictMode(),
+                defns(),
+                _createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                "},",
+            ]
+            break;
         }
     });
     VAR_NAMES.length = namesLenBefore;
@@ -944,11 +961,17 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var obj = ["({"];
-    for (var i = rng(6); --i >= 0;) switch (rng(20)) {
+    for (var i = rng(6); --i >= 0;) switch (rng(50)) {
       case 0:
-        obj.push(createAccessor(recurmax, stmtDepth, canThrow));
+        obj.push(createObjectFunction("get", recurmax, stmtDepth, canThrow));
         break;
       case 1:
+        obj.push(createObjectFunction("set", recurmax, stmtDepth, canThrow));
+        break;
+      case 2:
+        obj.push(createObjectFunction(KEYS[rng(KEYS.length)], recurmax, stmtDepth, canThrow));
+        break;
+      case 3:
         obj.push(getVarName() + ",");
         break;
       default:
