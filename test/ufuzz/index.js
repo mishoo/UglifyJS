@@ -944,13 +944,16 @@ function createAccessor(recurmax, stmtDepth, canThrow) {
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var obj = ["({"];
-    for (var i = rng(6); --i >= 0;) {
-        if (rng(20) == 0) {
-            obj.push(createAccessor(recurmax, stmtDepth, canThrow));
-        } else {
-            var key = KEYS[rng(KEYS.length)];
-            obj.push(key + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "),");
-        }
+    for (var i = rng(6); --i >= 0;) switch (rng(20)) {
+      case 0:
+        obj.push(createAccessor(recurmax, stmtDepth, canThrow));
+        break;
+      case 1:
+        obj.push(getVarName() + ",");
+        break;
+      default:
+        obj.push(KEYS[rng(KEYS.length)] + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "),");
+        break;
     }
     obj.push("})");
     return obj.join("\n");
