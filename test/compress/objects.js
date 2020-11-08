@@ -221,3 +221,38 @@ numeric_literal: {
         "8 7 8",
     ]
 }
+
+evaluate_computed_key: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            ["foo" + "bar"]: "PASS",
+        }.foobar);
+    }
+    expect: {
+        console.log({
+            foobar: "PASS",
+        }.foobar);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+keep_computed_key: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            [console.log("PASS")]: 42,
+        });
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
