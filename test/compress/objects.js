@@ -256,3 +256,107 @@ keep_computed_key: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4269_1: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            get 0() {
+                return "FAIL";
+            },
+            [0]: "PASS",
+        }[0]);
+    }
+    expect: {
+        console.log({
+            get 0() {
+                return "FAIL";
+            },
+            [0]: "PASS",
+        }[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4269_2: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            get [0]() {
+                return "FAIL";
+            },
+            0: "PASS",
+        }[0]);
+    }
+    expect: {
+        console.log({
+            get [0]() {
+                return "FAIL";
+            },
+            0: "PASS",
+        }[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4269_3: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            ["foo"]: "bar",
+            get 42() {
+                return "FAIL";
+            },
+            42: "PASS",
+        }[42]);
+    }
+    expect: {
+        console.log({
+            ["foo"]: "bar",
+            get 42() {
+                return "FAIL";
+            },
+            42: "PASS",
+        }[42]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4269_4: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            get 42() {
+                return "FAIL";
+            },
+            ["foo"]: "bar",
+            42: "PASS",
+        }[42]);
+    }
+    expect: {
+        console.log({
+            get 42() {
+                return "FAIL";
+            },
+            ["foo"]: "bar",
+            42: "PASS",
+        }[42]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
