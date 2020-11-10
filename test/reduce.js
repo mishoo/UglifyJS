@@ -95,6 +95,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
             // quick ignores
             if (node instanceof U.AST_Accessor) return;
+            if (node instanceof U.AST_Destructured) return;
             if (node instanceof U.AST_Directive) return;
             if (!in_list && node instanceof U.AST_EmptyStatement) return;
             if (node instanceof U.AST_Label) return;
@@ -114,6 +115,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
             // ignore lvalues
             if (parent instanceof U.AST_Assign && parent.left === node) return;
+            if (parent instanceof U.AST_Destructured) return;
+            if (parent instanceof U.AST_DestructuredKeyVal && parent.value === node) return;
             if (parent instanceof U.AST_Unary && parent.expression === node) switch (parent.operator) {
               case "++":
               case "--":
@@ -250,13 +253,23 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 }
             }
             else if (node instanceof U.AST_ForIn) {
-                var expr = [
-                    node.init,
-                    node.object,
-                    node.body,
-                ][ (node.start._permute * steps | 0) % 3 ];
+                var expr;
+                switch ((node.start._permute * steps | 0) % 3) {
+                  case 0:
+                    if (!(node.init instanceof U.AST_Definitions
+                        && node.init.definitions[0].name instanceof U.AST_Destructured)) {
+                        expr = node.init;
+                    }
+                    break;
+                  case 1:
+                    expr = node.object;
+                    break;
+                  case 2:
+                    if (!has_loopcontrol(node.body, node, parent)) expr = node.body;
+                    break;
+                }
                 node.start._permute += step;
-                if (expr && (expr !== node.body || !has_loopcontrol(expr, node, parent))) {
+                if (expr) {
                     CHANGED = true;
                     return to_statement(expr);
                 }
@@ -385,6 +398,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
                 // remove this node unless its the sole element of a (transient) sequence
                 if (!(parent instanceof U.AST_Sequence) || parent.expressions.length > 1) {
+                    node.start._permute++;
+                    CHANGED = true;
+                    return List.skip;
+                }
+
+                // skip element/property from (destructured) array/object
+                if (parent instanceof U.AST_Array || parent instanceof U.AST_Destructured || parent instanceof AST_Object) {
                     node.start._permute++;
                     CHANGED = true;
                     return List.skip;
