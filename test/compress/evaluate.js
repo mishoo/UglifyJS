@@ -3047,3 +3047,30 @@ issue_4214: {
     }
     expect_stdout: "NaN"
 }
+
+issue_4271: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        ({
+            p: null,
+            q: (console.log("foo"), 42),
+            p: function() {}
+        })[console.log("bar"), "p"] && console.log("PASS");
+    }
+    expect: {
+        ({
+            p: null,
+            q: (console.log("foo"), 42),
+            p: function() {}
+        })[console.log("bar"), "p"],
+        console.log("PASS");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "PASS",
+    ]
+}
