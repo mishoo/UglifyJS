@@ -1175,3 +1175,53 @@ issue_4261: {
     }
     expect_stdout: "42"
 }
+
+issue_4274_1: {
+    options = {
+        loops: true,
+    }
+    input: {
+        for (;;) {
+            if (console.log("PASS")) {
+                const a = 0;
+            } else {
+                break;
+                var a;
+            }
+        }
+    }
+    expect: {
+        for (; console.log("PASS");) {
+            {
+                const a = 0;
+            }
+            var a;
+        }
+    }
+    expect_stdout: true
+}
+
+issue_4274_2: {
+    options = {
+        loops: true,
+    }
+    input: {
+        for (;;) {
+            if (!console.log("PASS")) {
+                break;
+                var a;
+            } else {
+                const a = 0;
+            }
+        }
+    }
+    expect: {
+        for (; console.log("PASS");) {
+            {
+                const a = 0;
+            }
+            var a;
+        }
+    }
+    expect_stdout: true
+}
