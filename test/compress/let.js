@@ -950,3 +950,59 @@ issue_4248: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4274_1: {
+    options = {
+        loops: true,
+    }
+    input: {
+        "use strict";
+        for (;;) {
+            if (console.log("PASS")) {
+                let a;
+            } else {
+                break;
+                var a;
+            }
+        }
+    }
+    expect: {
+        "use strict";
+        for (; console.log("PASS");) {
+            {
+                let a;
+            }
+            var a;
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4274_2: {
+    options = {
+        loops: true,
+    }
+    input: {
+        "use strict";
+        for (;;) {
+            if (!console.log("PASS")) {
+                break;
+                var a;
+            } else {
+                let a;
+            }
+        }
+    }
+    expect: {
+        "use strict";
+        for (; console.log("PASS");) {
+            {
+                let a;
+            }
+            var a;
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
