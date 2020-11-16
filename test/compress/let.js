@@ -1006,3 +1006,61 @@ issue_4274_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4276_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        "use strict";
+        try {
+            let a = b, b;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            let a = b, b;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4276_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        "use strict";
+        try {
+            let a = f(), b;
+            console.log("FAIL");
+            function f() {
+                return b;
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            let a = f(), b;
+            console.log("FAIL");
+            function f() {
+                return b;
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
