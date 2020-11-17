@@ -1403,3 +1403,40 @@ issue_4284_3: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4286_1: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS", b;
+        (0 && a)[{ a } = b = a];
+        console.log(b);
+    }
+    expect: {
+        var a = "PASS", b;
+        (0 && a)[{ a } = b = a];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4286_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        a = [ "PASS" ];
+        var b, { a } = b = a;
+        console.log(b[0]);
+    }
+    expect: {
+        var b, { a } = b = a = [ "PASS" ];
+        console.log(b[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
