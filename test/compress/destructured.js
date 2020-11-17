@@ -541,7 +541,7 @@ funarg_reduce_vars_3: {
         (function({
             [a++]: b
         }) {})(0);
-        console.log(1);
+        console.log(a);
     }
     expect_stdout: "1"
     node_version: ">=6"
@@ -1315,5 +1315,29 @@ issue_4280: {
         console.log(void 0);
     }
     expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+issue_4282: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            ({
+                [a = "bar"]: 0[console.log(a)],
+            } = 0);
+        })("foo");
+    }
+    expect: {
+        (function(a) {
+            ({
+                [a = "bar"]: 0[console.log(a)],
+            } = 0);
+        })("foo");
+    }
+    expect_stdout: true
     node_version: ">=6"
 }
