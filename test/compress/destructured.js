@@ -1295,3 +1295,25 @@ fn_name_unused: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4280: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var {
+            1: a,
+        } = 2;
+        console.log(a);
+    }
+    expect: {
+        var {} = 2;
+        console.log(void 0);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
