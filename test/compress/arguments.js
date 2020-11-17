@@ -807,3 +807,23 @@ issue_4200: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4291: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        console.log(function() {
+            arguments[0] = "PASS";
+            return arguments;
+        }()[0]);
+    }
+    expect: {
+        console.log(function() {
+            arguments[0] = "PASS";
+            return arguments;
+        }()[0]);
+    }
+    expect_stdout: "PASS"
+}
