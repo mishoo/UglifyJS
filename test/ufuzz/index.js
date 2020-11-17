@@ -377,6 +377,118 @@ function createArgs(recurmax, stmtDepth, canThrow) {
     return args.join(", ");
 }
 
+function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames, maybe, dontStore) {
+    var avoid = [];
+    var len = unique_vars.length;
+    var pairs = createPairs(recurmax);
+    unique_vars.length = len;
+    return pairs;
+
+    function createAssignmentValue(recurmax) {
+        var current = VAR_NAMES;
+        VAR_NAMES = (varNames || VAR_NAMES).slice();
+        var value = varNames && rng(2) ? createValue() : createExpression(recurmax, noComma, stmtDepth, canThrow);
+        VAR_NAMES = current;
+        return value;
+    }
+
+    function createKey(recurmax, keys) {
+        var save = VAR_NAMES;
+        VAR_NAMES = VAR_NAMES.filter(function(name) {
+            return avoid.indexOf(name) < 0;
+        });
+        var len = VAR_NAMES.length;
+        var key;
+        do {
+            key = createObjectKey(recurmax, stmtDepth, canThrow);
+        } while (keys.indexOf(key) >= 0);
+        VAR_NAMES = save.concat(VAR_NAMES.slice(len));
+        return key;
+    }
+
+    function createPairs(recurmax) {
+        var names = [], values = [];
+        var m = rng(4), n = rng(4);
+        if (!varNames) m = Math.max(m, n, 1);
+        for (var i = Math.max(m, n); --i >= 0;) {
+            if (i < m && i < n) {
+                createDestructured(recurmax, names, values);
+                continue;
+            }
+            if (i < m) {
+                unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
+                var name = createVarName(maybe, dontStore);
+                unique_vars.length -= 6;
+                avoid.push(name);
+                unique_vars.push(name);
+                names.unshift(name);
+            }
+            if (i < n) {
+                values.unshift(createAssignmentValue(recurmax));
+            }
+        }
+        return {
+            names: names,
+            values: values,
+        };
+    }
+
+    function createDestructured(recurmax, names, values) {
+        switch (rng(20)) {
+          case 0:
+            if (--recurmax < 0) {
+                names.unshift("[]");
+                values.unshift('""');
+            } else {
+                var pairs = createPairs(recurmax);
+                while (!rng(10)) {
+                    var index = rng(pairs.names.length + 1);
+                    pairs.names.splice(index, 0, "");
+                    pairs.values.splice(index, 0, rng(2) ? createAssignmentValue(recurmax) : "");
+                }
+                names.unshift("[ " + pairs.names.join(", ") + " ]");
+                values.unshift("[ " + pairs.values.join(", ") + " ]");
+            }
+            break;
+          case 1:
+            if (--recurmax < 0) {
+                names.unshift("{}");
+                values.unshift('""');
+            } else {
+                var pairs = createPairs(recurmax);
+                var keys = [];
+                pairs.names.forEach(function(name, index) {
+                    if (/^[[{]/.test(name)) {
+                        var key;
+                        do {
+                            key = KEYS[rng(KEYS.length)];
+                        } while (keys.indexOf(key) >= 0);
+                        keys[index] = key;
+                    }
+                });
+                names.unshift("{ " + pairs.names.map(function(name, index) {
+                    var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
+                    return key ? key + ": " + name : name;
+                }).join(", ") + " }");
+                values.unshift("{ " + pairs.values.map(function(value, index) {
+                    var key = index in keys ? keys[index] : createKey(recurmax, keys);
+                    return key + ": " + value;
+                }).join(", ") + " }");
+            }
+            break;
+          default:
+            unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
+            var name = createVarName(maybe, dontStore);
+            unique_vars.length -= 6;
+            avoid.push(name);
+            unique_vars.push(name);
+            names.unshift(name);
+            values.unshift(createAssignmentValue(recurmax));
+            break;
+        }
+    }
+}
+
 function filterDirective(s) {
     if (!generate_directive && !s[1] && /\("/.test(s[2])) s[2] = ";" + s[2];
     return s;
@@ -415,11 +527,37 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
             return names.indexOf(name) < 0;
         });
         var len = VAR_NAMES.length;
-        var s = type + " " + names.map(function(name) {
-            var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
-            VAR_NAMES.push(name);
-            return name + " = " + value;
-        }).join(", ") + ";";
+        var s = type + " ";
+        switch (rng(10)) {
+          case 0:
+            while (!rng(10)) names.splice(rng(names.length + 1), 0, "");
+            s += "[ " + names.join(", ") + " ] = [ " + names.map(function() {
+                return rng(10) ? createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) : "";
+            }).join(", ") + " ];";
+            break;
+          case 1:
+            var keys = [];
+            s += "{ " + names.map(function(name, i) {
+                var key = createObjectKey(recurmax, stmtDepth, canThrow);
+                if (!/\[/.test(key)) keys[i] = key;
+                return key + ": " + name;
+            }).join(", ") + "} = { " + names.map(function(name, i) {
+                var key = i in keys ? keys[i] : createObjectKey(recurmax, stmtDepth, canThrow);
+                return key + ": " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
+            }).join(", ") + "};";
+            break;
+          default:
+            s += names.map(function(name, i) {
+                if (type == "let" && !rng(10)) {
+                    VAR_NAMES.push(name);
+                    return name;
+                }
+                var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
+                VAR_NAMES.push(name);
+                return name + " = " + value;
+            }).join(", ") + ";";
+            break;
+        }
         VAR_NAMES = save.concat(VAR_NAMES.slice(len));
         return s;
     }
@@ -429,9 +567,9 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ";"; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
     var s = [];
-    var name;
+    var name, args;
+    var varNames = VAR_NAMES.slice();
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-        var namesLenBefore = VAR_NAMES.length;
         if (allowDefun || rng(5) > 0) {
             name = "f" + funcs++;
         } else {
@@ -439,7 +577,16 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
             name = createVarName(MANDATORY, !allowDefun);
             unique_vars.length -= 3;
         }
-        s.push("function " + name + "(" + createParams() + "){", strictMode());
+        var params;
+        if ((!allowDefun || !(name in called)) && rng(2)) {
+            called[name] = false;
+            var pairs = createAssignmentPairs(recurmax, COMMA_OK, stmtDepth, canThrow, varNames, MANDATORY);
+            params = pairs.names.join(", ");
+            args = pairs.values.join(", ");
+        } else {
+            params = createParams();
+        }
+        s.push("function " + name + "(" + params + "){", strictMode());
         s.push(defns());
         if (rng(5) === 0) {
             // functions with functions. lower the recursion to prevent a mess.
@@ -450,17 +597,16 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         }
         s.push("}", "");
         s = filterDirective(s).join("\n");
-
-        VAR_NAMES.length = namesLenBefore;
     });
+    VAR_NAMES = varNames;
 
     if (!allowDefun) {
         // avoid "function statements" (decl inside statements)
         s = "var " + createVarName(MANDATORY) + " = " + s;
-        s += "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
-    } else if (!(name in called) || rng(3) > 0) {
+        s += "(" + (args || createArgs(recurmax, stmtDepth, canThrow)) + ")";
+    } else if (!(name in called) || args || rng(3)) {
         s += "var " + createVarName(MANDATORY) + " = " + name;
-        s += "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
+        s += "(" + (args || createArgs(recurmax, stmtDepth, canThrow)) + ")";
     }
 
     return s + ";";
@@ -561,8 +707,9 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return [
             "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ",
             label.target + " for (",
-            /^key/.test(key) ? "var " : "",
-            key + " in expr" + loop + ") {",
+            !/^key/.test(key) ? rng(10) ? "" : "var " : rng(10) ? "var " : rng(2) ? "let " : "const ",
+            rng(20) ? key : "{ length: " + key + " }",
+            " in expr" + loop + ") {",
             rng(5) > 1 ? "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; " : "",
             createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
             "}}",
@@ -576,7 +723,12 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         // note: default does not _need_ to be last
         return "switch (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") { " + createSwitchParts(recurmax, 4, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_VAR:
-        switch (rng(3)) {
+        if (!rng(20)) {
+            var pairs = createAssignmentPairs(recurmax, NO_COMMA, stmtDepth, canThrow, null, MANDATORY);
+            return "var " + pairs.names.map(function(name, index) {
+                return index in pairs.values ? name + " = " + pairs.values[index] : name;
+            }).join(", ") + ";";
+        } else switch (rng(3)) {
           case 0:
             unique_vars.push("c");
             var name = createVarName(MANDATORY);
@@ -719,7 +871,28 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return getVarName();
       case p++:
-        return getVarName(NO_CONST) + createAssignment() + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
+        switch (rng(20)) {
+          case 0:
+            return [
+                "[ ",
+                new Array(rng(3)).join(","),
+                getVarName(NO_CONST),
+                new Array(rng(3)).join(","),
+                " ] = ",
+                createArrayLiteral(recurmax, stmtDepth, canThrow),
+            ].join("");
+          case 1:
+            return [
+                "{ ",
+                rng(2) ? "" : createObjectKey(recurmax, stmtDepth, canThrow) + ": ",
+                getVarName(NO_CONST),
+                " } = ",
+                createExpression(recurmax, COMMA_OK, stmtDepth, canThrow),
+                " || {}",
+            ].join("");
+          default:
+            return getVarName(NO_CONST) + createAssignment() + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
+        }
       case p++:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:
@@ -864,7 +1037,10 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
       case p++:
-        var name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
+        var name;
+        do {
+            name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
+        } while (name in called && !called[name]);
         called[name] = true;
         return "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
     }
@@ -1002,13 +1178,77 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
         return "(" + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
       case 3:
         assignee = getVarName();
-        expr = "(" + assignee + "[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow)
-            + "]" + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
+        switch (rng(20)) {
+          case 0:
+            expr = [
+                "([ ",
+                assignee,
+                "[", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "]",
+                " ] = [ ",
+                _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow),
+                " ])",
+            ].join("");
+            break;
+          case 1:
+            var key1 = createObjectKey(recurmax, stmtDepth, canThrow);
+            var key2 = /^\[/.test(key1) ? createObjectKey(recurmax, stmtDepth, canThrow) : key1;
+            expr = [
+                "({ ",
+                key1, ": ", assignee,
+                "[", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "]",
+                " } = { ",
+                key2, ": ", _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow),
+                " })",
+            ].join("");
+            break;
+          default:
+            expr = [
+                "(",
+                assignee,
+                "[", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "]",
+                createAssignment(),
+                _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow),
+                ")",
+            ].join("");
+            break;
+        }
         return canThrow && rng(10) == 0 ? expr : "(" + assignee + " && " + expr + ")";
       case 4:
         assignee = getVarName();
-        expr = "(" + assignee + "." + getDotKey(true) + createAssignment()
-            + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
+        switch (rng(20)) {
+          case 0:
+            expr = [
+                "([ ",
+                assignee,
+                ".", getDotKey(true),
+                " ] = [ ",
+                _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow),
+                " ])",
+            ].join("");
+            break;
+          case 1:
+            var key1 = createObjectKey(recurmax, stmtDepth, canThrow);
+            var key2 = /^\[/.test(key1) ? createObjectKey(recurmax, stmtDepth, canThrow) : key1;
+            expr = [
+                "({ ",
+                key1, ": ", assignee,
+                ".", getDotKey(true),
+                " } = { ",
+                key2, ": ", _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow),
+                " })",
+            ].join("");
+            break;
+          default:
+            expr = [
+                "(",
+                assignee,
+                ".", getDotKey(true),
+                createAssignment(),
+                _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow),
+                ")",
+            ].join("");
+            break;
+        }
         return canThrow && rng(10) == 0 ? expr : "(" + assignee + " && " + expr + ")";
       default:
         return _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow);
@@ -1351,7 +1591,14 @@ function patch_try_catch(orig, toplevel) {
     }
 }
 
-var minify_options = require("./options.json").map(JSON.stringify);
+var minify_options = require("./options.json");
+if (typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
+    minify_options.forEach(function(o) {
+        if (!("output" in o)) o.output = {};
+        o.output.v8 = true;
+    });
+}
+minify_options = minify_options.map(JSON.stringify);
 var original_code, original_result, errored;
 var uglify_code, uglify_result, ok;
 for (var round = 1; round <= num_iterations; round++) {

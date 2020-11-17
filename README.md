@@ -906,6 +906,8 @@ can pass additional arguments that control the code output:
 
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
 
+- `v8` (default `false`) -- enable workarounds for Chrome & Node.js bugs
+
 - `webkit` (default `false`) -- enable workarounds for WebKit bugs.
   PhantomJS users should set this option to `true`.
 
@@ -1138,7 +1140,7 @@ To enable fast minify mode with the API use:
 UglifyJS.minify(code, { compress: false, mangle: true });
 ```
 
-#### Source maps and debugging
+### Source maps and debugging
 
 Various `compress` transforms that simplify, rearrange, inline and remove code
 are known to have an adverse effect on debugging with source maps. This is
@@ -1150,6 +1152,10 @@ disable the Uglify `compress` option and just use `mangle`.
 
 To allow for better optimizations, the compiler makes various assumptions:
 
+- The code does not rely on preserving its runtime performance characteristics.
+  Typically uglified code will run faster due to less instructions and easier
+  inlining, but may be slower on rare occasions for a specific platform, e.g.
+  see [`reduce_funcs`](#compress-options).
 - `.toString()` and `.valueOf()` don't have side effects, and for built-in
   objects they have not been overridden.
 - `undefined`, `NaN` and `Infinity` have not been externally redefined.
@@ -1177,3 +1183,7 @@ To allow for better optimizations, the compiler makes various assumptions:
   top.B = "PASS";
   console.log(B);
   ```
+- Use of `arguments` alongside destructuring as function parameters, e.g.
+  `function({}, arguments) {}` will result in `SyntaxError` in earlier versions
+  of Chrome and Node.js - UglifyJS may modify the input which in turn may
+  suppress those errors.
