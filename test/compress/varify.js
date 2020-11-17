@@ -234,3 +234,122 @@ issue_4191_let: {
     expect_stdout: "function undefined"
     node_version: ">=4"
 }
+
+forin_const_1: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        const o = {
+            foo: 42,
+            bar: "PASS",
+        };
+        for (const k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            foo: 42,
+            bar: "PASS",
+        };
+        for (const k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+forin_const_2: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        const o = {
+            p: 42,
+            q: "PASS",
+        };
+        for (const [ k ] in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            p: 42,
+            q: "PASS",
+        }, k;
+        for ([ k ] in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "p 42",
+        "q PASS",
+    ]
+    node_version: ">=6"
+}
+
+forin_let_1: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        let o = {
+            foo: 42,
+            bar: "PASS",
+        };
+        for (let k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        "use strict";
+        var o = {
+            foo: 42,
+            bar: "PASS",
+        }, k;
+        for (k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "foo 42",
+        "bar PASS",
+    ]
+    node_version: ">=4"
+}
+
+forin_let_2: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        let o = {
+            p: 42,
+            q: "PASS",
+        };
+        for (let [ k ] in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            p: 42,
+            q: "PASS",
+        }, k;
+        for ([ k ] in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "p 42",
+        "q PASS",
+    ]
+    node_version: ">=6"
+}
