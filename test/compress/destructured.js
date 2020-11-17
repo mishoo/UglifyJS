@@ -1440,3 +1440,33 @@ issue_4286_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4288: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f({
+            [new function() {
+                console.log(typeof b);
+            }()]: a,
+        }) {
+            var b = a;
+            b++;
+        }
+        f(0);
+    }
+    expect: {
+        function f({
+            [new function() {
+                console.log(typeof b);
+            }()]: a,
+        }) {
+            var b = a;
+            b++;
+        }
+        f(0);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
