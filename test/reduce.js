@@ -115,7 +115,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
             // ignore lvalues
             if (parent instanceof U.AST_Assign && parent.left === node) return;
-            if (parent instanceof U.AST_Destructured) return;
+            if (parent instanceof U.AST_DestructuredArray) return;
             if (parent instanceof U.AST_DestructuredKeyVal && parent.value === node) return;
             if (parent instanceof U.AST_Unary && parent.expression === node) switch (parent.operator) {
               case "++":

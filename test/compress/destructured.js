@@ -1470,3 +1470,35 @@ issue_4288: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_4294: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        A = "PASS";
+        (function() {
+            var a = function({
+                [a]: {},
+            }) {}({
+                [a]: 0,
+            });
+            var b = A;
+            console.log(b);
+        })();
+    }
+    expect: {
+        A = "PASS";
+        (function() {
+            var a = function({
+                [a]: {},
+            }) {}({
+                [a]: 0,
+            });
+            var b = A;
+            console.log(b);
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
