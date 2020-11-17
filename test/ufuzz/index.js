@@ -708,7 +708,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ",
             label.target + " for (",
             !/^key/.test(key) ? rng(10) ? "" : "var " : rng(10) ? "var " : rng(2) ? "let " : "const ",
-            rng(20) ? key : "{ length: " + key + " }",
+            rng(10) ? key : rng(5) ? "[ " + key + " ]" : "{ length: " + key + " }",
             " in expr" + loop + ") {",
             rng(5) > 1 ? "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; " : "",
             createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
