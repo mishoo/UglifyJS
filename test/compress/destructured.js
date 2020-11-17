@@ -1341,3 +1341,65 @@ issue_4282: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_4284_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a, {
+            0: b,
+        } = a = "foo";
+        console.log(a, b);
+    }
+    expect: {
+        var a, {
+            0: b,
+        } = a = "foo";
+        console.log(a, b);
+    }
+    expect_stdout: "foo f"
+    node_version: ">=6"
+}
+
+issue_4284_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, {
+            [console.log(a)]: b,
+        } = (a = "PASS", 0);
+        var c = a;
+    }
+    expect: {
+        var a, {
+            [console.log(a)]: b,
+        } = (a = "PASS", 0);
+        var c = a;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4284_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, b;
+        ({
+            [console.log(a)]: b,
+        } = (a = "PASS", 0));
+        var c = a;
+    }
+    expect: {
+        var a, b;
+        ({
+            [console.log(a)]: b,
+        } = (a = "PASS", 0));
+        var c = a;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
