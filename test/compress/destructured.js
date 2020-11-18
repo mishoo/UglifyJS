@@ -1559,3 +1559,35 @@ issue_4298: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4301: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        try {
+            console.log(function() {
+                var a, b = console;
+                return {
+                    [a = b]: a.p,
+                } = "foo";
+            }());
+        } catch (e) {
+            console.log("bar");
+        }
+    }
+    expect: {
+        try {
+            console.log(function() {
+                var a, b = console;
+                return {
+                    [a = b]: a.p,
+                } = "foo";
+            }());
+        } catch (e) {
+            console.log("bar");
+        }
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
