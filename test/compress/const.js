@@ -1225,3 +1225,18 @@ issue_4274_2: {
     }
     expect_stdout: true
 }
+
+issue_4290_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        const a = 0;
+        var a;
+    }
+    expect: {
+        const a = 0;
+        var a;
+    }
+    expect_stdout: true
+}

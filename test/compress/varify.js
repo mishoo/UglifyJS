@@ -353,3 +353,40 @@ forin_let_2: {
     ]
     node_version: ">=6"
 }
+
+issue_4290_1_const: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        const a = 0;
+        var a;
+    }
+    expect: {
+        const a = 0;
+        var a;
+    }
+    expect_stdout: true
+}
+
+issue_4290_1_let: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        let a = 0;
+        var a;
+    }
+    expect: {
+        "use strict";
+        let a = 0;
+        var a;
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
