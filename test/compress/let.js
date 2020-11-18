@@ -20,6 +20,26 @@ retain_block: {
     node_version: ">=4"
 }
 
+retain_catch: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        "use strict";
+        try {} catch (a) {
+            let a = "aa";
+        }
+    }
+    expect: {
+        "use strict";
+        try {} catch (a) {
+            let a = "aa";
+        }
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
 if_dead_branch: {
     options = {
         conditionals: true,
