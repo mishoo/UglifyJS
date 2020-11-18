@@ -1490,13 +1490,51 @@ issue_4294: {
     expect: {
         A = "PASS";
         (function() {
-            var a = function({
-                [a]: {},
+            var b = function({
+                [b]: {},
             }) {}({
-                [a]: 0,
+                [b]: 0,
             });
             var b = A;
             console.log(b);
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4298: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        (function() {
+            var a = {
+                object: "PASS",
+            };
+            function f({
+                [typeof a]: b,
+            }) {
+                var a = b;
+                return a;
+            }
+            var c = f(a);
+            console.log(c);
+        })();
+    }
+    expect: {
+        (function() {
+            var a = {
+                object: "PASS",
+            };
+            function f({
+                [typeof a]: b,
+            }) {
+                var a = b;
+                return a;
+            }
+            var c = f(a);
+            console.log(c);
         })();
     }
     expect_stdout: "PASS"
