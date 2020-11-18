@@ -1503,6 +1503,25 @@ issue_4294: {
     node_version: ">=6"
 }
 
+issue_4297: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function(a) {
+            return { a } = a;
+        }(function() {}));
+    }
+    expect: {
+        console.log(typeof function(a) {
+            return { a } = a;
+        }(function() {}));
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
+
 issue_4298: {
     options = {
         merge_vars: true,
