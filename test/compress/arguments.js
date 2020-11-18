@@ -808,7 +808,7 @@ issue_4200: {
     expect_stdout: "undefined"
 }
 
-issue_4291: {
+issue_4291_1: {
     options = {
         arguments: true,
         keep_fargs: "strict",
@@ -826,4 +826,28 @@ issue_4291: {
         }()[0]);
     }
     expect_stdout: "PASS"
+}
+
+issue_4291_2: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        var a = function() {
+            if (arguments[0])
+                arguments[1] = "PASS";
+            return arguments;
+        }(42);
+        console.log(a[1], a[0], a.length);
+    }
+    expect: {
+        var a = function(argument_0) {
+            if (argument_0)
+                arguments[1] = "PASS";
+            return arguments;
+        }(42);
+        console.log(a[1], a[0], a.length);
+    }
+    expect_stdout: "PASS 42 1"
 }
