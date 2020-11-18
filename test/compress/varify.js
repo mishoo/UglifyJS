@@ -390,3 +390,22 @@ issue_4290_1_let: {
     expect_stdout: true
     node_version: ">=4"
 }
+
+drop_forin_let: {
+    options = {
+        loops: true,
+        toplevel: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        for (let a in console.log("PASS"));
+    }
+    expect: {
+        "use strict";
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
