@@ -1257,3 +1257,51 @@ issue_4290_1: {
     }
     expect_stdout: true
 }
+
+issue_4305_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            const arguments = function() {
+                while (console.log("PASS"));
+            };
+            arguments();
+        })();
+    }
+    expect: {
+        (function() {
+            const arguments = function() {
+                while (console.log("PASS"));
+            };
+            arguments();
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_4305_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            const a = function() {
+                while (console.log("aaaaa"));
+            };
+            a();
+        })();
+    }
+    expect: {
+        (function(a) {
+            const a = function() {
+                while (console.log("aaaaa"));
+            };
+            a();
+        })();
+    }
+    expect_stdout: true
+}
