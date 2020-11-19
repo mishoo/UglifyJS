@@ -1591,3 +1591,28 @@ issue_4301: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_4308: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        console.log(function({
+            [a = "FAIL"]: b
+        }, c) {
+            return c;
+        }(0, a));
+    }
+    expect: {
+        var a = "PASS";
+        console.log(function({
+            [a = "FAIL"]: b
+        }, c) {
+            return c;
+        }(0, a));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
