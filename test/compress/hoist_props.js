@@ -297,6 +297,33 @@ name_collision_3: {
     expect_stdout: "true 4 6"
 }
 
+name_collision_4: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var o = {
+                p: 0,
+                q: "PASS",
+            };
+            return function(o_p) {
+                if (!o.p) return o_p;
+            }(o.q);
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var o_p$0 = 0, o_q = "PASS";
+            return function(o_p) {
+                if (!o_p$0) return o_p;
+            }(o_q);
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
 contains_this_1: {
     options = {
         evaluate: true,
