@@ -57,6 +57,23 @@ retain_block: {
     expect_stdout: true
 }
 
+retain_catch: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {} catch (a) {
+            const a = "aa";
+        }
+    }
+    expect: {
+        try {} catch (a) {
+            const a = "aa";
+        }
+    }
+    expect_stdout: true
+}
+
 if_dead_branch: {
     options = {
         conditionals: true,
