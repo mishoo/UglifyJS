@@ -1134,3 +1134,55 @@ issue_4290_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4305_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            let arguments = function() {
+                while (console.log("PASS"));
+            };
+            arguments();
+        })();
+    }
+    expect: {
+        (function() {
+            let arguments = function() {
+                while (console.log("PASS"));
+            };
+            arguments();
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
+
+issue_4305_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function(a) {
+            let a = function() {
+                while (console.log("aaaaa"));
+            };
+            a();
+        })();
+    }
+    expect: {
+        "use strict";
+        (function(a) {
+            let a = function() {
+                while (console.log("aaaaa"));
+            };
+            a();
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
