@@ -1616,3 +1616,34 @@ issue_4308: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4312: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function f(b, c) {
+            return function({
+                [a = b]: d,
+            }) {}(c && c);
+        })("PASS", "FAIL");
+        console.log(a);
+    }
+    expect: {
+        var a;
+        b = "PASS",
+        (function({
+            [a = b]: d,
+        }){})((c = "FAIL") && c);
+        var b, c;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
