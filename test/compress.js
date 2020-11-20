@@ -63,7 +63,6 @@ function make_code(ast, options) {
 
 function parse_test(file) {
     var script = fs.readFileSync(file, "utf8");
-    // TODO try/catch can be removed after fixing https://github.com/mishoo/UglifyJS/issues/348
     try {
         var ast = U.parse(script, {
             filename: file
