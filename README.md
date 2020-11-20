@@ -868,6 +868,8 @@ can pass additional arguments that control the code output:
   }
   ```
 
+- `galio` (default `false`) -- enable workarounds for ANT Galio bugs
+
 - `indent_level` (default `4`)
 
 - `indent_start` (default `0`) -- prefix all lines by that many spaces
