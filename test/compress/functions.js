@@ -521,7 +521,7 @@ issue_2531_2: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 3,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         side_effects: true,
@@ -556,9 +556,10 @@ issue_2531_3: {
     options = {
         evaluate: true,
         inline: true,
-        passes: 3,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
+        sequences: true,
         side_effects: true,
         toplevel: true,
         unused: true,
