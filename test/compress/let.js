@@ -1186,3 +1186,45 @@ issue_4305_2: {
     expect_stdout: true
     node_version: ">=4"
 }
+
+issue_1753: {
+    mangle = {
+        toplevel: false,
+        webkit: true,
+    }
+    input: {
+        "use strict";
+        let l = null;
+        for (let i = 0; i < 1; i++)
+            console.log(i);
+    }
+    expect: {
+        "use strict";
+        let l = null;
+        for (let i = 0; i < 1; i++)
+            console.log(i);
+    }
+    expect_stdout: "0"
+    node_version: ">=4"
+}
+
+issue_1753_toplevel: {
+    mangle = {
+        toplevel: true,
+        webkit: true,
+    }
+    input: {
+        "use strict";
+        let l = null;
+        for (let i = 0; i < 1; i++)
+            console.log(i);
+    }
+    expect: {
+        "use strict";
+        let l = null;
+        for (let e = 0; e < 1; e++)
+            console.log(e);
+    }
+    expect_stdout: "0"
+    node_version: ">=4"
+}

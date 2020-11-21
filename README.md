@@ -135,6 +135,10 @@ a double dash to prevent input files being used as option arguments:
     --toplevel                  Compress and/or mangle variables in top level scope.
     --verbose                   Print diagnostic messages.
     --warn                      Print warning messages.
+    --webkit                    Support non-standard Safari/Webkit.
+                                Equivalent to setting `webkit: true` in `minify()`
+                                for `mangle` and `output` options.
+                                By default UglifyJS will not try to be Safari-proof.
     --wrap <name>               Embed everything in a big function, making the
                                 “exports” and “global” variables available. You
                                 need to pass an argument to this option to
@@ -518,6 +522,9 @@ if (result.error) throw result.error;
 
 - `warnings` (default `false`) — pass `true` to return compressor warnings
   in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
+
+- `webkit` (default `false`) -- enable workarounds for Safari/WebKit bugs.
+  PhantomJS users should set this option to `true`.
 
 ## Minify options structure
 
@@ -909,9 +916,6 @@ can pass additional arguments that control the code output:
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
 
 - `v8` (default `false`) -- enable workarounds for Chrome & Node.js bugs
-
-- `webkit` (default `false`) -- enable workarounds for WebKit bugs.
-  PhantomJS users should set this option to `true`.
 
 - `width` (default `80`) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
