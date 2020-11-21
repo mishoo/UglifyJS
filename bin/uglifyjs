@@ -111,6 +111,7 @@ function process_option(name, no_value) {
                 "  --validate                               Perform validation during AST manipulations.",
                 "  --verbose                                Print diagnostic messages.",
                 "  --warn                                   Print warning messages.",
+                "  --webkit                                 Support non-standard Safari/Webkit.",
                 "  --wrap <name>                            Embed everything as a function with “exports” corresponding to “name” globally.",
                 "  --reduce-test                            Reduce a standalone test case (assumes cloned repository).",
             ].join("\n"));
@@ -142,6 +143,7 @@ function process_option(name, no_value) {
       case "timings":
       case "toplevel":
       case "validate":
+      case "webkit":
         options[name] = true;
         break;
       case "keep-fnames":
