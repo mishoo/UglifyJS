@@ -1,3 +1,45 @@
+mangle_block: {
+    mangle = {
+        toplevel: false,
+    }
+    input: {
+        var o = "PASS";
+        {
+            const a = "FAIL";
+        }
+        console.log(o);
+    }
+    expect: {
+        var o = "PASS";
+        {
+            const a = "FAIL";
+        }
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}
+
+mangle_block_toplevel: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        var o = "PASS";
+        {
+            const a = "FAIL";
+        }
+        console.log(o);
+    }
+    expect: {
+        var o = "PASS";
+        {
+            const c = "FAIL";
+        }
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}
+
 mangle_catch_1: {
     mangle = {}
     input: {
@@ -11,8 +53,8 @@ mangle_catch_1: {
     expect: {
         try {
             throw "eeeee";
-        } catch (e) {
-            const o = typeof d;
+        } catch (o) {
+            const e = typeof d;
         }
         console.log(typeof a, typeof b);
     }
