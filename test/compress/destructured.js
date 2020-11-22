@@ -1647,3 +1647,40 @@ issue_4312: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4315: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            console;
+        }
+        var a = function() {
+            if ([ 0[f && f] ] = [])
+                return this;
+        }(), b;
+        do {
+            console.log("PASS");
+        } while (0 && (b = 0), b && a);
+    }
+    expect: {
+        [ 0[function() {
+            console
+        }] ] = [];
+        do {
+            console.log("PASS");
+        } while (void 0);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
