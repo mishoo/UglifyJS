@@ -3,7 +3,7 @@
   "description": "JavaScript parser, mangler/compressor and beautifier toolkit",
   "author": "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)",
   "license": "BSD-2-Clause",
-  "version": "3.11.6",
+  "version": "3.12.0",
   "engines": {
     "node": ">=0.8.0"
   },
