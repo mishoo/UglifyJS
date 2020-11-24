@@ -314,6 +314,7 @@ var TYPEOF_OUTCOMES = [
     "crap",
 ];
 
+var avoid_vars = [];
 var block_vars = [];
 var unique_vars = [];
 var loops = 0;
@@ -393,16 +394,12 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
     }
 
     function createKey(recurmax, keys) {
-        var save = VAR_NAMES;
-        VAR_NAMES = VAR_NAMES.filter(function(name) {
-            return avoid.indexOf(name) < 0;
-        });
-        var len = VAR_NAMES.length;
+        addAvoidVars(avoid);
         var key;
         do {
             key = createObjectKey(recurmax, stmtDepth, canThrow);
         } while (keys.indexOf(key) >= 0);
-        VAR_NAMES = save.concat(VAR_NAMES.slice(len));
+        removeAvoidVars(avoid);
         return key;
     }
 
@@ -511,6 +508,8 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
     }
     unique_vars.length -= 6;
     fn(function() {
+        addAvoidVars(consts);
+        addAvoidVars(lets);
         if (rng(2)) {
             return createDefinitions("const", consts) + "\n" + createDefinitions("let", lets) + "\n";
         } else {
@@ -522,11 +521,6 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
 
     function createDefinitions(type, names) {
         if (!names.length) return "";
-        var save = VAR_NAMES;
-        VAR_NAMES = VAR_NAMES.filter(function(name) {
-            return names.indexOf(name) < 0;
-        });
-        var len = VAR_NAMES.length;
         var s = type + " ";
         switch (rng(10)) {
           case 0:
@@ -547,18 +541,18 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
             }).join(", ") + "};";
             break;
           default:
-            s += names.map(function(name, i) {
+            s += names.map(function(name) {
                 if (type == "let" && !rng(10)) {
-                    VAR_NAMES.push(name);
+                    removeAvoidVars([ name ]);
                     return name;
                 }
                 var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
-                VAR_NAMES.push(name);
+                removeAvoidVars([ name ]);
                 return name + " = " + value;
             }).join(", ") + ";";
             break;
         }
-        VAR_NAMES = save.concat(VAR_NAMES.slice(len));
+        removeAvoidVars(names);
         return s;
     }
 }
@@ -1300,10 +1294,25 @@ function createUnaryPostfix() {
     return UNARY_POSTFIX[rng(UNARY_POSTFIX.length)];
 }
 
+function addAvoidVars(names) {
+    avoid_vars = avoid_vars.concat(names);
+}
+
+function removeAvoidVars(names) {
+    names.forEach(function(name) {
+        var index = avoid_vars.lastIndexOf(name);
+        if (index >= 0) avoid_vars.splice(index, 1);
+    });
+}
+
 function getVarName(noConst) {
     // try to get a generated name reachable from current scope. default to just `a`
-    var name = VAR_NAMES[INITIAL_NAMES_LEN + rng(VAR_NAMES.length - INITIAL_NAMES_LEN)];
-    return !name || noConst && block_vars.indexOf(name) >= 0 ? "a" : name;
+    var name, tries = 10;
+    do {
+        if (--tries < 0) return "a";
+        name = VAR_NAMES[INITIAL_NAMES_LEN + rng(VAR_NAMES.length - INITIAL_NAMES_LEN)];
+    } while (!name || avoid_vars.indexOf(name) >= 0 || noConst && block_vars.indexOf(name) >= 0);
+    return name;
 }
 
 function createVarName(maybe, dontStore) {
