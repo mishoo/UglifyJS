@@ -1684,3 +1684,29 @@ issue_4315: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4319: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a) {
+            while (!a);
+        }
+        console.log(function({}) {
+            return f(console);
+        }(0));
+    }
+    expect: {
+        function f(a) {
+            while (!a);
+        }
+        console.log(function({}) {
+            return f(console);
+        }(0));
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
