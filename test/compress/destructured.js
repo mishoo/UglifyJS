@@ -1741,3 +1741,39 @@ issue_4321: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4323: {
+    options = {
+        ie8: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function b({
+            [function a() {
+                console.log(typeof a);
+            }()]: d,
+        }) {})(0);
+        (function c(e) {
+            e.p;
+        })(1, console.log);
+    }
+    expect: {
+        var a = 0;
+        (function({
+            [function a() {
+                console.log(typeof a);
+            }()]: d,
+        }) {})(0);
+        e = 1,
+        console.log,
+        void e.p;
+        var e;
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
