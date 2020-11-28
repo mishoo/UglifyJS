@@ -1710,3 +1710,34 @@ issue_4319: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_4321: {
+    options = {
+        inline: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        try {
+            console.log(function({}) {
+                return function() {
+                    while (!console);
+                }();
+            }());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            console.log(function({}) {
+                return function() {
+                    while (!console);
+                }();
+            }());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
