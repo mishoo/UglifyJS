@@ -1052,6 +1052,7 @@ issue_4084: {
     options = {
         keep_fargs: "strict",
         loops: true,
+        passes: 2,
         reduce_vars: true,
         unused: true,
     }
