@@ -433,3 +433,40 @@ trim_new: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4325: {
+    options = {
+        keep_fargs: "strict",
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            (function(b, c) {
+                try {
+                    c.p = 0;
+                } catch (e) {
+                    console.log("PASS");
+                    return b;
+                }
+                c;
+            })(f++);
+        })();
+    }
+    expect: {
+        (function() {
+            (function() {
+                try {
+                    (void 0).p = 0;
+                } catch (e) {
+                    console.log("PASS");
+                    return;
+                }
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+}
