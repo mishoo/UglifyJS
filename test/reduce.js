@@ -135,7 +135,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 if (expr && !(expr instanceof U.AST_Hole)) {
                     node.start._permute++;
                     CHANGED = true;
-                    return expr;
+                    return expr instanceof U.AST_Spread ? expr.expression : expr;
                 }
             }
             else if (node instanceof U.AST_Binary) {
@@ -164,7 +164,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 ][ ((node.start._permute += step) * steps | 0) % 3 ];
                 if (expr) {
                     CHANGED = true;
-                    return expr;
+                    return expr instanceof U.AST_Spread ? expr.expression : expr;
                 }
                 if (node.expression instanceof U.AST_Function) {
                     // hoist and return expressions from the IIFE function expression
@@ -381,9 +381,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
 
             if (in_list) {
-                // special case to drop object properties and switch branches
-                if (parent instanceof U.AST_Object
-                    || parent instanceof U.AST_Switch && parent.expression != node) {
+                // drop switch branches
+                if (parent instanceof U.AST_Switch && parent.expression != node) {
                     node.start._permute++;
                     CHANGED = true;
                     return List.skip;
@@ -404,7 +403,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 }
 
                 // skip element/property from (destructured) array/object
-                if (parent instanceof U.AST_Array || parent instanceof U.AST_Destructured || parent instanceof AST_Object) {
+                if (parent instanceof U.AST_Array
+                    || parent instanceof U.AST_Destructured
+                    || parent instanceof U.AST_Object) {
                     node.start._permute++;
                     CHANGED = true;
                     return List.skip;
