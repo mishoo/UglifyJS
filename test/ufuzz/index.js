@@ -371,9 +371,24 @@ function createParams(noDuplicate) {
 }
 
 function createArgs(recurmax, stmtDepth, canThrow) {
+    recurmax--;
     var args = [];
-    for (var n = rng(4); --n >= 0;) {
-        args.push(rng(2) ? createValue() : createExpression(recurmax - 1, COMMA_OK, stmtDepth, canThrow));
+    for (var n = rng(4); --n >= 0;) switch (rng(50)) {
+      case 0:
+      case 1:
+        var name = getVarName();
+        if (canThrow && rng(8) === 0) {
+            args.push("..." + name);
+        } else {
+            args.push('...("" + ' + name + ")");
+        }
+        break;
+      case 2:
+        args.push("..." + createArrayLiteral(recurmax, stmtDepth, canThrow));
+        break;
+      default:
+        args.push(rng(2) ? createValue() : createExpression(recurmax, COMMA_OK, stmtDepth, canThrow));
+        break;
     }
     return args.join(", ");
 }
@@ -1044,13 +1059,30 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
 
 function createArrayLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
-    var arr = "[";
-    for (var i = rng(6); --i >= 0;) {
+    var arr = [];
+    for (var i = rng(6); --i >= 0;) switch (rng(50)) {
+      case 0:
+      case 1:
         // in rare cases produce an array hole element
-        var element = rng(20) ? createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) : "";
-        arr += element + ", ";
+        arr.push("");
+        break;
+      case 2:
+      case 3:
+        var name = getVarName();
+        if (canThrow && rng(8) === 0) {
+            arr.push("..." + name);
+        } else {
+            arr.push('...("" + ' + name + ")");
+        }
+        break;
+      case 4:
+        arr.push("..." + createArrayLiteral(recurmax, stmtDepth, canThrow));
+        break;
+      default:
+        arr.push(createExpression(recurmax, COMMA_OK, stmtDepth, canThrow));
+        break;
     }
-    return arr + "]";
+    return "[" + arr.join(", ") + "]";
 }
 
 var SAFE_KEYS = [
@@ -1135,12 +1167,19 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var obj = ["({"];
-    for (var i = rng(6); --i >= 0;) switch (rng(30)) {
+    for (var i = rng(6); --i >= 0;) switch (rng(50)) {
       case 0:
-        obj.push(createObjectFunction(recurmax, stmtDepth, canThrow));
-        break;
       case 1:
         obj.push(getVarName() + ",");
+        break;
+      case 2:
+        obj.push(createObjectFunction(recurmax, stmtDepth, canThrow));
+        break;
+      case 3:
+        obj.push("..." + getVarName() + ",");
+        break;
+      case 4:
+        obj.push("..." + createObjectLiteral(recurmax, stmtDepth, canThrow) + ",");
         break;
       default:
         obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "),");
@@ -1591,6 +1630,9 @@ function patch_try_catch(orig, toplevel) {
             } else if (result.name == "TypeError" && /'in'/.test(result.message)) {
                 index = result.ufuzz_catch;
                 return orig.slice(0, index) + result.ufuzz_var + ' = new Error("invalid `in`");' + orig.slice(index);
+            } else if (result.name == "TypeError" && /not iterable/.test(result.message)) {
+                index = result.ufuzz_catch;
+                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("spread not iterable");' + orig.slice(index);
             } else if (result.name == "RangeError" && result.message == "Maximum call stack size exceeded") {
                 index = result.ufuzz_try;
                 return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
@@ -1656,6 +1698,7 @@ for (var round = 1; round <= num_iterations; round++) {
                 ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
             }
             // ignore difference in error message caused by `in`
+            // ignore difference in error message caused by spread syntax
             // ignore difference in depth of termination caused by infinite recursion
             if (!ok) {
                 var orig_skipped = patch_try_catch(original_code, toplevel);
