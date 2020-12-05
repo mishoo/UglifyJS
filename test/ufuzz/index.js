@@ -298,6 +298,8 @@ var VAR_NAMES = [
     "arguments",
     "Math",
     "parseInt",
+    "async",
+    "await",
 ];
 var INITIAL_NAMES_LEN = VAR_NAMES.length;
 
@@ -317,6 +319,7 @@ var TYPEOF_OUTCOMES = [
 var avoid_vars = [];
 var block_vars = [];
 var unique_vars = [];
+var async = false;
 var loops = 0;
 var funcs = 0;
 var called = Object.create(null);
@@ -335,6 +338,7 @@ function createTopLevelCode() {
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
     block_vars.length = 0;
     unique_vars.length = 0;
+    async = false;
     loops = 0;
     funcs = 0;
     called = Object.create(null);
@@ -393,7 +397,7 @@ function createArgs(recurmax, stmtDepth, canThrow) {
     return args.join(", ");
 }
 
-function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames, maybe, dontStore) {
+function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames, was_async) {
     var avoid = [];
     var len = unique_vars.length;
     var pairs = createPairs(recurmax);
@@ -403,7 +407,10 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
     function createAssignmentValue(recurmax) {
         var current = VAR_NAMES;
         VAR_NAMES = (varNames || VAR_NAMES).slice();
+        var save_async = async;
+        if (was_async != null) async = was_async;
         var value = varNames && rng(2) ? createValue() : createExpression(recurmax, noComma, stmtDepth, canThrow);
+        async = save_async;
         VAR_NAMES = current;
         return value;
     }
@@ -429,7 +436,7 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
             }
             if (i < m) {
                 unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
-                var name = createVarName(maybe, dontStore);
+                var name = createVarName(MANDATORY);
                 unique_vars.length -= 6;
                 avoid.push(name);
                 unique_vars.push(name);
@@ -490,7 +497,7 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
             break;
           default:
             unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
-            var name = createVarName(maybe, dontStore);
+            var name = createVarName(MANDATORY);
             unique_vars.length -= 6;
             avoid.push(name);
             unique_vars.push(name);
@@ -572,12 +579,18 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
     }
 }
 
+function makeFunction(name) {
+    return (async ? "async function " : "function ") + name;
+}
+
 function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ";"; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
     var s = [];
     var name, args;
     var varNames = VAR_NAMES.slice();
+    var save_async = async;
+    async = rng(50) == 0;
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
         if (allowDefun || rng(5) > 0) {
             name = "f" + funcs++;
@@ -589,13 +602,13 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         var params;
         if ((!allowDefun || !(name in called)) && rng(2)) {
             called[name] = false;
-            var pairs = createAssignmentPairs(recurmax, COMMA_OK, stmtDepth, canThrow, varNames, MANDATORY);
+            var pairs = createAssignmentPairs(recurmax, COMMA_OK, stmtDepth, canThrow, varNames, save_async);
             params = pairs.names.join(", ");
             args = pairs.values.join(", ");
         } else {
             params = createParams();
         }
-        s.push("function " + name + "(" + params + "){", strictMode());
+        s.push(makeFunction(name) + "(" + params + "){", strictMode());
         s.push(defns());
         if (rng(5) === 0) {
             // functions with functions. lower the recursion to prevent a mess.
@@ -607,6 +620,7 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         s.push("}", "");
         s = filterDirective(s).join("\n");
     });
+    async = save_async;
     VAR_NAMES = varNames;
 
     if (!allowDefun) {
@@ -733,7 +747,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return "switch (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") { " + createSwitchParts(recurmax, 4, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_VAR:
         if (!rng(20)) {
-            var pairs = createAssignmentPairs(recurmax, NO_COMMA, stmtDepth, canThrow, null, MANDATORY);
+            var pairs = createAssignmentPairs(recurmax, NO_COMMA, stmtDepth, canThrow);
             return "var " + pairs.names.map(function(name, index) {
                 return index in pairs.values ? name + " = " + pairs.values[index] : name;
             }).join(", ") + ";";
@@ -853,7 +867,8 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case 2:
         return "((c = c + 1) + (" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + "))"; // c only gets incremented
       default:
-        return "(" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + ")";
+        var expr = "(" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + ")";
+        return async && rng(50) == 0 ? "(await" + expr + ")" : expr;
     }
 }
 
@@ -909,6 +924,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
         var nameLenBefore = VAR_NAMES.length;
+        var save_async = async;
+        async = rng(50) == 0;
         unique_vars.push("c");
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
         unique_vars.pop();
@@ -916,7 +933,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         switch (rng(5)) {
           case 0:
             s.push(
-                "(function " + name + "(){",
+                "(" + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 rng(2) == 0 ? "})" : "})()"
@@ -924,7 +941,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
           case 1:
             s.push(
-                "+function " + name + "(){",
+                "+" + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "}()"
@@ -932,7 +949,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
           case 2:
             s.push(
-                "!function " + name + "(){",
+                "!" + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "}()"
@@ -940,13 +957,14 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
           case 3:
             s.push(
-                "void function " + name + "(){",
+                "void " + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "}()"
             );
             break;
           default:
+            async = false;
             createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
                 var instantiate = rng(4) ? "new " : "";
                 s.push(
@@ -965,6 +983,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             });
             break;
         }
+        async = save_async;
         VAR_NAMES.length = nameLenBefore;
         return filterDirective(s).join("\n");
       case p++:
@@ -1361,7 +1380,7 @@ function createVarName(maybe, dontStore) {
         do {
             name = VAR_NAMES[rng(VAR_NAMES.length)];
             if (suffix) name += "_" + suffix;
-        } while (unique_vars.indexOf(name) >= 0 || block_vars.indexOf(name) >= 0);
+        } while (unique_vars.indexOf(name) >= 0 || block_vars.indexOf(name) >= 0 || async && name == "await");
         if (suffix && !dontStore) VAR_NAMES.push(name);
         return name;
     }

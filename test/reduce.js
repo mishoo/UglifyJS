@@ -618,7 +618,7 @@ function is_timed_out(result) {
 }
 
 function is_statement(node) {
-    return node instanceof U.AST_Statement && !(node instanceof U.AST_Function);
+    return node instanceof U.AST_Statement && !(node instanceof U.AST_AsyncFunction || node instanceof U.AST_Function);
 }
 
 function merge_sequence(array, node) {

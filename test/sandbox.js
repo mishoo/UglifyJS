@@ -32,11 +32,12 @@ function createContext() {
 
     function safe_log(arg, level) {
         if (arg) switch (typeof arg) {
-        case "function":
+          case "function":
             return arg.toString();
-        case "object":
+          case "object":
             if (arg === global) return "[object global]";
             if (/Error$/.test(arg.name)) return arg.toString();
+            if (typeof arg.then == "function") return "[object Promise]";
             arg.constructor.toString();
             if (level--) for (var key in arg) {
                 var desc = Object.getOwnPropertyDescriptor(arg, key);
