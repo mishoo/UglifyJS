@@ -369,3 +369,33 @@ unused_var_side_effects: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4329: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log({
+            ...{
+                get 0() {
+                    return "FAIL";
+                },
+                ...{
+                    0: "PASS",
+                },
+            },
+        }[0]);
+    }
+    expect: {
+        console.log({
+            ...{
+                get 0() {
+                    return "FAIL";
+                },
+                [0]: "PASS",
+            },
+        }[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
