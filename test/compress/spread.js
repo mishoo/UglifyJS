@@ -399,3 +399,29 @@ issue_4329: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4331: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS", b;
+        console,
+        b = a;
+        (function() {
+            a++;
+        })(...a);
+        console.log(b);
+    }
+    expect: {
+        var a = "PASS", b;
+        console;
+        (function() {
+            a++;
+        })(...b = a);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
