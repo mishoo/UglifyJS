@@ -1,0 +1,218 @@
+await_await: {
+    input: {
+        (async function() {
+            console.log("PASS");
+            await await 42;
+        })();
+    }
+    expect: {
+        (async function() {
+            console.log("PASS");
+            await await 42;
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+defun_name: {
+    input: {
+        async function await() {
+            console.log("PASS");
+        }
+        await();
+    }
+    expect: {
+        async function await() {
+            console.log("PASS");
+        }
+        await();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+nested_await: {
+    input: {
+        (async function() {
+            console.log(function(await) {
+                return await;
+            }("PASS"));
+        })();
+    }
+    expect: {
+        (async function() {
+            console.log(function(await) {
+                return await;
+            }("PASS"));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+reduce_single_use_defun: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        async function f(a) {
+            console.log(a);
+        }
+        f("PASS");
+    }
+    expect: {
+        (async function(a) {
+            console.log(a);
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+dont_inline: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            A;
+        })().catch(function() {});
+        console.log("PASS");
+    }
+    expect: {
+        (async function() {
+            A;
+        })().catch(function() {});
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+evaluate: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = async function() {}();
+        console.log(typeof a);
+    }
+    expect: {
+        var a = async function() {}();
+        console.log(typeof a);
+    }
+    expect_stdout: "object"
+    node_version: ">=8"
+}
+
+negate: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        console && async function() {} && console.log("PASS");
+    }
+    expect: {
+        console && async function() {} && console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+negate_iife: {
+    options = {
+        negate_iife: true,
+    }
+    input: {
+        (async function() {
+            console.log("PASS");
+        })();
+    }
+    expect: {
+        !async function() {
+            console.log("PASS");
+        }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+collapse_vars_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        (async function() {
+            a = "PASS";
+            await 42;
+            return "PASS";
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (async function() {
+            a = "PASS";
+            await 42;
+            return "PASS";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+collapse_vars_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        (async function() {
+            await (a = "PASS");
+            return "PASS";
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (async function() {
+            await (a = "PASS");
+            return "PASS";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+collapse_vars_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        (async function() {
+            await (a = "PASS", 42);
+            return "PASS";
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (async function() {
+            await (a = "PASS", 42);
+            return "PASS";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
