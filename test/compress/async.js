@@ -328,3 +328,62 @@ property_access_expression: {
     expect_stdout: "function"
     node_version: ">=8"
 }
+
+issue_4347_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        f();
+        a = "bar";
+        f();
+        async function f() {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = "foo";
+        f();
+        a = "bar";
+        f();
+        async function f() {
+            console.log(a);
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
+
+issue_4347_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (async function() {
+            throw 42;
+            a = "FAIL";
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (async function() {
+            throw 42;
+            a = "FAIL";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
