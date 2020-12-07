@@ -287,3 +287,22 @@ issue_4337: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4340: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (async function a(a) {
+            console.log(a || "PASS");
+        })();
+    }
+    expect: {
+        (async function a(a) {
+            console.log(a || "PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
