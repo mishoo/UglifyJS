@@ -425,3 +425,25 @@ issue_4331: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4342: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        try {
+            new function() {}(...42);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            [ ...42 ];
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
