@@ -362,6 +362,10 @@ function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
     return s;
 }
 
+function addTrailingComma(list) {
+    return list && rng(20) == 0 ? list + "," : list;
+}
+
 function createParams(noDuplicate) {
     var len = unique_vars.length;
     var params = [];
@@ -371,7 +375,7 @@ function createParams(noDuplicate) {
         params.push(name);
     }
     unique_vars.length = len;
-    return params.join(", ");
+    return addTrailingComma(params.join(", "));
 }
 
 function createArgs(recurmax, stmtDepth, canThrow) {
@@ -394,7 +398,7 @@ function createArgs(recurmax, stmtDepth, canThrow) {
         args.push(rng(2) ? createValue() : createExpression(recurmax, COMMA_OK, stmtDepth, canThrow));
         break;
     }
-    return args.join(", ");
+    return addTrailingComma(args.join(", "));
 }
 
 function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames, was_async) {
@@ -463,7 +467,10 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
                 while (!rng(10)) {
                     var index = rng(pairs.names.length + 1);
                     pairs.names.splice(index, 0, "");
-                    pairs.values.splice(index, 0, rng(2) ? createAssignmentValue(recurmax) : "");
+                    if (rng(2)) {
+                        if (index > pairs.values.length) pairs.values.length = index;
+                        pairs.values.splice(index, 0, createAssignmentValue(recurmax));
+                    }
                 }
                 names.unshift("[ " + pairs.names.join(", ") + " ]");
                 values.unshift("[ " + pairs.values.join(", ") + " ]");
@@ -485,14 +492,14 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
                         keys[index] = key;
                     }
                 });
-                names.unshift("{ " + pairs.names.map(function(name, index) {
+                names.unshift("{ " + addTrailingComma(pairs.names.map(function(name, index) {
                     var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
                     return key ? key + ": " + name : name;
-                }).join(", ") + " }");
-                values.unshift("{ " + pairs.values.map(function(value, index) {
+                }).join(", ")) + " }");
+                values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
                     var key = index in keys ? keys[index] : createKey(recurmax, keys);
                     return key + ": " + value;
-                }).join(", ") + " }");
+                }).join(", ")) + " }");
             }
             break;
           default:
@@ -603,8 +610,8 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         if ((!allowDefun || !(name in called)) && rng(2)) {
             called[name] = false;
             var pairs = createAssignmentPairs(recurmax, COMMA_OK, stmtDepth, canThrow, varNames, save_async);
-            params = pairs.names.join(", ");
-            args = pairs.values.join(", ");
+            params = addTrailingComma(pairs.names.join(", "));
+            args = addTrailingComma(pairs.values.join(", "));
         } else {
             params = createParams();
         }
@@ -968,7 +975,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
                 var instantiate = rng(4) ? "new " : "";
                 s.push(
-                    instantiate + "function " + name + "(){",
+                    instantiate + "function " + name + "(" + createParams() + "){",
                     strictMode(),
                     defns()
                 );
@@ -976,11 +983,11 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                     if (rng(2)) s.push("this." + getDotKey(true) + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ";");
                     else  s.push("this[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]" + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ";");
                 }
-                s.push(
-                    _createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                    rng(2) == 0 ? "}" : "}()"
-                );
+                s.push(_createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
             });
+            async = save_async;
+            VAR_NAMES.length = nameLenBefore;
+            s.push(rng(2) == 0 ? "}" : "}(" + createArgs(recurmax, stmtDepth, canThrow) + ")");
             break;
         }
         async = save_async;
