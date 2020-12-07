@@ -264,3 +264,26 @@ issue_4335_2: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4337: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            a();
+        })(async function() {
+            console.log("PASS");
+        });
+    }
+    expect: {
+        (function(a) {
+            (async function() {
+                console.log("PASS");
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
