@@ -751,6 +751,8 @@ to be `false` and all symbol names will be omitted.
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
 
+- `spread` (default: `true`) -- flatten spread expressions.
+
 - `strings` (default: `true`) -- compact string concatenations.
 
 - `switches` (default: `true`) -- de-duplicate and remove unreachable `switch` branches

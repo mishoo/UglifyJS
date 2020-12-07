@@ -105,8 +105,8 @@ dont_inline: {
 
 do_inline: {
     options = {
-        properties: true,
         inline: true,
+        spread: true,
     }
     input: {
         console.log(function(a) {
@@ -144,8 +144,8 @@ drop_empty_call_1: {
 
 drop_empty_call_2: {
     options = {
-        properties: true,
         side_effects: true,
+        spread: true,
     }
     input: {
         (function() {})(...[ console.log("PASS") ]);
@@ -159,7 +159,7 @@ drop_empty_call_2: {
 
 convert_hole: {
     options = {
-        properties: true,
+        spread: true,
     }
     input: {
         console.log(...[ "PASS", , 42 ]);
@@ -295,7 +295,8 @@ keep_getter: {
 
 keep_accessor: {
     options = {
-        properties: true,
+        objects: true,
+        spread: true,
     }
     input: {
         var o = {
@@ -372,7 +373,8 @@ unused_var_side_effects: {
 
 issue_4329: {
     options = {
-        properties: true,
+        objects: true,
+        spread: true,
     }
     input: {
         console.log({
@@ -423,7 +425,7 @@ issue_4331: {
         console.log(b);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=6"
 }
 
 issue_4342: {
@@ -446,4 +448,34 @@ issue_4342: {
     }
     expect_stdout: "PASS"
     node_version: ">=6"
+}
+
+issue_4345: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        console.log({
+            ...{
+                get 42() {
+                    return "FAIL";
+                },
+                ...{},
+                42: "PASS",
+            },
+        }[42]);
+    }
+    expect: {
+        console.log({
+            ...{
+                get 42() {
+                    return "FAIL";
+                },
+                [42]: "PASS",
+            },
+        }[42]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
 }

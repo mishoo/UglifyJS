@@ -45,8 +45,8 @@ duplicate_key_strict: {
         "use strict";
         var o = {
             a: 1,
-            b: 2,
             a: 3,
+            b: 2,
         };
         for (var k in o)
             console.log(k, o[k]);
@@ -323,8 +323,8 @@ issue_4269_3: {
     }
     expect: {
         console.log({
-            ["foo"]: "bar",
-            get 42() {
+            foo: "bar",
+            get [42]() {
                 return "FAIL";
             },
             42: "PASS",
@@ -353,8 +353,8 @@ issue_4269_4: {
             get 42() {
                 return "FAIL";
             },
-            ["foo"]: "bar",
-            42: "PASS",
+            foo: "bar",
+            [42]: "PASS",
         }[42]);
     }
     expect_stdout: "PASS"
