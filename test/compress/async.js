@@ -306,3 +306,25 @@ issue_4340: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+call_expression: {
+    input: {
+        console.log(typeof async function(log) {
+            (await log)("FAIL");
+        }(console.log).then);
+    }
+    expect_exact: 'console.log(typeof async function(log){(await log)("FAIL")}(console.log).then);'
+    expect_stdout: "function"
+    node_version: ">=8"
+}
+
+property_access_expression: {
+    input: {
+        console.log(typeof async function(con) {
+            (await con).log("FAIL");
+        }(console).then);
+    }
+    expect_exact: 'console.log(typeof async function(con){(await con).log("FAIL")}(console).then);'
+    expect_stdout: "function"
+    node_version: ">=8"
+}
