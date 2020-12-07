@@ -467,9 +467,13 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
                 while (!rng(10)) {
                     var index = rng(pairs.names.length + 1);
                     pairs.names.splice(index, 0, "");
-                    if (rng(2)) {
-                        if (index > pairs.values.length) pairs.values.length = index;
-                        pairs.values.splice(index, 0, createAssignmentValue(recurmax));
+                    if (index < pairs.values.length) {
+                        pairs.values.splice(index, 0, rng(2) ? createAssignmentValue(recurmax) : "");
+                    } else switch (rng(5)) {
+                      case 0:
+                        pairs.values[index] = createAssignmentValue(recurmax);
+                      case 1:
+                        pairs.values.length = index + 1;
                     }
                 }
                 names.unshift("[ " + pairs.names.join(", ") + " ]");
