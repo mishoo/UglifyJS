@@ -216,3 +216,51 @@ collapse_vars_3: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4335_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var await = "PASS";
+        (async function() {
+            console.log(function() {
+                return await;
+            }());
+        })();
+    }
+    expect: {
+        var await = "PASS";
+        (async function() {
+            console.log(function() {
+                return await;
+            }());
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4335_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            console.log(function() {
+                function await() {}
+                return "PASS";
+            }());
+        })();
+    }
+    expect: {
+        (async function() {
+            console.log(function() {
+                function await() {}
+                return "PASS";
+            }());
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
