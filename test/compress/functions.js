@@ -5213,3 +5213,13 @@ issue_4265: {
     }
     expect_stdout: "undefined"
 }
+
+trailing_comma: {
+    input: {
+        new function(a, b,) {
+            console.log(b, a,);
+        }(42, "PASS",);
+    }
+    expect_exact: 'new function(a,b){console.log(b,a)}(42,"PASS");'
+    expect_stdout: "PASS 42"
+}
