@@ -1452,3 +1452,37 @@ issue_3619: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4353_1: {
+    options = {
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(a) {}.length);
+    }
+    expect: {
+        console.log(function(a) {}.length);
+    }
+    expect_stdout: "1"
+}
+
+issue_4353_2: {
+    options = {
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f(a) {
+            while (console.log("PASS"));
+        })();
+    }
+    expect: {
+        (function() {
+            while (console.log("PASS"));
+        })();
+    }
+    expect_stdout: "PASS"
+}
