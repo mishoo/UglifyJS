@@ -387,3 +387,60 @@ issue_4347_2: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4349_1: {
+    input: {
+        console.log(typeof async function() {
+            await /abc/;
+        }().then);
+    }
+    expect_exact: "console.log(typeof async function(){await/abc/}().then);"
+    expect_stdout: "function"
+    node_version: ">=8"
+}
+
+issue_4349_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof async function() {
+            (function(a) {
+                this[a];
+            }(await 0));
+        }().then);
+    }
+    expect: {
+        console.log(typeof async function() {
+            (function(a) {
+                this[a];
+            }(await 0));
+        }().then);
+    }
+    expect_stdout: "function"
+    node_version: ">=8"
+}
+
+issue_4349_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function(await) {
+            return async function(a) {
+                this[a];
+            }(await);
+        }(this).then);
+    }
+    expect: {
+        console.log(typeof function(await) {
+            return async function(a) {
+                this[a];
+            }(await);
+        }(this).then);
+    }
+    expect_stdout: "function"
+    node_version: ">=8"
+}
