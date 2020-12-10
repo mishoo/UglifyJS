@@ -1777,3 +1777,32 @@ issue_4323: {
     expect_stdout: "function"
     node_version: ">=6"
 }
+
+issue_4355: {
+    options = {
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function({
+            [function() {
+                for (a in "foo");
+            }()]: b,
+        }) {
+            var a;
+        })(0);
+        console.log(a);
+    }
+    expect: {
+        var a;
+        (function({
+            [function() {
+                for (a in "foo");
+            }()]: b,
+        }) {})(0);
+        console.log(a);
+    }
+    expect_stdout: "2"
+    node_version: ">=6"
+}
