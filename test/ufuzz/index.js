@@ -722,17 +722,17 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
-        return "{var brake" + loop + " = 5; " + label.target + "do {" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "} while ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") && --brake" + loop + " > 0);}";
+        return "{var brake" + loop + " = 5; " + label.target + "do {" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "} while (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " && --brake" + loop + " > 0);}";
       case STMT_WHILE:
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
-        return "{var brake" + loop + " = 5; " + label.target + "while ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") && --brake" + loop + " > 0)" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
+        return "{var brake" + loop + " = 5; " + label.target + "while (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " && --brake" + loop + " > 0)" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_FOR_LOOP:
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
-        return label.target + "for (var brake" + loop + " = 5; (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") && brake" + loop + " > 0; --brake" + loop + ")" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
+        return label.target + "for (var brake" + loop + " = 5; " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " && brake" + loop + " > 0; --brake" + loop + ")" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
       case STMT_FOR_IN:
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
@@ -931,7 +931,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow);
       case p++:
-        return createExpression(recurmax, noComma, stmtDepth, canThrow) + "?" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ":" + createExpression(recurmax, noComma, stmtDepth, canThrow);
+        return createExpression(recurmax, noComma, stmtDepth, canThrow) + " ? " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + " : " + createExpression(recurmax, noComma, stmtDepth, canThrow);
       case p++:
       case p++:
         var nameLenBefore = VAR_NAMES.length;
@@ -1031,14 +1031,13 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createUnarySafePrefix() + "(" + createNestedBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
       case p++:
-        return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || a || 3).toString() ";
+        return " (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " || a || 3).toString() ";
       case p++:
-        return " /[abc4]/.test(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
+        return " /[abc4]/.test((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " || b || 5).toString()) ";
       case p++:
-        return " /[abc4]/g.exec(((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") || b || 5).toString()) ";
+        return " /[abc4]/g.exec((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " || b || 5).toString()) ";
       case p++:
-        return " ((" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) +
-            ") || " + rng(10) + ").toString()[" +
+        return " (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " || " + rng(10) + ").toString()[" +
             createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "] ";
       case p++:
         return createArrayLiteral(recurmax, stmtDepth, canThrow);
@@ -1209,10 +1208,10 @@ function createObjectLiteral(recurmax, stmtDepth, canThrow) {
         obj.push("..." + getVarName() + ",");
         break;
       case 4:
-        obj.push("..." + createObjectLiteral(recurmax, stmtDepth, canThrow) + ",");
+        obj.push("..." + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ",");
         break;
       default:
-        obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ":(" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "),");
+        obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ": " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ",");
         break;
     }
     obj.push("})");

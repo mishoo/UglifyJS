@@ -1175,6 +1175,8 @@ To allow for better optimizations, the compiler makes various assumptions:
 - Object properties can be added, removed and modified (not prevented with
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
+- Iteration order of keys over an object which contains spread syntax in later
+  versions of Chrome and Node.js may be altered.
 - When `toplevel` is enabled, UglifyJS effectively assumes input code is wrapped
   within `function(){ ... }`, thus forbids aliasing of declared global variables:
   ```js

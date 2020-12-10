@@ -250,21 +250,7 @@ reduce_vars_2: {
     node_version: ">=6"
 }
 
-drop_object: {
-    options = {
-        side_effects: true,
-    }
-    input: {
-        ({ ...console.log("PASS") });
-    }
-    expect: {
-        console.log("PASS");
-    }
-    expect_stdout: "PASS"
-    node_version: ">=8"
-}
-
-keep_getter: {
+keep_getter_1: {
     options = {
         side_effects: true,
     }
@@ -287,6 +273,96 @@ keep_getter: {
                     console.log("PASS");
                 },
             },
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+keep_getter_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            ...(console.log("foo"), {
+                get p() {
+                    console.log("bar");
+                },
+            }),
+        });
+    }
+    expect: {
+        ({
+            ...(console.log("foo"), {
+                get p() {
+                    console.log("bar");
+                },
+            }),
+        });
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
+
+keep_getter_3: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            ...function() {
+                return {
+                    get p() {
+                        console.log("PASS");
+                    },
+                };
+            }(),
+        });
+    }
+    expect: {
+        ({
+            ...function() {
+                return {
+                    get p() {
+                        console.log("PASS");
+                    },
+                };
+            }(),
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+keep_getter_4: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            },
+        };
+        ({
+            q: o,
+            ...o,
+        });
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            },
+        };
+        ({
+            ...o,
         });
     }
     expect_stdout: "PASS"
@@ -337,6 +413,179 @@ keep_accessor: {
         "p 42",
         "q undefined",
         "r null",
+    ]
+    node_version: ">=8"
+}
+
+object_key_order_1: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            ...{},
+            a: 1,
+            b: 2,
+            a: 3,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            a: (1, 3),
+            b: 2,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "a 3",
+        "b 2",
+    ]
+    node_version: ">=8 <=10"
+}
+
+object_key_order_2: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            ...{},
+            b: 2,
+            a: 3,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            a: (1, 3),
+            b: 2,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "a 3",
+        "b 2",
+    ]
+    node_version: ">=8"
+}
+
+object_key_order_3: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+            ...{},
+            a: 3,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            a: (1, 3),
+            b: 2,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "a 3",
+        "b 2",
+    ]
+    node_version: ">=8"
+}
+
+object_key_order_4: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            a: 1,
+            b: 2,
+            a: 3,
+            ...{},
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            a: (1, 3),
+            b: 2,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "a 3",
+        "b 2",
+    ]
+    node_version: ">=8"
+}
+
+object_spread_array: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            ...[ "foo", "bar" ],
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            ...[ "foo", "bar" ],
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "0 foo",
+        "1 bar",
+    ]
+    node_version: ">=8"
+}
+
+object_spread_string: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            ..."foo",
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            ..."foo",
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "0 f",
+        "1 o",
+        "2 o",
     ]
     node_version: ">=8"
 }

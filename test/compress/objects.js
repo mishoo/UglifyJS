@@ -360,3 +360,30 @@ issue_4269_4: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4269_5: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            get 42() {
+                return "FAIL";
+            },
+            [console]: "bar",
+            42: "PASS",
+        }[42]);
+    }
+    expect: {
+        console.log({
+            get 42() {
+                return "FAIL";
+            },
+            [console]: "bar",
+            42: "PASS",
+        }[42]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
