@@ -1255,3 +1255,28 @@ issue_4240: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4355: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        while (function() {
+            var a;
+            for (a in console.log("PASS"))
+                var b = 0;
+        }())
+            var c;
+    }
+    expect: {
+        (function() {
+            console.log("PASS");
+        })();
+        var c;
+    }
+    expect_stdout: "PASS"
+}
