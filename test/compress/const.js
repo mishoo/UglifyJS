@@ -1347,3 +1347,31 @@ issue_4305_2: {
     }
     expect_stdout: true
 }
+
+issue_4365_1: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        const arguments = 42;
+    }
+    expect: {
+        const arguments = 42;
+    }
+    expect_stdout: true
+}
+
+issue_4365_2: {
+    options = {
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        const arguments = 42;
+    }
+    expect: {
+        const arguments = 42;
+    }
+    expect_stdout: true
+}
