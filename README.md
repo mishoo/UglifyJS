@@ -4,10 +4,12 @@ UglifyJS 3
 UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit.
 
 #### Note:
-- **`uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage) that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
+- **`uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage)
+  that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
 - **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
-- `uglify-js` only supports JavaScript (ECMAScript 5).
-- To minify ECMAScript 2015 or above, transpile using tools like [Babel](https://babeljs.io/).
+- `uglify-js` supports ECMAScript 5 and some newer language features.
+- To minify ECMAScript 2015 or above, you may need to transpile using tools like
+  [Babel](https://babeljs.io/).
 
 Install
 -------
@@ -1175,6 +1177,16 @@ To allow for better optimizations, the compiler makes various assumptions:
 - Object properties can be added, removed and modified (not prevented with
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
+- Earlier versions of JavaScript will throw `SyntaxError` with the following:
+  ```js
+  ({
+    p: 42,
+    get p() {},
+  });
+  // SyntaxError: Object literal may not have data and accessor property with
+  //              the same name
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
 - Iteration order of keys over an object which contains spread syntax in later
   versions of Chrome and Node.js may be altered.
 - When `toplevel` is enabled, UglifyJS effectively assumes input code is wrapped

@@ -470,3 +470,39 @@ issue_4325: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4366_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            p: 42,
+            get p() {},
+            q: console.log("PASS"),
+        });
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4366_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            set p(v) {},
+            q: console.log("PASS"),
+            p: 42,
+        });
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

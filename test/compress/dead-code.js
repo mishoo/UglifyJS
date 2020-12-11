@@ -1375,3 +1375,27 @@ issue_4051: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4366: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            return "PASS";
+            ({
+                p: 42,
+                get p() {},
+            });
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            return "PASS";
+        }
+        console.log(f());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
