@@ -126,6 +126,22 @@ for (var i = 2; i < process.argv.length; ++i) {
     }
 }
 
+var SUPPORT = function(matrix) {
+    for (var name in matrix) {
+        matrix[name] = typeof sandbox.run_code(matrix[name]) == "string";
+    }
+    return matrix;
+}({
+    async: "async function f(){}",
+    catch_omit_var: "try {} catch {}",
+    computed_key: "({[0]: 0});",
+    destructuring: "[] = [];",
+    let: "let a;",
+    spread: "[...[]];",
+    spread_object: "({...0});",
+    trailing_comma: "function f(a,) {}",
+});
+
 var VALUES = [
     '"a"',
     '"b"',
@@ -363,7 +379,7 @@ function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
 }
 
 function addTrailingComma(list) {
-    return list && rng(20) == 0 ? list + "," : list;
+    return SUPPORT.trailing_comma && list && rng(20) == 0 ? list + "," : list;
 }
 
 function createParams(noDuplicate) {
@@ -381,7 +397,7 @@ function createParams(noDuplicate) {
 function createArgs(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var args = [];
-    for (var n = rng(4); --n >= 0;) switch (rng(50)) {
+    for (var n = rng(4); --n >= 0;) switch (SUPPORT.spread ? rng(50) : 3) {
       case 0:
       case 1:
         var name = getVarName();
@@ -532,10 +548,10 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
     unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
     while (!rng(block_vars.length > block_len ? 10 : 100)) {
         var name = createVarName(MANDATORY, DONT_STORE);
-        if (rng(2)) {
-            consts.push(name);
-        } else {
+        if (SUPPORT.let && rng(2)) {
             lets.push(name);
+        } else {
+            consts.push(name);
         }
         block_vars.push(name);
     }
@@ -555,7 +571,7 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
     function createDefinitions(type, names) {
         if (!names.length) return "";
         var s = type + " ";
-        switch (rng(10)) {
+        switch (SUPPORT.destructuring ? rng(10) : 2) {
           case 0:
             while (!rng(10)) names.splice(rng(names.length + 1), 0, "");
             s += "[ " + names.join(", ") + " ] = [ " + names.map(function() {
@@ -601,7 +617,7 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     var name, args;
     var varNames = VAR_NAMES.slice();
     var save_async = async;
-    async = rng(50) == 0;
+    async = SUPPORT.async && rng(50) == 0;
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
         if (allowDefun || rng(5) > 0) {
             name = "f" + funcs++;
@@ -611,7 +627,7 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
             unique_vars.length -= 3;
         }
         var params;
-        if ((!allowDefun || !(name in called)) && rng(2)) {
+        if (SUPPORT.destructuring && (!allowDefun || !(name in called)) && rng(2)) {
             called[name] = false;
             var pairs = createAssignmentPairs(recurmax, COMMA_OK, stmtDepth, canThrow, varNames, save_async);
             params = addTrailingComma(pairs.names.join(", "));
@@ -741,8 +757,8 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return [
             "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ",
             label.target + " for (",
-            !/^key/.test(key) ? rng(10) ? "" : "var " : rng(10) ? "var " : rng(2) ? "let " : "const ",
-            rng(10) ? key : rng(5) ? "[ " + key + " ]" : "{ length: " + key + " }",
+            !/^key/.test(key) ? rng(10) ? "" : "var " : !SUPPORT.let || rng(10) ? "var " : rng(2) ? "let " : "const ",
+            !SUPPORT.destructuring || rng(10) ? key : rng(5) ? "[ " + key + " ]" : "{ length: " + key + " }",
             " in expr" + loop + ") {",
             rng(5) > 1 ? "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; " : "",
             createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
@@ -757,7 +773,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         // note: default does not _need_ to be last
         return "switch (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") { " + createSwitchParts(recurmax, 4, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_VAR:
-        if (!rng(20)) {
+        if (SUPPORT.destructuring && rng(20) == 0) {
             var pairs = createAssignmentPairs(recurmax, NO_COMMA, stmtDepth, canThrow);
             return "var " + pairs.names.map(function(name, index) {
                 return index in pairs.values ? name + " = " + pairs.values[index] : name;
@@ -819,10 +835,14 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             // we have to do go through some trouble here to prevent leaking it
             var nameLenBefore = VAR_NAMES.length;
             createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-                var catchName = createVarName(MANDATORY);
+                if (SUPPORT.catch_omit_var && rng(20) == 0) {
+                    s += " catch { ";
+                } else {
+                    var catchName = createVarName(MANDATORY);
+                    if (!catch_redef) unique_vars.push(catchName);
+                    s += " catch (" + catchName + ") { ";
+                }
                 var freshCatchName = VAR_NAMES.length !== nameLenBefore;
-                if (!catch_redef) unique_vars.push(catchName);
-                s += " catch (" + catchName + ") { ";
                 s += defns() + "\n";
                 s += _createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
                 s += " }";
@@ -906,7 +926,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return getVarName();
       case p++:
-        switch (rng(20)) {
+        switch (SUPPORT.destructuring ? rng(20) : 2) {
           case 0:
             return [
                 "[ ",
@@ -936,7 +956,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         var nameLenBefore = VAR_NAMES.length;
         var save_async = async;
-        async = rng(50) == 0;
+        async = SUPPORT.async && rng(50) == 0;
         unique_vars.push("c");
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
         unique_vars.pop();
@@ -1089,14 +1109,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
 function createArrayLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var arr = [];
-    for (var i = rng(6); --i >= 0;) switch (rng(50)) {
+    for (var i = rng(6); --i >= 0;) switch (SUPPORT.spread ? rng(50) : 3 + rng(47)) {
       case 0:
       case 1:
-        // in rare cases produce an array hole element
-        arr.push("");
-        break;
-      case 2:
-      case 3:
         var name = getVarName();
         if (canThrow && rng(8) === 0) {
             arr.push("..." + name);
@@ -1104,8 +1119,13 @@ function createArrayLiteral(recurmax, stmtDepth, canThrow) {
             arr.push('...("" + ' + name + ")");
         }
         break;
-      case 4:
+      case 2:
         arr.push("..." + createArrayLiteral(recurmax, stmtDepth, canThrow));
+        break;
+      case 3:
+      case 4:
+        // in rare cases produce an array hole element
+        arr.push("");
         break;
       default:
         arr.push(createExpression(recurmax, COMMA_OK, stmtDepth, canThrow));
@@ -1145,14 +1165,17 @@ function getDotKey(assign) {
 }
 
 function createObjectKey(recurmax, stmtDepth, canThrow) {
-    return rng(10) ? KEYS[rng(KEYS.length)] : "[" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + "]";
+    if (SUPPORT.computed_key && rng(10) == 0) {
+        return "[" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + "]";
+    }
+    return KEYS[rng(KEYS.length)];
 }
 
 function createObjectFunction(recurmax, stmtDepth, canThrow) {
     var namesLenBefore = VAR_NAMES.length;
     var s;
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-        switch (rng(3)) {
+        switch (rng(SUPPORT.computed_key ? 3 : 2)) {
           case 0:
             s = [
                 "get " + createObjectKey(recurmax, stmtDepth, canThrow) + "(){",
@@ -1196,19 +1219,20 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var obj = ["({"];
-    for (var i = rng(6); --i >= 0;) switch (rng(50)) {
+    var offset = SUPPORT.spread_object ? 0 : SUPPORT.computed_key ? 2 : 4;
+    for (var i = rng(6); --i >= 0;) switch (offset + rng(50 - offset)) {
       case 0:
-      case 1:
-        obj.push(getVarName() + ",");
-        break;
-      case 2:
-        obj.push(createObjectFunction(recurmax, stmtDepth, canThrow));
-        break;
-      case 3:
         obj.push("..." + getVarName() + ",");
         break;
-      case 4:
+      case 1:
         obj.push("..." + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ",");
+        break;
+      case 2:
+      case 3:
+        obj.push(getVarName() + ",");
+        break;
+      case 4:
+        obj.push(createObjectFunction(recurmax, stmtDepth, canThrow));
         break;
       default:
         obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ": " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ",");
@@ -1240,7 +1264,7 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
         return "(" + assignee + createAssignment() + _createBinaryExpr(recurmax, noComma, stmtDepth, canThrow) + ")";
       case 3:
         assignee = getVarName();
-        switch (rng(20)) {
+        switch (SUPPORT.destructuring ? rng(20) : 2) {
           case 0:
             expr = [
                 "([ ",
@@ -1277,7 +1301,7 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
         return canThrow && rng(10) == 0 ? expr : "(" + assignee + " && " + expr + ")";
       case 4:
         assignee = getVarName();
-        switch (rng(20)) {
+        switch (SUPPORT.destructuring ? rng(20) : 2) {
           case 0:
             expr = [
                 "([ ",
@@ -1672,7 +1696,7 @@ function patch_try_catch(orig, toplevel) {
 }
 
 var minify_options = require("./options.json");
-if (typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
+if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
     minify_options.forEach(function(o) {
         if (!("output" in o)) o.output = {};
         o.output.v8 = true;
