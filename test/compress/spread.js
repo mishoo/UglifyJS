@@ -758,3 +758,26 @@ issue_4361: {
     ]
     node_version: ">=8"
 }
+
+issue_4363: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        ({
+            ...{
+                set [console.log("PASS")](v) {},
+            },
+        });
+    }
+    expect: {
+        ({
+            ...{
+                set [console.log("PASS")](v) {},
+            },
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
