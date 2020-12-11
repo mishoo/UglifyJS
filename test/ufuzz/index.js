@@ -516,10 +516,13 @@ function createAssignmentPairs(recurmax, noComma, stmtDepth, canThrow, varNames,
                     var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
                     return key ? key + ": " + name : name;
                 }).join(", ")) + " }");
+                var save_async = async;
+                if (was_async != null) async = was_async;
                 values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
                     var key = index in keys ? keys[index] : createKey(recurmax, keys);
                     return key + ": " + value;
                 }).join(", ")) + " }");
+                async = save_async;
             }
             break;
           default:
