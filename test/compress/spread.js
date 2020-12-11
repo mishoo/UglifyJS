@@ -250,6 +250,31 @@ reduce_vars_2: {
     node_version: ">=6"
 }
 
+convert_setter: {
+    options = {
+        objects: true,
+        spread: true,
+    }
+    input: {
+        var o = {
+            ...{
+                set PASS(v) {},
+            },
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {
+            PASS: void 0,
+        };
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: "PASS undefined"
+    node_version: ">=8"
+}
+
 keep_getter_1: {
     options = {
         side_effects: true,
@@ -773,9 +798,7 @@ issue_4363: {
     }
     expect: {
         ({
-            ...{
-                set [console.log("PASS")](v) {},
-            },
+            [console.log("PASS")]: void 0,
         });
     }
     expect_stdout: "PASS"
