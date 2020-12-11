@@ -444,3 +444,30 @@ issue_4349_3: {
     expect_stdout: "function"
     node_version: ">=8"
 }
+
+issue_4359: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        try {
+            (async function(a) {
+                return a;
+            })(A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (async function(a) {
+                return a;
+            })(A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
