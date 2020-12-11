@@ -728,3 +728,33 @@ issue_4345: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4361: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = console.log("foo");
+            console;
+            var b = {
+                ...a,
+            };
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a = console.log("foo");
+            console;
+            ({
+                ...a,
+            });
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
