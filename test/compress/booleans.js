@@ -153,3 +153,31 @@ issue_3690: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4374: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        if_return: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            console.log(f());
+            function f(a) {
+                if (null) return 0;
+                if (a) return 1;
+                return 0;
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log(function(a) {
+                return !null && a ? 1 : 0;
+            }());
+        })();
+    }
+    expect_stdout: "0"
+}
