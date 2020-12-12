@@ -1806,3 +1806,41 @@ issue_4355: {
     expect_stdout: "2"
     node_version: ">=6"
 }
+
+issue_4372_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = "FAIL";
+        a += {
+            [console.log(a)]: a,
+        } = a = "PASS";
+    }
+    expect: {
+        var a = "FAIL";
+        a += {
+            [console.log(a)]: a,
+        } = a = "PASS";
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4372_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a;
+        [ a ] = a = [ "PASS", "FAIL" ];
+        console.log(a);
+    }
+    expect: {
+        var a;
+        [ a ] = [ "PASS", "FAIL" ];
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
