@@ -18,9 +18,18 @@ var sandbox = require("./sandbox");
 
 Error.stackTraceLimit = Infinity;
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
-    if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string();
     minify_options = minify_options || {};
     reduce_options = reduce_options || {};
+    var print_options = {};
+    [
+        "ie8",
+        "v8",
+        "webkit",
+    ].forEach(function(name) {
+        var value = minify_options[name] || minify_options.output && minify_options.output[name];
+        if (value) print_options[name] = value;
+    });
+    if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string(print_options);
     var max_iterations = reduce_options.max_iterations || 1000;
     var max_timeout = reduce_options.max_timeout || 10000;
     var warnings = [];
@@ -459,7 +468,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                         return node;
                     }
                 }));
-                var code = testcase_ast.print_to_string();
+                var code = testcase_ast.print_to_string(print_options);
                 var diff = test_for_diff(code, minify_options, result_cache, max_timeout);
                 if (diff && !diff.timed_out && !diff.error) {
                     testcase = code;
@@ -483,7 +492,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 var code_ast = testcase_ast.clone(true).transform(tt);
                 if (!CHANGED) break;
                 try {
-                    var code = code_ast.print_to_string();
+                    var code = code_ast.print_to_string(print_options);
                 } catch (ex) {
                     // AST is not well formed.
                     // no harm done - just log the error, ignore latest change and continue iterating.
@@ -525,11 +534,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         var beautified = U.minify(testcase, {
             compress: false,
             mangle: false,
-            output: {
-                beautify: true,
-                braces: true,
-                comments: true,
-            },
+            output: function() {
+                var options = JSON.parse(JSON.stringify(print_options));
+                options.beautify = true;
+                options.braces = true;
+                options.comments = true;
+                return options;
+            }(),
         });
         testcase = {
             code: testcase,
