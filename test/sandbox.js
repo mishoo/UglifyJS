@@ -26,9 +26,18 @@ var setupContext = new vm.Script([
 ]).join("\n"));
 
 function createContext() {
-    var ctx = vm.createContext(Object.defineProperty({}, "console", { value: { log: log } }));
+    var ctx = vm.createContext(Object.defineProperties({}, {
+        console: { value: { log: log } },
+        global: { get: self },
+        self: { get: self },
+        window: { get: self },
+    }));
     var global = setupContext.runInContext(ctx);
     return ctx;
+
+    function self() {
+        return this;
+    }
 
     function safe_log(arg, level) {
         if (arg) switch (typeof arg) {
