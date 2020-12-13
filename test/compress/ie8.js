@@ -588,7 +588,6 @@ issue_3197_1: {
         ie8: false,
     }
     input: {
-        var window = {};
         !function() {
             function Foo() {
                 console.log(this instanceof Foo);
@@ -598,7 +597,6 @@ issue_3197_1: {
         new window.Foo();
     }
     expect: {
-        var window = {};
         window.Foo = function o() {
             console.log(this instanceof o);
         };
@@ -619,7 +617,6 @@ issue_3197_1_ie8: {
         ie8: true,
     }
     input: {
-        var window = {};
         !function() {
             function Foo() {
                 console.log(this instanceof Foo);
@@ -629,7 +626,6 @@ issue_3197_1_ie8: {
         new window.Foo();
     }
     expect: {
-        var window = {};
         window.Foo = function Foo() {
             console.log(this instanceof Foo);
         };
