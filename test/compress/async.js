@@ -471,3 +471,28 @@ issue_4359: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4377: {
+    options = {
+        dead_code: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(typeof function() {
+            return function() {
+                f;
+                async function f() {}
+                return f();
+            }();
+        }().then);
+    }
+    expect: {
+        console.log(typeof function() {
+            return f();
+            async function f() {}
+        }().then);
+    }
+    expect_stdout: "function"
+    node_version: ">=8"
+}
