@@ -387,3 +387,29 @@ issue_4269_5: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4380: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            get 0() {
+                return "FAIL 1";
+            },
+            0: "FAIL 2",
+            [0]: "PASS",
+        }[0]);
+    }
+    expect: {
+        console.log({
+            get 0() {
+                return "FAIL 1";
+            },
+            [0]: ("FAIL 2", "PASS"),
+        }[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
