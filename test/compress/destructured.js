@@ -1844,3 +1844,25 @@ issue_4372_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4383: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(function(a) {
+            [ a[0] ] = [];
+            return a.length;
+        }([]));
+    }
+    expect: {
+        console.log(function(a) {
+            [ a[0] ] = [];
+            return a.length;
+        }([]));
+    }
+    expect_stdout: "1"
+    node_version: ">=6"
+}
