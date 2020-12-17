@@ -1209,3 +1209,11 @@ To allow for better optimizations, the compiler makes various assumptions:
   `function({}, arguments) {}` will result in `SyntaxError` in earlier versions
   of Chrome and Node.js - UglifyJS may modify the input which in turn may
   suppress those errors.
+- Later versions of JavaScript will throw `SyntaxError` with the following:
+  ```js
+  a => {
+    let a;
+  };
+  // SyntaxError: Identifier 'a' has already been declared
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
