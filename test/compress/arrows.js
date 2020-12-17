@@ -351,3 +351,32 @@ issue_4388: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_4390: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        function log() {
+            console.log.apply(console, arguments);
+        }
+        var a = 42, b = "FAIL";
+        b = "PASS";
+        (c => log(b, c))(a);
+        log(b);
+    }
+    expect: {
+        function log() {
+            console.log.apply(console, arguments);
+        }
+        var a = 42, b = "FAIL";
+        b = "PASS";
+        (c => log(b, c))(a);
+        log(b);
+    }
+    expect_stdout: [
+        "PASS 42",
+        "PASS",
+    ]
+    node_version: ">=4"
+}
