@@ -337,6 +337,91 @@ trim_body: {
     node_version: ">=4"
 }
 
+reduce_iife_1: {
+    options = {
+        evaluate: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (a => console.log(a + a))(21);
+    }
+    expect: {
+        (() => console.log(42))();
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+reduce_iife_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 21;
+        (() => console.log(a + a))();
+    }
+    expect: {
+        (() => console.log(42))();
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+reduce_iife_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        (() => {
+            console.log(a);
+            console.log(a);
+        })();
+        a = "bar";
+    }
+    expect: {
+        (() => {
+            console.log("foo");
+            console.log("foo");
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+    node_version: ">=4"
+}
+
+single_use_recursive: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return (() => f)();
+        }
+        console.log(typeof f());
+    }
+    expect: {
+        console.log(typeof function f() {
+            return (() => f)();
+        }());
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}
+
 issue_4388: {
     options = {
         inline: true,

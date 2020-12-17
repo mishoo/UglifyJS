@@ -329,6 +329,77 @@ property_access_expression: {
     node_version: ">=8"
 }
 
+reduce_iife_1: {
+    options = {
+        evaluate: true,
+        keep_fargs: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (async function(a) {
+            console.log(a + a);
+        })(21);
+    }
+    expect: {
+        (async function() {
+            console.log(42);
+        })();
+    }
+    expect_stdout: "42"
+    node_version: ">=8"
+}
+
+reduce_iife_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 21;
+        (async function() {
+            console.log(a + a);
+        })();
+    }
+    expect: {
+        (async function() {
+            console.log(42);
+        })();
+    }
+    expect_stdout: "42"
+    node_version: ">=8"
+}
+
+reduce_iife_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            console.log(a);
+            console.log(await a);
+        })();
+        a = "bar";
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            console.log(a);
+            console.log(await a);
+        })();
+        a = "bar";
+    }
+    expect_stdout: "foo"
+    node_version: ">=8"
+}
+
 issue_4347_1: {
     options = {
         evaluate: true,
