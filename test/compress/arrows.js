@@ -336,3 +336,18 @@ trim_body: {
     expect_stdout: "PASS undefined"
     node_version: ">=4"
 }
+
+issue_4388: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        (arguments => console.log(arguments && arguments))();
+    }
+    expect: {
+        (arguments => console.log(arguments && arguments))();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
