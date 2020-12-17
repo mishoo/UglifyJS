@@ -851,3 +851,23 @@ issue_4291_2: {
     }
     expect_stdout: "PASS 42 1"
 }
+
+issue_4397: {
+    options = {
+        arguments: true,
+        keep_fargs: "strict",
+    }
+    input: {
+        console.log(typeof function() {
+            arguments += 0;
+            return arguments[0];
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            arguments += 0;
+            return arguments[0];
+        }());
+    }
+    expect_stdout: "string"
+}
