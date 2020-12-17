@@ -1886,3 +1886,23 @@ issue_4386: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4395: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        console.log(function(a, {}) {
+            a = "FAIL";
+            return arguments[0];
+        }("PASS", 42));
+    }
+    expect: {
+        console.log(function(a, {}) {
+            a = "FAIL";
+            return arguments[0];
+        }("PASS", 42));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
