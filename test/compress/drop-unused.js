@@ -3112,3 +3112,25 @@ issue_4235: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4404: {
+    options = {
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            arguments[0] = "PASS";
+            console.log(a);
+        }
+        f("FAIL");
+    }
+    expect: {
+        function f(a) {
+            arguments[0] = "PASS";
+            console.log(a);
+        }
+        f("FAIL");
+    }
+    expect_stdout: "PASS"
+}
