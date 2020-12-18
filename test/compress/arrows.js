@@ -320,6 +320,8 @@ inline_this: {
 trim_body: {
     options = {
         arrows: true,
+        if_return: true,
+        side_effects: true,
     }
     input: {
         var f = a => {
@@ -334,6 +336,25 @@ trim_body: {
         console.log(f("PASS"), g("FAIL"));
     }
     expect_stdout: "PASS undefined"
+    node_version: ">=4"
+}
+
+collapse_value: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        keep_fargs: "strict",
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        console.log((b => Math.floor(b))(a));
+    }
+    expect: {
+        var a = 42;
+        console.log((() => Math.floor(a))());
+    }
+    expect_stdout: "42"
     node_version: ">=4"
 }
 
