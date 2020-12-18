@@ -750,6 +750,46 @@ simple_var: {
     node_version: ">=6"
 }
 
+drop_catch: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {} catch ({
+            [console.log("FAIL")]: e,
+        }) {} finally {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+drop_catch_var: {
+    options = {
+        unused: true,
+    }
+    input: {
+        try {
+            throw new Error("PASS");
+        } catch ({ name, message }) {
+            console.log(message);
+        }
+    }
+    expect: {
+        try {
+            throw new Error("PASS");
+        } catch ({ message }) {
+            console.log(message);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 collapse_vars_1: {
     options = {
         collapse_vars: true,

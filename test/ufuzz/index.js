@@ -858,22 +858,44 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         if (n !== 1) {
             // the catch var should only be accessible in the catch clause...
             // we have to do go through some trouble here to prevent leaking it
-            var nameLenBefore = VAR_NAMES.length;
             mayCreateBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-                if (SUPPORT.catch_omit_var && rng(20) == 0) {
+                var block_len = block_vars.length;
+                var nameLenBefore = VAR_NAMES.length;
+                var unique_len = unique_vars.length;
+                var offset = SUPPORT.catch_omit_var ? 0 : SUPPORT.destructuring ? 1 : 2;
+                switch (offset + rng(20 - offset)) {
+                  case 0:
                     s += " catch { ";
-                } else {
-                    var catchName = createVarName(MANDATORY);
-                    if (!catch_redef) unique_vars.push(catchName);
-                    s += " catch (" + catchName + ") { ";
+                    break;
+                  case 1:
+                    var name = createVarName(MANDATORY);
+                    block_vars.push(name);
+                    var message = createVarName(MANDATORY);
+                    block_vars.push(message);
+                    if (SUPPORT.computed_key && rng(10) == 0) {
+                        s += " catch ({  message: " + message + ", ";
+                        addAvoidVars([ name ]);
+                        s += "[" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + "]: " + name;
+                        removeAvoidVars([ name ]);
+                        s += " }) { ";
+                    } else {
+                        s += " catch ({ name: " + name + ", message: " + message + " }) { ";
+                    }
+                    break;
+                  default:
+                    var name = createVarName(MANDATORY);
+                    if (!catch_redef) unique_vars.push(name);
+                    s += " catch (" + name + ") { ";
+                    break;
                 }
-                var freshCatchName = VAR_NAMES.length !== nameLenBefore;
+                var catches = VAR_NAMES.length - nameLenBefore;
                 s += defns() + "\n";
                 s += _createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
                 s += " }";
-                // remove catch name
-                if (!catch_redef) unique_vars.pop();
-                if (freshCatchName) VAR_NAMES.splice(nameLenBefore, 1);
+                // remove catch variables
+                block_vars.length = block_len;
+                if (catches > 0) VAR_NAMES.splice(nameLenBefore, catches);
+                unique_vars.length = unique_len;
             });
         }
         if (n !== 0) s += " finally { " + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + " }";
