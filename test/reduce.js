@@ -175,6 +175,12 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     CHANGED = true;
                     return expr instanceof U.AST_Spread ? expr.expression : expr;
                 }
+                if (node.expression instanceof U.AST_Arrow && node.expression.value) {
+                    var seq = node.args.slice();
+                    seq.push(node.expression.value);
+                    CHANGED = true;
+                    return to_sequence(seq);
+                }
                 if (node.expression instanceof U.AST_Function) {
                     // hoist and return expressions from the IIFE function expression
                     var body = node.expression.body;
