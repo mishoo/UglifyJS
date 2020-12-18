@@ -567,3 +567,33 @@ issue_4377: {
     expect_stdout: "function"
     node_version: ">=8"
 }
+
+issue_4406: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        A = "PASS";
+        B = "FAIL";
+        (function() {
+            var a, b;
+            a = A;
+            (async function({
+                [console.log(a)]: {},
+            }) {})((b = B) && { undefined: b });
+        })();
+    }
+    expect: {
+        A = "PASS";
+        B = "FAIL";
+        (function() {
+            var a, b;
+            a = A;
+            (async function({
+                [console.log(a)]: {},
+            }) {})((b = B) && { undefined: b });
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
