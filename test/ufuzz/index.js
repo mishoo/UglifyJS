@@ -1011,7 +1011,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                         suffix = "})";
                     } else {
                         s.push("((" + params + ") => ");
-                        switch (rng(4)) {
+                        switch (rng(10)) {
                           case 0:
                             s.push('(typeof arguments != "undefined" && arguments && arguments[' + rng(3) + "])");
                             break;
