@@ -871,3 +871,74 @@ issue_4397: {
     }
     expect_stdout: "string"
 }
+
+issue_4410_1: {
+    options = {
+        arguments: true,
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a) {
+            console.log(arguments[0] === (a = 0) ? "FAIL" : "PASS");
+        })(1);
+    }
+    expect: {
+        (function(a) {
+            console.log(a === (a = 0) ? "FAIL" : "PASS");
+        })(1);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4410_2: {
+    options = {
+        arguments: true,
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function f(a) {
+            console.log(arguments[0] === (a = 0) ? "FAIL" : "PASS");
+        })(1);
+    }
+    expect: {
+        (function f(a) {
+            console.log(arguments[0] === (a = 0) ? "FAIL" : "PASS");
+        })(1);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4410_3: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        var a = 1;
+        (function f(b) {
+            a-- && f();
+            for (var c = 2; c--;)
+                switch (arguments[0]) {
+                  case b = 42:
+                  case 42:
+                    console.log("PASS");
+                }
+        })(null);
+    }
+    expect: {
+        var a = 1;
+        (function f(b) {
+            a-- && f();
+            for (var c = 2; c--;)
+                switch (arguments[0]) {
+                  case b = 42:
+                  case 42:
+                    console.log("PASS");
+                }
+        })(null);
+    }
+    expect_stdout: "PASS"
+}
