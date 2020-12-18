@@ -43,6 +43,82 @@ await_parenthesis: {
     expect_exact: "async function f(){await(a=>a)}"
 }
 
+for_parenthesis_init: {
+    input: {
+        for (a => (a in a); console.log(42););
+    }
+    expect_exact: "for((a=>a in a);console.log(42););"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_parenthesis_condition: {
+    input: {
+        for (console.log(42); a => (a in a);)
+            break;
+    }
+    expect_exact: "for(console.log(42);a=>a in a;)break;"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_parenthesis_step: {
+    input: {
+        for (; console.log(42); a => (a in a));
+    }
+    expect_exact: "for(;console.log(42);a=>a in a);"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_assign_parenthesis_init: {
+    input: {
+        for (f = a => (a in a); console.log(42););
+    }
+    expect_exact: "for((f=a=>a in a);console.log(42););"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_assign_parenthesis_condition: {
+    input: {
+        for (console.log(42); f = a => (a in a);)
+            break;
+    }
+    expect_exact: "for(console.log(42);f=a=>a in a;)break;"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_assign_parenthesis_step: {
+    input: {
+        for (; console.log(42); f = a => (a in a));
+    }
+    expect_exact: "for(;console.log(42);f=a=>a in a);"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_declaration_parenthesis_init: {
+    input: {
+        for (var f = a => (a in a); console.log(42););
+    }
+    expect_exact: "for(var f=(a=>a in a);console.log(42););"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+for_statement_parenthesis_init: {
+    input: {
+        for (a => {
+            a in a;
+        }; console.log(42););
+    }
+    expect_exact: "for(a=>{a in a};console.log(42););"
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
 body_call: {
     input: {
         (() => {
