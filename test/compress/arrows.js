@@ -465,3 +465,28 @@ issue_4390: {
     ]
     node_version: ">=4"
 }
+
+issue_4401: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        (function() {
+            var a = (b => b(a))(console.log || a);
+            var c = console.log;
+            c && c(typeof b);
+        })();
+    }
+    expect: {
+        (function() {
+            var a = (b => b(a))(console.log || a);
+            var c = console.log;
+            c && c(typeof b);
+        })();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
