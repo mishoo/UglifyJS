@@ -862,16 +862,15 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                 var block_len = block_vars.length;
                 var nameLenBefore = VAR_NAMES.length;
                 var unique_len = unique_vars.length;
-                var offset = SUPPORT.catch_omit_var ? 0 : SUPPORT.destructuring ? 1 : 2;
-                switch (offset + rng(20 - offset)) {
-                  case 0:
+                if (SUPPORT.catch_omit_var && !rng(20)) {
                     s += " catch { ";
-                    break;
-                  case 1:
+                } else if (canThrow && SUPPORT.destructuring && !rng(20)) {
+                    unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
                     var name = createVarName(MANDATORY);
                     block_vars.push(name);
                     var message = createVarName(MANDATORY);
                     block_vars.push(message);
+                    unique_vars.length -= 6;
                     if (SUPPORT.computed_key && rng(10) == 0) {
                         s += " catch ({  message: " + message + ", ";
                         addAvoidVars([ name ]);
@@ -881,12 +880,10 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                     } else {
                         s += " catch ({ name: " + name + ", message: " + message + " }) { ";
                     }
-                    break;
-                  default:
+                } else {
                     var name = createVarName(MANDATORY);
                     if (!catch_redef) unique_vars.push(name);
                     s += " catch (" + name + ") { ";
-                    break;
                 }
                 var catches = VAR_NAMES.length - nameLenBefore;
                 s += defns() + "\n";
