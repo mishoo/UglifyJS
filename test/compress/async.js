@@ -597,3 +597,25 @@ issue_4406: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4417: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            console.log(function() {
+                return await => 0;
+            }().prototype);
+        })();
+    }
+    expect: {
+        (async function() {
+            console.log(function() {
+                return await => 0;
+            }().prototype);
+        })();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=8"
+}
