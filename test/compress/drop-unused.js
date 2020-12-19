@@ -3134,3 +3134,22 @@ issue_4404: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4413: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(arguments) {
+            var arguments = function() {};
+            return arguments.length;
+        }());
+    }
+    expect: {
+        console.log(function(arguments) {
+            return function() {}.length;
+        }());
+    }
+    expect_stdout: "0"
+}
