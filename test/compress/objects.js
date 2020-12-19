@@ -413,3 +413,22 @@ issue_4380: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4415: {
+    options = {
+        evaluate: true,
+        objects: true,
+    }
+    input: {
+        console.log({
+            ["00"]: "FAIL",
+        }[0] || "PASS");
+    }
+    expect: {
+        console.log({
+            "00": "FAIL",
+        }[0] || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
