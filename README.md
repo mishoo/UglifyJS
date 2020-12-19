@@ -1209,6 +1209,20 @@ To allow for better optimizations, the compiler makes various assumptions:
   `function({}, arguments) {}` will result in `SyntaxError` in earlier versions
   of Chrome and Node.js - UglifyJS may modify the input which in turn may
   suppress those errors.
+- Earlier versions of Chrome and Node.js will throw `ReferenceError` with the
+  following:
+  ```js
+  var a;
+  try {
+      throw 42;
+  } catch ({
+      [a]: b,
+      // ReferenceError: a is not defined
+  }) {
+      let a;
+  }
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
 - Later versions of JavaScript will throw `SyntaxError` with the following:
   ```js
   a => {

@@ -1968,3 +1968,36 @@ issue_4399: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4420: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = 1;
+            try {
+                throw [ "FAIL", "PASS" ];
+            } catch ({
+                [a]: b,
+            }) {
+                let a = 0;
+                return b;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a = 1;
+            try {
+                throw [ "FAIL", "PASS" ];
+            } catch ({
+                [a]: b,
+            }) {
+                return b;
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
