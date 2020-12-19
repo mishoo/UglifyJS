@@ -3094,3 +3094,26 @@ issue_4393: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4422: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f(a) {
+            a = "FAIL 1";
+            arguments[0] = "PASS";
+            return a;
+        }("FAIL 2"));
+    }
+    expect: {
+        console.log(function(a) {
+            a = "FAIL 1";
+            arguments[0] = "PASS";
+            return a;
+        }("FAIL 2"));
+    }
+    expect_stdout: "PASS"
+}
