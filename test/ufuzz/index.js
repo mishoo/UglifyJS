@@ -521,24 +521,28 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
                         keys[index] = key;
                     }
                 });
-                if (was_async) avoid.push("await");
-                addAvoidVars(avoid);
                 var save_async = async;
-                async = false;
+                if (was_async != null) {
+                    async = false;
+                    if (save_async || was_async) avoid.push("await");
+                }
+                addAvoidVars(avoid);
+                var save_vars = nameLenBefore && VAR_NAMES.splice(nameLenBefore);
                 names.unshift("{ " + addTrailingComma(pairs.names.map(function(name, index) {
                     var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
                     return key ? key + ": " + name : name;
                 }).join(", ")) + " }");
-                if (was_async) removeAvoidVars([ avoid.pop() ]);
-                if (was_async != null) async = was_async;
-                var save_vars = nameLenBefore && VAR_NAMES.splice(nameLenBefore);
+                if (was_async != null) {
+                    async = was_async;
+                    if (save_async || was_async) removeAvoidVars([ avoid.pop() ]);
+                }
                 values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
                     var key = index in keys ? keys[index] : createKey(recurmax, keys);
                     return key + ": " + value;
                 }).join(", ")) + " }");
                 if (save_vars) [].push.apply(VAR_NAMES, save_vars);
-                async = save_async;
                 removeAvoidVars(avoid);
+                async = save_async;
             }
             break;
           default:
