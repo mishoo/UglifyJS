@@ -2001,3 +2001,39 @@ issue_4420: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4425: {
+    rename = true
+    input: {
+        var a;
+        console.log(function() {
+            try {
+                try {
+                    throw 42;
+                } catch ({
+                    [a]: a,
+                }) {}
+                return "FAIL";
+            } catch (e) {
+                return "PASS";
+            }
+        }());
+    }
+    expect: {
+        var a;
+        console.log(function() {
+            try {
+                try {
+                    throw 42;
+                } catch ({
+                    [b]: b,
+                }) {}
+                return "FAIL";
+            } catch (c) {
+                return "PASS";
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
