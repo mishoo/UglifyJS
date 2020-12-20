@@ -1714,7 +1714,7 @@ function patch_try_catch(orig, toplevel) {
         offset: 0,
         tries: [],
     } ];
-    var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)]+)\)|}\s*finally)\s*(?={)/g;
+    var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)[{]+)\)|}\s*finally)\s*(?={)/g;
     while (stack.length) {
         var code = stack[0].code;
         var offset = stack[0].offset;

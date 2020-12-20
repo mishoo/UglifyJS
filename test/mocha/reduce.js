@@ -313,4 +313,12 @@ describe("test/reduce.js", function() {
         if (result.error) throw result.error;
         assert.strictEqual(result.code, read("test/input/reduce/diff_error.reduced.js"));
     });
+    it("Should handle destructured catch expressions", function() {
+        if (semver.satisfies(process.version, "<6")) return;
+        var result = reduce_test(read("test/input/reduce/destructured_catch.js"), {
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, read("test/input/reduce/destructured_catch.reduced.js"));
+    });
 });
