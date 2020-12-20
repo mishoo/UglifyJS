@@ -465,7 +465,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     if (node.TYPE == "Call" && node.expression.print_to_string() == "console.log") {
                         return to_sequence(node.args);
                     }
-                    if (node instanceof U.AST_Catch && node.argname) {
+                    if (node instanceof U.AST_Catch && node.argname instanceof U.AST_SymbolCatch) {
                         descend(node, this);
                         node.body.unshift(new U.AST_SimpleStatement({
                             body: wrap_with_console_log(new U.AST_SymbolRef(node.argname)),
