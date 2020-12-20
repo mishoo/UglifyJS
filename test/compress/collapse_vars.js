@@ -8602,3 +8602,63 @@ issue_4248: {
     }
     expect_stdout: "1"
 }
+
+issue_4430_1: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        function f(a) {
+            switch (a = 1, arguments[0]) {
+              case 1:
+                return "PASS";
+              case 2:
+                return "FAIL";
+            }
+        }
+        console.log(f(2));
+    }
+    expect: {
+        function f(a) {
+            switch (a = 1, arguments[0]) {
+              case 1:
+                return "PASS";
+              case 2:
+                return "FAIL";
+            }
+        }
+        console.log(f(2));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4430_2: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        function f(a) {
+            switch (a = 0, arguments[0]) {
+              case 0:
+                return "PASS";
+              case 1:
+                return "FAIL";
+            }
+        }
+        console.log(f(1));
+    }
+    expect: {
+        function f(a) {
+            switch (arguments[a = 0]) {
+              case 0:
+                return "PASS";
+              case 1:
+                return "FAIL";
+            }
+        }
+        console.log(f(1));
+    }
+    expect_stdout: "PASS"
+}
