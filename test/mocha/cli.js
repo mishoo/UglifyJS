@@ -573,6 +573,20 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should throw syntax error (var { eval })", function(done) {
+        var command = uglifyjscmd + " test/input/invalid/destructured_var.js";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/destructured_var.js:7,10",
+                "    var { eval } = 42;",
+                "          ^",
+                "ERROR: Unexpected eval in strict mode"
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should throw syntax error (else)", function(done) {
         var command = uglifyjscmd + " test/input/invalid/else.js";
         exec(command, function(err, stdout, stderr) {
