@@ -143,6 +143,27 @@ negate_iife: {
     node_version: ">=8"
 }
 
+object_function: {
+    options = {
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        ({
+            async f() {
+                console.log("PASS");
+            },
+        }).f();
+    }
+    expect: {
+        (async function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 collapse_vars_1: {
     options = {
         collapse_vars: true,

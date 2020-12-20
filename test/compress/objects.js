@@ -257,6 +257,29 @@ keep_computed_key: {
     node_version: ">=4"
 }
 
+shorthand_keywords: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var async = 1, get = 2, set = 3, o = {
+            async,
+            get,
+            set,
+        };
+        console.log(o.async, o.get, o.set);
+    }
+    expect: {
+        console.log(1, 2, 3);
+    }
+    expect_stdout: "1 2 3"
+    node_version: ">=6"
+}
+
 issue_4269_1: {
     options = {
         evaluate: true,
