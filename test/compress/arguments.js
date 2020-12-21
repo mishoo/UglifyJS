@@ -942,3 +942,23 @@ issue_4410_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4432: {
+    options = {
+        arguments: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            for (a in { FAIL: 42 });
+            return arguments[0];
+        }() || "PASS");
+    }
+    expect: {
+        console.log(function(a) {
+            for (a in { FAIL: 42 });
+            return arguments[0];
+        }() || "PASS");
+    }
+    expect_stdout: "PASS"
+}
