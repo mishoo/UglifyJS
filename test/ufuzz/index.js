@@ -1267,10 +1267,10 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
     var nameLenBefore = VAR_NAMES.length;
     var save_async = async;
     var s;
+    var name = createObjectKey(recurmax, stmtDepth, canThrow);
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
         switch (rng(SUPPORT.computed_key ? 3 : 2)) {
           case 0:
-            var name = createObjectKey(recurmax, stmtDepth, canThrow);
             async = false;
             s = [
                 "get " + name + "(){",
@@ -1282,23 +1282,21 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
             ];
             break;
           case 1:
-            var prop1 = createObjectKey(recurmax, stmtDepth, canThrow);
-            var prop2;
+            var prop;
             do {
-                prop2 = getDotKey();
-            } while (prop1 == prop2);
+                prop = getDotKey();
+            } while (name == prop);
             async = false;
             s = [
-                "set " + prop1 + "(" + createVarName(MANDATORY) + "){",
+                "set " + name + "(" + createVarName(MANDATORY) + "){",
                 strictMode(),
                 defns(),
                 _createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                "this." + prop2 + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
+                "this." + prop + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
                 "},",
             ];
             break;
           default:
-            var name = createObjectKey(recurmax, stmtDepth, canThrow);
             async = SUPPORT.async && rng(50) == 0;
             s = [
                 (async ? "async " : "") + name + "(" + createParams(save_async, NO_DUPLICATE) + "){",
