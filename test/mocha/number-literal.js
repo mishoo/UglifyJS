@@ -89,4 +89,13 @@ describe("Number literals", function() {
             }, code);
         });
     });
+    it("Should reject invalid syntax under expression=true", function() {
+        assert.throws(function() {
+            UglifyJS.parse("42.g", {
+                expression: true,
+            });
+        }, function(e) {
+            return e instanceof UglifyJS.JS_Parse_Error;
+        });
+    });
 });
