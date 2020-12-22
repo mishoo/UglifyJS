@@ -2037,3 +2037,90 @@ issue_4425: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4436_Infinity: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function({
+            [delete Infinity]: a,
+        }) {
+            var Infinity;
+            return a;
+        }({
+            true: "FAIL",
+            false: "PASS",
+        }));
+    }
+    expect: {
+        console.log(function({
+            [delete Infinity]: a,
+        }) {
+            return a;
+        }({
+            true: "FAIL",
+            false: "PASS",
+        }));
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
+
+issue_4436_NaN: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function({
+            [delete NaN]: a,
+        }) {
+            var NaN;
+            return a;
+        }({
+            true: "FAIL",
+            false: "PASS",
+        }));
+    }
+    expect: {
+        console.log(function({
+            [delete NaN]: a,
+        }) {
+            return a;
+        }({
+            true: "FAIL",
+            false: "PASS",
+        }));
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
+
+issue_4436_undefined: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function({
+            [delete undefined]: a,
+        }) {
+            var undefined;
+            return a;
+        }({
+            true: "FAIL",
+            false: "PASS",
+        }));
+    }
+    expect: {
+        console.log(function({
+            [delete undefined]: a,
+        }) {
+            return a;
+        }({
+            true: "FAIL",
+            false: "PASS",
+        }));
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
