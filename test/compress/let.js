@@ -1228,3 +1228,35 @@ issue_1753_toplevel: {
     expect_stdout: "0"
     node_version: ">=4"
 }
+
+issue_4438: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            if (console) {
+                {
+                    let a = console.log;
+                    return void a("PASS");
+                }
+            }
+        }
+        f();
+    }
+    expect: {
+        "use strict";
+        function f() {
+            if (!console)
+                ;
+            else {
+                let a = console.log;
+                a("PASS");
+            }
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
