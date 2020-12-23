@@ -1208,3 +1208,32 @@ issue_3427: {
     expect: {}
     expect_stdout: true
 }
+
+issue_4440: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        try {
+            (function() {
+                arguments = null;
+                console.log(arguments.p = "FAIL");
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function() {
+                arguments = null;
+                console.log(arguments.p = "FAIL");
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
