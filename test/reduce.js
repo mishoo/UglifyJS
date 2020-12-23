@@ -211,6 +211,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     node.alternative,
                 ][ ((node.start._permute += step) * steps | 0) % 3 ];
             }
+            else if (node instanceof U.AST_DefaultValue) {
+                node.start._permute++;
+                CHANGED = true;
+                return node.name;
+            }
             else if (node instanceof U.AST_Defun) {
                 switch (((node.start._permute += step) * steps | 0) % 2) {
                   case 0:

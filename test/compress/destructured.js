@@ -691,6 +691,28 @@ funarg_inline: {
     node_version: ">=6"
 }
 
+process_boolean_returns: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        console.log(function({ length }) {
+            return length ? "FAIL" : "PASS";
+        }(function() {
+            return 42;
+        }));
+    }
+    expect: {
+        console.log(function({ length }) {
+            return length ? "FAIL" : "PASS";
+        }(function() {
+            return 42;
+        }));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 simple_const: {
     options = {
         evaluate: true,

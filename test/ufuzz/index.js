@@ -137,6 +137,7 @@ var SUPPORT = function(matrix) {
     catch_omit_var: "try {} catch {}",
     computed_key: "({[0]: 0});",
     const_block: "var a; { const a = 0; }",
+    default_value: "[ a = 0 ] = [];",
     destructuring: "[] = [];",
     let: "let a;",
     spread: "[...[]];",
@@ -425,18 +426,35 @@ function createArgs(recurmax, stmtDepth, canThrow) {
 function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was_async) {
     var avoid = [];
     var len = unique_vars.length;
-    var pairs = createPairs(recurmax);
+    var pairs = createPairs(recurmax, !nameLenBefore);
     unique_vars.length = len;
     return pairs;
 
-    function createAssignmentValue(recurmax) {
+    function fill(nameFn, valueFn) {
         var save_async = async;
-        if (was_async != null) async = was_async;
+        if (was_async != null) {
+            async = false;
+            if (save_async || was_async) addAvoidVar("await");
+        }
+        avoid.forEach(addAvoidVar);
         var save_vars = nameLenBefore && VAR_NAMES.splice(nameLenBefore);
-        var value = nameLenBefore && rng(2) ? createValue() : createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
+        if (nameFn) nameFn();
+        if (was_async != null) {
+            async = was_async;
+            if (save_async || was_async) removeAvoidVar("await");
+        }
+        if (valueFn) valueFn();
         if (save_vars) [].push.apply(VAR_NAMES, save_vars);
+        avoid.forEach(removeAvoidVar);
         async = save_async;
-        return value;
+    }
+
+    function createAssignmentValue(recurmax) {
+        return nameLenBefore && rng(2) ? createValue() : createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
+    }
+
+    function createDefaultValue(recurmax, noDefault) {
+        return !noDefault && SUPPORT.default_value && rng(20) == 0 ? " = " +  createAssignmentValue(recurmax) : "";
     }
 
     function createKey(recurmax, keys) {
@@ -459,20 +477,22 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
         return name;
     }
 
-    function createPairs(recurmax) {
+    function createPairs(recurmax, noDefault) {
         var names = [], values = [];
         var m = rng(4), n = rng(4);
         if (!nameLenBefore) m = Math.max(m, n, 1);
         for (var i = Math.max(m, n); --i >= 0;) {
             if (i < m && i < n) {
-                createDestructured(recurmax, names, values);
-                continue;
-            }
-            if (i < m) {
-                names.unshift(createName());
-            }
-            if (i < n) {
-                values.unshift(createAssignmentValue(recurmax));
+                createDestructured(recurmax, noDefault, names, values);
+            } else if (i < m) {
+                var name = createName();
+                fill(function() {
+                    names.unshift(name + createDefaultValue(recurmax, noDefault));
+                });
+            } else {
+                fill(null, function() {
+                    values.unshift(createAssignmentValue(recurmax));
+                });
             }
         }
         return {
@@ -481,7 +501,7 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
         };
     }
 
-    function createDestructured(recurmax, names, values) {
+    function createDestructured(recurmax, noDefault, names, values) {
         switch (rng(20)) {
           case 0:
             if (--recurmax < 0) {
@@ -489,20 +509,25 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
                 values.unshift('""');
             } else {
                 var pairs = createPairs(recurmax);
-                while (!rng(10)) {
-                    var index = rng(pairs.names.length + 1);
-                    pairs.names.splice(index, 0, "");
-                    if (index < pairs.values.length) {
-                        pairs.values.splice(index, 0, rng(2) ? createAssignmentValue(recurmax) : "");
-                    } else switch (rng(5)) {
-                      case 0:
-                        pairs.values[index] = createAssignmentValue(recurmax);
-                      case 1:
-                        pairs.values.length = index + 1;
+                var default_value;
+                fill(function() {
+                    default_value = createDefaultValue(recurmax, noDefault);
+                }, function() {
+                    while (!rng(10)) {
+                        var index = rng(pairs.names.length + 1);
+                        pairs.names.splice(index, 0, "");
+                        if (index < pairs.values.length) {
+                            pairs.values.splice(index, 0, rng(2) ? createAssignmentValue(recurmax) : "");
+                        } else switch (rng(5)) {
+                        case 0:
+                            pairs.values[index] = createAssignmentValue(recurmax);
+                        case 1:
+                            pairs.values.length = index + 1;
+                        }
                     }
-                }
-                names.unshift("[ " + pairs.names.join(", ") + " ]");
-                values.unshift("[ " + pairs.values.join(", ") + " ]");
+                    names.unshift("[ " + pairs.names.join(", ") + " ]" + default_value);
+                    values.unshift("[ " + pairs.values.join(", ") + " ]");
+                });
             }
             break;
           case 1:
@@ -521,33 +546,26 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
                         keys[index] = key;
                     }
                 });
-                var save_async = async;
-                if (was_async != null) {
-                    async = false;
-                    if (save_async || was_async) avoid.push("await");
-                }
-                addAvoidVars(avoid);
-                var save_vars = nameLenBefore && VAR_NAMES.splice(nameLenBefore);
-                names.unshift("{ " + addTrailingComma(pairs.names.map(function(name, index) {
-                    var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
-                    return key ? key + ": " + name : name;
-                }).join(", ")) + " }");
-                if (was_async != null) {
-                    async = was_async;
-                    if (save_async || was_async) removeAvoidVars([ avoid.pop() ]);
-                }
-                values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
-                    var key = index in keys ? keys[index] : createKey(recurmax, keys);
-                    return key + ": " + value;
-                }).join(", ")) + " }");
-                if (save_vars) [].push.apply(VAR_NAMES, save_vars);
-                removeAvoidVars(avoid);
-                async = save_async;
+                fill(function() {
+                    names.unshift("{ " + addTrailingComma(pairs.names.map(function(name, index) {
+                        var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
+                        return key ? key + ": " + name : name;
+                    }).join(", ")) + " }" + createDefaultValue(recurmax, noDefault));
+                }, function() {
+                    values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
+                        var key = index in keys ? keys[index] : createKey(recurmax, keys);
+                        return key + ": " + value;
+                    }).join(", ")) + " }");
+                });
             }
             break;
           default:
-            names.unshift(createName());
-            values.unshift(createAssignmentValue(recurmax));
+            var name = createName();
+            fill(function() {
+                names.unshift(name + createDefaultValue(recurmax, noDefault));
+            }, function() {
+                values.unshift(createAssignmentValue(recurmax));
+            });
             break;
         }
     }
@@ -575,8 +593,8 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
     }
     unique_vars.length -= 6;
     fn(function() {
-        addAvoidVars(consts);
-        addAvoidVars(lets);
+        consts.forEach(addAvoidVar);
+        lets.forEach(addAvoidVar);
         if (rng(2)) {
             return createDefinitions("const", consts) + "\n" + createDefinitions("let", lets) + "\n";
         } else {
@@ -610,17 +628,17 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
           default:
             s += names.map(function(name) {
                 if (type == "let" && !rng(10)) {
-                    removeAvoidVars([ name ]);
+                    removeAvoidVar(name);
                     return name;
                 }
                 var value = createExpression(recurmax, NO_COMMA, stmtDepth, canThrow);
-                removeAvoidVars([ name ]);
+                removeAvoidVar(name);
                 return name + " = " + value;
             }).join(", ") + ";";
             names.length = 0;
             break;
         }
-        removeAvoidVars(names);
+        names.forEach(removeAvoidVar);
         return s;
     }
 }
@@ -877,9 +895,9 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                     unique_vars.length -= 6;
                     if (SUPPORT.computed_key && rng(10) == 0) {
                         s += " catch ({  message: " + message + ", ";
-                        addAvoidVars([ name ]);
+                        addAvoidVar(name);
                         s += "[" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + "]: " + name;
-                        removeAvoidVars([ name ]);
+                        removeAvoidVar(name);
                         s += " }) { ";
                     } else {
                         s += " catch ({ name: " + name + ", message: " + message + " }) { ";
@@ -1483,15 +1501,13 @@ function createUnaryPostfix() {
     return UNARY_POSTFIX[rng(UNARY_POSTFIX.length)];
 }
 
-function addAvoidVars(names) {
-    avoid_vars = avoid_vars.concat(names);
+function addAvoidVar(name) {
+    avoid_vars.push(name);
 }
 
-function removeAvoidVars(names) {
-    names.forEach(function(name) {
-        var index = avoid_vars.lastIndexOf(name);
-        if (index >= 0) avoid_vars.splice(index, 1);
-    });
+function removeAvoidVar(name) {
+    var index = avoid_vars.lastIndexOf(name);
+    if (index >= 0) avoid_vars.splice(index, 1);
 }
 
 function getVarName(noConst) {
@@ -1799,6 +1815,8 @@ for (var round = 1; round <= num_iterations; round++) {
     var orig_result = [ sandbox.run_code(original_code), sandbox.run_code(original_code, true) ];
     errored = typeof orig_result[0] != "string";
     if (errored) {
+        println();
+        println();
         println("//=============================================================");
         println("// original code");
         try_beautify(original_code, false, orig_result[0], println);
