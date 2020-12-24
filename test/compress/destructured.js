@@ -2146,3 +2146,21 @@ issue_4436_undefined: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_4446: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        a = "PASS";
+        var a = [ a[0] ] = [ a ];
+        console.log(a[0]);
+    }
+    expect: {
+        a = "PASS";
+        var a = [ a[0] ] = [ a ];
+        console.log(a[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}

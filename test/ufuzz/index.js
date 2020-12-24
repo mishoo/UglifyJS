@@ -1680,18 +1680,20 @@ function log(options) {
         }
     }
     errorln("//-------------------------------------------------------------");
-    var reduce_options = JSON.parse(options);
-    reduce_options.validate = true;
-    var reduced = reduce_test(original_code, reduce_options, {
-        verbose: false,
-    }).code;
-    if (reduced) {
-        errorln();
-        errorln("// reduced test case (output will differ)");
-        errorln();
-        errorln(reduced);
-        errorln();
-        errorln("//-------------------------------------------------------------");
+    if (!ok) {
+        var reduce_options = JSON.parse(options);
+        reduce_options.validate = true;
+        var reduced = reduce_test(original_code, reduce_options, {
+            verbose: false,
+        }).code;
+        if (reduced) {
+            errorln();
+            errorln("// reduced test case (output will differ)");
+            errorln();
+            errorln(reduced);
+            errorln();
+            errorln("//-------------------------------------------------------------");
+        }
     }
     errorln("minify(options):");
     errorln(JSON.stringify(JSON.parse(options), null, 2));

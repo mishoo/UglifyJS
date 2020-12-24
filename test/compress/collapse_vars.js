@@ -4273,8 +4273,8 @@ issue_2436_14: {
         var b = {};
         (function() {
             a && function(c, d) {
-                console.log(c, d);
-            }(b, a);
+                console.log(b, d);
+            }(0, a);
         })();
     }
     expect_stdout: true

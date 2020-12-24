@@ -153,6 +153,20 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     node.left,
                     node.right,
                 ][ permute & 1 ];
+                if (expr instanceof U.AST_Destructured) expr = expr.transform(new U.TreeTransformer(function(node, descend) {
+                    if (node instanceof U.AST_DefaultValue) return new U.AST_Assign({
+                        operator: "=",
+                        left: node.name.transform(this),
+                        right: node.value,
+                        start: {},
+                    });
+                    if (node instanceof U.AST_DestructuredKeyVal) return new U.AST_ObjectKeyVal(node);
+                    if (node instanceof U.AST_Destructured) {
+                        node = new (node instanceof U.AST_DestructuredArray ? U.AST_Array : U.AST_Object)(node);
+                        descend(node, this);
+                    }
+                    return node;
+                }));
                 CHANGED = true;
                 return permute < 2 ? expr : wrap_with_console_log(expr);
             }

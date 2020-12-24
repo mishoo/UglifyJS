@@ -974,3 +974,41 @@ issue_4444: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4446_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        a = 42;
+        [ b = 42 ] = [ "PASS" ];
+        c = 42;
+        console.log(b, a);
+    }
+    expect: {
+        [ b = 42 ] = [ "PASS" ];
+        c = a = 42;
+        console.log(b, a);
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
+
+issue_4446_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        a = 42;
+        var [ b = 42 ] = [ "PASS" ];
+        c = 42;
+        console.log(b, a);
+    }
+    expect: {
+        var [ b = 42 ] = [ "PASS" ];
+        c = a = 42;
+        console.log(b, a);
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
