@@ -1,5 +1,5 @@
-(function f(a) {
-    do {
-        console.log(f.length);
-    } while (console.log(f += 0));
-})();
+console.log(function(undefined) {
+    return undefined[function() {
+        {}
+    }] || 1 + .1 + .1;
+}(42));

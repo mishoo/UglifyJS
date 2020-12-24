@@ -4,15 +4,16 @@ unused_funarg_1: {
         unused: true,
     }
     input: {
-        function f(a, b, c, d, e) {
+        console.log(function f(a, b, c, d, e) {
             return a + b;
-        }
+        }(14, 28));
     }
     expect: {
-        function f(a, b) {
+        console.log(function(a, b) {
             return a + b;
-        }
+        }(14, 28));
     }
+    expect_stdout: "42"
 }
 
 unused_funarg_2: {
@@ -21,15 +22,16 @@ unused_funarg_2: {
         unused: true,
     }
     input: {
-        function f(a, b, c, d, e) {
+        console.log(function f(a, b, c, d, e) {
             return a + c;
-        }
+        }(14, 21, 28));
     }
     expect: {
-        function f(a, b, c) {
+        console.log(function(a, c) {
             return a + c;
-        }
+        }(14, 28));
     }
+    expect_stdout: "42"
 }
 
 unused_nested_function: {
@@ -357,37 +359,6 @@ drop_toplevel_vars: {
     }
 }
 
-drop_toplevel_vars_fargs: {
-    options = {
-        keep_fargs: false,
-        toplevel: "vars",
-        unused: true,
-    }
-    input: {
-        var a, b = 1, c = g;
-        function f(d) {
-            return function() {
-                c = 2;
-            };
-        }
-        a = 2;
-        function g() {}
-        function h() {}
-        console.log(b = 3);
-    }
-    expect: {
-        function f() {
-            return function() {
-                2;
-            };
-        }
-        2;
-        function g() {}
-        function h() {}
-        console.log(3);
-    }
-}
-
 drop_toplevel_all: {
     options = {
         toplevel: true,
@@ -625,13 +596,14 @@ drop_fargs: {
         unused: true,
     }
     input: {
-        function f(a) {
+        console.log(function f(a) {
             var b = a;
-        }
+        }());
     }
     expect: {
-        function f() {}
+        console.log(function() {}());
     }
+    expect_stdout: "undefined"
 }
 
 drop_fnames: {
@@ -2027,7 +1999,7 @@ issue_3192_1: {
 
 issue_3192_2: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -2435,7 +2407,7 @@ issue_3673: {
 
 issue_3746: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         side_effects: true,
         unused: true,
     }
@@ -2713,7 +2685,7 @@ issue_3956: {
 issue_3962_1: {
     options = {
         evaluate: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2745,7 +2717,7 @@ issue_3962_1: {
 
 issue_3962_2: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2948,7 +2920,7 @@ issue_4133: {
 
 issue_4144: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         unused: true,
     }

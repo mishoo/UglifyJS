@@ -353,7 +353,7 @@ property_access_expression: {
 reduce_iife_1: {
     options = {
         evaluate: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         unused: true,
     }

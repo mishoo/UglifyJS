@@ -481,7 +481,7 @@ retain_fargs: {
 
 drop_fargs: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {

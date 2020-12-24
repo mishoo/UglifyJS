@@ -790,7 +790,7 @@ issue_3795: {
         dead_code: true,
         evaluate: true,
         join_vars: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         loops: true,
         passes: 2,
         reduce_vars: true,

@@ -2373,7 +2373,7 @@ redefine_farg_1: {
         function f(a) {
             return typeof a;
         }
-        function g() {
+        function g(a) {
             return "number";
         }
         function h(a, b) {
@@ -6928,7 +6928,7 @@ issue_3622: {
     options = {
         evaluate: true,
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         sequences: true,
         toplevel: true,
@@ -7196,7 +7196,7 @@ issue_3894: {
 issue_3922: {
     options = {
         evaluate: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         pure_getters: "strict",
         reduce_vars: true,
         side_effects: true,

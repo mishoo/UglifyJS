@@ -436,7 +436,7 @@ trim_new: {
 
 issue_4325: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         passes: 2,
         pure_getters: "strict",
         reduce_vars: true,

@@ -419,7 +419,7 @@ collapse_value: {
     options = {
         arrows: true,
         collapse_vars: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -437,7 +437,7 @@ collapse_value: {
 reduce_iife_1: {
     options = {
         evaluate: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         unused: true,
     }

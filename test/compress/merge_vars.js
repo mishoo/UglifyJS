@@ -327,7 +327,7 @@ issue_4103: {
 
 issue_4107: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         merge_vars: true,
         reduce_vars: true,
         unused: true,

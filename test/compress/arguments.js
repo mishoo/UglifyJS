@@ -78,7 +78,7 @@ replace_index_strict: {
     ]
 }
 
-replace_index_keep_fargs: {
+replace_index_drop_fargs_1: {
     options = {
         arguments: true,
         evaluate: true,
@@ -128,7 +128,7 @@ replace_index_keep_fargs: {
     ]
 }
 
-replace_index_keep_fargs_strict: {
+replace_index_drop_fargs_2: {
     options = {
         arguments: true,
         evaluate: true,
@@ -412,7 +412,7 @@ issue_3273_global_strict_reduce_vars: {
     ]
 }
 
-issue_3273_keep_fargs_false: {
+issue_3273_drop_fargs_1: {
     options = {
         arguments: true,
         keep_fargs: false,
@@ -435,10 +435,10 @@ issue_3273_keep_fargs_false: {
     expect_stdout: "1"
 }
 
-issue_3273_keep_fargs_strict: {
+issue_3273_drop_fargs_2: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
     }
     input: {
@@ -633,7 +633,7 @@ issue_3282_2_passes: {
 issue_3420_1: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         console.log(function() {
@@ -655,7 +655,7 @@ issue_3420_1: {
 issue_3420_2: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         var foo = function() {
@@ -675,7 +675,7 @@ issue_3420_2: {
 issue_3420_3: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         "use strict";
@@ -697,7 +697,7 @@ issue_3420_3: {
 issue_3420_4: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         !function() {
@@ -722,7 +722,7 @@ issue_3420_4: {
 issue_3420_5: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         "use strict";
@@ -749,7 +749,7 @@ issue_3420_5: {
 issue_3420_6: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         console.log(function() {
@@ -767,7 +767,7 @@ issue_3420_6: {
 issue_3420_7: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         "use strict";
@@ -811,7 +811,7 @@ issue_4200: {
 issue_4291_1: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         console.log(function() {
@@ -831,7 +831,7 @@ issue_4291_1: {
 issue_4291_2: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         var a = function() {
@@ -855,7 +855,7 @@ issue_4291_2: {
 issue_4397: {
     options = {
         arguments: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         console.log(typeof function() {

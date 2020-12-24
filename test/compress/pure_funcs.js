@@ -685,7 +685,7 @@ issue_3858: {
     options = {
         collapse_vars: true,
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -711,7 +711,7 @@ inline_pure_call_1: {
     options = {
         collapse_vars: true,
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -733,7 +733,7 @@ inline_pure_call_2: {
     options = {
         collapse_vars: true,
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -756,7 +756,7 @@ inline_pure_call_3: {
         collapse_vars: true,
         evaluate: true,
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         passes: 2,
         reduce_vars: true,
         toplevel: true,

@@ -192,7 +192,7 @@ keep_property_access: {
 
 keep_fargs: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {

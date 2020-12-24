@@ -63,42 +63,81 @@ eval_unused: {
         unused: true,
     }
     input: {
-        function f1(a, eval, c, d, e) {
-            return a('c') + eval;
+        function o(k) {
+            return { c: 14 }[k];
         }
-        function f2(a, b, c, d, e) {
-            return a + eval('c');
-        }
-        function f3(a, eval, c, d, e) {
-            return a + eval('c');
-        }
+        console.log(function f1(a, eval, c, d, e) {
+            return a("c") + eval;
+        }(o, 28, true));
+        console.log(function f2(a, b, c, d, e) {
+            return a + eval("c");
+        }(14, true, 28));
+        console.log(function f3(a, eval, c, d, e) {
+            return a + eval("c");
+        }(28, o, true));
     }
     expect: {
-        function f1(a, eval) {
-            return a('c') + eval;
+        function o(k) {
+            return { c: 14 }[k];
         }
-        function f2(a, b, c, d, e) {
-            return a + eval('c');
-        }
-        function f3(a, eval, c, d, e) {
-            return a + eval('c');
-        }
+        console.log(function(a, eval) {
+            return a("c") + eval;
+        }(o, 28));
+        console.log(function f2(a, b, c, d, e) {
+            return a + eval("c");
+        }(14, true, 28));
+        console.log(function f3(a, eval, c, d, e) {
+            return a + eval("c");
+        }(28, o, true));
     }
+    expect_stdout: [
+        "42",
+        "42",
+        "42",
+    ]
 }
 
 eval_mangle: {
-    mangle = {
-    };
-    input: {
-        function f1(a, eval, c, d, e) {
-            return a('c') + eval;
-        }
-        function f2(a, b, c, d, e) {
-            return a + eval('c');
-        }
-        function f3(a, eval, c, d, e) {
-            return a + eval('c');
-        }
+    mangle = {}
+    beautify = {
+        beautify: true,
     }
-    expect_exact: 'function f1(n,c,e,a,f){return n("c")+c}function f2(a,b,c,d,e){return a+eval("c")}function f3(a,eval,c,d,e){return a+eval("c")}'
+    input: {
+        function o(k) {
+            return { cc: 14 }[k + "c"];
+        }
+        console.log(function f1(a, eval, c, d, e) {
+            return a("c") + eval;
+        }(o, 28, true));
+        console.log(function f2(a, b, c, d, e) {
+            return a + eval("c");
+        }(14, true, 28));
+        console.log(function f3(a, eval, c, d, e) {
+            return a + eval("c");
+        }(28, o, true));
+    }
+    expect_exact: [
+        "function o(o) {",
+        "    return {",
+        "        cc: 14",
+        '    }[o + "c"];',
+        "}",
+        "",
+        "console.log(function o(c, e, n, r, t) {",
+        '    return c("c") + e;',
+        "}(o, 28, true));",
+        "",
+        "console.log(function f2(a, b, c, d, e) {",
+        '    return a + eval("c");',
+        "}(14, true, 28));",
+        "",
+        "console.log(function f3(a, eval, c, d, e) {",
+        '    return a + eval("c");',
+        "}(28, o, true));",
+    ]
+    expect_stdout: [
+        "42",
+        "42",
+        "42",
+    ]
 }
