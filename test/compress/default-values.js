@@ -950,3 +950,27 @@ mangle_arrow_2_toplevel: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4444: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS";
+        console.log(function(b) {
+            b = a;
+            (function(c = b.p) {})();
+            return a;
+        }());
+    }
+    expect: {
+        var a = "PASS";
+        console.log(function(b) {
+            b = a;
+            (function(c = b.p) {})();
+            return a;
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
