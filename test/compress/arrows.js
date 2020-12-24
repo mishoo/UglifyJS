@@ -587,3 +587,32 @@ issue_4401: {
     ]
     node_version: ">=4"
 }
+
+issue_4448: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        var A;
+        try {
+            (arguments => {
+                arguments[0];
+            })(A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var A;
+        try {
+            (arguments => {
+                arguments[0];
+            })(A);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
