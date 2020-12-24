@@ -40,7 +40,7 @@ redefine_arguments_2: {
 
 redefine_arguments_3: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -259,7 +259,7 @@ funarg_side_effects_3: {
 
 funarg_unused_1: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -318,7 +318,7 @@ funarg_unused_3: {
 
 funarg_unused_4: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         pure_getters: "strict",
         unused: true,
     }
@@ -384,7 +384,7 @@ funarg_unused_6_inline: {
 
 funarg_unused_6_keep_fargs: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -426,7 +426,7 @@ funarg_collapse_vars_1: {
 funarg_collapse_vars_2: {
     options = {
         collapse_vars: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -505,7 +505,7 @@ funarg_reduce_vars_1: {
 funarg_reduce_vars_2: {
     options = {
         evaluate: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         pure_getters: "strict",
         reduce_vars: true,
         unsafe: true,
@@ -1123,7 +1123,7 @@ join_vars: {
 
 keep_fargs: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -1776,7 +1776,7 @@ issue_4319: {
 issue_4321: {
     options = {
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         try {

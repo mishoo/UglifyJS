@@ -1,8 +1,5 @@
-console.log(function f(a) {
-    ({
-        set p(v) {
-            f++;
-        }
-    });
-    return f.length;
-}());
+({
+    set p(v) {
+        console.log(+v + .1 + .1);
+    }
+}).p = 1;

@@ -229,7 +229,7 @@ issue_203: {
     }
     expect: {
         var m = {};
-        var fn = Function("n,o", "o.exports=42");
+        var fn = Function("n,o,t", "o.exports=42");
         fn(null, m, m.exports);
         console.log(m.exports);
     }
@@ -4230,7 +4230,7 @@ substitute: {
 substitute_add_farg: {
     options = {
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
     }
     input: {
         function f(g) {
@@ -4411,7 +4411,9 @@ substitute_drop_farg: {
                 return f;
             },
             function() {
-                return f;
+                return function(d, e) {
+                    return f(d, e);
+                };
             },
         ].forEach(function(g) {
             console.log(g()(o), g().call(o, o));
@@ -4594,7 +4596,7 @@ substitute_use_strict: {
 issue_3833: {
     options = {
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -4751,7 +4753,7 @@ issue_4006: {
         dead_code: true,
         evaluate: true,
         inline: true,
-        keep_fargs: "strict",
+        keep_fargs: false,
         reduce_vars: true,
         sequences: true,
         side_effects: true,

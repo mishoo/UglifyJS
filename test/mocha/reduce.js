@@ -37,8 +37,7 @@ describe("test/reduce.js", function() {
     it("Should retain setter arguments", function() {
         var result = reduce_test(read("test/input/reduce/setter.js"), {
             compress: {
-                keep_fargs: false,
-                unsafe: true,
+                unsafe_math: true,
             },
             mangle: false,
         }, {
@@ -110,28 +109,24 @@ describe("test/reduce.js", function() {
     });
     it("Should print correct output for irreducible test case", function() {
         var result = reduce_test([
-            "console.log(function f(a) {",
-            "    return f.length;",
-            "}());",
+            "console.log(1 + .1 + .1);",
         ].join("\n"), {
             compress: {
-                keep_fargs: false,
+                unsafe_math: true,
             },
             mangle: false,
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
             "// (beautified)",
-            "console.log(function f(a) {",
-            "    return f.length;",
-            "}());",
-            "// output: 1",
+            "console.log(1 + .1 + .1);",
+            "// output: 1.2000000000000002",
             "// ",
-            "// minify: 0",
+            "// minify: 1.2",
             "// ",
             "// options: {",
             '//   "compress": {',
-            '//     "keep_fargs": false',
+            '//     "unsafe_math": true',
             "//   },",
             '//   "mangle": false',
             "// }",
@@ -303,8 +298,7 @@ describe("test/reduce.js", function() {
         if (semver.satisfies(process.version, "<=0.10")) return;
         var result = reduce_test(read("test/input/reduce/diff_error.js"), {
             compress: {
-                keep_fargs: false,
-                unsafe: true,
+                unsafe_math: true,
             },
             mangle: false,
         }, {

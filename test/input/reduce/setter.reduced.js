@@ -1,20 +1,16 @@
 // (beautified)
-console.log(function f(a) {
-    ({
-        set p(v) {
-            f++;
-        }
-    });
-    return f.length;
-}());
-// output: 1
+({
+    set p(v) {
+        console.log(1 + .1 + .1);
+    }
+}).p = 0;
+// output: 1.2000000000000002
 // 
-// minify: 0
+// minify: 1.2
 // 
 // options: {
 //   "compress": {
-//     "keep_fargs": false,
-//     "unsafe": true
+//     "unsafe_math": true
 //   },
 //   "mangle": false
 // }

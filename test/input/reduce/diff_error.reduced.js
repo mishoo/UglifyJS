@@ -1,19 +1,14 @@
 // (beautified)
-(function f(a) {
-    do {
-        console.log(f.length);
-    } while (console.log(f += 0));
-})();
-// output: 1
-// function(){}0
+console.log(function() {
+    return 1 + .1 + .1;
+}());
+// output: 1.2000000000000002
 // 
-// minify: 0
-// function(){}0
+// minify: 1.2
 // 
 // options: {
 //   "compress": {
-//     "keep_fargs": false,
-//     "unsafe": true
+//     "unsafe_math": true
 //   },
 //   "mangle": false
 // }

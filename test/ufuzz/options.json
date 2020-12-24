@@ -28,7 +28,6 @@
     },
     {
         "compress": {
-            "keep_fargs": false,
             "passes": 1e6,
             "sequences": 1e6,
             "unsafe": true,

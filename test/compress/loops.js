@@ -1026,7 +1026,7 @@ issue_4075: {
 
 issue_4082: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         loops: true,
         unused: true,
     }
@@ -1050,7 +1050,7 @@ issue_4082: {
 
 issue_4084: {
     options = {
-        keep_fargs: "strict",
+        keep_fargs: false,
         loops: true,
         passes: 2,
         reduce_vars: true,

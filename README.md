@@ -683,9 +683,9 @@ to be `false` and all symbol names will be omitted.
 
 - `join_vars` (default: `true`) -- join consecutive `var` statements
 
-- `keep_fargs` (default: `strict`) -- Discard unused function arguments. Code
-  which relies on `Function.length` will break if this is done indiscriminately,
-  i.e. when passing `true`. Pass `false` to always retain function arguments.
+- `keep_fargs` (default: `false`) -- discard unused function arguments except
+  when unsafe to do so, e.g. code which relies on `Function.prototype.length`.
+  Pass `true` to always retain function arguments.
 
 - `keep_fnames` (default: `false`) -- Pass `true` to prevent the
   compressor from discarding function names.  Useful for code relying on
