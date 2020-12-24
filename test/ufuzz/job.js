@@ -70,7 +70,7 @@ function run() {
 
     function trap(data) {
         stderr += data;
-        if (~stderr.indexOf("\nminify(options):\n")) {
+        if (~stderr.indexOf("!!!!!! Failed... round ")) {
             process.exitCode = 1;
             child.stderr.removeListener("data", trap);
         }
