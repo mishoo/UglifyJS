@@ -638,6 +638,8 @@ to be `false` and all symbol names will be omitted.
 
 - `dead_code` (default: `true`) -- remove unreachable code
 
+- `default_values` (default: `true`) -- drop overshadowed default values
+
 - `directives` (default: `true`) -- remove redundant or non-standard directives
 
 - `drop_console` (default: `false`) -- Pass `true` to discard calls to
