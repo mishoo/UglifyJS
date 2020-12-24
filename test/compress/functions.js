@@ -5134,8 +5134,8 @@ issue_4259: {
         console.log(typeof a);
     }
     expect: {
-        function a() {
-            for (a in a);
+        var a = function b() {
+            for (b in b);
         }
         a();
         console.log(typeof a);
@@ -5224,4 +5224,28 @@ trailing_comma: {
     }
     expect_exact: 'new function(a,b){console.log(b,a)}(42,"PASS");'
     expect_stdout: "PASS 42"
+}
+
+issue_4451: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            for (f in "foo")
+                return f;
+        };
+        while (console.log(typeof a()));
+    }
+    expect: {
+        var a = function f() {
+            for (f in "foo")
+                return f;
+        };
+        while (console.log(typeof a()));
+    }
+    expect_stdout: "function"
 }
