@@ -543,6 +543,70 @@ unused_var_2: {
     node_version: ">=6"
 }
 
+unused_value_assign_1: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        [] = [ console.log("PASS") ];
+    }
+    expect: {
+        [ console.log("PASS") ];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+unused_value_assign_2: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        [ a = console.log("FAIL") ] = [ "PASS" ];
+        console.log(a);
+    }
+    expect: {
+        [ a ] = [ "PASS" ];
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+unused_value_var_1: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        var [] = [ console.log("PASS") ];
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+unused_value_var_2: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        var [ a = console.log("FAIL") ] = [ "PASS" ];
+        console.log(a);
+    }
+    expect: {
+        var [ a ] = [ "PASS" ];
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 mangle_var_1: {
     mangle = {
         toplevel: false,
