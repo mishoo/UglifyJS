@@ -2164,3 +2164,36 @@ issue_4446: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4456: {
+    options = {
+        pure_getters: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            set p(v) {
+                console.log(v);
+            },
+        };
+        [ function() {
+            try {
+                return o;
+            } catch ({}) {}
+        }().p ] = [ "PASS" ];
+    }
+    expect: {
+        var o = {
+            set p(v) {
+                console.log(v);
+            },
+        };
+        [ function() {
+            try {
+                return o;
+            } catch ({}) {}
+        }().p ] = [ "PASS" ];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
