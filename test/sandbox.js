@@ -64,7 +64,7 @@ function createContext() {
     }
 }
 
-exports.run_code = function(code, toplevel, timeout) {
+function run_code(code, toplevel, timeout) {
     timeout = timeout || 5000;
     var stdout = "";
     var original_write = process.stdout.write;
@@ -79,7 +79,17 @@ exports.run_code = function(code, toplevel, timeout) {
     } finally {
         process.stdout.write = original_write;
     }
-};
+}
+
+exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, toplevel, timeout) {
+    var stdout = run_code(code, toplevel, timeout);
+    if (typeof stdout != "string" || !/arguments/.test(code)) return stdout;
+    do {
+        var prev = stdout;
+        stdout = run_code(code, toplevel, timeout);
+    } while (prev !== stdout);
+    return stdout;
+} : run_code;
 
 function strip_func_ids(text) {
     return ("" + text).replace(/F[0-9]{6}N/g, "<F<>N>");
