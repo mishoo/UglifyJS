@@ -1076,3 +1076,27 @@ issue_4446_2: {
     expect_stdout: "PASS 42"
     node_version: ">=6"
 }
+
+issue_4458: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b = a = "FAIL") {
+            console.log(a, b);
+        }
+        f(42);
+    }
+    expect: {
+        var a = "PASS";
+        (function(b = a = "FAIL") {
+            console.log(a, b);
+        })(42);
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
