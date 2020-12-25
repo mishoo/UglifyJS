@@ -640,3 +640,59 @@ issue_4417: {
     expect_stdout: "undefined"
     node_version: ">=8"
 }
+
+issue_4454_1: {
+    rename = false
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            (async function(b = console.log(a)) {})();
+            var await = 42..toString();
+            console.log(await);
+        }
+        f("PASS");
+    }
+    expect: {
+        function f(a) {
+            (async function(b = console.log(a)) {})();
+            var await = 42..toString();
+            console.log(await);
+        }
+        f("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=8"
+}
+
+issue_4454_2: {
+    rename = true
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            (async function(b = console.log(a)) {})();
+            var await = 42..toString();
+            console.log(await);
+        }
+        f("PASS");
+    }
+    expect: {
+        function f(b) {
+            (async function(c = console.log(b)) {})();
+            var b = 42..toString();
+            console.log(b);
+        }
+        f("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=8"
+}
