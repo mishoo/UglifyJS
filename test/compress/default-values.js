@@ -1100,3 +1100,63 @@ issue_4458: {
     expect_stdout: "PASS 42"
     node_version: ">=6"
 }
+
+issue_4460: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log, a = "FAIL";
+        var [ b = a ] = (a = "PASS", []);
+        log(a, b);
+    }
+    expect: {
+        var log = console.log, a = "FAIL";
+        var [ b = a ] = (a = "PASS", []);
+        log(a, b);
+    }
+    expect_stdout: "PASS PASS"
+    node_version: ">=6"
+}
+
+issue_4461_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function(b = a && console.log("PASS"), c) {
+            return c;
+        })(void 0, a++);
+    }
+    expect: {
+        var a = 0;
+        (function(b = a && console.log("PASS"), c) {
+            return c;
+        })(void 0, a++);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4461_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function([ b = a && console.log("PASS") ], c) {
+            return c;
+        })([], a++);
+    }
+    expect: {
+        var a = 0;
+        (function([ b = a && console.log("PASS") ], c) {
+            return c;
+        })([], a++);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
