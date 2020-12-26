@@ -2,7 +2,7 @@ name: Fuzzing
 on:
   pull_request:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: '*/5 * * * *'
 env:
   BASE_URL: https://api.github.com/repos/${{ github.repository }}
   CAUSE: ${{ github.event_name }}
@@ -13,22 +13,39 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-    name: ${{ matrix.os }}
+        include:
+          - node: latest
+            os: macos-latest
+          - node: '8'
+            os: ubuntu-latest
+          - node: '8'
+            os: ubuntu-latest
+          - node: '8'
+            os: windows-latest
+          - node: '8'
+            os: windows-latest
+    name: ${{ matrix.node }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      NODE: ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v2
+      - name: Install GNU Core Utilities
+        if: ${{ startsWith(matrix.os, 'macos') }}
+        shell: bash
+        run: |
+          brew install coreutils
       - name: Perform fuzzing
         shell: bash
         run: |
-          git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add 8 && nvs use 8'; do
+          git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
+          while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add $NODE && nvs use $NODE'; do
             cd ~/.nvs
             while !(git clean -xdf); do echo "'git clean' failed - retrying..."; done
             cd -
           done
           . ~/.nvs/nvs.sh --version
-          nvs use 8
+          nvs use $NODE
           node --version
           npm config set audit false
           npm config set optional false

@@ -7,13 +7,13 @@ jobs:
   test:
     strategy:
       matrix:
-        node: [ "0.8", "0.10", "0.12", "4", "6", "8", "10", "12", latest ]
+        node: [ '0.8', '0.10', '0.12', '4', '6', '8', '10', '12', latest ]
         os: [ ubuntu-latest, windows-latest ]
         script: [ compress, mocha, release/benchmark, release/jetstream ]
         exclude:
-          - node: "0.8"
+          - node: '0.8'
             script: release/benchmark
-          - node: "0.8"
+          - node: '0.8'
             script: release/jetstream
     name: ${{ matrix.node }} ${{ matrix.os }} ${{ matrix.script }}
     runs-on: ${{ matrix.os }}
@@ -29,7 +29,7 @@ jobs:
       - name: Perform tests
         shell: bash
         run: |
-          git clone --branch v1.5.4 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
+          git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
           while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add $NODE && nvs use $NODE'; do
             cd ~/.nvs
             while !(git clean -xdf); do echo "'git clean' failed - retrying..."; done
