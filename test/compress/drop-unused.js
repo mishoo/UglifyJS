@@ -3125,3 +3125,74 @@ issue_4413: {
     }
     expect_stdout: "0"
 }
+
+issue_4464_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var a = function() {};
+            return [ arguments, a ];
+        }
+        console.log(typeof f()[1]);
+    }
+    expect: {
+        function f(a) {
+            a = function() {};
+            return [ arguments, a ];
+        }
+        console.log(typeof f()[1]);
+    }
+    expect_stdout: "function"
+}
+
+issue_4464_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var a = function() {};
+            return [ arguments, a ];
+        }
+        console.log(typeof f(42)[0][0]);
+    }
+    expect: {
+        function f(a) {
+            a = function() {};
+            return [ arguments, a ];
+        }
+        console.log(typeof f(42)[0][0]);
+    }
+    expect_stdout: "function"
+}
+
+issue_4464_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function a(a) {
+            var a = function() {};
+            return [ arguments[0], a ];
+        })(42).forEach(function(b) {
+            console.log(typeof b);
+        });
+    }
+    expect: {
+        (function(a) {
+            a = function() {};
+            return [ arguments[0], a ];
+        })(42).forEach(function(b) {
+            console.log(typeof b);
+        });
+    }
+    expect_stdout: [
+        "function",
+        "function",
+    ]
+}

@@ -352,6 +352,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     }
                 }
             }
+            else if (node instanceof U.AST_Spread) {
+                node.start._permute++;
+                CHANGED = true;
+                return node.expression;
+            }
             else if (node instanceof U.AST_Switch) {
                 var expr = [
                     node.expression,                         // switch expression
