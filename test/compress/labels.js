@@ -207,3 +207,123 @@ labels_10: {
         }
     }
 }
+
+issue_4466_1: {
+    mangle = {
+        v8: false,
+    }
+    input: {
+        A: if (console.log("PASS"))
+            B:;
+        else
+            C:;
+    }
+    expect: {
+        e: if (console.log("PASS"))
+            l:;
+        else
+            l:;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_4466_1_v8: {
+    mangle = {
+        v8: true,
+    }
+    input: {
+        A: if (console.log("PASS"))
+            B:;
+        else
+            C:;
+    }
+    expect: {
+        e: if (console.log("PASS"))
+            l:;
+        else
+            o:;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_4466_2: {
+    mangle = {
+        toplevel: false,
+        v8: false,
+    }
+    input: {
+        if (console.log("PASS"))
+            A:;
+        else
+            B:;
+    }
+    expect: {
+        if (console.log("PASS"))
+            e:;
+        else
+            e:;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4466_2_v8: {
+    mangle = {
+        toplevel: false,
+        v8: true,
+    }
+    input: {
+        if (console.log("PASS"))
+            A:;
+        else
+            B:;
+    }
+    expect: {
+        if (console.log("PASS"))
+            e:;
+        else
+            l:;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4466_2_toplevel: {
+    mangle = {
+        toplevel: true,
+        v8: false,
+    }
+    input: {
+        if (console.log("PASS"))
+            A:;
+        else
+            B:;
+    }
+    expect: {
+        if (console.log("PASS"))
+            e:;
+        else
+            e:;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4466_2_toplevel_v8: {
+    mangle = {
+        toplevel: true,
+        v8: true,
+    }
+    input: {
+        if (console.log("PASS"))
+            A:;
+        else
+            B:;
+    }
+    expect: {
+        if (console.log("PASS"))
+            e:;
+        else
+            e:;
+    }
+    expect_stdout: "PASS"
+}
