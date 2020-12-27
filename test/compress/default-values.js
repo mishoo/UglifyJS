@@ -1160,3 +1160,31 @@ issue_4461_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4468: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            var {
+                [console.log("PASS")]: b = a && (a.p = 0),
+            } = 0;
+            a;
+        })(1234);
+    }
+    expect: {
+        (function() {
+            var {
+                [console.log("PASS")]: b = 0,
+            } = 0;
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
