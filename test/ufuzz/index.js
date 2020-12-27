@@ -1799,6 +1799,12 @@ var beautify_options = {
     },
 };
 var minify_options = require("./options.json");
+if (typeof sandbox.run_code("A:if (0) B:; else B:;") != "string") {
+    minify_options.forEach(function(o) {
+        if (!("mangle" in o)) o.mangle = {};
+        if (o.mangle) o.mangle.v8 = true;
+    });
+}
 if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
     beautify_options.output.v8 = true;
     minify_options.forEach(function(o) {

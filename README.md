@@ -135,6 +135,10 @@ a double dash to prevent input files being used as option arguments:
                                        `//# sourceMappingURL`.
     --timings                   Display operations run time on STDERR.
     --toplevel                  Compress and/or mangle variables in top level scope.
+    --v8                        Support non-standard Chrome & Node.js
+                                Equivalent to setting `v8: true` in `minify()`
+                                for `mangle` and `output` options.
+                                By default UglifyJS will not try to be v8-proof.
     --verbose                   Print diagnostic messages.
     --warn                      Print warning messages.
     --webkit                    Support non-standard Safari/Webkit.
@@ -521,6 +525,8 @@ if (result.error) throw result.error;
 
 - `toplevel` (default `false`) -- set to `true` if you wish to enable top level
   variable and function name mangling and to drop unused variables and functions.
+
+- `v8` (default `false`) -- enable workarounds for Chrome & Node.js bugs.
 
 - `warnings` (default `false`) — pass `true` to return compressor warnings
   in `result.warnings`. Use the value `"verbose"` for more detailed warnings.
@@ -920,8 +926,6 @@ can pass additional arguments that control the code output:
   gzip could be smaller; size after gzip insignificantly larger).
 
 - `shebang` (default `true`) -- preserve shebang `#!` in preamble (bash scripts)
-
-- `v8` (default `false`) -- enable workarounds for Chrome & Node.js bugs
 
 - `width` (default `80`) -- only takes effect when beautification is on, this
   specifies an (orientative) line width that the beautifier will try to
