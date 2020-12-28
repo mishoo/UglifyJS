@@ -32,6 +32,54 @@ defun_name: {
     node_version: ">=8"
 }
 
+drop_fname: {
+    rename = true
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        async function await() {
+            console.log("PASS");
+        }
+        await();
+    }
+    expect: {
+        (async function() {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+keep_fname: {
+    options = {
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        async function await() {
+            console.log("PASS");
+        }
+        await();
+    }
+    expect: {
+        async function await() {
+            console.log("PASS");
+        }
+        await();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 nested_await: {
     input: {
         (async function() {
