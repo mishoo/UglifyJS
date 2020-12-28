@@ -1,6 +1,6 @@
 "use strict";
 
-require("../tools/exit");
+require("../tools/tty");
 
 var assert = require("assert");
 var child_process = require("child_process");
