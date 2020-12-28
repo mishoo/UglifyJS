@@ -5249,3 +5249,37 @@ issue_4451: {
     }
     expect_stdout: "function"
 }
+
+issue_4471: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        f(f());
+        function f() {
+            return g();
+        }
+        function g() {
+            {
+                console.log("PASS");
+            }
+        }
+    }
+    expect: {
+        f(g());
+        function f() {
+            return g();
+        }
+        function g() {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
