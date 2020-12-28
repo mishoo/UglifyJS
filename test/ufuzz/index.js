@@ -5,7 +5,7 @@
 // bin/uglifyjs s.js -c && bin/uglifyjs s.js -c passes=3 && bin/uglifyjs s.js -c passes=3 -m
 // cat s.js | node && node s.js && bin/uglifyjs s.js -c | node && bin/uglifyjs s.js -c passes=3 | node && bin/uglifyjs s.js -c passes=3 -m | node
 
-require("../../tools/exit");
+require("../../tools/tty");
 
 var UglifyJS = require("../..");
 var randomBytes = require("crypto").randomBytes;

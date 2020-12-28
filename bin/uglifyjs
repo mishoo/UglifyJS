@@ -3,7 +3,7 @@
 
 "use strict";
 
-require("../tools/exit");
+require("../tools/tty");
 
 var fs = require("fs");
 var info = require("../package.json");

@@ -5,7 +5,7 @@
 
 var site = "https://browserbench.org/JetStream1.1";
 if (typeof phantom == "undefined") {
-    require("../tools/exit");
+    require("../tools/tty");
     var args = process.argv.slice(2);
     var debug = args.indexOf("--debug");
     if (debug < 0) {
