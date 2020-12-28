@@ -1358,6 +1358,24 @@ fn_name_unused: {
     node_version: ">=6"
 }
 
+hoist_vars: {
+    options = {
+        hoist_vars: true,
+    }
+    input: {
+        var a = "PASS";
+        var [ b ] = [ 42 ];
+        console.log(a, b);
+    }
+    expect: {
+        var a = "PASS";
+        var [ b ] = [ 42 ];
+        console.log(a, b);
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
+
 issue_4280: {
     options = {
         evaluate: true,

@@ -21,9 +21,12 @@
     },
     {
         "compress": {
+            "hoist_vars": true,
+            "keep_infinity": true,
             "passes": 1e6,
             "unsafe": true
         },
+        "keep_fnames": true,
         "toplevel": true
     },
     {

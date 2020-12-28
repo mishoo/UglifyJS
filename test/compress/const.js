@@ -658,6 +658,30 @@ legacy_scope: {
     expect_stdout: true
 }
 
+hoist_vars: {
+    options = {
+        hoist_vars: true,
+    }
+    input: {
+        {
+            const a = "FAIL";
+            var b = 42;
+        }
+        var a = "PASS";
+        console.log(a, b);
+    }
+    expect: {
+        var b;
+        {
+            const a = "FAIL";
+            b = 42;
+        }
+        var a = "PASS";
+        console.log(a, b);
+    }
+    expect_stdout: true
+}
+
 issue_4191: {
     options = {
         functions: true,

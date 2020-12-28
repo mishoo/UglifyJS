@@ -89,6 +89,31 @@ sequences_funs: {
     }
 }
 
+catch_var: {
+    options = {
+        dead_code: true,
+        hoist_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        try {
+            a;
+        } catch (a) {
+            var a = 0;
+            a;
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
 issue_2295: {
     options = {
         collapse_vars: true,
