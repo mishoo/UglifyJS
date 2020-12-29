@@ -3145,8 +3145,8 @@ issue_2313_2: {
         var c = 0;
         !function a() {
             a && c++;
-            var a = 0;
-            a && c++;
+            var a;
+            (a = 0) && c++;
         }();
         console.log(c);
     }
@@ -5502,8 +5502,7 @@ collapse_rhs_lhs_2: {
     expect: {
         var b = 1;
         (function f(f) {
-            f = b;
-            f[b] = 0;
+            b[b] = 0;
         })();
         console.log("PASS");
     }
@@ -5996,7 +5995,7 @@ issue_3215_1: {
         }());
     }
     expect: {
-        console.log(typeof 42);
+        console.log("number");
     }
     expect_stdout: "number"
 }
@@ -8659,6 +8658,50 @@ issue_4430_2: {
             }
         }
         console.log(f(1));
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_and_assign: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log;
+        var a = {
+            p: "PASS",
+        };
+        console && (a = a.p);
+        log(a);
+    }
+    expect: {
+        var log = console.log;
+        var a = {
+            p: "PASS",
+        };
+        log(a = console ? a.p : a);
+    }
+    expect_stdout: "PASS"
+}
+
+collapse_or_assign: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log;
+        var a = {
+            p: "PASS",
+        };
+        a.q || (a = a.p);
+        log(a);
+    }
+    expect: {
+        var log = console.log;
+        var a = {
+            p: "PASS",
+        };
+        log(a = !a.q ? a.p : a);
     }
     expect_stdout: "PASS"
 }

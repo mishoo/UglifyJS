@@ -2175,7 +2175,7 @@ issue_3016_3: {
     expect: {
         var b = 1;
         do {
-            console.log((a = void 0, a ? "FAIL" : a = "PASS"));
+            console.log((a = void 0, a ? "FAIL" : "PASS"));
         } while (b--);
         var a;
     }
@@ -2208,7 +2208,7 @@ issue_3016_3_ie8: {
     expect: {
         var b = 1;
         do {
-            console.log((a = void 0, a ? "FAIL" : a = "PASS"));
+            console.log((a = void 0, a ? "FAIL" : "PASS"));
         } while (b--);
         var a;
     }
