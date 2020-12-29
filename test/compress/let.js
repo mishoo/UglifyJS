@@ -359,6 +359,28 @@ reduce_block_2_toplevel: {
     node_version: ">=4"
 }
 
+reduce_vars: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        let a = "PASS";
+        console.log(a);
+        a = "FAIL";
+    }
+    expect: {
+        "use strict";
+        console.log("PASS");
+        "FAIL";
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 hoist_props: {
     options = {
         hoist_props: true,
