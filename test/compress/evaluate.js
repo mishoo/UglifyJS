@@ -3117,3 +3117,28 @@ issue_4422: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4480: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = function f(b) {
+            b = "FAIL";
+            arguments[0] = "PASS";
+            var arguments = 0;
+            console.log(b);
+        }(a);
+    }
+    expect: {
+        var a = function(b) {
+            b = "FAIL";
+            arguments[0] = "PASS";
+            var arguments = 0;
+            console.log(b);
+        }(a);
+    }
+    expect_stdout: "PASS"
+}

@@ -101,6 +101,13 @@ replace_index_drop_fargs_1: {
             var arguments;
             console.log(arguments[1], arguments["1"], arguments["foo"]);
         })("bar", 42);
+        (function() {
+            var arguments = {
+                1: "foo",
+                foo: "bar",
+            };
+            console.log(arguments[1], arguments["1"], arguments["foo"]);
+        })("bar", 42);
     }
     expect: {
         var arguments = [];
@@ -114,8 +121,15 @@ replace_index_drop_fargs_1: {
         (function(arguments) {
             console.log(arguments[1], arguments[1], arguments.foo);
         })("bar", 42);
-        (function() {
+        (function(argument_0, argument_1) {
             var arguments;
+            console.log(argument_1, argument_1, arguments.foo);
+        })("bar", 42);
+        (function() {
+            var arguments = {
+                1: "foo",
+                foo: "bar",
+            };
             console.log(arguments[1], arguments[1], arguments.foo);
         })("bar", 42);
     }
@@ -125,6 +139,7 @@ replace_index_drop_fargs_1: {
         "42 42 undefined",
         "a a undefined",
         "42 42 undefined",
+        "foo foo bar",
     ]
 }
 
