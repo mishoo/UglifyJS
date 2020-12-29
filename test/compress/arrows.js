@@ -616,3 +616,25 @@ issue_4448: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4476: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        (function(a, b) {
+            (a => {
+                console.log(arguments[0], a);
+            })(b);
+        })("foo", "bar");
+    }
+    expect: {
+        (function(a, b) {
+            (a => {
+                console.log(arguments[0], a);
+            })(b);
+        })("foo", "bar");
+    }
+    expect_stdout: "foo bar"
+    node_version: ">=4"
+}
