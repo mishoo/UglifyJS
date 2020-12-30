@@ -1206,3 +1206,24 @@ issue_4468: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4483: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        if (console)
+            var [ a = "FAIL" ] = [], b = a = "PASS";
+        console.log(b);
+    }
+    expect: {
+        var a, b;
+        console && ([ a = "FAIL" ] = [], b = "PASS");
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
