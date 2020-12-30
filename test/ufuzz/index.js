@@ -1710,7 +1710,9 @@ function log(options) {
 
 function sort_globals(code) {
     var globals = sandbox.run_code("throw Object.keys(this).sort();" + code);
-    return globals.length ? "var " + globals.join(",") + ";" + code : code;
+    return globals.length ? "var " + globals.map(function(name) {
+        return name + "=" + name;
+    }).join(",") + ";" + code : code;
 }
 
 function fuzzy_match(original, uglified) {
