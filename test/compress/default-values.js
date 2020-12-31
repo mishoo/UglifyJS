@@ -1227,3 +1227,89 @@ issue_4483: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4485_1: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        (function(a = null) {
+            var arguments;
+            try {
+                arguments.length;
+            } catch (e) {
+                console.log("PASS");
+            }
+        })();
+    }
+    expect: {
+        (function(a = null) {
+            var arguments;
+            try {
+                arguments.length;
+            } catch (e) {
+                console.log("PASS");
+            }
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
+
+issue_4485_2: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        (function(a = null) {
+            var arguments = null;
+            try {
+                arguments.length;
+            } catch (e) {
+                console.log("PASS");
+            }
+        })();
+    }
+    expect: {
+        (function(a = null) {
+            var arguments = null;
+            try {
+                arguments.length;
+            } catch (e) {
+                console.log("PASS");
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4485_3: {
+    options = {
+        unused: true,
+    }
+    input: {
+        (function(a = null) {
+            var arguments;
+            try {
+                arguments.length;
+            } catch (e) {
+                console.log("PASS");
+            }
+        })();
+    }
+    expect: {
+        (function(a = null) {
+            var arguments;
+            try {
+                arguments.length;
+            } catch (e) {
+                console.log("PASS");
+            }
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
