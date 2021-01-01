@@ -85,6 +85,28 @@ collapse_vars_4: {
     node_version: ">=6"
 }
 
+conditionals_farg: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function log(msg) {
+            console.log(msg);
+        }
+        var a = 42, b = [ "PASS" ], c = [ "FAIL" ];
+        a ? log(...b) : log(...c);
+    }
+    expect: {
+        function log(msg) {
+            console.log(msg);
+        }
+        var a = 42, b = [ "PASS" ], c = [ "FAIL" ];
+        log(...a ? b : c);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 dont_inline: {
     options = {
         inline: true,
