@@ -322,7 +322,16 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
             else if (node instanceof U.AST_Object) {
                 // first property's value
-                var expr = node.properties[0] instanceof U.AST_ObjectKeyVal && node.properties[0].value;
+                var expr = node.properties[0];
+                if (expr instanceof U.AST_ObjectKeyVal) {
+                    expr = expr.value;
+                } else if (expr instanceof U.AST_Spread) {
+                    expr = expr.expression;
+                } else if (expr && expr.key instanceof U.AST_Node) {
+                    expr = expr.key;
+                } else {
+                    expr = null;
+                }
                 if (expr) {
                     node.start._permute++;
                     CHANGED = true;
@@ -350,11 +359,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                         return List.splice(body);
                     }
                 }
-            }
-            else if (node instanceof U.AST_Spread) {
-                node.start._permute++;
-                CHANGED = true;
-                return node.expression;
             }
             else if (node instanceof U.AST_Switch) {
                 var expr = [
