@@ -134,3 +134,27 @@ issue_2295: {
         }
     }
 }
+
+issue_4487: {
+    options = {
+        functions: true,
+        hoist_vars: true,
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            var f = console.log(typeof f);
+        };
+        var b = a();
+    }
+    expect: {
+        function a() {
+            var a = console.log(typeof a);
+        }
+        a();
+    }
+    expect_stdout: "undefined"
+}
