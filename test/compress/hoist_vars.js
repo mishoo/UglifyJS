@@ -158,3 +158,22 @@ issue_4487: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4489: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = 0;
+        var o = !0 || null;
+        for (var k in o);
+    }
+    expect: {
+        for (var k in !(A = 0));
+    }
+}
