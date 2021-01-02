@@ -1313,3 +1313,31 @@ issue_4485_3: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_4496: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        (function f(a = 0) {
+            console.log(function(b) {
+                a && b();
+                return a;
+            }(f));
+        })(42);
+    }
+    expect: {
+        (function f(a = 0) {
+            console.log(function(b) {
+                a && b();
+                return a;
+            }(f));
+        })(42);
+    }
+    expect_stdout: [
+        "0",
+        "42",
+    ]
+    node_version: ">=6"
+}
