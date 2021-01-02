@@ -3,11 +3,11 @@ var fs = require("fs");
 exports.FILES = [
     require.resolve("../lib/utils.js"),
     require.resolve("../lib/ast.js"),
-    require.resolve("../lib/parse.js"),
     require.resolve("../lib/transform.js"),
+    require.resolve("../lib/parse.js"),
     require.resolve("../lib/scope.js"),
-    require.resolve("../lib/output.js"),
     require.resolve("../lib/compress.js"),
+    require.resolve("../lib/output.js"),
     require.resolve("../lib/sourcemap.js"),
     require.resolve("../lib/mozilla-ast.js"),
     require.resolve("../lib/propmangle.js"),

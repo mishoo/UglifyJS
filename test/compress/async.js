@@ -142,6 +142,7 @@ dont_inline: {
 
 inline_await_1: {
     options = {
+        awaits: true,
         inline: true,
         reduce_vars: true,
         unused: true,
@@ -167,6 +168,7 @@ inline_await_1: {
 
 inline_await_1_trim: {
     options = {
+        awaits: true,
         if_return: true,
         inline: true,
         reduce_vars: true,
@@ -194,6 +196,7 @@ inline_await_1_trim: {
 
 inline_await_2: {
     options = {
+        awaits: true,
         inline: true,
         reduce_vars: true,
         unused: true,
@@ -219,6 +222,7 @@ inline_await_2: {
 
 inline_await_2_trim: {
     options = {
+        awaits: true,
         if_return: true,
         inline: true,
         reduce_vars: true,
@@ -246,6 +250,7 @@ inline_await_2_trim: {
 
 inline_await_3: {
     options = {
+        awaits: true,
         inline: true,
         reduce_vars: true,
         unused: true,
@@ -270,6 +275,7 @@ inline_await_3: {
 
 inline_await_3_trim: {
     options = {
+        awaits: true,
         inline: true,
         reduce_vars: true,
         sequences: true,
@@ -296,6 +302,7 @@ inline_await_3_trim: {
 
 await_unary: {
     options = {
+        awaits: true,
         side_effects: true,
     }
     input: {
@@ -315,6 +322,28 @@ await_unary: {
             a = "FAIL";
         })();
         console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+await_void: {
+    options = {
+        awaits: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            console.log("PASS");
+            return await void 42;
+        })();
+    }
+    expect: {
+        (async function() {
+            await console.log("PASS");
+        })();
     }
     expect_stdout: "PASS"
     node_version: ">=8"
