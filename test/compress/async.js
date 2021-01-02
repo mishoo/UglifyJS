@@ -184,7 +184,7 @@ inline_await_1_trim: {
     }
     expect: {
         (async function() {
-            await 42;
+            await 0;
         })();
         console.log("PASS");
     }
@@ -228,7 +228,7 @@ inline_await_2_trim: {
     input: {
         (async function() {
             async function f(a) {
-                await a;
+                await a.log;
             }
             return await f(console);
         })();
@@ -236,7 +236,7 @@ inline_await_2_trim: {
     }
     expect: {
         (async function() {
-            await console;
+            await console.log;
         })();
         console.log("PASS");
     }
@@ -299,18 +299,22 @@ await_unary: {
         side_effects: true,
     }
     input: {
+        var a;
         (async function() {
-            console.log("PASS");
-            await +[];
-            console.log("FAIL");
+            a = "PASS";
+            await delete a.p;
+            a = "FAIL";
         })();
+        console.log(a);
     }
     expect: {
+        var a;
         (async function() {
-            console.log("PASS");
-            await +[];
-            console.log("FAIL");
+            a = "PASS";
+            await delete a.p;
+            a = "FAIL";
         })();
+        console.log(a);
     }
     expect_stdout: "PASS"
     node_version: ">=8"
