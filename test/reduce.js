@@ -341,7 +341,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             else if (node instanceof U.AST_PropAccess) {
                 var expr = [
                     node.expression,
-                    node.property instanceof U.AST_Node && node.property,
+                    node.property instanceof U.AST_Node && !(parent instanceof U.AST_Destructured) && node.property,
                 ][ node.start._permute++ % 2 ];
                 if (expr) {
                     CHANGED = true;
