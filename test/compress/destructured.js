@@ -2302,3 +2302,27 @@ issue_4485_3: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_4500: {
+    options = {
+        evaluate: true,
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f(b) {
+            return [ b ] = [], b;
+        }("FAIL");
+        console.log(a || "PASS");
+    }
+    expect: {
+        var a = function f(b) {
+            return [ b ] = [], b;
+        }("FAIL");
+        console.log(a || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
