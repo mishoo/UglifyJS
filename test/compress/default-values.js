@@ -1341,3 +1341,86 @@ issue_4496: {
     ]
     node_version: ">=6"
 }
+
+issue_4502_1: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a = "PASS";
+            (function(b = a++) {
+                var a;
+            })(void 0, console.log(a));
+        })();
+    }
+    expect: {
+        (function() {
+            var a = "PASS";
+            console.log(a),
+            a++,
+            void 0;
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4502_2: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a = "PASS";
+            (function(b = a++) {})(void 0, console.log(a));
+        })();
+    }
+    expect: {
+        (function() {
+            var a = "PASS";
+            console.log(a),
+            a++,
+            void 0;
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4502_3: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            var a = "PASS";
+            (function(b = a++) {})(void 0, console.log(a));
+        })();
+    }
+    expect: {
+        (function() {
+            var a = "PASS";
+            console.log(a),
+            a++;
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4502_4: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (function(a, b = console.log("FAIL")) {})(..."" + console.log(42));
+    }
+    expect: {
+        (function(a, b = console.log("FAIL")) {})(..."" + console.log(42));
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
+}
