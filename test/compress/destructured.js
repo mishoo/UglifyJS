@@ -2356,3 +2356,31 @@ issue_4504: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4508: {
+    options = {
+        inline: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var i = 0; i < 2; i++)
+            (function f([ a ]) {
+                var a = console.log(a) && b, b = null;
+            })([ "PASS" ]);
+    }
+    expect: {
+        for (var i = 0; i < 2; i++)
+            [ [ a ] ] = [ [ "PASS" ] ],
+            b = void 0,
+            a = console.log(a) && b,
+            b = null,
+            void 0;
+        var a, b;
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+    node_version: ">=6"
+}
