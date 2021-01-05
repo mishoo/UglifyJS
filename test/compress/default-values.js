@@ -1479,3 +1479,51 @@ issue_4502_4: {
     expect_stdout: "42"
     node_version: ">=6"
 }
+
+issue_4510_1: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        var a = [];
+        var [ , b = console.log("PASS") ] = [ ...a, null ];
+    }
+    expect: {
+        var a = [];
+        var [ , b = console.log("PASS") ] = [ ...a, null ];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4510_2: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            p: void 0,
+        };
+        var {
+            p: a = console.log("PASS"),
+        } = {
+            p: null,
+            ...o,
+        };
+    }
+    expect: {
+        var o = {
+            p: void 0,
+        };
+        var {
+            p: a = console.log("PASS"),
+        } = {
+            p: null,
+            ...o,
+        };
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
