@@ -2384,3 +2384,17 @@ issue_4508: {
     ]
     node_version: ">=6"
 }
+
+issue_4512: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        console.log(function([ a, b = a ]) {}([]));
+    }
+    expect: {
+        console.log(function([ a, b = a ]) {}([]));
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
