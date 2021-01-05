@@ -2326,3 +2326,29 @@ issue_4500: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4504: {
+    options = {
+        inline: true,
+        merge_vars: true,
+    }
+    input: {
+        A = "FAIL";
+        (function f(a) {
+            ({
+                [console.log(a)]: 0[(b => console + b)(A)]
+            } = 0);
+        })("PASS");
+    }
+    expect: {
+        A = "FAIL";
+        (function f(a) {
+            ({
+                [console.log(a)]: 0[b = A, console + b]
+            } = 0);
+            var b;
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
