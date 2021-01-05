@@ -140,6 +140,8 @@ var SUPPORT = function(matrix) {
     default_value: "[ a = 0 ] = [];",
     destructuring: "[] = [];",
     let: "let a;",
+    rest: "var [...a] = [];",
+    rest_object: "var {...a} = {};",
     spread: "[...[]];",
     spread_object: "({...0});",
     trailing_comma: "function f(a,) {}",
@@ -427,8 +429,21 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
     var avoid = [];
     var len = unique_vars.length;
     var pairs = createPairs(recurmax, !nameLenBefore);
+    pairs.has_rest = nameLenBefore && convertToRest(pairs.names);
     unique_vars.length = len;
     return pairs;
+
+    function convertToRest(names) {
+        var last = names.length - 1;
+        if (last >= 0 && SUPPORT.rest && rng(20) == 0) {
+            var name = names[last];
+            if (name && name.indexOf("=") < 0) {
+                if (/^[[{]/.test(name)) name = "[ " + name + " ]";
+                names[last] = "..." + name;
+                return true;
+            }
+        }
+    }
 
     function fill(nameFn, valueFn) {
         var save_async = async;
@@ -519,12 +534,13 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
                         if (index < pairs.values.length) {
                             pairs.values.splice(index, 0, rng(2) ? createAssignmentValue(recurmax) : "");
                         } else switch (rng(5)) {
-                        case 0:
+                          case 0:
                             pairs.values[index] = createAssignmentValue(recurmax);
-                        case 1:
+                          case 1:
                             pairs.values.length = index + 1;
                         }
                     }
+                    convertToRest(pairs.names);
                     names.unshift("[ " + pairs.names.join(", ") + " ]" + default_value);
                     values.unshift("[ " + pairs.values.join(", ") + " ]");
                 });
@@ -547,10 +563,17 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
                     }
                 });
                 fill(function() {
-                    names.unshift("{ " + addTrailingComma(pairs.names.map(function(name, index) {
-                        var key = index in keys ? keys[index] : rng(10) && createKey(recurmax, keys);
-                        return key ? key + ": " + name : name;
-                    }).join(", ")) + " }" + createDefaultValue(recurmax, noDefault));
+                    var last = pairs.names.length - 1, has_rest = false;
+                    var s = pairs.names.map(function(name, index) {
+                        if (index in keys) return keys[index] + ": " + name;
+                        if (index == last && SUPPORT.rest_object && rng(20) == 0 && name.indexOf("=") < 0) {
+                            has_rest = true;
+                            return "..." + name;
+                        }
+                        return rng(10) == 0 ? name : createKey(recurmax, keys) + ": " + name;
+                    }).join(", ");
+                    if (!has_rest) s = addTrailingComma(s);
+                    names.unshift("{ " + s + " }" + createDefaultValue(recurmax, noDefault));
                 }, function() {
                     values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
                         var key = index in keys ? keys[index] : createKey(recurmax, keys);
@@ -677,7 +700,8 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         if (SUPPORT.destructuring && (!allowDefun || !(name in called)) && rng(2)) {
             called[name] = false;
             var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async);
-            params = addTrailingComma(pairs.names.join(", "));
+            params = pairs.names.join(", ");
+            if (!pairs.has_rest) params = addTrailingComma(params);
             args = addTrailingComma(pairs.values.join(", "));
         } else {
             params = createParams(save_async);
@@ -1037,7 +1061,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                     var params;
                     if (SUPPORT.destructuring && rng(2)) {
                         var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async);
-                        params = addTrailingComma(pairs.names.join(", "));
+                        params = pairs.names.join(", ");
+                        if (!pairs.has_rest) params = addTrailingComma(params);
                         args = addTrailingComma(pairs.values.join(", "));
                     } else {
                         params = createParams(save_async, NO_DUPLICATE);

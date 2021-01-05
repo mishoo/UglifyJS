@@ -452,6 +452,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     CHANGED = true;
                     return List.skip;
                 }
+            } else if (parent.rest === node) {
+                node.start._permute++;
+                CHANGED = true;
+                return null;
             }
 
             // replace this node

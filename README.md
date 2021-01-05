@@ -627,7 +627,11 @@ to be `false` and all symbol names will be omitted.
 - `arguments` (default: `true`) -- replace `arguments[index]` with function
   parameter name whenever possible.
 
-- `assignments` (default: `true`) -- apply optimizations to assignment expressions.
+- `arrows` (default: `true`) -- apply optimizations to arrow functions
+
+- `assignments` (default: `true`) -- apply optimizations to assignment expressions
+
+- `awaits` (default: `true`) -- apply optimizations to `await` expressions
 
 - `booleans` (default: `true`) -- various optimizations for boolean context,
   for example `!!a ? b : c → a ? b : c`
@@ -695,10 +699,6 @@ to be `false` and all symbol names will be omitted.
   when unsafe to do so, e.g. code which relies on `Function.prototype.length`.
   Pass `true` to always retain function arguments.
 
-- `keep_fnames` (default: `false`) -- Pass `true` to prevent the
-  compressor from discarding function names.  Useful for code relying on
-  `Function.prototype.name`. See also: the `keep_fnames` [mangle option](#mangle-options).
-
 - `keep_infinity` (default: `false`) -- Pass `true` to prevent `Infinity` from
   being compressed into `1/0`, which may cause performance issues on Chrome.
 
@@ -747,6 +747,8 @@ to be `false` and all symbol names will be omitted.
 - `reduce_vars` (default: `true`) -- Improve optimization on variables assigned with and
   used as constant values.
 
+- `rests` (default: `true`) -- apply optimizations to rest parameters
+
 - `sequences` (default: `true`) -- join consecutive simple statements using the
   comma operator.  May be set to a positive integer to specify the maximum number
   of consecutive comma sequences that will be generated. If this option is set to
@@ -761,19 +763,19 @@ to be `false` and all symbol names will be omitted.
   annotation `/*@__PURE__*/` or `/*#__PURE__*/` immediately precedes the call. For
   example: `/*@__PURE__*/foo();`
 
-- `spread` (default: `true`) -- flatten spread expressions.
+- `spreads` (default: `true`) -- flatten spread expressions.
 
 - `strings` (default: `true`) -- compact string concatenations.
 
 - `switches` (default: `true`) -- de-duplicate and remove unreachable `switch` branches
 
-- `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or
-  variables (`"vars"`) in the top level scope (`false` by default, `true` to drop
-  both unreferenced functions and variables)
-
 - `top_retain` (default: `null`) -- prevent specific toplevel functions and
   variables from `unused` removal (can be array, comma-separated, RegExp or
   function. Implies `toplevel`)
+
+- `toplevel` (default: `false`) -- drop unreferenced functions (`"funcs"`) and/or
+  variables (`"vars"`) in the top level scope (`false` by default, `true` to drop
+  both unreferenced functions and variables)
 
 - `typeofs` (default: `true`) -- Transforms `typeof foo == "undefined"` into
   `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
@@ -810,10 +812,6 @@ to be `false` and all symbol names will be omitted.
 
 - `eval` (default `false`) -- Pass `true` to mangle names visible in scopes
   where `eval` or `with` are used.
-
-- `keep_fnames` (default `false`) -- Pass `true` to not mangle function names.
-  Useful for code relying on `Function.prototype.name`. See also: the `keep_fnames`
-  [compress option](#compress-options).
 
 - `reserved` (default `[]`) -- Pass an array of identifiers that should be
   excluded from mangling. Example: `["foo", "bar"]`.
