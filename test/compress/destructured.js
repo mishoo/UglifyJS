@@ -188,7 +188,7 @@ funarg_side_effects_1: {
     }
     expect: {
         try {
-            (function({}) {})();
+            [ {} ] = [];
         } catch (e) {
             console.log("PASS");
         }
@@ -682,7 +682,7 @@ funarg_inline: {
     }
     expect: {
         try {
-            (function({}) {})();
+            [ {} ] = [];
         } catch (e) {
             console.log("PASS");
         }
@@ -1718,10 +1718,14 @@ issue_4312: {
     expect: {
         var a;
         b = "PASS",
-        (function({
-            [a = b]: d,
-        }){})((c = "FAIL") && c);
-        var b, c;
+        c = "FAIL",
+        [
+            {
+                [a = b]: d,
+            },
+        ] = [ c && c ],
+        void 0;
+        var b, c, d;
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -1783,9 +1787,7 @@ issue_4319: {
         function f(a) {
             while (!a);
         }
-        console.log(function({}) {
-            return f(console);
-        }(0));
+        console.log(([ {} ] = [ 0 ], f(console)));
     }
     expect_stdout: "undefined"
     node_version: ">=6"
@@ -1809,11 +1811,9 @@ issue_4321: {
     }
     expect: {
         try {
-            console.log(function({}) {
-                return function() {
-                    while (!console);
-                }();
-            }());
+            console.log(([ {} ] = [], function() {
+                while (!console);
+            }()));
         } catch (e) {
             console.log("PASS");
         }
@@ -1844,11 +1844,15 @@ issue_4323: {
     }
     expect: {
         var a = 0;
-        (function({
-            [function a() {
-                console.log(typeof a);
-            }()]: d,
-        }) {})(0);
+        [
+            {
+                [function a() {
+                    console.log(typeof a);
+                }()]: d,
+            },
+        ] = [ 0 ],
+        void 0;
+        var d;
         e = 1,
         console.log,
         void e.p;
