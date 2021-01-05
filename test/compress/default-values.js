@@ -354,6 +354,22 @@ inline_constant: {
     node_version: ">=6"
 }
 
+inline_destructured: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function([ a ] = []) {
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(([ [] = [] ] = [], "PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 inline_function: {
     options = {
         default_values: true,
@@ -420,6 +436,45 @@ inline_loop_2: {
         var a;
     }
     expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+inline_side_effects_1: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 42;
+        (function(b = --a) {})(console);
+        console.log(a);
+    }
+    expect: {
+        var a = 42;
+        [ b = --a ] = [ console ],
+        void 0;
+        var b;
+        console.log(a);
+    }
+    expect_stdout: "42"
+    node_version: ">=6"
+}
+
+inline_side_effects_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var a = 42;
+        (function(b = --a) {})(console);
+        console.log(a);
+    }
+    expect: {
+        var a = 42;
+        [ 0[0] = --a ] = [ console ];
+        console.log(a);
+    }
+    expect_stdout: "42"
     node_version: ">=6"
 }
 
@@ -1419,7 +1474,7 @@ issue_4502_4: {
         (function(a, b = console.log("FAIL")) {})(..."" + console.log(42));
     }
     expect: {
-        (function(a, b = console.log("FAIL")) {})(..."" + console.log(42));
+        [ , 0[0] = console.log("FAIL") ] = [ ..."" + console.log(42) ];
     }
     expect_stdout: "42"
     node_version: ">=6"
