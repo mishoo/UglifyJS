@@ -2669,8 +2669,7 @@ issue_3956: {
         })();
     }
     expect: {
-        var c, d;
-        c += 0,
+        var d;
         console.log(NaN),
         d = 1 ^ console.log(1),
         console.log(d);
@@ -2703,13 +2702,13 @@ issue_3962_1: {
     }
     expect: {
         var a = 0;
-        a = (function(c) {
+        (function(c) {
             do {
                 console;
                 0..toString();
             } while (0);
             if (c) console.log("PASS");
-        }(1), 0);
+        })(1);
         void 0;
     }
     expect_stdout: "PASS"
@@ -2736,13 +2735,13 @@ issue_3962_2: {
     }
     expect: {
         var a = 0;
-        a = (function(c) {
+        (function(c) {
             do {
                 console;
                 0..toString();
             } while (0);
             if (c) console.log("PASS");
-        }(1), 0);
+        })(1);
     }
     expect_stdout: "PASS"
 }
@@ -2799,7 +2798,9 @@ issue_4017: {
         var a = 0;
         console.log(function() {
             c &= 0;
-            var c = (a++, A = a, 0);
+            var c;
+            a++,
+            A = a;
         }());
     }
     expect_stdout: "undefined"
