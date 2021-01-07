@@ -23,6 +23,37 @@ new Function("exports", function() {
     return code.join("\n\n");
 }())(exports);
 
+function to_comment(value) {
+    if (typeof value != "string") value = JSON.stringify(value, function(key, value) {
+        return typeof value == "function" ? "<[ " + value + " ]>" : value;
+    }, 2);
+    return "// " + value.replace(/\n/g, "\n// ");
+}
+
+if (+process.env["UGLIFY_BUG_REPORT"]) exports.minify = function(files, options) {
+    if (typeof options == "undefined") options = "<<undefined>>";
+    var code = [
+        "// UGLIFY_BUG_REPORT",
+        to_comment(options),
+    ];
+    if (typeof files == "string") {
+        code.push("");
+        code.push("//-------------------------------------------------------------")
+        code.push("// INPUT CODE", files);
+    } else for (var name in files) {
+        code.push("");
+        code.push("//-------------------------------------------------------------")
+        code.push(to_comment(name), files[name]);
+    }
+    if (options.sourceMap && options.sourceMap.url) {
+        code.push("");
+        code.push("//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiJ9");
+    }
+    var result = { code: code.join("\n") };
+    if (options.sourceMap) result.map = '{"version":3,"sources":[],"names":[],"mappings":""}';
+    return result;
+};
+
 function describe_ast() {
     var out = OutputStream({ beautify: true });
     function doitem(ctor) {

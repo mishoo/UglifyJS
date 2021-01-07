@@ -31,6 +31,15 @@ test case will be closed.
 
 <!--
 Command-line or API call to UglifyJS without third party tools or libraries.
+
+For users using bundlers or transpilers, you may be able to gather the required
+information through setting the `UGLIFY_BUG_REPORT` environment variable:
+
+    UGLIFY_BUG_REPORT=1         (Linux)
+    set UGLIFY_BUG_REPORT=1     (Windows)
+
+before running your usual build process. The resulting "minified" output should
+contain the necessary details for this report.
 -->
 
 **JavaScript output or error produced.**
