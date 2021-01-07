@@ -265,7 +265,7 @@ if (paths.length) {
     process.stdin.on("data", function(chunk) {
         chunks.push(chunk);
     }).on("end", function() {
-        files = [ chunks.join("") ];
+        files = { STDIN: chunks.join("") };
         run();
     });
     process.stdin.resume();
