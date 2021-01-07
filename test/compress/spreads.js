@@ -128,7 +128,7 @@ dont_inline: {
 do_inline: {
     options = {
         inline: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         console.log(function(a) {
@@ -167,7 +167,7 @@ drop_empty_call_1: {
 drop_empty_call_2: {
     options = {
         side_effects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         (function() {})(...[ console.log("PASS") ]);
@@ -181,7 +181,7 @@ drop_empty_call_2: {
 
 convert_hole: {
     options = {
-        spread: true,
+        spreads: true,
     }
     input: {
         console.log(...[ "PASS", , 42 ]);
@@ -275,7 +275,7 @@ reduce_vars_2: {
 convert_setter: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -419,7 +419,7 @@ keep_getter_4: {
 keep_accessor: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -467,7 +467,7 @@ keep_accessor: {
 object_key_order_1: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -497,7 +497,7 @@ object_key_order_1: {
 object_key_order_2: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -527,7 +527,7 @@ object_key_order_2: {
 object_key_order_3: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -557,7 +557,7 @@ object_key_order_3: {
 object_key_order_4: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -587,7 +587,7 @@ object_key_order_4: {
 object_spread_array: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -613,7 +613,7 @@ object_spread_array: {
 object_spread_string: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         var o = {
@@ -670,7 +670,7 @@ unused_var_side_effects: {
 issue_4329: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         console.log({
@@ -749,7 +749,7 @@ issue_4342: {
 issue_4345: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         console.log({
@@ -809,7 +809,7 @@ issue_4361: {
 issue_4363: {
     options = {
         objects: true,
-        spread: true,
+        spreads: true,
     }
     input: {
         ({
