@@ -172,8 +172,38 @@ issue_4489: {
         A = 0;
         var o = !0 || null;
         for (var k in o);
+        console.log(k);
     }
     expect: {
-        for (var k in !(A = 0));
+        !(A = 0);
+        for (var k in true);
+        console.log(k);
     }
+    expect_stdout: "undefined"
+}
+
+issue_4517: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+        join_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = 2;
+            A = a;
+            var b = typeof !1;
+            return A + b;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a = 2;
+            A = a;
+            return A + typeof !1;
+        }());
+    }
+    expect_stdout: "2boolean"
 }
