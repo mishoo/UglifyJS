@@ -2189,7 +2189,7 @@ issue_4446: {
 
 issue_4456: {
     options = {
-        pure_getters: true,
+        pure_getters: "strict",
         unused: true,
     }
     input: {
@@ -2396,5 +2396,63 @@ issue_4512: {
         console.log(function([ a, b = a ]) {}([]));
     }
     expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+issue_4519_1: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+    }
+    input: {
+        try {
+            (function() {
+                var [ arguments ] = [];
+                arguments[0];
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function() {
+                var [ arguments ] = [];
+                arguments[0];
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4519_2: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        try {
+            (function() {
+                var [ arguments ] = [];
+                arguments[0];
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function() {
+                var [ arguments ] = [];
+                arguments[0];
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
     node_version: ">=6"
 }
