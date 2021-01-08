@@ -1527,3 +1527,25 @@ issue_4510_2: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4523: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var a, b;
+            [ a = b = false ] = [ "FAIL" ];
+            return b || "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a, b;
+            [ a = b = false ] = [ "FAIL" ];
+            return b || "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
