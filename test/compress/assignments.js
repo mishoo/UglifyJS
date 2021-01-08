@@ -461,3 +461,17 @@ issue_3949_2: {
     }
     expect_stdout: "100"
 }
+
+issue_4521: {
+    options = {
+        assignments: true,
+        dead_code: true,
+    }
+    input: {
+        var a = (a = 42 | a) ? console.log(a) : 0;
+    }
+    expect: {
+        var a = (a |= 42) ? console.log(a) : 0;
+    }
+    expect_stdout: "42"
+}
