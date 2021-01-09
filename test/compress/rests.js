@@ -485,3 +485,43 @@ keep_arguments: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4525_1: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        console.log(function(a, ...[]) {
+            a = "FAIL";
+            return arguments[0];
+        }("PASS"));
+    }
+    expect: {
+        console.log(function(a, ...[]) {
+            a = "FAIL";
+            return arguments[0];
+        }("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4525_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function(a, ...[]) {
+            a = "FAIL";
+            return arguments[0];
+        }("PASS"));
+    }
+    expect: {
+        console.log(function(a, ...[]) {
+            a = "FAIL";
+            return arguments[0];
+        }("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
