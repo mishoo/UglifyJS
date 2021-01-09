@@ -1399,3 +1399,38 @@ issue_4365_2: {
     }
     expect_stdout: true
 }
+
+issue_4527: {
+    mangle = {}
+    input: {
+        (function() {
+            try {
+                throw 1;
+            } catch (a) {
+                try {
+                    const a = FAIL;
+                } finally {
+                    if (!b)
+                        return console.log("aaaa");
+                }
+            }
+            var b;
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                throw 1;
+            } catch (a) {
+                try {
+                    const a = FAIL;
+                } finally {
+                    if (!t)
+                        return console.log("aaaa");
+                }
+            }
+            var t;
+        })();
+    }
+    expect_stdout: "aaaa"
+}
