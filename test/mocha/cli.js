@@ -56,7 +56,7 @@ describe("bin/uglifyjs", function() {
             "--source-map", [
                 "names=true",
                 "url=inline",
-            ].join(","),
+            ].join(),
         ].join(" "), function(err, stdout) {
             if (err) throw err;
             var expected = [
@@ -84,7 +84,7 @@ describe("bin/uglifyjs", function() {
             "--source-map", [
                 "names=false",
                 "url=inline",
-            ].join(","),
+            ].join(),
         ].join(" "), function(err, stdout) {
             if (err) throw err;
             var expected = [
@@ -171,7 +171,7 @@ describe("bin/uglifyjs", function() {
                 "content=" + mapFile,
                 "includeSources",
                 "url=inline",
-            ].join(","),
+            ].join(),
         ].join(" ");
 
         var child = exec(command, function(err, stdout) {

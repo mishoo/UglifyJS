@@ -209,7 +209,7 @@ function reminify(orig_options, input_code, input_formatted, stdout) {
         } else {
             var toplevel = sandbox.has_toplevel(options);
             var expected = stdout[toplevel ? 1 : 0];
-            var actual = run_code(result.code, toplevel);
+            var actual = sandbox.run_code(result.code, toplevel);
             if (typeof expected != "string" && typeof actual != "string" && expected.name == actual.name) {
                 actual = expected;
             }
@@ -242,11 +242,6 @@ function reminify(orig_options, input_code, input_formatted, stdout) {
         }
     }
     return true;
-}
-
-function run_code(code, toplevel) {
-    var result = sandbox.run_code(code, toplevel);
-    return typeof result == "string" ? result.replace(/\u001b\[\d+m/g, "") : result;
 }
 
 function test_case(test) {
@@ -380,7 +375,7 @@ function test_case(test) {
         }
     }
     if (test.expect_stdout && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-        var stdout = [ run_code(input_code), run_code(input_code, true) ];
+        var stdout = [ sandbox.run_code(input_code), sandbox.run_code(input_code, true) ];
         var toplevel = sandbox.has_toplevel({
             compress: test.options,
             mangle: test.mangle
@@ -409,7 +404,7 @@ function test_case(test) {
             });
             return false;
         }
-        actual = run_code(output_code, toplevel);
+        actual = sandbox.run_code(output_code, toplevel);
         if (!sandbox.same_stdout(test.expect_stdout, actual)) {
             log([
                 "!!! failed",

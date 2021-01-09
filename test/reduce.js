@@ -70,8 +70,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     } else if (differs.error) {
         differs.warnings = warnings;
         return differs;
-    } else if (is_error(differs.unminified_result)
-        && is_error(differs.minified_result)
+    } else if (sandbox.is_error(differs.unminified_result)
+        && sandbox.is_error(differs.minified_result)
         && differs.unminified_result.name == differs.minified_result.name) {
         return {
             code: [
@@ -558,8 +558,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                         log(code);
                         log(diff.error.stack);
                         log("*** Discarding permutation and continuing.");
-                    } else if (is_error(diff.unminified_result)
-                        && is_error(diff.minified_result)
+                    } else if (sandbox.is_error(diff.unminified_result)
+                        && sandbox.is_error(diff.minified_result)
                         && diff.unminified_result.name == diff.minified_result.name) {
                         // ignore difference in error messages caused by minification
                         diff_error_message = testcase;
@@ -600,10 +600,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         }
         var lines = [ "" ];
         if (isNaN(max_timeout)) {
-            lines.push("// minify error: " + to_comment(strip_color_codes(differs.minified_result.stack)));
+            lines.push("// minify error: " + to_comment(differs.minified_result.stack));
         } else {
-            var unminified_result = strip_color_codes(differs.unminified_result);
-            var minified_result = strip_color_codes(differs.minified_result);
+            var unminified_result = differs.unminified_result;
+            var minified_result = differs.minified_result;
             if (trim_trailing_whitespace(unminified_result) == trim_trailing_whitespace(minified_result)) {
                 lines.push(
                     "// (stringified)",
@@ -623,10 +623,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         return testcase;
     }
 };
-
-function strip_color_codes(value) {
-    return ("" + value).replace(/\u001b\[\d+m/g, "");
-}
 
 function to_comment(value) {
     return ("" + value).replace(/\n/g, "\n// ");
@@ -665,12 +661,8 @@ function has_loopcontrol(body, loop, label) {
     return found;
 }
 
-function is_error(result) {
-    return result && typeof result.name == "string" && typeof result.message == "string";
-}
-
 function is_timed_out(result) {
-    return is_error(result) && /timed out/.test(result.message);
+    return sandbox.is_error(result) && /timed out/.test(result.message);
 }
 
 function is_statement(node) {

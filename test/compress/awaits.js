@@ -612,22 +612,32 @@ issue_4340: {
 call_expression: {
     input: {
         console.log(typeof async function(log) {
-            (await log)("FAIL");
+            (await log)("foo");
         }(console.log).then);
+        console.log("bar");
     }
-    expect_exact: 'console.log(typeof async function(log){(await log)("FAIL")}(console.log).then);'
-    expect_stdout: "function"
+    expect_exact: 'console.log(typeof async function(log){(await log)("foo")}(console.log).then);console.log("bar");'
+    expect_stdout: [
+        "function",
+        "bar",
+        "foo",
+    ]
     node_version: ">=8"
 }
 
 property_access_expression: {
     input: {
         console.log(typeof async function(con) {
-            (await con).log("FAIL");
+            (await con).log("foo");
         }(console).then);
+        console.log("bar");
     }
-    expect_exact: 'console.log(typeof async function(con){(await con).log("FAIL")}(console).then);'
-    expect_stdout: "function"
+    expect_exact: 'console.log(typeof async function(con){(await con).log("foo")}(console).then);console.log("bar");'
+    expect_stdout: [
+        "function",
+        "bar",
+        "foo",
+    ]
     node_version: ">=8"
 }
 
@@ -685,20 +695,18 @@ reduce_iife_3: {
     input: {
         var a = "foo";
         (async function() {
-            console.log(a);
-            console.log(await a);
+            console.log(a, await a, a, await a);
         })();
         a = "bar";
     }
     expect: {
         var a = "foo";
         (async function() {
-            console.log(a);
-            console.log(await a);
+            console.log(a, await a, a, await a);
         })();
         a = "bar";
     }
-    expect_stdout: "foo"
+    expect_stdout: "foo foo bar bar"
     node_version: ">=8"
 }
 
