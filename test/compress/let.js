@@ -1282,3 +1282,60 @@ issue_4438: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4531_1: {
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        var a;
+        console.log(function a() {
+            let a;
+            var b;
+        }());
+    }
+    expect: {
+        "use strict";
+        var o;
+        console.log(function o() {
+            let o;
+            var t;
+        }());
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+issue_4531_2: {
+    options = {
+        evaluate: true,
+        ie8: true,
+        toplevel: true,
+    }
+    mangle = {
+        ie8: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        var a = console;
+        console.log(typeof a, function a() {
+            let { [console]: a } = 0 && a;
+            var b = console;
+            while (!b);
+        }());
+    }
+    expect: {
+        "use strict";
+        var o = console;
+        console.log(typeof o, function o() {
+            let { [console]: o } = 0;
+            var e = console;
+            while (!e);
+        }());
+    }
+    expect_stdout: "object undefined"
+    node_version: ">=6"
+}
