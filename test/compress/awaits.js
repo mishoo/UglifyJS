@@ -977,3 +977,21 @@ issue_4454_2: {
     ]
     node_version: ">=8"
 }
+
+issue_4534: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        (function(await) {
+            (async () => console.log(arguments[0]))();
+        })("PASS");
+    }
+    expect: {
+        (function(await) {
+            (async () => console.log(arguments[0]))();
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
