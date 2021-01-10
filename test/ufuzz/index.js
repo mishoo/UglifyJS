@@ -1053,7 +1053,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         var s = [];
         switch (rng(5)) {
           case 0:
-            if (SUPPORT.arrow && !async && !name && rng(2)) {
+            if (SUPPORT.arrow && !name && rng(2)) {
                 var args, suffix;
                 (rng(2) ? createBlockVariables : function() {
                     arguments[3]();
@@ -1067,16 +1067,17 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                     } else {
                         params = createParams(save_async, NO_DUPLICATE);
                     }
+                    params = (async ? "async (" : "(") + params + ") => ";
                     if (defns) {
                         s.push(
-                            "((" + params + ") => {",
+                            "(" + params + "{",
                             strictMode(),
                             defns(),
                             _createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth)
                         );
                         suffix = "})";
                     } else {
-                        s.push("((" + params + ") => ");
+                        s.push("(" + params);
                         switch (rng(10)) {
                           case 0:
                             s.push('(typeof arguments != "undefined" && arguments && arguments[' + rng(3) + "])");

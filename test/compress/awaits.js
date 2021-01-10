@@ -1,3 +1,27 @@
+async_arrow: {
+    input: {
+        (async a => console.log(a))("PASS");
+        console.log(typeof (async () => 42)());
+    }
+    expect_exact: '(async a=>console.log(a))("PASS");console.log(typeof(async()=>42)());'
+    expect_stdout: [
+        "PASS",
+        "object",
+    ]
+    node_version: ">=8"
+}
+
+async_label: {
+    input: {
+        (async function() {
+            async: console.log("PASS");
+        })();
+    }
+    expect_exact: '(async function(){async:console.log("PASS")})();'
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 await_await: {
     input: {
         (async function() {
