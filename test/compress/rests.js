@@ -525,3 +525,22 @@ issue_4525_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4538: {
+    options = {
+        rests: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function f(...a) {
+            return a.p, f;
+        }()());
+    }
+    expect: {
+        console.log(typeof function f(...a) {
+            return a.p, f;
+        }()());
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
