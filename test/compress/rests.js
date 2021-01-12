@@ -600,3 +600,49 @@ issue_4538: {
     expect_stdout: "function"
     node_version: ">=6"
 }
+
+issue_4544_1: {
+    options = {
+        keep_fnames: true,
+        side_effects: true,
+    }
+    input: {
+        try {
+            (function f(...[ {} ]) {})();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            [ ...[ {} ] ] = [];
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4544_2: {
+    options = {
+        keep_fnames: true,
+        side_effects: true,
+    }
+    input: {
+        try {
+            (function f(a, ...[ {} ]) {})([]);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            [ , ...[ {} ] ] = [ [] ];
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
