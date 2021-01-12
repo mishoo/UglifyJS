@@ -1386,3 +1386,75 @@ issue_4142: {
     }
     expect_stdout: "0"
 }
+
+issue_4542_1: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a / (1 / (a[0] = 2));
+        }([ 3 ]));
+    }
+    expect: {
+        console.log(function(a) {
+            return a / (1 / (a[0] = 2));
+        }([ 3 ]));
+    }
+    expect_stdout: "4"
+}
+
+issue_4542_2: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a / (1 / --a[0]);
+        }([ 3 ]));
+    }
+    expect: {
+        console.log(function(a) {
+            return a / (1 / --a[0]);
+        }([ 3 ]));
+    }
+    expect_stdout: "4"
+}
+
+issue_4542_3: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a / (0 / (a[0] = 0, 1));
+        }([ 1 ]));
+    }
+    expect: {
+        console.log(function(a) {
+            return a / (0 / (a[0] = 0, 1));
+        }([ 1 ]));
+    }
+    expect_stdout: "NaN"
+}
+
+issue_4542_4: {
+    options = {
+        evaluate: true,
+        unsafe_math: true,
+    }
+    input: {
+        console.log(function(a) {
+            return a / (1 / (a.length = 1));
+        }([ 2, 3 ]));
+    }
+    expect: {
+        console.log(function(a) {
+            return a / (1 / (a.length = 1));
+        }([ 2, 3 ]));
+    }
+    expect_stdout: "2"
+}
