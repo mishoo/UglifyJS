@@ -486,6 +486,62 @@ keep_arguments: {
     node_version: ">=6"
 }
 
+drop_rest_array: {
+    options = {
+        rests: true,
+    }
+    input: {
+        var [ ...[ a ]] = [ "PASS" ];
+        console.log(a);
+    }
+    expect: {
+        var [ a ] = [ "PASS" ];
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+drop_rest_arrow: {
+    options = {
+        arrows: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        rests: true,
+    }
+    input: {
+        console.log(((...[ a ]) => a)("PASS"));
+    }
+    expect: {
+        console.log((a => a)("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+drop_rest_lambda: {
+    options = {
+        keep_fargs: false,
+        reduce_vars: true,
+        rests: true,
+        toplevel: true,
+    }
+    input: {
+        function f(...[ a ]) {
+            return a;
+        }
+        console.log(f("PASS"), f(42));
+    }
+    expect: {
+        function f(a) {
+            return a;
+        }
+        console.log(f("PASS"), f(42));
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
+
 issue_4525_1: {
     options = {
         arguments: true,
