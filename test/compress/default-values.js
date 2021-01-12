@@ -1570,3 +1570,29 @@ issue_4540: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_4548: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        A = "foo";
+        var a = A;
+        [ b = c = "bar" ] = [ console, console.log(a) ];
+        console.log(c);
+        var c;
+    }
+    expect: {
+        A = "foo";
+        var a = A;
+        [ b = c = "bar" ] = [ console, console.log(a) ];
+        console.log(c);
+        var c;
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+    ]
+    node_version: ">=6"
+}
