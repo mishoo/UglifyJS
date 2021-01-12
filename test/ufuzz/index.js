@@ -1485,17 +1485,25 @@ function _createSimpleBinaryExpr(recurmax, noComma, stmtDepth, canThrow) {
 function createTypeofExpr(recurmax, stmtDepth, canThrow) {
     switch (rng(8)) {
       case 0:
-        return "(typeof " + createVarName(MANDATORY, DONT_STORE) + ' === "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
+        return "(typeof " + createVar() + ' === "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
       case 1:
-        return "(typeof " + createVarName(MANDATORY, DONT_STORE) + ' !== "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
+        return "(typeof " + createVar() + ' !== "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
       case 2:
-        return "(typeof " + createVarName(MANDATORY, DONT_STORE) + ' == "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
+        return "(typeof " + createVar() + ' == "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
       case 3:
-        return "(typeof " + createVarName(MANDATORY, DONT_STORE) + ' != "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
+        return "(typeof " + createVar() + ' != "' + TYPEOF_OUTCOMES[rng(TYPEOF_OUTCOMES.length)] + '")';
       case 4:
-        return "(typeof " + createVarName(MANDATORY, DONT_STORE) + ")";
+        return "(typeof " + createVar() + ")";
       default:
         return "(typeof " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ")";
+    }
+
+    function createVar() {
+        var save_async = async;
+        if (!async && avoid_vars.indexOf("await") >= 0) async = true;
+        var name = createVarName(MANDATORY, DONT_STORE);
+        async = save_async;
+        return name;
     }
 }
 
