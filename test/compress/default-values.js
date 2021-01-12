@@ -1549,3 +1549,24 @@ issue_4523: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4540: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function() {
+            function f([ a = 0 ]) {}
+            f([]);
+        }());
+    }
+    expect: {
+        console.log(function() {
+            function f([ a = 0 ]) {}
+            f([]);
+        }());
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
