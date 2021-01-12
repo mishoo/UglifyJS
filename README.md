@@ -879,7 +879,7 @@ can pass additional arguments that control the code output:
   comments, `"some"` to preserve multi-line comments that contain `@cc_on`,
   `@license`, or `@preserve` (case-insensitive), a regular expression string
   (e.g. `/^!/`), or a function which returns `boolean`, e.g.
-  ```js
+  ```javascript
   function(node, comment) {
       return comment.value.indexOf("@type " + node.TYPE) >= 0;
   }
@@ -1150,7 +1150,7 @@ To enable fast minify mode from the CLI use:
 uglifyjs file.js -m
 ```
 To enable fast minify mode with the API use:
-```js
+```javascript
 UglifyJS.minify(code, { compress: false, mangle: true });
 ```
 
@@ -1182,10 +1182,10 @@ To allow for better optimizations, the compiler makes various assumptions:
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
 - Earlier versions of JavaScript will throw `SyntaxError` with the following:
-  ```js
+  ```javascript
   ({
-    p: 42,
-    get p() {},
+      p: 42,
+      get p() {},
   });
   // SyntaxError: Object literal may not have data and accessor property with
   //              the same name
@@ -1195,7 +1195,7 @@ To allow for better optimizations, the compiler makes various assumptions:
   versions of Chrome and Node.js may be altered.
 - When `toplevel` is enabled, UglifyJS effectively assumes input code is wrapped
   within `function(){ ... }`, thus forbids aliasing of declared global variables:
-  ```js
+  ```javascript
   A = "FAIL";
   var B = "FAIL";
   // can be `global`, `self`, `window` etc.
@@ -1215,7 +1215,7 @@ To allow for better optimizations, the compiler makes various assumptions:
   suppress those errors.
 - Earlier versions of Chrome and Node.js will throw `ReferenceError` with the
   following:
-  ```js
+  ```javascript
   var a;
   try {
       throw 42;
@@ -1228,20 +1228,29 @@ To allow for better optimizations, the compiler makes various assumptions:
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
 - Later versions of JavaScript will throw `SyntaxError` with the following:
-  ```js
+  ```javascript
   a => {
-    let a;
+      let a;
   };
   // SyntaxError: Identifier 'a' has already been declared
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
 - Later versions of JavaScript will throw `SyntaxError` with the following:
-  ```js
+  ```javascript
   try {
-    // ...
+      // ...
   } catch ({ message: a }) {
-    var a;
+      var a;
   }
   // SyntaxError: Identifier 'a' has already been declared
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
+- Some versions of Chrome and Node.js will throw `ReferenceError` with the
+  following:
+  ```javascript
+  console.log(((a, b = function() {
+      return a;
+      // ReferenceError: a is not defined
+  }()) => b)());
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
