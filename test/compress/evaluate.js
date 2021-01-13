@@ -3142,3 +3142,36 @@ issue_4480: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4552: {
+    options = {
+        evaluate: true,
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f(b) {
+            return function() {
+                b++;
+                try {
+                    return b;
+                } catch (e) {}
+            }();
+        }();
+        console.log(a);
+    }
+    expect: {
+        var a = function f(b) {
+            return function() {
+                b++;
+                try {
+                    return b;
+                } catch (e) {}
+            }();
+        }();
+        console.log(a);
+    }
+    expect_stdout: "NaN"
+}
