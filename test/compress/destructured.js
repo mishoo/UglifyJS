@@ -2456,3 +2456,34 @@ issue_4519_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4554: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        var a = "FAIL";
+        try {
+            (function({}, b) {
+                return b;
+            })(void 0, a = A);
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        A = "PASS";
+        var a = "FAIL";
+        try {
+            (function({}, b) {
+                return b;
+            })(void 0, a = A);
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
