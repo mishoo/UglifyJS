@@ -826,3 +826,23 @@ issue_4363: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4556: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = "" + [ a++ ];
+            var b = [ ...a ];
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a;
+        }());
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
