@@ -3197,3 +3197,54 @@ issue_4464_3: {
         "function",
     ]
 }
+
+issue_4558_1: {
+    options = {
+        evaluate: true,
+        pure_getters: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        var b = 1, b = c >>>= a;
+        var c = 0;
+        b && 0[a++],
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        var b = c >>>= a;
+        var c;
+        b && a++,
+        console.log(a);
+    }
+    expect_stdout: "0"
+}
+
+issue_4558_2: {
+    options = {
+        evaluate: true,
+        ie8: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var a = 1;
+            var b = (a = NaN) || (console.log("PASS"), 2);
+            return a;
+        })();
+    }
+    expect: {
+        (function() {
+            var a;
+            (a = NaN) || console.log("PASS");
+            return a;
+        })();
+    }
+    expect_stdout: "PASS"
+}
