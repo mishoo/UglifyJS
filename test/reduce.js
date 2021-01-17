@@ -104,15 +104,14 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
             // quick ignores
             if (node instanceof U.AST_Accessor) return;
-            if (node instanceof U.AST_Destructured) return;
             if (node instanceof U.AST_Directive) return;
             if (!in_list && node instanceof U.AST_EmptyStatement) return;
             if (node instanceof U.AST_Label) return;
             if (node instanceof U.AST_LabelRef) return;
-            if (!in_list && node instanceof U.AST_SymbolDeclaration) return;
             if (node instanceof U.AST_Toplevel) return;
             var parent = tt.parent();
             if (node instanceof U.AST_SymbolFunarg && parent instanceof U.AST_Accessor) return;
+            if (!in_list && parent.rest !== node && node instanceof U.AST_SymbolDeclaration) return;
 
             // ensure that the _permute prop is a number.
             // can not use `node.start._permute |= 0;` as it will erase fractional part.
@@ -124,6 +123,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
             // ignore lvalues
             if (parent instanceof U.AST_Assign && parent.left === node) return;
+            if (parent instanceof U.AST_DefaultValue && parent.name === node) return;
             if (parent instanceof U.AST_DestructuredKeyVal && parent.value === node) return;
             if (parent instanceof U.AST_Unary && parent.expression === node) switch (parent.operator) {
               case "++":
@@ -228,6 +228,23 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 node.start._permute++;
                 CHANGED = true;
                 return node.name;
+            }
+            else if (node instanceof U.AST_DestructuredArray) {
+                var expr = node.elements[0];
+                if (expr && !(expr instanceof U.AST_Hole)) {
+                    node.start._permute++;
+                    CHANGED = true;
+                    return expr;
+                }
+            }
+            else if (node instanceof U.AST_DestructuredObject) {
+                // first property's value
+                var expr = node.properties[0];
+                if (expr) {
+                    node.start._permute++;
+                    CHANGED = true;
+                    return expr.value;
+                }
             }
             else if (node instanceof U.AST_Defun) {
                 switch (((node.start._permute += step) * steps | 0) % 2) {
@@ -439,15 +456,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
 
                 // remove this node unless its the sole element of a (transient) sequence
                 if (!(parent instanceof U.AST_Sequence) || parent.expressions.length > 1) {
-                    node.start._permute++;
-                    CHANGED = true;
-                    return List.skip;
-                }
-
-                // skip element/property from (destructured) array/object
-                if (parent instanceof U.AST_Array
-                    || parent instanceof U.AST_Destructured
-                    || parent instanceof U.AST_Object) {
                     node.start._permute++;
                     CHANGED = true;
                     return List.skip;
