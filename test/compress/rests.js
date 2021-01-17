@@ -646,3 +646,20 @@ issue_4544_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4562: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        rests: true,
+        unsafe: true,
+    }
+    input: {
+        console.log((([ ...[ a ] ]) => a)("foo"));
+    }
+    expect: {
+        console.log((([ a ]) => a)("foo"));
+    }
+    expect_stdout: "f"
+    node_version: ">=6"
+}
