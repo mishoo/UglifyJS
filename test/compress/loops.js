@@ -1280,3 +1280,33 @@ issue_4355: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4564: {
+    options = {
+        loops: true,
+        unused: true,
+    }
+    input: {
+        try {
+            throw null;
+        } catch (a) {
+            var a;
+            (function() {
+                for (a in "foo");
+            })();
+            console.log(a);
+        }
+    }
+    expect: {
+        try {
+            throw null;
+        } catch (a) {
+            var a;
+            (function() {
+                for (a in "foo");
+            })();
+            console.log(a);
+        }
+    }
+    expect_stdout: "2"
+}
