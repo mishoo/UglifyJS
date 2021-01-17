@@ -666,7 +666,7 @@ function has_loopcontrol(body, loop, label) {
 }
 
 function is_error(result) {
-    return typeof result == "object" && typeof result.name == "string" && typeof result.message == "string";
+    return result && typeof result.name == "string" && typeof result.message == "string";
 }
 
 function is_timed_out(result) {
