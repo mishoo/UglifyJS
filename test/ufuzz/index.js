@@ -1763,6 +1763,18 @@ function fuzzy_match(original, uglified) {
     return true;
 }
 
+function is_error_in(ex) {
+    return ex.name == "TypeError" && /'in'/.test(ex.message);
+}
+
+function is_error_spread(ex) {
+    return ex.name == "TypeError" && /Found non-callable @@iterator|is not iterable|undefined is not a function/.test(ex.message);
+}
+
+function is_error_recursion(ex) {
+    return ex.name == "RangeError" && /Invalid string length|Maximum call stack size exceeded/.test(ex.message);
+}
+
 function patch_try_catch(orig, toplevel) {
     var stack = [ {
         code: orig,
@@ -1811,13 +1823,13 @@ function patch_try_catch(orig, toplevel) {
                 });
                 offset += insert.length;
                 code = new_code;
-            } else if (result.name == "TypeError" && /'in'/.test(result.message)) {
+            } else if (is_error_in(result)) {
                 index = result.ufuzz_catch;
                 return orig.slice(0, index) + result.ufuzz_var + ' = new Error("invalid `in`");' + orig.slice(index);
-            } else if (result.name == "TypeError" && /not iterable/.test(result.message)) {
+            } else if (is_error_spread(result)) {
                 index = result.ufuzz_catch;
                 return orig.slice(0, index) + result.ufuzz_var + ' = new Error("spread not iterable");' + orig.slice(index);
-            } else if (result.name == "RangeError" && result.message == "Maximum call stack size exceeded") {
+            } else if (is_error_recursion(result)) {
                 index = result.ufuzz_try;
                 return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
             }
@@ -1840,6 +1852,12 @@ if (typeof sandbox.run_code("A:if (0) B:; else B:;") != "string") {
         if (!("mangle" in o)) o.mangle = {};
         if (o.mangle) o.mangle.v8 = true;
     });
+}
+var is_bug_async_arrow_rest = function() {};
+if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && typeof sandbox.run_code("async (a = f(...[], b)) => 0;") != "string") {
+    is_bug_async_arrow_rest = function(ex) {
+        return ex.name == "SyntaxError" && ex.message == "Rest parameter must be last formal parameter";
+    };
 }
 if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
     beautify_options.output.v8 = true;
@@ -1869,6 +1887,7 @@ for (var round = 1; round <= num_iterations; round++) {
         println("original result:");
         println(orig_result[0]);
         println();
+        if (is_bug_async_arrow_rest(orig_result[0])) continue;
     }
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
@@ -1900,8 +1919,14 @@ for (var round = 1; round <= num_iterations; round++) {
                 ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
             }
             // ignore difference in error message caused by `in`
+            if (!ok && errored && is_error_in(uglify_result) && is_error_in(original_result)) ok = true;
             // ignore difference in error message caused by spread syntax
+            if (!ok && errored && is_error_spread(uglify_result) && is_error_spread(original_result)) ok = true;
             // ignore difference in depth of termination caused by infinite recursion
+            if (!ok && errored && is_error_recursion(original_result)) {
+                if (is_error_recursion(uglify_result) || typeof uglify_result == "string") ok = true;
+            }
+            // ignore errors above when caught by try-catch
             if (!ok) {
                 var orig_skipped = patch_try_catch(original_code, toplevel);
                 var uglify_skipped = patch_try_catch(uglify_code, toplevel);
