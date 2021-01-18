@@ -244,6 +244,39 @@ describe("sourcemaps", function() {
             assert.strictEqual(result.code, '(function(){console.log("hello")}).call(this);');
             assert.strictEqual(result.map, '{"version":3,"sources":["main.coffee"],"names":["console","log"],"mappings":"CAAA,WAAAA,QAAQC,IAAI"}');
         });
+        it("Should not overwrite existing sourcesContent", function() {
+            var result = UglifyJS.minify({
+                "in.js": [
+                    '"use strict";',
+                    "",
+                    "var _window$foo = window.foo,",
+                    "    a = _window$foo[0],",
+                    "    b = _window$foo[1];",
+                ].join("\n"),
+            }, {
+                compress: false,
+                mangle: false,
+                sourceMap: {
+                    content: {
+                        version: 3,
+                        sources: [ "in.js" ],
+                        names: [
+                            "window",
+                            "foo",
+                            "a",
+                            "b",
+                        ],
+                        mappings: ";;kBAAaA,MAAM,CAACC,G;IAAfC,C;IAAGC,C",
+                        file: "in.js",
+                        sourcesContent: [ "let [a, b] = window.foo;\n" ],
+                    },
+                    includeSources: true,
+                },
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, '"use strict";var _window$foo=window.foo,a=_window$foo[0],b=_window$foo[1];');
+            assert.strictEqual(result.map, '{"version":3,"sources":["in.js"],"sourcesContent":["let [a, b] = window.foo;\\n"],"names":["window","foo","a","b"],"mappings":"6BAAaA,OAAOC,IAAfC,E,eAAGC,E"}');
+        });
     });
 
     describe("sourceMapInline", function() {
