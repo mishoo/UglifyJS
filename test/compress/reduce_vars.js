@@ -7601,3 +7601,32 @@ issue_4188_2: {
     }
     expect_stdout: "number undefined"
 }
+
+issue_4568: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            a && console.log("FAIL");
+            if (1)
+                do {
+                    if (!console.log("PASS")) break;
+                } while (1);
+        })(!(0 !== delete NaN));
+    }
+    expect: {
+        (function(a) {
+            for (a && console.log("FAIL"), 1; console.log("PASS"); ) 1;
+        })(!(0 !== delete NaN));
+    }
+    expect_stdout: "PASS"
+}

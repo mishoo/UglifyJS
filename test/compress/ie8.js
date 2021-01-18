@@ -2900,3 +2900,22 @@ issue_4250: {
     }
     expect_stdout: "0"
 }
+
+issue_4568: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof f, function(a) {
+            return a.length;
+        }([ function f() {} ]));
+    }
+    expect: {
+        console.log(typeof f, function(a) {
+            return a.length;
+        }([ function f() {} ]));
+    }
+    expect_stdout: "undefined 1"
+}
