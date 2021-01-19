@@ -32,6 +32,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install GNU Core Utilities
         if: ${{ startsWith(matrix.os, 'macos') }}
+        env:
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
         shell: bash
         run: |
           brew install coreutils

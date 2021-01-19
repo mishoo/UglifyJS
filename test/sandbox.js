@@ -1,103 +1,33 @@
+var execSync = require("child_process").execSync;
 var semver = require("semver");
 var vm = require("vm");
 
-var setupContext = new vm.Script([
-    "[ Array, Boolean, Error, Function, Number, Object, RegExp, String ].forEach(function(f) {",
-    "    f.toString = Function.prototype.toString;",
-    "});",
-    "Function.prototype.toString = function() {",
-    "    var id = 100000;",
-    "    return function() {",
-    "        var n = this.name;",
-    "        if (!/^F[0-9]{6}N$/.test(n)) {",
-    '            n = "F" + ++id + "N";',
-].concat(Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable ? [
-    '            Object.defineProperty(this, "name", {',
-    "                get: function() {",
-    "                    return n;",
-    "                }",
-    "            });",
-] : [], [
-    "        }",
-    '        return "function(){}";',
-    "    };",
-    "}();",
-    "this;",
-]).join("\n"));
-
-function createContext() {
-    var ctx = vm.createContext(Object.defineProperties({}, {
-        console: { value: { log: log } },
-        global: { get: self },
-        self: { get: self },
-        window: { get: self },
-    }));
-    var global = setupContext.runInContext(ctx);
-    return ctx;
-
-    function self() {
-        return this;
-    }
-
-    function safe_log(arg, level) {
-        if (arg) switch (typeof arg) {
-          case "function":
-            return arg.toString();
-          case "object":
-            if (arg === global) return "[object global]";
-            if (/Error$/.test(arg.name)) return arg.toString();
-            if (typeof arg.then == "function") return "[object Promise]";
-            arg.constructor.toString();
-            if (level--) for (var key in arg) {
-                var desc = Object.getOwnPropertyDescriptor(arg, key);
-                if (!desc || !desc.get && !desc.set) arg[key] = safe_log(arg[key], level);
-            }
-        }
-        return arg;
-    }
-
-    function log(msg) {
-        if (arguments.length == 1 && typeof msg == "string") return console.log("%s", msg);
-        return console.log.apply(console, [].map.call(arguments, function(arg) {
-            return safe_log(arg, 3);
-        }));
-    }
-}
-
-function run_code(code, toplevel, timeout) {
-    timeout = timeout || 5000;
-    var stdout = "";
-    var original_write = process.stdout.write;
-    process.stdout.write = function(chunk) {
-        stdout += chunk;
-    };
-    try {
-        vm.runInContext(toplevel ? "(function(){" + code + "})()" : code, createContext(), { timeout: timeout });
-        return stdout;
-    } catch (ex) {
-        return ex;
-    } finally {
-        process.stdout.write = original_write;
-    }
-}
-
+setup_log();
+var setup_code = "(" + setup + ")(this, " + setup_log + ", " + find_builtins() + ");";
+exports.has_toplevel = function(options) {
+    return options.toplevel
+        || options.mangle && options.mangle.toplevel
+        || options.compress && options.compress.toplevel;
+};
+exports.is_error = is_error;
 exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, toplevel, timeout) {
-    var stdout = run_code(code, toplevel, timeout);
+    var stdout = run_code_vm(code, toplevel, timeout);
     if (typeof stdout != "string" || !/arguments/.test(code)) return stdout;
     do {
         var prev = stdout;
-        stdout = run_code(code, toplevel, timeout);
+        stdout = run_code_vm(code, toplevel, timeout);
     } while (prev !== stdout);
     return stdout;
-} : run_code;
-
-function strip_func_ids(text) {
-    return ("" + text).replace(/F[0-9]{6}N/g, "<F<>N>");
-}
-
+} : semver.satisfies(process.version, "<0.12") ? run_code_vm : function(code, toplevel, timeout) {
+    if (/\basync([ \t]+[^\s()[\]{},.&|!~=*%/+-]+|[ \t]*\([\s\S]*?\))[ \t]*=>|\b(async[ \t]+function|setInterval|setTimeout)\b/.test(code)) {
+        return run_code_exec(code, toplevel, timeout);
+    } else {
+        return run_code_vm(code, toplevel, timeout);
+    }
+};
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
     if (typeof expected != typeof actual) return false;
-    if (typeof expected == "object" && typeof expected.name == "string" && typeof expected.message == "string") {
+    if (is_error(expected)) {
         if (expected.name !== actual.name) return false;
         if (typeof actual.message != "string") return false;
         expected = expected.message.slice(expected.message.lastIndexOf("\n") + 1);
@@ -107,8 +37,215 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 } : function(expected, actual) {
     return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
-exports.has_toplevel = function(options) {
-    return options.toplevel
-        || options.mangle && options.mangle.toplevel
-        || options.compress && options.compress.toplevel;
-};
+
+function is_error(result) {
+    return result && typeof result.name == "string" && typeof result.message == "string";
+}
+
+function strip_color_codes(value) {
+    return value.replace(/\u001b\[\d+m/g, "");
+}
+
+function strip_func_ids(text) {
+    return ("" + text).replace(/F[0-9]{6}N/g, "<F<>N>");
+}
+
+function setup_log() {
+    var inspect = require("util").inspect;
+    if (inspect.defaultOptions) {
+        var log_options = {
+            breakLength: Infinity,
+            colors: false,
+            compact: true,
+            customInspect: false,
+            depth: Infinity,
+            maxArrayLength: Infinity,
+            maxStringLength: Infinity,
+            showHidden: false,
+        };
+        for (var name in log_options) {
+            if (name in inspect.defaultOptions) inspect.defaultOptions[name] = log_options[name];
+        }
+    }
+    return inspect;
+}
+
+function find_builtins() {
+    setup_code = "console.log(Object.keys(this));";
+    var builtins = run_code_vm("");
+    if (semver.satisfies(process.version, ">=0.12")) builtins += ".concat(" + run_code_exec("") + ")";
+    return builtins;
+}
+
+function setup(global, setup_log, builtins) {
+    [ Array, Boolean, Error, Function, Number, Object, RegExp, String ].forEach(function(f) {
+        f.toString = Function.prototype.toString;
+    });
+    Function.prototype.toString = function() {
+        var configurable = Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable;
+        var id = 100000;
+        return function() {
+            var n = this.name;
+            if (!/^F[0-9]{6}N$/.test(n)) {
+                n = "F" + ++id + "N";
+                if (configurable) Object.defineProperty(this, "name", {
+                    get: function() {
+                        return n;
+                    }
+                });
+            }
+            return "function(){}";
+        };
+    }();
+    var process = global.process;
+    if (process) {
+        var inspect = setup_log();
+        process.on("uncaughtException", function(ex) {
+            var value = ex;
+            if (value instanceof Error) {
+                value = {};
+                for (var name in ex) value[name] = ex[name];
+            }
+            process.stderr.write(inspect(value) + "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
+            throw ex;
+        }).on("unhandledRejection", function() {});
+    }
+    var log = console.log;
+    var safe_console = {
+        log: function(msg) {
+            if (arguments.length == 1 && typeof msg == "string") return log("%s", msg);
+            return log.apply(null, [].map.call(arguments, function(arg) {
+                return safe_log(arg, {
+                    level: 3,
+                    original: [],
+                    replaced: [],
+                });
+            }));
+        },
+    };
+    var props = {
+        // for Node.js v8
+        console: {
+            get: function() {
+                return safe_console;
+            },
+        },
+        global: { get: self },
+        self: { get: self },
+        window: { get: self },
+    };
+    [
+        // for Node.js v0.12
+        "Buffer",
+        "clearInterval",
+        "clearTimeout",
+        // for Node.js v0.12
+        "DTRACE_NET_STREAM_END",
+        // for Node.js v8
+        "process",
+        "setInterval",
+        "setTimeout",
+    ].forEach(function(name) {
+        var value = global[name];
+        props[name] = {
+            get: function() {
+                return value;
+            },
+        };
+    });
+    builtins.forEach(function(name) {
+        try {
+            delete global[name];
+        } catch (e) {}
+    });
+    Object.defineProperties(global, props);
+    // for Node.js v8+
+    global.toString = function() {
+        return "[object global]";
+    };
+
+    function self() {
+        return this;
+    }
+
+    function safe_log(arg, cache) {
+        if (arg) switch (typeof arg) {
+          case "function":
+            return arg.toString();
+          case "object":
+            if (arg === global) return "[object global]";
+            if (/Error$/.test(arg.name)) return arg.toString();
+            if (typeof arg.then == "function") return "[object Promise]";
+            arg.constructor.toString();
+            var index = cache.original.indexOf(arg);
+            if (index >= 0) return cache.replaced[index];
+            if (--cache.level < 0) break;
+            var value = {};
+            cache.original.push(arg);
+            cache.replaced.push(value);
+            for (var key in arg) {
+                var desc = Object.getOwnPropertyDescriptor(arg, key);
+                if (desc && (desc.get || desc.set)) {
+                    Object.defineProperty(value, key, desc);
+                } else {
+                    value[key] = safe_log(arg[key], cache);
+                }
+            }
+            return value;
+        }
+        return arg;
+    }
+}
+
+function run_code_vm(code, toplevel, timeout) {
+    timeout = timeout || 5000;
+    var stdout = "";
+    var original_write = process.stdout.write;
+    process.stdout.write = function(chunk) {
+        stdout += chunk;
+    };
+    try {
+        var ctx = vm.createContext({ console: console });
+        // for Node.js v6
+        vm.runInContext(setup_code, ctx);
+        vm.runInContext(toplevel ? "(function(){" + code + "})();" : code, ctx, { timeout: timeout });
+        return strip_color_codes(stdout);
+    } catch (ex) {
+        return ex;
+    } finally {
+        process.stdout.write = original_write;
+    }
+}
+
+function run_code_exec(code, toplevel, timeout) {
+    if (toplevel) {
+        code = setup_code + "(function(){" + code + "})();";
+    } else {
+        code = code.replace(/^((["'])[^"']*\2(;|$))?/, function(directive) {
+            return directive + setup_code;
+        });
+    }
+    try {
+        return execSync('"' + process.argv[0] + '" --max-old-space-size=4096', {
+            encoding: "utf8",
+            input: code,
+            stdio: "pipe",
+            timeout: timeout || 5000,
+        });
+    } catch (ex) {
+        var msg = ex.message.replace(/\r\n/g, "\n");
+        if (/ETIMEDOUT/.test(msg)) return new Error("Script execution timed out.");
+        var value = msg.slice(msg.indexOf("\n") + 1, msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n"));
+        try {
+            value = vm.runInNewContext("(" + value.replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
+                return new Array(+count).join();
+            }) + ")");
+        } catch (e) {}
+        var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
+        if (!match) return value;
+        ex = new global[match[1]](match[2]);
+        ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
+        for (var name in value) ex[name] = value[name];
+        return ex;
+    }
+}

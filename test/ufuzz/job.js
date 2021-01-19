@@ -2,7 +2,7 @@ var actions = require("./actions");
 var child_process = require("child_process");
 
 var args = [
-    "--max-old-space-size=2048",
+    "--max-old-space-size=4096",
     "test/ufuzz",
 ];
 var iterations;

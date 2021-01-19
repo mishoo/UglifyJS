@@ -13,6 +13,23 @@ console_log: {
     ]
 }
 
+console_log_console: {
+    input: {
+        var log = console.log;
+        log(console);
+        log(typeof console.log);
+    }
+    expect: {
+        var log = console.log;
+        log(console);
+        log(typeof console.log);
+    }
+    expect_stdout: [
+        "{ log: 'function(){}' }",
+        "function",
+    ]
+}
+
 typeof_arguments: {
     options = {
         evaluate: true,
@@ -79,6 +96,38 @@ log_global: {
         }());
     }
     expect_stdout: "[object global]"
+}
+
+timers: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var count = 0, interval = 1000, duration = 3210;
+        var timer = setInterval(function() {
+            console.log(++count);
+        }, interval);
+        setTimeout(function() {
+            clearInterval(timer);
+        }, duration);
+    }
+    expect: {
+        var count = 0;
+        var timer = setInterval(function() {
+            console.log(++count);
+        }, 1000);
+        setTimeout(function() {
+            clearInterval(timer);
+        }, 3210);
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "3",
+    ]
+    node_version: ">=0.12"
 }
 
 issue_4054: {

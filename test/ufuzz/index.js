@@ -317,7 +317,6 @@ var VAR_NAMES = [
     "NaN",
     "Infinity",
     "arguments",
-    "Math",
     "parseInt",
     "async",
     "await",
@@ -1020,9 +1019,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
           case 0:
             return [
                 "[ ",
-                new Array(rng(3)).join(","),
+                new Array(rng(3)).join(),
                 getVarName(NO_CONST),
-                new Array(rng(3)).join(","),
+                new Array(rng(3)).join(),
                 " ] = ",
                 createArrayLiteral(recurmax, stmtDepth, canThrow),
             ].join("");
@@ -1743,24 +1742,49 @@ function log(options) {
 }
 
 function sort_globals(code) {
-    var globals = sandbox.run_code("throw Object.keys(this).sort();" + code);
+    var globals = sandbox.run_code("throw Object.keys(this).sort(" + function(global) {
+        return function(m, n) {
+            return (n == "toString") - (m == "toString")
+                || (typeof global[n] == "function") - (typeof global[m] == "function")
+                || (m < n ? -1 : m > n ? 1 : 0);
+        };
+    } + "(this));" + code);
+    if (!Array.isArray(globals)) {
+        errorln();
+        errorln();
+        errorln("//-------------------------------------------------------------");
+        errorln("// !!! sort_globals() failed !!!");
+        errorln("// expected Array, got:");
+        try {
+            errorln("// " + JSON.stringify(globals));
+        } catch (e) {
+            errorln("// " + globals);
+        }
+        errorln("//");
+        errorln(code);
+        errorln();
+        return code;
+    }
     return globals.length ? "var " + globals.map(function(name) {
         return name + "=" + name;
-    }).join(",") + ";" + code : code;
+    }).join() + ";" + code : code;
 }
 
 function fuzzy_match(original, uglified) {
-    uglified = uglified.split(" ");
-    var i = uglified.length;
-    original = original.split(" ", i);
-    while (--i >= 0) {
-        if (original[i] === uglified[i]) continue;
-        var a = +original[i];
-        var b = +uglified[i];
-        if (Math.abs((b - a) / a) < 1e-10) continue;
-        return false;
+    var m = [], n = [];
+    if (collect(original, m) !== collect(uglified, n)) return false;
+    for (var i = 0; i < m.length; i++) {
+        var a = m[i];
+        var b = n[i];
+        if (Math.abs((b - a) / a) > 1e-10) return false;
     }
     return true;
+
+    function collect(input, nums) {
+        return input.replace(/-?([1-9][0-9]*(\.[0-9]+)?|0\.[0-9]+)(e-?[1-9][0-9]*)?/ig, function(num) {
+            return "<|" + nums.push(+num) + "|>";
+        });
+    }
 }
 
 function is_error_in(ex) {
@@ -1768,7 +1792,7 @@ function is_error_in(ex) {
 }
 
 function is_error_spread(ex) {
-    return ex.name == "TypeError" && /Found non-callable @@iterator|is not iterable|undefined is not a function/.test(ex.message);
+    return ex.name == "TypeError" && /Found non-callable @@iterator| is not iterable| is not a function/.test(ex.message);
 }
 
 function is_error_recursion(ex) {
@@ -1782,6 +1806,7 @@ function patch_try_catch(orig, toplevel) {
         offset: 0,
         tries: [],
     } ];
+    var tail_throw = '\nif (typeof UFUZZ_ERROR == "object") throw UFUZZ_ERROR;\n';
     var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)[{]+)\)|}\s*finally)\s*(?={)/g;
     while (stack.length) {
         var code = stack[0].code;
@@ -1798,7 +1823,7 @@ function patch_try_catch(orig, toplevel) {
             var insert;
             if (/}\s*finally\s*$/.test(match[0])) {
                 tries.shift();
-                insert = 'if (typeof UFUZZ_ERROR == "object") throw UFUZZ_ERROR;';
+                insert = tail_throw;
             } else {
                 while (tries.length && tries[0].catch) tries.shift();
                 tries[0].catch = index - offset;
@@ -1812,7 +1837,7 @@ function patch_try_catch(orig, toplevel) {
                     "throw " + match[1] + ";",
                 ].join("\n");
             }
-            var new_code = code.slice(0, index) + insert + code.slice(index);
+            var new_code = code.slice(0, index) + insert + code.slice(index) + tail_throw;
             var result = sandbox.run_code(new_code, toplevel);
             if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
                 if (!stack.filled && match[1]) stack.push({
@@ -1904,8 +1929,12 @@ for (var round = 1; round <= num_iterations; round++) {
                 ok = sandbox.same_stdout(sandbox.run_code(sort_globals(original_code)), sandbox.run_code(sort_globals(uglify_code)));
             }
             // ignore numerical imprecision caused by `unsafe_math`
-            if (!ok && o.compress && o.compress.unsafe_math && typeof original_result == "string" && typeof uglify_result == "string") {
-                ok = fuzzy_match(original_result, uglify_result);
+            if (!ok && o.compress && o.compress.unsafe_math && typeof original_result == typeof uglify_result) {
+                if (typeof original_result == "string") {
+                    ok = fuzzy_match(original_result, uglify_result);
+                } else if (sandbox.is_error(original_result)) {
+                    ok = original_result.name == uglify_result.name && fuzzy_match(original_result.message, uglify_result.message);
+                }
                 if (!ok) {
                     var fuzzy_result = sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"), toplevel);
                     ok = sandbox.same_stdout(fuzzy_result, uglify_result);
