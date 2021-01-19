@@ -1399,3 +1399,21 @@ issue_4366: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4570: {
+    options = {
+        dead_code: true,
+        inline: true,
+    }
+    input: {
+        var a = function(b) {
+            return a += b;
+        }() ? 0 : a;
+        console.log(a);
+    }
+    expect: {
+        var a = (a += void 0) ? 0 : a;
+        console.log(a);
+    }
+    expect_stdout: "NaN"
+}
