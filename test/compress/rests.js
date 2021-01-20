@@ -663,3 +663,36 @@ issue_4562: {
     expect_stdout: "f"
     node_version: ">=6"
 }
+
+issue_4575: {
+    options = {
+        collapse_vars: true,
+        ie8: true,
+        reduce_vars: true,
+        rests: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        (function() {
+            var a = 0, b = a;
+            var c = function a(...b) {
+                A;
+                var d = A;
+                console.log(d, b.length);
+            }();
+        })();
+    }
+    expect: {
+        A = "PASS";
+        (function() {
+            (function(b) {
+                A;
+                var d = A;
+                console.log(d, b.length);
+            })([]);
+        })();
+    }
+    expect_stdout: "PASS 0"
+    node_version: ">=6"
+}
