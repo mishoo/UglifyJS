@@ -1311,10 +1311,11 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
     var save_async = async;
     var s;
     var name = createObjectKey(recurmax, stmtDepth, canThrow);
-    createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-        switch (rng(SUPPORT.computed_key ? 3 : 2)) {
-          case 0:
-            async = false;
+    var fn;
+    switch (rng(SUPPORT.computed_key ? 3 : 2)) {
+      case 0:
+        async = false;
+        fn = function(defns) {
             s = [
                 "get " + name + "(){",
                 strictMode(),
@@ -1323,13 +1324,15 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
                 createStatement(recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth, STMT_RETURN_ETC),
                 "},",
             ];
-            break;
-          case 1:
-            var prop;
-            do {
-                prop = getDotKey();
-            } while (name == prop);
-            async = false;
+        };
+        break;
+      case 1:
+        var prop;
+        do {
+            prop = getDotKey();
+        } while (name == prop);
+        async = false;
+        fn = function(defns) {
             s = [
                 "set " + name + "(" + createVarName(MANDATORY) + "){",
                 strictMode(),
@@ -1338,9 +1341,11 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
                 "this." + prop + createAssignment() + _createBinaryExpr(recurmax, COMMA_OK, stmtDepth, canThrow) + ";",
                 "},",
             ];
-            break;
-          default:
-            async = SUPPORT.async && rng(50) == 0;
+        };
+        break;
+      default:
+        async = SUPPORT.async && rng(50) == 0;
+        fn = function(defns) {
             s = [
                 (async ? "async " : "") + name + "(" + createParams(save_async, NO_DUPLICATE) + "){",
                 strictMode(),
@@ -1348,9 +1353,10 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
                 _createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "},",
             ]
-            break;
-        }
-    });
+        };
+        break;
+    }
+    createBlockVariables(recurmax, stmtDepth, canThrow, fn);
     async = save_async;
     VAR_NAMES.length = nameLenBefore;
     return filterDirective(s).join("\n");
@@ -1787,6 +1793,10 @@ function fuzzy_match(original, uglified) {
     }
 }
 
+function is_error_timeout(ex) {
+    return /timed out/.test(ex.message);
+}
+
 function is_error_in(ex) {
     return ex.name == "TypeError" && /'in'/.test(ex.message);
 }
@@ -1942,10 +1952,15 @@ for (var round = 1; round <= num_iterations; round++) {
             }
             // ignore difference in error message caused by Temporal Dead Zone
             if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
-            // ignore spurious time-outs
-            if (!ok && errored && /timed out/.test(original_result.message) && !/timed out/.test(uglify_result.message)) {
-                if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = sandbox.run_code(original_code, toplevel, 10000);
-                ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
+            if (!ok && errored && is_error_timeout(original_result)) {
+                if (is_error_timeout(uglify_result)) {
+                    // ignore difference in error message
+                    ok = true;
+                } else {
+                    // ignore spurious time-outs
+                    if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = sandbox.run_code(original_code, toplevel, 10000);
+                    ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
+                }
             }
             // ignore difference in error message caused by `in`
             if (!ok && errored && is_error_in(uglify_result) && is_error_in(original_result)) ok = true;
