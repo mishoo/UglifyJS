@@ -10,16 +10,17 @@ exports.init = function(url, auth, num) {
 exports.should_stop = function(callback) {
     read(base + "/actions/runs?per_page=100", function(reply) {
         if (!reply || !Array.isArray(reply.workflow_runs)) return;
-        var runs = reply.workflow_runs.filter(function(workflow) {
-            return workflow.status != "completed";
-        }).sort(function(a, b) {
+        var runs = reply.workflow_runs.sort(function(a, b) {
             return b.run_number - a.run_number;
         });
         var found = false, remaining = 20;
         (function next() {
-            if (!runs.length) return;
-            var workflow = runs.pop();
-            if (workflow.event == "schedule" && workflow.run_number == run_number) found = true;
+            var workflow;
+            do {
+                workflow = runs.pop();
+                if (!workflow) return;
+                if (workflow.event == "schedule" && workflow.run_number == run_number) found = true;
+            } while (!found && workflow.status == "completed");
             read(workflow.jobs_url, function(reply) {
                 if (!reply || !Array.isArray(reply.jobs)) return;
                 if (!reply.jobs.every(function(job) {
