@@ -317,7 +317,6 @@ var VAR_NAMES = [
     "NaN",
     "Infinity",
     "arguments",
-    "parseInt",
     "async",
     "await",
 ];
@@ -1848,7 +1847,7 @@ function patch_try_catch(orig, toplevel) {
             }
             var new_code = code.slice(0, index) + insert + code.slice(index) + tail_throw;
             var result = sandbox.run_code(new_code, toplevel);
-            if (typeof result != "object" || typeof result.name != "string" || typeof result.message != "string") {
+            if (!sandbox.is_error(result)) {
                 if (!stack.filled && match[1]) stack.push({
                     code: code,
                     index: index && index - 1,

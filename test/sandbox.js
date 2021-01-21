@@ -226,7 +226,7 @@ function run_code_exec(code, toplevel, timeout) {
         });
     }
     try {
-        return execSync('"' + process.argv[0] + '" --max-old-space-size=4096', {
+        return execSync('"' + process.argv[0] + '" --max-old-space-size=2048', {
             encoding: "utf8",
             input: code,
             stdio: "pipe",
@@ -234,7 +234,7 @@ function run_code_exec(code, toplevel, timeout) {
         });
     } catch (ex) {
         var msg = ex.message.replace(/\r\n/g, "\n");
-        if (/ETIMEDOUT/.test(msg)) return new Error("Script execution timed out.");
+        if (/ETIMEDOUT|FATAL ERROR:/.test(msg)) return new Error("Script execution timed out.");
         var end = msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
         var details;
         if (end >= 0) {
