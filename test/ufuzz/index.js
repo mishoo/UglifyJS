@@ -1761,11 +1761,10 @@ function sort_globals(code) {
         errorln("//-------------------------------------------------------------");
         errorln("// !!! sort_globals() failed !!!");
         errorln("// expected Array, got:");
-        try {
-            errorln("// " + JSON.stringify(globals));
-        } catch (e) {
-            errorln("// " + globals);
-        }
+        if (!sandbox.is_error(globals)) try {
+            globals = JSON.stringify(globals);
+        } catch (e) {}
+        errorln(globals);
         errorln("//");
         errorln(code);
         errorln();
@@ -1922,6 +1921,7 @@ for (var round = 1; round <= num_iterations; round++) {
         println("original result:");
         println(orig_result[0]);
         println();
+        // ignore v8 parser bug
         if (is_bug_async_arrow_rest(orig_result[0])) continue;
     }
     minify_options.forEach(function(options) {
@@ -1934,6 +1934,8 @@ for (var round = 1; round <= num_iterations; round++) {
             uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code, toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
+            // ignore v8 parser bug
+            if (!ok && is_bug_async_arrow_rest(uglify_result)) ok = true;
             // ignore declaration order of global variables
             if (!ok && !toplevel) {
                 ok = sandbox.same_stdout(sandbox.run_code(sort_globals(original_code)), sandbox.run_code(sort_globals(uglify_code)));
