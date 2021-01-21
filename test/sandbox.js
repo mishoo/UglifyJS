@@ -235,17 +235,26 @@ function run_code_exec(code, toplevel, timeout) {
     } catch (ex) {
         var msg = ex.message.replace(/\r\n/g, "\n");
         if (/ETIMEDOUT/.test(msg)) return new Error("Script execution timed out.");
-        var value = msg.slice(msg.indexOf("\n") + 1, msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n"));
-        try {
-            value = vm.runInNewContext("(" + value.replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
+        var end = msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
+        var details;
+        if (end >= 0) {
+            var start = msg.indexOf("\n") + 1;
+            details = msg.slice(start, end).replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
                 return new Array(+count).join();
-            }) + ")");
-        } catch (e) {}
+            });
+            try {
+                details = vm.runInNewContext("(" + details + ")");
+            } catch (e) {}
+        }
         var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
-        if (!match) return value;
+        if (!match) return details;
         ex = new global[match[1]](match[2]);
         ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
-        for (var name in value) ex[name] = value[name];
+        if (typeof details == "object") {
+            for (var name in details) ex[name] = details[name];
+        } else if (end >= 0) {
+            ex.details = details;
+        }
         return ex;
     }
 }
