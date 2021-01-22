@@ -431,6 +431,14 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
     unique_vars.length = len;
     return pairs;
 
+    function mapShuffled(array, fn) {
+        var result = [];
+        for (var i = array.length; --i >= 0;) {
+            result.splice(rng(result.length + 1), 0, fn(array[i], i));
+        }
+        return result;
+    }
+
     function convertToRest(names) {
         var last = names.length - 1;
         if (last >= 0 && SUPPORT.rest && rng(20) == 0) {
@@ -561,19 +569,24 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
                     }
                 });
                 fill(function() {
-                    var last = pairs.names.length - 1, has_rest = false;
-                    var s = pairs.names.map(function(name, index) {
+                    var last = pairs.names.length - 1, rest;
+                    if (last >= 0 && !(last in keys) && SUPPORT.rest_object && rng(20) == 0) {
+                        rest = pairs.names.pop();
+                        if (!/=/.test(rest)) rest = "..." + rest;
+                    }
+                    var s = mapShuffled(pairs.names, function(name, index) {
                         if (index in keys) return keys[index] + ": " + name;
-                        if (index == last && SUPPORT.rest_object && rng(20) == 0 && name.indexOf("=") < 0) {
-                            has_rest = true;
-                            return "..." + name;
-                        }
                         return rng(10) == 0 ? name : createKey(recurmax, keys) + ": " + name;
-                    }).join(", ");
-                    if (!has_rest) s = addTrailingComma(s);
+                    });
+                    if (rest) {
+                        s.push(rest);
+                        s = s.join(", ");
+                    } else {
+                        s = addTrailingComma(s.join(", "));
+                    }
                     names.unshift("{ " + s + " }" + createDefaultValue(recurmax, noDefault));
                 }, function() {
-                    values.unshift("{ " + addTrailingComma(pairs.values.map(function(value, index) {
+                    values.unshift("{ " + addTrailingComma(mapShuffled(pairs.values, function(value, index) {
                         var key = index in keys ? keys[index] : createKey(recurmax, keys);
                         return key + ": " + value;
                     }).join(", ")) + " }");
@@ -1807,6 +1820,10 @@ function is_error_recursion(ex) {
     return ex.name == "RangeError" && /Invalid string length|Maximum call stack size exceeded/.test(ex.message);
 }
 
+function is_error_destructuring(ex) {
+    return ex.name == "TypeError" && /^Cannot destructure /.test(ex.message);
+}
+
 function patch_try_catch(orig, toplevel) {
     var stack = [ {
         code: orig,
@@ -1865,6 +1882,9 @@ function patch_try_catch(orig, toplevel) {
             } else if (is_error_recursion(result)) {
                 index = result.ufuzz_try;
                 return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
+            } else if (is_error_destructuring(result)) {
+                index = result.ufuzz_catch;
+                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("cannot destructure");' + orig.slice(index);
             }
         }
         stack.filled = true;
@@ -1970,6 +1990,10 @@ for (var round = 1; round <= num_iterations; round++) {
             // ignore difference in depth of termination caused by infinite recursion
             if (!ok && errored && is_error_recursion(original_result)) {
                 if (is_error_recursion(uglify_result) || typeof uglify_result == "string") ok = true;
+            }
+            // ignore difference in error message caused by destructuring
+            if (!ok && errored && is_error_destructuring(uglify_result) && is_error_destructuring(original_result)) {
+                ok = true;
             }
             // ignore errors above when caught by try-catch
             if (!ok) {
