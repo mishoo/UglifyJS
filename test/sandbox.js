@@ -1,5 +1,5 @@
-var execSync = require("child_process").execSync;
 var semver = require("semver");
+var spawnSync = require("child_process").spawnSync;
 var vm = require("vm");
 
 setup_log();
@@ -104,7 +104,10 @@ function setup(global, setup_log, builtins) {
             var value = ex;
             if (value instanceof Error) {
                 value = {};
-                for (var name in ex) value[name] = ex[name];
+                for (var name in ex) {
+                    value[name] = ex[name];
+                    delete ex[name];
+                }
             }
             process.stderr.write(inspect(value) + "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
             throw ex;
@@ -225,36 +228,36 @@ function run_code_exec(code, toplevel, timeout) {
             return directive + setup_code;
         });
     }
-    try {
-        return execSync('"' + process.argv[0] + '" --max-old-space-size=2048', {
-            encoding: "utf8",
-            input: code,
-            stdio: "pipe",
-            timeout: timeout || 5000,
-        });
-    } catch (ex) {
-        var msg = ex.message.replace(/\r\n/g, "\n");
-        if (/ETIMEDOUT|FATAL ERROR:/.test(msg)) return new Error("Script execution timed out.");
-        var end = msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
-        var details;
-        if (end >= 0) {
-            var start = msg.indexOf("\n") + 1;
-            details = msg.slice(start, end).replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
-                return new Array(+count).join();
-            });
-            try {
-                details = vm.runInNewContext("(" + details + ")");
-            } catch (e) {}
-        }
-        var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
-        if (!match) return details;
-        ex = new global[match[1]](match[2]);
-        ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
-        if (typeof details == "object") {
-            for (var name in details) ex[name] = details[name];
-        } else if (end >= 0) {
-            ex.details = details;
-        }
-        return ex;
+    var result = spawnSync(process.argv[0], [ '--max-old-space-size=2048' ], {
+        encoding: "utf8",
+        input: code,
+        stdio: "pipe",
+        timeout: timeout || 5000,
+    });
+    if (result.status === 0) return result.stdout;
+    if (result.error && result.error.code == "ETIMEDOUT" || /FATAL ERROR:/.test(msg)) {
+        return new Error("Script execution timed out.");
     }
+    if (result.error) return result.error;
+    var msg = result.stderr.replace(/\r\n/g, "\n");
+    var end = msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
+    var details;
+    if (end >= 0) {
+        details = msg.slice(0, end).replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
+            return new Array(+count).join();
+        });
+        try {
+            details = vm.runInNewContext("(" + details + ")");
+        } catch (e) {}
+    }
+    var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
+    if (!match) return details;
+    var ex = new global[match[1]](match[2]);
+    ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
+    if (typeof details == "object") {
+        for (var name in details) ex[name] = details[name];
+    } else if (end >= 0) {
+        ex.details = details;
+    }
+    return ex;
 }
