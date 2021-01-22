@@ -1003,3 +1003,24 @@ issue_4534: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4581: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (async () => (A, a = "FAIL"))();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (async () => (A, a = "FAIL"))();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
