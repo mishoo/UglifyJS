@@ -2487,3 +2487,30 @@ issue_4554: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4584: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        try {
+            (function f({
+                [console.log(a = "FAIL")]: a,
+            }) {})(0);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function f({
+                [console.log(a = "FAIL")]: a,
+            }) {})(0);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
