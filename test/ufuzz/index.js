@@ -431,12 +431,18 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
     unique_vars.length = len;
     return pairs;
 
-    function mapShuffled(array, fn) {
-        var result = [];
-        for (var i = array.length; --i >= 0;) {
-            result.splice(rng(result.length + 1), 0, fn(array[i], i));
-        }
-        return result;
+    function mapShuffled(values, fn) {
+        var ordered = [];
+        var shuffled = [];
+        values.forEach(function(value, index) {
+            value = fn(value, index);
+            if (/]:/.test(value) ? canThrow && rng(10) == 0 : rng(5)) {
+                shuffled.splice(rng(shuffled.length + 1), 0, value);
+            } else {
+                ordered.push(value);
+            }
+        });
+        return shuffled.concat(ordered);
     }
 
     function convertToRest(names) {
