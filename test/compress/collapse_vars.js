@@ -8705,3 +8705,48 @@ collapse_or_assign: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4586_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 42;
+        (function f(b) {
+            var b = a;
+            if (b === arguments[0])
+                console.log("PASS");
+        })(console);
+    }
+    expect: {
+        var a = 42;
+        (function f(b) {
+            var b = a;
+            if (b === arguments[0])
+                console.log("PASS");
+        })(console);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4586_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 42;
+        (function f(b) {
+            b = a;
+            if (b === arguments[0])
+                console.log("PASS");
+        })(console);
+    }
+    expect: {
+        var a = 42;
+        (function f(b) {
+            if ((b = a) === arguments[0])
+                console.log("PASS");
+        })(console);
+    }
+    expect_stdout: "PASS"
+}
