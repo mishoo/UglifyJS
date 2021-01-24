@@ -338,7 +338,7 @@ evaluate_3: {
         console.log(1 + Number(x) + 2);
     }
     expect: {
-        console.log(+x + 3);
+        console.log(+("" + x) + 3);
     }
 }
 

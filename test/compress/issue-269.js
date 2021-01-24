@@ -17,7 +17,7 @@ issue_269_1: {
     expect: {
         var x = {};
         console.log(
-            x + "", +x, !!x,
+            "" + x, +("" + x), !!x,
             "", 0, false
         );
     }

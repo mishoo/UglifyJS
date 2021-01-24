@@ -134,6 +134,7 @@ var SUPPORT = function(matrix) {
 }({
     arrow: "a => 0;",
     async: "async function f(){}",
+    bigint: "42n",
     catch_omit_var: "try {} catch {}",
     computed_key: "({[0]: 0});",
     const_block: "var a; { const a = 0; }",
@@ -188,6 +189,12 @@ var VALUES = [
     '"function"',
     "this",
 ];
+if (SUPPORT.bigint) VALUES = VALUES.concat([
+    "!0o644n",
+    "([3n][0] > 2)",
+    "(-42n).toString()",
+    "Number(0XDEADn << 16n | 0xbeefn)",
+]);
 
 var BINARY_OPS = [
     " + ", // spaces needed to disambiguate with ++ cases (could otherwise cause syntax errors)
