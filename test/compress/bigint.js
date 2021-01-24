@@ -44,3 +44,19 @@ Number: {
     expect_stdout: "-1148098955808013200"
     node_version: ">=10"
 }
+
+issue_4590: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        A = 1;
+        0n || console.log("PASS");
+    }
+    expect: {
+        A = 1;
+        0n || console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}

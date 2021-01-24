@@ -2138,6 +2138,7 @@ issue_3497: {
 issue_3515_1: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2189,6 +2190,7 @@ issue_3515_2: {
 issue_3515_3: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         unused: true,
     }
     input: {
@@ -2256,6 +2258,7 @@ function_assign: {
 issue_3598: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         reduce_vars: true,
         unused: true,
     }

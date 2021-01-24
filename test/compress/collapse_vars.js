@@ -5608,6 +5608,7 @@ collapse_rhs_array: {
 collapse_rhs_boolean_1: {
     options = {
         collapse_vars: true,
+        evaluate: true,
     }
     input: {
         var a, b;
@@ -5633,6 +5634,7 @@ collapse_rhs_boolean_1: {
 collapse_rhs_boolean_2: {
     options = {
         collapse_vars: true,
+        evaluate: true,
     }
     input: {
         var a;
@@ -5667,6 +5669,7 @@ collapse_rhs_boolean_3: {
         booleans: true,
         collapse_vars: true,
         conditionals: true,
+        evaluate: true,
     }
     input: {
         var a, f, g, h, i, n, s, t, x, y;
@@ -5720,6 +5723,7 @@ collapse_rhs_function: {
 collapse_rhs_number: {
     options = {
         collapse_vars: true,
+        evaluate: true,
     }
     input: {
         var a, b;
@@ -5799,6 +5803,7 @@ collapse_rhs_regexp: {
 collapse_rhs_string: {
     options = {
         collapse_vars: true,
+        evaluate: true,
     }
     input: {
         var a, b;

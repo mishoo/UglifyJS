@@ -979,6 +979,7 @@ collapse_vars_2_strict: {
 collapse_rhs_true: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         pure_getters: true,
     }
     input: {
@@ -1015,6 +1016,7 @@ collapse_rhs_true: {
 collapse_rhs_false: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         pure_getters: false,
     }
     input: {
@@ -1051,6 +1053,7 @@ collapse_rhs_false: {
 collapse_rhs_strict: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         pure_getters: "strict",
     }
     input: {
@@ -1087,6 +1090,7 @@ collapse_rhs_strict: {
 collapse_rhs_setter: {
     options = {
         collapse_vars: true,
+        evaluate: true,
         pure_getters: "strict",
     }
     input: {
