@@ -161,6 +161,7 @@ process_boolean_returns: {
 collapse_value_1: {
     options = {
         collapse_vars: true,
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -169,7 +170,7 @@ collapse_value_1: {
         }());
     }
     expect: {
-        console.log(function(a) {
+        console.log(function() {
             return "PASS";
         }());
     }
@@ -180,6 +181,7 @@ collapse_value_1: {
 collapse_value_2: {
     options = {
         collapse_vars: true,
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -188,7 +190,7 @@ collapse_value_2: {
         })().log("PASS");
     }
     expect: {
-        (function(a) {
+        (function() {
             return console;
         })().log("PASS");
     }
@@ -554,8 +556,9 @@ drop_fargs: {
         "bar",
     ]
     expect_warnings: [
-        "WARN: Dropping unused function argument c [test/compress/default-values.js:1,61]",
+        "WARN: Dropping unused default argument c [test/compress/default-values.js:1,61]",
         "WARN: Side effects in default value of unused variable b [test/compress/default-values.js:1,37]",
+        "WARN: Dropping unused default argument assignment a [test/compress/default-values.js:1,29]",
     ]
     node_version: ">=6"
 }
@@ -1594,5 +1597,67 @@ issue_4548: {
         "foo",
         "undefined",
     ]
+    node_version: ">=6"
+}
+
+issue_4588_1_unused: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function(a = 42) {}.length);
+    }
+    expect: {
+        console.log(function(a = 0) {}.length);
+    }
+    expect_stdout: "0"
+    node_version: ">=6"
+}
+
+issue_4588_2_unused: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function(a, b = void 0, c, d = "foo") {}.length);
+    }
+    expect: {
+        console.log(function(a, b = 0, c, d) {}.length);
+    }
+    expect_stdout: "1"
+    expect_warnings: [
+        "WARN: Dropping unused default argument assignment d [test/compress/default-values.js:1,47]",
+        "WARN: Dropping unused default argument value b [test/compress/default-values.js:1,32]",
+    ]
+    node_version: ">=6"
+}
+
+issue_4588_1_evaluate: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(function(a = 42) {}.length);
+    }
+    expect: {
+        console.log(0);
+    }
+    expect_stdout: "0"
+    node_version: ">=6"
+}
+
+issue_4588_2_evaluate: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(function(a, b = void 0, c, d = "foo") {}.length);
+    }
+    expect: {
+        console.log(1);
+    }
+    expect_stdout: "1"
     node_version: ">=6"
 }
