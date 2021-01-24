@@ -1587,9 +1587,10 @@ function getVarName(noConst) {
 function createVarName(maybe, dontStore) {
     if (!maybe || rng(2)) {
         var suffix = rng(3);
-        var name;
+        var name, tries = 10;
         do {
             name = VAR_NAMES[rng(VAR_NAMES.length)];
+            if (--tries < 0) suffix++;
             if (suffix) name += "_" + suffix;
         } while (unique_vars.indexOf(name) >= 0 || block_vars.indexOf(name) >= 0 || async && name == "await");
         if (!dontStore) VAR_NAMES.push(name);
