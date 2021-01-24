@@ -1254,3 +1254,9 @@ To allow for better optimizations, the compiler makes various assumptions:
   }()) => b)());
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Some arithmetic operations with `BigInt` may throw `TypeError`:
+  ```javascript
+  1n + 1;
+  // TypeError: can't convert BigInt to number
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
