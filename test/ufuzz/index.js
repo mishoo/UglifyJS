@@ -140,6 +140,7 @@ var SUPPORT = function(matrix) {
     const_block: "var a; { const a = 0; }",
     default_value: "[ a = 0 ] = [];",
     destructuring: "[] = [];",
+    exponentiation: "0 ** 0",
     let: "let a;",
     rest: "var [...a] = [];",
     rest_object: "var {...a} = {};",
@@ -168,7 +169,7 @@ var VALUES = [
     "4",
     "5",
     "22",
-    "-0", // 0/-0 !== 0
+    "(-0)", // 0/-0 !== 0
     "23..toString()",
     "24 .toString()",
     "25. ",
@@ -190,7 +191,7 @@ var VALUES = [
     "this",
 ];
 if (SUPPORT.bigint) VALUES = VALUES.concat([
-    "!0o644n",
+    "(!0o644n)",
     "([3n][0] > 2)",
     "(-42n).toString()",
     "Number(0XDEADn << 16n | 0xbeefn)",
@@ -224,6 +225,7 @@ var BINARY_OPS = [
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
+if (SUPPORT.exponentiation) BINARY_OPS.push("**");
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS.push(" in ");
@@ -439,17 +441,19 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
     return pairs;
 
     function mapShuffled(values, fn) {
-        var ordered = [];
-        var shuffled = [];
+        var declare_only = [];
+        var side_effects = [];
         values.forEach(function(value, index) {
             value = fn(value, index);
-            if (/]:/.test(value) ? canThrow && rng(10) == 0 : rng(5)) {
-                shuffled.splice(rng(shuffled.length + 1), 0, value);
+            if (/]:|=/.test(value) ? canThrow && rng(10) == 0 : rng(5)) {
+                declare_only.splice(rng(declare_only.length + 1), 0, value);
+            } else if (canThrow && rng(5) == 0) {
+                side_effects.splice(rng(side_effects.length + 1), 0, value);
             } else {
-                ordered.push(value);
+                side_effects.push(value);
             }
         });
-        return shuffled.concat(ordered);
+        return declare_only.concat(side_effects);
     }
 
     function convertToRest(names) {
