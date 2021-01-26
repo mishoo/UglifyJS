@@ -1,9 +1,15 @@
+var readFileSync = require("fs").readFileSync;
 var semver = require("semver");
 var spawnSync = require("child_process").spawnSync;
 var vm = require("vm");
 
 setup_log();
-var setup_code = "(" + setup + ")(this, " + setup_log + ", " + find_builtins() + ");";
+var setup_code = "(" + setup + ")(" + [
+    "this",
+    find_builtins(),
+    setup_log,
+    "function(process) {" + readFileSync(require.resolve("../tools/tty", "utf8")) + "}",
+].join(",\n") + ");\n";
 exports.has_toplevel = function(options) {
     return options.toplevel
         || options.mangle && options.mangle.toplevel
@@ -77,7 +83,7 @@ function find_builtins() {
     return builtins;
 }
 
-function setup(global, setup_log, builtins) {
+function setup(global, builtins, setup_log, setup_tty) {
     [ Array, Boolean, Error, Function, Number, Object, RegExp, String ].forEach(function(f) {
         f.toString = Function.prototype.toString;
     });
@@ -99,6 +105,7 @@ function setup(global, setup_log, builtins) {
     }();
     var process = global.process;
     if (process) {
+        setup_tty(process);
         var inspect = setup_log();
         process.on("uncaughtException", function(ex) {
             var value = ex;
