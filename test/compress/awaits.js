@@ -1024,3 +1024,26 @@ issue_4581: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4595: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await async function f() {
+                console.log(f.length);
+            }();
+        })();
+    }
+    expect: {
+        (async function() {
+            await async function f() {
+                console.log(f.length);
+            }();
+        })();
+    }
+    expect_stdout: "0"
+    node_version: ">=8"
+}
