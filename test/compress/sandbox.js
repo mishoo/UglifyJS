@@ -98,6 +98,31 @@ log_global: {
     expect_stdout: "[object global]"
 }
 
+log_nested: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var o = { p: 42 };
+        for (var i = 0; i < 10; i++)
+            o = {
+                p: o,
+                q: function foo() {},
+            };
+        console.log(o);
+    }
+    expect: {
+        var o = { p: 42 };
+        for (var i = 0; i < 10; i++)
+            o = {
+                p: o,
+                q: function() {},
+            };
+        console.log(o);
+    }
+    expect_stdout: true
+}
+
 timers: {
     options = {
         reduce_vars: true,

@@ -126,7 +126,7 @@ function setup(global, builtins, setup_log, setup_tty) {
             if (arguments.length == 1 && typeof msg == "string") return log("%s", msg);
             return log.apply(null, [].map.call(arguments, function(arg) {
                 return safe_log(arg, {
-                    level: 3,
+                    level: 5,
                     original: [],
                     replaced: [],
                 });
@@ -189,7 +189,7 @@ function setup(global, builtins, setup_log, setup_tty) {
             arg.constructor.toString();
             var index = cache.original.indexOf(arg);
             if (index >= 0) return cache.replaced[index];
-            if (--cache.level < 0) break;
+            if (--cache.level < 0) return "[object Object]";
             var value = {};
             cache.original.push(arg);
             cache.replaced.push(value);
