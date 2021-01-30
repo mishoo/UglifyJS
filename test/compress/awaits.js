@@ -1047,3 +1047,20 @@ issue_4595: {
     expect_stdout: "0"
     node_version: ">=8"
 }
+
+issue_4598: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        if (console.log("PASS")) {
+            async function f() {}
+        }
+    }
+    expect: {
+        async function f() {}
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
