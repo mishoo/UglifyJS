@@ -53,7 +53,10 @@ describe("Template literals", function() {
             [ "`foo\\\\r\nbar`", "`foo\\\\r\nbar`" ],
         ].forEach(function(test) {
             var input = "console.log(" + test[0] + ");";
-            var result = UglifyJS.minify(input);
+            var result = UglifyJS.minify(input, {
+                compress: false,
+                mangle: false,
+            });
             if (result.error) throw result.error;
             var expected = "console.log(" + test[1] + ");";
             assert.strictEqual(result.code, expected, test[0]);

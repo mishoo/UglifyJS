@@ -115,8 +115,8 @@ describe("String literals", function() {
                 UglifyJS.parse(test);
             }, function(e) {
                 return e instanceof UglifyJS.JS_Parse_Error
-                    && e.message === "Invalid hex-character pattern in string";
-            });
+                    && /^Invalid escape sequence: \\u/.test(e.message);
+            }, test);
         });
     });
     it("Should reject invalid code points in Unicode escape sequence", function() {
@@ -130,8 +130,8 @@ describe("String literals", function() {
                 UglifyJS.parse(test);
             }, function(e) {
                 return e instanceof UglifyJS.JS_Parse_Error
-                    && /^Invalid character code: /.test(e.message);
-            });
+                    && /^Invalid escape sequence: \\u{1/.test(e.message);
+            }, test);
         });
     });
 });

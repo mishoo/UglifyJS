@@ -1260,3 +1260,10 @@ To allow for better optimizations, the compiler makes various assumptions:
   // TypeError: can't convert BigInt to number
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Some versions of JavaScript will throw `SyntaxError` with the
+  following:
+  ```javascript
+  console.log(String.raw`\uFo`);
+  // SyntaxError: Invalid Unicode escape sequence
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
