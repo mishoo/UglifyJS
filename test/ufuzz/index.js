@@ -146,6 +146,7 @@ var SUPPORT = function(matrix) {
     rest_object: "var {...a} = {};",
     spread: "[...[]];",
     spread_object: "({...0});",
+    template: "``",
     trailing_comma: "function f(a,) {}",
 });
 
@@ -1038,6 +1039,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return rng(2) + " === 1 ? a : b";
       case p++:
+        if (SUPPORT.template && rng(20) == 0) return createTemplateLiteral(recurmax, stmtDepth, canThrow);
       case p++:
         return createValue();
       case p++:
@@ -1296,6 +1298,28 @@ function createArrayLiteral(recurmax, stmtDepth, canThrow) {
         break;
     }
     return "[" + arr.join(", ") + "]";
+}
+
+function createTemplateLiteral(recurmax, stmtDepth, canThrow) {
+    recurmax--;
+    var s = [];
+    addText();
+    for (var i = rng(6); --i >= 0;) {
+        s.push("${", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "}");
+        addText();
+    }
+    return (rng(10) ? "`" : "String.raw`") + s.join(rng(5) ? "" : "\n") + "`";
+
+    function addText() {
+        while (rng(5) == 0) s.push([
+            " ",
+            "$",
+            "}",
+            "\\`",
+            "\\\\",
+            "tmpl",
+        ][rng(6)]);
+    }
 }
 
 var SAFE_KEYS = [
