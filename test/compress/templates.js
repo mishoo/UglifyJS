@@ -198,3 +198,27 @@ unsafe_side_effects: {
     expect_stdout: "foo"
     node_version: ">=4"
 }
+
+issue_4604: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0, log = console.log;
+        a = "FAIL";
+        (function() {
+            a = "PASS";
+        })``;
+        log(a);
+    }
+    expect: {
+        var a = 0, log = console.log;
+        a = "FAIL";
+        (function() {
+            a = "PASS";
+        })``;
+        log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
