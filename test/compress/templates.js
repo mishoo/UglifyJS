@@ -222,3 +222,18 @@ issue_4604: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4606: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`${typeof A} ${"\r"} ${"\\"} ${"`"}`);
+    }
+    expect: {
+        console.log(`${typeof A} \r \\ \``);
+    }
+    expect_stdout: "undefined \r \\ `"
+    node_version: ">=4"
+}
