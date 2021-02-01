@@ -410,8 +410,9 @@ function createParams(was_async, noDuplicate) {
     return addTrailingComma(params.join(", "));
 }
 
-function createArgs(recurmax, stmtDepth, canThrow) {
+function createArgs(recurmax, stmtDepth, canThrow, noTemplate) {
     recurmax--;
+    if (SUPPORT.template && !noTemplate && rng(20) == 0) return createTemplateLiteral(recurmax, stmtDepth, canThrow);
     var args = [];
     for (var n = rng(4); --n >= 0;) switch (SUPPORT.spread ? rng(50) : 3) {
       case 0:
@@ -430,7 +431,7 @@ function createArgs(recurmax, stmtDepth, canThrow) {
         args.push(rng(2) ? createValue() : createExpression(recurmax, NO_COMMA, stmtDepth, canThrow));
         break;
     }
-    return addTrailingComma(args.join(", "));
+    return "(" + addTrailingComma(args.join(", ")) + ")";
 }
 
 function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was_async) {
@@ -731,7 +732,7 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
             var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async);
             params = pairs.names.join(", ");
             if (!pairs.has_rest) params = addTrailingComma(params);
-            args = addTrailingComma(pairs.values.join(", "));
+            args = "(" + addTrailingComma(pairs.values.join(", ")) + ")";
         } else {
             params = createParams(save_async);
         }
@@ -753,10 +754,10 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     if (!allowDefun) {
         // avoid "function statements" (decl inside statements)
         s = "var " + createVarName(MANDATORY) + " = " + s;
-        s += "(" + (args || createArgs(recurmax, stmtDepth, canThrow)) + ")";
+        s += args || createArgs(recurmax, stmtDepth, canThrow);
     } else if (!(name in called) || args || rng(3)) {
         s += "var " + createVarName(MANDATORY) + " = " + name;
-        s += "(" + (args || createArgs(recurmax, stmtDepth, canThrow)) + ")";
+        s += args || createArgs(recurmax, stmtDepth, canThrow);
     }
 
     return s + ";";
@@ -1039,7 +1040,11 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return rng(2) + " === 1 ? a : b";
       case p++:
-        if (SUPPORT.template && rng(20) == 0) return createTemplateLiteral(recurmax, stmtDepth, canThrow);
+        if (SUPPORT.template && rng(20) == 0) {
+            var tmpl = createTemplateLiteral(recurmax, stmtDepth, canThrow);
+            if (rng(10) == 0) tmpl = "String.raw" + tmpl;
+            return tmpl;
+        }
       case p++:
         return createValue();
       case p++:
@@ -1093,7 +1098,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                         var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async);
                         params = pairs.names.join(", ");
                         if (!pairs.has_rest) params = addTrailingComma(params);
-                        args = addTrailingComma(pairs.values.join(", "));
+                        args = "(" + addTrailingComma(pairs.values.join(", ")) + ")";
                     } else {
                         params = createParams(save_async, NO_DUPLICATE);
                     }
@@ -1125,7 +1130,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 async = save_async;
                 VAR_NAMES.length = nameLenBefore;
                 if (!args && rng(2)) args = createArgs(recurmax, stmtDepth, canThrow);
-                if (args) suffix += "(" + args + ")";
+                if (args) suffix += args;
                 s.push(suffix);
             } else {
                 s.push(
@@ -1162,8 +1167,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             break;
           default:
             async = false;
+            var instantiate = rng(4) ? "new " : "";
             createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
-                var instantiate = rng(4) ? "new " : "";
                 s.push(
                     instantiate + "function " + name + "(" + createParams(save_async) + "){",
                     strictMode(),
@@ -1177,7 +1182,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             });
             async = save_async;
             VAR_NAMES.length = nameLenBefore;
-            s.push(rng(2) ? "}" : "}(" + createArgs(recurmax, stmtDepth, canThrow) + ")");
+            s.push(rng(2) ? "}" : "}" + createArgs(recurmax, stmtDepth, canThrow, instantiate));
             break;
         }
         async = save_async;
@@ -1255,7 +1260,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         var name = getVarName();
         var s = name + "." + getDotKey();
-        s = "typeof " + s + ' == "function" && --_calls_ >= 0 && ' + s + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
+        s = "typeof " + s + ' == "function" && --_calls_ >= 0 && ' + s + createArgs(recurmax, stmtDepth, canThrow);
         return canThrow && rng(8) == 0 ? s : name + " && " + s;
       case p++:
       case p++:
@@ -1266,7 +1271,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
         } while (name in called && !called[name]);
         called[name] = true;
-        return "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + "(" + createArgs(recurmax, stmtDepth, canThrow) + ")";
+        return "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + createArgs(recurmax, stmtDepth, canThrow);
     }
     _createExpression.N = p;
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
@@ -1308,7 +1313,7 @@ function createTemplateLiteral(recurmax, stmtDepth, canThrow) {
         s.push("${", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "}");
         addText();
     }
-    return (rng(10) ? "`" : "String.raw`") + s.join(rng(5) ? "" : "\n") + "`";
+    return "`" + s.join(rng(5) ? "" : "\n") + "`";
 
     function addText() {
         while (rng(5) == 0) s.push([
