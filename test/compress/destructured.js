@@ -2514,3 +2514,45 @@ issue_4584: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4608_1: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+    }
+    input: {
+        (function() {
+            [ arguments ] = [ "foo" ];
+            console.log(arguments[0]);
+        })();
+    }
+    expect: {
+        (function() {
+            [ arguments ] = [ "foo" ];
+            console.log(arguments[0]);
+        })();
+    }
+    expect_stdout: "f"
+    node_version: ">=6"
+}
+
+issue_4608_2: {
+    options = {
+        arguments: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a) {
+            [ arguments ] = [ "foo" ];
+            console.log(arguments[0]);
+        })();
+    }
+    expect: {
+        (function(a) {
+            [ arguments ] = [ "foo" ];
+            console.log(arguments[0]);
+        })();
+    }
+    expect_stdout: "f"
+    node_version: ">=6"
+}
