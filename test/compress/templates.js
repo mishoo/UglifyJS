@@ -134,7 +134,7 @@ partial_evaluate: {
     node_version: ">=4"
 }
 
-malformed_evaluate: {
+malformed_evaluate_1: {
     options = {
         evaluate: true,
         templates: true,
@@ -147,6 +147,52 @@ malformed_evaluate: {
     }
     expect_stdout: true
     node_version: ">=4"
+}
+
+malformed_evaluate_2: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`\u0${0}b${5}`);
+    }
+    expect: {
+        console.log(`\u0${0}b5`);
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+malformed_evaluate_3: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`\u${0}b${5}`);
+    }
+    expect: {
+        console.log(`\u0b5`);
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+malformed_evaluate_4: {
+    options = {
+        evaluate: true,
+        templates: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(String.raw`\u0${0}b${5}`);
+    }
+    expect: {
+        console.log("\\u00b5");
+    }
+    expect_stdout: "\\u00b5"
+    node_version: ">=8"
 }
 
 unsafe_evaluate: {

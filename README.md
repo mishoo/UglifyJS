@@ -769,6 +769,9 @@ to be `false` and all symbol names will be omitted.
 
 - `switches` (default: `true`) -- de-duplicate and remove unreachable `switch` branches
 
+- `templates` (default: `true`) -- compact template literals by embedding expressions
+  and/or converting to string literals, e.g. `` `foo ${42}` → "foo 42"``
+
 - `top_retain` (default: `null`) -- prevent specific toplevel functions and
   variables from `unused` removal (can be array, comma-separated, RegExp or
   function. Implies `toplevel`)
