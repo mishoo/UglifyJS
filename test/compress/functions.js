@@ -5283,3 +5283,127 @@ issue_4471: {
         "PASS",
     ]
 }
+
+issue_4612_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function f() {
+                return g();
+            }
+            function g(a) {
+                return a || f();
+            }
+            return g("PASS");
+        }());
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4612_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function fn() {
+                return h();
+            }
+            function g() {
+                return fn();
+            }
+            function h(a) {
+                return a || fn();
+            }
+            return h("PASS");
+        }());
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4612_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(typeof function() {
+            return g();
+            function f() {
+                return g;
+            }
+            function g() {
+                {
+                    return f;
+                }
+            }
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            return g();
+            function f() {
+                return g;
+            }
+            function g() {
+                return f;
+            }
+        }());
+    }
+    expect_stdout: "function"
+}
+
+issue_4612_4: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            function f() {
+                return h();
+            }
+            function g() {
+                {
+                    return h();
+                }
+            }
+            function h() {
+                {
+                    return g();
+                }
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            function f() {
+                return h();
+            }
+            function g() {
+                return h();
+            }
+            function h() {
+                return g();
+            }
+        }());
+    }
+    expect_stdout: "undefined"
+}
