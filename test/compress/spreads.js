@@ -918,3 +918,32 @@ issue_4560_3: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_4614: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        try {
+            (function(...[]) {
+                var arguments;
+                arguments[0];
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function(...[]) {
+                var arguments;
+                arguments[0];
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
