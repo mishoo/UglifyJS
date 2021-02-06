@@ -519,6 +519,160 @@ collapse_vars_3: {
     node_version: ">=8"
 }
 
+collapse_property_lambda: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        (async function f() {
+            f.g = () => 42;
+            return f.g();
+        })().then(console.log);
+    }
+    expect: {
+        (async function f() {
+            return (f.g = () => 42)();
+        })().then(console.log);
+    }
+    expect_stdout: "42"
+    node_version: ">=8"
+}
+
+drop_return: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (async function(a) {
+            while (!console);
+            return console.log(a);
+        })(42);
+    }
+    expect: {
+        (async function(a) {
+            while (!console);
+            console.log(a);
+        })(42);
+    }
+    expect_stdout: "42"
+    node_version: ">=8"
+}
+
+functions: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        !async function() {
+            var a = async function a() {
+                return a && "a";
+            };
+            var b = async function x() {
+                return !!x;
+            };
+            var c = async function(c) {
+                return c;
+            };
+            if (await c(await b(await a()))) {
+                var d = async function() {};
+                var e = async function y() {
+                    return typeof y;
+                };
+                var f = async function(f) {
+                    return f;
+                };
+                console.log(await a(await d()), await b(await e()), await c(await f(42)), typeof d, await e(), typeof f);
+            }
+        }();
+    }
+    expect: {
+        !async function() {
+            async function a() {
+                return a && "a";
+            }
+            async function b() {
+                return !!b;
+            }
+            var c = async function(c) {
+                return c;
+            };
+            if (await c(await b(await a()))) {
+                async function d() {}
+                async function e() {
+                    return typeof e;
+                }
+                var f = async function(f) {
+                    return f;
+                };
+                console.log(await a(await d()), await b(await e()), await c(await f(42)), typeof d, await e(), typeof f);
+            }
+        }();
+    }
+    expect_stdout: "a true 42 function function function"
+    node_version: ">=8"
+}
+
+functions_use_strict: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        !async function() {
+            var a = async function a() {
+                return a && "a";
+            };
+            var b = async function x() {
+                return !!x;
+            };
+            var c = async function(c) {
+                return c;
+            };
+            if (await c(await b(await a()))) {
+                var d = async function() {};
+                var e = async function y() {
+                    return typeof y;
+                };
+                var f = async function(f) {
+                    return f;
+                };
+                console.log(await a(await d()), await b(await e()), await c(await f(42)), typeof d, await e(), typeof f);
+            }
+        }();
+    }
+    expect: {
+        "use strict";
+        !async function() {
+            async function a() {
+                return a && "a";
+            }
+            async function b() {
+                return !!b;
+            }
+            var c = async function(c) {
+                return c;
+            };
+            if (await c(await b(await a()))) {
+                var d = async function() {};
+                var e = async function y() {
+                    return typeof y;
+                };
+                var f = async function(f) {
+                    return f;
+                };
+                console.log(await a(await d()), await b(await e()), await c(await f(42)), typeof d, await e(), typeof f);
+            }
+        }();
+    }
+    expect_stdout: "a true 42 function function function"
+    node_version: ">=8"
+}
+
 issue_4335_1: {
     options = {
         inline: true,

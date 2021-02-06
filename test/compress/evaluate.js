@@ -703,6 +703,7 @@ prototype_function: {
         var g = 0();
         var h = 0();
     }
+    expect_stdout: true
 }
 
 call_args: {
@@ -2800,7 +2801,7 @@ operator_in: {
         console.log("PASS" in { });
         console.log("FAIL" in { });
         console.log("toString" in { });
-        console.log(true);
+        console.log("toString" in { toString: 3 });
     }
     expect_stdout: [
         "true",
