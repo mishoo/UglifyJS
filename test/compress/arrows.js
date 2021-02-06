@@ -434,6 +434,46 @@ collapse_value: {
     node_version: ">=4"
 }
 
+collapse_property_lambda: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        console.log(function f() {
+            f.g = () => 42;
+            return f.g();
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            return (f.g = () => 42)();
+        }());
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+drop_return: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (a => {
+            while (!console);
+            return console.log(a);
+        })(42);
+    }
+    expect: {
+        (a => {
+            while (!console);
+            console.log(a);
+        })(42);
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
 reduce_iife_1: {
     options = {
         evaluate: true,

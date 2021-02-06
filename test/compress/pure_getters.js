@@ -248,6 +248,35 @@ issue_2110_2: {
     expect_stdout: "function"
 }
 
+issue_2110_3: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        function g() {
+            return this;
+        }
+        console.log(typeof function() {
+            function f() {}
+            f.g = g;
+            return f.g();
+        }());
+    }
+    expect: {
+        function g() {
+            return this;
+        }
+        console.log(typeof function() {
+            function f() {}
+            f.g = g;
+            return f.g();
+        }());
+    }
+    expect_stdout: "function"
+}
+
 set_immutable_1: {
     options = {
         collapse_vars: true,
