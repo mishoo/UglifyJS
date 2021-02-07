@@ -1218,3 +1218,31 @@ issue_4598: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4618: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            var await = async function f() {
+                console || f();
+            };
+            console.log;
+            return await;
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            var await = async function f() {
+                console || f();
+            };
+            console.log;
+            return await;
+        }());
+    }
+    expect_stdout: "function"
+    node_version: ">=8"
+}
