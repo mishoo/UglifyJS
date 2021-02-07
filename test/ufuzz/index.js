@@ -134,6 +134,7 @@ var SUPPORT = function(matrix) {
 }({
     arrow: "a => 0;",
     async: "async function f(){}",
+    async_generator: "async function* f(){}",
     bigint: "42n",
     catch_omit_var: "try {} catch {}",
     computed_key: "({[0]: 0});",
@@ -141,6 +142,7 @@ var SUPPORT = function(matrix) {
     default_value: "[ a = 0 ] = [];",
     destructuring: "[] = [];",
     exponentiation: "0 ** 0",
+    generator: "function* f(){}",
     let: "let a;",
     rest: "var [...a] = [];",
     rest_object: "var {...a} = {};",
@@ -349,6 +351,7 @@ var avoid_vars = [];
 var block_vars = [];
 var unique_vars = [];
 var async = false;
+var generator = false;
 var loops = 0;
 var funcs = 0;
 var called = Object.create(null);
@@ -368,6 +371,7 @@ function createTopLevelCode() {
     block_vars.length = 0;
     unique_vars.length = 0;
     async = false;
+    generator = false;
     loops = 0;
     funcs = 0;
     called = Object.create(null);
@@ -395,9 +399,11 @@ function addTrailingComma(list) {
     return SUPPORT.trailing_comma && list && rng(20) == 0 ? list + "," : list;
 }
 
-function createParams(was_async, noDuplicate) {
+function createParams(was_async, was_generator, noDuplicate) {
     var save_async = async;
     if (was_async) async = true;
+    var save_generator = generator;
+    if (was_generator) generator = true;
     var len = unique_vars.length;
     var params = [];
     for (var n = rng(4); --n >= 0;) {
@@ -406,6 +412,7 @@ function createParams(was_async, noDuplicate) {
         params.push(name);
     }
     unique_vars.length = len;
+    generator = save_generator;
     async = save_async;
     return addTrailingComma(params.join(", "));
 }
@@ -434,7 +441,7 @@ function createArgs(recurmax, stmtDepth, canThrow, noTemplate) {
     return "(" + addTrailingComma(args.join(", ")) + ")";
 }
 
-function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was_async) {
+function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was_async, was_generator) {
     var avoid = [];
     var len = unique_vars.length;
     var pairs = createPairs(recurmax, !nameLenBefore);
@@ -476,9 +483,18 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
             async = false;
             if (save_async || was_async) addAvoidVar("await");
         }
+        var save_generator = generator;
+        if (was_generator != null) {
+            generator = false;
+            if (save_generator || was_generator) addAvoidVar("yield");
+        }
         avoid.forEach(addAvoidVar);
         var save_vars = nameLenBefore && VAR_NAMES.splice(nameLenBefore);
         if (nameFn) nameFn();
+        if (was_generator != null) {
+            generator = was_generator;
+            if (save_generator || was_generator) removeAvoidVar("yield");
+        }
         if (was_async != null) {
             async = was_async;
             if (save_async || was_async) removeAvoidVar("await");
@@ -486,6 +502,7 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
         if (valueFn) valueFn();
         if (save_vars) [].push.apply(VAR_NAMES, save_vars);
         avoid.forEach(removeAvoidVar);
+        generator = save_generator;
         async = save_async;
     }
 
@@ -509,7 +526,10 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
         unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
         var save_async = async;
         if (was_async) async = true;
+        var save_generator = generator;
+        if (was_generator) generator = true;
         var name = createVarName(MANDATORY);
+        generator = save_generator;
         async = save_async;
         unique_vars.length -= 6;
         avoid.push(name);
@@ -707,7 +727,25 @@ function mayCreateBlockVariables(recurmax, stmtDepth, canThrow, fn) {
 }
 
 function makeFunction(name) {
-    return (async ? "async function " : "function ") + name;
+    if (generator) {
+        name = "function* " + name;
+    } else {
+        name = "function " + name;
+    }
+    if (async) name = "async " + name;
+    return name;
+}
+
+function invokeGenerator(was_generator) {
+    if (generator && !was_generator) switch (rng(4)) {
+      case 0:
+        return ".next()";
+      case 1:
+        return ".next().done";
+      case 2:
+        return ".next().value";
+    }
+    return "";
 }
 
 function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
@@ -718,6 +756,15 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     var nameLenBefore = VAR_NAMES.length;
     var save_async = async;
     async = SUPPORT.async && rng(50) == 0;
+    var save_generator = generator;
+    generator = SUPPORT.generator && rng(50) == 0;
+    if (async && generator && !SUPPORT.async_generator) {
+        if (rng(2)) {
+            async = false;
+        } else {
+            generator = false;
+        }
+    }
     createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
         if (allowDefun || rng(5) > 0) {
             name = "f" + funcs++;
@@ -729,12 +776,12 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         var params;
         if (SUPPORT.destructuring && (!allowDefun || !(name in called)) && rng(2)) {
             called[name] = false;
-            var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async);
+            var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async, save_generator);
             params = pairs.names.join(", ");
             if (!pairs.has_rest) params = addTrailingComma(params);
             args = "(" + addTrailingComma(pairs.values.join(", ")) + ")";
         } else {
-            params = createParams(save_async);
+            params = createParams(save_async, save_generator);
         }
         s.push(makeFunction(name) + "(" + params + "){", strictMode());
         s.push(defns());
@@ -748,6 +795,8 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         s.push("}", "");
         s = filterDirective(s).join("\n");
     });
+    var call_next = invokeGenerator(save_generator);
+    generator = save_generator;
     async = save_async;
     VAR_NAMES.length = nameLenBefore;
 
@@ -755,9 +804,11 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         // avoid "function statements" (decl inside statements)
         s = "var " + createVarName(MANDATORY) + " = " + s;
         s += args || createArgs(recurmax, stmtDepth, canThrow);
+        s += call_next;
     } else if (!(name in called) || args || rng(3)) {
         s += "var " + createVarName(MANDATORY) + " = " + name;
         s += args || createArgs(recurmax, stmtDepth, canThrow);
+        s += call_next;
     }
 
     return s + ";";
@@ -1019,7 +1070,9 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
         return "((c = c + 1) + (" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + "))"; // c only gets incremented
       default:
         var expr = "(" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + ")";
-        return async && rng(50) == 0 ? "(await" + expr + ")" : expr;
+        if (async && rng(50) == 0) return "(await" + expr + ")";
+        if (generator && rng(50) == 0) return "(yield" + (canThrow && rng(20) == 0 ? "*" : "") + expr + ")";
+        return expr;
     }
 }
 
@@ -1027,6 +1080,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
     var p = 0;
     switch (rng(_createExpression.N)) {
       case p++:
+        if (generator && rng(50) == 0) return "yield";
       case p++:
         return createUnaryPrefix() + (rng(2) ? "a" : "b");
       case p++:
@@ -1082,25 +1136,34 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         var nameLenBefore = VAR_NAMES.length;
         var save_async = async;
         async = SUPPORT.async && rng(50) == 0;
+        var save_generator = generator;
+        generator = SUPPORT.generator && rng(50) == 0;
+        if (async && generator && !SUPPORT.async_generator) {
+            if (rng(2)) {
+                async = false;
+            } else {
+                generator = false;
+            }
+        }
         unique_vars.push("c");
         var name = createVarName(MAYBE); // note: this name is only accessible from _within_ the function. and immutable at that.
         unique_vars.pop();
         var s = [];
         switch (rng(5)) {
           case 0:
-            if (SUPPORT.arrow && !name && rng(2)) {
+            if (SUPPORT.arrow && !name && !generator && rng(2)) {
                 var args, suffix;
                 (rng(2) ? createBlockVariables : function() {
                     arguments[3]();
                 })(recurmax, stmtDepth, canThrow, function(defns) {
                     var params;
                     if (SUPPORT.destructuring && rng(2)) {
-                        var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async);
+                        var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, save_async, save_generator);
                         params = pairs.names.join(", ");
                         if (!pairs.has_rest) params = addTrailingComma(params);
                         args = "(" + addTrailingComma(pairs.values.join(", ")) + ")";
                     } else {
-                        params = createParams(save_async, NO_DUPLICATE);
+                        params = createParams(save_async, save_generator, NO_DUPLICATE);
                     }
                     params = (async ? "async (" : "(") + params + ") => ";
                     if (defns) {
@@ -1127,6 +1190,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                         suffix = ")";
                     }
                 });
+                generator = save_generator;
                 async = save_async;
                 VAR_NAMES.length = nameLenBefore;
                 if (!args && rng(2)) args = createArgs(recurmax, stmtDepth, canThrow);
@@ -1137,7 +1201,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                     "(" + makeFunction(name) + "(){",
                     strictMode(),
                     createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                    rng(2) ? "})" : "})()"
+                    rng(2) ? "})" : "})()" + invokeGenerator(save_generator)
                 );
             }
             break;
@@ -1146,7 +1210,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 "+" + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                "}()"
+                "}()" + invokeGenerator(save_generator)
             );
             break;
           case 2:
@@ -1154,7 +1218,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 "!" + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                "}()"
+                "}()" + invokeGenerator(save_generator)
             );
             break;
           case 3:
@@ -1162,15 +1226,16 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 "void " + makeFunction(name) + "(){",
                 strictMode(),
                 createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
-                "}()"
+                "}()" + invokeGenerator(save_generator)
             );
             break;
           default:
             async = false;
+            generator = false;
             var instantiate = rng(4) ? "new " : "";
             createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
                 s.push(
-                    instantiate + "function " + name + "(" + createParams(save_async) + "){",
+                    instantiate + "function " + name + "(" + createParams(save_async, save_generator) + "){",
                     strictMode(),
                     defns()
                 );
@@ -1180,11 +1245,13 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 }
                 s.push(_createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
             });
+            generator = save_generator;
             async = save_async;
             VAR_NAMES.length = nameLenBefore;
             s.push(rng(2) ? "}" : "}" + createArgs(recurmax, stmtDepth, canThrow, instantiate));
             break;
         }
+        generator = save_generator;
         async = save_async;
         VAR_NAMES.length = nameLenBefore;
         return filterDirective(s).join("\n");
@@ -1328,8 +1395,6 @@ function createTemplateLiteral(recurmax, stmtDepth, canThrow) {
 }
 
 var SAFE_KEYS = [
-    "length",
-    "foo",
     "a",
     "b",
     "c",
@@ -1337,7 +1402,13 @@ var SAFE_KEYS = [
     "null",
     "NaN",
     "Infinity",
+    "done",
+    "foo",
     "in",
+    "length",
+    "next",
+    "then",
+    "value",
     "var",
 ];
 var KEYS = [
@@ -1367,12 +1438,14 @@ function createObjectKey(recurmax, stmtDepth, canThrow) {
 function createObjectFunction(recurmax, stmtDepth, canThrow) {
     var nameLenBefore = VAR_NAMES.length;
     var save_async = async;
+    var save_generator = generator;
     var s;
     var name = createObjectKey(recurmax, stmtDepth, canThrow);
     var fn;
     switch (rng(SUPPORT.computed_key ? 3 : 2)) {
       case 0:
         async = false;
+        generator = false;
         fn = function(defns) {
             s = [
                 "get " + name + "(){",
@@ -1390,6 +1463,7 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
             prop = getDotKey();
         } while (name == prop);
         async = false;
+        generator = false;
         fn = function(defns) {
             s = [
                 "set " + name + "(" + createVarName(MANDATORY) + "){",
@@ -1403,9 +1477,19 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
         break;
       default:
         async = SUPPORT.async && rng(50) == 0;
+        generator = SUPPORT.generator && rng(50) == 0;
+        if (async && generator && !SUPPORT.async_generator) {
+            if (rng(2)) {
+                async = false;
+            } else {
+                generator = false;
+            }
+        }
         fn = function(defns) {
+            if (generator) name = "*" + name;
+            if (async) name = "async "+ name;
             s = [
-                (async ? "async " : "") + name + "(" + createParams(save_async, NO_DUPLICATE) + "){",
+                name + "(" + createParams(save_async, save_generator, NO_DUPLICATE) + "){",
                 strictMode(),
                 defns(),
                 _createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
@@ -1415,6 +1499,7 @@ function createObjectFunction(recurmax, stmtDepth, canThrow) {
         break;
     }
     createBlockVariables(recurmax, stmtDepth, canThrow, fn);
+    generator = save_generator;
     async = save_async;
     VAR_NAMES.length = nameLenBefore;
     return filterDirective(s).join("\n");
@@ -1563,8 +1648,11 @@ function createTypeofExpr(recurmax, stmtDepth, canThrow) {
 
     function createVar() {
         var save_async = async;
+        var save_generator = generator;
         if (!async && avoid_vars.indexOf("await") >= 0) async = true;
+        if (!generator && avoid_vars.indexOf("yield") >= 0) generator = true;
         var name = createVarName(MANDATORY, DONT_STORE);
+        generator = save_generator;
         async = save_async;
         return name;
     }
@@ -1613,7 +1701,11 @@ function getVarName(noConst) {
     do {
         if (--tries < 0) return "a";
         name = VAR_NAMES[INITIAL_NAMES_LEN + rng(VAR_NAMES.length - INITIAL_NAMES_LEN)];
-    } while (!name || avoid_vars.indexOf(name) >= 0 || noConst && block_vars.indexOf(name) >= 0 || async && name == "await");
+    } while (!name
+        || avoid_vars.indexOf(name) >= 0
+        || noConst && block_vars.indexOf(name) >= 0
+        || async && name == "await"
+        || generator && name == "yield");
     return name;
 }
 
@@ -1625,7 +1717,10 @@ function createVarName(maybe, dontStore) {
             name = VAR_NAMES[rng(VAR_NAMES.length)];
             if (--tries < 0) suffix++;
             if (suffix) name += "_" + suffix;
-        } while (unique_vars.indexOf(name) >= 0 || block_vars.indexOf(name) >= 0 || async && name == "await");
+        } while (unique_vars.indexOf(name) >= 0
+            || block_vars.indexOf(name) >= 0
+            || async && name == "await"
+            || generator && name == "yield");
         if (!dontStore) VAR_NAMES.push(name);
         return name;
     }
