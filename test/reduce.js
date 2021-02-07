@@ -666,11 +666,7 @@ function is_timed_out(result) {
 }
 
 function is_statement(node) {
-    return node instanceof U.AST_Statement
-        && !(node instanceof U.AST_Arrow
-            || node instanceof U.AST_AsyncArrow
-            || node instanceof U.AST_AsyncFunction
-            || node instanceof U.AST_Function);
+    return node instanceof U.AST_Statement && !(node instanceof U.AST_LambdaExpression);
 }
 
 function merge_sequence(array, node) {

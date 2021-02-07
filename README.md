@@ -811,6 +811,8 @@ to be `false` and all symbol names will be omitted.
 - `varify` (default: `true`) -- convert block-scoped declaractions into `var`
   whenever safe to do so
 
+- `yields` (default: `true`) -- apply optimizations to `yield` expressions
+
 ## Mangle options
 
 - `eval` (default `false`) -- Pass `true` to mangle names visible in scopes
