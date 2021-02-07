@@ -696,3 +696,21 @@ issue_4575: {
     expect_stdout: "PASS 0"
     node_version: ">=6"
 }
+
+issue_4621: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (function f(a, ...{
+            [console.log(a)]: b,
+        }) {})("PASS");
+    }
+    expect: {
+        (function f(a, ...{
+            [console.log(a)]: b,
+        }) {})("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
