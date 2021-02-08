@@ -1272,3 +1272,12 @@ To allow for better optimizations, the compiler makes various assumptions:
   // SyntaxError: Invalid Unicode escape sequence
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Some versions of JavaScript will throw `SyntaxError` with the
+  following:
+  ```javascript
+  try {} catch (e) {
+      for (var e of []);
+  }
+  // SyntaxError: Identifier 'e' has already been declared
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.

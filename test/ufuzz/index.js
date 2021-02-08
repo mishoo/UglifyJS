@@ -27,7 +27,7 @@ var STMT_IF_ELSE = STMT_("ifelse");
 var STMT_DO_WHILE = STMT_("dowhile");
 var STMT_WHILE = STMT_("while");
 var STMT_FOR_LOOP = STMT_("forloop");
-var STMT_FOR_IN = STMT_("forin");
+var STMT_FOR_ENUM = STMT_("forenum");
 var STMT_SEMI = STMT_("semi");
 var STMT_EXPR = STMT_("expr");
 var STMT_SWITCH = STMT_("switch");
@@ -142,6 +142,8 @@ var SUPPORT = function(matrix) {
     default_value: "[ a = 0 ] = [];",
     destructuring: "[] = [];",
     exponentiation: "0 ** 0",
+    for_await_of: "async function f(a) { for await (a of []); }",
+    for_of: "for (var a of []);",
     generator: "function* f(){}",
     let: "let a;",
     rest: "var [...a] = [];",
@@ -901,21 +903,58 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
         return label.target + "for (var brake" + loop + " = 5; " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " && brake" + loop + " > 0; --brake" + loop + ")" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
-      case STMT_FOR_IN:
+      case STMT_FOR_ENUM:
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
         var key = rng(10) ? "key" + loop : getVarName(NO_CONST);
-        return [
-            "{var expr" + loop + " = " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ",
-            label.target + " for (",
-            !/^key/.test(key) ? rng(10) ? "" : "var " : !SUPPORT.let || rng(10) ? "var " : rng(2) ? "let " : "const ",
-            !SUPPORT.destructuring || rng(10) ? key : rng(5) ? "[ " + key + " ]" : "{ length: " + key + " }",
-            " in expr" + loop + ") {",
-            rng(5) > 1 ? "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; " : "",
-            createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
-            "}}",
-        ].join("");
+        var of = SUPPORT.for_of && rng(20) == 0;
+        var init = "";
+        if (!/^key/.test(key)) {
+            if (!(of && bug_for_of_var) && rng(10) == 0) init = "var ";
+        } else if (!SUPPORT.let || !(of && bug_for_of_var) && rng(10)) {
+            init = "var ";
+        } else if (rng(2)) {
+            init = "let ";
+        } else {
+            init = "const ";
+        }
+        if (!SUPPORT.destructuring || of && !(canThrow && rng(10) == 0) || rng(10)) {
+            init += key;
+        } else if (rng(5)) {
+            init += "[ " + key + " ]";
+        } else {
+            init += "{ length: " + key + " }";
+        }
+        var s = "var expr" + loop + " = ";
+        if (of) {
+            var await = SUPPORT.for_await_of && async && rng(20) == 0;
+            if (SUPPORT.generator && rng(20) == 0) {
+                var gen = getVarName();
+                if (canThrow && rng(10) == 0) {
+                    s += gen + "; ";
+                } else {
+                    s += gen + " && typeof " + gen + "[Symbol.";
+                    s += await ? "asyncIterator" : "iterator";
+                    s += '] == "function" ? ' + gen + " : " + createArrayLiteral(recurmax, stmtDepth, canThrow) + "; ";
+                }
+            } else if (rng(5)) {
+                s += createArrayLiteral(recurmax, stmtDepth, canThrow) + "; ";
+            } else if (canThrow && rng(10) == 0) {
+                s += createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ";
+            } else {
+                s += '"" + (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "); ";
+            }
+            s += label.target + " for ";
+            if (await) s += "await ";
+            s += "(" + init + " of expr" + loop + ") {";
+        } else {
+            s += createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ";
+            s += label.target + " for (" + init + " in expr" + loop + ") {";
+        }
+        if (rng(3)) s += "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; ";
+        s += createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
+        return "{" + s + "}";
       case STMT_SEMI:
         return use_strict && rng(20) === 0 ? '"use strict";' : ";";
       case STMT_EXPR:
@@ -2048,12 +2087,13 @@ if (typeof sandbox.run_code("A:if (0) B:; else B:;") != "string") {
         if (o.mangle) o.mangle.v8 = true;
     });
 }
-var is_bug_async_arrow_rest = function() {};
+var bug_async_arrow_rest = function() {};
 if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && typeof sandbox.run_code("async (a = f(...[], b)) => 0;") != "string") {
-    is_bug_async_arrow_rest = function(ex) {
+    bug_async_arrow_rest = function(ex) {
         return ex.name == "SyntaxError" && ex.message == "Rest parameter must be last formal parameter";
     };
 }
+var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && typeof sandbox.run_code("try {} catch (e) { for (var e of []); }") != "string";
 if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
     beautify_options.output.v8 = true;
     minify_options.forEach(function(o) {
@@ -2083,7 +2123,7 @@ for (var round = 1; round <= num_iterations; round++) {
         println(result);
         println();
         // ignore v8 parser bug
-        return is_bug_async_arrow_rest(result);
+        return bug_async_arrow_rest(result);
     })) continue;
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
@@ -2097,7 +2137,7 @@ for (var round = 1; round <= num_iterations; round++) {
             uglify_result = sandbox.run_code(uglify_code, toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
             // ignore v8 parser bug
-            if (!ok && is_bug_async_arrow_rest(uglify_result)) ok = true;
+            if (!ok && bug_async_arrow_rest(uglify_result)) ok = true;
             // ignore declaration order of global variables
             if (!ok && !toplevel) {
                 ok = sandbox.same_stdout(sandbox.run_code(sort_globals(original_code)), sandbox.run_code(sort_globals(uglify_code)));

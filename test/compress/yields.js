@@ -96,6 +96,48 @@ pause_resume: {
     node_version: ">=4"
 }
 
+for_of: {
+    input: {
+        function* f() {
+            if (yield "PASS") yield "FAIL 1";
+            yield 42;
+            return "FAIL 2";
+        }
+        for (var a of f())
+            console.log(a);
+    }
+    expect_exact: 'function*f(){if(yield"PASS")yield"FAIL 1";yield 42;return"FAIL 2"}for(var a of f())console.log(a);'
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=4"
+}
+
+for_await_of: {
+    input: {
+        async function* f() {
+            if (yield "PASS") yield "FAIL 1";
+            yield {
+                then: function(r) {
+                    r(42);
+                },
+            };
+            return "FAIL 2";
+        }
+        (async function(a) {
+            for await (a of f())
+                console.log(a);
+        })();
+    }
+    expect_exact: 'async function*f(){if(yield"PASS")yield"FAIL 1";yield{then:function(r){r(42)}};return"FAIL 2"}(async function(a){for await(a of f())console.log(a)})();'
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=10"
+}
+
 collapse_vars_1: {
     options = {
         collapse_vars: true,

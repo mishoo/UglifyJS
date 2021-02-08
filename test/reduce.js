@@ -134,8 +134,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (parent instanceof U.AST_VarDef && parent.name === node) return;
             // preserve for (var xxx; ...)
             if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Definitions) return node;
-            // preserve for (xxx in ...)
-            if (parent instanceof U.AST_ForIn && parent.init === node) return node;
+            // preserve for (xxx in/of ...)
+            if (parent instanceof U.AST_ForEnumeration && parent.init === node) return node;
 
             // node specific permutations with no parent logic
 
@@ -303,7 +303,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     return to_statement(expr);
                 }
             }
-            else if (node instanceof U.AST_ForIn) {
+            else if (node instanceof U.AST_ForEnumeration) {
                 var expr;
                 switch ((node.start._permute * steps | 0) % 3) {
                   case 0:
