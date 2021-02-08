@@ -2070,27 +2070,28 @@ for (var round = 1; round <= num_iterations; round++) {
 
     original_code = createTopLevelCode();
     var orig_result = [ sandbox.run_code(original_code), sandbox.run_code(original_code, true) ];
-    errored = typeof orig_result[0] != "string";
-    if (errored) {
+    if (orig_result.some(function(result, toplevel) {
+        if (typeof result == "string") return;
         println();
         println();
         println("//=============================================================");
-        println("// original code");
-        try_beautify(original_code, false, orig_result[0], println);
+        println("// original code" + (toplevel ? " (toplevel)" : ""));
+        try_beautify(original_code, toplevel, result, println);
         println();
         println();
         println("original result:");
-        println(orig_result[0]);
+        println(result);
         println();
         // ignore v8 parser bug
-        if (is_bug_async_arrow_rest(orig_result[0])) continue;
-    }
+        return is_bug_async_arrow_rest(result);
+    })) continue;
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
         var toplevel = sandbox.has_toplevel(o);
         o.validate = true;
         uglify_code = UglifyJS.minify(original_code, o);
         original_result = orig_result[toplevel ? 1 : 0];
+        errored = typeof original_result != "string";
         if (!uglify_code.error) {
             uglify_code = uglify_code.code;
             uglify_result = sandbox.run_code(uglify_code, toplevel);
