@@ -131,6 +131,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
               case "delete":
                 return;
             }
+            if (parent instanceof U.AST_VarDef && parent.name === node) return;
             // preserve for (var xxx; ...)
             if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Definitions) return node;
             // preserve for (xxx in ...)
