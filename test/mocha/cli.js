@@ -624,7 +624,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/for-in_1.js:2,5",
                 "for (1, 2, a in b) {",
                 "     ^",
-                "ERROR: Invalid left-hand side in for..in loop"
+                "ERROR: Invalid left-hand side in for..in/of loop"
             ].join("\n"));
             done();
         });
@@ -638,7 +638,7 @@ describe("bin/uglifyjs", function() {
                 "Parse error at test/input/invalid/for-in_2.js:2,5",
                 "for (var a, b in c) {",
                 "     ^",
-                "ERROR: Only one variable declaration allowed in for..in loop"
+                "ERROR: Only one variable declaration allowed in for..in/of loop"
             ].join("\n"));
             done();
         });

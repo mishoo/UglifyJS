@@ -828,6 +828,21 @@ empty_for_in_prop_init: {
     ]
 }
 
+for_of: {
+    input: {
+        var async = [ "PASS", 42 ];
+        async.p = "FAIL";
+        for (async of (null, async))
+            console.log(async);
+    }
+    expect_exact: 'var async=["PASS",42];async.p="FAIL";for(async of(null,async))console.log(async);'
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=0.12"
+}
+
 issue_3631_1: {
     options = {
         dead_code: true,
