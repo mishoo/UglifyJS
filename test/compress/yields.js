@@ -587,3 +587,18 @@ issue_4618: {
     expect_stdout: "function"
     node_version: ">=4"
 }
+
+issue_4623: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        if (console ? function*() {} : 0)
+            console.log("PASS");
+    }
+    expect: {
+        (console ? function*() {} : 0) && console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
