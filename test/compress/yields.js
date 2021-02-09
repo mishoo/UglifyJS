@@ -644,3 +644,33 @@ issue_4623: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4633: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = function*() {
+            (function(log) {
+                log(typeof this);
+            })(yield "PASS");
+        }();
+        console.log(a.next().value);
+        a.next(console.log);
+    }
+    expect: {
+        var a = function*() {
+            (function(log) {
+                log(typeof this);
+            })(yield "PASS");
+        }();
+        console.log(a.next().value);
+        a.next(console.log);
+    }
+    expect_stdout: [
+        "PASS",
+        "object",
+    ]
+    node_version: ">=4"
+}
