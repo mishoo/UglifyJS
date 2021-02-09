@@ -283,3 +283,18 @@ issue_4606: {
     expect_stdout: "undefined \r \\ `"
     node_version: ">=4"
 }
+
+issue_4630: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`${/PASS/}`);
+    }
+    expect: {
+        console.log("/PASS/");
+    }
+    expect_stdout: "/PASS/"
+    node_version: ">=4"
+}
