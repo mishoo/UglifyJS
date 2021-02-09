@@ -255,6 +255,71 @@ collapse_property_lambda: {
     node_version: ">=4"
 }
 
+defun_name: {
+    input: {
+        function* yield() {
+            console.log("PASS");
+        }
+        yield().next();
+    }
+    expect: {
+        function* yield() {
+            console.log("PASS");
+        }
+        yield().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+drop_fname: {
+    rename = true
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        function* yield() {
+            console.log("PASS");
+        }
+        yield().next();
+    }
+    expect: {
+        (function*() {
+            console.log("PASS");
+        })().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+keep_fname: {
+    options = {
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function* yield() {
+            console.log("PASS");
+        }
+        yield().next();
+    }
+    expect: {
+        function* yield() {
+            console.log("PASS");
+        }
+        yield().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 evaluate: {
     options = {
         evaluate: true,
