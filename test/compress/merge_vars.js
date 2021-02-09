@@ -3183,3 +3183,32 @@ issue_4257: {
         "1",
     ]
 }
+
+issue_4628: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        (function() {
+            try {
+                console;
+            } finally {
+                var b = a;
+            }
+            for (var a in "foo");
+            console.log(b);
+        })();
+    }
+    expect: {
+        (function() {
+            try {
+                console;
+            } finally {
+                var b = a;
+            }
+            for (var a in "foo");
+            console.log(b);
+        })();
+    }
+    expect_stdout: "undefined"
+}
