@@ -889,3 +889,64 @@ issue_4639_2: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_4641_1: {
+    options = {
+        sequences: true,
+    }
+    input: {
+        console.log(typeof async function*() {
+            try {
+                console.log("foo");
+                return;
+            } finally {
+                console.log("bar");
+            }
+        }().next().then);
+    }
+    expect: {
+        console.log(typeof async function*() {
+            try {
+                console.log("foo");
+                return;
+            } finally {
+                console.log("bar");
+            }
+        }().next().then);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "function",
+    ]
+    node_version: ">=10"
+}
+
+issue_4641_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        console.log(typeof async function*() {
+            try {
+                return void "FAIL";
+            } finally {
+                console.log("PASS");
+            }
+        }().next().then);
+    }
+    expect: {
+        console.log(typeof async function*() {
+            try {
+                return void 0;
+            } finally {
+                console.log("PASS");
+            }
+        }().next().then);
+    }
+    expect_stdout: [
+        "function",
+        "PASS",
+    ]
+    node_version: ">=10"
+}
