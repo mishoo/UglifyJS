@@ -456,6 +456,7 @@ collapse_property_lambda: {
 
 drop_return: {
     options = {
+        arrows: true,
         side_effects: true,
     }
     input: {
@@ -469,6 +470,21 @@ drop_return: {
             while (!console);
             console.log(a);
         })(42);
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
+
+drop_value: {
+    options = {
+        arrows: true,
+        side_effects: true,
+    }
+    input: {
+        ((a, b) => a + b)(console.log(42));
+    }
+    expect: {
+        ((a, b) => {})(console.log(42));
     }
     expect_stdout: "42"
     node_version: ">=4"
