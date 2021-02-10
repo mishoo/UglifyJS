@@ -5879,6 +5879,7 @@ collapse_rhs_this: {
 collapse_rhs_undefined: {
     options = {
         collapse_vars: true,
+        side_effects: true,
     }
     input: {
         var a, b;

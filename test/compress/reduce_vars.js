@@ -2460,6 +2460,7 @@ delay_def: {
         evaluate: true,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
