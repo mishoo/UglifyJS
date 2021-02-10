@@ -96,6 +96,18 @@ pause_resume: {
     node_version: ">=4"
 }
 
+arrow_yield: {
+    input: {
+        yield = "PASS";
+        console.log(function*() {
+            return () => yield || "FAIL";
+        }().next().value());
+    }
+    expect_exact: 'yield="PASS";console.log(function*(){return()=>yield||"FAIL"}().next().value());'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 for_of: {
     input: {
         function* f() {
@@ -831,5 +843,49 @@ issue_4633: {
         "PASS",
         "object",
     ]
+    node_version: ">=4"
+}
+
+issue_4639_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function*() {
+            return function() {
+                return yield => "PASS";
+            }();
+        }().next().value());
+    }
+    expect: {
+        console.log(function*() {
+            return function() {
+                return yield => "PASS";
+            }();
+        }().next().value());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4639_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function*() {
+            console.log(function() {
+                return typeof yield;
+            }());
+        })().next();
+    }
+    expect: {
+        (function*() {
+            console.log(function() {
+                return typeof yield;
+            }());
+        })().next();
+    }
+    expect_stdout: "undefined"
     node_version: ">=4"
 }
