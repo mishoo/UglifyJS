@@ -1055,3 +1055,75 @@ issue_3916: {
     }
     expect_stdout: "object PASS true PASS"
 }
+
+assign_var: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        b = "foo";
+        var a = [ , "bar" ];
+        console.log(b);
+        for (var b in a)
+            console.log(b, a[b]);
+    }
+    expect: {
+        var b = "foo", a = [ , "bar" ], b;
+        console.log(b);
+        for (b in a)
+            console.log(b, a[b]);
+    }
+    expect_stdout: [
+        "foo",
+        "1 bar",
+    ]
+}
+
+assign_for_var: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        i = "foo",
+        a = new Array(i, "bar");
+        for (var i = 2; --i >= 0;) {
+            console.log(a[i]);
+            for (var a in i);
+        }
+    }
+    expect: {
+        for (var i = "foo", a = new Array(i, "bar"), i = 2; --i >= 0;) {
+            console.log(a[i]);
+            for (var a in i);
+        }
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+}
+
+assign_sequence_var: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a = 0, b = 1;
+        console.log(a),
+        a++,
+        b = 2;
+        var c = 3;
+        console.log(a, b, c);
+    }
+    expect: {
+        var a = 0, b = 1;
+        console.log(a),
+        a++;
+        var b = 2, c = 3;
+        console.log(a, b, c);
+    }
+    expect_stdout: [
+        "0",
+        "1 2 3",
+    ]
+}
