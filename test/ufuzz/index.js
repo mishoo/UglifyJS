@@ -333,6 +333,7 @@ var VAR_NAMES = [
     "arguments",
     "async",
     "await",
+    "yield",
 ];
 var INITIAL_NAMES_LEN = VAR_NAMES.length;
 
