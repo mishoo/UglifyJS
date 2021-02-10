@@ -602,6 +602,62 @@ inline_nested_yield: {
     node_version: ">=4"
 }
 
+issue_4454_1: {
+    rename = false
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            (function*(b = console.log(a)) {})();
+            var yield = 42..toString();
+            console.log(yield);
+        }
+        f("PASS");
+    }
+    expect: {
+        function f(a) {
+            (function*(b = console.log(a)) {})();
+            var yield = 42..toString();
+            console.log(yield);
+        }
+        f("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=6"
+}
+
+issue_4454_2: {
+    rename = true
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            (function*(b = console.log(a)) {})();
+            var yield = 42..toString();
+            console.log(yield);
+        }
+        f("PASS");
+    }
+    expect: {
+        function f(b) {
+            (function*(c = console.log(b)) {})();
+            var b = 42..toString();
+            console.log(b);
+        }
+        f("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=6"
+}
+
 issue_4618: {
     options = {
         functions: true,
