@@ -673,27 +673,21 @@ issue_4575: {
         unused: true,
     }
     input: {
-        A = "PASS";
-        (function() {
-            var a = 0, b = a;
-            var c = function a(...b) {
-                A;
-                var d = A;
-                console.log(d, b.length);
+        (function(a) {
+            var b = a;
+            var c = function a(...d) {
+                console.log(d.length);
             }();
         })();
     }
     expect: {
-        A = "PASS";
-        (function() {
-            (function(b) {
-                A;
-                var d = A;
-                console.log(d, b.length);
-            })([]);
+        (function(a) {
+            (function a(...d) {
+                console.log(d.length);
+            })();
         })();
     }
-    expect_stdout: "PASS 0"
+    expect_stdout: "0"
     node_version: ">=6"
 }
 

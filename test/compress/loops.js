@@ -1067,7 +1067,6 @@ issue_4084: {
     options = {
         keep_fargs: false,
         loops: true,
-        passes: 2,
         reduce_vars: true,
         unused: true,
     }
@@ -1276,6 +1275,7 @@ issue_4355: {
         dead_code: true,
         evaluate: true,
         loops: true,
+        passes: 2,
         side_effects: true,
         unused: true,
     }

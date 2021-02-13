@@ -3322,7 +3322,9 @@ issue_3506_1: {
     }
     expect: {
         var a = "FAIL";
-        a && (a = "PASS");
+        !function(b) {
+            b && (a = "PASS");
+        }(a);
         console.log(a);
     }
     expect_stdout: "PASS"
