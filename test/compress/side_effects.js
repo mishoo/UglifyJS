@@ -458,14 +458,14 @@ issue_4325: {
     }
     expect: {
         (function() {
-            (function() {
+            (function(c) {
                 try {
-                    (void 0).p = 0;
+                    c.p = 0;
                 } catch (e) {
                     console.log("PASS");
                     return;
                 }
-            })();
+            })(void 0);
         })();
     }
     expect_stdout: "PASS"

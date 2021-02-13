@@ -294,8 +294,9 @@ describe("test/reduce.js", function() {
             "// }",
         ]).join("\n"));
     });
-    it("Should maintain block-scope for const & let", function() {
+    it("Should maintain block-scope for const/let", function() {
         if (semver.satisfies(process.version, "<4")) return;
+        this.timeout(120000);
         var code = [
             '"use strict";',
             "",

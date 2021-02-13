@@ -438,7 +438,7 @@ issue_2506: {
         function f0(bar) {
             (function() {
                 (function() {
-                    if (false <= NaN & this >> 1 >= 0)
+                    if (false <= 0/0 & this >> 1 >= 0)
                         c++;
                 })(c++);
             })();
