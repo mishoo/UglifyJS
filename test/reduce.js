@@ -300,7 +300,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 node.start._permute += step;
                 if (expr && (expr !== node.body || !has_loopcontrol(expr, node, parent))) {
                     CHANGED = true;
-                    return to_statement(expr);
+                    return to_statement_init(expr);
                 }
             }
             else if (node instanceof U.AST_ForEnumeration) {
@@ -322,7 +322,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 node.start._permute += step;
                 if (expr) {
                     CHANGED = true;
-                    return to_statement(expr);
+                    return to_statement_init(expr);
                 }
             }
             else if (node instanceof U.AST_If) {
@@ -693,6 +693,13 @@ function to_statement(node) {
         body: node,
         start: {},
     });
+}
+
+function to_statement_init(node) {
+    return node instanceof U.AST_Const || node instanceof U.AST_Let ? new U.AST_BlockStatement({
+        body: [ node ],
+        start: {},
+    }) : to_statement(node);;
 }
 
 function wrap_with_console_log(node) {

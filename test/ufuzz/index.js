@@ -2139,6 +2139,17 @@ for (var round = 1; round <= num_iterations; round++) {
             ok = sandbox.same_stdout(original_result, uglify_result);
             // ignore v8 parser bug
             if (!ok && bug_async_arrow_rest(uglify_result)) ok = true;
+            // handle difference caused by time-outs
+            if (!ok && errored && is_error_timeout(original_result)) {
+                if (is_error_timeout(uglify_result)) {
+                    // ignore difference in error message
+                    ok = true;
+                } else {
+                    // ignore spurious time-outs
+                    if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = sandbox.run_code(original_code, toplevel, 10000);
+                    ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
+                }
+            }
             // ignore declaration order of global variables
             if (!ok && !toplevel) {
                 ok = sandbox.same_stdout(sandbox.run_code(sort_globals(original_code)), sandbox.run_code(sort_globals(uglify_code)));
@@ -2157,16 +2168,6 @@ for (var round = 1; round <= num_iterations; round++) {
             }
             // ignore difference in error message caused by Temporal Dead Zone
             if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
-            if (!ok && errored && is_error_timeout(original_result)) {
-                if (is_error_timeout(uglify_result)) {
-                    // ignore difference in error message
-                    ok = true;
-                } else {
-                    // ignore spurious time-outs
-                    if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = sandbox.run_code(original_code, toplevel, 10000);
-                    ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
-                }
-            }
             // ignore difference in error message caused by `in`
             if (!ok && errored && is_error_in(uglify_result) && is_error_in(original_result)) ok = true;
             // ignore difference in error message caused by spread syntax

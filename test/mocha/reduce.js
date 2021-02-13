@@ -294,6 +294,39 @@ describe("test/reduce.js", function() {
             "// }",
         ]).join("\n"));
     });
+    it("Should maintain block-scope for const & let", function() {
+        if (semver.satisfies(process.version, "<4")) return;
+        var code = [
+            '"use strict";',
+            "",
+            "L: for (let a = (1 - .8).toString(); ;) {",
+            "    if (!console.log(a)) {",
+            "        break L;",
+            "    }",
+            "}",
+        ].join("\n");
+        var result = reduce_test(code, {
+            compress: {
+                unsafe_math: true,
+            },
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// (beautified)",
+            code,
+            "// output: 0.19999999999999996",
+            "// ",
+            "// minify: 0.2",
+            "// ",
+            "// options: {",
+            '//   "compress": {',
+            '//     "unsafe_math": true',
+            '//   },',
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
     it("Should handle corner cases when intermediate case differs only in Error.message", function() {
         if (semver.satisfies(process.version, "<=0.10")) return;
         var result = reduce_test(read("test/input/reduce/diff_error.js"), {
