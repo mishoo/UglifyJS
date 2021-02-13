@@ -685,6 +685,8 @@ to be `false` and all symbol names will be omitted.
 
 - `if_return` (default: `true`) -- optimizations for if/return and if/continue
 
+- `imports` (default: `true`) -- drop unreferenced import symbols when used with `unused`
+
 - `inline` (default: `true`) -- inline calls to function with simple/`return` statement:
   - `false` -- same as `0`
   - `0` -- disabled inlining
