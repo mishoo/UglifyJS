@@ -667,10 +667,13 @@ to be `false` and all symbol names will be omitted.
 - `expression` (default: `false`) -- Pass `true` to preserve completion values
   from terminal statements without `return`, e.g. in bookmarklets.
 
-- `functions` (default: `true`) -- convert declarations from `var`to `function`
+- `functions` (default: `true`) -- convert declarations from `var` to `function`
   whenever possible.
 
 - `global_defs` (default: `{}`) -- see [conditional compilation](#conditional-compilation)
+
+- `hoist_exports` (default: `true`) -- hoist `export` statements to facilitate
+  various `compress` and `mangle` optimizations.
 
 - `hoist_funs` (default: `false`) -- hoist function declarations
 
