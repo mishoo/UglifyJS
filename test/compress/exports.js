@@ -142,3 +142,38 @@ mangle_rename: {
         }
     }
 }
+
+hoist_exports: {
+    options = {
+        evaluate: true,
+        hoist_exports: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        const a = 42;
+        export let bbb, { foo: ccc } = a;
+        export function fff(d, { [bbb]: e }) {
+            d(e, fff);
+        }
+        export default a;
+        export default async function g(x, ...{ [ccc]: y }) {
+            (await x)(g, y);
+        }
+    }
+    expect: {
+        let f, { foo: o } = 42;
+        function c(t, { [f]: a }) {
+            t(a, c);
+        }
+        export default 42;
+        export default async function t(a, ...{ [o]: f }) {
+            (await a)(t, f);
+        };
+        export { f as bbb, o as ccc, c as fff };
+    }
+}
