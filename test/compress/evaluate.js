@@ -399,18 +399,18 @@ unsafe_object_accessor: {
         function f() {
             var a = {
                 get b() {},
-                set b() {}
+                set b(v) {},
             };
-            return {a:a};
+            return { a: a };
         }
     }
     expect: {
         function f() {
             var a = {
                 get b() {},
-                set b() {}
+                set b(v) {},
             };
-            return {a:a};
+            return { a: a };
         }
     }
 }
