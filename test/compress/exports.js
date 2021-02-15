@@ -17,22 +17,25 @@ var_defs: {
 
 defuns: {
     input: {
+        export class A {}
         export function e() {}
         export function* f(a) {}
         export async function g(b, c) {}
         export async function* h({}, ...[]) {}
     }
-    expect_exact: "export function e(){}export function*f(a){}export async function g(b,c){}export async function*h({},...[]){}"
+    expect_exact: "export class A{}export function e(){}export function*f(a){}export async function g(b,c){}export async function*h({},...[]){}"
 }
 
 defaults: {
     input: {
         export default 42;
+        export default async;
         export default (x, y) => x * x;
+        export default class {};
         export default function*(a, b) {};
         export default async function f({ c }, ...[ d ]) {};
     }
-    expect_exact: "export default 42;export default(x,y)=>x*x;export default function*(a,b){}export default async function f({c:c},...[d]){}"
+    expect_exact: "export default 42;export default async;export default(x,y)=>x*x;export default class{}export default function*(a,b){}export default async function f({c:c},...[d]){}"
 }
 
 defaults_parenthesis_1: {
@@ -88,18 +91,22 @@ drop_unused: {
     input: {
         export default 42;
         export default (x, y) => x * x;
-        export default function*(a, b) {};
-        export default async function f({ c }, ...[ d ]) {};
+        export default class A extends B { get p() { h() } }
+        export default function*(a, b) {}
+        export default async function f({ c }, ...[ d ]) {}
         export var e;
         export function g(x, [ y ], ...z) {}
+        function h() {}
     }
     expect: {
         export default 42;
         export default (x, y) => x * x;
-        export default function*(a, b) {};
-        export default async function({}) {};
+        export default class extends B { get p() { h() } }
+        export default function*(a, b) {}
+        export default async function({}) {}
         export var e;
         export function g(x, []) {}
+        function h() {}
     }
 }
 
@@ -193,5 +200,30 @@ hoist_exports: {
             (await t)(e, a);
         };
         export { f as bbb, o as ccc, c as fff };
+    }
+}
+
+keep_return_values: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        export default function() {
+            return [];
+        }
+        export default function f() {
+            return null;
+        }
+    }
+    expect: {
+        export default function() {
+            return [];
+        }
+        export default function f() {
+            return null;
+        }
     }
 }

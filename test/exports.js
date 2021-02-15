@@ -1,5 +1,6 @@
 exports["Compressor"] = Compressor;
 exports["defaults"] = defaults;
+exports["is_statement"] = is_statement;
 exports["JS_Parse_Error"] = JS_Parse_Error;
 exports["List"] = List;
 exports["mangle_properties"] = mangle_properties;

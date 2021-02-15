@@ -181,7 +181,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
             else if (node instanceof U.AST_Call) {
                 var expr = [
-                    node.expression,
+                    !(node.expression instanceof U.AST_Super) && node.expression,
                     node.args[0],
                     null,  // intentional
                 ][ ((node.start._permute += step) * steps | 0) % 3 ];
@@ -202,7 +202,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     var seq = [];
                     body.forEach(function(node) {
                         var expr = expr instanceof U.AST_Exit ? node.value : node.body;
-                        if (expr instanceof U.AST_Node && !is_statement(expr)) {
+                        if (expr instanceof U.AST_Node && !U.is_statement(expr)) {
                             // collect expressions from each statements' body
                             seq.push(expr);
                         }
@@ -358,7 +358,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
             else if (node instanceof U.AST_PropAccess) {
                 var expr = [
-                    node.expression,
+                    !(node.expression instanceof U.AST_Super) && node.expression,
                     node.property instanceof U.AST_Node && !(parent instanceof U.AST_Destructured) && node.property,
                 ][ node.start._permute++ % 2 ];
                 if (expr) {
@@ -468,7 +468,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
 
             // replace this node
-            var newNode = is_statement(node) ? new U.AST_EmptyStatement({
+            var newNode = U.is_statement(node) ? new U.AST_EmptyStatement({
                 start: {},
             }) : U.parse(REPLACEMENTS[node.start._permute % REPLACEMENTS.length | 0], {
                 expression: true,
@@ -666,10 +666,6 @@ function is_timed_out(result) {
     return sandbox.is_error(result) && /timed out/.test(result.message);
 }
 
-function is_statement(node) {
-    return node instanceof U.AST_Statement && !(node instanceof U.AST_LambdaExpression);
-}
-
 function merge_sequence(array, node) {
     if (node instanceof U.AST_Sequence) {
         array.push.apply(array, node.expressions);
@@ -689,7 +685,7 @@ function to_sequence(expressions) {
 }
 
 function to_statement(node) {
-    return is_statement(node) ? node : new U.AST_SimpleStatement({
+    return U.is_statement(node) ? node : new U.AST_SimpleStatement({
         body: node,
         start: {},
     });
