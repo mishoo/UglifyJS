@@ -3212,3 +3212,30 @@ issue_4628: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4653: {
+    options = {
+        evaluate: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1, b;
+        function f(c, d) {
+            c || console.log(d);
+        }
+        f(a++ + (b = b), b |= console.log(a));
+    }
+    expect: {
+        var b = 1;
+        (function(c, d) {
+            c || console.log(d);
+        })(+b + (b = void 0), b |= console.log(2));
+    }
+    expect_stdout: [
+        "2",
+        "0",
+    ]
+}
