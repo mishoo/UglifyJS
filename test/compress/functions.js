@@ -5409,3 +5409,30 @@ issue_4612_4: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4655: {
+    options = {
+        functions: true,
+        loops: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function f() {
+            while (console.log("PASS")) {
+                var g = function() {};
+                for (var a in g)
+                    g();
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            for (; console.log("PASS");) {
+                function g() {};
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+}
