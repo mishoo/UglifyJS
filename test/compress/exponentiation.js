@@ -56,3 +56,31 @@ evaluate: {
     expect_stdout: "5"
     node_version: ">=8"
 }
+
+issue_4664: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            new function(a) {
+                console.log(typeof f, a, typeof this);
+            }((A = 0, (NaN ^ 1) * 2 ** 30), 0);
+        }
+        f();
+    }
+    expect: {
+        (function f() {
+            new function(a) {
+                console.log(typeof f, 2 ** 30, typeof this);
+            }(0, A = 0);
+        })();
+    }
+    expect_stdout: "function 1073741824 object"
+    node_version: ">=8"
+}

@@ -10,7 +10,7 @@ var info = require("../package.json");
 var path = require("path");
 var UglifyJS = require("../tools/node");
 
-var skip_keys = [ "cname", "inlined", "parent_scope", "scope", "uses_eval", "uses_with" ];
+var skip_keys = [ "cname", "fixed", "inlined", "parent_scope", "scope", "uses_eval", "uses_with" ];
 var files = {};
 var options = {};
 var short_forms = {
@@ -360,14 +360,14 @@ function run() {
         }
         print(JSON.stringify(result.ast, function(key, value) {
             if (value) switch (key) {
-              case "thedef":
-                return symdef(value);
               case "enclosed":
                 return value.length ? value.map(symdef) : undefined;
-              case "variables":
               case "functions":
               case "globals":
+              case "variables":
                 return value.size() ? value.map(symdef) : undefined;
+              case "thedef":
+                return symdef(value);
             }
             if (skip_key(key)) return;
             if (value instanceof UglifyJS.AST_Token) return;
