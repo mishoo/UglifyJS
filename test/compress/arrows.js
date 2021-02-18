@@ -694,3 +694,12 @@ issue_4476: {
     expect_stdout: "foo bar"
     node_version: ">=4"
 }
+
+issue_4666: {
+    input: {
+        console.log((a => /[0-9]/.test(a))(42));
+    }
+    expect_exact: "console.log((a=>/[0-9]/.test(a))(42));"
+    expect_stdout: "true"
+    node_version: ">=4"
+}
