@@ -5436,3 +5436,125 @@ issue_4655: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4659_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            function f() {
+                return a++;
+            }
+            (function() {
+                f && f();
+                (function() {
+                    var a = console && a;
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (function() {
+            function f() {
+                return a++;
+            }
+            (function() {
+                f && a++;
+                (function() {
+                    var a = console && a;
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_4659_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            function f() {
+                return a++;
+            }
+            (function() {
+                (function() {
+                    f && f();
+                })();
+                (function() {
+                    var a = console && a;
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (function() {
+            function f() {
+                return a++;
+            }
+            (function() {
+                void (f && a++);
+                (function() {
+                    var a = console && a;
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
+
+issue_4659_3: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function() {
+            function f() {
+                return a++;
+            }
+            (function() {
+                function g() {
+                    while (!console);
+                }
+                g(f && f());
+                (function() {
+                    var a = console && a;
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (function() {
+            function f() {
+                return a++;
+            }
+            (function() {
+                (function() {
+                    while (!console);
+                })(f && a++);
+                (function() {
+                    var a = console && a;
+                })();
+            })();
+        })();
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
