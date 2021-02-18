@@ -3251,3 +3251,26 @@ issue_4558_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4662: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        function f(b, c) {
+            console.log(b, c);
+        }
+        f(++a, a = a, a);
+    }
+    expect: {
+        var a = 0;
+        (function(b, c) {
+            console.log(b, c);
+        })(++a, a = 1);
+    }
+    expect_stdout: "1 1"
+}
