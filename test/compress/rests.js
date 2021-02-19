@@ -757,3 +757,30 @@ issue_4644_2: {
     expect_stdout: "PASS 0 undefined"
     node_version: ">=6"
 }
+
+issue_4666: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        rests: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = 0, b = 0;
+        var o = ((...c) => a++ + c)(b);
+        for (var k in o)
+            b++;
+        console.log(a, b);
+    }
+    expect: {
+        var a = 0, b = 0;
+        var o = (c => +a + c)([ b ]);
+        for(var k in o)
+            b++;
+        console.log(1, b);
+    }
+    expect_stdout: "1 2"
+    node_version: ">=6"
+}
