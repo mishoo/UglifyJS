@@ -506,3 +506,34 @@ issue_4366_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4668: {
+    options = {
+        conditionals: true,
+        keep_fargs: false,
+        keep_fnames: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b, c;
+            function g() {
+                return a = 0 + a, !d || (a = 0);
+            }
+            c = g();
+        }
+        console.log(f());
+        var d = 0;
+    }
+    expect: {
+        console.log(function f() {
+            (function g() {
+                0;
+            })();
+        }());
+    }
+    expect_stdout: "undefined"
+}
