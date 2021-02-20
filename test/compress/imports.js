@@ -128,3 +128,19 @@ rename_mangle: {
         import * as r from "moz";
     }
 }
+
+keep_ref: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        import foo from "bar";
+        foo();
+    }
+    expect: {
+        import foo from "bar";
+        foo();
+    }
+}
