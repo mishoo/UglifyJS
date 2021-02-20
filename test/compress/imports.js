@@ -47,6 +47,13 @@ dynamic: {
     expect_exact: '(async a=>await import(a))("foo").then(bar);'
 }
 
+dynamic_nought: {
+    input: {
+        import(foo);
+    }
+    expect_exact: "import(foo);"
+}
+
 import_meta: {
     input: {
         console.log(import.meta, import.meta.url);
