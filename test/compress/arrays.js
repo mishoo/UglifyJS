@@ -355,3 +355,72 @@ constructor_good: {
     expect_stdout: true
     expect_warnings: []
 }
+
+unsafe_evaluate_modified_binary: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        (function(a) {
+            (console && a).push(1);
+            if (a.length)
+                console.log("PASS");
+        })([]);
+    }
+    expect: {
+        (function(a) {
+            (console && a).push(1);
+            if (a.length)
+                console.log("PASS");
+        })([]);
+    }
+    expect_stdout: "PASS"
+}
+
+unsafe_evaluate_modified_conditional: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        (function(a) {
+            (console ? a : []).push(1);
+            if (a.length)
+                console.log("PASS");
+        })([]);
+    }
+    expect: {
+        (function(a) {
+            (console ? a : []).push(1);
+            if (a.length)
+                console.log("PASS");
+        })([]);
+    }
+    expect_stdout: "PASS"
+}
+
+unsafe_evaluate_modified_sequence: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        (function(a) {
+            (0, a).push(1);
+            if (a.length)
+                console.log("PASS");
+        })([]);
+    }
+    expect: {
+        (function(a) {
+            (0, a).push(1);
+            if (a.length)
+                console.log("PASS");
+        })([]);
+    }
+    expect_stdout: "PASS"
+}
