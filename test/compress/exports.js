@@ -32,7 +32,25 @@ defaults: {
         export default function*(a, b) {};
         export default async function f({ c }, ...[ d ]) {};
     }
-    expect_exact: "export default 42;export default(x,y)=>x*x;export default function*(a,b){};export default async function f({c:c},...[d]){};"
+    expect_exact: "export default 42;export default(x,y)=>x*x;export default function*(a,b){}export default async function f({c:c},...[d]){}"
+}
+
+defaults_parenthesis_1: {
+    input: {
+        export default function() {
+            console.log("FAIL");
+        }(console.log("PASS"));
+    }
+    expect_exact: 'export default function(){console.log("FAIL")}console.log("PASS");'
+}
+
+defaults_parenthesis_2: {
+    input: {
+        export default (async function() {
+            console.log("PASS");
+        })();
+    }
+    expect_exact: 'export default(async function(){console.log("PASS")})();'
 }
 
 foreign: {
@@ -108,8 +126,8 @@ mangle: {
             t(o, f);
         }
         export default t;
-        export default async function t(o, ...{ [c]: e}) {
-            (await o)(t, e);
+        export default async function e(t, ...{ [c]: o}) {
+            (await t)(e, o);
         }
     }
 }
@@ -137,8 +155,8 @@ mangle_rename: {
             t(o, f);
         }
         export default t;
-        export default async function t(o, ...{ [c]: e}) {
-            (await o)(t, e);
+        export default async function e(t, ...{ [c]: o}) {
+            (await t)(e, o);
         }
     }
 }
@@ -171,8 +189,8 @@ hoist_exports: {
             t(a, c);
         }
         export default 42;
-        export default async function t(a, ...{ [o]: f }) {
-            (await a)(t, f);
+        export default async function e(t, ...{ [o]: a }) {
+            (await t)(e, a);
         };
         export { f as bbb, o as ccc, c as fff };
     }
