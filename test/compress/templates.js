@@ -298,3 +298,33 @@ issue_4630: {
     expect_stdout: "/PASS/"
     node_version: ">=4"
 }
+
+issue_4676: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        templates: true,
+        toplevel: true,
+        unsafe:true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b = `foo${a = "PASS"}`;
+            for (var c in f && b)
+                b.p;
+            return a;
+        }
+        console.log(f("FAIL"));
+    }
+    expect: {
+        console.log(function f(a) {
+            var b = "fooPASS";
+            for (var c in f, b)
+                b.p;
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
