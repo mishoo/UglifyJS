@@ -4,12 +4,11 @@ UglifyJS 3
 UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit.
 
 #### Note:
-- **`uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage)
-  that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
-- **Documentation for UglifyJS `2.x` releases can be found [here](https://github.com/mishoo/UglifyJS/tree/v2.x)**.
-- `uglify-js` supports ECMAScript 5 and some newer language features.
-- To minify ECMAScript 2015 or above, you may need to transpile using tools like
-  [Babel](https://babeljs.io/).
+- `uglify-js` supports JavaScript and most language features in ECMAScript.
+- For more exotic parts of ECMAScript, process your source file with transpilers
+  like [Babel](https://babeljs.io/) before passing onto `uglify-js`.
+- `uglify-js@3` has a simplified [API](#api-reference) and [CLI](#command-line-usage)
+  that is not backwards compatible with [`uglify-js@2`](https://github.com/mishoo/UglifyJS/tree/v2.x).
 
 Install
 -------
