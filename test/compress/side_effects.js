@@ -348,8 +348,6 @@ issue_3983_1: {
     }
     expect: {
         var a = "PASS";
-        g();
-        function g() {}
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -536,4 +534,27 @@ issue_4668: {
         }());
     }
     expect_stdout: "undefined"
+}
+
+drop_side_effect_free_call: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a) {
+            return "PA" + a;
+        }
+        f(42);
+        console.log(f("SS"));
+    }
+    expect: {
+        function f(a) {
+            return "PA" + a;
+        }
+        console.log(f("SS"));
+    }
+    expect_stdout: "PASS"
 }
