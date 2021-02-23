@@ -34,7 +34,7 @@ destructured_funarg: {
     node_version: ">=6"
 }
 
-await_parenthesis: {
+await_parentheses: {
     input: {
         async function f() {
             await (a => a);
@@ -43,7 +43,7 @@ await_parenthesis: {
     expect_exact: "async function f(){await(a=>a)}"
 }
 
-for_parenthesis_init: {
+for_parentheses_init: {
     input: {
         for (a => (a in a); console.log(42););
     }
@@ -52,7 +52,7 @@ for_parenthesis_init: {
     node_version: ">=4"
 }
 
-for_parenthesis_condition: {
+for_parentheses_condition: {
     input: {
         for (console.log(42); a => (a in a);)
             break;
@@ -62,7 +62,7 @@ for_parenthesis_condition: {
     node_version: ">=4"
 }
 
-for_parenthesis_step: {
+for_parentheses_step: {
     input: {
         for (; console.log(42); a => (a in a));
     }
@@ -71,7 +71,7 @@ for_parenthesis_step: {
     node_version: ">=4"
 }
 
-for_assign_parenthesis_init: {
+for_assign_parentheses_init: {
     input: {
         for (f = a => (a in a); console.log(42););
     }
@@ -80,7 +80,7 @@ for_assign_parenthesis_init: {
     node_version: ">=4"
 }
 
-for_assign_parenthesis_condition: {
+for_assign_parentheses_condition: {
     input: {
         for (console.log(42); f = a => (a in a);)
             break;
@@ -90,7 +90,7 @@ for_assign_parenthesis_condition: {
     node_version: ">=4"
 }
 
-for_assign_parenthesis_step: {
+for_assign_parentheses_step: {
     input: {
         for (; console.log(42); f = a => (a in a));
     }
@@ -99,7 +99,7 @@ for_assign_parenthesis_step: {
     node_version: ">=4"
 }
 
-for_declaration_parenthesis_init: {
+for_declaration_parentheses_init: {
     input: {
         for (var f = a => (a in a); console.log(42););
     }
@@ -108,7 +108,7 @@ for_declaration_parenthesis_init: {
     node_version: ">=4"
 }
 
-for_statement_parenthesis_init: {
+for_statement_parentheses_init: {
     input: {
         for (a => {
             a in a;

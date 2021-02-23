@@ -85,7 +85,7 @@ a double dash to prevent input files being used as option arguments:
                                                1 - single
                                                2 - double
                                                3 - original
-                                `wrap_iife`  Wrap IIFEs in parenthesis. Note: you may
+                                `wrap_iife`  Wrap IIFEs in parentheses. Note: you may
                                              want to disable `negate_iife` under
                                              compressor options.
     -O, --output-opts [options] Specify output options (`beautify` disabled by default).

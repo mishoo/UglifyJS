@@ -259,7 +259,7 @@ describe("comments", function() {
         assert.strictEqual(result.code, code);
     });
 
-    it("Should handle comments around parenthesis correctly", function() {
+    it("Should handle comments around parentheses correctly", function() {
         var code = [
             "a();",
             "/* foo */",

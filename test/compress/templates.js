@@ -53,7 +53,7 @@ tagged_chain: {
     node_version: ">=4"
 }
 
-tag_parenthesis_arrow: {
+tag_parentheses_arrow: {
     input: {
         console.log((s => s.raw[0])`\tPASS`.slice(2));
     }
@@ -62,7 +62,7 @@ tag_parenthesis_arrow: {
     node_version: ">=4"
 }
 
-tag_parenthesis_new: {
+tag_parentheses_new: {
     input: {
         (new function() {
             return console.log;

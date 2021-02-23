@@ -777,7 +777,7 @@ issue_1710: {
     expect_stdout: true
 }
 
-unary_binary_parenthesis: {
+unary_binary_parentheses: {
     options = {
         evaluate: true,
     }

@@ -38,7 +38,7 @@ defaults: {
     expect_exact: "export default 42;export default async;export default(x,y)=>x*x;export default class{}export default function*(a,b){}export default async function f({c:c},...[d]){}"
 }
 
-defaults_parenthesis_1: {
+defaults_parentheses_1: {
     input: {
         export default function() {
             console.log("FAIL");
@@ -47,7 +47,7 @@ defaults_parenthesis_1: {
     expect_exact: 'export default function(){console.log("FAIL")}console.log("PASS");'
 }
 
-defaults_parenthesis_2: {
+defaults_parentheses_2: {
     input: {
         export default (async function() {
             console.log("PASS");

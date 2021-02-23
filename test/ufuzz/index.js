@@ -149,6 +149,7 @@ var SUPPORT = function(matrix) {
     for_of: "for (var a of []);",
     generator: "function* f(){}",
     let: "let a;",
+    nullish: "0 ?? 0",
     rest: "var [...a] = [];",
     rest_object: "var {...a} = {};",
     spread: "[...[]];",
@@ -231,6 +232,7 @@ var BINARY_OPS = [
     ",",
 ];
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
+if (SUPPORT.nullish) BINARY_OPS.push("??");
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 if (SUPPORT.exponentiation) BINARY_OPS.push("**");
