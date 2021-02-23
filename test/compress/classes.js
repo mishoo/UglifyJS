@@ -158,7 +158,7 @@ yield: {
     node_version: ">=12"
 }
 
-conditional_parenthesis: {
+conditional_parentheses: {
     options = {
         conditionals: true,
     }

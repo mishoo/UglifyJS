@@ -85,7 +85,7 @@ new_with_unary_prefix: {
     expect_exact: 'var bar=(+new Date).toString(32);';
 }
 
-dot_parenthesis_1: {
+dot_parentheses_1: {
     input: {
         console.log(new (Math.random().constructor) instanceof Number);
     }
@@ -93,7 +93,7 @@ dot_parenthesis_1: {
     expect_stdout: "true"
 }
 
-dot_parenthesis_2: {
+dot_parentheses_2: {
     input: {
         console.log(typeof new function(){Math.random()}.constructor);
     }

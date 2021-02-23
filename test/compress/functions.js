@@ -2053,7 +2053,7 @@ issue_2898: {
     expect_stdout: "2"
 }
 
-deduplicate_parenthesis: {
+deduplicate_parentheses: {
     input: {
         ({}).a = b;
         (({}).a = b)();

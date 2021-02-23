@@ -501,14 +501,14 @@ do_switch: {
     }
 }
 
-in_parenthesis_1: {
+in_parentheses_1: {
     input: {
         for (("foo" in {});0;);
     }
     expect_exact: 'for(("foo"in{});0;);'
 }
 
-in_parenthesis_2: {
+in_parentheses_2: {
     input: {
         for ((function(){ "foo" in {}; });0;);
     }
