@@ -280,6 +280,72 @@ shorthand_keywords: {
     node_version: ">=6"
 }
 
+object_super: {
+    input: {
+        var o = {
+            f() {
+                return super.p;
+            },
+            p: "FAIL",
+        };
+        Object.setPrototypeOf(o, { p: "PASS" });
+        console.log(o.f());
+    }
+    expect_exact: 'var o={f(){return super.p},p:"FAIL"};Object.setPrototypeOf(o,{p:"PASS"});console.log(o.f());'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+object_super_async: {
+    input: {
+        var o = {
+            async f() {
+                return super.p;
+            },
+            p: "FAIL",
+        };
+        Object.setPrototypeOf(o, { p: "PASS" });
+        o.f().then(console.log);
+    }
+    expect_exact: 'var o={async f(){return super.p},p:"FAIL"};Object.setPrototypeOf(o,{p:"PASS"});o.f().then(console.log);'
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+object_super_generator: {
+    input: {
+        var o = {
+            *f() {
+                yield super.p;
+            },
+            p: "FAIL",
+        };
+        Object.setPrototypeOf(o, { p: "PASS" });
+        console.log(o.f().next().value);
+    }
+    expect_exact: 'var o={*f(){yield super.p},p:"FAIL"};Object.setPrototypeOf(o,{p:"PASS"});console.log(o.f().next().value);'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+object_super_async_generator: {
+    input: {
+        var o = {
+            async *f() {
+                return super.p;
+            },
+            p: "FAIL",
+        };
+        Object.setPrototypeOf(o, { p: "PASS" });
+        o.f().next().then(function(v) {
+            console.log(v.value, v.done);
+        });
+    }
+    expect_exact: 'var o={async*f(){return super.p},p:"FAIL"};Object.setPrototypeOf(o,{p:"PASS"});o.f().next().then(function(v){console.log(v.value,v.done)});'
+    expect_stdout: "PASS true"
+    node_version: ">=10"
+}
+
 issue_4269_1: {
     options = {
         evaluate: true,

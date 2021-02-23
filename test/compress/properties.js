@@ -1378,3 +1378,25 @@ issue_3389: {
     }
     expect_stdout: "PASS"
 }
+
+object_super: {
+    options = {
+        properties: true,
+    }
+    input: {
+        ({
+            f(a) {
+                return a ? console.log("PASS") : super.log("PASS");
+            },
+        }).f(console);
+    }
+    expect: {
+        ({
+            f(a) {
+                return a ? console.log("PASS") : super.log("PASS");
+            },
+        }).f(console);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

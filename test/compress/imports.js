@@ -144,3 +144,24 @@ keep_ref: {
         foo();
     }
 }
+
+forbid_merge: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        import A from "foo";
+        export default class extends A {}
+        var f = () => () => {};
+        f();
+        f();
+    }
+    expect: {
+        import A from "foo";
+        export default class extends A {}
+        var f = () => () => {};
+        f();
+        f();
+    }
+}

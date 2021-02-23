@@ -25,7 +25,13 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
     } while (prev !== stdout);
     return stdout;
 } : semver.satisfies(process.version, "<0.12") ? run_code_vm : function(code, toplevel, timeout) {
-    if (/\basync([ \t]+[^\s()[\]{},.&|!~=*%/+-]+|[ \t]*\([\s\S]*?\))[ \t]*=>|\b(async[ \t]+function|setInterval|setTimeout)\b/.test(code)) {
+    if ([
+        /\basync[ \t]*\([\s\S]*?\)[ \t]*=>/,
+        /\b(async[ \t]+function|setInterval|setTimeout)\b/,
+        /\basync([ \t]+|[ \t]*\*[ \t]*)[^\s()[\]{},.&|!~=*%/+-]+(\s*\(|[ \t]*=>)/,
+    ].some(function(pattern) {
+        return pattern.test(code);
+    })) {
         return run_code_exec(code, toplevel, timeout);
     } else {
         return run_code_vm(code, toplevel, timeout);

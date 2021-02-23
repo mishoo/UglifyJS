@@ -1068,3 +1068,29 @@ issue_4023: {
     }
     expect_stdout: "true"
 }
+
+object_super: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            f(a) {
+                return a ? console.log("PASS") : super.log("PASS");
+            },
+        };
+        o.f(42);
+    }
+    expect: {
+        var o = {
+            f(a) {
+                return a ? console.log("PASS") : super.log("PASS");
+            },
+        };
+        o.f(42);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

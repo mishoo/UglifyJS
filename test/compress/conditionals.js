@@ -1861,3 +1861,39 @@ issue_3808_2: {
     }
     expect_stdout: " PASS"
 }
+
+object_super: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        Object.setPrototypeOf({
+            f(a) {
+                a ? this.g("FAIL") : super.g("FAIL");
+            },
+            g(b) {
+                console.log(b);
+            },
+        }, {
+            g() {
+                console.log("PASS");
+            },
+        }).f();
+    }
+    expect: {
+        Object.setPrototypeOf({
+            f(a) {
+                a ? this.g("FAIL") : super.g("FAIL");
+            },
+            g(b) {
+                console.log(b);
+            },
+        }, {
+            g() {
+                console.log("PASS");
+            },
+        }).f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
