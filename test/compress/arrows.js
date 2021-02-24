@@ -703,3 +703,24 @@ issue_4666: {
     expect_stdout: "true"
     node_version: ">=4"
 }
+
+issue_4685: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        new function(f) {
+            if (f() !== this)
+                console.log("PASS");
+        }(() => this);
+    }
+    expect: {
+        new function(f) {
+            if (f() !== this)
+                console.log("PASS");
+        }(() => this);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
