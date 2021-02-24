@@ -109,3 +109,22 @@ conditional_assignment_4: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_4679: {
+    options = {
+        comparisons: true,
+        ie8: true,
+    }
+    input: {
+        var a;
+        if (void 0 === (undefined ?? a))
+            console.log("PASS");
+    }
+    expect: {
+        var a;
+        if (void 0 === (undefined ?? a))
+            console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
