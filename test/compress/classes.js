@@ -596,3 +596,22 @@ issue_4681: {
     expect_stdout: "function"
     node_version: ">=12"
 }
+
+issue_4683: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        loops: true,
+    }
+    input: {
+        "use strict";
+        for (class extends null {}; void console.log("PASS"); );
+    }
+    expect: {
+        "use strict";
+        (class extends null {});
+        void console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
