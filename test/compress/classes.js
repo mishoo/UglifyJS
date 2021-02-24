@@ -615,3 +615,135 @@ issue_4683: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4685_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        new class {
+            f() {
+                (function(g) {
+                    if (g() !== this)
+                        console.log("PASS");
+                })(() => this);
+            }
+        }().f();
+    }
+    expect: {
+        "use strict";
+        new class {
+            f() {
+                (function(g) {
+                    if (g() !== this)
+                        console.log("PASS");
+                })(() => this);
+            }
+        }().f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4685_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        new class {
+            f() {
+                (function(g) {
+                    if (g() !== this)
+                        console.log("PASS");
+                })(() => {
+                    if (console)
+                        return this;
+                });
+            }
+        }().f();
+    }
+    expect: {
+        "use strict";
+        new class {
+            f() {
+                (function(g) {
+                    if (g() !== this)
+                        console.log("PASS");
+                })(() => {
+                    if (console)
+                        return this;
+                });
+            }
+        }().f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4687_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        new class {
+            f() {
+                console.log(function(g) {
+                    return g() === this;
+                }(() => this) || "PASS");
+            }
+        }().f();
+    }
+    expect: {
+        "use strict";
+        new class {
+            f() {
+                console.log(function(g) {
+                    return g() === this;
+                }(() => this) || "PASS");
+            }
+        }().f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4687_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        new class {
+            f() {
+                console.log(function(g) {
+                    return g() === this;
+                }(() => {
+                    if (console)
+                        return this;
+                }) || "PASS");
+            }
+        }().f();
+    }
+    expect: {
+        "use strict";
+        new class {
+            f() {
+                console.log(function(g) {
+                    return g() === this;
+                }(() => {
+                    if (console)
+                        return this;
+                }) || "PASS");
+            }
+        }().f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
