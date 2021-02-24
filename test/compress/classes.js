@@ -572,3 +572,27 @@ computed_key_generator: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4681: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            class A {
+                static p = a = this;
+            }
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            class A {
+                static p = a = this;
+            }
+            return typeof a;
+        }());
+    }
+    expect_stdout: "function"
+    node_version: ">=12"
+}
