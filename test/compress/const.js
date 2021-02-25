@@ -1434,3 +1434,23 @@ issue_4527: {
     }
     expect_stdout: "aaaa"
 }
+
+issue_4689: {
+    options = {
+        sequences: true,
+    }
+    input: {
+        "use strict";
+        var a = "PASS";
+        console.log(a);
+        for (const a in 42);
+    }
+    expect: {
+        "use strict";
+        var a = "PASS";
+        console.log(a);
+        for (const a in 42);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
