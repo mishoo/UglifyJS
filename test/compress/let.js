@@ -1319,7 +1319,6 @@ issue_4531_2: {
         toplevel: true,
     }
     input: {
-        "use strict";
         var a = console;
         console.log(typeof a, function a() {
             let { [console]: a } = 0 && a;
@@ -1328,7 +1327,6 @@ issue_4531_2: {
         }());
     }
     expect: {
-        "use strict";
         var o = console;
         console.log(typeof o, function o() {
             let { [console]: o } = 0;
@@ -1338,4 +1336,24 @@ issue_4531_2: {
     }
     expect_stdout: "object undefined"
     node_version: ">=6"
+}
+
+issue_4689: {
+    options = {
+        sequences: true,
+    }
+    input: {
+        "use strict";
+        var a = "PASS";
+        console.log(a);
+        for (let a in 42);
+    }
+    expect: {
+        "use strict";
+        var a = "PASS";
+        console.log(a);
+        for (let a in 42);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
