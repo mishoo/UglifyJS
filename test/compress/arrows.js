@@ -704,7 +704,7 @@ issue_4666: {
     node_version: ">=4"
 }
 
-issue_4685: {
+issue_4685_1: {
     options = {
         collapse_vars: true,
         unused: true,
@@ -720,6 +720,85 @@ issue_4685: {
             if (f() !== this)
                 console.log("PASS");
         }(() => this);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4685_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        new function(f) {
+            if (f() !== this)
+                console.log("PASS");
+        }(() => {
+            if (console)
+                return this;
+        });
+    }
+    expect: {
+        new function(f) {
+            if (f() !== this)
+                console.log("PASS");
+        }(() => {
+            if (console)
+                return this;
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4687_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        new function() {
+            console.log(function(f) {
+                return f() === this;
+            }(() => this) || "PASS");
+        }
+    }
+    expect: {
+        new function() {
+            console.log(function(f) {
+                return f() === this;
+            }(() => this) || "PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4687_2: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        new function() {
+            console.log(function(f) {
+                return f() === this;
+            }(() => {
+                if (console)
+                    return this;
+            }) || "PASS");
+        }
+    }
+    expect: {
+        new function() {
+            console.log(function(f) {
+                return f() === this;
+            }(() => {
+                if (console)
+                    return this;
+            }) || "PASS");
+        }
     }
     expect_stdout: "PASS"
     node_version: ">=4"
