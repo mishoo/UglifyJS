@@ -227,3 +227,77 @@ keep_return_values: {
         }
     }
 }
+
+in_use: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export function f() {}
+        f.prototype.p = 42;
+    }
+    expect: {
+        export function f() {}
+        f.prototype.p = 42;
+    }
+}
+
+in_use_default: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default function f() {}
+        f.prototype.p = 42;
+    }
+    expect: {
+        export default function f() {}
+        f.prototype.p = 42;
+    }
+}
+
+single_use: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export function f() {
+            console.log("PASS");
+        }
+        f();
+    }
+    expect: {
+        export function f() {
+            console.log("PASS");
+        }
+        f();
+    }
+}
+
+single_use_default: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default function f() {
+            console.log("PASS");
+        }
+        f();
+    }
+    expect: {
+        export default function f() {
+            console.log("PASS");
+        }
+        f();
+    }
+}
