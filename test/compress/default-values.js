@@ -473,7 +473,7 @@ inline_side_effects_2: {
     }
     expect: {
         var a = 42;
-        [ 0[0] = --a ] = [ console ];
+        [ [].e = --a ] = [ console ];
         console.log(a);
     }
     expect_stdout: "42"
@@ -1477,7 +1477,7 @@ issue_4502_4: {
         (function(a, b = console.log("FAIL")) {})(..."" + console.log(42));
     }
     expect: {
-        [ , 0[0] = console.log("FAIL") ] = [ ..."" + console.log(42) ];
+        [ , [].e = console.log("FAIL") ] = [ ..."" + console.log(42) ];
     }
     expect_stdout: "42"
     node_version: ">=6"
