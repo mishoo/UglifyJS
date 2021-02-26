@@ -1357,3 +1357,50 @@ issue_4689: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4691: {
+    options = {
+        if_return: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        function A() {}
+        A.prototype.f = function() {
+            if (!this)
+                return;
+            let a = "PA";
+            function g(b) {
+                h(a + b);
+            }
+            [ "SS" ].forEach(function(c) {
+                g(c);
+            });
+        };
+        function h(d) {
+            console.log(d);
+        }
+        new A().f();
+    }
+    expect: {
+        "use strict";
+        function A() {}
+        A.prototype.f = function() {
+            if (this) {
+                let a = "PA";
+                [ "SS" ].forEach(function(c) {
+                    g(c);
+                });
+                function g(b) {
+                    h(a + b);
+                }
+            }
+        };
+        function h(d) {
+            console.log(d);
+        }
+        new A().f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

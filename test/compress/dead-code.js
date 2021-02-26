@@ -53,8 +53,10 @@ dead_code_2_should_warn: {
             g();
             x = 10;
             throw new Error("foo");
-            var x;
-            function g(){};
+            {
+                var x;
+                function g(){};
+            }
         }
         f();
     }
@@ -62,7 +64,6 @@ dead_code_2_should_warn: {
     expect_warnings: [
         "WARN: Dropping unreachable code [test/compress/dead-code.js:8,12]",
     ]
-    node_version: "<=4"
 }
 
 dead_code_constant_boolean_should_warn_more: {
@@ -88,8 +89,10 @@ dead_code_constant_boolean_should_warn_more: {
         bar();
     }
     expect: {
-        var foo;
-        function bar() {}
+        {
+            var foo;
+            function bar() {}
+        }
         // nothing for the while
         // as for the for, it should keep:
         var x = 10, y;

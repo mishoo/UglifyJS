@@ -5018,9 +5018,12 @@ catch_no_argname: {
         try {
             throw a;
         } catch {
-            console.log(a, a, a);
+            function g() {
+                return a;
+            }
+            console.log(a, a, g());
         }
-        console.log(a, a, a);
+        console.log(a, a, g());
     }
     expect_stdout: [
         "PASS PASS PASS",
@@ -5557,4 +5560,141 @@ issue_4659_3: {
         console.log(a);
     }
     expect_stdout: "1"
+}
+
+block_scope_1: {
+    input: {
+        console.log(typeof f);
+        function f() {}
+    }
+    expect: {
+        console.log(typeof f);
+        function f() {}
+    }
+    expect_stdout: "function"
+}
+
+block_scope_1_compress: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof f);
+        function f() {}
+    }
+    expect: {
+        console.log("function");
+    }
+    expect_stdout: "function"
+}
+
+block_scope_2: {
+    input: {
+        {
+            console.log(typeof f);
+        }
+        function f() {}
+    }
+    expect: {
+        console.log(typeof f);
+        function f() {}
+    }
+    expect_stdout: "function"
+}
+
+block_scope_2_compress: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        {
+            console.log(typeof f);
+        }
+        function f() {}
+    }
+    expect: {
+        console.log("function");
+    }
+    expect_stdout: "function"
+}
+
+block_scope_3: {
+    input: {
+        console.log(typeof f);
+        {
+            function f() {}
+        }
+    }
+    expect: {
+        console.log(typeof f);
+        {
+            function f() {}
+        }
+    }
+    expect_stdout: true
+}
+
+block_scope_3_compress: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof f);
+        {
+            function f() {}
+        }
+    }
+    expect: {
+        console.log(typeof f);
+        {
+            function f() {}
+        }
+    }
+    expect_stdout: true
+}
+
+block_scope_4: {
+    input: {
+        {
+            console.log(typeof f);
+            function f() {}
+        }
+    }
+    expect: {
+        console.log(typeof f);
+        function f() {}
+    }
+    expect_stdout: "function"
+}
+
+block_scope_4_compress: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+        unused: true,
+    }
+    input: {
+        {
+            console.log(typeof f);
+            function f() {}
+        }
+    }
+    expect: {
+        console.log("function");
+    }
+    expect_stdout: "function"
 }
