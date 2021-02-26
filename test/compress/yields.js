@@ -690,7 +690,7 @@ drop_body: {
         })([ console.log("baz") ]);
     }
     expect: {
-        [ [ , 0[0] = console.log("foo") ] ] = [ [ console.log("baz") ] ];
+        [ [ , [].e = console.log("foo") ] ] = [ [ console.log("baz") ] ];
     }
     expect_stdout: [
         "baz",
