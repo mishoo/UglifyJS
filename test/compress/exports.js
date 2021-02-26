@@ -70,6 +70,27 @@ defaults_parentheses_4: {
     expect_exact: "export default(function f(){});"
 }
 
+defaults_parentheses_5: {
+    input: {
+        export default (function(a) {
+            console.log(a[0]);
+        }`PASS`);
+    }
+    expect_exact: "export default(function(a){console.log(a[0])})`PASS`;"
+}
+
+defaults_parentheses_6: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        export default !function() {
+            while (!console);
+        }() ? "PASS" : "FAIL";
+    }
+    expect_exact: 'export default(function(){while(!console);})()?"FAIL":"PASS";'
+}
+
 foreign: {
     input: {
         export * from "foo";
