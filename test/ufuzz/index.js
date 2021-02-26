@@ -363,6 +363,7 @@ var lambda_vars = [];
 var unique_vars = [];
 var classes = [];
 var async = false;
+var export_default = false;
 var generator = false;
 var loops = 0;
 var funcs = 0;
@@ -380,6 +381,17 @@ function strictMode() {
     return use_strict && rng(4) == 0 ? '"use strict";' : "";
 }
 
+function appendExport(stmtDepth, allowDefault) {
+    if (stmtDepth == 1 && rng(20) == 0) {
+        if (allowDefault && !export_default && rng(5) == 0) {
+            export_default = true;
+            return "export default ";
+        }
+        return "export ";
+    }
+    return "";
+}
+
 function createTopLevelCode() {
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
     block_vars.length = 0;
@@ -387,21 +399,28 @@ function createTopLevelCode() {
     unique_vars.length = 0;
     classes.length = 0;
     async = false;
+    export_default = false;
     generator = false;
     loops = 0;
     funcs = 0;
     clazz = 0;
     in_class = 0;
     called = Object.create(null);
-    return [
+    var s = [
         strictMode(),
-        "var _calls_ = 10, a = 100, b = 10, c = 0;",
-        rng(2)
-        ? createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0)
-        : createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, DEFUN_OK, CANNOT_THROW, 0),
-        // preceding `null` makes for a cleaner output (empty string still shows up etc)
-        "console.log(null, a, b, c, Infinity, NaN, undefined);"
-    ].join("\n");
+        appendExport(1) + "var _calls_ = 10, a = 100, b = 10, c = 0;",
+    ];
+    createBlockVariables(MAX_GENERATION_RECURSION_DEPTH, 0, CANNOT_THROW, function(defns) {
+        s.push(defns());
+        if (rng(2)) {
+            s.push(createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0));
+        } else {
+            s.push(createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, DEFUN_OK, CANNOT_THROW, 0));
+        }
+    });
+    // preceding `null` makes for a cleaner output (empty string still shows up etc)
+    s.push("console.log(null, a, b, c, Infinity, NaN, undefined);");
+    return s.join("\n");
 }
 
 function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
@@ -668,6 +687,7 @@ function filterDirective(s) {
 }
 
 function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
+    ++stmtDepth;
     var block_len = block_vars.length;
     var class_len = classes.length;
     var nameLenBefore = VAR_NAMES.length;
@@ -691,7 +711,7 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
         if (SUPPORT.class) while (rng(100) == 0) {
             var name = "C" + clazz++;
             classes.push(name);
-            s.push(createClassLiteral(recurmax,stmtDepth, canThrow, name));
+            s.push(appendExport(stmtDepth, true) + createClassLiteral(recurmax, stmtDepth, canThrow, name));
         }
         if (rng(2)) {
             s.push(createDefinitions("const", consts), createDefinitions("let", lets));
@@ -707,7 +727,7 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
 
     function createDefinitions(type, names) {
         if (!names.length) return "";
-        var s = type + " ";
+        var s = appendExport(stmtDepth) + type + " ";
         switch (SUPPORT.destructuring ? rng(10) : 2) {
           case 0:
             while (!rng(10)) names.splice(rng(names.length + 1), 0, "");
@@ -780,6 +800,7 @@ function invokeGenerator(was_generator) {
 function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ";"; }
     if (!STMT_COUNT_FROM_GLOBAL) stmtDepth = 0;
+    ++stmtDepth;
     var s = [];
     var name, args;
     var nameLenBefore = VAR_NAMES.length;
@@ -831,13 +852,14 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     lambda_vars.length = lambda_len;
     VAR_NAMES.length = nameLenBefore;
 
+    if (allowDefun) s = appendExport(stmtDepth, true) + s;
     if (!allowDefun) {
         // avoid "function statements" (decl inside statements)
-        s = "var " + createVarName(MANDATORY) + " = " + s;
+        s = appendExport(stmtDepth) + "var " + createVarName(MANDATORY) + " = " + s;
         s += args || createArgs(recurmax, stmtDepth, canThrow);
         s += call_next;
     } else if (!(name in called) || args || rng(3)) {
-        s += "var " + createVarName(MANDATORY) + " = " + name;
+        s += appendExport(stmtDepth) + "var " + createVarName(MANDATORY) + " = " + name;
         s += args || createArgs(recurmax, stmtDepth, canThrow);
         s += call_next;
     }
@@ -987,6 +1009,10 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
       case STMT_SEMI:
         return use_strict && rng(20) === 0 ? '"use strict";' : ";";
       case STMT_EXPR:
+          if (stmtDepth == 1 && !export_default && rng(20) == 0) {
+              export_default = true;
+              return "export default " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ";";
+          }
         return createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ";";
       case STMT_SWITCH:
         // note: case args are actual expressions
@@ -995,7 +1021,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
       case STMT_VAR:
         if (SUPPORT.destructuring && rng(20) == 0) {
             var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow);
-            return "var " + pairs.names.map(function(name, index) {
+            return appendExport(stmtDepth) + "var " + pairs.names.map(function(name, index) {
                 return index in pairs.values ? name + " = " + pairs.values[index] : name;
             }).join(", ") + ";";
         } else switch (rng(3)) {
@@ -1003,20 +1029,20 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             unique_vars.push("c");
             var name = createVarName(MANDATORY);
             unique_vars.pop();
-            return "var " + name + ";";
+            return appendExport(stmtDepth) + "var " + name + ";";
           case 1:
             // initializer can only have one expression
             unique_vars.push("c");
             var name = createVarName(MANDATORY);
             unique_vars.pop();
-            return "var " + name + " = " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ";";
+            return appendExport(stmtDepth) + "var " + name + " = " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ";";
           default:
             // initializer can only have one expression
             unique_vars.push("c");
             var n1 = createVarName(MANDATORY);
             var n2 = createVarName(MANDATORY);
             unique_vars.pop();
-            return "var " + n1 + " = " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ", " + n2 + " = " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ";";
+            return appendExport(stmtDepth) + "var " + n1 + " = " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ", " + n2 + " = " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ";";
         }
       case STMT_RETURN_ETC:
         switch (rng(8)) {
@@ -1939,6 +1965,10 @@ if (require.main !== module) {
     return;
 }
 
+function run_code(code, toplevel) {
+    return sandbox.run_code(sandbox.strip_exports(code), toplevel);
+}
+
 function writeln(stream, msg) {
     if (typeof msg != "undefined") {
         stream.write(typeof msg == "string" ? msg : msg.stack || "" + msg);
@@ -1960,7 +1990,7 @@ function try_beautify(code, toplevel, result, printfn, options) {
         printfn("// !!! beautify failed !!!");
         printfn(beautified.error);
         beautified = null;
-    } else if (!sandbox.same_stdout(sandbox.run_code(beautified.code, toplevel), result)) {
+    } else if (!sandbox.same_stdout(run_code(beautified.code, toplevel), result)) {
         beautified = null;
     } else if (options) {
         var uglified = UglifyJS.minify(beautified.code, JSON.parse(options));
@@ -1970,7 +2000,7 @@ function try_beautify(code, toplevel, result, printfn, options) {
             actual = uglified.error;
         } else {
             expected = uglify_result;
-            actual = sandbox.run_code(uglified.code, toplevel);
+            actual = run_code(uglified.code, toplevel);
         }
         if (!sandbox.same_stdout(expected, actual)) {
             beautified = null;
@@ -2008,7 +2038,7 @@ function log_suspects(minify_options, component) {
                 errorln("Error testing options." + component + "." + name);
                 errorln(result.error);
             } else {
-                var r = sandbox.run_code(result.code, toplevel);
+                var r = run_code(result.code, toplevel);
                 return !sandbox.same_stdout(uglify_result, r);
             }
         }
@@ -2036,7 +2066,7 @@ function log_suspects_global(options, toplevel) {
             errorln("Error testing options." + component);
             errorln(result.error);
         } else {
-            var r = sandbox.run_code(result.code, toplevel);
+            var r = run_code(result.code, toplevel);
             return !sandbox.same_stdout(uglify_result, r);
         }
     });
@@ -2108,7 +2138,7 @@ function log(options) {
 }
 
 function sort_globals(code) {
-    var globals = sandbox.run_code("throw Object.keys(this).sort(" + function(global) {
+    var globals = run_code("throw Object.keys(this).sort(" + function(global) {
         return function(m, n) {
             return (n == "toString") - (m == "toString")
                 || (typeof global[n] == "function") - (typeof global[m] == "function")
@@ -2221,7 +2251,7 @@ function patch_try_catch(orig, toplevel) {
                 ].join("\n");
             }
             var new_code = code.slice(0, index) + insert + code.slice(index) + tail_throw;
-            var result = sandbox.run_code(new_code, toplevel);
+            var result = run_code(new_code, toplevel);
             if (!sandbox.is_error(result)) {
                 if (!stack.filled && match[1]) stack.push({
                     code: code,
@@ -2292,7 +2322,7 @@ for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
 
     original_code = createTopLevelCode();
-    var orig_result = [ sandbox.run_code(original_code), sandbox.run_code(original_code, true) ];
+    var orig_result = [ run_code(original_code), run_code(original_code, true) ];
     if (orig_result.some(function(result, toplevel) {
         if (typeof result == "string") return;
         println();
@@ -2317,7 +2347,7 @@ for (var round = 1; round <= num_iterations; round++) {
         errored = typeof original_result != "string";
         if (!uglify_code.error) {
             uglify_code = uglify_code.code;
-            uglify_result = sandbox.run_code(uglify_code, toplevel);
+            uglify_result = run_code(uglify_code, toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
             // ignore v8 parser bug
             if (!ok && bug_async_arrow_rest(uglify_result)) ok = true;
@@ -2328,13 +2358,13 @@ for (var round = 1; round <= num_iterations; round++) {
                     ok = true;
                 } else {
                     // ignore spurious time-outs
-                    if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = sandbox.run_code(original_code, toplevel, 10000);
+                    if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = run_code(original_code, toplevel, 10000);
                     ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
                 }
             }
             // ignore declaration order of global variables
             if (!ok && !toplevel) {
-                ok = sandbox.same_stdout(sandbox.run_code(sort_globals(original_code)), sandbox.run_code(sort_globals(uglify_code)));
+                ok = sandbox.same_stdout(run_code(sort_globals(original_code)), run_code(sort_globals(uglify_code)));
             }
             // ignore numerical imprecision caused by `unsafe_math`
             if (!ok && o.compress && o.compress.unsafe_math && typeof original_result == typeof uglify_result) {
@@ -2344,7 +2374,7 @@ for (var round = 1; round <= num_iterations; round++) {
                     ok = original_result.name == uglify_result.name && fuzzy_match(original_result.message, uglify_result.message);
                 }
                 if (!ok) {
-                    var fuzzy_result = sandbox.run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"), toplevel);
+                    var fuzzy_result = run_code(original_code.replace(/( - 0\.1){3}/g, " - 0.3"), toplevel);
                     ok = sandbox.same_stdout(fuzzy_result, uglify_result);
                 }
             }
@@ -2352,8 +2382,8 @@ for (var round = 1; round <= num_iterations; round++) {
             if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
             // ignore difference due to implicit strict-mode in `class`
             if (!ok && /\bclass\b/.test(original_code)) {
-                var original_strict = sandbox.run_code('"use strict";' + original_code, toplevel);
-                var uglify_strict = sandbox.run_code('"use strict";' + uglify_code, toplevel);
+                var original_strict = run_code('"use strict";' + original_code, toplevel);
+                var uglify_strict = run_code('"use strict";' + uglify_code, toplevel);
                 if (typeof original_strict != "string" && /strict/.test(original_strict.message)) {
                     ok = typeof uglify_strict != "string" && /strict/.test(uglify_strict.message);
                 } else {
@@ -2385,7 +2415,7 @@ for (var round = 1; round <= num_iterations; round++) {
                 var orig_skipped = patch_try_catch(original_code, toplevel);
                 var uglify_skipped = patch_try_catch(uglify_code, toplevel);
                 if (orig_skipped && uglify_skipped) {
-                    ok = sandbox.same_stdout(sandbox.run_code(orig_skipped, toplevel), sandbox.run_code(uglify_skipped, toplevel));
+                    ok = sandbox.same_stdout(run_code(orig_skipped, toplevel), run_code(uglify_skipped, toplevel));
                 }
             }
         } else {

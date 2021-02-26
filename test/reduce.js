@@ -132,6 +132,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 return;
             }
             if (parent instanceof U.AST_VarDef && parent.name === node) return;
+            // preserve exports
+            if (parent instanceof U.AST_ExportDeclaration) return;
+            if (parent instanceof U.AST_ExportDefault) return;
+            if (parent instanceof U.AST_ExportForeign) return;
+            if (parent instanceof U.AST_ExportReferences) return;
             // preserve for (var xxx; ...)
             if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Definitions) return node;
             // preserve for (xxx in/of ...)
@@ -455,6 +460,13 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     return List.skip;
                 }
 
+                // preserve sole definition of an export statement
+                if (node instanceof U.AST_VarDef
+                    && parent.definitions.length == 1
+                    && tt.parent(1) instanceof U.AST_ExportDeclaration) {
+                    return node;
+                }
+
                 // remove this node unless its the sole element of a (transient) sequence
                 if (!(parent instanceof U.AST_Sequence) || parent.expressions.length > 1) {
                     node.start._permute++;
@@ -720,7 +732,7 @@ function run_code(code, toplevel, result_cache, timeout) {
     if (!value) {
         var start = Date.now();
         result_cache[key] = value = {
-            result: sandbox.run_code(code, toplevel, timeout),
+            result: sandbox.run_code(sandbox.strip_exports(code), toplevel, timeout),
             elapsed: Date.now() - start,
         };
     }
