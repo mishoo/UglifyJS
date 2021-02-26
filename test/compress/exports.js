@@ -56,6 +56,20 @@ defaults_parentheses_2: {
     expect_exact: 'export default(async function(){console.log("PASS")})();'
 }
 
+defaults_parentheses_3: {
+    input: {
+        export default (42, "PASS");
+    }
+    expect_exact: 'export default(42,"PASS");'
+}
+
+defaults_parentheses_4: {
+    input: {
+        export default (function f() {});
+    }
+    expect_exact: "export default(function f(){});"
+}
+
 foreign: {
     input: {
         export * from "foo";
@@ -203,6 +217,20 @@ hoist_exports: {
     }
 }
 
+hoist_vars: {
+    options = {
+        hoist_vars: true,
+    }
+    input: {
+        var a;
+        export var b = 42;
+    }
+    expect: {
+        var a;
+        export var b = 42;
+    }
+}
+
 keep_return_values: {
     options = {
         booleans: true,
@@ -299,5 +327,37 @@ single_use_default: {
             console.log("PASS");
         }
         f();
+    }
+}
+
+single_use_class: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export class A {}
+        A.prototype.p = "PASS";
+    }
+    expect: {
+        export class A {}
+        A.prototype.p = "PASS";
+    }
+}
+
+single_use_class_default: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default class A {}
+        A.prototype.p = "PASS";
+    }
+    expect: {
+        export default class A {}
+        A.prototype.p = "PASS";
     }
 }
