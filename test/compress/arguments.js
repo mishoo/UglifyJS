@@ -977,3 +977,25 @@ issue_4432: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4696: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+    }
+    input: {
+        console.log(function() {
+            for (arguments in [ 42 ]);
+            for (var a in arguments[0])
+                return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            for (arguments in [ 42 ]);
+            for (var a in arguments[0])
+                return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
