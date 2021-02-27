@@ -747,3 +747,24 @@ issue_4687_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4705: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        class A {
+            p = a = "FAIL";
+            [console.log(a)];
+        }
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
