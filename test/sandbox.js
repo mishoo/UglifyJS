@@ -51,7 +51,7 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 };
 exports.strip_exports = function(code) {
     var count = 0;
-    return code.replace(/\bexport(?:\s*\{[^}]*};|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
+    return code.replace(/\bexport(?:\s*\{[^}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
         if (!header) return "";
         if (header.length == 1) return "!!" + header;
         return header.slice(0, -1) + " _" + ++count + header.slice(-1);
