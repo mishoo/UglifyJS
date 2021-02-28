@@ -1020,22 +1020,30 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return "switch (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") { " + createSwitchParts(recurmax, 4, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_VAR:
         if (SUPPORT.destructuring && stmtDepth == 1 && rng(5) == 0) {
-            unique_vars.push("c");
-            var s = rng(2) ? " " + createVarName(MANDATORY) : "";
+            unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
+            var s = "";
+            if (rng(2)) {
+                var name = createVarName(MANDATORY);
+                block_vars.push(name);
+                s += " " + name;
+            }
             if (rng(10)) {
                 if (s) s += ",";
                 if (rng(2)) {
-                    s += " * as " + createVarName(MANDATORY);
+                    var name = createVarName(MANDATORY);
+                    block_vars.push(name);
+                    s += " * as " + name;
                 } else {
                     var names = [];
                     for (var i = rng(4); --i >= 0;) {
                         var name = createVarName(MANDATORY);
+                        block_vars.push(name);
                         names.push(rng(2) ? getDotKey() + " as " + name : name);
                     }
                     s += " { " + names.join(", ") + " }";
                 }
             }
-            unique_vars.pop();
+            unique_vars.length -= 6;
             if (s) s += " from";
             return "import" + s + ' "path/to/module.js";';
         } else if (SUPPORT.destructuring && rng(20) == 0) {
@@ -2217,6 +2225,10 @@ function is_error_recursion(ex) {
     return ex.name == "RangeError" && /Invalid string length|Maximum call stack size exceeded/.test(ex.message);
 }
 
+function is_error_redeclaration(ex) {
+    return ex.name == "SyntaxError" && /already been declared|redeclaration/.test(ex.message);
+}
+
 function is_error_destructuring(ex) {
     return ex.name == "TypeError" && /^Cannot destructure /.test(ex.message);
 }
@@ -2408,6 +2420,10 @@ for (var round = 1; round <= num_iterations; round++) {
                 } else {
                     ok = sandbox.same_stdout(original_strict, uglify_strict);
                 }
+            }
+            // ignore difference in error message caused by `import` symbol redeclaration
+            if (!ok && errored && /\bimport\b/.test(original_code)) {
+                if (is_error_redeclaration(uglify_result) && is_error_redeclaration(original_result)) ok = true;
             }
             // ignore difference in error message caused by `in`
             if (!ok && errored && is_error_in(uglify_result) && is_error_in(original_result)) ok = true;
