@@ -61,7 +61,7 @@ exports.patch_module_statements = function(code) {
             symbols = symbols.replace(/[{}]/g, "").trim().replace(/\s*,\s*/g, ",");
             symbols = symbols.replace(/\*/, '"*"').replace(/\bas\s+(?!$|,|as\s)/g, ":");
             imports.push([
-                "var {",
+                "const {",
                 symbols,
                 "} = new Proxy(Object.create(null), { get(_, value) { return { value }; } });",
             ].join(""));

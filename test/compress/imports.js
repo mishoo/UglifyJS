@@ -165,3 +165,38 @@ forbid_merge: {
         f();
     }
 }
+
+issue_4708_1: {
+    options = {
+        imports: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        import a from "foo";
+    }
+    expect: {
+        var a;
+        import a from "foo";
+    }
+}
+
+issue_4708_2: {
+    options = {
+        imports: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(a);
+        import a from "foo";
+    }
+    expect: {
+        var a;
+        console.log(a);
+        import a from "foo";
+    }
+}
