@@ -732,7 +732,7 @@ function run_code(code, toplevel, result_cache, timeout) {
     if (!value) {
         var start = Date.now();
         result_cache[key] = value = {
-            result: sandbox.run_code(sandbox.strip_exports(code), toplevel, timeout),
+            result: sandbox.run_code(sandbox.patch_module_statements(code), toplevel, timeout),
             elapsed: Date.now() - start,
         };
     }

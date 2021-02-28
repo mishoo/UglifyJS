@@ -49,13 +49,27 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 } : function(expected, actual) {
     return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
-exports.strip_exports = function(code) {
-    var count = 0;
-    return code.replace(/\bexport(?:\s*\{[^}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
+exports.patch_module_statements = function(code) {
+    var count = 0, imports = [];
+    code = code.replace(/\bexport(?:\s*\{[^}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
         if (!header) return "";
         if (header.length == 1) return "0, " + header;
         return header.slice(0, -1) + " _" + ++count + header.slice(-1);
+    }).replace(/\bimport\b(?:\s*([^('"]+)\bfrom\b)?\s*(['"]).*?\2(?:$|\n|;)/g, function(match, symbols) {
+        if (symbols) {
+            if (!/^[{*]/.test(symbols)) symbols = "default:" + symbols;
+            symbols = symbols.replace(/[{}]/g, "").trim().replace(/\s*,\s*/g, ",");
+            symbols = symbols.replace(/\*/, '"*"').replace(/\bas\s+(?!$|,|as\s)/g, ":");
+            imports.push([
+                "var {",
+                symbols,
+                "} = new Proxy(Object.create(null), { get(_, value) { return { value }; } });",
+            ].join(""));
+        }
+        return "";
     });
+    imports.push("");
+    return imports.join("\n") + code;
 };
 
 function is_error(result) {

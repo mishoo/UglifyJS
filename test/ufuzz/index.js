@@ -382,7 +382,7 @@ function strictMode() {
 }
 
 function appendExport(stmtDepth, allowDefault) {
-    if (stmtDepth == 1 && rng(20) == 0) {
+    if (SUPPORT.destructuring && stmtDepth == 1 && rng(20) == 0) {
         if (allowDefault && !export_default && rng(5) == 0) {
             export_default = true;
             return "export default ";
@@ -1009,7 +1009,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
       case STMT_SEMI:
         return use_strict && rng(20) === 0 ? '"use strict";' : ";";
       case STMT_EXPR:
-          if (stmtDepth == 1 && !export_default && rng(20) == 0) {
+          if (SUPPORT.destructuring && stmtDepth == 1 && !export_default && rng(20) == 0) {
               export_default = true;
               return "export default " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ";";
           }
@@ -1019,7 +1019,26 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         // note: default does not _need_ to be last
         return "switch (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") { " + createSwitchParts(recurmax, 4, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_VAR:
-        if (SUPPORT.destructuring && rng(20) == 0) {
+        if (SUPPORT.destructuring && stmtDepth == 1 && rng(5) == 0) {
+            unique_vars.push("c");
+            var s = rng(2) ? " " + createVarName(MANDATORY) : "";
+            if (rng(10)) {
+                if (s) s += ",";
+                if (rng(2)) {
+                    s += " * as " + createVarName(MANDATORY);
+                } else {
+                    var names = [];
+                    for (var i = rng(4); --i >= 0;) {
+                        var name = createVarName(MANDATORY);
+                        names.push(rng(2) ? getDotKey() + " as " + name : name);
+                    }
+                    s += " { " + names.join(", ") + " }";
+                }
+            }
+            unique_vars.pop();
+            if (s) s += " from";
+            return "import" + s + ' "path/to/module.js";';
+        } else if (SUPPORT.destructuring && rng(20) == 0) {
             var pairs = createAssignmentPairs(recurmax, stmtDepth, canThrow);
             return appendExport(stmtDepth) + "var " + pairs.names.map(function(name, index) {
                 return index in pairs.values ? name + " = " + pairs.values[index] : name;
@@ -1966,7 +1985,7 @@ if (require.main !== module) {
 }
 
 function run_code(code, toplevel) {
-    return sandbox.run_code(sandbox.strip_exports(code), toplevel);
+    return sandbox.run_code(sandbox.patch_module_statements(code), toplevel);
 }
 
 function writeln(stream, msg) {
@@ -2384,8 +2403,8 @@ for (var round = 1; round <= num_iterations; round++) {
             if (!ok && /\bclass\b/.test(original_code)) {
                 var original_strict = run_code('"use strict";' + original_code, toplevel);
                 var uglify_strict = run_code('"use strict";' + uglify_code, toplevel);
-                if (typeof original_strict != "string" && /strict/.test(original_strict.message)) {
-                    ok = typeof uglify_strict != "string" && /strict/.test(uglify_strict.message);
+                if (typeof original_strict != "string") {
+                    ok = typeof uglify_strict != "string";
                 } else {
                     ok = sandbox.same_stdout(original_strict, uglify_strict);
                 }
