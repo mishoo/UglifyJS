@@ -125,7 +125,7 @@ private_methods: {
     }
     expect_exact: "(new class A{static*#f(){yield 3*A.#p}async #g(){for(var a of A.#f())return a*await 2}static get #p(){return 7}get q(){return this.#g()}}).q.then(console.log);"
     expect_stdout: "42"
-    node_version: ">=14"
+    node_version: ">=14.6"
 }
 
 await: {
@@ -570,6 +570,78 @@ computed_key_generator: {
         a.next("PASS");
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_805_1: {
+    options = {
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function(a) {
+            var unused = class {};
+            unused.prototype[a()] = 42;
+            (unused.prototype.bar = function() {
+                console.log("bar");
+            })();
+            return unused;
+        })(function() {
+            console.log("foo");
+            return "foo";
+        });
+    }
+    expect: {
+        "use strict";
+        console.log("foo"),
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
+issue_805_2: {
+    options = {
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function(a) {
+            class unused {}
+            unused.prototype[a()] = 42;
+            (unused.prototype.bar = function() {
+                console.log("bar");
+            })();
+            return unused;
+        })(function() {
+            console.log("foo");
+            return "foo";
+        });
+    }
+    expect: {
+        "use strict";
+        console.log("foo"),
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
     node_version: ">=4"
 }
 
