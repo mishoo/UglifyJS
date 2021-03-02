@@ -919,6 +919,12 @@ function getLabel(label) {
     return label && " L" + label;
 }
 
+function declareVarName(name, no_var) {
+    if (!SUPPORT.let || !no_var && rng(10)) return "var ";
+    block_vars.push(name);
+    return rng(2) ? "let " : "const ";
+}
+
 function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth, target) {
     ++stmtDepth;
     var loop = ++loops;
@@ -955,6 +961,8 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
         return label.target + "for (var brake" + loop + " = 5; " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " && brake" + loop + " > 0; --brake" + loop + ")" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth);
       case STMT_FOR_ENUM:
+        var block_len = block_vars.length;
+        var nameLenBefore = VAR_NAMES.length;
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
@@ -963,12 +971,8 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         var init = "";
         if (!/^key/.test(key)) {
             if (!(of && bug_for_of_var) && rng(10) == 0) init = "var ";
-        } else if (!SUPPORT.let || !(of && bug_for_of_var) && rng(10)) {
-            init = "var ";
-        } else if (rng(2)) {
-            init = "let ";
         } else {
-            init = "const ";
+            init = declareVarName(key, of && bug_for_of_var);
         }
         if (!SUPPORT.destructuring || of && !(canThrow && rng(20) == 0) || rng(10)) {
             init += key;
@@ -1003,8 +1007,15 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
             s += createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ";
             s += label.target + " for (" + init + " in expr" + loop + ") {";
         }
-        if (rng(3)) s += "c = 1 + c; var " + createVarName(MANDATORY) + " = expr" + loop + "[" + key + "]; ";
+        if (/^key/.test(key)) VAR_NAMES.push(key);
+        if (rng(3)) {
+            s += "c = 1 + c; ";
+            var name = createVarName(MANDATORY);
+            s += declareVarName(name) + name + " = expr" + loop + "[" + key + "]; ";
+        }
         s += createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
+        VAR_NAMES.length = nameLenBefore;
+        block_vars.length = block_len;
         return "{" + s + "}";
       case STMT_SEMI:
         return use_strict && rng(20) === 0 ? '"use strict";' : ";";
