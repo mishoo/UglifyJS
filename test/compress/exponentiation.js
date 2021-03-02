@@ -84,3 +84,42 @@ issue_4664: {
     expect_stdout: "function 1073741824 object"
     node_version: ">=8"
 }
+
+issue_4715: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        A = 1;
+        console.log((-0) ** A + 0);
+        console.log((-0) ** A - 0);
+        console.log((-0) ** A * 1);
+        console.log((-0) ** A / 1);
+        console.log(Math.pow(-0, A) + 0);
+        console.log(Math.pow(-0, A) - 0);
+        console.log(Math.pow(-0, A) * 1);
+        console.log(Math.pow(-0, A) / 1);
+    }
+    expect: {
+        A = 1;
+        console.log((-0) ** A + 0);
+        console.log((-0) ** A);
+        console.log((-0) ** A * 1);
+        console.log((-0) ** A);
+        console.log(Math.pow(-0, A) + 0);
+        console.log(+Math.pow(-0, A));
+        console.log(+Math.pow(-0, A));
+        console.log(+Math.pow(-0, A));
+    }
+    expect_stdout: [
+        "0",
+        "-0",
+        "-0",
+        "-0",
+        "0",
+        "-0",
+        "-0",
+        "-0",
+    ]
+    node_version: ">=8"
+}
