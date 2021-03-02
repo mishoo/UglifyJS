@@ -82,6 +82,19 @@ fields: {
     node_version: ">=12"
 }
 
+modifier_as_field_name: {
+    input: {
+        for (var k in new class { async; static = 42 })
+            console.log(k);
+    }
+    expect_exact: "for(var k in new class{async;static=42})console.log(k);"
+    expect_stdout: [
+        "async",
+        "static",
+    ]
+    node_version: ">=12"
+}
+
 methods: {
     input: {
         "use strict";
