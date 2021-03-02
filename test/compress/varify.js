@@ -409,3 +409,31 @@ drop_forin_let: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+default_init: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        A = "PASS";
+        (function() {
+            "use strict";
+            let a;
+            a = A;
+            console.log(a);
+        })();
+    }
+    expect: {
+        A = "PASS";
+        (function() {
+            "use strict";
+            var a = A;
+            console.log(a);
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
