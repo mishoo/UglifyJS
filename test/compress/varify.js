@@ -354,6 +354,92 @@ forin_let_2: {
     node_version: ">=6"
 }
 
+loop_scope_1: {
+    options = {
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        var o = { foo: 1, bar: 2 };
+        for (let i in o) {
+            console.log(i);
+        }
+        for (const j in o)
+            setTimeout(() => console.log(j), 0);
+        for (let k in o)
+            setTimeout(function() {
+                console.log(k);
+            }, 0);
+    }
+    expect: {
+        "use strict";
+        var o = { foo: 1, bar: 2 };
+        for (var i in o)
+            console.log(i);
+        for (const j in o)
+            setTimeout(() => console.log(j), 0);
+        for (let k in o)
+            setTimeout(function() {
+                console.log(k);
+            }, 0);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
+loop_scope_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        var a = [ "foo", "bar" ];
+        for (var i = 0; i < a.length; i++) {
+            const x = a[i];
+            console.log(x);
+            let y = a[i];
+            setTimeout(() => console.log(y), 0);
+            const z = a[i];
+            setTimeout(function() {
+                console.log(z);
+            }, 0);
+        }
+    }
+    expect: {
+        "use strict";
+        var a = [ "foo", "bar" ];
+        for (var i = 0; i < a.length; i++) {
+            var x = a[i];
+            console.log(x);
+            let y = a[i];
+            setTimeout(() => console.log(y), 0);
+            const z = a[i];
+            setTimeout(function() {
+                console.log(z);
+            }, 0);
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "foo",
+        "bar",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
 issue_4290_1_const: {
     options = {
         reduce_vars: true,
