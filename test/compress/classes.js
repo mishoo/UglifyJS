@@ -269,6 +269,43 @@ block_scoped: {
     node_version: ">=4"
 }
 
+drop_extends: {
+    options = {
+        inline: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (function() {
+                var f = () => {};
+                class A extends f {
+                    get p() {}
+                }
+                A.q = 42;
+                return class B extends A {};
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (class extends (() => {}) {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 keep_extends: {
     options = {
         toplevel: true,
@@ -370,7 +407,7 @@ static_side_effects: {
     node_version: ">=12"
 }
 
-single_use: {
+single_use_1: {
     options = {
         reduce_vars: true,
         toplevel: true,
@@ -386,6 +423,163 @@ single_use: {
         console.log(typeof new class {}());
     }
     expect_stdout: "object"
+    node_version: ">=4"
+}
+
+single_use_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {
+            f(a) {
+                console.log(a);
+            }
+        }
+        new A().f("PASS");
+    }
+    expect: {
+        "use strict";
+        new class {
+            f(a) {
+                console.log(a);
+            }
+        }().f("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+single_use_3: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {
+            f() {
+                return A;
+            }
+        }
+        console.log(typeof new A().f());
+    }
+    expect: {
+        "use strict";
+        console.log(typeof new class A {
+            f() {
+                return A;
+            }
+        }().f());
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}
+
+single_use_4: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        console.log(new class A {
+            f() {
+                return typeof A;
+            }
+        }().f());
+    }
+    expect: {
+        "use strict";
+        console.log(new class A {
+            f() {
+                return typeof A;
+            }
+        }().f());
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}
+
+single_use_5: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            console.log("foo");
+        }
+        (function() {
+            "use strict";
+            class A extends f {
+                f() {
+                    console.log("bar");
+                }
+            }
+            console.log("baz");
+            new A().f();
+        })();
+    }
+    expect: {
+        function f() {
+            console.log("foo");
+        }
+        (function() {
+            "use strict";
+            class A extends f {
+                f() {
+                    console.log("bar");
+                }
+            }
+            console.log("baz");
+            new A().f();
+        })();
+    }
+    expect_stdout: [
+        "baz",
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
+single_use_6: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {
+            [(console.log("foo"), "f")]() {
+                console.log("bar");
+            }
+        }
+        console.log("baz");
+        new A().f();
+    }
+    expect: {
+        "use strict";
+        class A {
+            [(console.log("foo"), "f")]() {
+                console.log("bar");
+            }
+        }
+        console.log("baz");
+        new A().f();
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
     node_version: ">=4"
 }
 
