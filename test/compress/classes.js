@@ -1047,3 +1047,128 @@ issue_4705: {
     expect_stdout: "PASS"
     node_version: ">=12"
 }
+
+issue_4720: {
+    options = {
+        ie8: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A {
+            static p = function f() {};
+        }
+        console.log(typeof A.p, typeof f);
+    }
+    expect: {
+        class A {
+            static p = function f() {};
+        }
+        console.log(typeof A.p, typeof f);
+    }
+    expect_stdout: "function undefined"
+    node_version: ">=12"
+}
+
+issue_4721: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        var a = "foo";
+        try {
+            (class extends 42 {
+                [a = "bar"]() {}
+            })
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        "use strict";
+        var a = "foo";
+        try {
+            (class extends 42 {
+                [a = "bar"]() {}
+            });
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+issue_4722_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (class extends function*() {} {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (class extends function*() {} {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4722_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (class extends async function() {} {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (class extends async function() {} {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4722_3: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (class extends async function*() {} {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (class extends async function*() {} {});
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
