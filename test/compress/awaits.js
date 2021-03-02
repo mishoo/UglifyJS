@@ -1246,3 +1246,37 @@ issue_4618: {
     expect_stdout: "function"
     node_version: ">=8"
 }
+
+issue_4717: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            async function f() {
+                var a = function() {
+                    await;
+                }();
+                return "FAIL";
+            }
+            return f();
+        })().then(console.log).catch(function() {
+            console.log("PASS");
+        });
+    }
+    expect: {
+        (async function() {
+            return function() {
+                await;
+            }(), "FAIL";
+        })().then(console.log).catch(function() {
+            console.log("PASS");
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
