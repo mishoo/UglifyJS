@@ -5698,3 +5698,57 @@ block_scope_4_compress: {
     }
     expect_stdout: "function"
 }
+
+issue_4725_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var o = {
+            f() {
+                return function g() {
+                    return g;
+                }();
+            }
+        };
+        console.log(typeof o.f());
+    }
+    expect: {
+        var o = {
+            f() {
+                return function g() {
+                    return g;
+                }();
+            }
+        };
+        console.log(typeof o.f());
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}
+
+issue_4725_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var o = {
+            f() {
+                return function() {
+                    while (console.log("PASS"));
+                }();
+            }
+        };
+        o.f();
+    }
+    expect: {
+        var o = {
+            f() {
+                while (console.log("PASS"));
+            }
+        };
+        o.f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
