@@ -610,6 +610,28 @@ drop_unused: {
     node_version: ">=4"
 }
 
+default_init: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        let a;
+        a = "PASS";
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 issue_4191: {
     options = {
         functions: true,
