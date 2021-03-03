@@ -2919,3 +2919,28 @@ issue_4568: {
     }
     expect_stdout: "undefined 1"
 }
+
+issue_4729: {
+    options = {
+        ie8: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            f;
+        } catch(e) {
+            var a = a && a[function f() {}];
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            f;
+        } catch(e) {
+            (function f() {});
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}

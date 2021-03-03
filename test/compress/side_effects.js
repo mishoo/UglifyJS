@@ -558,3 +558,33 @@ drop_side_effect_free_call: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4730_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var a;
+        console.log("PASS") + (a && a[a.p]);
+    }
+    expect: {
+        var a;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4730_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var a;
+        !console.log("PASS") || a && a[a.p];
+    }
+    expect: {
+        var a;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
