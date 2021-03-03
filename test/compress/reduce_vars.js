@@ -2554,7 +2554,7 @@ side_effects_assign: {
         console.log(a);
     }
     expect: {
-        var a = typeof void (a && a.in);
+        var a = "undefined";
         console.log(a);
     }
     expect_stdout: "undefined"
@@ -2595,9 +2595,7 @@ pure_getters_2: {
         var a;
         var a = a && a.b;
     }
-    expect: {
-        var a = a && a.b;
-    }
+    expect: {}
 }
 
 pure_getters_3: {

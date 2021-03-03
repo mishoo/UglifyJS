@@ -745,12 +745,12 @@ issue_2062: {
     }
     input: {
         var a = 1;
-        if ([ a || a++ + a--, a++ + a--, a && a.var ]);
+        if ([ a || a++ + a--, a++ + a--, a && a[console] ]);
         console.log(a);
     }
     expect: {
         var a = 1;
-        a || (a++, a--), a++, --a && a.var;
+        a || (a++, a--), a++, --a && console;
         console.log(a);
     }
     expect_stdout: "1"
@@ -1088,7 +1088,7 @@ issue_3490_1: {
         if ({
             3: function() {
                 var a;
-                return (a && a.p) < this;
+                return (a && a[console]) < this;
             }(),
         }) c = "PASS";
         if (b) while ("" == typeof d);
@@ -1098,7 +1098,7 @@ issue_3490_1: {
         var b = 42, c = "FAIL";
         if (function() {
             var a;
-            a && a.p;
+            a && console;
         }(), c = "PASS", b) while ("" == typeof d);
         console.log(c, b);
     }
