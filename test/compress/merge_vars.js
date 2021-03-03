@@ -2723,7 +2723,7 @@ issue_4135: {
             var c = function() {
                 var d = 0;
                 function f() {
-                    d && d.p;
+                    d && d[console];
                 }
                 f();
                 this;
@@ -2735,7 +2735,7 @@ issue_4135: {
         0;
         a++;
         if (!a)
-            c = (a++, c = 0, void (c && c.p));
+            c = (a++, c = 0, void (c && console));
         var c;
         console.log(a, -1, c);
     }

@@ -2863,7 +2863,7 @@ lvalues_def: {
     expect: {
         var a = 0, b = 1;
         a = b++, b = +void 0;
-        a && a[a++];
+        a && a++;
         console.log(a, b);
     }
     expect_stdout: true
@@ -5098,7 +5098,7 @@ issue_2878: {
             }
             b = f2();
             a = 1;
-            b && b.b;
+            b && b[console];
             f2();
         })();
         console.log(c);
@@ -5111,7 +5111,7 @@ issue_2878: {
             }
             b = f2(),
             a = 1,
-            b && b.b,
+            b && console,
             f2();
         })(),
         console.log(c);
@@ -6546,7 +6546,7 @@ issue_3520: {
                 (function f() {
                     c = 0;
                     var i = void 0;
-                    var f = f && f[i];
+                    var f = f && f[console && i];
                 })();
                 a += b;
                 c && b++;
@@ -6560,7 +6560,7 @@ issue_3520: {
             for (var i = 2; --i >= 0;) {
                 (function() {
                     c = 0;
-                    var f = f && f[void 0];
+                    var f = f && f[console && void 0];
                 })();
                 a += b;
                 c && b++;

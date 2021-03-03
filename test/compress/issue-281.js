@@ -463,15 +463,19 @@ drop_fargs: {
         var a = 1;
         !function(a_1) {
             a++;
-        }(a++ + (a && a.var));
+        }(a++ + (a && console.log(a)));
         console.log(a);
     }
     expect: {
         var a = 1;
-        ++a && a.var, a++;
+        ++a && console.log(a),
+        a++;
         console.log(a);
     }
-    expect_stdout: "3"
+    expect_stdout: [
+        "2",
+        "3",
+    ]
 }
 
 keep_fargs: {
@@ -486,13 +490,17 @@ keep_fargs: {
         var a = 1;
         !function(a_1) {
             a++;
-        }(a++ + (a && a.var));
+        }(a++ + (a && console.log(a)));
         console.log(a);
     }
     expect: {
         var a = 1;
-        ++a && a.var, a++;
+        ++a && console.log(a),
+        a++;
         console.log(a);
     }
-    expect_stdout: "3"
+    expect_stdout: [
+        "2",
+        "3",
+    ]
 }
