@@ -184,9 +184,9 @@ var VALUES = [
     "25. ",
     "0x26.toString()",
     "NaN",
-    "undefined",
-    "Infinity",
     "null",
+    "Infinity",
+    "undefined",
     "[]",
     "[,0][1]", // an array with elisions... but this is always false
     "([,0].length === 2)", // an array with elisions... this is always true
@@ -368,6 +368,7 @@ var generator = false;
 var loops = 0;
 var funcs = 0;
 var clazz = 0;
+var imports = 0;
 var in_class = 0;
 var called = Object.create(null);
 var labels = 10000;
@@ -392,6 +393,10 @@ function appendExport(stmtDepth, allowDefault) {
     return "";
 }
 
+function mayDefer(code) {
+    return SUPPORT.arrow && rng(50) == 0 ? "void setTimeout(() => (" + code + "), 0)" : code;
+}
+
 function createTopLevelCode() {
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
     block_vars.length = 0;
@@ -404,6 +409,7 @@ function createTopLevelCode() {
     loops = 0;
     funcs = 0;
     clazz = 0;
+    imports = 0;
     in_class = 0;
     called = Object.create(null);
     var s = [
@@ -419,7 +425,7 @@ function createTopLevelCode() {
         }
     });
     // preceding `null` makes for a cleaner output (empty string still shows up etc)
-    s.push("console.log(null, a, b, c, Infinity, NaN, undefined);");
+    s.push(mayDefer("console.log(null, a, b, c, Infinity, NaN, undefined)") + ";");
     return s.join("\n");
 }
 
@@ -925,6 +931,15 @@ function declareVarName(name, no_var) {
     return rng(2) ? "let " : "const ";
 }
 
+function createImportAlias() {
+    if (rng(10)) return "alias" + imports++;
+    unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
+    var name = createVarName(MANDATORY);
+    block_vars.push(name);
+    unique_vars.length -= 6;
+    return name;
+}
+
 function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth, target) {
     ++stmtDepth;
     var loop = ++loops;
@@ -1010,7 +1025,12 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         if (/^key/.test(key)) VAR_NAMES.push(key);
         if (rng(3)) {
             s += "c = 1 + c; ";
-            var name = createVarName(MANDATORY);
+            unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
+            var name;
+            do {
+                name = createVarName(MANDATORY);
+            } while (name == key);
+            unique_vars.length -= 6;
             s += declareVarName(name) + name + " = expr" + loop + "[" + key + "]; ";
         }
         s += createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
@@ -1031,30 +1051,20 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         return "switch (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ") { " + createSwitchParts(recurmax, 4, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_VAR:
         if (SUPPORT.destructuring && stmtDepth == 1 && rng(5) == 0) {
-            unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
-            var s = "";
-            if (rng(2)) {
-                var name = createVarName(MANDATORY);
-                block_vars.push(name);
-                s += " " + name;
-            }
+            var s = rng(2) ? " " + createImportAlias() : "";
             if (rng(10)) {
                 if (s) s += ",";
                 if (rng(2)) {
-                    var name = createVarName(MANDATORY);
-                    block_vars.push(name);
-                    s += " * as " + name;
+                    s += " * as " + createImportAlias();
                 } else {
                     var names = [];
                     for (var i = rng(4); --i >= 0;) {
-                        var name = createVarName(MANDATORY);
-                        block_vars.push(name);
+                        var name = createImportAlias();
                         names.push(rng(2) ? getDotKey() + " as " + name : name);
                     }
                     s += " { " + names.join(", ") + " }";
                 }
             }
-            unique_vars.length -= 6;
             if (s) s += " from";
             return "import" + s + ' "path/to/module.js";';
         } else if (SUPPORT.destructuring && rng(20) == 0) {
@@ -1234,6 +1244,10 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         return createValue();
       case p++:
+        if (SUPPORT.destructuring && rng(20) == 0) {
+            var name = "alias" + rng(imports + 2);
+            return canThrow && rng(20) == 0 ? name : "typeof " + name + ' != "undefined" && ' + name;
+        }
       case p++:
         return getVarName();
       case p++:
@@ -1463,9 +1477,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
       case p++:
         var name = getVarName();
-        var s = name + "." + getDotKey();
-        s = "typeof " + s + ' == "function" && --_calls_ >= 0 && ' + s + createArgs(recurmax, stmtDepth, canThrow);
-        return canThrow && rng(20) == 0 ? s : name + " && " + s;
+        var fn = name + "." + getDotKey();
+        var s = "typeof " + fn + ' == "function" && --_calls_ >= 0 && ' + fn + createArgs(recurmax, stmtDepth, canThrow);
+        return mayDefer(canThrow && rng(20) == 0 ? s : name + " && " + s);
       case p++:
         if (SUPPORT.class && classes.length) switch (rng(20)) {
           case 0:
@@ -1497,7 +1511,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
         } while (name in called && !called[name]);
         called[name] = true;
-        return "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + createArgs(recurmax, stmtDepth, canThrow);
+        return mayDefer("typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + createArgs(recurmax, stmtDepth, canThrow));
     }
     _createExpression.N = p;
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
@@ -1557,15 +1571,19 @@ var SAFE_KEYS = [
     "a",
     "b",
     "c",
-    "undefined",
-    "null",
-    "NaN",
-    "Infinity",
-    "done",
     "foo",
+    "NaN",
+    "null",
+    "Infinity",
+    "undefined",
+    "async",
+    "done",
+    "get",
     "in",
     "length",
     "next",
+    "set",
+    "static",
     "then",
     "value",
     "var",
