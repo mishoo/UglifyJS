@@ -8756,3 +8756,51 @@ issue_4586_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4732_1: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function(b) {
+            var b = a++;
+            var c = b ? b && console.log("PASS") : 0;
+        })(a++);
+    }
+    expect: {
+        var a = 0;
+        (function(b) {
+            (b = a++) && (b && console.log("PASS"));
+        })(a++);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4732_2: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function(b) {
+            var b = a++;
+            var c = b ? b && console.log("PASS") : 0;
+        })(a++);
+    }
+    expect: {
+        var a = 0;
+        (function(b) {
+            (b = a++) && b && console.log("PASS");
+        })(a++);
+    }
+    expect_stdout: "PASS"
+}
