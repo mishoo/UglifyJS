@@ -140,6 +140,7 @@ issue_4487: {
         functions: true,
         hoist_vars: true,
         keep_fnames: true,
+        passes: 2,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -206,4 +207,36 @@ issue_4517: {
         }());
     }
     expect_stdout: "2boolean"
+}
+
+issue_4736: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        hoist_vars: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f() {
+            (function g() {
+                var b = (a = 0, 1 << 30);
+                var c = (a = 0, console.log(b));
+                var d = c;
+            })(f);
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            (function() {
+                0,
+                console.log(1073741824);
+            })();
+        })();
+    }
+    expect_stdout: "1073741824"
 }
