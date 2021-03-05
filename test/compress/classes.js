@@ -620,11 +620,10 @@ collapse_rhs: {
     expect: {
         "use strict";
         var a = "FAIL";
-        a = "PASS";
         class A {
             p = "PASS";
         }
-        console.log(a);
+        console.log(a = "PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=12"

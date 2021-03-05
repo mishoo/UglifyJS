@@ -958,8 +958,7 @@ collapse_vars_misc: {
     }
     expect: {
         function f0(o, a, h) {
-            var b = 3 - a;
-            return o.run(b)[7] = h;
+            return o.run(3 - a)[7] = h;
         }
         function f1(x) { return 5 - x }
         function f2(x) { return foo() / (5 - x) }
@@ -2276,8 +2275,8 @@ var_defs: {
     }
     expect: {
         var f1 = function(x, y) {
-            var r = x + y, z = r * r - r, b = 7;
-            console.log(z + b);
+            var r = x + y;
+            console.log(r * r - r + 7);
         };
         f1("1", 0);
     }
@@ -2907,8 +2906,7 @@ issue_2187_1: {
         var a = 1;
         !function(foo) {
             foo();
-            var a = 2;
-            console.log(a);
+            console.log(2);
         }(function() {
             console.log(a);
         });
@@ -6961,8 +6959,7 @@ sequence_in_iife_2: {
     }
     expect: {
         var a = "foo", b = 42;
-        b = a;
-        console.log(a, b);
+        console.log(a, b = a);
     }
     expect_stdout: "foo foo"
 }
@@ -8803,4 +8800,60 @@ issue_4732_2: {
         })(a++);
     }
     expect_stdout: "PASS"
+}
+
+dot_in_try: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var o, a = 6, b = 7, c;
+        try {
+            c = a * b;
+            o.p(c);
+        } catch (e) {
+            console.log(c);
+        }
+    }
+    expect: {
+        var o, a = 6, b = 7, c;
+        try {
+            c = a * b;
+            o.p(c);
+        } catch (e) {
+            console.log(c);
+        }
+    }
+    expect_stdout: "42"
+}
+
+dot_non_local: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var o, a = 6, b = 7, c;
+        function f() {
+            c = a * b;
+            o.p(c);
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log(c);
+        }
+    }
+    expect: {
+        var o, a = 6, b = 7, c;
+        function f() {
+            c = a * b;
+            o.p(c);
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log(c);
+        }
+    }
+    expect_stdout: "42"
 }
