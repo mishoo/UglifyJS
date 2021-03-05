@@ -137,6 +137,12 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (parent instanceof U.AST_ExportDefault) return;
             if (parent instanceof U.AST_ExportForeign) return;
             if (parent instanceof U.AST_ExportReferences) return;
+            // preserve sole definition of an export statement
+            if (node instanceof U.AST_VarDef
+                && parent.definitions.length == 1
+                && tt.parent(1) instanceof U.AST_ExportDeclaration) {
+                return;
+            }
             // preserve for (var xxx; ...)
             if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Definitions) return node;
             // preserve for (xxx in/of ...)
@@ -458,13 +464,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     node.start._permute++;
                     CHANGED = true;
                     return List.skip;
-                }
-
-                // preserve sole definition of an export statement
-                if (node instanceof U.AST_VarDef
-                    && parent.definitions.length == 1
-                    && tt.parent(1) instanceof U.AST_ExportDeclaration) {
-                    return node;
                 }
 
                 // remove this node unless its the sole element of a (transient) sequence
