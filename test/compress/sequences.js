@@ -663,12 +663,21 @@ side_effects_cascade_1: {
             if (a < 0) a = 0;
             b.a = a;
         }
+        var m = {}, n = {};
+        f(13, m);
+        f("foo", n);
+        console.log(m.a, n.a);
     }
     expect: {
         function f(a, b) {
-            (a -= 42) < 0 && (a = 0), b.a = a;
+            b.a = a = (a -= 42) < 0 ? 0 : a;
         }
+        var m = {}, n = {};
+        f(13, m),
+        f("foo", n),
+        console.log(m.a, n.a);
     }
+    expect_stdout: "0 NaN"
 }
 
 side_effects_cascade_2: {

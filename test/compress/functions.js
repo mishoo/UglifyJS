@@ -2492,14 +2492,14 @@ issue_3297_3: {
     input: {
         function function1(session) {
             var public = {
-                processBulk: processBulk
+                processBulk: processBulk,
             };
             return public;
             function processBulk(bulk) {
                 var subparam1 = session();
                 function processOne(param1) {
                     var param2 = {
-                        subparam1: subparam1
+                        subparam1: subparam1,
                     };
                     doProcessOne({
                         param1: param1,
@@ -2525,18 +2525,18 @@ issue_3297_3: {
             return {
                 processBulk: function n(o) {
                     var r, t, u = c();
-                    o && 0 < o.length && (r = {
-                        param1: o.shift(),
-                        param2: {
-                            subparam1: u
-                        }
-                    },
+                    o && 0 < o.length && (r = o.shift(),
                     t = function() {
                         n(o);
                     },
-                    console.log(JSON.stringify(r)),
+                    console.log(JSON.stringify({
+                        param1: r,
+                        param2: {
+                            subparam1: u,
+                        },
+                    })),
                     t());
-                }
+                },
             };
         }
         function1(function() {
