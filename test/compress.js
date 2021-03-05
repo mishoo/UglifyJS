@@ -10,33 +10,38 @@ var sandbox = require("./sandbox");
 var semver = require("semver");
 var U = require("./node");
 
-var file = process.argv[2];
+var batch = 50;
 var dir = path.resolve(path.dirname(module.filename), "compress");
-if (file) {
+if (process.argv.length > 3) {
+    var file = process.argv[2];
+    var start = process.argv[3] | 0;
     var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
-    log("--- {file}", { file: file });
     var tests = parse_test(path.resolve(dir, file));
-    process.exit(Object.keys(tests).filter(function(name) {
+    process.exit(Object.keys(tests).slice(start, start + batch).filter(function(name) {
         return !test_case(tests[name]);
     }).length);
 } else {
-    var files = fs.readdirSync(dir).filter(function(name) {
+    var files = process.argv.length == 3 ? [ process.argv[2] ] : fs.readdirSync(dir).filter(function(name) {
         return /\.js$/i.test(name);
     });
     var failures = 0;
     var failed_files = Object.create(null);
-    (function next() {
-        var file = files.shift();
-        if (file) {
-            child_process.spawn(process.argv[0], [ process.argv[1], file ], {
+    (function next(file, start, length) {
+        if (start < length) {
+            child_process.spawn(process.argv[0], [ process.argv[1], file, start, batch ], {
                 stdio: [ "ignore", 1, 2 ]
             }).on("exit", function(code) {
                 if (code) {
                     failures += code;
-                    failed_files[file] = code;
+                    failed_files[file] = true;
                 }
-                next();
+                next(file, start + batch, length);
             });
+        } else if (file = files.shift()) {
+            log("--- {file}", { file: file });
+            start = 0;
+            length = Object.keys(parse_test(path.resolve(dir, file))).length;
+            next(file, start, length);
         } else if (failures) {
             console.error();
             console.error("!!! Failed " + failures + " test case(s).");
