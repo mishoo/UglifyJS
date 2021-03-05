@@ -23,16 +23,34 @@ async_label: {
 }
 
 await_await: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
     input: {
         (async function() {
-            console.log("PASS");
-            await await 42;
+            await await {
+                then(resolve) {
+                    resolve({
+                        then() {
+                            console.log("PASS");
+                        },
+                    });
+                },
+            };
         })();
     }
     expect: {
         (async function() {
-            console.log("PASS");
-            await await 42;
+            await {
+                then(resolve) {
+                    resolve({
+                        then() {
+                            console.log("PASS");
+                        },
+                    });
+                },
+            };
         })();
     }
     expect_stdout: "PASS"
@@ -1276,6 +1294,87 @@ issue_4717: {
         })().then(console.log).catch(function() {
             console.log("PASS");
         });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4738_1: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            await {
+                then() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect: {
+        (async function() {
+            await {
+                then() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4738_2: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            await {
+                get then() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect: {
+        (async function() {
+            await {
+                get then() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4738_3: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            await {
+                then: function() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect: {
+        (async function() {
+            await {
+                then: function() {
+                    console.log("PASS");
+                },
+            };
+        })();
     }
     expect_stdout: "PASS"
     node_version: ">=8"
