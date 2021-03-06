@@ -5752,3 +5752,22 @@ issue_4725_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+new_target: {
+    input: {
+        console.log(typeof new function() {
+            return new.target;
+        }, function() {
+            return new.target;
+        }());
+    }
+    expect: {
+        console.log(typeof new function() {
+            return new.target;
+        }(), function() {
+            return new.target;
+        }());
+    }
+    expect_stdout: "function undefined"
+    node_version: ">=6"
+}
