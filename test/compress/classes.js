@@ -1225,3 +1225,22 @@ issue_4725_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+new_target: {
+    input: {
+        console.log(typeof new class {
+            constructor() {
+                this.f = () => new.target;
+            }
+        }().f());
+    }
+    expect: {
+        console.log(typeof new class {
+            constructor() {
+                this.f = () => new.target;
+            }
+        }().f());
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
