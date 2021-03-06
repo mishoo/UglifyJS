@@ -382,3 +382,62 @@ single_use_class_default: {
         A.prototype.p = "PASS";
     }
 }
+
+issue_4742_join_vars_1: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a = 42;
+        export var a;
+    }
+    expect: {
+        var a = 42;
+        export var a;
+    }
+}
+
+issue_4742_join_vars_2: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        export var a = "foo";
+        var b;
+        b = "bar";
+    }
+    expect: {
+        export var a = "foo";
+        var b, b = "bar";
+    }
+}
+
+issue_4742_unused_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        export var a;
+    }
+    expect: {
+        var a = 42;
+        export var a;
+    }
+}
+
+issue_4742_unused_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export var a = "foo";
+        var a = "bar";
+    }
+    expect: {
+        export var a = "foo";
+        a = "bar";
+    }
+}
