@@ -27,7 +27,7 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
 } : semver.satisfies(process.version, "<0.12") ? run_code_vm : function(code, toplevel, timeout) {
     if ([
         /\basync[ \t]*\([\s\S]*?\)[ \t]*=>/,
-        /\b(async[ \t]+function|setInterval|setTimeout)\b/,
+        /\b(async[ \t]+function|setImmediate|setInterval|setTimeout)\b/,
         /\basync([ \t]+|[ \t]*\*[ \t]*)[^\s()[\]{},.&|!~=*%/+-]+(\s*\(|[ \t]*=>)/,
     ].some(function(pattern) {
         return pattern.test(code);
@@ -175,12 +175,14 @@ function setup(global, builtins, setup_log, setup_tty) {
     [
         // for Node.js v0.12
         "Buffer",
+        "clearImmediate",
         "clearInterval",
         "clearTimeout",
         // for Node.js v0.12
         "DTRACE_NET_STREAM_END",
         // for Node.js v8
         "process",
+        "setImmediate",
         "setInterval",
         "setTimeout",
     ].forEach(function(name) {

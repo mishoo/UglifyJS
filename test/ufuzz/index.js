@@ -363,6 +363,7 @@ var lambda_vars = [];
 var unique_vars = [];
 var classes = [];
 var async = false;
+var has_await = false;
 var export_default = false;
 var generator = false;
 var loops = 0;
@@ -394,7 +395,11 @@ function appendExport(stmtDepth, allowDefault) {
 }
 
 function mayDefer(code) {
-    return SUPPORT.arrow && rng(50) == 0 ? "void setTimeout(() => (" + code + "), 0)" : code;
+    if (SUPPORT.arrow && rng(200) == 0) {
+        has_await = true;
+        return "void setImmediate(() => (" + code + "))";
+    }
+    return code;
 }
 
 function createTopLevelCode() {
@@ -404,6 +409,7 @@ function createTopLevelCode() {
     unique_vars.length = 0;
     classes.length = 0;
     async = false;
+    has_await = false;
     export_default = false;
     generator = false;
     loops = 0;
@@ -425,7 +431,9 @@ function createTopLevelCode() {
         }
     });
     // preceding `null` makes for a cleaner output (empty string still shows up etc)
-    s.push(mayDefer("console.log(null, a, b, c, Infinity, NaN, undefined)") + ";");
+    var log = "console.log(null, a, b, c, Infinity, NaN, undefined)";
+    if (SUPPORT.arrow && has_await && rng(20) == 0) log = "setImmediate(() => " + log + ")";
+    s.push(log + ";");
     return s.join("\n");
 }
 
@@ -714,7 +722,7 @@ function createBlockVariables(recurmax, stmtDepth, canThrow, fn) {
         consts.forEach(addAvoidVar);
         lets.forEach(addAvoidVar);
         var s = [];
-        if (SUPPORT.class) while (rng(100) == 0) {
+        if (SUPPORT.class) while (rng(200) == 0) {
             var name = "C" + clazz++;
             classes.push(name);
             s.push(appendExport(stmtDepth, true) + createClassLiteral(recurmax, stmtDepth, canThrow, name));
@@ -812,8 +820,8 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
     var nameLenBefore = VAR_NAMES.length;
     var lambda_len = lambda_vars.length;
     var save_async = async;
-    async = SUPPORT.async && rng(50) == 0;
     var save_generator = generator;
+    async = SUPPORT.async && rng(200) == 0;
     generator = SUPPORT.generator && rng(50) == 0;
     if (async && generator && !SUPPORT.async_generator) {
         if (rng(2)) {
@@ -1016,7 +1024,10 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                 s += '"" + (' + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "); ";
             }
             s += label.target + " for ";
-            if (await) s += "await ";
+            if (await) {
+                s += "await ";
+                has_await = true;
+            }
             s += "(" + init + " of expr" + loop + ") {";
         } else {
             s += createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "; ";
@@ -1212,7 +1223,10 @@ function createExpression(recurmax, noComma, stmtDepth, canThrow) {
         return "((c = c + 1) + (" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + "))"; // c only gets incremented
       default:
         var expr = "(" + _createExpression(recurmax, noComma, stmtDepth, canThrow) + ")";
-        if (async && rng(50) == 0) return "(await" + expr + ")";
+        if (async && rng(50) == 0) {
+            has_await = true;
+            return "(await" + expr + ")";
+        }
         if (generator && rng(50) == 0) return "(yield" + (canThrow && rng(20) == 0 ? "*" : "") + expr + ")";
         return expr;
     }
@@ -1282,8 +1296,8 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         var nameLenBefore = VAR_NAMES.length;
         var lambda_len = lambda_vars.length;
         var save_async = async;
-        async = SUPPORT.async && rng(50) == 0;
         var save_generator = generator;
+        async = SUPPORT.async && rng(200) == 0;
         generator = SUPPORT.generator && rng(50) == 0;
         if (async && generator && !SUPPORT.async_generator) {
             if (rng(2)) {
@@ -1481,27 +1495,29 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         var s = "typeof " + fn + ' == "function" && --_calls_ >= 0 && ' + fn + createArgs(recurmax, stmtDepth, canThrow);
         return mayDefer(canThrow && rng(20) == 0 ? s : name + " && " + s);
       case p++:
-        if (SUPPORT.class && classes.length) switch (rng(20)) {
-          case 0:
-            return "--_calls_ >= 0 && new " + classes[rng(classes.length)] + createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE);
-          case 1:
-            var s = "--_calls_ >= 0 && new ";
-            var nameLenBefore = VAR_NAMES.length;
-            var class_len = classes.length;
-            var name;
-            if (canThrow && rng(20) == 0) {
-                in_class++;
-                name = createVarName(MAYBE);
-                in_class--;
-            } else if (rng(2)) {
-                name = "C" + clazz++;
-                classes.push(name);
+        if (SUPPORT.class) {
+            if (classes.length && rng(20) == 0) {
+                return "--_calls_ >= 0 && new " + classes[rng(classes.length)] + createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE);
             }
-            s += createClassLiteral(recurmax, stmtDepth, canThrow, name);
-            classes.length = class_len;
-            VAR_NAMES.length = nameLenBefore;
-            s += createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE);
-            return s;
+            if (rng(200) == 0) {
+                var s = "--_calls_ >= 0 && new ";
+                var nameLenBefore = VAR_NAMES.length;
+                var class_len = classes.length;
+                var name;
+                if (canThrow && rng(20) == 0) {
+                    in_class++;
+                    name = createVarName(MAYBE);
+                    in_class--;
+                } else if (rng(2)) {
+                    name = "C" + clazz++;
+                    classes.push(name);
+                }
+                s += createClassLiteral(recurmax, stmtDepth, canThrow, name);
+                classes.length = class_len;
+                VAR_NAMES.length = nameLenBefore;
+                s += createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE);
+                return s;
+            }
         }
       case p++:
       case p++:
@@ -1677,7 +1693,7 @@ function createObjectFunction(recurmax, stmtDepth, canThrow, internal, isClazz) 
             generator = false;
             name = "constructor";
         } else {
-            async = SUPPORT.async && rng(50) == 0;
+            async = SUPPORT.async && rng(200) == 0;
             generator = SUPPORT.generator && rng(50) == 0;
             if (async && generator && !SUPPORT.async_generator) {
                 if (rng(2)) {
