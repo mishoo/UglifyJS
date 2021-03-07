@@ -1379,3 +1379,32 @@ issue_4738_3: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4747: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            async function f() {
+                a = "PASS";
+                null.p += "PASS";
+            }
+            f();
+            return a;
+        }("FAIL"));
+    }
+    expect: {
+        console.log(function(a) {
+            (async function() {
+                a = "PASS";
+                null.p += "PASS";
+            })();
+            return a;
+        }("FAIL"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
