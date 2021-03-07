@@ -2923,13 +2923,14 @@ issue_4568: {
 issue_4729: {
     options = {
         ie8: true,
+        pure_getters: true,
         toplevel: true,
         unused: true,
     }
     input: {
         try {
             f;
-        } catch(e) {
+        } catch (e) {
             var a = a && a[function f() {}];
             console.log("PASS");
         }
@@ -2937,7 +2938,7 @@ issue_4729: {
     expect: {
         try {
             f;
-        } catch(e) {
+        } catch (e) {
             (function f() {});
             console.log("PASS");
         }
