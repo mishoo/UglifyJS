@@ -5771,3 +5771,64 @@ new_target: {
     expect_stdout: "function undefined"
     node_version: ">=6"
 }
+
+issue_4753_1: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var i in [ 1, 2 ])
+            (function() {
+                function f() {}
+                f && console.log(f.p ^= 42);
+            })();
+    }
+    expect: {
+        for (var i in [ 1, 2 ])
+            f = function() {},
+            void (f && console.log(f.p ^= 42));
+        var f;
+    }
+    expect_stdout: [
+        "42",
+        "42",
+    ]
+}
+
+issue_4753_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        do {
+            (function() {
+                var a = f();
+                function f() {
+                    return "PASS";
+                }
+                f;
+                function g() {
+                    console.log(a);
+                }
+                g();
+            })();
+        } while (0);
+    }
+    expect: {
+        do {
+            f = function() {
+                return "PASS";
+            },
+            a = void 0,
+            a = f(),
+            console.log(a);
+        } while (0);
+        var f, a;
+    }
+    expect_stdout: "PASS"
+}
