@@ -561,6 +561,7 @@ drop_side_effect_free_call: {
 
 issue_4730_1: {
     options = {
+        pure_getters: "strict",
         side_effects: true,
     }
     input: {
@@ -569,13 +570,15 @@ issue_4730_1: {
     }
     expect: {
         var a;
-        console.log("PASS");
+        console.log("PASS"),
+        a && a[a.p];
     }
     expect_stdout: "PASS"
 }
 
 issue_4730_2: {
     options = {
+        pure_getters: "strict",
         side_effects: true,
     }
     input: {
@@ -584,7 +587,31 @@ issue_4730_2: {
     }
     expect: {
         var a;
-        console.log("PASS");
+        !console.log("PASS") || a && a[a.p];
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4751: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            },
+        };
+        o && o.p;
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            },
+        };
+        o && o.p;
     }
     expect_stdout: "PASS"
 }
