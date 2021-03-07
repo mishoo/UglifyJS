@@ -203,7 +203,23 @@ mangle_rename: {
     }
 }
 
-hoist_exports: {
+hoist_exports_1: {
+    options = {
+        hoist_exports: true,
+    }
+    input: {
+        export { a };
+        export var b;
+        export function f() {}
+    }
+    expect: {
+        var b;
+        function f() {}
+        export { a, b, f };
+    }
+}
+
+hoist_exports_2: {
     options = {
         evaluate: true,
         hoist_exports: true,
