@@ -113,6 +113,9 @@ function process_option(name, no_value) {
                 "  --warn                                   Print warning messages.",
                 "  --webkit                                 Support non-standard Safari/Webkit.",
                 "  --wrap <name>                            Embed everything as a function with “exports” corresponding to “name” globally.",
+                "",
+                "(internal debug use only)",
+                "  --in-situ                                Warning: replaces original source files with minified output.",
                 "  --reduce-test                            Reduce a standalone test case (assumes cloned repository).",
             ].join("\n"));
         }
@@ -194,6 +197,7 @@ function process_option(name, no_value) {
       case "no-rename":
         options.rename = false;
         break;
+      case "in-situ":
       case "reduce-test":
       case "self":
         break;
@@ -254,7 +258,17 @@ if (specified["self"]) {
     if (!options.wrap) options.wrap = "UglifyJS";
     paths = UglifyJS.FILES;
 }
-if (paths.length) {
+if (specified["in-situ"]) {
+    if (output || specified["reduce-test"] || specified["self"]) fatal("incompatible options specified");
+    paths.forEach(function(name) {
+        print(name);
+        if (/^ast|spidermonkey$/.test(name)) fatal("invalid file name specified");
+        files = {};
+        files[convert_path(name)] = read_file(name);
+        output = name;
+        run();
+    });
+} else if (paths.length) {
     simple_glob(paths).forEach(function(name) {
         files[convert_path(name)] = read_file(name);
     });

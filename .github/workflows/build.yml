@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         options: [ '-mb braces', '-mc', '--toplevel -mc passes=10,pure_getters,unsafe' ]
-        script: [ acorn.sh, buble.sh, butternut.sh, rollup-es.sh, rollup-ts.sh, sucrase.sh ]
+        script: [ acorn.sh, buble.sh, butternut.sh, mathjs.sh, rollup-es.sh, rollup-ts.sh, sucrase.sh ]
         include:
           - node: '14'
             script: acorn.sh
@@ -17,6 +17,8 @@ jobs:
             script: buble.sh
           - node: '14'
             script: butternut.sh
+          - node: '14'
+            script: mathjs.sh
           - node: '8'
             script: rollup-es.sh
           - node: '14'
