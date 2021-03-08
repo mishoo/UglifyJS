@@ -1244,3 +1244,34 @@ new_target: {
     expect_stdout: "function"
     node_version: ">=6"
 }
+
+issue_4756: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            class A extends 42 {
+                static [console.log("foo")] = console.log("bar");
+            }
+        } catch (e) {
+            console.log("baz");
+        }
+    }
+    expect: {
+        try {
+            (class extends 42 {
+                [console.log("foo")]() {}
+            }),
+            (() => console.log("bar"))();
+        } catch (e) {
+            console.log("baz");
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+    ]
+    node_version: ">=12"
+}
