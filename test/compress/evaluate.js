@@ -847,6 +847,8 @@ unsafe_charAt_noop: {
         unsafe: true,
     }
     input: {
+        s = "foo";
+        x = 42;
         console.log(
             s.charAt(0),
             "string".charAt(x),
@@ -854,12 +856,15 @@ unsafe_charAt_noop: {
         );
     }
     expect: {
+        s = "foo";
+        x = 42;
         console.log(
-            s[0],
-            "string"[0 | x],
-            (typeof x)[0]
+            s[0] || "",
+            "string"[0 | x] || "",
+            (typeof x)[0] || ""
         );
     }
+    expect_stdout: "f  n"
 }
 
 issue_1649: {
