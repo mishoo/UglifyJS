@@ -4,18 +4,18 @@ alias uglify-js=$PWD/bin/uglifyjs
 UGLIFY_OPTIONS=$@
 
 minify_in_situ() {
+    ARGS="$UGLIFY_OPTIONS --in-situ"
     DIRS="$1"
     echo '> uglify-js' $DIRS $UGLIFY_OPTIONS
     for i in `find $DIRS -name '*.js'`
     do
-        echo "$i"
-        uglify-js "$i" $UGLIFY_OPTIONS -o "$i"
+        ARGS="$ARGS $i"
     done
     for i in `find $DIRS -name '*.mjs'`
     do
-        echo "$i"
-        uglify-js "$i" $UGLIFY_OPTIONS -o "$i"
+        ARGS="$ARGS $i"
     done
+    uglify-js $ARGS
     for i in `find $DIRS -name '*.ts' | grep -v '\.d\.ts'`
     do
         echo "$i"
