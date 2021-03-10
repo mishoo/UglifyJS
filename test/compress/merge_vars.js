@@ -2620,9 +2620,9 @@ issue_4126_1: {
             try {
                 console.log("PASS");
             } catch (e) {
-                var b = a;
+                var c = a;
             } finally {
-                var c = b;
+                var c = c;
             }
             console.log(c);
         }
@@ -3238,4 +3238,46 @@ issue_4653: {
         "2",
         "0",
     ]
+}
+
+issue_4759: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var i = 2, a = 1, b, c, d;
+        while (i--) {
+            try {
+                if (1 != b) {
+                    d = [];
+                    null.p;
+                    c = d;
+                } else {
+                    b = 0;
+                    a = c;
+                }
+            } catch (e) {}
+            b = a;
+        }
+        console.log(a);
+    }
+    expect: {
+        var i = 2, a = 1, b, c, d;
+        while (i--) {
+            try {
+                if (1 != b) {
+                    d = [];
+                    null.p;
+                    c = d;
+                } else {
+                    b = 0;
+                    a = c;
+                }
+            } catch (e) {}
+            b = a;
+        }
+        console.log(a);
+    }
+    expect_stdout: "undefined"
 }
