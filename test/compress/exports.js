@@ -457,3 +457,10 @@ issue_4742_unused_2: {
         a = "bar";
     }
 }
+
+issue_4761: {
+    input: {
+        export default "function" == 42;
+    }
+    expect_exact: 'export default"function"==42;'
+}

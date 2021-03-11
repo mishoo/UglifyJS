@@ -3281,3 +3281,23 @@ issue_4759: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4761: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "FAIL", b;
+        try {
+            !a && --a && (b = 0)[console] || console.log(b);
+        } catch (e) {}
+    }
+    expect: {
+        var a = "FAIL", b;
+        try {
+            !a && --a && (b = 0)[console] || console.log(b);
+        } catch (e) {}
+    }
+    expect_stdout: "undefined"
+}
