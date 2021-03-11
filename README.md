@@ -704,7 +704,7 @@ to be `false` and all symbol names will be omitted.
   Pass `true` to always retain function arguments.
 
 - `keep_infinity` (default: `false`) -- Pass `true` to prevent `Infinity` from
-  being compressed into `1/0`, which may cause performance issues on Chrome.
+  being compressed into `1/0`, which may cause performance issues on old versions of Chrome.
 
 - `loops` (default: `true`) -- optimizations for `do`, `while` and `for` loops
   when we can statically determine the condition.
