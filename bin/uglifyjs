@@ -95,6 +95,8 @@ function process_option(name, no_value) {
                 "  -b, --beautify [options]                 Beautify output/specify output options.",
                 "  -O, --output-opts <options>              Output options (beautify disabled).",
                 "  -o, --output <file>                      Output file (default STDOUT).",
+                "  --annotations                            Process and preserve comment annotations.",
+                "  --no-annotations                         Ignore and discard comment annotations.",
                 "  --comments [filter]                      Preserve copyright comments in the output.",
                 "  --config-file <file>                     Read minify() options from JSON file.",
                 "  -d, --define <expr>[=value]              Global definitions.",
@@ -142,12 +144,16 @@ function process_option(name, no_value) {
       case "enclose":
         options[name] = read_value();
         break;
+      case "annotations":
       case "ie8":
       case "timings":
       case "toplevel":
       case "validate":
       case "webkit":
         options[name] = true;
+        break;
+      case "no-annotations":
+        options.annotations = false;
         break;
       case "keep-fnames":
         options.keep_fnames = true;

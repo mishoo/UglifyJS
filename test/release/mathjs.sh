@@ -1,7 +1,7 @@
 #!/bin/sh
 
 alias uglify-js=$PWD/bin/uglifyjs
-UGLIFY_OPTIONS=$@
+UGLIFY_OPTIONS="--annotations $@"
 
 minify_in_situ() {
     ARGS="$UGLIFY_OPTIONS --in-situ"
@@ -46,11 +46,6 @@ rm -rf tmp/mathjs \
 @@ -68 +75 @@ export function format (value, options) {
 -      return value.toString()
 +      return HACK(value).toString()
---- a/test/node-tests/treeShaking/treeShaking.test.js
-+++ b/test/node-tests/treeShaking/treeShaking.test.js
-@@ -35 +35 @@ describe('tree shaking', function () {
--  it('should apply tree-shaking when bundling', function (done) {
-+  if (0) it('should apply tree-shaking when bundling', function (done) {
 --- a/test/unit-tests/expression/node/Node.test.js
 +++ b/test/unit-tests/expression/node/Node.test.js
 @@ -157 +157 @@ describe('Node', function () {
