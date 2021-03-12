@@ -235,8 +235,8 @@ describe("minify", function() {
                 }
             });
             var code = result.code;
-            assert.strictEqual(code, "var a=/* */function(){foo()}();");
-        })
+            assert.strictEqual(code, "var a=function(){foo()}();");
+        });
     });
 
     describe("JS_Parse_Error", function() {

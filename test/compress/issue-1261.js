@@ -1,5 +1,6 @@
 pure_function_calls: {
     options = {
+        annotations: true,
         booleans: true,
         comparisons: true,
         conditionals: true,
@@ -60,6 +61,7 @@ pure_function_calls: {
 
 pure_function_calls_toplevel: {
     options = {
+        annotations: true,
         booleans: true,
         comparisons: true,
         conditionals: true,
@@ -126,6 +128,7 @@ pure_function_calls_toplevel: {
 
 should_warn: {
     options = {
+        annotations: true,
         booleans: true,
         conditionals: true,
         evaluate: true,

@@ -426,6 +426,7 @@ wrap_iife_in_return_call: {
 
 pure_annotation_1: {
     options = {
+        annotations: true,
         inline: true,
         side_effects: true,
     }
@@ -439,6 +440,7 @@ pure_annotation_1: {
 
 pure_annotation_2: {
     options = {
+        annotations: true,
         collapse_vars: true,
         inline: true,
         side_effects: true,
