@@ -564,7 +564,7 @@ drop_return: {
     input: {
         (async function(a) {
             while (!console);
-            return console.log(a);
+            return !console.log(a);
         })(42);
     }
     expect: {
@@ -1404,6 +1404,81 @@ issue_4747: {
             })();
             return a;
         }("FAIL"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4764_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            return {
+                then() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect: {
+        (async function() {
+            return {
+                then() {
+                    console.log("PASS");
+                },
+            };
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4764_2: {
+    options = {
+        arrows: true,
+        side_effects: true,
+    }
+    input: {
+        (async () => ({
+            get then() {
+                console.log("PASS");
+            },
+        }))();
+    }
+    expect: {
+        (async () => ({
+            get then() {
+                console.log("PASS");
+            },
+        }))();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_4764_3: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (async function(o) {
+            return o;
+        })({
+            then() {
+                console.log("PASS");
+            },
+        });
+    }
+    expect: {
+        (async function(o) {
+            return o;
+        })({
+            then() {
+                console.log("PASS");
+            },
+        });
     }
     expect_stdout: "PASS"
     node_version: ">=8"
