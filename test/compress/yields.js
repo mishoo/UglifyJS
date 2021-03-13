@@ -950,3 +950,43 @@ issue_4641_2: {
     ]
     node_version: ">=10"
 }
+
+issue_4769_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        console.log(function*() {
+            (function({} = yield => {}) {})();
+        }().next().done);
+    }
+    expect: {
+        console.log(function*() {
+            (function({} = yield => {}) {})();
+        }().next().done);
+    }
+    expect_stdout: "true"
+    node_version: ">=6"
+}
+
+issue_4769_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function*() {
+            return function({} = yield => {}) {
+                return "PASS";
+            }();
+        }().next().value);
+    }
+    expect: {
+        console.log(function*() {
+            return function({} = yield => {}) {
+                return "PASS";
+            }();
+        }().next().value);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
