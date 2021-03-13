@@ -3,7 +3,7 @@ refs: {
         export {};
         export { a, b as B, c as case, d as default };
     }
-    expect_exact: "export{};export{a as a,b as B,c as case,d as default};"
+    expect_exact: "export{};export{a,b as B,c as case,d as default};"
 }
 
 var_defs: {
@@ -12,7 +12,7 @@ var_defs: {
         export let b = 2, c = 3;
         export var { d, e: [] } = f;
     }
-    expect_exact: "export const a=1;export let b=2,c=3;export var{d:d,e:[]}=f;"
+    expect_exact: "export const a=1;export let b=2,c=3;export var{d,e:[]}=f;"
 }
 
 defuns: {
@@ -35,7 +35,7 @@ defaults: {
         export default function*(a, b) {};
         export default async function f({ c }, ...[ d ]) {};
     }
-    expect_exact: "export default 42;export default async;export default(x,y)=>x*x;export default class{}export default function*(a,b){}export default async function f({c:c},...[d]){}"
+    expect_exact: "export default 42;export default async;export default(x,y)=>x*x;export default class{}export default function*(a,b){}export default async function f({c},...[d]){}"
 }
 
 defaults_parentheses_1: {
@@ -242,15 +242,15 @@ hoist_exports_2: {
         }
     }
     expect: {
-        let f, { foo: o } = 42;
-        function c(t, { [f]: a }) {
-            t(a, c);
+        let e, { foo: a } = 42;
+        function f(t, { [e]: o }) {
+            t(o, f);
         }
         export default 42;
-        export default async function e(t, ...{ [o]: a }) {
-            (await t)(e, a);
+        export default async function n(t, ...{ [a]: o }) {
+            (await t)(n, o);
         };
-        export { f as bbb, o as ccc, c as fff };
+        export { e as bbb, a as ccc, f as fff };
     }
 }
 
