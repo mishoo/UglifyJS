@@ -464,3 +464,17 @@ issue_4761: {
     }
     expect_exact: 'export default"function"==42;'
 }
+
+issue_4766: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        export var a = "bar";
+    }
+    expect: {
+        var a = "foo";
+        export var a = "bar";
+    }
+}
