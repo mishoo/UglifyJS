@@ -23,7 +23,7 @@ keys_only: {
     input: {
         import { as as foo, bar, delete as baz } from "moo";
     }
-    expect_exact: 'import{as as foo,bar as bar,delete as baz}from"moo";'
+    expect_exact: 'import{as as foo,bar,delete as baz}from"moo";'
 }
 
 default_all: {
@@ -37,7 +37,7 @@ default_keys: {
     input: {
         import foo, { bar } from "baz";
     }
-    expect_exact: 'import foo,{bar as bar}from"baz";'
+    expect_exact: 'import foo,{bar}from"baz";'
 }
 
 dynamic: {
