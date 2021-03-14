@@ -803,3 +803,13 @@ issue_4687_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4772: {
+    input: {
+        var f = a => (a)
+        /**/ console.log(f("PASS"));
+    }
+    expect_exact: 'var f=a=>a;console.log(f("PASS"));'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
