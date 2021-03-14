@@ -36,12 +36,7 @@ jobs:
       - name: Perform uglify, build & test
         shell: bash
         run: |
-          git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add $NODE && nvs use $NODE'; do
-            cd ~/.nvs
-            while !(git clean -xdf); do echo "'git clean' failed - retrying..."; done
-            cd -
-          done
+          ./test/release/setup_node.sh
           . ~/.nvs/nvs.sh --version
           nvs use $NODE
           node --version
