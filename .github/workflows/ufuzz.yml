@@ -30,33 +30,10 @@ jobs:
       NODE: ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install GNU Core Utilities
-        if: ${{ startsWith(matrix.os, 'macos') }}
-        env:
-          HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK: 1
-          HOMEBREW_NO_INSTALL_CLEANUP: 1
-        shell: bash
-        run: |
-          while !(brew install coreutils); do echo "'brew install' failed - retrying..."; done
       - name: Perform fuzzing
         shell: bash
         run: |
-          git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
-          while ! timeout 60 bash -c '. ~/.nvs/nvs.sh add $NODE && nvs use $NODE'; do
-            cd ~/.nvs
-            while !(git clean -xdf); do echo "'git clean' failed - retrying..."; done
-            cd -
-          done
-          . ~/.nvs/nvs.sh --version
-          nvs use $NODE
-          node --version
-          npm config set audit false
-          npm config set optional false
-          npm config set save false
-          npm config set strict-ssl false
-          npm config set update-notifier false
-          npm --version
-          while !(npm install); do echo "'npm install' failed - retrying..."; done
+          . ./test/release/install.sh
           if [[ $CAUSE == "schedule" ]]; then
             node test/ufuzz/job $BASE_URL $TOKEN $RUN_NUM
           else
