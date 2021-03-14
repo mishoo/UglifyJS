@@ -8,8 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        options: [ '-mb braces', '-mc', '--toplevel -mc passes=10,pure_getters,unsafe' ]
-        script: [ acorn.sh, buble.sh, butternut.sh, mathjs.sh, rollup-es.sh, rollup-ts.sh, sucrase.sh ]
+        options: [ '-mb braces', '--ie8 -c', '-mc', '--toplevel -mc passes=3,pure_getters,unsafe' ]
+        script: [ acorn.sh, buble.sh, butternut.sh, mathjs.sh, rollup-es.sh, rollup-ts.sh, sucrase.sh, web-tooling-benchmark.sh ]
         include:
           - node: '14'
             script: acorn.sh
@@ -25,6 +25,8 @@ jobs:
             script: rollup-ts.sh
           - node: '14'
             script: sucrase.sh
+          - node: '14'
+            script: web-tooling-benchmark.sh
     name: ${{ matrix.script }} ${{ matrix.options }}
     runs-on: ubuntu-latest
     env:
