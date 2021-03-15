@@ -43,6 +43,28 @@ await: {
     node_version: ">=8"
 }
 
+assignment_1: {
+    input: {
+        var a = 2;
+        a **= 5;
+        console.log(a);
+    }
+    expect_exact: "var a=2;a**=5;console.log(a);"
+    expect_stdout: "32"
+    node_version: ">=8"
+}
+
+assignment_2: {
+    input: {
+        var a = 8n;
+        a **= a;
+        console.log(a);
+    }
+    expect_exact: "var a=8n;a**=a;console.log(a);"
+    expect_stdout: "16777216n"
+    node_version: ">=10"
+}
+
 evaluate: {
     options = {
         evaluate: true,

@@ -277,14 +277,15 @@ var ASSIGNMENTS = [
     "-=",
     "*=",
     "/=",
+    "%=",
     "&=",
     "|=",
     "^=",
     "<<=",
     ">>=",
     ">>>=",
-    "%=",
 ];
+if (SUPPORT.exponentiation) ASSIGNMENTS.push("**=");
 
 var UNARY_SAFE = [
     "+",
