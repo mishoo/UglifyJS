@@ -1492,7 +1492,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
       case p++:
         var name = getVarName();
         var fn = name + "." + getDotKey();
-        var s = "typeof " + fn + ' == "function" && --_calls_ >= 0 && ' + fn + createArgs(recurmax, stmtDepth, canThrow);
+        var s = "typeof " + fn + ' == "function" && --_calls_ >= 0 && ';
+        s += rng(5) ? fn : "(" + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ", " + fn + ")";
+        s += createArgs(recurmax, stmtDepth, canThrow);
         return mayDefer(canThrow && rng(20) == 0 ? s : name + " && " + s);
       case p++:
         if (SUPPORT.class) {

@@ -73,6 +73,20 @@ tag_parentheses_new: {
     node_version: ">=4"
 }
 
+tag_parentheses_sequence: {
+    input: {
+        var o = {
+            f() {
+                console.log(this === o ? "FAIL" : "PASS");
+            },
+        };
+        (42, o.f)``;
+    }
+    expect_exact: 'var o={f(){console.log(this===o?"FAIL":"PASS")}};(42,o.f)``;'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 malformed_escape: {
     input: {
         (function(s) {
@@ -211,7 +225,7 @@ unsafe_evaluate: {
     node_version: ">=8"
 }
 
-side_effects: {
+side_effects_1: {
     options = {
         side_effects: true,
     }
@@ -225,6 +239,30 @@ side_effects: {
         console.log`\nbar`;
     }
     expect_stdout: true
+    node_version: ">=4"
+}
+
+side_effects_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            f() {
+                console.log(this === o ? "FAIL" : "PASS");
+            },
+        };
+        (42, o.f)``;
+    }
+    expect: {
+        var o = {
+            f() {
+                console.log(this === o ? "FAIL" : "PASS");
+            },
+        };
+        (0, o.f)``;
+    }
+    expect_stdout: "PASS"
     node_version: ">=4"
 }
 
