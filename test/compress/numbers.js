@@ -1,3 +1,10 @@
+literal_infinity: {
+    input: {
+        console.log(2e308, -1e2345);
+    }
+    expect_exact: "console.log(1/0,-(1/0));"
+}
+
 parentheses_for_prototype_functions: {
     beautify = {
         beautify: true,
