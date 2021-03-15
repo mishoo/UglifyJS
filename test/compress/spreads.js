@@ -689,6 +689,57 @@ unused_var_side_effects: {
     node_version: ">=8"
 }
 
+unsafe_join_1: {
+    options = {
+        unsafe: true,
+    }
+    input: {
+        console.log([ ..."foo" ].join());
+    }
+    expect: {
+        console.log([ ..."foo" ].join());
+    }
+    expect_stdout: "f,o,o"
+    node_version: ">=6"
+}
+
+unsafe_join_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log([ "foo", ..."bar" ].join(""));
+    }
+    expect: {
+        console.log([ "foo", ..."bar" ].join(""));
+    }
+    expect_stdout: "foobar"
+    node_version: ">=6"
+}
+
+unsafe_join_3: {
+    options = {
+        unsafe: true,
+    }
+    input: {
+        try {
+            [].join(...console);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            [].join(...console);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 issue_4329: {
     options = {
         objects: true,
