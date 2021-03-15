@@ -85,7 +85,7 @@ collapse_vars_4: {
     node_version: ">=6"
 }
 
-conditionals_farg: {
+conditionals_farg_1: {
     options = {
         conditionals: true,
     }
@@ -102,6 +102,28 @@ conditionals_farg: {
         }
         var a = 42, b = [ "PASS" ], c = [ "FAIL" ];
         log(...a ? b : c);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+conditionals_farg_2: {
+    options = {
+        conditionals: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        var log = console.log;
+        (function(a) {
+            return a.length ? log(...a) : log("FAIL");
+        })([ "PASS" ]);
+    }
+    expect: {
+        var log = console.log;
+        (function(a) {
+            return a.length ? log(...a) : log("FAIL");
+        })([ "PASS" ]);
     }
     expect_stdout: "PASS"
     node_version: ">=6"
