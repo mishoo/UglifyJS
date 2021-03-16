@@ -4,7 +4,7 @@ mangle_keep_fnames_false: {
         keep_fnames: true,
     }
     mangle = {
-        keep_fnames : false,
+        keep_fnames: false,
     }
     input: {
         "use strict";
@@ -30,7 +30,7 @@ mangle_keep_fnames_true: {
         keep_fnames: true,
     }
     mangle = {
-        keep_fnames : true,
+        keep_fnames: true,
     }
     input: {
         "use strict";

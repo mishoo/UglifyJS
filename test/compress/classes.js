@@ -779,6 +779,27 @@ computed_key_generator: {
     node_version: ">=4"
 }
 
+keep_fnames: {
+    options = {
+        keep_fnames: true,
+        toplevel: true,
+    }
+    mangle = {
+        keep_fnames: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        class Foo {}
+        console.log(Foo.name, class Bar {}.name);
+    }
+    expect: {
+        "use strict";
+        class Foo {}
+        console.log(Foo.name, class Bar {}.name);
+    }
+}
+
 issue_805_1: {
     options = {
         inline: true,
