@@ -5912,3 +5912,40 @@ issue_4753_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4788: {
+    options = {
+        evaluate: true,
+        functions: true,
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a = function g() {
+                if (0) {
+                    var g = 42;
+                    f();
+                }
+                g || console.log("PASS");
+            };
+            a(a);
+        }
+        f();
+    }
+    expect: {
+        (function f() {
+            function a() {
+                if (0) {
+                    var g = 42;
+                    f();
+                }
+                g || console.log("PASS");
+            }
+            a();
+        })();
+    }
+    expect_stdout: "PASS"
+}

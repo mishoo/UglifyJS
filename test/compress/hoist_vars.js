@@ -153,7 +153,7 @@ issue_4487: {
     }
     expect: {
         function a() {
-            var a = console.log(typeof a);
+            var f = console.log(typeof f);
         }
         a();
     }
