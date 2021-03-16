@@ -1490,3 +1490,49 @@ issue_4751: {
         };
     }
 }
+
+super_toString: {
+    options = {
+        pure_getters: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            f() {
+                return super.toString();
+            },
+        }.f());
+    }
+    expect: {
+        console.log({
+            f() {
+                return super.toString();
+            },
+        }.f());
+    }
+    expect_stdout: "[object Object]"
+    node_version: ">=4"
+}
+
+this_toString: {
+    options = {
+        pure_getters: true,
+        unsafe: true,
+    }
+    input: {
+        console.log({
+            f() {
+                return this.toString();
+            },
+        }.f());
+    }
+    expect: {
+        console.log({
+            f() {
+                return "" + this;
+            },
+        }.f());
+    }
+    expect_stdout: "[object Object]"
+    node_version: ">=4"
+}
