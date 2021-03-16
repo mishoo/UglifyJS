@@ -46,6 +46,15 @@ rm -rf tmp/mathjs \
 @@ -68 +75 @@ export function format (value, options) {
 -      return value.toString()
 +      return HACK(value).toString()
+--- a/test/node-tests/cli/cli.test.js
++++ b/test/node-tests/cli/cli.test.js
+@@ -36 +35,0 @@ describe('command line interface', function () {
+-    const path2 = path.join(__dirname, 'script2')
+@@ -38,2 +37,2 @@ describe('command line interface', function () {
+-    run('"' + path1 + '" "' + path2 + '"', function (e, result) {
+-      assert.strictEqual(result, '2\n8\n')
++    run('"' + path1 + '"', function (e, result) {
++      assert.strictEqual(result, '2\n')
 --- a/test/unit-tests/expression/node/Node.test.js
 +++ b/test/unit-tests/expression/node/Node.test.js
 @@ -157 +157 @@ describe('Node', function () {
