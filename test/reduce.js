@@ -208,12 +208,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 }
                 if (node.expression instanceof U.AST_Function) {
                     // hoist and return expressions from the IIFE function expression
-                    var body = node.expression.body;
-                    node.expression.body = [];
                     var seq = [];
-                    body.forEach(function(node) {
+                    node.expression.body.forEach(function(node) {
                         var expr = expr instanceof U.AST_Exit ? node.value : node.body;
-                        if (expr instanceof U.AST_Node && !U.is_statement(expr)) {
+                        if (expr instanceof U.AST_Node && !U.is_statement(expr) && can_hoist(expr)) {
                             // collect expressions from each statements' body
                             seq.push(expr);
                         }
@@ -264,7 +262,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     CHANGED = true;
                     return List.skip;
                   default:
-                    if (!has_exit(node)) {
+                    if (!has_exit(node) && can_hoist(node)) {
                         // hoist function declaration body
                         var body = node.body;
                         node.body = [];
@@ -381,11 +379,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 if (node.body instanceof U.AST_Call && node.body.expression instanceof U.AST_Function) {
                     // hoist simple statement IIFE function expression body
                     node.start._permute++;
-                    if (!has_exit(node.body.expression)) {
-                        var body = node.body.expression.body;
-                        node.body.expression.body = [];
+                    if (!has_exit(node.body.expression) && can_hoist(node.body.expression)) {
                         CHANGED = true;
-                        return List.splice(body);
+                        return List.splice(node.body.expression.body);
                     }
                 }
             }
@@ -671,6 +667,20 @@ function has_loopcontrol(body, loop, label) {
     tw.push(loop);
     body.walk(tw);
     return found;
+}
+
+function can_hoist(body) {
+    var found = false;
+    body.walk(new U.TreeWalker(function(node) {
+        if (found) return true;
+        if (node instanceof U.AST_NewTarget) return found = true;
+        if (node instanceof U.AST_Scope) {
+            if (node === body) return;
+            return true;
+        }
+        if (node instanceof U.AST_Super) return found = true;
+    }));
+    return !found;
 }
 
 function is_timed_out(result) {
