@@ -614,14 +614,14 @@ functions: {
             async function b() {
                 return !!b;
             }
-            var c = async function(c) {
+            async function c(c) {
                 return c;
-            };
+            }
             if (await c(await b(await a()))) {
-                async function d() {}
-                async function e() {
-                    return typeof e;
-                }
+                var d = async function() {};
+                var e = async function y() {
+                    return typeof y;
+                };
                 var f = async function(f) {
                     return f;
                 };
@@ -672,9 +672,9 @@ functions_use_strict: {
             async function b() {
                 return !!b;
             }
-            var c = async function(c) {
+            async function c(c) {
                 return c;
-            };
+            }
             if (await c(await b(await a()))) {
                 var d = async function() {};
                 var e = async function y() {
@@ -688,6 +688,54 @@ functions_use_strict: {
         }();
     }
     expect_stdout: "a true 42 function function function"
+    node_version: ">=8"
+}
+
+functions_anonymous: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var await = async function() {
+            console.log("PASS");
+        };
+        await(await);
+    }
+    expect: {
+        async function await() {
+            console.log("PASS");
+        }
+        await();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+functions_inner_var: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var await = function a() {
+            var a;
+            console.log(a, a);
+        };
+        await(await);
+    }
+    expect: {
+        function await() {
+            var a;
+            console.log(a, a);
+        }
+        await();
+    }
+    expect_stdout: "undefined undefined"
     node_version: ">=8"
 }
 

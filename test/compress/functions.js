@@ -2751,17 +2751,17 @@ functions: {
             function b() {
                 return !!b;
             }
-            var c = function(c) {
+            function c(c) {
                 return c;
-            };
+            }
             if (c(b(a()))) {
                 function d() {}
                 function e() {
                     return typeof e;
                 }
-                var f = function(f) {
+                function f(f) {
                     return f;
-                };
+                }
                 console.log(a(d()), b(e()), c(f(42)), typeof d, e(), typeof f);
             }
         }();
@@ -2808,9 +2808,9 @@ functions_use_strict: {
             function b() {
                 return !!b;
             }
-            var c = function(c) {
+            function c(c) {
                 return c;
-            };
+            }
             if (c(b(a()))) {
                 var d = function() {};
                 var e = function y() {
@@ -2824,6 +2824,30 @@ functions_use_strict: {
         }();
     }
     expect_stdout: "a true 42 function function function"
+}
+
+functions_inner_var: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function() {
+            var a;
+            console.log(a, a);
+        };
+        a(a);
+    }
+    expect: {
+        function a() {
+            var a;
+            console.log(a, a);
+        }
+        a();
+    }
+    expect_stdout: "undefined undefined"
 }
 
 issue_2437: {

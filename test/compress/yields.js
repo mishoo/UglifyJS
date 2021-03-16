@@ -388,14 +388,14 @@ functions: {
             function* b() {
                 return !!b;
             }
-            var c = function*(c) {
+            function* c(c) {
                 return c;
-            };
+            }
             if (yield* c(yield* b(yield* a()))) {
-                function* d() {}
-                function* e() {
-                    return typeof e;
-                }
+                var d = function*() {};
+                var e = function* y() {
+                    return typeof y;
+                };
                 var f = function*(f) {
                     return f;
                 };
@@ -446,9 +446,9 @@ functions_use_strict: {
             function* b() {
                 return !!b;
             }
-            var c = function*(c) {
+            function* c(c) {
                 return c;
-            };
+            }
             if (yield* c(yield* b(yield* a()))) {
                 var d = function*() {};
                 var e = function* y() {
@@ -462,6 +462,54 @@ functions_use_strict: {
         }().next();
     }
     expect_stdout: "a true 42 function function function"
+    node_version: ">=4"
+}
+
+functions_anonymous: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var yield = function*() {
+            return "PASS";
+        };
+        console.log(yield().next(yield).value);
+    }
+    expect: {
+        function* yield() {
+            return "PASS";
+        }
+        console.log(yield().next(yield).value);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+functions_inner_var: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var yield = function* a() {
+            var a;
+            console.log(a, a);
+        };
+        yield().next(yield);
+    }
+    expect: {
+        function* yield() {
+            var a;
+            console.log(a, a);
+        }
+        yield().next(yield);
+    }
+    expect_stdout: "undefined undefined"
     node_version: ">=4"
 }
 
