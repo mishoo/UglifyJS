@@ -399,6 +399,17 @@ single_use_class_default: {
     }
 }
 
+hoist_funs: {
+    options = {
+        hoist_funs: true,
+    }
+    input: {
+        export function f() {}
+        export default async function* g() {}
+    }
+    expect_exact: "export function f(){}export default async function*g(){}"
+}
+
 issue_4742_join_vars_1: {
     options = {
         join_vars: true,
