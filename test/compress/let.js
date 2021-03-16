@@ -359,7 +359,7 @@ reduce_block_2_toplevel: {
     node_version: ">=4"
 }
 
-reduce_vars: {
+reduce_vars_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -378,6 +378,86 @@ reduce_vars: {
         "FAIL";
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+reduce_vars_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function() {
+            function f() {
+                console.log(typeof a);
+            }
+            for (let a in [ 42 ])
+                f();
+        })();
+    }
+    expect: {
+        "use strict";
+        (function() {
+            function f() {
+                console.log(typeof a);
+            }
+            for (let a in [ 42 ])
+                f();
+        })();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+reduce_vars_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function(scope) {
+            let i = 1;
+            function f() {
+                i = 0;
+            }
+            for (let i = 0, x = 0; i < scope.length; i++, x++) {
+                if (x != i) {
+                    console.log("FAIL");
+                    break;
+                }
+                f();
+                console.log(scope[i]);
+            }
+            console.log(i);
+        })([ 4, 2 ]);
+    }
+    expect: {
+        "use strict";
+        (function(scope) {
+            let i = 1;
+            function f() {
+                i = 0;
+            }
+            for (let i = 0, x = 0; i < scope.length; i++, x++) {
+                if (x != i) {
+                    console.log("FAIL");
+                    break;
+                }
+                f();
+                console.log(scope[i]);
+            }
+            console.log(i);
+        })([ 4, 2 ]);
+    }
+    expect_stdout: [
+        "4",
+        "2",
+        "0",
+    ]
     node_version: ">=4"
 }
 
