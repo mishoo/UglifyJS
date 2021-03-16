@@ -5753,22 +5753,102 @@ issue_4725_2: {
     node_version: ">=4"
 }
 
-new_target: {
+new_target_1: {
     input: {
-        console.log(typeof new function() {
-            return new.target;
-        }, function() {
+        new function f() {
+            console.log(new.target === f);
+        }();
+        console.log(function() {
             return new.target;
         }());
     }
     expect: {
-        console.log(typeof new function() {
-            return new.target;
-        }(), function() {
+        new function f() {
+            console.log(new.target === f);
+        }();
+        console.log(function() {
             return new.target;
         }());
     }
-    expect_stdout: "function undefined"
+    expect_stdout: [
+        "true",
+        "undefined",
+    ]
+    node_version: ">=6"
+}
+
+new_target_2: {
+    input: {
+        new function(a) {
+            if (!new.target)
+                console.log("FAIL");
+            else if (a)
+                console.log("PASS");
+            else
+                new new.target(new.target.length);
+        }();
+    }
+    expect: {
+        new function(a) {
+            if (!new.target)
+                console.log("FAIL");
+            else if (a)
+                console.log("PASS");
+            else
+                new new.target(new.target.length);
+        }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+new_target_collapse_vars: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        new function(a) {
+            if (a)
+                console.log("PASS");
+            else
+                new new.target(new.target.length);
+        }(0);
+    }
+    expect: {
+        new function(a) {
+            if (a)
+                console.log("PASS");
+            else
+                new new.target(new.target.length);
+        }(0);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+new_target_reduce_vars: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        new function(a) {
+            if (a)
+                console.log("PASS");
+            else
+                new new.target(new.target.length);
+        }(0);
+    }
+    expect: {
+        new function(a) {
+            if (a)
+                console.log("PASS");
+            else
+                new new.target(new.target.length);
+        }(0);
+    }
+    expect_stdout: "PASS"
     node_version: ">=6"
 }
 

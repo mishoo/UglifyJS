@@ -149,6 +149,7 @@ var SUPPORT = function(matrix) {
     for_of: "for (var a of []);",
     generator: "function* f(){}",
     let: "let a;",
+    new_target: "function f() { new.target; }",
     nullish: "0 ?? 0",
     rest: "var [...a] = [];",
     rest_object: "var {...a} = {};",
@@ -1401,13 +1402,16 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             createBlockVariables(recurmax, stmtDepth, canThrow, function(defns) {
                 s.push(
                     instantiate + makeFunction(name) + "(" + createParams(save_async, save_generator) + "){",
-                    strictMode(),
-                    defns()
+                    strictMode()
                 );
+                var add_new_target = SUPPORT.new_target && VALUES.indexOf("new.target") < 0;
+                if (add_new_target) VALUES.push("new.target");
+                s.push(defns());
                 if (instantiate) for (var i = rng(4); --i >= 0;) {
                     s.push((in_class ? "if (this) " : "") + createThisAssignment(recurmax, stmtDepth, canThrow));
                 }
                 s.push(_createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
+                if (add_new_target) VALUES.splice(VALUES.indexOf("new.target"), 1);
             });
             generator = save_generator;
             async = save_async;
