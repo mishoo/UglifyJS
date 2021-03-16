@@ -4,7 +4,7 @@ alias uglify-js=$PWD/bin/uglifyjs
 UGLIFY_OPTIONS=$@
 
 minify_in_situ() {
-    ARGS="$UGLIFY_OPTIONS --in-situ"
+    ARGS="$UGLIFY_OPTIONS --validate --in-situ"
     DIRS="$1"
     echo '> uglify-js' $DIRS $UGLIFY_OPTIONS
     for i in `find $DIRS -name '*.js'`
