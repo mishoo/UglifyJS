@@ -1947,7 +1947,11 @@ function createTypeofExpr(recurmax, stmtDepth, canThrow) {
 }
 
 function createValue() {
-    return VALUES[rng(VALUES.length)];
+    var v;
+    do {
+        v = VALUES[rng(VALUES.length)];
+    } while (v == "new.target" && rng(200));
+    return v;
 }
 
 function createBinaryOp(noComma, canThrow) {
