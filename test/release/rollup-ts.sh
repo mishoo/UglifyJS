@@ -32,6 +32,10 @@ rm -rf tmp/rollup \
 -    "postpublish": "pinst --enable",
 -    "prepare": "npm run build",
 -    "prepublishOnly": "pinst --disable && npm ci && npm run lint:nofix && npm run security && npm run build:bootstrap && npm run test:all",
+--- a/test/cli/index.js
++++ b/test/cli/index.js
+@@ -13,0 +14 @@ sander.rimrafSync(__dirname, 'node_modules');
++sander.rimrafSync(__dirname, 'samples', 'watch', 'watch-config-error');
 EOF
 ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
 npm install esbuild-wasm@0.8.56 \
