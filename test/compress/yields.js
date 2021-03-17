@@ -247,6 +247,30 @@ collapse_vars_4: {
     node_version: ">=4"
 }
 
+collapse_vars_5: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = function* f(b, c) {
+            b = yield c = b;
+            console.log(c);
+        }("PASS");
+        a.next();
+        a.next("FAIL");
+    }
+    expect: {
+        var a = function* f(b, c) {
+            b = yield c = b;
+            console.log(c);
+        }("PASS");
+        a.next();
+        a.next("FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 collapse_property_lambda: {
     options = {
         collapse_vars: true,
