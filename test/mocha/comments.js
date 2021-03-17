@@ -392,12 +392,12 @@ describe("comments", function() {
     describe("comment filters", function() {
         it("Should be able to filter comments by passing regexp", function() {
             var ast = UglifyJS.parse("/*!test1*/\n/*test2*/\n//!test3\n//test4\n<!--test5\n<!--!test6\n-->test7\n-->!test8");
-            assert.strictEqual(ast.print_to_string({comments: /^!/}), "/*!test1*/\n//!test3\n//!test6\n//!test8\n");
+            assert.strictEqual(ast.print_to_string({comments: /^!/}), "/*!test1*/\n//!test3\n//!test6\n//!test8");
         });
 
         it("Should be able to filter comments with the 'all' option", function() {
             var ast = UglifyJS.parse("/*!test1*/\n/*test2*/\n//!test3\n//test4\n<!--test5\n<!--!test6\n-->test7\n-->!test8");
-            assert.strictEqual(ast.print_to_string({comments: "all"}), "/*!test1*/\n/*test2*/\n//!test3\n//test4\n//test5\n//!test6\n//test7\n//!test8\n");
+            assert.strictEqual(ast.print_to_string({comments: "all"}), "/*!test1*/\n/*test2*/\n//!test3\n//test4\n//test5\n//!test6\n//test7\n//!test8");
         });
 
         it("Should be able to filter commments with the 'some' option", function() {
@@ -410,13 +410,12 @@ describe("comments", function() {
             var f = function(node, comment) {
                 return comment.value.length === 8;
             };
-
-            assert.strictEqual(ast.print_to_string({comments: f}), "/*TEST 123*/\n//8 chars.\n");
+            assert.strictEqual(ast.print_to_string({comments: f}), "/*TEST 123*/\n//8 chars.");
         });
 
         it("Should be able to filter comments by passing regex in string format", function() {
             var ast = UglifyJS.parse("/*!test1*/\n/*test2*/\n//!test3\n//test4\n<!--test5\n<!--!test6\n-->test7\n-->!test8");
-            assert.strictEqual(ast.print_to_string({comments: "/^!/"}), "/*!test1*/\n//!test3\n//!test6\n//!test8\n");
+            assert.strictEqual(ast.print_to_string({comments: "/^!/"}), "/*!test1*/\n//!test3\n//!test6\n//!test8");
         });
 
         it("Should be able to get the comment and comment type when using a function", function() {
@@ -424,14 +423,12 @@ describe("comments", function() {
             var f = function(node, comment) {
                 return comment.type == "comment1" || comment.type == "comment3";
             };
-
-            assert.strictEqual(ast.print_to_string({comments: f}), "//!test3\n//test4\n//test5\n//!test6\n");
+            assert.strictEqual(ast.print_to_string({comments: f}), "//!test3\n//test4\n//test5\n//!test6");
         });
 
         it("Should be able to filter comments by passing a boolean", function() {
             var ast = UglifyJS.parse("/*!test1*/\n/*test2*/\n//!test3\n//test4\n<!--test5\n<!--!test6\n-->test7\n-->!test8");
-
-            assert.strictEqual(ast.print_to_string({comments: true}), "/*!test1*/\n/*test2*/\n//!test3\n//test4\n//test5\n//!test6\n//test7\n//!test8\n");
+            assert.strictEqual(ast.print_to_string({comments: true}), "/*!test1*/\n/*test2*/\n//!test3\n//test4\n//test5\n//!test6\n//test7\n//!test8");
             assert.strictEqual(ast.print_to_string({comments: false}), "");
         });
 
@@ -439,10 +436,8 @@ describe("comments", function() {
             var ast = UglifyJS.parse("#!Random comment\n//test1\n/*test2*/");
             var f = function(node, comment) {
                 assert.strictEqual(comment.type === "comment5", false);
-
                 return true;
             };
-
             assert.strictEqual(ast.print_to_string({comments: f}), "#!Random comment\n//test1\n/*test2*/");
         });
 
@@ -453,9 +448,8 @@ describe("comments", function() {
 
         it("Should have no problem on multiple calls", function() {
             const options = {
-                comments: /ok/
+                comments: /ok/,
             };
-
             assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
             assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
             assert.strictEqual(UglifyJS.parse("/* ok */ function a(){}").print_to_string(options), "/* ok */function a(){}");
@@ -463,14 +457,14 @@ describe("comments", function() {
 
         it("Should handle shebang and preamble correctly", function() {
             var code = UglifyJS.minify("#!/usr/bin/node\nvar x = 10;", {
-                output: { preamble: "/* Build */" }
+                output: { preamble: "/* Build */" },
             }).code;
             assert.strictEqual(code, "#!/usr/bin/node\n/* Build */\nvar x=10;");
         });
 
         it("Should handle preamble without shebang correctly", function() {
             var code = UglifyJS.minify("var x = 10;", {
-                output: { preamble: "/* Build */" }
+                output: { preamble: "/* Build */" },
             }).code;
             assert.strictEqual(code, "/* Build */\nvar x=10;");
         });

@@ -29,7 +29,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + ' test/input/comments/filter.js --comments all';
         exec(command, function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, "// foo\n/*@preserve*/\n// bar\n\n");
+            assert.strictEqual(stdout, "// foo\n/*@preserve*/\n// bar\n");
             done();
         });
     });
@@ -37,7 +37,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + ' test/input/comments/filter.js --comments /r/';
         exec(command, function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, "/*@preserve*/\n// bar\n\n");
+            assert.strictEqual(stdout, "/*@preserve*/\n// bar\n");
             done();
         });
     });
@@ -45,7 +45,7 @@ describe("bin/uglifyjs", function() {
         var command = uglifyjscmd + ' test/input/comments/filter.js --comments';
         exec(command, function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, "/*@preserve*/\n\n");
+            assert.strictEqual(stdout, "/*@preserve*/\n");
             done();
         });
     });
