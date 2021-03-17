@@ -7,11 +7,11 @@ minify_in_situ() {
     ARGS="$UGLIFY_OPTIONS --validate --in-situ"
     DIRS="$1"
     echo '> uglify-js' $DIRS $UGLIFY_OPTIONS
-    for i in `find $DIRS -name '*.js'`
+    for i in `find $DIRS -type f -name '*.js'`
     do
         ARGS="$ARGS $i"
     done
-    for i in `find $DIRS -name '*.mjs'`
+    for i in `find $DIRS -type f -name '*.mjs'`
     do
         ARGS="$ARGS $i"
     done
