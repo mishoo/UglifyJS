@@ -50,13 +50,24 @@ unicode_parse_variables: {
     }
 }
 
-unicode_escaped_identifier: {
+unicode_escaped_identifier_1: {
     input: {
         var \u0061 = "\ud800\udc00";
         console.log(a);
     }
     expect_exact: 'var a="\ud800\udc00";console.log(a);'
     expect_stdout: "\ud800\udc00"
+}
+
+unicode_escaped_identifier_2: {
+    input: {
+        var \u{61} = "foo";
+        var \u{10000} = "bar";
+        console.log(a, \u{10000});
+    }
+    expect_exact: 'var a="foo";var \u{10000}="bar";console.log(a,\u{10000});'
+    expect_stdout: "foo bar"
+    node_version: ">=4"
 }
 
 unicode_identifier_ascii_only: {
