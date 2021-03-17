@@ -9,10 +9,21 @@ jobs:
       fail-fast: false
       matrix:
         options: [ '-mb braces', '--ie8 -c', '-mc', '--toplevel -mc passes=3,pure_getters,unsafe' ]
-        script: [ acorn.sh, buble.sh, butternut.sh, mathjs.sh, rollup-es.sh, rollup-ts.sh, sucrase.sh, web-tooling-benchmark.sh ]
+        script:
+          - acorn.sh
+          - bootstrap.sh
+          - buble.sh
+          - butternut.sh
+          - mathjs.sh
+          - rollup-es.sh
+          - rollup-ts.sh
+          - sucrase.sh
+          - web-tooling-benchmark.sh
         include:
           - node: '14'
             script: acorn.sh
+          - node: '14'
+            script: bootstrap.sh
           - node: '14'
             script: buble.sh
           - node: '14'

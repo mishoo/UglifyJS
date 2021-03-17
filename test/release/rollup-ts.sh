@@ -7,12 +7,12 @@ minify_in_situ() {
     ARGS="$UGLIFY_OPTIONS --validate --in-situ"
     DIRS="$1"
     echo '> uglify-js' $DIRS $UGLIFY_OPTIONS
-    for i in `find $DIRS -name '*.js'`
+    for i in `find $DIRS -type f -name '*.js'`
     do
         ARGS="$ARGS $i"
     done
     uglify-js $ARGS
-    for i in `find $DIRS -name '*.ts' | grep -v '\.d\.ts'`
+    for i in `find $DIRS -type f -name '*.ts' | grep -v '\.d\.ts'`
     do
         echo "$i"
         node_modules/.bin/esbuild --loader=ts --target=node14 < "$i" \
@@ -34,8 +34,10 @@ rm -rf tmp/rollup \
 -    "prepublishOnly": "pinst --disable && npm ci && npm run lint:nofix && npm run security && npm run build:bootstrap && npm run test:all",
 --- a/test/cli/index.js
 +++ b/test/cli/index.js
-@@ -13,0 +14 @@ sander.rimrafSync(__dirname, 'node_modules');
+@@ -13,0 +14,3 @@ sander.rimrafSync(__dirname, 'node_modules');
++sander.rimrafSync(__dirname, 'samples', 'watch', 'bundle-error');
 +sander.rimrafSync(__dirname, 'samples', 'watch', 'watch-config-error');
++sander.rimrafSync(__dirname, 'samples', 'watch', 'watch-config-initial-error');
 EOF
 ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
 npm install esbuild-wasm@0.8.56 \
