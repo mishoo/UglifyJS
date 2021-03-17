@@ -294,6 +294,31 @@ reduce_vars_2: {
     node_version: ">=6"
 }
 
+reduce_vars_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        function g() {
+            return (a => a)(...[ f ]);
+        }
+        console.log(g() === g() ? "PASS" : "FAIL");
+    }
+    expect: {
+        function f() {}
+        function g() {
+            return (a => a)(...[ f ]);
+        }
+        console.log(g() === g() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 convert_setter: {
     options = {
         objects: true,
