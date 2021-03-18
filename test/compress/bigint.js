@@ -60,3 +60,33 @@ issue_4590: {
     expect_stdout: "PASS"
     node_version: ">=10"
 }
+
+issue_4801: {
+    options = {
+        booleans: true,
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        try {
+            (function(a) {
+                A = 42;
+                a || A;
+            })(!(0 == 42 >> 0o644n));
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (function(a) {
+                0 != (A = 42) >> 0o644n || A;
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
