@@ -5851,6 +5851,24 @@ new_target_collapse_vars: {
     node_version: ">=6"
 }
 
+new_target_delete: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        new function() {
+            console.log(delete new.target);
+        }();
+    }
+    expect: {
+        new function() {
+            console.log(delete new.target);
+        }();
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
+
 new_target_reduce_vars: {
     options = {
         evaluate: true,
