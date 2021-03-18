@@ -566,6 +566,34 @@ delete_seq_3: {
 delete_seq_4: {
     options = {
         booleans: true,
+        evaluate: false,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {}
+        console.log(delete (f(), undefined));
+        console.log(delete (f(), void 0));
+        console.log(delete (f(), Infinity));
+        console.log(delete (f(), 1 / 0));
+        console.log(delete (f(), NaN));
+        console.log(delete (f(), 0 / 0));
+    }
+    expect: {
+        function f() {}
+        console.log(delete void f()),
+        console.log(delete void f()),
+        console.log((f(), delete (1 / 0))),
+        console.log((f(), delete (1 / 0))),
+        console.log(delete (f(), NaN)),
+        console.log((f(), delete(0 / 0)));
+    }
+    expect_stdout: true
+}
+
+delete_seq_4_evaluate: {
+    options = {
+        booleans: true,
         evaluate: true,
         sequences: true,
         side_effects: true,
@@ -592,6 +620,35 @@ delete_seq_4: {
 }
 
 delete_seq_5: {
+    options = {
+        booleans: true,
+        evaluate: false,
+        keep_infinity: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {}
+        console.log(delete (f(), undefined));
+        console.log(delete (f(), void 0));
+        console.log(delete (f(), Infinity));
+        console.log(delete (f(), 1 / 0));
+        console.log(delete (f(), NaN));
+        console.log(delete (f(), 0 / 0));
+    }
+    expect: {
+        function f() {}
+        console.log(delete void f()),
+        console.log(delete void f()),
+        console.log(delete (f(), Infinity)),
+        console.log((f(), delete (1 / 0))),
+        console.log(delete (f(), NaN)),
+        console.log((f(), delete (0 / 0)));
+    }
+    expect_stdout: true
+}
+
+delete_seq_5_evaluate: {
     options = {
         booleans: true,
         evaluate: true,
