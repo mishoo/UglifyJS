@@ -419,36 +419,36 @@ reduce_vars_3: {
     }
     input: {
         "use strict";
-        (function(scope) {
+        (function(a) {
             let i = 1;
             function f() {
                 i = 0;
             }
-            for (let i = 0, x = 0; i < scope.length; i++, x++) {
+            for (let i = 0, x = 0; i < a.length; i++, x++) {
                 if (x != i) {
                     console.log("FAIL");
                     break;
                 }
                 f();
-                console.log(scope[i]);
+                console.log(a[i]);
             }
             console.log(i);
         })([ 4, 2 ]);
     }
     expect: {
         "use strict";
-        (function(scope) {
+        (function(a) {
             let i = 1;
             function f() {
                 i = 0;
             }
-            for (let i = 0, x = 0; i < scope.length; i++, x++) {
+            for (let i = 0, x = 0; i < a.length; i++, x++) {
                 if (x != i) {
                     console.log("FAIL");
                     break;
                 }
                 f();
-                console.log(scope[i]);
+                console.log(a[i]);
             }
             console.log(i);
         })([ 4, 2 ]);
