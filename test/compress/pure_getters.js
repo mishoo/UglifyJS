@@ -1320,11 +1320,10 @@ issue_2878: {
 
 issue_3427: {
     options = {
-        assignments: true,
-        collapse_vars: true,
+        evaluate: true,
         inline: true,
-        passes: 2,
         pure_getters: "strict",
+        reduce_vars: true,
         sequences: true,
         side_effects: true,
         toplevel: true,
@@ -1535,4 +1534,33 @@ this_toString: {
     }
     expect_stdout: "[object Object]"
     node_version: ">=4"
+}
+
+issue_4803: {
+    options = {
+        hoist_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            get f() {
+                console.log("PASS");
+            },
+        } || 42;
+        for (var k in o)
+            o[k];
+    }
+    expect: {
+        var k, o = {
+            get f() {
+                console.log("PASS");
+            },
+        } || 42;
+        for (k in o)
+            o[k];
+    }
+    expect_stdout: "PASS"
 }
