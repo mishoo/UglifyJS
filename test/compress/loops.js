@@ -836,10 +836,7 @@ for_of: {
             console.log(async);
     }
     expect_exact: 'var async=["PASS",42];async.p="FAIL";for(async of(null,async))console.log(async);'
-    expect_stdout: [
-        "PASS",
-        "42",
-    ]
+    expect_stdout: true
     node_version: ">=0.12"
 }
 

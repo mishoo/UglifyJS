@@ -158,6 +158,9 @@ var SUPPORT = function(matrix) {
     template: "``",
     trailing_comma: "function f(a,) {}",
 });
+if (SUPPORT.exponentiation && sandbox.run_code("console.log(10 ** 100 === Math.pow(10, 100));") !== "true\n") {
+    SUPPORT.exponentiation = false;
+}
 
 var VALUES = [
     '"a"',
@@ -241,40 +244,13 @@ BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS.push(" in ");
 
-var ASSIGNMENTS = [
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-    "=",
-
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-    "+=",
-
+var ASSIGNMENTS = [ "=" ];
+ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
+ASSIGNMENTS.push("+=");
+ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
+ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
+ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
+ASSIGNMENTS = ASSIGNMENTS.concat([
     "-=",
     "*=",
     "/=",
@@ -285,8 +261,11 @@ var ASSIGNMENTS = [
     "<<=",
     ">>=",
     ">>>=",
-];
-if (SUPPORT.exponentiation) ASSIGNMENTS.push("**=");
+]);
+if (SUPPORT.exponentiation) {
+    ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
+    ASSIGNMENTS.push("**=");
+}
 
 var UNARY_SAFE = [
     "+",

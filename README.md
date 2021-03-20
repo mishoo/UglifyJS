@@ -1296,3 +1296,16 @@ To allow for better optimizations, the compiler makes various assumptions:
   // SyntaxError: Identifier 'e' has already been declared
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Some versions of Chrome and Node.js will give incorrect results with the
+  following:
+  ```javascript
+  console.log({
+      ...{
+          set 42(v) {},
+          42: "PASS",
+      },
+  });
+  // Expected: { '42': 'PASS' }
+  // Actual:   { '42': undefined }
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
