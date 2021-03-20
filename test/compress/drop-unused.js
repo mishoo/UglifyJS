@@ -3274,3 +3274,86 @@ issue_4662: {
     }
     expect_stdout: "1 1"
 }
+
+issue_4806_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        O = {
+            f: function() {
+                console.log(this === O ? "FAIL" : "PASS");
+            },
+        };
+        var a;
+        (a = 42, O.f)();
+        a;
+    }
+    expect: {
+        O = {
+            f: function() {
+                console.log(this === O ? "FAIL" : "PASS");
+            },
+        };
+        (0, O.f)();
+        42;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4806_2: {
+    options = {
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        O = {
+            f: function() {
+                console.log(this === O ? "FAIL" : "PASS");
+            },
+        };
+        var a;
+        (a = 42, O.f)();
+        a;
+    }
+    expect: {
+        O = {
+            f: function() {
+                console.log(this === O ? "FAIL" : "PASS");
+            },
+        },
+        (0, O.f)();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4806_3: {
+    options = {
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        O = {
+            f: function() {
+                console.log(this === O ? "FAIL" : "PASS");
+            },
+        };
+        var a;
+        (a = 42, O.f)();
+        a;
+    }
+    expect: {
+        O = {
+            f: function() {
+                console.log(this === O ? "FAIL" : "PASS");
+            },
+        };
+        (0, O.f)();
+    }
+    expect_stdout: "PASS"
+}

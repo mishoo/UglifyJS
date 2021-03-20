@@ -8857,3 +8857,26 @@ dot_non_local: {
     }
     expect_stdout: "42"
 }
+
+issue_4806: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a, o = {
+            f: function() {
+                console.log(this === o ? "FAIL" : "PASS");
+            },
+        };
+        (a = 42, o.f)(42);
+    }
+    expect: {
+        var a, o = {
+            f: function() {
+                console.log(this === o ? "FAIL" : "PASS");
+            },
+        };
+        (0, o.f)(a = 42);
+    }
+    expect_stdout: "PASS"
+}
