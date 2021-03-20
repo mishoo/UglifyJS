@@ -725,7 +725,7 @@ unused_await: {
             (() => console.log(await))();
         })();
     }
-    expect_stdout: "PASS"
+    expect_stdout: true
     node_version: ">=12"
 }
 
