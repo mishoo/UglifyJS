@@ -276,6 +276,7 @@ drop_arguments: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         console.log(function() {

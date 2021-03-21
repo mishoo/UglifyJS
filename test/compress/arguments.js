@@ -84,6 +84,7 @@ replace_index_drop_fargs_1: {
         evaluate: true,
         keep_fargs: false,
         properties: true,
+        reduce_vars: true,
     }
     input: {
         var arguments = [];
@@ -119,7 +120,7 @@ replace_index_drop_fargs_1: {
             console.log(b, b, arguments.foo);
         })("bar", 42);
         (function(arguments) {
-            console.log(arguments[1], arguments[1], arguments.foo);
+            console.log("bar"[1], "bar"[1], "bar".foo);
         })("bar", 42);
         (function(argument_0, argument_1) {
             var arguments;
@@ -649,6 +650,7 @@ issue_3420_1: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         console.log(function() {
@@ -671,6 +673,7 @@ issue_3420_2: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         var foo = function() {
@@ -691,6 +694,7 @@ issue_3420_3: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         "use strict";
@@ -713,6 +717,7 @@ issue_3420_4: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         !function() {
@@ -738,6 +743,7 @@ issue_3420_5: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         "use strict";
@@ -765,6 +771,7 @@ issue_3420_6: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         console.log(function() {
@@ -783,6 +790,7 @@ issue_3420_7: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         "use strict";
@@ -827,6 +835,7 @@ issue_4291_1: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         console.log(function() {
@@ -847,6 +856,7 @@ issue_4291_2: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         var a = function() {
@@ -857,8 +867,8 @@ issue_4291_2: {
         console.log(a[1], a[0], a.length);
     }
     expect: {
-        var a = function(argument_0) {
-            if (argument_0)
+        var a = function() {
+            if (arguments[0])
                 arguments[1] = "PASS";
             return arguments;
         }(42);
@@ -871,6 +881,7 @@ issue_4397: {
     options = {
         arguments: true,
         keep_fargs: false,
+        reduce_vars: true,
     }
     input: {
         console.log(typeof function() {
@@ -996,6 +1007,29 @@ issue_4696: {
             for (var a in arguments[0])
                 return "PASS";
         }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4809: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+        reduce_vars: true,
+    }
+    input: {
+        A = 0;
+        (function() {
+            arguments[A] = "PASS";
+            console.log(arguments[0]);
+        })();
+    }
+    expect: {
+        A = 0;
+        (function() {
+            arguments[A] = "PASS";
+            console.log(arguments[0]);
+        })();
     }
     expect_stdout: "PASS"
 }
