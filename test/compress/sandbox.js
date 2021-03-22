@@ -172,3 +172,32 @@ issue_4054: {
     }
     expect_stdout: "{ p: [Setter] }"
 }
+
+issue_4811_1: {
+    input: {
+        for (var PASS in this);
+        console.log(PASS, this);
+    }
+    expect: {
+        for (var PASS in this);
+        console.log(PASS, this);
+    }
+    expect_stdout: "PASS [object global]"
+}
+
+issue_4811_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (async function() {});
+        for (var PASS in this);
+        console.log(PASS, this);
+    }
+    expect: {
+        for (var PASS in this);
+        console.log(PASS, this);
+    }
+    expect_stdout: "PASS [object global]"
+    node_version: ">=8"
+}
