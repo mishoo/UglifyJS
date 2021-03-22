@@ -475,3 +475,77 @@ issue_4521: {
     }
     expect_stdout: "42"
 }
+
+logical_assignments: {
+    input: {
+        var a = 42, b = null, c;
+        a &&= "foo";
+        b ||= "bar";
+        c ??= "baz";
+        console.log(a, b, c);
+    }
+    expect_exact: 'var a=42,b=null,c;a&&="foo";b||="bar";c??="baz";console.log(a,b,c);'
+    expect_stdout: "foo bar baz"
+    node_version: ">=15"
+}
+
+logical_collapse_vars: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL", b = false;
+        a = "PASS";
+        b ??= a;
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL", b = false;
+        a = "PASS";
+        b ??= a;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+logical_reduce_vars: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS", b = 42;
+        b ??= a = "FAIL";
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS", b = 42;
+        b ??= a = "FAIL";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+logical_side_effects: {
+    options = {
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS", b = 42;
+        b ??= a = "FAIL";
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS", b = 42;
+        b ??= a = "FAIL";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}

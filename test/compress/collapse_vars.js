@@ -2868,7 +2868,7 @@ lvalues_def: {
     expect_stdout: true
 }
 
-compound_assignment: {
+compound_assignment_1: {
     options = {
         collapse_vars: true,
     }
@@ -2883,6 +2883,23 @@ compound_assignment: {
         a = 1;
         a += a + 2;
         console.log(a);
+    }
+    expect_stdout: "4"
+}
+
+compound_assignment_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        a = 1;
+        for (a += a + 2; console.log(a););
+    }
+    expect: {
+        var a;
+        a = 1;
+        for (a += a + 2; console.log(a););
     }
     expect_stdout: "4"
 }
