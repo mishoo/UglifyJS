@@ -170,6 +170,12 @@ function setup(global, builtins, setup_log, setup_tty) {
         },
         global: { get: self },
         self: { get: self },
+        // for Node.js v8+
+        toString: {
+            get: function() {
+                return global_toString;
+            },
+        },
         window: { get: self },
     };
     [
@@ -199,13 +205,13 @@ function setup(global, builtins, setup_log, setup_tty) {
         } catch (e) {}
     });
     Object.defineProperties(global, props);
-    // for Node.js v8+
-    global.toString = function() {
-        return "[object global]";
-    };
 
     function self() {
         return this;
+    }
+
+    function global_toString() {
+        return "[object global]";
     }
 
     function safe_log(arg, cache) {

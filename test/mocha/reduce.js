@@ -361,4 +361,22 @@ describe("test/reduce.js", function() {
         if (result.error) throw result.error;
         assert.strictEqual(result.code, read("test/input/reduce/destructured_catch.reduced.js"));
     });
+    it("Should not enumerate `toString` over global context", function() {
+        if (semver.satisfies(process.version, "<8")) return;
+        var code = [
+            "(async function() {});",
+            "for (var k in this);",
+            "console.log(k);",
+        ].join("\n");
+        var result = reduce_test(code, {
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
 });
