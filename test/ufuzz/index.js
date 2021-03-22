@@ -149,6 +149,7 @@ var SUPPORT = function(matrix) {
     for_of: "for (var a of []);",
     generator: "function* f(){}",
     let: "let a;",
+    logical_assignment: "[].p ??= 0;",
     new_target: "function f() { new.target; }",
     nullish: "0 ?? 0",
     rest: "var [...a] = [];",
@@ -262,10 +263,13 @@ ASSIGNMENTS = ASSIGNMENTS.concat([
     ">>=",
     ">>>=",
 ]);
-if (SUPPORT.exponentiation) {
-    ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
-    ASSIGNMENTS.push("**=");
-}
+ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
+if (SUPPORT.exponentiation) ASSIGNMENTS.push("**=");
+if (SUPPORT.logical_assignment) ASSIGNMENTS = ASSIGNMENTS.concat([
+    "&&=",
+    "||=",
+    "??=",
+]);
 
 var UNARY_SAFE = [
     "+",
