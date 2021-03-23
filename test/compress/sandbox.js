@@ -176,13 +176,13 @@ issue_4054: {
 issue_4811_1: {
     input: {
         for (var PASS in this);
-        console.log(PASS, this);
+        console.log(PASS, this, {} < this);
     }
     expect: {
         for (var PASS in this);
-        console.log(PASS, this);
+        console.log(PASS, this, {} < this);
     }
-    expect_stdout: "PASS [object global]"
+    expect_stdout: "PASS [object global] true"
 }
 
 issue_4811_2: {
@@ -192,12 +192,12 @@ issue_4811_2: {
     input: {
         (async function() {});
         for (var PASS in this);
-        console.log(PASS, this);
+        console.log(PASS, this, {} < this);
     }
     expect: {
         for (var PASS in this);
-        console.log(PASS, this);
+        console.log(PASS, this, {} < this);
     }
-    expect_stdout: "PASS [object global]"
+    expect_stdout: "PASS [object global] true"
     node_version: ">=8"
 }
