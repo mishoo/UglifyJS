@@ -366,7 +366,7 @@ describe("test/reduce.js", function() {
         var code = [
             "(async function() {});",
             "for (var k in this);",
-            "console.log(k);",
+            "console.log(k, 42 + this);",
         ].join("\n");
         var result = reduce_test(code, {
             mangle: false,

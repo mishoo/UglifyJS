@@ -2206,8 +2206,7 @@ function log(options) {
 function sort_globals(code) {
     var globals = run_code("throw Object.keys(this).sort(" + function(global) {
         return function(m, n) {
-            return (n == "toString") - (m == "toString")
-                || (typeof global[n] == "function") - (typeof global[m] == "function")
+            return (typeof global[n] == "function") - (typeof global[m] == "function")
                 || (m < n ? -1 : m > n ? 1 : 0);
         };
     } + "(this));" + code);
