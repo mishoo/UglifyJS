@@ -549,3 +549,43 @@ logical_side_effects: {
     expect_stdout: "PASS"
     node_version: ">=15"
 }
+
+issue_4815_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        42..p &&= a = "FAIL";
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        42..p &&= a = "FAIL";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+issue_4815_2: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        42..p &&= a = "FAIL";
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        42..p &&= a = "FAIL";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
