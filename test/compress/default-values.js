@@ -1661,3 +1661,23 @@ issue_4588_2_evaluate: {
     expect_stdout: "1"
     node_version: ">=6"
 }
+
+issue_4817: {
+    options = {
+        ie8: true,
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function f(a = console.log(typeof f)) {
+            return 42;
+        })();
+    }
+    expect: {
+        (function f(a = console.log(typeof f)) {
+            return 42;
+        })();
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
