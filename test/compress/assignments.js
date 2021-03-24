@@ -589,3 +589,17 @@ issue_4815_2: {
     expect_stdout: "PASS"
     node_version: ">=15"
 }
+
+issue_4819: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        console.log(void 0 === ([].p &&= 42));
+    }
+    expect: {
+        console.log(void 0 === ([].p &&= 42));
+    }
+    expect_stdout: "true"
+    node_version: ">=15"
+}
