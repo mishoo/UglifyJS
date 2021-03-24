@@ -1296,3 +1296,51 @@ issue_4756: {
     ]
     node_version: ">=12"
 }
+
+issue_4821_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        class A {
+            static p = void (a = this);
+        }
+        console.log(typeof a);
+    }
+    expect: {
+        var a;
+        class A {
+            static p = void (a = this);
+        }
+        console.log(typeof a);
+    }
+    expect_stdout: "function"
+    node_version: ">=12"
+}
+
+issue_4821_2: {
+    options = {
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        class A {
+            static p = void (a = this);
+        }
+        console.log(typeof a);
+    }
+    expect: {
+        var a;
+        (class {
+            static p = void (a = this);
+        });
+        console.log(typeof a);
+    }
+    expect_stdout: "function"
+    node_version: ">=12"
+}
