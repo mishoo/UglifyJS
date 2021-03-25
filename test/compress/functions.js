@@ -5991,3 +5991,33 @@ issue_4788: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4823: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            {
+                function f() {}
+                var arguments = f();
+                function g() {}
+                var arguments = g;
+            }
+            return f && arguments;
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            {
+                function f() {}
+                arguments = f();
+                var arguments = function() {};
+            }
+            return f && arguments;
+        }());
+    }
+    expect_stdout: "function"
+}
