@@ -603,3 +603,72 @@ issue_4819: {
     expect_stdout: "true"
     node_version: ">=15"
 }
+
+issue_4827_1: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        A = "FAIL";
+        var a = A, b = "PASS", c;
+        c &&= b = a, console.log(b);
+    }
+    expect: {
+        A = "FAIL";
+        var a = A, b = "PASS", c;
+        c &&= b = a, console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+issue_4827_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0, b = "PASS";
+        function f(c) {
+            a++,
+            c &&= b = a;
+        }
+        f();
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b = "PASS";
+        a++,
+        c &&= b = a;
+        var c;
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+issue_4827_3: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b, c;
+        a++;
+        c &&= b = a;
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b, c;
+        a++;
+        c &&= b = a;
+        console.log(b);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=15"
+}
