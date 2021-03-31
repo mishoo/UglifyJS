@@ -1344,3 +1344,27 @@ issue_4821_2: {
     expect_stdout: "function"
     node_version: ">=12"
 }
+
+issue_4829: {
+    options = {
+        properties: true,
+    }
+    input: {
+        "use strict";
+        try {
+            class A extends { f(){} }.f {}
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            class A extends [ () => {} ][0] {}
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
