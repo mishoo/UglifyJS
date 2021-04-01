@@ -3357,3 +3357,34 @@ issue_4806_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4834: {
+    options = {
+        inline: true,
+        keep_fargs: false,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            new function(a, b) {
+                b;
+                b.p;
+            }(42);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            void b.p;
+        } catch (e) {
+            console.log("PASS");
+        }
+        var b;
+    }
+    expect_stdout: "PASS"
+}
