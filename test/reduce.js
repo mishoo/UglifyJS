@@ -316,10 +316,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 var expr;
                 switch ((node.start._permute * steps | 0) % 3) {
                   case 0:
-                    if (!(node.init instanceof U.AST_Definitions
-                        && node.init.definitions[0].name instanceof U.AST_Destructured)) {
-                        expr = node.init;
+                    if (node.init instanceof U.AST_Definitions) {
+                        if (node.init instanceof U.AST_Const) break;
+                        if (node.init.definitions[0].name instanceof U.AST_Destructured) break;
                     }
+                    expr = node.init;
                     break;
                   case 1:
                     expr = node.object;
@@ -484,20 +485,24 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             CHANGED = true;
             return newNode;
         }, function(node, in_list) {
-            if (node instanceof U.AST_Sequence) {
+            if (node instanceof U.AST_Definitions) {
+                // remove empty var statement
+                if (node.definitions.length == 0) return in_list ? List.skip : new U.AST_EmptyStatement({
+                    start: {},
+                });
+            } else if (node instanceof U.AST_ObjectMethod) {
+                if (!/Function$/.test(node.value.TYPE)) return new U.AST_ObjectKeyVal({
+                    key: node.key,
+                    value: node.value,
+                    start: {},
+                });
+            } else if (node instanceof U.AST_Sequence) {
                 // expand single-element sequence
                 if (node.expressions.length == 1) return node.expressions[0];
-            }
-            else if (node instanceof U.AST_Try) {
+            } else if (node instanceof U.AST_Try) {
                 // expand orphaned try block
                 if (!node.bcatch && !node.bfinally) return new U.AST_BlockStatement({
                     body: node.body,
-                    start: {},
-                });
-            }
-            else if (node instanceof U.AST_Definitions) {
-                // remove empty var statement
-                if (node.definitions.length == 0) return in_list ? List.skip : new U.AST_EmptyStatement({
                     start: {},
                 });
             }
