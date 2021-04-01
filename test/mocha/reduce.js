@@ -183,6 +183,24 @@ describe("test/reduce.js", function() {
             "// }",
         ].join("\n"));
     });
+    it("Should reduce `for (const ... in ...)` without invalid intermediate AST", function() {
+        if (semver.satisfies(process.version, "<4")) return;
+        var code = [
+            "var a = 0;",
+            "",
+            "for (const b in [ 1, 2, 3 ]) {",
+            "    a = +a + 1 - .2;",
+            "    console.log(a);",
+            "}",
+        ].join("\n");
+        var result = reduce_test(code, {
+            compress: {
+                unsafe_math: true,
+            },
+        });
+        if (result.error) throw result.error;
+        assert.deepEqual(result.warnings, []);
+    });
     it("Should reduce infinite loops with reasonable performance", function() {
         if (semver.satisfies(process.version, "<=0.10")) return;
         this.timeout(120000);
@@ -378,5 +396,22 @@ describe("test/reduce.js", function() {
             '//   "mangle": false',
             "// }",
         ].join("\n"));
+    });
+    it("Should reduce object with method syntax without invalid intermediate AST", function() {
+        if (semver.satisfies(process.version, "<4")) return;
+        var code = [
+            "console.log({",
+            "    f() {",
+            "        return 1 - .8;",
+            "    },",
+            "}.f());",
+        ].join("\n");
+        var result = reduce_test(code, {
+            compress: {
+                unsafe_math: true,
+            },
+        });
+        if (result.error) throw result.error;
+        assert.deepEqual(result.warnings, []);
     });
 });
