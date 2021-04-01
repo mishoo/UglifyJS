@@ -1400,3 +1400,49 @@ object_super: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4831_1: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log({
+            f() {
+                return arguments;
+            },
+        }.f("PASS")[0]);
+    }
+    expect: {
+        console.log([
+            function() {
+                return arguments;
+            },
+        ][0]("PASS")[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4831_2: {
+    options = {
+        properties: true,
+    }
+    input: {
+        var f = {
+            f() {
+                return arguments;
+            },
+        }.f;
+        console.log(f("PASS")[0]);
+    }
+    expect: {
+        var f = {
+            f() {
+                return arguments;
+            },
+        }.f;
+        console.log(f("PASS")[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

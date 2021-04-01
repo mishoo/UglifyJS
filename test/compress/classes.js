@@ -1345,7 +1345,7 @@ issue_4821_2: {
     node_version: ">=12"
 }
 
-issue_4829: {
+issue_4829_1: {
     options = {
         properties: true,
     }
@@ -1361,6 +1361,38 @@ issue_4829: {
         "use strict";
         try {
             class A extends [ () => {} ][0] {}
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4829_2: {
+    options = {
+        properties: true,
+    }
+    input: {
+        "use strict";
+        try {
+            class A extends {
+                f() {
+                    return arguments;
+                },
+            }.f {}
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            class A extends {
+                f() {
+                    return arguments;
+                },
+            }.f {}
         } catch (e) {
             console.log("PASS");
         }
