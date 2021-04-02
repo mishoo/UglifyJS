@@ -1400,3 +1400,45 @@ issue_4829_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+mangle_properties: {
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
+    input: {
+        class A {
+            static #P = "PASS";
+            static get Q() {
+                return this.#P;
+            }
+            #p(n) {
+                return (this["q"] = n) * this.r;
+            }
+            set q(v) {
+                this.r = v + 1;
+            }
+            r = this.#p(6);
+        }
+        console.log(A.Q, new A().r);
+    }
+    expect: {
+        class A {
+            static #t = "PASS";
+            static get s() {
+                return this.#t;
+            }
+            #i(t) {
+                return (this["q"] = t) * this.e;
+            }
+            set q(t) {
+                this.e = t + 1;
+            }
+            e = this.#i(6);
+        }
+        console.log(A.s, new A().e);
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=14.6"
+}
