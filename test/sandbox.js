@@ -55,6 +55,8 @@ exports.patch_module_statements = function(code) {
         if (!header) return "";
         if (header.length == 1) return "0, " + header;
         return header.slice(0, -1) + " _" + ++count + header.slice(-1);
+    }).replace(/\bimport\.meta\b/g, function() {
+        return '({ url: "https://example.com/path/index.html" })';
     }).replace(/\bimport\b(?:\s*([^('"]+)\bfrom\b)?\s*(['"]).*?\2(?:$|\n|;)/g, function(match, symbols) {
         if (symbols) {
             if (!/^[{*]/.test(symbols)) symbols = "default:" + symbols;
@@ -220,7 +222,7 @@ function setup(global, builtins, setup_log, setup_tty) {
             if (arg === global) return "[object global]";
             if (/Error$/.test(arg.name)) return arg.toString();
             if (typeof arg.then == "function") return "[object Promise]";
-            arg.constructor.toString();
+            if (arg.constructor) arg.constructor.toString();
             var index = cache.original.indexOf(arg);
             if (index >= 0) return cache.replaced[index];
             if (--cache.level < 0) return "[object Object]";
