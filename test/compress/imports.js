@@ -54,11 +54,20 @@ dynamic_nought: {
     expect_exact: "import(foo);"
 }
 
-import_meta: {
+import_meta_1: {
     input: {
         console.log(import.meta, import.meta.url);
     }
     expect_exact: "console.log(import.meta,import.meta.url);"
+}
+
+import_meta_2: {
+    input: {
+        import.meta.url.split("/").forEach(function(part, index) {
+            console.log(index, part);
+        });
+    }
+    expect_exact: 'import.meta.url.split("/").forEach(function(part,index){console.log(index,part)});'
 }
 
 same_quotes: {
