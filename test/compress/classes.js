@@ -583,6 +583,31 @@ single_use_6: {
     node_version: ">=4"
 }
 
+single_use_7: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {
+            static foo() {}
+        }
+        var a = "foo" in A;
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        console.log("foo" in class {
+            static foo() {}
+        });
+    }
+    expect_stdout: "true"
+    node_version: ">=4"
+}
+
 collapse_non_strict: {
     options = {
         collapse_vars: true,
@@ -652,6 +677,32 @@ collapse_rhs_static: {
     }
     expect_stdout: "PASS"
     node_version: ">=12"
+}
+
+self_comparison: {
+    options = {
+        booleans: true,
+        comparisons: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        console.log(A == A, A != A);
+        console.log(A === A, A !== A);
+    }
+    expect: {
+        "use strict";
+        console.log(!0, !1);
+        console.log(!0, !1);
+    }
+    expect_stdout: [
+        "true false",
+        "true false",
+    ]
+    node_version: ">=4"
 }
 
 property_side_effects: {
