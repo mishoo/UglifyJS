@@ -140,7 +140,6 @@ issue_4487: {
         functions: true,
         hoist_vars: true,
         keep_fnames: true,
-        passes: 2,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -239,4 +238,30 @@ issue_4736: {
         })();
     }
     expect_stdout: "1073741824"
+}
+
+issue_4839: {
+    options = {
+        evaluate: true,
+        hoist_vars: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = function(a, b) {
+            return b && b;
+        }("foo");
+        for (var k in o)
+            throw "FAIL";
+        console.log("PASS");
+    }
+    expect: {
+        var k, o = void 0;
+        for (k in o)
+            throw "FAIL";
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
 }
