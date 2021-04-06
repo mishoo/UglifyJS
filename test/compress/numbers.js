@@ -104,6 +104,40 @@ parentheses_for_prototype_functions_galio: {
     expect_stdout: true
 }
 
+octal: {
+    beautify = {
+        beautify: true,
+    }
+    input: {
+        (function() {
+            console.log(052);
+            console.log(-052);
+
+            console.log(018);
+            console.log(-018);
+
+            console.log(052.toFixed(0));
+            console.log(-052.toFixed(0));
+
+            console.log(018..toFixed(0));
+            console.log(-018..toFixed(0));
+        })();
+    }
+    expect_exact: [
+        "(function() {",
+        "    console.log(42);",
+        "    console.log(-42);",
+        "    console.log(18);",
+        "    console.log(-18);",
+        "    console.log(42..toFixed(0));",
+        "    console.log(-42..toFixed(0));",
+        "    console.log(18..toFixed(0));",
+        "    console.log(-18..toFixed(0));",
+        "})();",
+    ]
+    expect_stdout: true
+}
+
 comparisons: {
     options = {
         comparisons: true,
