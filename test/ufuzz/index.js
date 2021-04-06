@@ -206,12 +206,14 @@ var VALUES = [
 ];
 VALUES = VALUES.concat(VALUES);
 VALUES = VALUES.concat(VALUES);
+VALUES = VALUES.concat(VALUES);
 if (SUPPORT.bigint) VALUES = VALUES.concat([
     "(!0o644n)",
     "([3n][0] > 2)",
     "(-42n).toString()",
     "Number(0XDEADn << 16n | 0xbeefn)",
 ]);
+VALUES = VALUES.concat(VALUES);
 VALUES = VALUES.concat(VALUES);
 VALUES = VALUES.concat(VALUES);
 VALUES = VALUES.concat(VALUES);
