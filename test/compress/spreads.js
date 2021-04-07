@@ -1045,3 +1045,26 @@ issue_4614: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_4849: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        while (function() {
+            while (!console);
+        }(new function(a) {
+            console.log(typeof { ...a });
+        }(function() {})));
+    }
+    expect: {
+        while (function() {
+            while (!console);
+        }(function(a) {
+            console.log(typeof { ...function() {} });
+        }()));
+    }
+    expect_stdout: "object"
+    node_version: ">=8"
+}
