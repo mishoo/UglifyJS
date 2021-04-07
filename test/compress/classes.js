@@ -1493,3 +1493,51 @@ mangle_properties: {
     expect_stdout: "PASS 42"
     node_version: ">=14.6"
 }
+
+issue_4848: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            a(function() {
+                new A();
+            });
+            if (!console)
+                return;
+            class A {
+                constructor() {
+                    console.log("PASS");
+                }
+            }
+        }
+        var g;
+        f(function(h) {
+            g = h;
+        });
+        g();
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            a(function() {
+                new A();
+            });
+            if (!console)
+                return;
+            class A {
+                constructor() {
+                    console.log("PASS");
+                }
+            }
+        }
+        var g;
+        f(function(h) {
+            g = h;
+        });
+        g();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
