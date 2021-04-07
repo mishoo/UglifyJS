@@ -679,6 +679,20 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should throw syntax error (for-await)", function(done) {
+        var command = uglifyjscmd + " test/input/invalid/for-await.js";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/for-await.js:1,11",
+                "for await (; console.log(42););",
+                "           ^",
+                "ERROR: Unexpected token: punc «;»",
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should throw syntax error (switch defaults)", function(done) {
         var command = uglifyjscmd + " test/input/invalid/switch.js";
         exec(command, function(err, stdout, stderr) {
