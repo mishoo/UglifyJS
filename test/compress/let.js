@@ -1506,3 +1506,43 @@ issue_4691: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4848: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            a(function() {
+                console.log(b);
+            });
+            if (!console)
+                return;
+            let b = "PASS";
+        }
+        var g;
+        f(function(h) {
+            g = h;
+        });
+        g();
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            a(function() {
+                console.log(b);
+            });
+            if (!console)
+                return;
+            let b = "PASS";
+        }
+        var g;
+        f(function(h) {
+            g = h;
+        });
+        g();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

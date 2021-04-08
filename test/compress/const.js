@@ -1498,3 +1498,40 @@ issue_4691: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4848: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            a(function() {
+                console.log(b);
+            });
+            if (!console)
+                return;
+            const b = "PASS";
+        }
+        var g;
+        f(function(h) {
+            g = h;
+        });
+        g();
+    }
+    expect: {
+        function f(a) {
+            a(function() {
+                console.log(b);
+            });
+            if (!console)
+                return;
+            const b = "PASS";
+        }
+        var g;
+        f(function(h) {
+            g = h;
+        });
+        g();
+    }
+    expect_stdout: "PASS"
+}
