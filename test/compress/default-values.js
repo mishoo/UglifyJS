@@ -1681,3 +1681,25 @@ issue_4817: {
     expect_stdout: "function"
     node_version: ">=6"
 }
+
+issue_4854: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            (function(b = a = "foo") {
+                [] = "foo";
+            })();
+            a;
+        }());
+    }
+    expect: {
+        console.log(void ([] = "foo"));
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
