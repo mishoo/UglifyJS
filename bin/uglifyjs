@@ -235,7 +235,7 @@ if (options.mangle && options.mangle.properties) {
         });
     }
 }
-if (output == "ast") options.output = {
+if (output == "ast" || output == "spidermonkey") options.output = {
     ast: true,
     code: false,
 };
@@ -313,9 +313,11 @@ function run() {
             if (options.parse.acorn) {
                 files = convert_ast(function(toplevel, name) {
                     return require("acorn").parse(files[name], {
+                        ecmaVersion: "latest",
                         locations: true,
                         program: toplevel,
-                        sourceFile: name
+                        sourceFile: name,
+                        sourceType: "module",
                     });
                 });
             } else if (options.parse.spidermonkey) {
@@ -409,14 +411,7 @@ function run() {
             return value;
         }, 2));
     } else if (output == "spidermonkey") {
-        print(JSON.stringify(UglifyJS.minify(result.code, {
-            compress: false,
-            mangle: false,
-            output: {
-                ast: true,
-                code: false
-            },
-        }).ast.to_mozilla_ast(), null, 2));
+        print(JSON.stringify(result.ast.to_mozilla_ast(), null, 2));
     } else if (output) {
         fs.writeFileSync(output, result.code);
         if (result.map) fs.writeFileSync(output + ".map", result.map);
