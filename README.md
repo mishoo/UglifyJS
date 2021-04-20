@@ -1309,3 +1309,21 @@ To allow for better optimizations, the compiler makes various assumptions:
   // Actual:   { '42': undefined }
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Later versions of JavaScript will throw `SyntaxError` with the following:
+  ```javascript
+  var await;
+  async function f() {
+      class A {
+          static p = await;
+      }
+  }
+  // SyntaxError: Unexpected reserved word
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
+- Later versions of JavaScript will throw `SyntaxError` with the following:
+  ```javascript
+  var async;
+  for (async of []);
+  // SyntaxError: The left-hand side of a for-of loop may not be 'async'.
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.

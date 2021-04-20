@@ -982,8 +982,17 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         var label = createLabel(canBreak, canContinue);
         canBreak = label.break || enableLoopControl(canBreak, CAN_BREAK);
         canContinue = label.continue || enableLoopControl(canContinue, CAN_CONTINUE);
-        var key = rng(10) ? "key" + loop : getVarName(NO_CONST);
         var of = SUPPORT.for_of && rng(20) == 0;
+        var key;
+        if (rng(10)) {
+            key = "key" + loop;
+        } else if (bug_for_of_async && of) {
+            addAvoidVar("async");
+            key = getVarName(NO_CONST);
+            removeAvoidVar("async");
+        } else {
+            key = getVarName(NO_CONST);
+        }
         var init = "";
         if (!/^key/.test(key)) {
             if (!(of && bug_for_of_var) && rng(10) == 0) init = "var ";
@@ -1789,7 +1798,9 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
             if (rng(5)) {
                 async = false;
                 generator = false;
+                if (bug_async_class_await && fixed) addAvoidVar("await");
                 s += " = " + createExpression(recurmax, NO_COMMA, stmtDepth, fixed ? canThrow : CANNOT_THROW);
+                if (bug_async_class_await && fixed) removeAvoidVar("await");
                 generator = save_generator;
                 async = save_async;
             }
@@ -2383,6 +2394,8 @@ if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && typeof sandbox.run_code("a
         return ex.name == "SyntaxError" && ex.message == "Rest parameter must be last formal parameter";
     };
 }
+var bug_async_class_await = SUPPORT.async && SUPPORT.class_field && typeof sandbox.run_code("var await; async function f() { class A { static p = await; } }") != "string";
+var bug_for_of_async = SUPPORT.for_await_of && typeof sandbox.run_code("var async; for (async of []);") != "string";
 var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && typeof sandbox.run_code("try {} catch (e) { for (var e of []); }") != "string";
 if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
     beautify_options.output.v8 = true;

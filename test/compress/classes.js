@@ -777,7 +777,7 @@ unused_await: {
         })();
     }
     expect_stdout: true
-    node_version: ">=12"
+    node_version: ">=12 <16"
 }
 
 computed_key_side_effects: {
