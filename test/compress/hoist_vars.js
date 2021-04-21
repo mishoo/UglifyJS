@@ -265,3 +265,32 @@ issue_4839: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4859: {
+    options = {
+        evaluate: true,
+        hoist_vars: true,
+        keep_infinity: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b = (a = 2, 1 / 0), c = 3;
+            var d = a + b;
+            console.log(d);
+            return f;
+        }
+        f();
+    }
+    expect: {
+        (function f(a) {
+            var d = 1 / 0, d = Infinity;
+            console.log(d);
+            return f;
+        })();
+    }
+    expect_stdout: "Infinity"
+}

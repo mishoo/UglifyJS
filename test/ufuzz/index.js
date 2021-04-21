@@ -1796,11 +1796,9 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
         if (SUPPORT.class_field && rng(2)) {
             s += internal || createObjectKey(recurmax, stmtDepth, canThrow);
             if (rng(5)) {
-                async = false;
+                async = bug_async_class_await && fixed;
                 generator = false;
-                if (bug_async_class_await && fixed) addAvoidVar("await");
                 s += " = " + createExpression(recurmax, NO_COMMA, stmtDepth, fixed ? canThrow : CANNOT_THROW);
-                if (bug_async_class_await && fixed) removeAvoidVar("await");
                 generator = save_generator;
                 async = save_async;
             }
