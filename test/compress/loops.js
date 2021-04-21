@@ -830,6 +830,18 @@ empty_for_in_prop_init: {
 
 for_of: {
     input: {
+        var a = [ "PASS", 42 ];
+        a.p = "FAIL";
+        for (a of (null, a))
+            console.log(a);
+    }
+    expect_exact: 'var a=["PASS",42];a.p="FAIL";for(a of(null,a))console.log(a);'
+    expect_stdout: true
+    node_version: ">=0.12"
+}
+
+for_async_of: {
+    input: {
         var async = [ "PASS", 42 ];
         async.p = "FAIL";
         for (async of (null, async))
@@ -837,7 +849,7 @@ for_of: {
     }
     expect_exact: 'var async=["PASS",42];async.p="FAIL";for(async of(null,async))console.log(async);'
     expect_stdout: true
-    node_version: ">=0.12"
+    node_version: ">=0.12 <16"
 }
 
 issue_3631_1: {
