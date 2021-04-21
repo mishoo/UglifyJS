@@ -1796,7 +1796,7 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
         if (SUPPORT.class_field && rng(2)) {
             s += internal || createObjectKey(recurmax, stmtDepth, canThrow);
             if (rng(5)) {
-                async = bug_async_class_await && fixed;
+                async = bug_async_class_await && fixed && 0;
                 generator = false;
                 s += " = " + createExpression(recurmax, NO_COMMA, stmtDepth, fixed ? canThrow : CANNOT_THROW);
                 generator = save_generator;
@@ -2000,7 +2000,7 @@ function isBannedKeyword(name) {
       case "arguments":
         return in_class;
       case "await":
-        return async;
+        return async !== false;
       case "yield":
         return generator || in_class;
     }
