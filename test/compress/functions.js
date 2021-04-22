@@ -6021,3 +6021,20 @@ issue_4823: {
     }
     expect_stdout: "function"
 }
+
+drop_unused_self_reference: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        (f.p = f).q = console.log("PASS");
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}

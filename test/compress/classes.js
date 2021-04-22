@@ -1541,3 +1541,23 @@ issue_4848: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+drop_unused_self_reference: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        (A.p = A).q = console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
