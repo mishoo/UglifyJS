@@ -198,6 +198,36 @@ global_fns: {
     ]
 }
 
+global_constructors: {
+    options = {
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        Map;
+        new Map(console.log("foo"));
+        Set;
+        new Set(console.log("bar"));
+        WeakMap;
+        new WeakMap(console.log("baz"));
+        WeakSet;
+        new WeakSet(console.log("moo"));
+    }
+    expect: {
+        console.log("foo");
+        console.log("bar");
+        console.log("baz");
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+        "moo",
+    ]
+    node_version: ">=0.12"
+}
+
 unsafe_builtin_1: {
     options = {
         side_effects: true,
