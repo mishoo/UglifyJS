@@ -1564,3 +1564,77 @@ issue_4803: {
     }
     expect_stdout: "PASS"
 }
+
+nested_property_assignments_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f;
+        ((f = function() {
+            console.log("FAIL");
+        }).p = f).q = console.log("PASS");
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+nested_property_assignments_2: {
+    options = {
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        var o = {};
+        (function() {
+            var a;
+            (o.p = a = {}).q = "PASS";
+        })();
+        console.log(o.p.q);
+    }
+    expect: {
+        var o = {};
+        (function() {
+            (o.p = {}).q = "PASS";
+        })();
+        console.log(o.p.q);
+    }
+    expect_stdout: "PASS"
+}
+
+nested_property_assignments_3: {
+    options = {
+        collapse_vars: true,
+        pure_getters: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var o = { p: {} };
+        (function(a) {
+            console && a;
+            if (console) {
+                a = a.p;
+                a.q = a;
+            }
+        })(o);
+        console.log(o.p.q === o.p ? "PASS" : "FAIL");
+    }
+    expect: {
+        var o = { p: {} };
+        (function(a) {
+            console;
+            if (console)
+                (a = a.p).q = a;
+        })(o);
+        console.log(o.p.q === o.p ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}

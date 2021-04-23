@@ -445,9 +445,9 @@ function addTrailingComma(list) {
 
 function createParams(was_async, was_generator, noDuplicate) {
     var save_async = async;
-    if (was_async) async = true;
+    if (!async) async = was_async;
     var save_generator = generator;
-    if (was_generator) generator = true;
+    if (!generator) generator = was_generator;
     var len = unique_vars.length;
     var params = [];
     for (var n = rng(4); --n >= 0;) {
@@ -569,9 +569,9 @@ function createAssignmentPairs(recurmax, stmtDepth, canThrow, nameLenBefore, was
     function createName() {
         unique_vars.push("a", "b", "c", "undefined", "NaN", "Infinity");
         var save_async = async;
-        if (was_async) async = true;
+        if (!async) async = was_async;
         var save_generator = generator;
-        if (was_generator) generator = true;
+        if (!generator) generator = was_generator;
         var name = createVarName(MANDATORY);
         generator = save_generator;
         async = save_async;

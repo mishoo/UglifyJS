@@ -1546,6 +1546,8 @@ drop_unused_self_reference: {
     options = {
         pure_getters: "strict",
         reduce_vars: true,
+        sequences: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
