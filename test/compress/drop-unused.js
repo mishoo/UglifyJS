@@ -2371,6 +2371,7 @@ function_parameter_ie8: {
 issue_3664: {
     options = {
         pure_getters: "strict",
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -2381,7 +2382,7 @@ issue_3664: {
     }
     expect: {
         console.log(function() {
-            var b = ([ b && console.log("FAIL") ].p = 0, 0);
+            var b = (b && console.log("FAIL"), 0, 0);
             return "PASS";
         }());
     }
@@ -2391,6 +2392,7 @@ issue_3664: {
 issue_3673: {
     options = {
         pure_getters: "strict",
+        sequences: true,
         side_effects: true,
         toplevel: true,
         unused: true,
@@ -2401,8 +2403,6 @@ issue_3673: {
         console.log("PASS");
     }
     expect: {
-        var a;
-        (a = [ a ]).p = 42;
         console.log("PASS");
     }
     expect_stdout: "PASS"
