@@ -8064,6 +8064,67 @@ mangleable_var: {
     expect_stdout: "PASS"
 }
 
+mangleable_assignment_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            p: function() {
+                return 6;
+            },
+        };
+        (function() {
+            var a, b = a = o.p();
+            console.log(a * (b / a + b));
+        })();
+    }
+    expect: {
+        var o = {
+            p: function() {
+                return 6;
+            },
+        };
+        (function() {
+            var a;
+            a = o.p();
+            console.log(a * (a / a + a));
+        })();
+    }
+    expect_stdout: "42"
+}
+
+mangleable_assignment_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var o = {
+            p: function() {
+                return 6;
+            },
+        };
+        (function(a, b) {
+            b = a = o.p();
+            console.log(a * (b / a + b));
+        })();
+    }
+    expect: {
+        var o = {
+            p: function() {
+                return 6;
+            },
+        };
+        (function(a, b) {
+            a = o.p();
+            console.log(a * (a / a + a));
+        })();
+    }
+    expect_stdout: "42"
+}
+
 issue_3884_1: {
     options = {
         collapse_vars: true,
