@@ -9010,3 +9010,23 @@ issue_4865: {
     }
     expect_stdout: true
 }
+
+issue_4868: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b) {
+            console.log(b[0]);
+        })(a = [ "PASS" ], a = [ "FAIL" ]);
+    }
+    expect: {
+        var a;
+        (function(b) {
+            console.log(b[0]);
+        })(a = [ "PASS" ], a = [ "FAIL" ]);
+    }
+    expect_stdout: "PASS"
+}
