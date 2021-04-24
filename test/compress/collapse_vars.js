@@ -8993,3 +8993,20 @@ issue_4852: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4865: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var NaN;
+        var a = NaN = "PASS";
+        console.log(a, NaN);
+    }
+    expect: {
+        var NaN;
+        var a = NaN = "PASS";
+        console.log(a, NaN);
+    }
+    expect_stdout: true
+}
