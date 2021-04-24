@@ -150,6 +150,27 @@ for_await_of: {
     node_version: ">=10"
 }
 
+comment_newline: {
+    beautify = {
+        comments: "all",
+    }
+    input: {
+        console.log(function*() {
+            yield (
+                /* */
+                "PASS"
+            );
+        }().next().value);
+    }
+    expect_exact: [
+        "console.log(function*(){",
+        "/* */",
+        'yield"PASS"}().next().value);',
+    ]
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 collapse_vars_1: {
     options = {
         collapse_vars: true,
