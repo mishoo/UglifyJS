@@ -852,6 +852,20 @@ for_async_of: {
     node_version: ">=0.12 <16"
 }
 
+for_of_regexp: {
+    input: {
+        for (var a of /foo/);
+    }
+    expect_exact: "for(var a of/foo/);"
+}
+
+for_await_of_regexp: {
+    input: {
+        for await (var a of /foo/);
+    }
+    expect_exact: "for await(var a of/foo/);"
+}
+
 issue_3631_1: {
     options = {
         dead_code: true,
