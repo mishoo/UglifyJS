@@ -91,6 +91,13 @@ defaults_parentheses_6: {
     expect_exact: 'export default(function(){while(!console);})()?"FAIL":"PASS";'
 }
 
+defaults_regexp: {
+    input: {
+        export default /foo/;
+    }
+    expect_exact: "export default/foo/;"
+}
+
 foreign: {
     input: {
         export * from "foo";
