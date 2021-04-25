@@ -11,7 +11,7 @@ function try_beautify(code) {
         mangle: false,
         output: {
             beautify: true,
-            braces: true
+            braces: true,
         }
     });
     if (beautified.error) {
@@ -35,12 +35,18 @@ function validate(ast) {
     return UglifyJS.minify(ast, {
         compress: false,
         mangle: false,
+        validate: true,
     });
+}
+
+function fuzzy(code) {
+    return code.replace(/\bimport\s*\{\s*\}\s*from\s*(['"])/g, "import$1")
+        .replace(/\b(import\b.*?)\s*,\s*\{\s*\}\s*(from\s*['"])/g, "$1 $2");
 }
 
 function test(original, estree, description) {
     var transformed = validate(UglifyJS.AST_Node.from_mozilla_ast(estree));
-    if (transformed.error || original !== transformed.code) {
+    if (transformed.error || original !== transformed.code && fuzzy(original) !== fuzzy(transformed.code)) {
         console.log("//=============================================================");
         console.log("// !!!!!! Failed... round", round);
         console.log("// original code");
@@ -72,18 +78,35 @@ for (var round = 1; round <= num_iterations; round++) {
             compress: false,
             mangle: false,
             output: {
-                ast: true
-            }
+                ast: true,
+            },
         });
-        var ok = test(uglified.code, uglified.ast.to_mozilla_ast(), "AST_Node.to_mozilla_ast()");
+        var ok = true;
         try {
-            ok = test(uglified.code, acorn.parse(input), "acorn.parse()") && ok;
+            var estree = uglified.ast.to_mozilla_ast();
         } catch (e) {
+            ok = false;
             console.log("//=============================================================");
-            console.log("// acorn parser failed... round", round);
+            console.log("// AST_Node.to_mozilla_ast() failed... round", round);
             console.log(e);
             console.log("// original code");
             console.log(input);
+        }
+        if (ok) ok = test(uglified.code, estree, "AST_Node.to_mozilla_ast()");
+        if (ok) try {
+            ok = test(uglified.code, acorn.parse(input, {
+                ecmaVersion: "latest",
+                locations: true,
+                sourceType: "module",
+            }), "acorn.parse()");
+        } catch (e) {
+            if (ufuzz.verbose) {
+                console.log("//=============================================================");
+                console.log("// acorn parser failed... round", round);
+                console.log(e);
+                console.log("// original code");
+                console.log(input);
+            }
         }
         if (!ok) process.exit(1);
     });

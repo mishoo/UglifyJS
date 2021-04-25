@@ -56,6 +56,9 @@ if (+process.env["UGLIFY_BUG_REPORT"]) exports.minify = function(files, options)
 
 function describe_ast() {
     var out = OutputStream({ beautify: true });
+    doitem(AST_Node);
+    return out.get() + "\n";
+
     function doitem(ctor) {
         out.print("AST_" + ctor.TYPE);
         var props = ctor.SELF_PROPS.filter(function(prop) {
@@ -86,9 +89,7 @@ function describe_ast() {
                 });
             });
         }
-    };
-    doitem(AST_Node);
-    return out + "\n";
+    }
 }
 
 function infer_options(options) {

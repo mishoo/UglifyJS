@@ -2045,6 +2045,7 @@ function createVarName(maybe, dontStore) {
 if (require.main !== module) {
     exports.createTopLevelCode = createTopLevelCode;
     exports.num_iterations = num_iterations;
+    exports.verbose = verbose;
     return;
 }
 
