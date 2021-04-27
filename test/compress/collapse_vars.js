@@ -9030,3 +9030,30 @@ issue_4868: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4874: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        a = null;
+        (function(b) {
+            for (var c in b = b && b[console.log("PASS")])
+                console;
+        })(a = 42);
+    }
+    expect: {
+        var a;
+        null;
+        (function(b) {
+            for (var c in a && a[console.log("PASS")])
+                console;
+        })(a = 42);
+    }
+    expect_stdout: "PASS"
+}
