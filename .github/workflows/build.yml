@@ -8,7 +8,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        options: [ '-mb braces', '--ie8 -c', '-mc', '--toplevel -mc passes=3,pure_getters,unsafe' ]
+        options:
+          - '-mb braces'
+          - '--ie8 -c'
+          - '-mc'
+          - '--toplevel -mc passes=3,pure_getters,unsafe'
         script:
           - acorn.sh
           - bootstrap.sh

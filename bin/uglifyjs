@@ -235,10 +235,11 @@ if (options.mangle && options.mangle.properties) {
         });
     }
 }
-if (output == "ast" || output == "spidermonkey") options.output = {
-    ast: true,
-    code: false,
-};
+if (/^ast|spidermonkey$/.test(output)) {
+    if (typeof options.output != "object") options.output = {};
+    options.output.ast = true;
+    options.output.code = false;
+}
 if (options.parse && (options.parse.acorn || options.parse.spidermonkey)
     && options.sourceMap && options.sourceMap.content == "inline") {
     fatal("inline source map only works with built-in parser");
@@ -265,7 +266,9 @@ if (specified["self"]) {
     paths = UglifyJS.FILES;
 }
 if (specified["in-situ"]) {
-    if (output || specified["reduce-test"] || specified["self"]) fatal("incompatible options specified");
+    if (output && output != "spidermonkey" || specified["reduce-test"] || specified["self"]) {
+        fatal("incompatible options specified");
+    }
     paths.forEach(function(name) {
         print(name);
         if (/^ast|spidermonkey$/.test(name)) fatal("invalid file name specified");
@@ -313,6 +316,7 @@ function run() {
             if (options.parse.acorn) {
                 files = convert_ast(function(toplevel, name) {
                     return require("acorn").parse(files[name], {
+                        allowHashBang: true,
                         ecmaVersion: "latest",
                         locations: true,
                         program: toplevel,
@@ -413,7 +417,17 @@ function run() {
     } else if (output == "spidermonkey") {
         print(JSON.stringify(result.ast.to_mozilla_ast(), null, 2));
     } else if (output) {
-        fs.writeFileSync(output, result.code);
+        var code;
+        if (result.ast) {
+            var opts = {};
+            for (var name in options.output) {
+                if (!/^ast|code$/.test(name)) opts[name] = options.output[name];
+            }
+            code = UglifyJS.AST_Node.from_mozilla_ast(result.ast.to_mozilla_ast()).print_to_string(opts);
+        } else {
+            code = result.code;
+        }
+        fs.writeFileSync(output, code);
         if (result.map) fs.writeFileSync(output + ".map", result.map);
     } else {
         print(result.code);

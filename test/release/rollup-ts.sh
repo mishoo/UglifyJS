@@ -15,7 +15,7 @@ minify_in_situ() {
     for i in `find $DIRS -type f -name '*.ts' | grep -v '\.d\.ts'`
     do
         echo "$i"
-        node_modules/.bin/esbuild --loader=ts --target=node14 < "$i" \
+        node_modules/.bin/esbuild --loader=ts --target=es2019 < "$i" \
             | uglify-js $UGLIFY_OPTIONS -o "$i"
     done
 }
