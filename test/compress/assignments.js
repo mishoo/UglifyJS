@@ -672,3 +672,32 @@ issue_4827_3: {
     expect_stdout: "undefined"
     node_version: ">=15"
 }
+
+issue_4876: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            var a = null;
+            var b = a &&= 42;
+            b.p;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            var a = null;
+            var b = a &&= 42;
+            b.p;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
