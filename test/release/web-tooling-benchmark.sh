@@ -1,6 +1,6 @@
 #!/bin/sh
 
-alias uglify-js="node --max-old-space-size=4096 $PWD/bin/uglifyjs"
+alias uglify-js="node --max-old-space-size=8192 $PWD/bin/uglifyjs"
 UGLIFY_OPTIONS=$@
 
 minify_in_situ() {
@@ -23,6 +23,17 @@ rm -rf tmp/web-tooling-benchmark \
 +++ b/package.json
 @@ -12 +11,0 @@
 -    "postinstall": "npm run build:terser-bundled && npm run build:uglify-js-bundled && npm run build",
+--- a/src/bootstrap.js
++++ b/src/bootstrap.js
+@@ -6 +6 @@ const gmean = require("compute-gmean");
+-const package = require("../package.json");
++const package_json = require("../package.json");
+@@ -65 +65 @@ function initialize() {
+-  document.title = \`Web Tooling Benchmark v\${package.version}\`;
++  document.title = \`Web Tooling Benchmark v\${package_json.version}\`;
+@@ -68 +68 @@ function initialize() {
+-  versionDiv.innerHTML = \`v\${package.version}\`;
++  versionDiv.innerHTML = \`v\${package_json.version}\`;
 --- a/src/cli-flags-helper.js
 +++ b/src/cli-flags-helper.js
 @@ -7 +6,0 @@ const targetList = new Set([
