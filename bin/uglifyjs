@@ -314,16 +314,43 @@ function run() {
     try {
         if (options.parse) {
             if (options.parse.acorn) {
+                var annotations = Object.create(null);
                 files = convert_ast(function(toplevel, name) {
-                    return require("acorn").parse(files[name], {
+                    var content = files[name];
+                    var list = annotations[name] = [];
+                    var prev = -1;
+                    return require("acorn").parse(content, {
                         allowHashBang: true,
                         ecmaVersion: "latest",
                         locations: true,
+                        onComment: function(block, text, start, end) {
+                            var match = /[@#]__PURE__/.exec(text);
+                            if (!match) {
+                                if (start != prev) return;
+                                match = [ list[prev] ];
+                            }
+                            while (/\s/.test(content[end])) end++;
+                            list[end] = match[0];
+                            prev = end;
+                        },
+                        preserveParens: true,
                         program: toplevel,
                         sourceFile: name,
                         sourceType: "module",
                     });
                 });
+                files.walk(new UglifyJS.TreeWalker(function(node) {
+                    if (!(node instanceof UglifyJS.AST_Call)) return;
+                    var list = annotations[node.start.file];
+                    var pure = list[node.start.pos];
+                    if (!pure) {
+                        var pos = node.start.parens;
+                        if (pos) for (var i = 0; !pure && i < pos.length; i++) {
+                            pure = list[pos[i]];
+                        }
+                    }
+                    if (pure) node.pure = pure;
+                }));
             } else if (options.parse.spidermonkey) {
                 files = convert_ast(function(toplevel, name) {
                     var obj = JSON.parse(files[name]);

@@ -6,6 +6,16 @@ UGLIFY_OPTIONS=$@
 minify_in_situ() {
     ARGS="$UGLIFY_OPTIONS --validate --in-situ"
     DIRS="$1"
+    echo '> esbuild' $DIRS
+    for i in `find $DIRS -type f -name '*.ts' | grep -v '\.d\.ts'`
+    do
+        echo "$i"
+        CODE=`cat "$i"`
+        node_modules/.bin/esbuild --loader=ts --target=es2019 > "$i" <<EOF
+$CODE
+EOF
+        ARGS="$ARGS $i"
+    done
     echo '> uglify-js' $DIRS $UGLIFY_OPTIONS
     for i in `find $DIRS -type f -name '*.js'`
     do
@@ -16,12 +26,6 @@ minify_in_situ() {
         ARGS="$ARGS $i"
     done
     uglify-js $ARGS
-    for i in `find $DIRS -type f -name '*.ts' | grep -v '\.d\.ts'`
-    do
-        echo "$i"
-        node_modules/.bin/esbuild --loader=ts --target=es2019 < "$i" \
-            | uglify-js $UGLIFY_OPTIONS -o "$i"
-    done
 }
 
 rm -rf tmp/sucrase \
