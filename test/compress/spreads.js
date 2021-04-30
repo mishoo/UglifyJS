@@ -1068,3 +1068,91 @@ issue_4849: {
     expect_stdout: "object"
     node_version: ">=8"
 }
+
+issue_4882_1: {
+    options = {
+        objects: true,
+        spreads: true,
+    }
+    input: {
+        var o = {
+            p: "PASS",
+            ... {
+                __proto__: {
+                    p: "FAIL 1",
+                    q: "FAIL 2",
+                },
+            },
+        };
+        console.log(o.p);
+        console.log(o.q);
+    }
+    expect: {
+        var o = {
+            p: "PASS",
+        };
+        console.log(o.p);
+        console.log(o.q);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
+
+issue_4882_2: {
+    options = {
+        objects: true,
+        spreads: true,
+    }
+    input: {
+        console.log(null == Object.getPrototypeOf({
+            ... {
+                __proto__: (console.log(42), null),
+            },
+        }) ? "FAIL" : "PASS");
+    }
+    expect: {
+        console.log(null == Object.getPrototypeOf({
+            ... {
+                __proto__: (console.log(42), null),
+            },
+        }) ? "FAIL" : "PASS");
+    }
+    expect_stdout: [
+        "42",
+        "PASS",
+    ]
+    node_version: ">=8"
+}
+
+issue_4882_3: {
+    options = {
+        objects: true,
+        spreads: true,
+    }
+    input: {
+        var o = {
+            __proto__: { p: 42 },
+            ... {
+                set __proto__(v) {},
+            },
+        };
+        console.log(o.__proto__ === Object.getPrototypeOf(o) ? "FAIL" : "PASS");
+        console.log(o.p);
+    }
+    expect: {
+        var o = {
+            __proto__: { p: 42 },
+            ["__proto__"]: void 0,
+        };
+        console.log(o.__proto__ === Object.getPrototypeOf(o) ? "FAIL" : "PASS");
+        console.log(o.p);
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+    node_version: ">=8"
+}
