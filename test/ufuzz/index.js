@@ -1188,7 +1188,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
 
 function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
     var hadDefault = false;
-    var s = [""];
+    var s = [ "" ];
     canBreak = enableLoopControl(canBreak, CAN_BREAK);
     while (n-- > 0) {
         //hadDefault = n > 0; // disables weird `default` clause positioning (use when handling destabilizes)
@@ -1619,6 +1619,10 @@ var KEYS = [
     "1.5",
     "3",
 ].concat(SAFE_KEYS);
+SAFE_KEYS = SAFE_KEYS.concat(SAFE_KEYS);
+SAFE_KEYS = SAFE_KEYS.concat(SAFE_KEYS);
+SAFE_KEYS = SAFE_KEYS.concat(SAFE_KEYS);
+SAFE_KEYS.push("__proto__");
 
 function getDotKey(assign) {
     var key;
@@ -1736,8 +1740,9 @@ function createObjectFunction(recurmax, stmtDepth, canThrow, internal, isClazz) 
 
 function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
-    var obj = ["({"];
+    var obj = [ "({" ];
     var offset = SUPPORT.spread_object ? 0 : SUPPORT.computed_key ? 2 : 4;
+    var has_proto = false;
     for (var i = rng(6); --i >= 0;) switch (offset + rng(50 - offset)) {
       case 0:
         obj.push("..." + getVarName() + ",");
@@ -1753,7 +1758,12 @@ function createObjectLiteral(recurmax, stmtDepth, canThrow) {
         obj.push(createObjectFunction(recurmax, stmtDepth, canThrow) + ",");
         break;
       default:
-        obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ": " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ",");
+        if (has_proto || rng(200)) {
+            obj.push(createObjectKey(recurmax, stmtDepth, canThrow) + ": " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ",");
+        } else {
+            obj.push("__proto__: " + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + " || {},");
+            has_proto = true;
+        }
         break;
     }
     obj.push("})");

@@ -1024,7 +1024,7 @@ issue_3856: {
     expect_stdout: "undefined"
 }
 
-issue_3916: {
+issue_3916_1: {
     options = {
         join_vars: true,
     }
@@ -1044,8 +1044,8 @@ issue_3916: {
         var o = {
             p: "PASS",
             __proto__: 42,
-            q: "FAIL",
         };
+        o.q = "FAIL";
         o.__proto__ = {
             p: "FAIL",
             q: "PASS",
@@ -1054,6 +1054,62 @@ issue_3916: {
         console.log(typeof o.__proto__, o.p, delete o.q, o.q);
     }
     expect_stdout: "object PASS true PASS"
+}
+
+issue_3916_2: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var log = console.log, o = {};
+        o.p = "FAIL 1";
+        o.__proto__ = {
+            get p() {
+                return "FAIL 2";
+            },
+            set p(u) {
+                log("FAIL 3");
+            },
+            set q(v) {
+                log("PASS 1");
+            },
+            get q() {
+                return "PASS 3";
+            },
+        };
+        o.p = "PASS 2";
+        o.q = "FAIL 4";
+        log(o.p);
+        log(o.q);
+    }
+    expect: {
+        var log = console.log, o = {
+            p: "FAIL 1",
+            __proto__: {
+                get p() {
+                    return "FAIL 2";
+                },
+                set p(u) {
+                    log("FAIL 3");
+                },
+                set q(v) {
+                    log("PASS 1");
+                },
+                get q() {
+                    return "PASS 3";
+                },
+            },
+        };
+        o.p = "PASS 2";
+        o.q = "FAIL 4";
+        log(o.p);
+        log(o.q);
+    }
+    expect_stdout: [
+        "PASS 1",
+        "PASS 2",
+        "PASS 3",
+    ]
 }
 
 assign_var: {
