@@ -1446,3 +1446,20 @@ issue_4831_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4888: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log(typeof {
+            __proto__: 42,
+        }.__proto__);
+    }
+    expect: {
+        console.log(typeof {
+            __proto__: 42,
+        }.__proto__);
+    }
+    expect_stdout: "object"
+}
