@@ -232,8 +232,9 @@ issue_4736: {
     expect: {
         (function() {
             (function() {
+                var b = 1 << 30;
                 0,
-                console.log(1073741824);
+                console.log(b);
             })();
         })();
     }

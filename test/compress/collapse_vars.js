@@ -4724,7 +4724,7 @@ cascade_statement: {
         }
         function f3(a, b) {
             for (; a < b; a++)
-                if ((c = a) && b)
+                if (c = a, a && b)
                     var c = c = b(a);
         }
     }
