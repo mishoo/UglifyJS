@@ -3181,3 +3181,23 @@ issue_4552: {
     }
     expect_stdout: "NaN"
 }
+
+issue_4886: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log("length" in {
+            __proto__: function() {},
+            length: void 0,
+        });
+    }
+    expect: {
+        console.log("length" in {
+            __proto__: function() {},
+            length: void 0,
+        });
+    }
+    expect_stdout: "true"
+}
