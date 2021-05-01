@@ -9057,3 +9057,31 @@ issue_4874: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4891: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b;
+        a++;
+        console.log(b = a, b);
+        b--;
+        a.a += 0;
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b;
+        a++;
+        console.log(a, b = a);
+        b--;
+        a.a += 0;
+        console.log(b);
+    }
+    expect_stdout: [
+        "1 1",
+        "0",
+    ]
+}
