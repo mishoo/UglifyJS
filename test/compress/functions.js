@@ -6013,7 +6013,7 @@ issue_4823: {
         console.log(typeof function() {
             {
                 function f() {}
-                arguments = f();
+                f();
                 var arguments = function() {};
             }
             return f && arguments;
@@ -6039,4 +6039,172 @@ drop_unused_self_reference: {
         console.log("PASS");
     }
     expect_stdout: "PASS"
+}
+
+reduce_cross_reference_1: {
+    options = {
+        passes: 3,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            a = b = function() {};
+            a.p = a;
+            b = a = function() {};
+            b.q = b;
+        })();
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_1_toplevel: {
+    options = {
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = b = function() {};
+        a.p = a;
+        var b = a = function() {};
+        b.q = b;
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_2: {
+    options = {
+        collapse_vars: true,
+        passes: 3,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            a = b = function() {};
+            b.p = a;
+            b = a = function() {};
+            a.q = b;
+        })();
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_2_toplevel: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = b = function() {};
+        b.p = a;
+        var b = a = function() {};
+        a.q = b;
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_3: {
+    options = {
+        collapse_vars: true,
+        passes: 3,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            a = b = function() {};
+            a.p = b;
+            b = a = function() {};
+            b.q = a;
+        })();
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_3_toplevel: {
+    options = {
+        collapse_vars: true,
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = b = function() {};
+        a.p = b;
+        var b = a = function() {};
+        b.q = a;
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_4: {
+    options = {
+        passes: 3,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            a = b = function() {};
+            b.p = b;
+            b = a = function() {};
+            a.q = a;
+        })();
+    }
+    expect: {}
+    expect_stdout: true
+}
+
+reduce_cross_reference_4_toplevel: {
+    options = {
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = b = function() {};
+        b.p = b;
+        var b = a = function() {};
+        a.q = a;
+    }
+    expect: {}
+    expect_stdout: true
 }
