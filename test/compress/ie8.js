@@ -2653,7 +2653,9 @@ issue_4019: {
             try {
                 console.log("FAIL");
             } catch (o) {}
-        }, o = (console.log(o.length), ++o);
+        };
+        console.log(o.length),
+        ++o;
     }
     expect_stdout: "0"
 }
