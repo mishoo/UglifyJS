@@ -295,3 +295,81 @@ issue_4859: {
     }
     expect_stdout: "Infinity"
 }
+
+issue_4893_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g() {}
+            var a = null;
+            var b = null;
+            var c = null;
+            b.p += a = 42;
+            f;
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try{
+            (function f() {
+                var b;
+                b = null;
+                b.p += 42;
+                f;
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4893_2: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            function g() {}
+            var a = null;
+            var b = null;
+            var c = null;
+            b.p += a = 42;
+            f;
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try{
+            (function() {
+                var b;
+                b = null;
+                b.p += 42;
+            })();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}

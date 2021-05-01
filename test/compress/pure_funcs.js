@@ -133,7 +133,7 @@ conditional: {
 relational: {
     options = {
         pure_funcs: [ "foo" ],
-        side_effects :true,
+        side_effects: true,
     }
     input: {
         foo() in new foo();
@@ -158,7 +158,7 @@ relational: {
 arithmetic: {
     options = {
         pure_funcs: [ "foo" ],
-        side_effects :true,
+        side_effects: true,
     }
     input: {
         foo() + foo();
@@ -183,7 +183,7 @@ arithmetic: {
 boolean_and: {
     options = {
         pure_funcs: [ "foo" ],
-        side_effects :true,
+        side_effects: true,
     }
     input: {
         foo() && foo();
@@ -208,7 +208,7 @@ boolean_and: {
 boolean_or: {
     options = {
         pure_funcs: [ "foo" ],
-        side_effects :true,
+        side_effects: true,
     }
     input: {
         foo() || foo();
@@ -233,7 +233,7 @@ boolean_or: {
 assign: {
     options = {
         pure_funcs: [ "foo" ],
-        side_effects :true,
+        side_effects: true,
     }
     input: {
         var a;
@@ -256,7 +256,7 @@ assign: {
 unary: {
     options = {
         pure_funcs: [ "foo" ],
-        side_effects :true,
+        side_effects: true,
     }
     input: {
         typeof foo();
