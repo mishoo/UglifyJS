@@ -343,7 +343,7 @@ issue_4676: {
         reduce_vars: true,
         templates: true,
         toplevel: true,
-        unsafe:true,
+        unsafe: true,
         unused: true,
     }
     input: {
