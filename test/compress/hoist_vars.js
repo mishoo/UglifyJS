@@ -232,9 +232,8 @@ issue_4736: {
     expect: {
         (function() {
             (function() {
-                var b = 1 << 30;
                 0,
-                console.log(b);
+                console.log(1073741824);
             })();
         })();
     }
@@ -370,6 +369,30 @@ issue_4893_2: {
         } catch (e) {
             console.log("PASS");
         }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4898: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        hoist_vars: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        do {
+            var b = [ console.log("PASS") ];
+            var c = b;
+        } while (c.p = 0);
+    }
+    expect: {
+        var b;
+        b = [ console.log("PASS") ];
+        b.p = 0;
     }
     expect_stdout: "PASS"
 }
