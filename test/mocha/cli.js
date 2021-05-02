@@ -427,16 +427,30 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
-    it("Should throw syntax error (++null)", function(done) {
+    it("Should throw syntax error (null = 4)", function(done) {
         var command = uglifyjscmd + " test/input/invalid/assign_4.js";
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
             assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
-                "Parse error at test/input/invalid/assign_4.js:1,0",
-                "++null",
-                "^",
-                "ERROR: Invalid use of ++ operator",
+                "Parse error at test/input/invalid/assign_4.js:1,23",
+                "console.log(4 || (null = 4));",
+                "                       ^",
+                "ERROR: Invalid assignment",
+            ].join("\n"));
+            done();
+        });
+    });
+    it("Should throw syntax error ([]?.length ^= 5)", function(done) {
+        var command = uglifyjscmd + " test/input/invalid/assign_5.js";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/assign_5.js:1,29",
+                "console.log(5 || ([]?.length ^= 5));",
+                "                             ^",
+                "ERROR: Invalid assignment",
             ].join("\n"));
             done();
         });

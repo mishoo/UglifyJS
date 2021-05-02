@@ -11,7 +11,7 @@ minify_in_situ() {
     do
         echo "$i"
         CODE=`cat "$i"`
-        node_modules/.bin/esbuild --loader=ts --target=es2019 > "$i" <<EOF
+        node_modules/.bin/esbuild --loader=ts --target=esnext > "$i" <<EOF
 $CODE
 EOF
         ARGS="$ARGS $i"
