@@ -8560,7 +8560,7 @@ issue_4047_1: {
     expect: {
         var b = 1;
         var a;
-        console.log((a = --b + ((a = 0) !== typeof A), +void ((a >>= 0) && console.log("PASS"))));
+        console.log((a = --b + (0 !== typeof A), +void ((a >>= 0) && console.log("PASS"))));
     }
     expect_stdout: [
         "PASS",
@@ -9084,4 +9084,26 @@ issue_4891: {
         "1 1",
         "0",
     ]
+}
+
+issue_4895: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b;
+        (function f() {
+            a = 42;
+        })();
+        console.log((b = a) || b, b += 0);
+    }
+    expect: {
+        var a, b;
+        (function f() {
+            a = 42;
+        })();
+        console.log((b = a) || b, b += 0);
+    }
+    expect_stdout: "42 42"
 }
