@@ -152,6 +152,7 @@ var SUPPORT = function(matrix) {
     logical_assignment: "[].p ??= 0;",
     new_target: "function f() { new.target; }",
     nullish: "0 ?? 0",
+    optional_chaining: "0?.p",
     rest: "var [...a] = [];",
     rest_object: "var {...a} = {};",
     spread: "[...[]];",
@@ -1487,12 +1488,16 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         return createValue() + " in " + createObjectLiteral(recurmax, stmtDepth, canThrow);
       case p++:
         var name = getVarName();
-        var s = name + "[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]";
-        return canThrow && rng(20) == 0 ? s : name + " && " + s;
+        var prop = "[" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + "]";
+        if (SUPPORT.optional_chaining && rng(50) == 0) return name + "?." + prop;
+        if (canThrow && rng(20) == 0) return name + prop;
+        return name + " && " + name + prop;
       case p++:
         var name = getVarName();
-        var s = name + "." + getDotKey();
-        return canThrow && rng(20) == 0 ? s : name + " && " + s;
+        var prop = getDotKey();
+        if (SUPPORT.optional_chaining && rng(50) == 0) return name + "?." + prop;
+        if (canThrow && rng(20) == 0) return name + "." + prop;
+        return name + " && " + name + "." + prop;
       case p++:
       case p++:
         var name = getVarName();
@@ -1534,7 +1539,16 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             name = rng(3) == 0 ? getVarName() : "f" + rng(funcs + 2);
         } while (name in called && !called[name]);
         called[name] = true;
-        return mayDefer("typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + createArgs(recurmax, stmtDepth, canThrow));
+        var args = createArgs(recurmax, stmtDepth, canThrow);
+        var call = "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + args;
+        if (canThrow) {
+            if (SUPPORT.optional_chaining && args[0] != "`" && rng(50) == 0) {
+                call = name + "?." + args;
+            } else if (rng(20) == 0) {
+                call = name + args;
+            }
+        }
+        return mayDefer(call);
     }
     _createExpression.N = p;
     return _createExpression(recurmax, noComma, stmtDepth, canThrow);
