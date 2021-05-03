@@ -62,6 +62,23 @@ tag_parentheses_arrow: {
     node_version: ">=4"
 }
 
+tag_parentheses_binary: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function() {
+            console.log("PASS");
+        } || console
+        f``;
+    }
+    expect_exact: '(function(){console.log("PASS")}||console)``;'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 tag_parentheses_new: {
     input: {
         (new function() {
@@ -83,6 +100,21 @@ tag_parentheses_sequence: {
         (42, o.f)``;
     }
     expect_exact: 'var o={f(){console.log(this===o?"FAIL":"PASS")}};(42,o.f)``;'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+tag_parentheses_unary: {
+    input: {
+        var a;
+        try {
+            (~a)``;
+            (a++)``;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_exact: 'var a;try{(~a)``;(a++)``}catch(e){console.log("PASS")}'
     expect_stdout: "PASS"
     node_version: ">=4"
 }
