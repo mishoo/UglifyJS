@@ -1543,9 +1543,9 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
         var call = "typeof " + name + ' == "function" && --_calls_ >= 0 && ' + name + args;
         if (canThrow) {
             if (SUPPORT.optional_chaining && args[0] != "`" && rng(50) == 0) {
-                call = name + "?." + args;
+                call = "--_calls_ >= 0 && " + name + "?." + args;
             } else if (rng(20) == 0) {
-                call = name + args;
+                call = "--_calls_ >= 0 && " + name + args;
             }
         }
         return mayDefer(call);
