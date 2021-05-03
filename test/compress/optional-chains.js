@@ -194,3 +194,20 @@ trim_2: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_4906: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        do {
+            var a = a?.[42];
+        } while (console.log("PASS"));
+    }
+    expect: {
+        do {} while (console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
