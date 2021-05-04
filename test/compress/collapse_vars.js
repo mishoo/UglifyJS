@@ -9049,7 +9049,7 @@ issue_4874: {
     }
     expect: {
         var a;
-        null;
+        a = null;
         (function(b) {
             for (var c in a && a[console.log("PASS")])
                 console;
@@ -9106,4 +9106,27 @@ issue_4895: {
         console.log((b = a) || b, b += 0);
     }
     expect_stdout: "42 42"
+}
+
+issue_4908: {
+    options = {
+        collapse_vars: true,
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        var b;
+        console || a++;
+        var c = d = a, d = [ c && c, d += 42 ];
+        console.log(d[1]);
+    }
+    expect: {
+        var a = 0, b;
+        console || a++;
+        var c = d = a, d = [ d && d, d += 42 ];
+        console.log(d[1]);
+    }
+    expect_stdout: "42"
 }
