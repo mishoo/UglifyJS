@@ -2382,7 +2382,7 @@ issue_3664: {
     }
     expect: {
         console.log(function() {
-            var b = (b && console.log("FAIL"), 0, 0);
+            var a, b = (a = (a = [ b && console.log("FAIL") ]).p = 0, 0);
             return "PASS";
         }());
     }
@@ -3385,6 +3385,88 @@ issue_4834: {
             console.log("PASS");
         }
         var b;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4912_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = A = function() {};
+        A;
+        a.prototype = {
+            f: function() {
+                console.log("PASS");
+            },
+        };
+        new A().f();
+    }
+    expect: {
+        var a = A = function() {};
+        A;
+        a.prototype = {
+            f: function() {
+                console.log("PASS");
+            },
+        };
+        new A().f();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4912_2: {
+    options = {
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var g, f = function() {};
+            f.p = {};
+            (g = f.p.q = function() {}).r = "PASS";
+            return f;
+        }().p.q.r);
+    }
+    expect: {
+        console.log(function() {
+            var g, f = function() {};
+            f.p = {};
+            (g = f.p.q = function() {}).r = "PASS";
+            return f;
+        }().p.q.r);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4912_3: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(f, g) {
+            f = function() {};
+            f.p = {};
+            g = f.p.q = function() {};
+            g.r = "PASS";
+            return f;
+        }().p.q.r);
+    }
+    expect: {
+        console.log(function(f, g) {
+            f = function() {};
+            f.p = {};
+            g = f.p.q = function() {};
+            g.r = "PASS";
+            return f;
+        }().p.q.r);
     }
     expect_stdout: "PASS"
 }
