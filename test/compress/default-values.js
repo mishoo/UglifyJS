@@ -1703,3 +1703,29 @@ issue_4854: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_4916: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        var log = console.log;
+        (function(b = "foo") {
+            b.value = "FAIL";
+            b;
+            log(b.value);
+        })();
+    }
+    expect: {
+        var log = console.log;
+        (function(b = "foo") {
+            b.value = "FAIL";
+            b;
+            log(b.value);
+        })();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
