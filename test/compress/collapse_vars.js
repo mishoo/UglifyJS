@@ -9151,3 +9151,23 @@ issue_4910: {
     }
     expect_stdout: "bar foo"
 }
+
+issue_4914: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+    }
+    input: {
+        console.log(typeof function f() {
+            f.__proto__ = 42;
+            return f.__proto__;
+        }());
+    }
+    expect: {
+        console.log(typeof function f() {
+            f.__proto__ = 42;
+            return f.__proto__;
+        }());
+    }
+    expect_stdout: "function"
+}
