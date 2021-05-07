@@ -9171,3 +9171,26 @@ issue_4914: {
     }
     expect_stdout: "function"
 }
+
+issue_4918: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "FAIL";
+        ({
+            get 42() {
+                console.log(a);
+            }
+        }[a = "PASS", 42] += "PASS");
+    }
+    expect: {
+        var a = "FAIL";
+        ({
+            get 42() {
+                console.log(a);
+            }
+        }[a = "PASS", 42] += "PASS");
+    }
+    expect_stdout: "PASS"
+}
