@@ -9194,3 +9194,29 @@ issue_4918: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4920: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS", b;
+        ({
+            get PASS() {
+                a = "FAIL";
+            },
+        })[b = a];
+        console.log(b);
+    }
+    expect: {
+        var a = "PASS", b;
+        ({
+            get PASS() {
+                a = "FAIL";
+            },
+        })[b = a];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
