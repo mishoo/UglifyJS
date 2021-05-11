@@ -2,7 +2,7 @@ name: Fuzzing
 on:
   pull_request:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
 env:
   BASE_URL: https://api.github.com/repos/${{ github.repository }}
   CAUSE: ${{ github.event_name }}
