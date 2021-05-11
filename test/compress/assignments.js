@@ -701,3 +701,48 @@ issue_4876: {
     expect_stdout: "PASS"
     node_version: ">=15"
 }
+
+issue_4924_1: {
+    options = {
+        collapse_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b;
+        console.log("PASS");
+        a = function() {};
+        b = function() {}(b ||= a);
+    }
+    expect: {
+        var b;
+        console.log("PASS");
+        b = void (b ||= function() {});
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+issue_4924_2: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        passes: 2,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b;
+        console.log("PASS");
+        a = function() {};
+        b = function() {}(b ||= a);
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
