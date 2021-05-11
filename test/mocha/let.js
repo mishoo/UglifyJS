@@ -7,11 +7,11 @@ describe("let", function() {
         // Produce a lot of variables in a function and run it through mangle.
         var s = '"dddddeeeeelllllooooottttt"; function foo() {';
         for (var i = 0; i < 18000; i++) {
-            s += "var v" + i + "=0;";
+            s += "var v" + i + "=[];";
         }
         s += '}';
         var result = UglifyJS.minify(s, {
-            compress: false
+            compress: false,
         }).code;
 
         // Verify that select keywords and reserved keywords not produced
