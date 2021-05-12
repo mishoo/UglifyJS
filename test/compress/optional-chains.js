@@ -253,3 +253,25 @@ issue_4906: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_4928: {
+    options = {
+        ie8: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = a?.[function f() {
+            f(a);
+        }];
+        console.log(typeof f);
+    }
+    expect: {
+        var a = a?.[function f() {
+            f(a);
+        }];
+        console.log(typeof f);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=14"
+}
