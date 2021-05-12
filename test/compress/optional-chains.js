@@ -43,6 +43,48 @@ ternary_decimal: {
     expect_stdout: "PASS"
 }
 
+assign_parentheses_call: {
+    input: {
+        var o = {};
+        ((() => o)?.()).p = "PASS";
+        console.log(o.p);
+    }
+    expect_exact: 'var o={};((()=>o)?.()).p="PASS";console.log(o.p);'
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+assign_parentheses_dot: {
+    input: {
+        (console?.log).name.p = console.log("PASS");
+    }
+    expect_exact: '(console?.log.name).p=console.log("PASS");'
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+assign_no_parentheses: {
+    input: {
+        console[console.log?.("PASS")] = 42;
+    }
+    expect_exact: 'console[console.log?.("PASS")]=42;'
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+unary_parentheses: {
+    input: {
+        var o = { p: 41 };
+        (function() {
+            return o;
+        }?.()).p++;
+        console.log(o.p);
+    }
+    expect_exact: "var o={p:41};(function(){return o}?.()).p++;console.log(o.p);"
+    expect_stdout: "42"
+    node_version: ">=14"
+}
+
 collapse_vars_1: {
     options = {
         collapse_vars: true,
