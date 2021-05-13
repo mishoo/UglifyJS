@@ -2947,3 +2947,53 @@ issue_4729: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4928_1: {
+    options = {
+        ie8: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            f(a);
+        };
+        console.log(typeof f);
+    }
+    expect: {
+        var a = function f() {
+            f(a);
+        };
+        console.log(typeof f);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4928_2: {
+    options = {
+        ie8: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        switch (42) {
+          case console:
+            var a = function f() {
+                f(a);
+            };
+          case 42:
+            var a = console.log("PASS");
+        }
+    }
+    expect: {
+        switch (42) {
+          case console:
+            var a = function f() {
+                f(a);
+            };
+          case 42:
+            a = console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
