@@ -132,6 +132,8 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 return;
             }
             if (parent instanceof U.AST_VarDef && parent.name === node) return;
+            // preserve class methods
+            if (parent instanceof U.AST_ClassMethod && parent.value === node) return;
             // preserve exports
             if (parent instanceof U.AST_ExportDeclaration) return;
             if (parent instanceof U.AST_ExportDefault) return;
@@ -147,6 +149,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (parent instanceof U.AST_For && parent.init === node && node instanceof U.AST_Definitions) return node;
             // preserve for (xxx in/of ...)
             if (parent instanceof U.AST_ForEnumeration && parent.init === node) return node;
+            // preserve super(...)
+            if (node.TYPE == "Call" && node.expression instanceof U.AST_Super) return;
+            if (node instanceof U.AST_Super && parent.TYPE == "Call" && parent.expression === node) return node;
 
             // node specific permutations with no parent logic
 
