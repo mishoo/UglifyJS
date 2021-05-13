@@ -356,6 +356,7 @@ var block_vars = [];
 var lambda_vars = [];
 var unique_vars = [];
 var classes = [];
+var allow_this = true;
 var async = false;
 var has_await = false;
 var export_default = false;
@@ -402,6 +403,7 @@ function createTopLevelCode() {
     lambda_vars.length = 0;
     unique_vars.length = 0;
     classes.length = 0;
+    allow_this = true;
     async = false;
     has_await = false;
     export_default = false;
@@ -1731,6 +1733,8 @@ function createObjectFunction(recurmax, stmtDepth, canThrow, internal, isClazz) 
         fn = function(defns) {
             if (generator) name = "*" + name;
             if (async) name = "async "+ name;
+            var save_allow = allow_this;
+            if (internal == "super") allow_this = false;
             s = [
                 name + "(" + createParams(save_async, save_generator, NO_DUPLICATE) + "){",
                 strictMode(),
@@ -1738,6 +1742,7 @@ function createObjectFunction(recurmax, stmtDepth, canThrow, internal, isClazz) 
             ];
             s.push(_createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, stmtDepth));
             if (internal == "super") s.push("super" + createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE) + ";");
+            allow_this = save_allow;
             if (/^(constructor|super)$/.test(internal) || rng(10) == 0) for (var i = rng(4); --i >= 0;) {
                 s.push(rng(2) ? createSuperAssignment(recurmax, stmtDepth, canThrow) : createThisAssignment(recurmax, stmtDepth, canThrow));
             }
@@ -1974,7 +1979,7 @@ function createValue() {
     var v;
     do {
         v = VALUES[rng(VALUES.length)];
-    } while (v == "new.target" && rng(200));
+    } while (v == "new.target" && rng(200) || !allow_this && v == "this");
     return v;
 }
 
@@ -2298,7 +2303,7 @@ function is_error_in(ex) {
 }
 
 function is_error_spread(ex) {
-    return ex.name == "TypeError" && /Found non-callable @@iterator| is not iterable| is not a function/.test(ex.message);
+    return ex.name == "TypeError" && /Found non-callable @@iterator| is not iterable| not a function/.test(ex.message);
 }
 
 function is_error_recursion(ex) {
