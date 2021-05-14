@@ -523,3 +523,55 @@ default_init: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4933_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        console.log(f());
+        function f() {
+            var a;
+            for (console in a = [ f ]) {
+                const b = a;
+            }
+        }
+    }
+    expect: {
+        console.log(function f() {
+            var a;
+            for (console in a = [ f ]) {
+                const b = a;
+            }
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4933_2: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        console.log(f());
+        function f() {
+            var a;
+            for (console in a = [ f ]) {
+                const b = a;
+            }
+        }
+    }
+    expect: {
+        console.log(function f() {
+            for (console in [ f ]);
+        }());
+    }
+    expect_stdout: "undefined"
+}
