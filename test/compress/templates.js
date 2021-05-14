@@ -398,3 +398,24 @@ issue_4676: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4931: {
+    options = {
+        evaluate: true,
+        templates: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(String.raw`${typeof A} ${"\r"}`);
+        console.log(String.raw`${"\\"} ${"`"}`);
+    }
+    expect: {
+        console.log(String.raw`${typeof A} ${"\r"}`);
+        console.log("\\ `");
+    }
+    expect_stdout: [
+        "undefined \r",
+        "\\ `",
+    ]
+    node_version: ">=4"
+}
