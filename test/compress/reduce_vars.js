@@ -7631,3 +7631,34 @@ issue_4568: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4937: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            while (console.log("PASS"));
+        }
+        do {
+            function g() {
+                f();
+            }
+        } while (!g);
+        f();
+    }
+    expect: {
+        function f() {
+            while (console.log("PASS"));
+        }
+        do {
+            function g() {
+                f();
+            }
+        } while (!g);
+        f();
+    }
+    expect_stdout: "PASS"
+}
