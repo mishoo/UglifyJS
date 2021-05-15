@@ -1327,3 +1327,17 @@ To allow for better optimizations, the compiler makes various assumptions:
   // SyntaxError: The left-hand side of a for-of loop may not be 'async'.
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Later versions of Chrome and Node.js will give incorrect results with the
+  following:
+  ```javascript
+  console.log({
+      ...console,
+      get 42() {
+          return "FAIL";
+      },
+      [42]: "PASS",
+  }[42]);
+  // Expected: "PASS"
+  // Actual:   "FAIL"
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
