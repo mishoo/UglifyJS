@@ -1638,3 +1638,29 @@ nested_property_assignments_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4939: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        ({
+            __proto__: {
+                get p() {
+                    console.log("PASS");
+                },
+            },
+        }).p;
+    }
+    expect: {
+        ({
+            __proto__: {
+                get p() {
+                    console.log("PASS");
+                },
+            },
+        }).p;
+    }
+    expect_stdout: "PASS"
+}
