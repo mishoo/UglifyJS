@@ -9220,3 +9220,28 @@ issue_4920: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4935: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        var b;
+        var c = b = a;
+        console || c(a++);
+        --b;
+        console.log(a, b);
+    }
+    expect: {
+        var a = 1;
+        var b;
+        var c = b = a;
+        console || a(a++);
+        --b;
+        console.log(a, b);
+    }
+    expect_stdout: "1 0"
+}
