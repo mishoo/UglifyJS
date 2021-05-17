@@ -7662,3 +7662,63 @@ issue_4937: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4943_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b = 1;
+        (function f() {
+            a = "foo";
+            b-- && f();
+            console.log(a);
+            a = "bar";
+        })();
+    }
+    expect: {
+        var a, b = 1;
+        (function f() {
+            a = "foo";
+            b-- && f();
+            console.log(a);
+            a = "bar";
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+issue_4943_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b = 1;
+        (function f() {
+            a = "foo";
+            b-- && f();
+            console.log(a);
+            a = "bar";
+        })();
+    }
+    expect: {
+        var a, b = 1;
+        (function f() {
+            a = "foo";
+            b-- && f();
+            console.log(a);
+            a = "bar";
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
