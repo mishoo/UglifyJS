@@ -9245,3 +9245,37 @@ issue_4935: {
     }
     expect_stdout: "1 0"
 }
+
+inline_throw: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        try {
+            (function() {
+                return function(a) {
+                    return function(b) {
+                        throw b;
+                    }(a);
+                };
+            })()("PASS");
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect: {
+        try {
+            (function(a) {
+                return function() {
+                    throw a;
+                }();
+            })("PASS");
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect_stdout: "PASS"
+}
