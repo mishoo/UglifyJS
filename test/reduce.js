@@ -46,7 +46,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     if (verbose) {
         log("// Node.js " + process.version + " on " + os.platform() + " " + os.arch());
     }
-    if (differs.error && [ "DefaultsError", "SyntaxError" ].indexOf(differs.error.name) < 0) {
+    if (differs && differs.error && [ "DefaultsError", "SyntaxError" ].indexOf(differs.error.name) < 0) {
         test_for_diff = test_minify;
         differs = test_for_diff(testcase, minify_options, result_cache, max_timeout);
     }
