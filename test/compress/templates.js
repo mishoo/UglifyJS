@@ -315,6 +315,21 @@ unsafe_side_effects: {
     node_version: ">=4"
 }
 
+pure_funcs: {
+    options = {
+        pure_funcs: "Math.random",
+        side_effects: true,
+    }
+    input: {
+        Math.random`${console.log("PASS")}`;
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 issue_4604: {
     options = {
         collapse_vars: true,
