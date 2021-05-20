@@ -275,3 +275,33 @@ issue_4928: {
     expect_stdout: "undefined"
     node_version: ">=14"
 }
+
+issue_4947_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        console.log(console.foo ? 42..p : console.bar?.p);
+    }
+    expect: {
+        console.log(console.foo ? 42..p : console.bar?.p);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=14"
+}
+
+issue_4947_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var log = console.log, fail;
+        log("PASS") ? log(42) : fail?.(42);
+    }
+    expect: {
+        var log = console.log, fail;
+        log("PASS") ? log(42) : fail?.(42);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
