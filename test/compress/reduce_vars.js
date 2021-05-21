@@ -7722,3 +7722,23 @@ issue_4943_2: {
         "bar",
     ]
 }
+
+issue_4949: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function f(a) {
+            a = 0;
+            console.log(a++, arguments[0]);
+        })(0);
+    }
+    expect: {
+        (function(a) {
+            a = 0;
+            console.log(a++, arguments[0]);
+        })(0);
+    }
+    expect_stdout: "0 1"
+}
