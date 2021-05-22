@@ -72,7 +72,7 @@ fields: {
             console.log(k, o[k]);
         console.log(o.q);
     }
-    expect_exact: 'var o=new class A{"#p";static #p="PASS";async;get q(){return A.#p}[6*7]=console?"foo":"bar"};for(var k in o)console.log(k,o[k]);console.log(o.q);'
+    expect_exact: 'var o=new class A{"#p";static#p="PASS";async;get q(){return A.#p}[6*7]=console?"foo":"bar"};for(var k in o)console.log(k,o[k]);console.log(o.q);'
     expect_stdout: [
         "42 foo",
         "#p undefined",
@@ -136,7 +136,7 @@ private_methods: {
             }
         }().q.then(console.log);
     }
-    expect_exact: "(new class A{static*#f(){yield 3*A.#p}async #g(){for(var a of A.#f())return a*await 2}static get #p(){return 7}get q(){return this.#g()}}).q.then(console.log);"
+    expect_exact: "(new class A{static*#f(){yield 3*A.#p}async#g(){for(var a of A.#f())return a*await 2}static get#p(){return 7}get q(){return this.#g()}}).q.then(console.log);"
     expect_stdout: "42"
     node_version: ">=14.6"
 }
@@ -1562,4 +1562,31 @@ drop_unused_self_reference: {
     }
     expect_stdout: "PASS"
     node_version: ">=4"
+}
+
+issue_4951_1: {
+    input: {
+        class A {
+            static#p = console.log("PASS");
+        }
+    }
+    expect_exact: 'class A{static#p=console.log("PASS")}'
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_4951_2: {
+    input: {
+        new class {
+            constructor() {
+                this.#f().then(console.log);
+            }
+            async#f() {
+                return await "PASS";
+            }
+        }();
+    }
+    expect_exact: 'new class{constructor(){this.#f().then(console.log)}async#f(){return await"PASS"}};'
+    expect_stdout: "PASS"
+    node_version: ">=14.6"
 }
