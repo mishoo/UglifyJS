@@ -3080,11 +3080,9 @@ issue_4235: {
         })();
     }
     expect: {
-        (function() {
-            f = console.log(f),
-            void 0;
-            var f;
-        })();
+        void function() {
+            var f = console.log(f);
+        }();
     }
     expect_stdout: "undefined"
 }

@@ -575,3 +575,41 @@ issue_4933_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4954: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        (function() {
+            {
+                let a = console;
+                console.log(typeof a);
+            }
+            {
+                let a = function() {};
+                a && console.log(typeof a);
+            }
+        })();
+    }
+    expect: {
+        "use strict";
+        (function() {
+            var a = console;
+            console.log(typeof a);
+            {
+                let a = function() {};
+                a && console.log(typeof a);
+            }
+        })();
+    }
+    expect_stdout: [
+        "object",
+        "function",
+    ]
+    node_version: ">=4"
+}
