@@ -101,6 +101,19 @@ describe("sourcemaps", function() {
         var map = JSON.parse(result.map);
         assert.deepEqual(map.names, []);
     });
+    it("Should mark class properties", function() {
+        var result = UglifyJS.minify([
+            "class A {",
+            "    static P = 42",
+            "    set #q(v) {}",
+            "}",
+        ].join("\n"), {
+            sourceMap: true,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, "class A{static P=42;set#q(s){}}");
+        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["A","P","#q","v"],"mappings":"MAAMA,EACFC,SAAW,GACXC,MAAOC"}');
+    });
     it("Should mark array/object literals", function() {
         var result = UglifyJS.minify([
             "var obj = {};",
