@@ -1535,3 +1535,56 @@ issue_4848: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4954_1: {
+    rename = true
+    input: {
+        (function() {
+            {
+                const a = "foo";
+                console.log(a);
+            }
+            {
+                const a = "bar";
+                console.log(a);
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            {
+                const a = "foo";
+                console.log(a);
+            }
+            {
+                const a = "bar";
+                console.log(a);
+            }
+        })();
+    }
+    expect_stdout: true
+}
+
+issue_4954_2: {
+    mangle = {}
+    input: {
+        "use strict";
+        const a = null;
+        (function(b) {
+            for (const a in null);
+            for (const a in b)
+                console.log("PASS");
+        })([ null ]);
+    }
+    expect: {
+        "use strict";
+        const a = null;
+        (function(o) {
+            for (const n in null);
+            for (const n in o)
+                console.log("PASS");
+        })([ null ]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
