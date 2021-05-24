@@ -1588,3 +1588,33 @@ issue_4954_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4960: {
+    mangle = {}
+    input: {
+        "use strict";
+        var a;
+        (function() {
+            {
+                const a = console.log("PASS");
+            }
+            try {} catch (e) {
+                const a = console.log("FAIL");
+            }
+        })();
+    }
+    expect: {
+        "use strict";
+        var a;
+        (function() {
+            {
+                const o = console.log("PASS");
+            }
+            try {} catch (c) {
+                const o = console.log("FAIL");
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
