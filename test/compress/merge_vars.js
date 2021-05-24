@@ -3301,3 +3301,80 @@ issue_4761: {
     }
     expect_stdout: "undefined"
 }
+
+issue_4956_1: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b;
+        function f(c) {
+            switch (c) {
+              case 0:
+                a = { p: 42 };
+
+              case 1:
+                b = a.p;
+                console.log(b);
+            }
+        }
+        f(0);
+        f(1);
+    }
+    expect: {
+        var a, b;
+        function f(c) {
+            switch (c) {
+              case 0:
+                a = { p: 42 };
+
+              case 1:
+                b = a.p;
+                console.log(b);
+            }
+        }
+        f(0);
+        f(1);
+    }
+    expect_stdout: [
+        "42",
+        "42",
+    ]
+}
+
+issue_4956_2: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b;
+        function f(c) {
+            if (0 == c) {
+                console;
+                a = { p: 42 };
+            }
+            b = a.p;
+            if (1 == c)
+                console.log(b);
+        }
+        f(0);
+        f(1);
+    }
+    expect: {
+        var a, b;
+        function f(c) {
+            if (0 == c) {
+                console;
+                a = { p: 42 };
+            }
+            b = a.p;
+            if (1 == c)
+                console.log(b);
+        }
+        f(0);
+        f(1);
+    }
+    expect_stdout: "42"
+}
