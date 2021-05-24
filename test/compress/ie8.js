@@ -2997,3 +2997,23 @@ issue_4928_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_4958: {
+    options = {
+        collapse_vars: true,
+        ie8: true,
+    }
+    input: {
+        console.log(function arguments(a) {
+            a = 21;
+            return arguments[0] + 21;
+        }("FAIL"));
+    }
+    expect: {
+        console.log(function arguments(a) {
+            a = 21;
+            return arguments[0] + 21;
+        }("FAIL"));
+    }
+    expect_stdout: "42"
+}
