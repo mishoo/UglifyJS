@@ -1590,3 +1590,56 @@ issue_4951_2: {
     expect_stdout: "PASS"
     node_version: ">=14.6"
 }
+
+issue_4962_1: {
+    options = {
+        ie8: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            function f() {
+                while (console.log(typeof g));
+            }
+            class A {
+                static p = f();
+            }
+        })(function g() {});
+    }
+    expect: {
+        (function g() {}),
+        void function() {
+            while (console.log(typeof g));
+        }();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=12"
+}
+
+issue_4962_2: {
+    options = {
+        ie8: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f() {}(function g() {
+            function h() {
+                f;
+            }
+            class A {
+                static p = h();
+            }
+        }, typeof g));
+    }
+    expect: {
+        console.log(function f() {}(function g() {
+            f;
+        }));
+    }
+    expect_stdout: "undefined"
+    node_version: ">=12"
+}
