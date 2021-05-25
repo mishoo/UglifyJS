@@ -1539,6 +1539,7 @@ issue_4848: {
 issue_4954_1: {
     rename = true
     input: {
+        "use strict";
         (function() {
             {
                 const a = "foo";
@@ -1551,18 +1552,23 @@ issue_4954_1: {
         })();
     }
     expect: {
+        "use strict";
         (function() {
             {
                 const a = "foo";
                 console.log(a);
             }
             {
-                const a = "bar";
-                console.log(a);
+                const b = "bar";
+                console.log(b);
             }
         })();
     }
-    expect_stdout: true
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
 }
 
 issue_4954_2: {
@@ -1610,11 +1616,79 @@ issue_4960: {
             {
                 const o = console.log("PASS");
             }
-            try {} catch (c) {
-                const o = console.log("FAIL");
+            try {} catch (o) {
+                const c = console.log("FAIL");
             }
         })();
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4965_1: {
+    mangle = {}
+    input: {
+        "use strict";
+        try {
+            c;
+        } catch (a) {
+            {
+                const a = 1;
+            }
+            {
+                const a = console.log(typeof c);
+            }
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            c;
+        } catch (t) {
+            {
+                const c = 1;
+            }
+            {
+                const t = console.log(typeof c);
+            }
+        }
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+issue_4965_2: {
+    mangle = {}
+    input: {
+        "use strict";
+        try {
+            throw 1;
+        } catch (e) {
+            try {
+                {
+                    const e = 2;
+                }
+            } finally {
+                const e = 3;
+                console.log(typeof t);
+            }
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            throw 1;
+        } catch (o) {
+            try {
+                {
+                    const t = 2;
+                }
+            } finally {
+                const o = 3;
+                console.log(typeof t);
+            }
+        }
+    }
+    expect_stdout: "undefined"
     node_version: ">=4"
 }

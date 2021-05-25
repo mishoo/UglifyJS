@@ -1341,3 +1341,16 @@ To allow for better optimizations, the compiler makes various assumptions:
   // Actual:   "FAIL"
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Earlier versions of JavaScript will throw `TypeError` with the following:
+  ```javascript
+  (function() {
+      {
+          const a = "foo";
+      }
+      {
+          const a = "bar";
+      }
+  })();
+  // TypeError: const 'a' has already been declared
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
