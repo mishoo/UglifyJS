@@ -254,6 +254,25 @@ duplicate_argname: {
     expect_stdout: "bar 42 foo 42 bar"
 }
 
+fraction: {
+    options = {
+        arguments: true,
+        keep_fargs: false,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            return arguments[0.3];
+        }("FAIL") || "PASS");
+    }
+    expect: {
+        console.log(function() {
+            return arguments[0.3];
+        }("FAIL") || "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
 issue_3273: {
     options = {
         arguments: true,
