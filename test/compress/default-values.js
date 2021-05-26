@@ -598,6 +598,7 @@ unused_var_1: {
 
 unused_var_2: {
     options = {
+        pure_getters: "strict",
         toplevel: true,
         unused: true,
     }
@@ -609,11 +610,7 @@ unused_var_2: {
         };
     }
     expect: {
-        var {
-            p: [] = [ console.log("FAIL") ],
-        } = {
-            p: [ console.log("PASS") ],
-        };
+        console.log("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
