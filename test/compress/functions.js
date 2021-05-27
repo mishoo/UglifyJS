@@ -6208,3 +6208,23 @@ reduce_cross_reference_4_toplevel: {
     expect: {}
     expect_stdout: true
 }
+
+recursive_collapse: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function f(a) {
+            var b = a && f();
+            return b;
+        }("FAIL") || "PASS");
+    }
+    expect: {
+        console.log(function f(a) {
+            var b;
+            return a && f();
+        }("FAIL") || "PASS");
+    }
+    expect_stdout: "PASS"
+}
