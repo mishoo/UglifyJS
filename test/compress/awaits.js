@@ -227,9 +227,7 @@ inline_await_1_trim: {
         console.log("PASS");
     }
     expect: {
-        (async function() {
-            await 0;
-        })();
+        void 0;
         console.log("PASS");
     }
     expect_stdout: "PASS"
@@ -334,7 +332,7 @@ inline_await_3_trim: {
     }
     expect: {
         (async function() {
-            return a = "PASS", b = console.log, await b(a);
+            return a = "PASS", b = console.log, b(a);
             var a, b;
         })();
     }
