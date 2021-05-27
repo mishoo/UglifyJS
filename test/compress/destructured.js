@@ -1010,6 +1010,42 @@ collapse_vars_8: {
     node_version: ">=6"
 }
 
+collapse_vars_9: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                var b = function([ c ]) {
+                    if (c)
+                        return "FAIL 1";
+                }();
+                a = "FAIL 2";
+                return b;
+            } catch (e) {
+                return a;
+            }
+        }("PASS"));
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                var b = function([ c ]) {
+                    if (c)
+                        return "FAIL 1";
+                }();
+                a = "FAIL 2";
+                return b;
+            } catch (e) {
+                return a;
+            }
+        }("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 conditionals: {
     options = {
         conditionals: true,
