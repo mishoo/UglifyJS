@@ -1529,3 +1529,111 @@ issue_4764_3: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_4972_1: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            try {
+                return await "bar";
+            } finally {
+                console.log("baz");
+            }
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            try {
+                return await "bar";
+            } finally {
+                console.log("baz");
+            }
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "moo",
+        "baz",
+        "bar",
+    ]
+    node_version: ">=8"
+}
+
+issue_4972_2: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            try {
+                console.log("bar");
+            } finally {
+                return await "baz";
+            }
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            try {
+                console.log("bar");
+            } finally {
+                return "baz";
+            }
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_4972_3: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        console.log("foo");
+        try {
+            (async function() {
+                return await "bar";
+            })().then(console.log);
+        } finally {
+            console.log("baz");
+        }
+        console.log("moo");
+    }
+    expect: {
+        console.log("foo");
+        try {
+            (async function() {
+                return "bar";
+            })().then(console.log);
+        } finally {
+            console.log("baz");
+        }
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "moo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
