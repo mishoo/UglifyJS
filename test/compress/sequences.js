@@ -727,7 +727,8 @@ side_effects_cascade_1: {
     }
     expect: {
         function f(a, b) {
-            b.a = a = (a -= 42) < 0 ? 0 : a;
+            (a -= 42) < 0 && (a = 0),
+            b.a = a;
         }
         var m = {}, n = {};
         f(13, m),

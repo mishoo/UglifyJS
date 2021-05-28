@@ -421,6 +421,7 @@ collapse_value: {
         arrows: true,
         collapse_vars: true,
         keep_fargs: false,
+        unsafe: true,
         unused: true,
     }
     input: {

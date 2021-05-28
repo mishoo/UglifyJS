@@ -117,6 +117,7 @@ issue_1858: {
         collapse_vars: true,
         keep_fargs: false,
         pure_getters: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {

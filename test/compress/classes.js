@@ -632,6 +632,7 @@ collapse_non_strict: {
 collapse_rhs: {
     options = {
         collapse_vars: true,
+        unsafe: true,
     }
     input: {
         "use strict";

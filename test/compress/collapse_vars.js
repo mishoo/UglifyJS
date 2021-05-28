@@ -2264,6 +2264,7 @@ var_defs: {
         properties: true,
         sequences: true,
         side_effects: true,
+        unsafe: true,
         unused: true,
     }
     input: {
@@ -2486,6 +2487,7 @@ issue_1858: {
     options = {
         collapse_vars: true,
         pure_getters: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -2907,6 +2909,7 @@ compound_assignment_2: {
 issue_2187_1: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -4271,6 +4274,7 @@ issue_2436_14: {
     options = {
         collapse_vars: true,
         reduce_vars: true,
+        unsafe: true,
         unused: true,
     }
     input: {
@@ -4761,6 +4765,7 @@ unsafe_builtin: {
     options = {
         collapse_vars: true,
         pure_getters: "strict",
+        reduce_vars: true,
         unsafe: true,
         unused: true,
     }
@@ -6965,6 +6970,7 @@ sequence_in_iife_2: {
         inline: true,
         passes: 2,
         side_effects: true,
+        unsafe: true,
         unused: true,
     }
     input: {
@@ -6976,7 +6982,7 @@ sequence_in_iife_2: {
     }
     expect: {
         var a = "foo", b = 42;
-        console.log(a, b = a);
+        console.log(b = a, b);
     }
     expect_stdout: "foo foo"
 }
@@ -6988,6 +6994,7 @@ sequence_in_iife_3: {
         passes: 2,
         side_effects: true,
         toplevel: true,
+        unsafe: true,
         unused: true,
     }
     input: {
@@ -7092,6 +7099,7 @@ setter_side_effect: {
 substitution_assign: {
     options = {
         collapse_vars: true,
+        unsafe: true,
     }
     input: {
         function f1(a, b) {
@@ -7112,8 +7120,7 @@ substitution_assign: {
     }
     expect: {
         function f1(a, b) {
-            f1 = a;
-            console.log(a, a);
+            console.log(f1 = a, a);
         }
         function f2(a, b) {
             a = 1 + (b = a);
@@ -7917,6 +7924,7 @@ issue_3744: {
 assign_value_def: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -7957,6 +7965,7 @@ join_vars_value_def: {
     options = {
         collapse_vars: true,
         join_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -7996,6 +8005,7 @@ join_vars_value_def: {
 var_value_def: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -8033,6 +8043,7 @@ var_value_def: {
 mangleable_var: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -8067,6 +8078,7 @@ mangleable_var: {
 mangleable_assignment_1: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -8098,6 +8110,7 @@ mangleable_assignment_1: {
 mangleable_assignment_2: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     input: {
@@ -8939,6 +8952,8 @@ dot_non_local: {
 issue_4806: {
     options = {
         collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
     }
     input: {
         var a, o = {
@@ -8962,6 +8977,7 @@ issue_4806: {
 issue_4852: {
     options = {
         collapse_vars: true,
+        unsafe: true,
     }
     input: {
         var a = "PASS";
@@ -9195,7 +9211,7 @@ issue_4918: {
     expect_stdout: "PASS"
 }
 
-issue_4920: {
+issue_4920_1: {
     options = {
         collapse_vars: true,
         toplevel: true,
@@ -9217,6 +9233,64 @@ issue_4920: {
             },
         })[b = a];
         console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4920_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            get PASS() {
+                a = "FAIL";
+            },
+        };
+        var a = "PASS", b;
+        o[b = a];
+        console.log(b);
+    }
+    expect: {
+        var o = {
+            get PASS() {
+                a = "FAIL";
+            },
+        };
+        var a = "PASS", b;
+        o[b = a];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4920_3: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var o = {
+            get PASS() {
+                a = "FAIL";
+            },
+        };
+        var a = "PASS", b;
+        o[b = a];
+        log(b);
+    }
+    expect: {
+        var log = console.log;
+        var o = {
+            get PASS() {
+                a = "FAIL";
+            },
+        };
+        var a = "PASS", b;
+        o[b = a];
+        log(b);
     }
     expect_stdout: "PASS"
 }
@@ -9278,4 +9352,63 @@ inline_throw: {
         }
     }
     expect_stdout: "PASS"
+}
+
+issue_4977_1: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+    }
+    input: {
+        var a = "FAIL";
+        var o = {
+            get p() {
+                return a;
+            }
+        };
+        a = "PASS";
+        console.log(o.p, a);
+    }
+    expect: {
+        var a = "FAIL";
+        var o = {
+            get p() {
+                return a;
+            }
+        };
+        a = "PASS";
+        console.log(o.p, a);
+    }
+    expect_stdout: "PASS PASS"
+}
+
+issue_4977_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unsafe: true,
+    }
+    input: {
+        var a, o = {
+            get p() {
+                return a = "PASS";
+            },
+        };
+        if (console) {
+            var a = "FAIL";
+            console.log(o.p, a);
+        }
+    }
+    expect: {
+        var a, o = {
+            get p() {
+                return a = "PASS";
+            },
+        };
+        if (console) {
+            var a = "FAIL";
+            console.log(o.p, a);
+        }
+    }
+    expect_stdout: "PASS PASS"
 }
