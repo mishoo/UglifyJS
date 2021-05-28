@@ -1682,3 +1682,47 @@ issue_4972_3: {
     ]
     node_version: ">=8"
 }
+
+issue_4974: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function f() {
+            return 42 in f();
+        })();
+        console.log("PASS");
+    }
+    expect: {
+        (async function f() {
+            return 42 in f();
+        })();
+        console.log("PASS");
+    }
+    expect_stdout: true
+    node_version: ">=8"
+}
+
+issue_4975: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function f(a) {
+            try {
+                if (a) console.log(typeof f());
+            } catch (e) {}
+        })(42);
+    }
+    expect: {
+        (async function f(a) {
+            try {
+                if (a) console.log(typeof f());
+            } catch (e) {}
+        })(42);
+    }
+    expect_stdout: "object"
+    node_version: ">=8"
+}
