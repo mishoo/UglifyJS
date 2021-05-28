@@ -555,6 +555,51 @@ collapse_property_lambda: {
     node_version: ">=8"
 }
 
+drop_async_1: {
+    options = {
+        awaits: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function(a) {
+            (async function() {
+                a *= 7;
+            })();
+            return a;
+        }(6));
+    }
+    expect: {
+        console.log(function(a) {
+            void (a *= 7);
+            return a;
+        }(6));
+    }
+    expect_stdout: "42"
+    node_version: ">=8"
+}
+
+drop_async_2: {
+    options = {
+        awaits: true,
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function(a) {
+            (async b => await (a *= b))(7);
+            return a;
+        }(6));
+    }
+    expect: {
+        console.log(42);
+    }
+    expect_stdout: "42"
+    node_version: ">=8"
+}
+
 drop_return: {
     options = {
         side_effects: true,
