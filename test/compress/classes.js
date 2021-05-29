@@ -260,12 +260,47 @@ block_scoped: {
     expect: {
         "use strict";
         0;
+        {
+            class A {}
+        }
         if (console) {
             class B {}
         }
         console.log(typeof A, typeof B);
     }
     expect_stdout: "undefined undefined"
+    node_version: ">=4"
+}
+
+retain_declaration: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        "use strict";
+        var a = "FAIL";
+        try {
+            console.log(function() {
+                return a;
+                class a {}
+            }());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        var a = "FAIL";
+        try {
+            console.log(function() {
+                return a;
+                class a {}
+            }());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
     node_version: ">=4"
 }
 
