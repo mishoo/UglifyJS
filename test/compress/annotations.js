@@ -256,6 +256,7 @@ issue_3858: {
         collapse_vars: true,
         inline: true,
         keep_fargs: false,
+        unsafe: true,
         unused: true,
     }
     input: {
