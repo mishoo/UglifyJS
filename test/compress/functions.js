@@ -5236,7 +5236,7 @@ issue_4265: {
     expect: {
         function f() {
             return console, function() {
-                return console.log(a);
+                console.log(a);
                 var a;
             }(), 0;
         }

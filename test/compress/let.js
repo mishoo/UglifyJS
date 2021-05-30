@@ -569,6 +569,38 @@ loop_block_2: {
     node_version: ">=4"
 }
 
+do_break: {
+    options = {
+        loops: true,
+    }
+    input: {
+        "use strict";
+        try {
+            do {
+                if (a)
+                    break;
+                let a;
+            } while (!console);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            do {
+                if (a)
+                    break;
+                let a;
+            } while (!console);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 do_continue: {
     options = {
         loops: true,
@@ -624,6 +656,82 @@ dead_block_after_return: {
                 let a;
             }
         })("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+if_return_1: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            function g() {
+                return b = "PASS";
+            }
+            if (a)
+                return g();
+            let b;
+            return g();
+        };
+        console.log(f());
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            function g() {
+                return b = "PASS";
+            }
+            if (a)
+                return g();
+            let b;
+            return g();
+        };
+        console.log(f());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+if_return_2: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            function g() {
+                return b = "FAIL";
+            }
+            if (a)
+                return g();
+            let b;
+            return g();
+        };
+        try {
+            console.log(f(42));
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            function g() {
+                return b = "FAIL";
+            }
+            if (a)
+                return g();
+            let b;
+            return g();
+        };
+        try {
+            console.log(f(42));
+        } catch (e) {
+            console.log("PASS");
+        }
     }
     expect_stdout: "PASS"
     node_version: ">=4"
