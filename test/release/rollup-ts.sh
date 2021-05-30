@@ -24,6 +24,13 @@ EOF
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/rollup \
 && git clone --depth 1 --branch v2.39.1 https://github.com/rollup/rollup.git tmp/rollup \
 && cd tmp/rollup \
@@ -44,11 +51,11 @@ rm -rf tmp/rollup \
 +sander.rimrafSync(__dirname, 'samples', 'watch', 'watch-config-initial-error');
 EOF
 ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
-npm install esbuild-wasm@0.8.56 \
+npm_install esbuild-wasm@0.8.56 \
 && minify_in_situ "cli" \
 && minify_in_situ "src" \
 && rm -rf node_modules \
-&& npm ci \
+&& npm_install \
 && rm -rf dist \
 && npm run build \
 && minify_in_situ "dist" \

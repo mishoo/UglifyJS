@@ -36,7 +36,9 @@ EOF
 }
 if [ $NATIVE ]; then unset -f timeout; fi
 
-git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs
+while !(git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs.git ~/.nvs); do
+    rm -rf ~/.nvs
+done
 while ! timeout 60 bash -c ". ~/.nvs/nvs.sh add $NODE && nvs use $NODE"; do
     cd ~/.nvs
     while !(git clean -xdf); do echo "'git clean' failed - retrying..."; done
@@ -51,4 +53,6 @@ npm config set save false
 npm config set strict-ssl false
 npm config set update-notifier false
 npm --version
-while !(npm install); do echo "'npm install' failed - retrying..."; done
+while !(npm install); do
+    while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+done

@@ -14,6 +14,13 @@ minify_in_situ() {
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/acorn \
 && git clone https://github.com/acornjs/acorn.git tmp/acorn \
 && cd tmp/acorn \
@@ -89,7 +96,7 @@ minify_in_situ "acorn/src" \
 && minify_in_situ "acorn-loose/src" \
 && minify_in_situ "acorn-walk/src" \
 && rm -rf node_modules \
-&& npm install \
+&& npm_install \
 && rm -rf acorn/dist acorn-loose/dist acorn-walk/dist \
 && npm run build \
 && minify_in_situ "acorn/dist" \
