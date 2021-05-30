@@ -1546,3 +1546,27 @@ issue_4848: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_4985: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        let a = { p: 42 };
+        console.log(function() {
+            a;
+        }());
+    }
+    expect: {
+        "use strict";
+        let a = { p: 42 };
+        console.log(function() {
+            a;
+        }());
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
