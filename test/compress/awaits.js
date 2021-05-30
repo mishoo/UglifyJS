@@ -1726,3 +1726,35 @@ issue_4975: {
     expect_stdout: "object"
     node_version: ">=8"
 }
+
+issue_4987: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            try {
+                await 42;
+            } finally {
+                console.log("foo");
+            }
+        })();
+        console.log("bar");
+    }
+    expect: {
+        (async function() {
+            try {
+                await 0;
+            } finally {
+                console.log("foo");
+            }
+        })();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+    node_version: ">=8"
+}
