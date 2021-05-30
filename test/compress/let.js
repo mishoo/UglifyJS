@@ -20,6 +20,39 @@ retain_block: {
     node_version: ">=4"
 }
 
+retain_assignment: {
+    options = {
+        dead_code: true,
+        reduce_vars: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            return a = 0;
+            let a;
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        function f() {
+            return a = 0;
+            let a;
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 retain_catch: {
     options = {
         dead_code: true,
@@ -897,6 +930,7 @@ issue_4210: {
 issue_4212_1: {
     options = {
         dead_code: true,
+        reduce_vars: true,
     }
     input: {
         "use strict";
