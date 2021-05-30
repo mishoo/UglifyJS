@@ -1679,3 +1679,49 @@ issue_4962_2: {
     expect_stdout: "undefined"
     node_version: ">=12"
 }
+
+issue_4982_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        "use strict";
+        try {} catch (e) {
+            class A extends 42 {}
+        }
+        console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        {
+            class A {}
+        }
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_4982_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = "PASS";
+        try {} catch (e) {
+            class A {
+                static p = a = "FAIL";
+            }
+        }
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        {
+            class A {}
+        }
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
