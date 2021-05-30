@@ -18,6 +18,13 @@ minify_in_situ() {
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/mathjs \
 && git clone --depth 1 --branch v9.2.0 https://github.com/josdejong/mathjs.git tmp/mathjs \
 && cd tmp/mathjs \
@@ -191,7 +198,7 @@ minify_in_situ "bin" \
 && minify_in_situ "test" \
 && minify_in_situ "tools" \
 && rm -rf node_modules \
-&& npm ci \
+&& npm_install \
 && rm -rf lib \
 && npm run build \
 && minify_in_situ "lib" \

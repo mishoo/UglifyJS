@@ -14,6 +14,13 @@ minify_in_situ() {
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/web-tooling-benchmark \
 && git clone --depth 1 --branch v0.5.3 https://github.com/v8/web-tooling-benchmark.git tmp/web-tooling-benchmark \
 && cd tmp/web-tooling-benchmark \
@@ -47,7 +54,7 @@ ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
 minify_in_situ "src" \
 && minify_in_situ "third_party" \
 && rm -rf node_modules \
-&& npm ci \
+&& npm_install \
 && rm -rf build/* \
 && npm run build:terser-bundled \
 && npm run build:uglify-js-bundled \

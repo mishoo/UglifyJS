@@ -14,6 +14,13 @@ minify_in_situ() {
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/bootstrap \
 && git clone --depth 1 --branch v5.0.0-beta2 https://github.com/twbs/bootstrap.git tmp/bootstrap \
 && cd tmp/bootstrap \
@@ -171,7 +178,7 @@ rm -rf tmp/bootstrap \
 EOF
 ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
 rm -rf node_modules \
-&& npm ci \
+&& npm_install \
 && minify_in_situ "node_modules/@popperjs/core" \
 && rm -rf dist/js/* \
 && minify_in_situ "build" \

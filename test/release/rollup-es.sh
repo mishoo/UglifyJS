@@ -14,6 +14,13 @@ minify_in_situ() {
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/rollup \
 && git clone https://github.com/rollup/rollup.git tmp/rollup \
 && cd tmp/rollup \
@@ -77,7 +84,7 @@ minify_in_situ "bin" \
 && minify_in_situ "browser" \
 && minify_in_situ "src" \
 && rm -rf node_modules \
-&& npm ci \
+&& npm_install \
 && rm -rf dist \
 && npm run build \
 && minify_in_situ "dist" \

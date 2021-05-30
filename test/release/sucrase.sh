@@ -28,6 +28,13 @@ EOF
     uglify-js $ARGS
 }
 
+npm_install() {
+    PKG="$1"
+    while !(npm install $PKG); do
+        while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
+    done
+}
+
 rm -rf tmp/sucrase \
 && git clone https://github.com/alangpierce/sucrase.git tmp/sucrase \
 && cd tmp/sucrase \
@@ -83,10 +90,10 @@ rm -rf tmp/sucrase \
 +export { getJSXPragmaInfo as HACK };
 EOF
 ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
-npm install esbuild-wasm@0.8.56 \
+npm_install esbuild-wasm@0.8.56 \
 && minify_in_situ "src" \
 && rm -rf node_modules \
-&& npm install \
+&& npm_install \
 && npm run clean \
 && npm run build \
 && minify_in_situ "dist" \
