@@ -3,10 +3,13 @@ on:
   pull_request:
   schedule:
     - cron: '*/15 * * * *'
+  workflow_dispatch:
+  workflow_run:
+    branches: [ master ]
+    types: [ completed ]
+    workflows: [ 'Build testing', CI ]
 env:
   BASE_URL: https://api.github.com/repos/${{ github.repository }}
-  CAUSE: ${{ github.event_name }}
-  RUN_NUM: ${{ github.run_number }}
   TOKEN: ${{ github.token }}
 jobs:
   ufuzz:
@@ -34,8 +37,8 @@ jobs:
         shell: bash
         run: |
           . ./test/release/install.sh
-          if [[ $CAUSE == "schedule" ]]; then
-            node test/ufuzz/job $BASE_URL $TOKEN $RUN_NUM
-          else
+          if [[ $GITHUB_EVENT_NAME == "pull_request" ]]; then
             node test/ufuzz/job 5000
+          else
+            node test/ufuzz/job $BASE_URL $TOKEN $GITHUB_RUN_NUMBER
           fi
