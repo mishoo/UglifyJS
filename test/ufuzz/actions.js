@@ -1,7 +1,7 @@
 var get = require("https").get;
 var parse = require("url").parse;
 
-var base, token, run_number, eldest = true;
+var base, token, run_number;
 exports.init = function(url, auth, num) {
     base = url;
     token = auth;
@@ -19,14 +19,14 @@ exports.should_stop = function(callback) {
             do {
                 workflow = runs.pop();
                 if (!workflow) return;
-                if (workflow.event == "schedule" && workflow.run_number == run_number) found = true;
+                if (is_cron(workflow) && workflow.run_number == run_number) found = true;
             } while (!found && workflow.status == "completed");
             read(workflow.jobs_url, function(reply) {
                 if (!reply || !Array.isArray(reply.jobs)) return;
                 if (!reply.jobs.every(function(job) {
                     if (job.status == "completed") return true;
                     remaining--;
-                    return found || workflow.event != "schedule";
+                    return found || !is_cron(workflow);
                 })) return;
                 if (remaining >= 0) {
                     next();
@@ -37,6 +37,10 @@ exports.should_stop = function(callback) {
         })();
     });
 };
+
+function is_cron(workflow) {
+    return /^(schedule|workflow_dispatch|workflow_run)$/.test(workflow.event);
+}
 
 function read(url, callback) {
     var done = function(reply) {
@@ -56,7 +60,7 @@ function read(url, callback) {
         }).on("end", function() {
             var reply;
             try {
-                reply = JSON.parse(chunks.join(""))
+                reply = JSON.parse(chunks.join(""));
             } catch (e) {}
             done(reply);
         }).on("error", function() {
