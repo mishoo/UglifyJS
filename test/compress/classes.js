@@ -973,9 +973,9 @@ issue_4681: {
     }
     expect: {
         console.log(function(a) {
-            class A {
+            (class {
                 static p = a = this;
-            }
+            });
             return typeof a;
         }());
     }
@@ -1399,9 +1399,9 @@ issue_4821_1: {
     }
     expect: {
         var a;
-        class A {
+        (class {
             static p = void (a = this);
-        }
+        });
         console.log(typeof a);
     }
     expect_stdout: "function"
@@ -1723,5 +1723,28 @@ issue_4982_2: {
         console.log(a);
     }
     expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_4992: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A {
+            static P = this;
+            get p() {}
+        }
+        console.log(typeof A.P);
+    }
+    expect: {
+        console.log(typeof class {
+            static P = this;
+            get p() {}
+        }.P);
+    }
+    expect_stdout: "function"
     node_version: ">=12"
 }
