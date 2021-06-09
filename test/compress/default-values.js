@@ -1726,3 +1726,28 @@ issue_4916: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_4994: {
+    options = {
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function(b = function() {
+            for (a in { PASS: 42 });
+        }()) {
+            var a;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function(b = function() {
+            for (a in { PASS: 42 });
+        }()) {})();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}

@@ -2592,3 +2592,36 @@ issue_4608_2: {
     expect_stdout: "f"
     node_version: ">=6"
 }
+
+issue_4994: {
+    options = {
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL";
+        (function([
+            {
+                [function() {
+                    for (a in { PASS: null });
+                }()]: b,
+            },
+        ]) {
+            var a;
+        })([ 42 ]);
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (function([
+            {
+                [function() {
+                    for (a in { PASS: null });
+                }()]: b,
+            },
+        ]) {})([ 42 ]);
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
