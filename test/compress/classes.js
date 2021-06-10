@@ -1748,3 +1748,47 @@ issue_4992: {
     expect_stdout: "function"
     node_version: ">=12"
 }
+
+issue_4996_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        console.log(new class A {
+            p = a-- && new A();
+        }().p.p);
+    }
+    expect: {
+        var a = 1;
+        console.log(new class A {
+            p = a-- && new A();
+        }().p.p);
+    }
+    expect_stdout: "0"
+    node_version: ">=12"
+}
+
+issue_4996_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        console.log(new class A {
+            p = a-- && new A();
+        }().p.p);
+    }
+    expect: {
+        var a = 1;
+        console.log(new class A {
+            p = a-- && new A();
+        }().p.p);
+    }
+    expect_stdout: "0"
+    node_version: ">=12"
+}
