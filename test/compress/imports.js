@@ -94,13 +94,15 @@ drop_unused: {
     }
     input: {
         import a, * as b from "foo";
-        import { c, bar as d } from "baz";
-        console.log(c);
+        import { c } from "bar";
+        import { d, _ as e } from "baz";
+        console.log(d);
     }
     expect: {
         import "foo";
-        import { c as c } from "baz";
-        console.log(c);
+        import "bar";
+        import { d as d } from "baz";
+        console.log(d);
     }
 }
 
