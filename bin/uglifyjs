@@ -344,9 +344,9 @@ function run() {
                     var list = annotations[node.start.file];
                     var pure = list[node.start.pos];
                     if (!pure) {
-                        var pos = node.start.parens;
-                        if (pos) for (var i = 0; !pure && i < pos.length; i++) {
-                            pure = list[pos[i]];
+                        var tokens = node.start.parens;
+                        if (tokens) for (var i = 0; !pure && i < tokens.length; i++) {
+                            pure = list[tokens[i].pos];
                         }
                     }
                     if (pure) node.pure = pure;
