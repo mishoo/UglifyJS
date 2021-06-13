@@ -1758,3 +1758,25 @@ issue_4987: {
     ]
     node_version: ">=8"
 }
+
+issue_5001: {
+    options = {
+        awaits: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 0;
+        (async function() {
+            a++ | await 42;
+        })();
+        console.log(a ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = 0;
+        void a++;
+        console.log(a ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
