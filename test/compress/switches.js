@@ -113,7 +113,7 @@ constant_switch_5: {
         // the break inside the if ruins our job
         // we can still get rid of irrelevant cases.
         switch (1) {
-          case 1:
+          default:
             x();
             if (foo) break;
             y();
@@ -501,7 +501,8 @@ drop_case_5: {
     }
     expect: {
         switch (42) {
-          case (void console.log("PASS 1"), 42):
+          default:
+            void console.log("PASS 1");
             console.log("PASS 2");
         }
     }
@@ -554,7 +555,8 @@ drop_case_7: {
     }
     expect: {
         switch (2) {
-          case (console.log("PASS 1"), 1, 2):
+          default:
+            console.log("PASS 1"), 1;
             console.log("PASS 2");
         }
     }
@@ -920,7 +922,7 @@ issue_1680_1: {
           case f(0):
           case f(1):
             f(2);
-          case 2:
+          default:
             f(5);
         }
     }
@@ -1183,7 +1185,6 @@ issue_2535: {
     }
     expect: {
         w(), 42;
-        42;
         y();
         z();
     }
@@ -1209,7 +1210,6 @@ issue_1750: {
     expect: {
         var a = 0, b = 1;
         true;
-        a, true;
         b = 2;
         console.log(a, b);
     }
@@ -1463,7 +1463,7 @@ issue_5008_1: {
     expect: {
         console.log(function f() {
             switch (f) {
-              case f:
+              default:
                 return "PASS";
             }
         }());
@@ -1492,7 +1492,7 @@ issue_5008_2: {
     expect: {
         console.log(function(a) {
             switch (a) {
-              case a:
+              default:
                 return "PASS";
             }
         }([]));
@@ -1521,7 +1521,7 @@ issue_5008_3: {
     expect: {
         console.log(function(a) {
             switch (a) {
-              case a:
+              default:
                 return "PASS";
             }
         }({}));
@@ -1549,7 +1549,7 @@ issue_5008_4: {
     expect: {
         console.log(function(a) {
             switch (a) {
-              case a:
+              default:
                 return "PASS";
             }
         }(/foo/));
@@ -1577,6 +1577,32 @@ issue_5010: {
         switch (42) {
           case console.log("PASS"):
           case a:
+            console.log("FAIL");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5012: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        switches: true,
+    }
+    input: {
+        switch (void 0) {
+          case console.log("PASS"):
+            break;
+          case void 0:
+          case 42:
+            console.log("FAIL");
+        }
+    }
+    expect: {
+        switch (void 0) {
+          case console.log("PASS"):
+            break;
+          default:
             console.log("FAIL");
         }
     }
