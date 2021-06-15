@@ -1156,3 +1156,23 @@ issue_4882_3: {
     ]
     node_version: ">=8"
 }
+
+issue_5006: {
+    options = {
+        arguments: true,
+    }
+    input: {
+        console.log(function(b, c) {
+            c = "FAIL 2";
+            return arguments[1];
+        }(...[], "FAIL 1") || "PASS");
+    }
+    expect: {
+        console.log(function(b, c) {
+            c = "FAIL 2";
+            return arguments[1];
+        }(...[], "FAIL 1") || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
