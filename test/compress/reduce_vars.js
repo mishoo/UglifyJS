@@ -2072,72 +2072,6 @@ issue_1670_2: {
 
 issue_1670_3: {
     options = {
-        comparisons: true,
-        conditionals: true,
-        dead_code: true,
-        evaluate: true,
-        reduce_funcs: true,
-        reduce_vars: true,
-        side_effects: true,
-        switches: true,
-        typeofs: true,
-        unused: true,
-    }
-    input: {
-        (function f() {
-            switch (1) {
-              case 0:
-                var a = true;
-                break;
-              case 1:
-                if (typeof a === "undefined") console.log("PASS");
-                else console.log("FAIL");
-            }
-        })();
-    }
-    expect: {
-        (function() {
-            var a;
-            void 0 === a ? console.log("PASS") : console.log("FAIL");
-        })();
-    }
-    expect_stdout: "PASS"
-}
-
-issue_1670_4: {
-    options = {
-        conditionals: true,
-        dead_code: true,
-        evaluate: true,
-        passes: 2,
-        reduce_funcs: true,
-        reduce_vars: true,
-        side_effects: true,
-        switches: true,
-        unused: true,
-    }
-    input: {
-        (function f() {
-            switch (1) {
-              case 0:
-                var a = true;
-                break;
-              case 1:
-                if (typeof a === "undefined") console.log("PASS");
-                else console.log("FAIL");
-            }
-        })();
-    }
-    expect: {
-        (function() {
-            console.log("PASS");
-        })();
-    }
-    expect_stdout: "PASS"
-}
-
-issue_1670_5: {
-    options = {
         conditionals: true,
         dead_code: true,
         evaluate: true,
@@ -2168,7 +2102,7 @@ issue_1670_5: {
     expect_stdout: "1"
 }
 
-issue_1670_6: {
+issue_1670_4: {
     options = {
         conditionals: true,
         dead_code: true,
