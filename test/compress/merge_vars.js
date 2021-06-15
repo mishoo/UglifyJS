@@ -3075,7 +3075,7 @@ issue_4237_2: {
         console.log(function(a) {
             do {
                 switch (0) {
-                  case 0:
+                  default:
                     var b = a++;
                     if (b)
                         return "FAIL";
