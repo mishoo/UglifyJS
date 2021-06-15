@@ -1556,3 +1556,29 @@ issue_5008_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5010: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        switches: true,
+    }
+    input: {
+        var a;
+        switch (42) {
+          case console.log("PASS"):
+          case a:
+            console.log("FAIL");
+          case 42:
+        }
+    }
+    expect: {
+        var a;
+        switch (42) {
+          case console.log("PASS"):
+          case a:
+            console.log("FAIL");
+        }
+    }
+    expect_stdout: "PASS"
+}
