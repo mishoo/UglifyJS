@@ -2625,3 +2625,25 @@ issue_4994: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5017: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = function() {};
+        var b = c = a;
+        var c = [ c ] = [ c ];
+        console.log(c[0] === a ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = function() {};
+        var b = a;
+        var c = [ c ] = [ c = a ];
+        console.log(c[0] === a ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}

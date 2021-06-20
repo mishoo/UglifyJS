@@ -4658,6 +4658,7 @@ replace_all_var_scope: {
     rename = true
     options = {
         collapse_vars: true,
+        reduce_vars: true,
         unused: true,
     }
     mangle = {}
@@ -4676,7 +4677,7 @@ replace_all_var_scope: {
         (function(c, o) {
             switch (~a) {
               case (b += a):
-              case o++:
+              case +o:
             }
         })(--b, a);
         console.log(a, b);
@@ -4728,7 +4729,7 @@ cascade_statement: {
         }
         function f3(a, b) {
             for (; a < b; a++)
-                if (c = a, a && b)
+                if ((c = a) && b)
                     var c = c = b(a);
         }
     }
