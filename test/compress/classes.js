@@ -1792,3 +1792,86 @@ issue_4996_2: {
     expect_stdout: "0"
     node_version: ">=12"
 }
+
+issue_5015_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        var a;
+        try {
+            (class a {
+                [a]() {}
+            });
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        var a;
+        try {
+            (class a {
+                [a]() {}
+            });
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5015_2: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        try {
+            new class A {
+                [(A, 42)]() {}
+            }();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            new class A {
+                [(A, 42)]() {}
+            }();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5015_3: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        (class A {
+            static f() {
+                return A;
+            }
+        });
+        console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
