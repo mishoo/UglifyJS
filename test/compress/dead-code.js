@@ -939,6 +939,170 @@ catch_return_assign: {
     expect_stdout: "PASS"
 }
 
+catch_return_assign_may_throw: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return e = console.log("PASS");
+            }
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                return console.log("PASS");
+            }
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+finally_return_assign: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                throw "FAIL";
+            } finally {
+                return a = "PASS";
+            }
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                throw "FAIL";
+            } finally {
+                return "PASS";
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+last_assign_statement: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(a) {
+            a = a("PASS");
+        }
+        f(console.log);
+    }
+    expect: {
+        function f(a) {
+            a("PASS");
+        }
+        f(console.log);
+    }
+    expect_stdout: "PASS"
+}
+
+last_assign_if_else: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                a = console.log("foo");
+            else {
+                console.log("bar");
+                a = console.log("baz");
+            }
+        }
+        f(42);
+        f(null);
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                console.log("foo");
+            else {
+                console.log("bar");
+                console.log("baz");
+            }
+        }
+        f(42);
+        f(null);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
+}
+
+last_assign_catch: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                e = console.log("PASS");
+            }
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            try {
+                throw "FAIL";
+            } catch (e) {
+                console.log("PASS");
+            }
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+last_assign_finally: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        function f(a) {
+            try {
+                throw a.log;
+            } catch (e) {
+                a = e;
+            } finally {
+                a = a("PASS");
+            }
+        }
+        f(console);
+    }
+    expect: {
+        function f(a) {
+            try {
+                throw a.log;
+            } catch (e) {
+                a = e;
+            } finally {
+                a("PASS");
+            }
+        }
+        f(console);
+    }
+    expect_stdout: "PASS"
+}
+
 issue_3578: {
     options = {
         dead_code: true,

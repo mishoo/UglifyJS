@@ -43,6 +43,9 @@ rm -rf tmp/rollup \
 -    "postpublish": "pinst --enable",
 -    "prepare": "npm run build",
 -    "prepublishOnly": "pinst --disable && npm ci && npm run lint:nofix && npm run security && npm run build:bootstrap && npm run test:all",
+@@ -93 +89 @@
+-    "is-reference": "lukastaegert/is-reference#update-class-features",
++    "is-reference": "3.0.0",
 --- a/test/cli/index.js
 +++ b/test/cli/index.js
 @@ -13,0 +14,3 @@ sander.rimrafSync(__dirname, 'node_modules');
