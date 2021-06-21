@@ -1083,3 +1083,62 @@ issue_4769_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5019_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        (function(a) {
+            return a = function*() {
+                console.log(typeof a);
+            }();
+        })().next();
+    }
+    expect: {
+        (function(a) {
+            return a = function*() {
+                console.log(typeof a);
+            }();
+        })().next();
+    }
+    expect_stdout: "object"
+    node_version: ">=4"
+}
+
+issue_5019_2: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var a = [];
+        for (var b in "foo")
+            a.push(function(c) {
+                return function*() {
+                    console.log(c);
+                }();
+            }(b));
+        a.map(function(d) {
+            return d.next();
+        });
+    }
+    expect: {
+        var a = [];
+        for (var b in "foo")
+            a.push(function(c) {
+                return function*() {
+                    console.log(c);
+                }();
+            }(b));
+        a.map(function(d) {
+            return d.next();
+        });
+    }
+    expect_stdout: [
+        "0",
+        "1",
+        "2",
+    ]
+    node_version: ">=4"
+}

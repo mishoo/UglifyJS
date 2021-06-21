@@ -1780,3 +1780,92 @@ issue_5001: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5019_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        (function(a) {
+            (async function() {
+                await 42;
+                console.log(a);
+            })();
+            a = "PASS";
+        })("FAIL");
+    }
+    expect: {
+        (function(a) {
+            (async function() {
+                await 42;
+                console.log(a);
+            })();
+            a = "PASS";
+        })("FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5019_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log("sync", function(a) {
+            (async function() {
+                console.log(await "async", a);
+            })();
+            return a = "PASS";
+        }("FAIL"));
+    }
+    expect: {
+        console.log("sync", function(a) {
+            (async function() {
+                console.log(await "async", a);
+            })();
+            return a = "PASS";
+        }("FAIL"));
+    }
+    expect_stdout: [
+        "sync PASS",
+        "async PASS",
+    ]
+    node_version: ">=8"
+}
+
+issue_5019_3: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var i in "foo") {
+            (function(a) {
+                (async function() {
+                    console.log(await "async", a);
+                })();
+            })(i);
+            console.log("sync", i);
+        }
+    }
+    expect: {
+        for (var i in "foo") {
+            (function(a) {
+                (async function() {
+                    console.log(await "async", a);
+                })();
+            })(i);
+            console.log("sync", i);
+        }
+    }
+    expect_stdout: [
+        "sync 0",
+        "sync 1",
+        "sync 2",
+        "async 0",
+        "async 1",
+        "async 2",
+    ]
+    node_version: ">=8"
+}
