@@ -822,6 +822,33 @@ cond_13: {
     }
 }
 
+cond_14: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                if (a)
+                    console.log("PASS");
+                else
+                    console.log("FAIL");
+        }
+        f(null);
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            a && console.log("PASS");
+        }
+        f(null);
+        f(42);
+    }
+    expect_stdout: "PASS"
+}
+
 ternary_boolean_consequent: {
     options = {
         booleans: true,
