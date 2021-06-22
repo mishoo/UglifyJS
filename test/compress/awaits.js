@@ -1869,3 +1869,49 @@ issue_5019_3: {
     ]
     node_version: ">=8"
 }
+
+issue_5023_1: {
+    options = {
+        awaits: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            let a = a;
+        })();
+        console.log("PASS");
+    }
+    expect: {
+        (async function() {
+            let a = a;
+        })();
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5023_2: {
+    options = {
+        awaits: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            let a;
+            a = a;
+        })();
+        console.log("PASS");
+    }
+    expect: {
+        (function() {
+            let a;
+            a = a;
+        })();
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
