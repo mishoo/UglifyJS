@@ -558,3 +558,79 @@ issue_4374: {
     }
     expect_stdout: "0"
 }
+
+issue_5028_1: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        var a = 1;
+        console.log(function() {
+            return a-- ? a-- ? "FAIL 1" : "PASS" : "FAIL 2";
+        }());
+    }
+    expect: {
+        var a = 1;
+        console.log(function() {
+            return a-- ? a-- ? "FAIL 1" : "PASS" : "FAIL 2";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5028_2: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        if_return: true,
+    }
+    input: {
+        var a = 1;
+        (function() {
+            if (a--)
+                if (a--)
+                    a = "FAIL";
+                else
+                    return;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        (function() {
+            a-- && a-- && (a = "FAIL");
+        })();
+        console.log(a);
+    }
+    expect_stdout: "-1"
+}
+
+issue_5028_3: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+        if_return: true,
+    }
+    input: {
+        var a = 1;
+        (function() {
+            if (a--)
+                if (a--)
+                    a = "FAIL";
+                else
+                    return;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = 1;
+        (function() {
+            a-- && a-- && (a = "FAIL");
+        })();
+        console.log(a);
+    }
+    expect_stdout: "-1"
+}
