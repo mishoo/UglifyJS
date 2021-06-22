@@ -110,6 +110,158 @@ conditional_assignment_4: {
     node_version: ">=14"
 }
 
+de_morgan_1: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        function f(a) {
+            return a ?? a;
+        }
+        console.log(f(null), f(42));
+    }
+    expect: {
+        function f(a) {
+            return a;
+        }
+        console.log(f(null), f(42));
+    }
+    expect_stdout: "null 42"
+    node_version: ">=14"
+}
+
+de_morgan_2a: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+    }
+    input: {
+        function f(a, b) {
+            return a || (a ?? b);
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect: {
+        function f(a, b) {
+            return a || (a ?? b);
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect_stdout: [
+        "undefined {}",
+        "42 42",
+    ]
+    node_version: ">=14"
+}
+
+de_morgan_2b: {
+    options = {
+        booleans: true,
+        evaluate: true,
+    }
+    input: {
+        function f(a, b) {
+            return a && (a ?? b);
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect: {
+        function f(a, b) {
+            return a;
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect_stdout: [
+        "null null",
+        "42 42",
+    ]
+    node_version: ">=14"
+}
+
+de_morgan_2c: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a, b) {
+            return a ?? (a || b);
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect: {
+        function f(a, b) {
+            return a ?? b;
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect_stdout: [
+        "undefined {}",
+        "42 42",
+    ]
+    node_version: ">=14"
+}
+
+de_morgan_2d: {
+    options = {
+        booleans: true,
+        evaluate: true,
+    }
+    input: {
+        function f(a, b) {
+            return a ?? (a && b);
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect: {
+        function f(a, b) {
+            return a;
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect_stdout: [
+        "null null",
+        "42 42",
+    ]
+    node_version: ">=14"
+}
+
+de_morgan_2e: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        function f(a, b) {
+            return a ?? (a ?? b);
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect: {
+        function f(a, b) {
+            return a ?? b;
+        }
+        console.log(f(null), f(null, {}));
+        console.log(f(42), f(42, {}));
+    }
+    expect_stdout: [
+        "undefined {}",
+        "42 42",
+    ]
+    node_version: ">=14"
+}
+
 issue_4679: {
     options = {
         comparisons: true,

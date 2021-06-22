@@ -1015,7 +1015,7 @@ issue_3856: {
         console.log(function() {
             (function() {
                 var a, b;
-                if (a) return !!a;
+                if (a) return a, 1;
                 for (a = 0; !console;);
                 return 0;
             })();

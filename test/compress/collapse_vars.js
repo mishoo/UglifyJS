@@ -8864,7 +8864,7 @@ issue_4732_1: {
     expect: {
         var a = 0;
         (function(b) {
-            (b = a++) && (b && console.log("PASS"));
+            (b = a++) && console.log("PASS");
         })(a++);
     }
     expect_stdout: "PASS"
