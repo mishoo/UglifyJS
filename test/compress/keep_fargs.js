@@ -1151,7 +1151,6 @@ replace_all_var_scope: {
     options = {
         collapse_vars: true,
         keep_fargs: false,
-        reduce_vars: true,
         unused: true,
     }
     mangle = {}
@@ -1170,7 +1169,7 @@ replace_all_var_scope: {
         (function(c) {
             switch (~a) {
               case (b += a):
-              case +c:
+              case c++:
             }
         })((--b, a));
         console.log(a, b);

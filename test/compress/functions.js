@@ -6228,3 +6228,33 @@ recursive_collapse: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5025: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            function g() {
+                b = 42;
+            }
+            g(b = a);
+            var b = this;
+            console.log(typeof b);
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            b = a,
+            void (b = 42);
+            var b = this;
+            console.log(typeof b);
+        }
+        f();
+    }
+    expect_stdout: "object"
+}
