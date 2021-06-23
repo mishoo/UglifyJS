@@ -1103,6 +1103,21 @@ last_assign_finally: {
     expect_stdout: "PASS"
 }
 
+consecutive_assignments: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        while (a = void 0, a = "PASS", console.log(a));
+        var a;
+    }
+    expect: {
+        while (void 0, a = "PASS", console.log(a));
+        var a;
+    }
+    expect_stdout: "PASS"
+}
+
 issue_3578: {
     options = {
         dead_code: true,
@@ -1583,4 +1598,38 @@ issue_4570: {
         console.log(a);
     }
     expect_stdout: "NaN"
+}
+
+issue_5030: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        (function(a, b) {
+            a = function f() {
+                if (a)
+                    if (b--)
+                        setImmediate(f);
+                    else
+                        console.log("FAIL");
+                else
+                    console.log("PASS");
+            }();
+        })(42, 1);
+    }
+    expect: {
+        (function(a, b) {
+            a = function f() {
+                if (a)
+                    if (b--)
+                        setImmediate(f);
+                    else
+                        console.log("FAIL");
+                else
+                    console.log("PASS");
+            }();
+        })(42, 1);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=0.12"
 }
