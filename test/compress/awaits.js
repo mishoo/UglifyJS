@@ -1915,3 +1915,77 @@ issue_5023_2: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5032_normal: {
+    options = {
+        merge_vars: true,
+        webkit: false,
+    }
+    input: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        async function f(a) {
+            var b = log(a), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS");
+    }
+    expect: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        async function f(c) {
+            var b = log(c), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+    node_version: ">=8"
+}
+
+issue_5032_webkit: {
+    options = {
+        merge_vars: true,
+        webkit: true,
+    }
+    input: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        async function f(a) {
+            var b = log(a), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS");
+    }
+    expect: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        async function f(a) {
+            var b = log(a), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+    node_version: ">=8"
+}
