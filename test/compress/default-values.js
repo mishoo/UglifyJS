@@ -422,7 +422,9 @@ inline_loop_1: {
 inline_loop_2: {
     options = {
         inline: true,
+        sequences: true,
         toplevel: true,
+        unused: true,
     }
     input: {
         while (function(a = [ "PASS" ]) {
@@ -432,10 +434,11 @@ inline_loop_2: {
         }());
     }
     expect: {
-        while (a = [ "PASS" ], a = function f(b) {
-            console.log(a[b]);
-        }(0), void 0) ;
-        var a;
+        while (a = [ "PASS" ],
+            b = void 0,
+            b = 0,
+            void (a = void console.log(a[b])));
+        var a, b;
     }
     expect_stdout: "PASS"
     node_version: ">=6"
