@@ -6258,3 +6258,28 @@ issue_5025: {
     }
     expect_stdout: "object"
 }
+
+issue_5036: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            var await = function f() {
+                return f;
+            };
+            return await() === await;
+        }() ? "PASS" : "FAIL");
+    }
+    expect: {
+        console.log(typeof function() {
+            function await() {
+                return await;
+            }
+            return await() === await;
+        }() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
