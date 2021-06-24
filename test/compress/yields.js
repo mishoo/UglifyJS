@@ -1142,3 +1142,77 @@ issue_5019_2: {
     ]
     node_version: ">=4"
 }
+
+issue_5032_normal: {
+    options = {
+        merge_vars: true,
+        webkit: false,
+    }
+    input: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        function *f(a) {
+            var b = log(a), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS").next();
+    }
+    expect: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        function *f(c) {
+            var b = log(c), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS").next();
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+    node_version: ">=4"
+}
+
+issue_5032_webkit: {
+    options = {
+        merge_vars: true,
+        webkit: true,
+    }
+    input: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        function *f(a) {
+            var b = log(a), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS").next();
+    }
+    expect: {
+        function log(value) {
+            console.log(value);
+            return value;
+        }
+        function *f(a) {
+            var b = log(a), c = b;
+            log(b);
+            log(c);
+        }
+        f("PASS").next();
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+        "PASS",
+    ]
+    node_version: ">=4"
+}
