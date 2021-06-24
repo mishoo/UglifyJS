@@ -1216,3 +1216,33 @@ issue_5032_webkit: {
     ]
     node_version: ">=4"
 }
+
+issue_5034: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var yield = function f() {
+                return function*() {
+                    return f;
+                };
+            };
+            return yield()().next().value === yield;
+        }() ? "PASS" : "FAIL");
+    }
+    expect: {
+        console.log(function() {
+            var yield = function f() {
+                return function*() {
+                    return f;
+                };
+            };
+            return yield()().next().value === yield;
+        }() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

@@ -1989,3 +1989,37 @@ issue_5032_webkit: {
     ]
     node_version: ">=8"
 }
+
+issue_5034: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var await = function f() {
+                return async function() {
+                    return f;
+                };
+            };
+            await()().then(function(value) {
+                console.log(value === await ? "PASS" : "FAIL");
+            });
+        })();
+    }
+    expect: {
+        (function() {
+            var await = function f() {
+                return async function() {
+                    return f;
+                };
+            };
+            await()().then(function(value) {
+                console.log(value === await ? "PASS" : "FAIL");
+            });
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
