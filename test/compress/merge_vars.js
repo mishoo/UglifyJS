@@ -2735,8 +2735,7 @@ issue_4135: {
         0;
         a++;
         if (!a)
-            c = (a++, c = 0, void (c && c.p));
-        var c;
+            var c = void a++;
         console.log(a, -1, c);
     }
     expect_stdout: "1 -1 undefined"
