@@ -305,3 +305,25 @@ issue_4947_2: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_5039: {
+    options = {
+        ie8: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = a?.[function f() {
+            f;
+            a;
+        }];
+        console.log("PASS");
+    }
+    expect: {
+        (function f() {});
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
