@@ -406,6 +406,27 @@ conditional_chain: {
     expect_stdout: "PASS"
 }
 
+negated_if: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function(a) {
+            if (!a)
+                return a ? "FAIL" : "PASS";
+        }(!console));
+    }
+    expect: {
+        console.log(function(a) {
+            if (!a)
+                return "PASS";
+        }(!console));
+    }
+    expect_stdout: "PASS"
+}
+
 issue_3465_1: {
     options = {
         booleans: true,
@@ -635,7 +656,7 @@ issue_5028_3: {
     expect_stdout: "-1"
 }
 
-issue_5041: {
+issue_5041_1: {
     options = {
         booleans: true,
         conditionals: true,
@@ -652,6 +673,27 @@ issue_5041: {
     expect: {
         var a = 42;
         a && [ a = null ] && (a ? console.log("FAIL") : console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5041_2: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        var a;
+        if (!a)
+            if (a = 42)
+                if (a)
+                    console.log("PASS");
+                else
+                    console.log("FAIL");
+    }
+    expect: {
+        var a;
+        a || (a = 42) && (a ? console.log("PASS") : console.log("FAIL"));
     }
     expect_stdout: "PASS"
 }
