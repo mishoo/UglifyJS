@@ -634,3 +634,24 @@ issue_5028_3: {
     }
     expect_stdout: "-1"
 }
+
+issue_5041: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        var a = 42;
+        if (a)
+            if ([ a = null ])
+                if (a)
+                    console.log("FAIL");
+                else
+                    console.log("PASS");
+    }
+    expect: {
+        var a = 42;
+        a && [ a = null ] && (a ? console.log("FAIL") : console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+}
