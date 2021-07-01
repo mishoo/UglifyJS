@@ -556,6 +556,38 @@ reduce_iife_3: {
     node_version: ">=4"
 }
 
+reduce_lambda: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = () => {
+            console.log(a, b);
+        };
+        var a = "foo", b = 42;
+        f();
+        b = "bar";
+        f();
+    }
+    expect: {
+        var f = () => {
+            console.log("foo", b);
+        };
+        var b = 42;
+        f();
+        b = "bar";
+        f();
+    }
+    expect_stdout: [
+        "foo 42",
+        "foo bar",
+    ]
+    node_version: ">=4"
+}
+
 single_use_recursive: {
     options = {
         reduce_vars: true,

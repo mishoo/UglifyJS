@@ -1320,6 +1320,7 @@ issue_2878: {
 
 issue_3427: {
     options = {
+        assignments: true,
         evaluate: true,
         inline: true,
         pure_getters: "strict",

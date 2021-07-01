@@ -494,6 +494,41 @@ reduce_vars_3: {
     node_version: ">=4"
 }
 
+reduce_lambda: {
+    options = {
+        evaluate: true,
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        let f = function() {
+            console.log(a, b);
+        };
+        let a = "foo", b = 42;
+        f();
+        b = "bar";
+        f();
+    }
+    expect: {
+        "use strict";
+        function f() {
+            console.log("foo", b);
+        }
+        let b = 42;
+        f();
+        b = "bar";
+        f();
+    }
+    expect_stdout: [
+        "foo 42",
+        "foo bar",
+    ]
+    node_version: ">=4"
+}
+
 hoist_props: {
     options = {
         hoist_props: true,

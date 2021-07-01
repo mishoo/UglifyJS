@@ -152,7 +152,8 @@ issue_4487: {
     }
     expect: {
         function a() {
-            var f = console.log(typeof f);
+            var f;
+            console.log(typeof f);
         }
         a();
     }

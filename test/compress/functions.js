@@ -2905,6 +2905,7 @@ issue_2437: {
 issue_2485_1: {
     options = {
         functions: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
@@ -2955,6 +2956,7 @@ issue_2485_2: {
     options = {
         functions: true,
         inline: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
