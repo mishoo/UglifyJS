@@ -795,9 +795,9 @@ issue_1656: {
         beautify: true,
     }
     input: {
-        for(var a=0;;);
+        for (var a=0;;);
     }
-    expect_exact: "for (;;) ;"
+    expect_exact: "for (;;);"
 }
 
 issue_1709: {
@@ -1110,7 +1110,7 @@ issue_1838: {
     }
     expect_exact: [
         "function f() {",
-        "    for (a; c; ) ;",
+        "    for (a; c; );",
         "}",
     ]
 }
