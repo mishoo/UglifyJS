@@ -3092,7 +3092,7 @@ accessor_1: {
                 a = 2;
                 return a;
             },
-            b: 1
+            b: 1,
         }.b, a);
     }
     expect: {
@@ -3102,7 +3102,7 @@ accessor_1: {
                 a = 2;
                 return a;
             },
-            b: 1
+            b: 1,
         }.b, a);
     }
     expect_stdout: "1 1"
@@ -3122,7 +3122,7 @@ accessor_2: {
         var B = {
             get c() {
                 console.log(A);
-            }
+            },
         };
         B.c;
     }
@@ -3130,7 +3130,7 @@ accessor_2: {
         ({
             get c() {
                 console.log(1);
-            }
+            },
         }).c;
     }
     expect_stdout: "1"
@@ -3176,7 +3176,7 @@ obj_var_1: {
         var obj = {
             bar: function() {
                 return C + C;
-            }
+            },
         };
         console.log(obj.bar());
     }
@@ -3184,7 +3184,7 @@ obj_var_1: {
         console.log({
             bar: function() {
                 return 2;
-            }
+            },
         }.bar());
     }
     expect_stdout: "2"
@@ -3208,7 +3208,7 @@ obj_var_2: {
         var obj = {
             bar: function() {
                 return C + C;
-            }
+            },
         };
         console.log(obj.bar());
     }
@@ -4422,6 +4422,7 @@ perf_2: {
 
 perf_3: {
     options = {
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
@@ -4430,10 +4431,10 @@ perf_3: {
     input: {
         var foo = function(x, y, z) {
             return x < y ? x * y + z : x * z - y;
-        }
+        };
         var indirect_foo = function(x, y, z) {
             return foo(x, y, z);
-        }
+        };
         var sum = 0;
         for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
@@ -4462,10 +4463,10 @@ perf_4: {
     input: {
         var foo = function(x, y, z) {
             return x < y ? x * y + z : x * z - y;
-        }
+        };
         var indirect_foo = function(x, y, z) {
             return foo(x, y, z);
-        }
+        };
         var sum = 0;
         for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
@@ -4474,10 +4475,10 @@ perf_4: {
     expect: {
         var foo = function(x, y, z) {
             return x < y ? x * y + z : x * z - y;
-        }
+        };
         var indirect_foo = function(x, y, z) {
             return foo(x, y, z);
-        }
+        };
         var sum = 0;
         for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
@@ -4566,9 +4567,9 @@ perf_7: {
         var indirect_foo = function(x, y, z) {
             var foo = function(x, y, z) {
                 return x < y ? x * y + z : x * z - y;
-            }
+            };
             return foo(x, y, z);
-        }
+        };
         var sum = 0;
         for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
@@ -4598,9 +4599,9 @@ perf_8: {
         var indirect_foo = function(x, y, z) {
             var foo = function(x, y, z) {
                 return x < y ? x * y + z : x * z - y;
-            }
+            };
             return foo(x, y, z);
-        }
+        };
         var sum = 0;
         for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);
@@ -4611,7 +4612,7 @@ perf_8: {
             return function(x, y, z) {
                 return x < y ? x * y + z : x * z - y;
             }(x, y, z);
-        }
+        };
         var sum = 0;
         for (var i = 0; i < 100; ++i)
             sum += indirect_foo(i, i + 1, 3 * i);

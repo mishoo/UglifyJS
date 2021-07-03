@@ -3081,7 +3081,8 @@ issue_4235: {
     }
     expect: {
         void function() {
-            var f = console.log(f);
+            var f;
+            console.log(f);
         }();
     }
     expect_stdout: "undefined"

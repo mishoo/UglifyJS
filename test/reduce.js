@@ -726,7 +726,7 @@ function to_statement_init(node) {
     return node instanceof U.AST_Const || node instanceof U.AST_Let ? new U.AST_BlockStatement({
         body: [ node ],
         start: {},
-    }) : to_statement(node);;
+    }) : to_statement(node);
 }
 
 function wrap_with_console_log(node) {
