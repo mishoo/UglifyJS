@@ -6285,3 +6285,34 @@ issue_5036: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5046: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        keep_fnames: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        if (a)
+            0();
+        else
+            (function f() {
+                f;
+                return a = "PASS";
+            })();
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (a ? 0 : function f() {
+            return a = "PASS";
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
