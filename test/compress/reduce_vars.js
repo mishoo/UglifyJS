@@ -7677,3 +7677,22 @@ issue_4949: {
     }
     expect_stdout: "0 1"
 }
+
+issue_5048: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = function() {
+                return a + 42;
+            };
+        }());
+    }
+    expect: {
+        console.log(function() {}());
+    }
+    expect_stdout: "undefined"
+}
