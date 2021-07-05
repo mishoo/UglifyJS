@@ -7696,3 +7696,32 @@ issue_5048: {
     }
     expect_stdout: "undefined"
 }
+
+issue_5050: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {
+            console.log(a);
+        }
+        this;
+        var a = 1;
+        f(console.log(2), f(), a = 3);
+    }
+    expect: {
+        function f() {
+            console.log(a);
+        }
+        this;
+        var a = 1;
+        f(console.log(2), f(), a = 3);
+    }
+    expect_stdout: [
+        "2",
+        "1",
+        "3",
+    ]
+}
