@@ -2826,6 +2826,36 @@ functions_use_strict: {
     expect_stdout: "a true 42 function function function"
 }
 
+functions_cross_scope_reference: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        log = function(fn) {
+            console.log(typeof fn());
+        };
+        var a = function() {};
+        function f() {
+            return a;
+        }
+        while (log(f));
+    }
+    expect: {
+        log = function(fn) {
+            console.log(typeof fn());
+        };
+        function a() {}
+        function f() {
+            return a;
+        }
+        while (log(f));
+    }
+    expect_stdout: "function"
+}
+
 functions_inner_var: {
     options = {
         functions: true,
