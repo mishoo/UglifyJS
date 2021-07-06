@@ -7725,3 +7725,49 @@ issue_5050: {
         "3",
     ]
 }
+
+issue_5055_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            console.log(a || "FAIL");
+        }
+        f(0 && (a = 0)(f(this)));
+    }
+    expect: {
+        var a = "PASS";
+        function f() {
+            console.log(a || "FAIL");
+        }
+        f(0);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5055_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            console.log(a || "FAIL");
+        }
+        f(0 && (a = 0)(f(this)));
+    }
+    expect: {
+        var a = "PASS";
+        function f() {
+            console.log(a || "FAIL");
+        }
+        f(0 && (a = 0)(f()));
+    }
+    expect_stdout: "PASS"
+}
