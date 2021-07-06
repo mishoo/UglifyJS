@@ -1875,3 +1875,136 @@ issue_5015_3: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5053_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        try {
+            console.log(new class A {
+                constructor() {
+                    A = 42;
+                }
+            }());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            console.log(new class A {
+                constructor() {
+                    A = 42;
+                }
+            }());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5053_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        try {
+            console.log(new class A {
+                f() {
+                    A = 42;
+                }
+            }().f());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            console.log(new class A {
+                f() {
+                    A = 42;
+                }
+            }().f());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5053_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            console.log(new class A {
+                p = A = 42;
+            }().p);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            console.log(new class A {
+                p = A = 42;
+            }().p);
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5053_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {
+            constructor() {
+                A = 42;
+            }
+        }
+        try {
+            console.log(new A());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        "use strict";
+        class A {
+            constructor() {
+                A = 42;
+            }
+        }
+        try {
+            console.log(new A());
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
