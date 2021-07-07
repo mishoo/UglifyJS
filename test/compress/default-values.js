@@ -149,7 +149,7 @@ process_boolean_returns: {
     }
     expect: {
         console.log(function(a = console.log("FAIL 1")) {
-            return a() ? "PASS" : "FAIL 2";
+            return 42 ? "PASS" : "FAIL 2";
         }(function() {
             return 1;
         }));
@@ -245,21 +245,64 @@ maintain_if: {
     node_version: ">=6"
 }
 
-reduce_value: {
+reduce_funarg: {
     options = {
         evaluate: true,
+        keep_fargs: false,
         reduce_vars: true,
         unused: true,
     }
     input: {
-        console.log(function(a = "PASS") {
-            return a;
-        }());
+        console.log(...function(a = "foo", b = "bar", c = "baz") {
+            return [ a, b, c ];
+        }(void 0, null));
     }
     expect: {
-        console.log("PASS");
+        console.log(...function() {
+            return [ "foo", null, "baz" ];
+        }());
     }
-    expect_stdout: "PASS"
+    expect_stdout: "foo null baz"
+    node_version: ">=6"
+}
+
+reduce_array: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var [ a = "foo", b = "bar", c = "baz" ] = [ void 0, null ];
+        console.log(a, b, c);
+    }
+    expect: {
+        var [ , , c = "baz" ] = [ void 0, null ];
+        console.log("foo", null, c);
+    }
+    expect_stdout: "foo null baz"
+    node_version: ">=6"
+}
+
+reduce_object: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var { a = "foo", b = "bar", c = "baz" } = { a: void 0, b: null };
+        console.log(a, b, c);
+    }
+    expect: {
+        var { c = "baz" } = { a: void 0, b: null };
+        console.log("foo", null, c);
+    }
+    expect_stdout: "foo null baz"
     node_version: ">=6"
 }
 

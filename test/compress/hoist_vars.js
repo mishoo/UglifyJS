@@ -323,9 +323,7 @@ issue_4893_1: {
     expect: {
         try{
             (function f() {
-                var b;
-                b = null;
-                b.p += 42;
+                null.p += 42;
                 f;
             })();
         } catch (e) {
