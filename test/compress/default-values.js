@@ -1416,6 +1416,7 @@ issue_4502_1: {
     expect: {
         (function() {
             var a = "PASS";
+            void 0,
             console.log(a),
             a++,
             void 0;
@@ -1439,6 +1440,7 @@ issue_4502_2: {
     expect: {
         (function() {
             var a = "PASS";
+            void 0,
             console.log(a),
             a++,
             void 0;
@@ -1750,6 +1752,81 @@ issue_4994: {
             for (a in { PASS: 42 });
         }()) {})();
         console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5057_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        sequences: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        (function() {
+            var b = function(c = (console.log("foo"), b = a)) {
+                a && console.log("bar");
+            }();
+        })();
+    }
+    expect: {
+        var a = 42;
+        console.log("foo"),
+        void (a && console.log("bar"));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=6"
+}
+
+issue_5057_2: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function f(a) {
+            (function(b = console.log("FAIL")) {})(a);
+        })(42);
+        console.log(typeof b);
+    }
+    expect: {
+        (function(a) {
+            [ b = console.log("FAIL") ] = [ a ],
+            void 0;
+            var b;
+        })(42);
+        console.log(typeof b);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+issue_5057_3: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            (function f(b) {
+                (function(a = console.log("FAIL 1")) {})(b);
+                console.log(a);
+            })("FAIL 2");
+        })("PASS");
+    }
+    expect: {
+        (function(a) {
+            (function(b) {
+                (function(a = console.log("FAIL 1")) {})(b);
+                console.log(a);
+            })("FAIL 2");
+        })("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
