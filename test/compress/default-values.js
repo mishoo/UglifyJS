@@ -70,7 +70,7 @@ object_shorthand_assign: {
         ({ a = "PASS" } = 42);
         console.log(a);
     }
-    expect_exact: '({a:a="PASS"}=42);console.log(a);'
+    expect_exact: '({a="PASS"}=42);console.log(a);'
     expect_stdout: "PASS"
     node_version: ">=6"
 }
@@ -80,7 +80,7 @@ object_shorthand_declaration: {
         var { a = "PASS" } = 42;
         console.log(a);
     }
-    expect_exact: 'var{a:a="PASS"}=42;console.log(a);'
+    expect_exact: 'var{a="PASS"}=42;console.log(a);'
     expect_stdout: "PASS"
     node_version: ">=6"
 }
@@ -91,7 +91,7 @@ object_shorthand_function: {
             console.log(a);
         })(42);
     }
-    expect_exact: '(function({a:a="PASS"}){console.log(a)})(42);'
+    expect_exact: '(function({a="PASS"}){console.log(a)})(42);'
     expect_stdout: "PASS"
     node_version: ">=6"
 }
