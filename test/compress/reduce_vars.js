@@ -1292,6 +1292,7 @@ toplevel_on_loops_3: {
         loops: true,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
