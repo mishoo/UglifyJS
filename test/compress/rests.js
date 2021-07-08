@@ -244,7 +244,7 @@ retain_destructured_array: {
         console.log.apply(console, b);
     }
     expect: {
-        var [ , ...b ] = [ "FAIL", "PASS", 42 ];
+        var [ ...b ] = [ "PASS", 42 ];
         console.log.apply(console, b);
     }
     expect_stdout: "PASS 42"
@@ -284,7 +284,7 @@ retain_destructured_object_2: {
             console.log(k, b[k]);
     }
     expect: {
-        var { foo: [], ...b } = { foo: [ "FAIL" ], bar: "PASS", baz: 42 };
+        var { foo: {}, ...b } = { foo: 0, bar: "PASS", baz: 42 };
         for (var k in b)
             console.log(k, b[k]);
     }
@@ -404,6 +404,24 @@ drop_unused_call_args_2: {
         }((console, [])).length);
     }
     expect_stdout: "0"
+    node_version: ">=6"
+}
+
+maintain_position: {
+    options = {
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        var [ , ...a ] = [ A, "PASS" ];
+        console.log(a[0]);
+    }
+    expect: {
+        A = "FAIL";
+        var [ , ...a ] = [ A, "PASS" ];
+        console.log(a[0]);
+    }
+    expect_stdout: "PASS"
     node_version: ">=6"
 }
 
@@ -718,6 +736,78 @@ issue_4544_2: {
         } catch (e) {
             console.log("PASS");
         }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_4560_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        (function(...{
+            [a++]: {},
+        }) {})(2);
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (function(...{
+            [a++]: {},
+        }) {})(2);
+        console.log(a);
+    }
+    expect_stdout: "1"
+    node_version: ">=6"
+}
+
+issue_4560_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        (function(...{
+            [a++]: {},
+        }) {})(2);
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        (function(...{
+            [a++]: {},
+        }) {})(2);
+        console.log(a);
+    }
+    expect_stdout: "1"
+    node_version: ">=6"
+}
+
+issue_4560_3: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b;
+        [ ...{
+            [a++]: b,
+        } ] = [ "PASS" ];
+        console.log(b);
+    }
+    expect: {
+        var a = 0, b;
+        [ ...{
+            [a++]: b,
+        } ] = [ "PASS" ];
+        console.log(b);
     }
     expect_stdout: "PASS"
     node_version: ">=6"

@@ -684,26 +684,47 @@ prototype_function: {
         side_effects: true,
     }
     input: {
-        var a = ({valueOf: 0}) < 1;
-        var b = ({toString: 0}) < 1;
-        var c = ({valueOf: 0}) + "";
-        var d = ({toString: 0}) + "";
-        var e = (({valueOf: 0}) + "")[2];
-        var f = (({toString: 0}) + "")[2];
-        var g = ({valueOf: 0}).valueOf();
-        var h = ({toString: 0}).toString();
+        function v() {
+            return this.valueOf === v ? "PASS" : "FAIL";
+        }
+        console.log(({ valueOf: v }) < 1);
+        console.log(({ valueOf: v }) + "");
+        console.log((( {valueOf: v }) + "")[2]);
+        console.log(({ valueOf: v }).valueOf());
+        function t() {
+            return this.toString === t ? "PASS" : "FAIL";
+        }
+        console.log(({ toString: t }) < 1);
+        console.log(({ toString: t }) + "");
+        console.log((( {toString: t }) + "")[2]);
+        console.log(({ toString: t }).toString());
     }
     expect: {
-        var a = ({valueOf: 0}) < 1;
-        var b = ({toString: 0}) < 1;
-        var c = ({valueOf: 0}) + "";
-        var d = ({toString: 0}) + "";
-        var e = (({valueOf: 0}) + "")[2];
-        var f = (({toString: 0}) + "")[2];
-        var g = 0();
-        var h = 0();
+        function v() {
+            return this.valueOf === v ? "PASS" : "FAIL";
+        }
+        console.log(({ valueOf: v }) < 1);
+        console.log(({ valueOf: v }) + "");
+        console.log((( {valueOf: v }) + "")[2]);
+        console.log(({ valueOf: v }).valueOf());
+        function t() {
+            return this.toString === t ? "PASS" : "FAIL";
+        }
+        console.log(({ toString: t }) < 1);
+        console.log(({ toString: t }) + "");
+        console.log((( {toString: t }) + "")[2]);
+        console.log(({ toString: t }).toString());
     }
-    expect_stdout: true
+    expect_stdout: [
+        "false",
+        "PASS",
+        "S",
+        "PASS",
+        "false",
+        "PASS",
+        "S",
+        "PASS",
+    ]
 }
 
 call_args: {

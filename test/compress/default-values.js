@@ -279,7 +279,7 @@ reduce_array: {
         console.log(a, b, c);
     }
     expect: {
-        var [ , , c = "baz" ] = [ void 0, null ];
+        var [ c = "baz" ] = [];
         console.log("foo", null, c);
     }
     expect_stdout: "foo null baz"
@@ -299,7 +299,7 @@ reduce_object: {
         console.log(a, b, c);
     }
     expect: {
-        var { c = "baz" } = { a: void 0, b: null };
+        var { c = "baz" } = {};
         console.log("foo", null, c);
     }
     expect_stdout: "foo null baz"
@@ -719,7 +719,7 @@ unused_value_var_2: {
         console.log(a);
     }
     expect: {
-        var [ a ] = [ "PASS" ];
+        var a = [ "PASS" ][0];
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -1300,7 +1300,7 @@ issue_4468: {
     expect: {
         (function() {
             var {
-                [console.log("PASS")]: b = 0,
+                [console.log("PASS")]: b,
             } = 0;
         })();
     }
@@ -1743,7 +1743,7 @@ issue_4854: {
         }());
     }
     expect: {
-        console.log(void ([] = "foo"));
+        console.log(void 0);
     }
     expect_stdout: "undefined"
     node_version: ">=6"

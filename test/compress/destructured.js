@@ -1105,7 +1105,7 @@ drop_unused_1: {
             try {
                 throw 42;
             } catch (a) {
-                var [ a ] = [];
+                var a = [][0];
             }
         }
     }
@@ -1133,6 +1133,142 @@ drop_unused_2: {
         (function(a) {
             console.log("PASS");
         })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+drop_hole: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var [ a ] = [ , ];
+        console.log(a);
+    }
+    expect: {
+        var a = [][0];
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+keep_key: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = {
+            [(console.log("PASS"), 42)]: null,
+        });
+    }
+    expect: {
+        ({} = {
+            [(console.log("PASS"), 42)]: 0,
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+keep_reference: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = [ {}, 42 ];
+        var [ b, c ] = a;
+        console.log(a[0] === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = [ {}, 42 ];
+        var [ b ] = a;
+        console.log(a[0] === b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+maintain_position_assign: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(([ , ] = [ , "PASS" ])[1]);
+    }
+    expect: {
+        console.log([ , "PASS" ][1]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+maintain_position_var: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        var [ a, b ] = [ A ];
+        console.log(b || "PASS");
+    }
+    expect: {
+        A = "FAIL";
+        var [ , b ] = [ A ];
+        console.log(b || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+side_effects_array: {
+    options = {
+        unused: true,
+    }
+    input: {
+        try {
+            var [ a ] = 42;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            var [ a ] = 42;
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+side_effects_object: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = null, b = console, { c } = 42;
+        try {
+            c[a = "PASS"];
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = null, c = (console, 42["c"]);
+        try {
+            c[a = "PASS"];
+        } catch (e) {
+            console.log(a);
+        }
     }
     expect_stdout: "PASS"
     node_version: ">=6"
