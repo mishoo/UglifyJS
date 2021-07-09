@@ -491,7 +491,7 @@ drop_rest_array: {
         rests: true,
     }
     input: {
-        var [ ...[ a ]] = [ "PASS" ];
+        var [ ...[ a ] ] = [ "PASS" ];
         console.log(a);
     }
     expect: {
@@ -537,6 +537,82 @@ drop_rest_lambda: {
             return a;
         }
         console.log(f("PASS"), f(42));
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
+
+keep_rest_array: {
+    options = {
+        rests: true,
+    }
+    input: {
+        var [ ...[ ...a ] ] = "PASS";
+        console.log(a.join(""));
+    }
+    expect: {
+        var [ ...a ] = "PASS";
+        console.log(a.join(""));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+keep_rest_arrow: {
+    options = {
+        arrows: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        rests: true,
+    }
+    input: {
+        console.log(((...[ ...a ]) => a.join(""))("PASS"));
+    }
+    expect: {
+        console.log(((...a) => a.join(""))("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+keep_rest_lambda_1: {
+    options = {
+        keep_fargs: false,
+        reduce_vars: true,
+        rests: true,
+        toplevel: true,
+    }
+    input: {
+        function f(...[ ...a ]) {
+            return a.join("");
+        }
+        console.log(f("PASS"), f([ 42 ]));
+    }
+    expect: {
+        function f(...a) {
+            return a.join("");
+        }
+        console.log(f("PASS"), f([ 42 ]));
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=6"
+}
+
+keep_rest_lambda_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        function f(...[ ...a ]) {
+            return a.join("");
+        }
+        console.log(f("PASS"), f([ 42 ]));
+    }
+    expect: {
+        function f(...[ ...a ]) {
+            return a.join("");
+        }
+        console.log(f("PASS"), f([ 42 ]));
     }
     expect_stdout: "PASS 42"
     node_version: ">=6"
