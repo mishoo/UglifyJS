@@ -249,7 +249,7 @@ hoist_exports_2: {
         }
     }
     expect: {
-        let e, { foo: a } = 42;
+        let e, a = 42["foo"];
         function f(t, { [e]: o }) {
             t(o, f);
         }
