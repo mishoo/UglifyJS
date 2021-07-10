@@ -1874,3 +1874,19 @@ issue_5057_3: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5065: {
+    options = {
+        pure_getters: "strict",
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var [ a = console.log("PASS") ] = [ (A = 42).p ];
+    }
+    expect: {
+        var [ a = console.log("PASS") ] = [ (A = 42).p ];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
