@@ -6398,3 +6398,18 @@ issue_5061_2: {
         "bar",
     ]
 }
+
+issue_5067: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function() {
+            f();
+        };
+    }
+    expect: {}
+}
