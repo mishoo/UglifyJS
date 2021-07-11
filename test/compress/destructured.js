@@ -2783,3 +2783,36 @@ issue_5017: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5071_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(([ , a ] = [ "PA", , ]).join("SS"));
+    }
+    expect: {
+        var a;
+        console.log(([ , a ] = [ "PA", , ]).join("SS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5071_2: {
+    options = {
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        var a;
+        ([ a ] = []).p = console.log("PASS");
+    }
+    expect: {
+        var a;
+        ([ a ] = []).p = console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
