@@ -1154,7 +1154,7 @@ drop_hole: {
     node_version: ">=6"
 }
 
-keep_key: {
+keep_key_1: {
     options = {
         evaluate: true,
         side_effects: true,
@@ -1169,6 +1169,39 @@ keep_key: {
         ({} = {
             [(console.log("PASS"), 42)]: 0,
         });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+keep_key_2: {
+    options = {
+        evaluate: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var { 42: a } = { [(console.log("PASS"), 42)](){} };
+    }
+    expect: {
+        var {} = { [(console.log("PASS"), 42)]: 0 };
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+keep_key_2_pure_getters: {
+    options = {
+        evaluate: true,
+        pure_getters: "strict",
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var { 42: a } = { [(console.log("PASS"), 42)](){} };
+    }
+    expect: {
+        console.log("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
@@ -2812,6 +2845,105 @@ issue_5071_2: {
     expect: {
         var a;
         ([ a ] = []).p = console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5074_getter: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = { get [(console.log("PASS"), 42)]() {} });
+    }
+    expect: {
+        ({} = { [(console.log("PASS"), 42)]: 0 });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5074_getter_pure_getters: {
+    options = {
+        evaluate: true,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = { get [(console.log("PASS"), 42)]() {} });
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5074_setter: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = { set [(console.log("PASS"), 42)](v) {} });
+    }
+    expect: {
+        ({} = { [(console.log("PASS"), 42)]: 0 });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5074_setter_pure_getters: {
+    options = {
+        evaluate: true,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = { set [(console.log("PASS"), 42)](v) {} });
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5074_method: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = { [(console.log("PASS"), 42)]() {} });
+    }
+    expect: {
+        ({} = { [(console.log("PASS"), 42)]: 0 });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5074_method_pure_getters: {
+    options = {
+        evaluate: true,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        ({} = { [(console.log("PASS"), 42)]() {} });
+    }
+    expect: {
+        console.log("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
