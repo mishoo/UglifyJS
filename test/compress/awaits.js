@@ -2023,3 +2023,26 @@ issue_5034: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5070: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            try {
+                for await (var a of console.log("PASS"));
+            } catch (e) {}
+        })();
+    }
+    expect: {
+        (async function() {
+            try {
+                for await (var a of console.log("PASS"));
+            } catch (e) {}
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
