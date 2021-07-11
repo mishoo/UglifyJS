@@ -786,6 +786,32 @@ issue_3071_1: {
         reduce_vars: true,
         sequences: true,
         side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            var obj = {};
+            obj.one = 1;
+            obj.two = 2;
+            console.log(obj.one, obj.two);
+        })();
+    }
+    expect: {
+        console.log(1, 2);
+    }
+    expect_stdout: "1 2"
+}
+
+issue_3071_1_toplevel: {
+    options = {
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        join_vars: true,
+        passes: 3,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -1093,4 +1119,25 @@ object_super: {
     }
     expect_stdout: "PASS"
     node_version: ">=4"
+}
+
+issue_4985: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = { p: 42 };
+        console.log(function() {
+            a;
+        }());
+    }
+    expect: {
+        var a_p = 42;
+        console.log(function() {
+            ({});
+        }());
+    }
+    expect_stdout: "undefined"
 }
