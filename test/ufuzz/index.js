@@ -2256,7 +2256,7 @@ function sort_globals(code) {
             return (typeof global[n] == "function") - (typeof global[m] == "function")
                 || (m < n ? -1 : m > n ? 1 : 0);
         };
-    } + "(this));" + code);
+    } + "(this));\n" + code);
     if (!Array.isArray(globals)) {
         errorln();
         errorln();
@@ -2292,6 +2292,20 @@ function fuzzy_match(original, uglified) {
             return "<|" + nums.push(+num) + "|>";
         });
     }
+}
+
+function patch_proto() {
+    [ Array, Boolean, Error, Function, Number, Object, RegExp, String ].forEach(function(type) {
+        [ "toString", "valueOf" ].forEach(function(prop) {
+            type.prototype[prop] = function(fn) {
+                return function() {
+                    try {
+                        return fn.apply(this, arguments);
+                    } catch (e) {}
+                };
+            }(type.prototype[prop]);
+        });
+    });
 }
 
 function is_error_timeout(ex) {
@@ -2500,8 +2514,8 @@ for (var round = 1; round <= num_iterations; round++) {
             if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
             // ignore difference due to implicit strict-mode in `class`
             if (!ok && /\bclass\b/.test(original_code)) {
-                var original_strict = run_code('"use strict";' + original_code, toplevel);
-                var uglify_strict = run_code('"use strict";' + uglify_code, toplevel);
+                var original_strict = run_code('"use strict";\n' + original_code, toplevel);
+                var uglify_strict = run_code('"use strict";\n' + uglify_code, toplevel);
                 if (typeof original_strict != "string") {
                     ok = typeof uglify_strict != "string";
                 } else {
@@ -2511,6 +2525,12 @@ for (var round = 1; round <= num_iterations; round++) {
             // ignore difference in error message caused by `import` symbol redeclaration
             if (!ok && errored && /\bimport\b/.test(original_code)) {
                 if (is_error_redeclaration(uglify_result) && is_error_redeclaration(original_result)) ok = true;
+            }
+            // ignore difference due to `__proto__` assignment
+            if (!ok && /\b__proto__\b/.test(original_code)) {
+                var original_proto = run_code("(" + patch_proto + ")();\n" + original_code, toplevel);
+                var uglify_proto = run_code("(" + patch_proto + ")();\n" + uglify_code, toplevel);
+                ok = sandbox.same_stdout(original_proto, uglify_proto);
             }
             // ignore difference in error message caused by `in`
             if (!ok && errored && is_error_in(uglify_result) && is_error_in(original_result)) ok = true;
