@@ -1246,3 +1246,32 @@ issue_5034: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5076: {
+    options = {
+        evaluate: true,
+        hoist_vars: true,
+        passes: 2,
+        pure_getters: "strict",
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a;
+        console.log("PASS");
+        var b = function*({
+            p: {},
+        }) {}({
+            p: { a } = 42,
+        });
+    }
+    expect: {
+        var a;
+        console.log("PASS");
+        a = 42["a"];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
