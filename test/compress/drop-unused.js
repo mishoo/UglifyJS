@@ -3469,3 +3469,26 @@ issue_4912_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5079: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        do {
+            (a = 123456).p = a;
+            a.q = null;
+        } while (console.log("PASS"));
+    }
+    expect: {
+        do {
+            0, 0, null;
+        } while (console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+}
