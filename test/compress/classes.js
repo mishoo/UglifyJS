@@ -2008,3 +2008,61 @@ issue_5053_4: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5082_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            class A {
+                p = console.log("PASS");
+                q() {}
+            }
+            class B {
+                static P = new A();
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            class A {
+                p = console.log("PASS");
+                q() {}
+            }
+            new A();
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5082_2: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            class A {
+                p = console.log("PASS");
+                q() {}
+            }
+            class B {
+                static P = new A();
+            }
+        })();
+    }
+    expect: {
+        void new class {
+            p = console.log("PASS");
+            q() {}
+        }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
