@@ -24,7 +24,7 @@ typeof_eq_undefined: {
 typeof_eq_undefined_ie8: {
     options = {
         comparisons: true,
-        ie8: true,
+        ie: true,
         typeofs: true,
     }
     input: {

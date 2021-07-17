@@ -41,7 +41,7 @@ describe("let", function() {
         }
         var result = UglifyJS.minify(s, {
             compress: false,
-            ie8: true,
+            ie: true,
             mangle: {
                 properties: true,
             }

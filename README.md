@@ -111,8 +111,8 @@ a double dash to prevent input files being used as option arguments:
     -d, --define <expr>[=value] Global definitions.
     -e, --enclose [arg[:value]] Embed everything in a big function, with configurable
                                 argument(s) & value(s).
-    --ie8                       Support non-standard Internet Explorer 8.
-                                Equivalent to setting `ie8: true` in `minify()`
+    --ie                        Support non-standard Internet Explorer.
+                                Equivalent to setting `ie: true` in `minify()`
                                 for `compress`, `mangle` and `output` options.
                                 By default UglifyJS will not try to be IE-proof.
     --keep-fnames               Do not mangle/drop function names.  Useful for
@@ -502,7 +502,7 @@ if (result.error) throw result.error;
 - `compress` (default: `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compress options](#compress-options).
 
-- `ie8` (default: `false`) — set to `true` to support IE8.
+- `ie` (default: `false`) — enable workarounds for Internet Explorer bugs.
 
 - `keep_fnames` (default: `false`) — pass `true` to prevent discarding or mangling
   of function names.  Useful for code relying on `Function.prototype.name`.
@@ -566,7 +566,6 @@ if (result.error) throw result.error;
     },
     nameCache: null, // or specify a name cache object
     toplevel: false,
-    ie8: false,
     warnings: false,
 }
 ```
@@ -795,9 +794,8 @@ to be `false` and all symbol names will be omitted.
   variables (`"vars"`) in the top level scope (`false` by default, `true` to drop
   both unreferenced functions and variables)
 
-- `typeofs` (default: `true`) — Transforms `typeof foo == "undefined"` into
-  `foo === void 0`.  Note: recommend to set this value to `false` for IE10 and
-  earlier versions due to known issues.
+- `typeofs` (default: `true`) — compress `typeof` expressions, e.g.
+  `typeof foo == "undefined" → void 0 === foo`
 
 - `unsafe` (default: `false`) — apply "unsafe" transformations (discussion below)
 

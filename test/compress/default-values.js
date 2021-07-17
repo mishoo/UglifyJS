@@ -1709,7 +1709,7 @@ issue_4588_2_evaluate: {
 
 issue_4817: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         unused: true,
     }

@@ -1164,7 +1164,7 @@ issue_4225: {
 
 issue_4229: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
     }
     input: {
@@ -1195,7 +1195,7 @@ issue_4229: {
 
 issue_4231: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
     }
     input: {
@@ -1564,7 +1564,7 @@ issue_4438: {
 
 issue_4531_1: {
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -1590,11 +1590,11 @@ issue_4531_1: {
 issue_4531_2: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {

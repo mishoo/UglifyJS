@@ -61,7 +61,7 @@ lambda_name_mangle: {
 
 lambda_name_mangle_ie8: {
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -95,7 +95,7 @@ function_name_mangle_ie8: {
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {

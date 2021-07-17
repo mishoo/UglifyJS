@@ -10,7 +10,7 @@ jobs:
       matrix:
         options:
           - '-mb braces'
-          - '--ie8 -c'
+          - '--ie -c'
           - '-mc'
           - '-p acorn --toplevel -mco spidermonkey'
           - '--toplevel -mc passes=3,pure_getters,unsafe'

@@ -17,7 +17,7 @@ dot_properties: {
         properties: true,
     }
     beautify = {
-        ie8: true,
+        ie: true,
     }
     input: {
         a["foo"] = "bar";
@@ -43,7 +43,7 @@ dot_properties_es5: {
         properties: true,
     }
     beautify = {
-        ie8: false,
+        ie: false,
     }
     input: {
         a["foo"] = "bar";

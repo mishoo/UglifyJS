@@ -2123,7 +2123,7 @@ issue_3016_2: {
 issue_3016_2_ie8: {
     options = {
         dead_code: true,
-        ie8: true,
+        ie: true,
         inline: true,
         toplevel: true,
     }
@@ -2188,7 +2188,7 @@ issue_3016_3: {
 issue_3016_3_ie8: {
     options = {
         dead_code: true,
-        ie8: true,
+        ie: true,
         inline: true,
         toplevel: true,
     }

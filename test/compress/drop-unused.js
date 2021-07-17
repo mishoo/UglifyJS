@@ -2345,7 +2345,7 @@ function_argument_reference: {
 
 function_parameter_ie8: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         unused: true,
     }
@@ -3230,7 +3230,7 @@ issue_4558_1: {
 issue_4558_2: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         unused: true,
     }

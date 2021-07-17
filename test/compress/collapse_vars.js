@@ -6008,7 +6008,7 @@ issue_3215_1: {
     options = {
         collapse_vars: true,
         evaluate: true,
-        ie8: false,
+        ie: false,
         inline: true,
         passes: 2,
         side_effects: true,
@@ -6030,7 +6030,7 @@ issue_3215_2: {
     options = {
         collapse_vars: true,
         evaluate: true,
-        ie8: true,
+        ie: true,
         inline: true,
         passes: 2,
         side_effects: true,
@@ -6055,7 +6055,7 @@ issue_3215_3: {
     options = {
         collapse_vars: true,
         evaluate: true,
-        ie8: false,
+        ie: false,
         inline: true,
         passes: 2,
         side_effects: true,
@@ -6078,7 +6078,7 @@ issue_3215_4: {
     options = {
         collapse_vars: true,
         evaluate: true,
-        ie8: true,
+        ie: true,
         inline: true,
         passes: 2,
         side_effects: true,

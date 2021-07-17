@@ -951,7 +951,7 @@ function_name_mangle_ie8: {
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {

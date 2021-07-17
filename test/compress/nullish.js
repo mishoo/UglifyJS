@@ -265,7 +265,7 @@ de_morgan_2e: {
 issue_4679: {
     options = {
         comparisons: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         var a;
