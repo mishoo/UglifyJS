@@ -2029,7 +2029,7 @@ issue_4321: {
 
 issue_4323: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         merge_vars: true,
         reduce_vars: true,

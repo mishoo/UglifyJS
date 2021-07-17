@@ -359,7 +359,7 @@ issue_4107: {
 
 issue_4109: {
     options = {
-        ie8: true,
+        ie: true,
         merge_vars: true,
         toplevel: true,
     }

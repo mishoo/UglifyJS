@@ -101,7 +101,7 @@ function process_option(name, no_value) {
                 "  --config-file <file>                     Read minify() options from JSON file.",
                 "  -d, --define <expr>[=value]              Global definitions.",
                 "  -e, --enclose [arg[,...][:value[,...]]]  Embed everything in a big function, with configurable argument(s) & value(s).",
-                "  --ie8                                    Support non-standard Internet Explorer 8.",
+                "  --ie                                     Support non-standard Internet Explorer.",
                 "  --keep-fnames                            Do not mangle/drop function names. Useful for code relying on Function.prototype.name.",
                 "  --name-cache <file>                      File to hold mangled name mappings.",
                 "  --rename                                 Force symbol expansion.",
@@ -110,6 +110,7 @@ function process_option(name, no_value) {
                 "  --source-map [options]                   Enable source map/specify source map options.",
                 "  --timings                                Display operations run time on STDERR.",
                 "  --toplevel                               Compress and/or mangle variables in toplevel scope.",
+                "  --v8                                     Support non-standard Chrome & Node.js.",
                 "  --validate                               Perform validation during AST manipulations.",
                 "  --verbose                                Print diagnostic messages.",
                 "  --warn                                   Print warning messages.",
@@ -145,9 +146,11 @@ function process_option(name, no_value) {
         options[name] = read_value();
         break;
       case "annotations":
+      case "ie":
       case "ie8":
       case "timings":
       case "toplevel":
+      case "v8":
       case "validate":
       case "webkit":
         options[name] = true;

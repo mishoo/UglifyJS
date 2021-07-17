@@ -1157,7 +1157,7 @@ issue_4705: {
 
 issue_4720: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -1629,7 +1629,7 @@ issue_4951_2: {
 
 issue_4962_1: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         reduce_vars: true,
         unused: true,
@@ -1656,7 +1656,7 @@ issue_4962_1: {
 
 issue_4962_2: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         reduce_vars: true,
         unused: true,

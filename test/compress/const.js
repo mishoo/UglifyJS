@@ -486,7 +486,7 @@ do_continue: {
 
 catch_ie8_1: {
     options = {
-        ie8: true,
+        ie: true,
         unused: true,
     }
     input: {
@@ -506,7 +506,7 @@ catch_ie8_1: {
 catch_ie8_2: {
     options = {
         dead_code: true,
-        ie8: true,
+        ie: true,
         passes: 2,
         toplevel: true,
         unused: true,
@@ -727,7 +727,7 @@ issue_4193: {
 
 issue_4195: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         console.log(function f(a) {
@@ -1131,7 +1131,7 @@ issue_4225: {
 
 issue_4229: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
     }
     input: {
@@ -1151,7 +1151,7 @@ issue_4229: {
 
 issue_4231: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
     }
     input: {

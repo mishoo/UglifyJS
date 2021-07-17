@@ -265,7 +265,7 @@ issue_1532_2: {
 issue_186: {
     beautify = {
         beautify: false,
-        ie8: false,
+        ie: false,
     }
     input: {
         var x = 3;
@@ -284,7 +284,7 @@ issue_186: {
 issue_186_ie8: {
     beautify = {
         beautify: false,
-        ie8: true,
+        ie: true,
     }
     input: {
         var x = 3;
@@ -303,7 +303,7 @@ issue_186_ie8: {
 issue_186_beautify: {
     beautify = {
         beautify: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         var x = 3;
@@ -330,7 +330,7 @@ issue_186_beautify: {
 issue_186_beautify_ie8: {
     beautify = {
         beautify: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         var x = 3;
@@ -360,7 +360,7 @@ issue_186_braces: {
     beautify = {
         beautify: false,
         braces: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         var x = 3;
@@ -380,7 +380,7 @@ issue_186_braces_ie8: {
     beautify = {
         beautify: false,
         braces: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         var x = 3;
@@ -400,7 +400,7 @@ issue_186_beautify_braces: {
     beautify = {
         beautify: true,
         braces: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         var x = 3;
@@ -432,7 +432,7 @@ issue_186_beautify_braces_ie8: {
     beautify = {
         beautify: true,
         braces: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         var x = 3;

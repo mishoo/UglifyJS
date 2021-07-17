@@ -22,7 +22,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     reduce_options = reduce_options || {};
     var print_options = {};
     [
-        "ie8",
+        "ie",
         "v8",
         "webkit",
     ].forEach(function(name) {

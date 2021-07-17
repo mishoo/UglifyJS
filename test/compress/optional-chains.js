@@ -256,7 +256,7 @@ issue_4906: {
 
 issue_4928: {
     options = {
-        ie8: true,
+        ie: true,
         toplevel: true,
         unused: true,
     }
@@ -308,7 +308,7 @@ issue_4947_2: {
 
 issue_5039: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
         toplevel: true,
         unused: true,

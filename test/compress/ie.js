@@ -1,9 +1,9 @@
 do_screw: {
     options = {
-        ie8: false,
+        ie: false,
     }
     beautify = {
-        ie8: false,
+        ie: false,
         ascii_only: true,
     }
     input: {
@@ -14,10 +14,10 @@ do_screw: {
 
 dont_screw: {
     options = {
-        ie8: true,
+        ie: true,
     }
     beautify = {
-        ie8: true,
+        ie: true,
         ascii_only: true,
     }
     input: {
@@ -28,7 +28,7 @@ dont_screw: {
 
 do_screw_constants: {
     options = {
-        ie8: false,
+        ie: false,
     }
     input: {
         f(undefined, Infinity);
@@ -38,7 +38,7 @@ do_screw_constants: {
 
 dont_screw_constants: {
     options = {
-        ie8: true,
+        ie: true,
     }
     input: {
         f(undefined, Infinity);
@@ -48,13 +48,13 @@ dont_screw_constants: {
 
 do_screw_try_catch: {
     options = {
-        ie8: false,
+        ie: false,
     }
     mangle = {
-        ie8: false,
+        ie: false,
     }
     beautify = {
-        ie8: false,
+        ie: false,
     }
     input: {
         good = function(e){
@@ -82,13 +82,13 @@ do_screw_try_catch: {
 
 dont_screw_try_catch: {
     options = {
-        ie8: true,
+        ie: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     beautify = {
-        ie8: true,
+        ie: true,
     }
     input: {
         bad = function(e){
@@ -116,13 +116,13 @@ dont_screw_try_catch: {
 
 do_screw_try_catch_undefined: {
     options = {
-        ie8: false,
+        ie: false,
     }
     mangle = {
-        ie8: false,
+        ie: false,
     }
     beautify = {
-        ie8: false,
+        ie: false,
     }
     input: {
         function a(b) {
@@ -159,13 +159,13 @@ do_screw_try_catch_undefined: {
 
 dont_screw_try_catch_undefined: {
     options = {
-        ie8: true,
+        ie: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     beautify = {
-        ie8: true,
+        ie: true,
     }
     input: {
         function a(b) {
@@ -204,13 +204,13 @@ dont_screw_try_catch_undefined: {
 reduce_vars: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         function f() {
@@ -236,12 +236,87 @@ reduce_vars: {
     }
 }
 
+typeof_getAttribute: {
+    options = {
+        comparisons: true,
+        ie: false,
+        typeofs: true,
+    }
+    input: {
+        document = {
+            createElement: function() {
+                return {
+                    getAttribute: function() {},
+                };
+            },
+            write: console.log,
+        };
+        document.write(function(element) {
+            if (element)
+                return "undefined" === typeof element.getAttribute;
+        }(document.createElement("foo")) ? "FAIL" : "PASS");
+    }
+    expect: {
+        document = {
+            createElement: function() {
+                return {
+                    getAttribute: function() {},
+                };
+            },
+            write: console.log,
+        };
+        document.write(function(element) {
+            if (element)
+                // IE6~10: Access is denied.
+                return void 0 === element.getAttribute;
+        }(document.createElement("foo")) ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+typeof_getAttribute_ie6: {
+    options = {
+        comparisons: true,
+        ie: true,
+        typeofs: true,
+    }
+    input: {
+        document = {
+            createElement: function() {
+                return {
+                    getAttribute: function() {},
+                };
+            },
+            write: console.log,
+        };
+        document.write(function(element) {
+            if (element)
+                return "undefined" === typeof element.getAttribute;
+        }(document.createElement("foo")) ? "FAIL" : "PASS");
+    }
+    expect: {
+        document = {
+            createElement: function() {
+                return {
+                    getAttribute: function() {},
+                };
+            },
+            write: console.log,
+        };
+        document.write(function(element) {
+            if (element)
+                return "undefined" == typeof element.getAttribute;
+        }(document.createElement("foo")) ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
 issue_1586_1: {
     options = {
-        ie8: true,
+        ie: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         function f() {
@@ -257,10 +332,10 @@ issue_1586_1: {
 
 issue_1586_2: {
     options = {
-        ie8: false,
+        ie: false,
     }
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         function f() {
@@ -276,7 +351,7 @@ issue_1586_2: {
 
 issue_2120_1: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         "aaaaaaaa";
@@ -311,7 +386,7 @@ issue_2120_1: {
 
 issue_2120_2: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         "aaaaaaaa";
@@ -346,7 +421,7 @@ issue_2120_2: {
 
 issue_2254_1: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         "eeeeee";
@@ -379,7 +454,7 @@ issue_2254_1: {
 
 issue_2254_2: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         "eeeeee";
@@ -412,7 +487,7 @@ issue_2254_2: {
 
 issue_24_1: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         (function(a) {
@@ -429,7 +504,7 @@ issue_24_1: {
 
 issue_24_2: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         (function(a) {
@@ -446,7 +521,7 @@ issue_24_2: {
 
 issue_2976_1: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         console.log(function f() {
@@ -465,7 +540,7 @@ issue_2976_1: {
 
 issue_2976_2: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         console.log(function f() {
@@ -484,7 +559,7 @@ issue_2976_2: {
 
 issue_2976_3: {
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -504,7 +579,7 @@ issue_2976_3: {
 
 issue_3035: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         var c = "FAIL";
@@ -541,7 +616,7 @@ issue_3035: {
 
 issue_3035_ie8: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         var c = "FAIL";
@@ -578,14 +653,14 @@ issue_3035_ie8: {
 
 issue_3197_1: {
     options = {
-        ie8: false,
+        ie: false,
         inline: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
     }
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         !function() {
@@ -607,14 +682,14 @@ issue_3197_1: {
 
 issue_3197_1_ie8: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         reduce_vars: true,
         side_effects: true,
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         !function() {
@@ -636,7 +711,7 @@ issue_3197_1_ie8: {
 
 issue_3197_2: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         (function(a) {
@@ -659,7 +734,7 @@ issue_3197_2: {
 
 issue_3197_2_ie8: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         (function(a) {
@@ -683,7 +758,7 @@ issue_3197_2_ie8: {
 issue_3206_1: {
     options = {
         evaluate: true,
-        ie8: false,
+        ie: false,
         reduce_vars: true,
         typeofs: true,
         unused: true,
@@ -706,7 +781,7 @@ issue_3206_1: {
 issue_3206_2: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         typeofs: true,
         unused: true,
@@ -729,7 +804,7 @@ issue_3206_2: {
 
 issue_3215_1: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         console.log(function foo() {
@@ -766,7 +841,7 @@ issue_3215_1: {
 
 issue_3215_2: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         console.log(function foo() {
@@ -803,7 +878,7 @@ issue_3215_2: {
 
 issue_3215_3: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         console.log(function foo() {
@@ -840,7 +915,7 @@ issue_3215_3: {
 
 issue_3215_4: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         console.log(function foo() {
@@ -877,7 +952,7 @@ issue_3215_4: {
 
 issue_3355_1: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         (function f() {
@@ -900,7 +975,7 @@ issue_3355_1: {
 
 issue_3355_2: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         (function f() {
@@ -923,7 +998,7 @@ issue_3355_2: {
 
 issue_3355_3: {
     mangle = {
-        ie8: false,
+        ie: false,
     }
     input: {
         !function(a) {
@@ -954,7 +1029,7 @@ issue_3355_3: {
 
 issue_3355_4: {
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         !function(a) {
@@ -986,7 +1061,7 @@ issue_3355_4: {
 issue_3468: {
     options = {
         collapse_vars: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         var a = 42;
@@ -1008,7 +1083,7 @@ issue_3468: {
 issue_3468_ie8: {
     options = {
         collapse_vars: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         var a = 42;
@@ -1029,7 +1104,7 @@ issue_3468_ie8: {
 
 issue_3471: {
     options = {
-        ie8: false,
+        ie: false,
         functions: true,
         reduce_vars: true,
         toplevel: true,
@@ -1063,7 +1138,7 @@ issue_3471: {
 
 issue_3471_ie8: {
     options = {
-        ie8: true,
+        ie: true,
         functions: true,
         reduce_vars: true,
         toplevel: true,
@@ -1098,7 +1173,7 @@ issue_3471_ie8: {
 issue_3473: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: false,
     }
     input: {
@@ -1125,7 +1200,7 @@ issue_3473: {
 issue_3473_ie8: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: false,
     }
     input: {
@@ -1152,7 +1227,7 @@ issue_3473_ie8: {
 issue_3473_toplevel: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: true,
     }
     input: {
@@ -1179,7 +1254,7 @@ issue_3473_toplevel: {
 issue_3473_ie8_toplevel: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -1206,7 +1281,7 @@ issue_3473_ie8_toplevel: {
 issue_3475: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: false,
     }
     input: {
@@ -1239,7 +1314,7 @@ issue_3475: {
 issue_3475_ie8: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: false,
     }
     input: {
@@ -1272,7 +1347,7 @@ issue_3475_ie8: {
 issue_3475_toplevel: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: true,
     }
     input: {
@@ -1305,7 +1380,7 @@ issue_3475_toplevel: {
 issue_3475_ie8_toplevel: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -1338,7 +1413,7 @@ issue_3475_ie8_toplevel: {
 issue_3478_1: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: false,
     }
     input: {
@@ -1365,7 +1440,7 @@ issue_3478_1: {
 issue_3478_1_ie8: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: false,
     }
     input: {
@@ -1392,7 +1467,7 @@ issue_3478_1_ie8: {
 issue_3478_1_toplevel: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: true,
     }
     input: {
@@ -1419,7 +1494,7 @@ issue_3478_1_toplevel: {
 issue_3478_1_ie8_toplevel: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -1446,7 +1521,7 @@ issue_3478_1_ie8_toplevel: {
 issue_3478_2: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: false,
     }
     input: {
@@ -1479,7 +1554,7 @@ issue_3478_2: {
 issue_3478_2_ie8: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: false,
     }
     input: {
@@ -1512,7 +1587,7 @@ issue_3478_2_ie8: {
 issue_3478_2_toplevel: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: true,
     }
     input: {
@@ -1545,7 +1620,7 @@ issue_3478_2_toplevel: {
 issue_3478_2_ie8_toplevel: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -1578,7 +1653,7 @@ issue_3478_2_ie8_toplevel: {
 issue_3482_1: {
     options = {
         evaluate: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         try {
@@ -1602,7 +1677,7 @@ issue_3482_1: {
 issue_3482_1_ie8: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         try {
@@ -1627,7 +1702,7 @@ issue_3482_1_ie8: {
 issue_3482_2: {
     options = {
         evaluate: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         (function() {
@@ -1655,7 +1730,7 @@ issue_3482_2: {
 issue_3482_2_ie8: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         (function() {
@@ -1682,7 +1757,7 @@ issue_3482_2_ie8: {
 
 issue_3484_1: {
     options = {
-        ie8: false,
+        ie: false,
         side_effects: true,
         toplevel: false,
     }
@@ -1698,7 +1773,7 @@ issue_3484_1: {
 
 issue_3484_1_ie8: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
         toplevel: false,
     }
@@ -1716,7 +1791,7 @@ issue_3484_1_ie8: {
 
 issue_3484_1_toplevel: {
     options = {
-        ie8: false,
+        ie: false,
         side_effects: true,
         toplevel: true,
     }
@@ -1732,7 +1807,7 @@ issue_3484_1_toplevel: {
 
 issue_3484_1_ie8_toplevel: {
     options = {
-        ie8: true,
+        ie: true,
         side_effects: true,
         toplevel: true,
     }
@@ -1751,7 +1826,7 @@ issue_3484_1_ie8_toplevel: {
 issue_3484_2: {
     options = {
         evaluate: true,
-        ie8: false,
+        ie: false,
         reduce_vars: true,
         toplevel: false,
     }
@@ -1773,7 +1848,7 @@ issue_3484_2: {
 issue_3484_2_ie8: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: false,
     }
@@ -1796,7 +1871,7 @@ issue_3484_2_ie8: {
 issue_3484_2_toplevel: {
     options = {
         evaluate: true,
-        ie8: false,
+        ie: false,
         reduce_vars: true,
         toplevel: true,
     }
@@ -1818,7 +1893,7 @@ issue_3484_2_toplevel: {
 issue_3484_2_ie8_toplevel: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
     }
@@ -1841,7 +1916,7 @@ issue_3484_2_ie8_toplevel: {
 issue_3486: {
     options = {
         conditionals: true,
-        ie8: false,
+        ie: false,
         reduce_vars: true,
     }
     input: {
@@ -1864,7 +1939,7 @@ issue_3486: {
 issue_3486_ie8: {
     options = {
         conditionals: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
     }
     input: {
@@ -1887,7 +1962,7 @@ issue_3486_ie8: {
 issue_3493: {
     options = {
         dead_code: true,
-        ie8: false,
+        ie: false,
     }
     input: {
         var c = "PASS";
@@ -1923,7 +1998,7 @@ issue_3493: {
 issue_3493_ie8: {
     options = {
         dead_code: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         var c = "PASS";
@@ -1958,7 +2033,7 @@ issue_3493_ie8: {
 
 issue_3523: {
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: false,
     }
     input: {
@@ -2004,7 +2079,7 @@ issue_3523: {
 
 issue_3523_ie8: {
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: false,
     }
     input: {
@@ -2050,7 +2125,7 @@ issue_3523_ie8: {
 
 issue_3523_toplevel: {
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: true,
     }
     input: {
@@ -2096,7 +2171,7 @@ issue_3523_toplevel: {
 
 issue_3523_ie8_toplevel: {
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -2143,7 +2218,7 @@ issue_3523_ie8_toplevel: {
 issue_3523_rename: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: false,
     }
     input: {
@@ -2192,7 +2267,7 @@ issue_3523_rename: {
 issue_3523_rename_ie8: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: false,
     }
     input: {
@@ -2241,7 +2316,7 @@ issue_3523_rename_ie8: {
 issue_3523_rename_toplevel: {
     rename = true
     mangle = {
-        ie8: false,
+        ie: false,
         toplevel: true,
     }
     input: {
@@ -2290,7 +2365,7 @@ issue_3523_rename_toplevel: {
 issue_3523_rename_ie8_toplevel: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -2338,7 +2413,7 @@ issue_3523_rename_ie8_toplevel: {
 
 issue_3542: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2360,7 +2435,7 @@ issue_3542: {
 
 issue_3703: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2398,7 +2473,7 @@ issue_3703: {
 issue_3750: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         (function(a) {
@@ -2419,7 +2494,7 @@ issue_3750: {
 
 issue_3823: {
     options = {
-        ie8: true,
+        ie: true,
         toplevel: true,
         unused: true,
     }
@@ -2444,7 +2519,7 @@ issue_3823: {
 
 issue_3825: {
     options = {
-        ie8: true,
+        ie: true,
         pure_getters: "strict",
         side_effects: true,
     }
@@ -2460,7 +2535,7 @@ issue_3825: {
 issue_3889: {
     options = {
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
     }
     input: {
@@ -2489,13 +2564,13 @@ issue_3889: {
 issue_3918: {
     options = {
         conditionals: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         if (console.log("PASS")) {
@@ -2522,7 +2597,7 @@ issue_3918: {
 issue_3999: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         (function() {
@@ -2559,7 +2634,7 @@ issue_3999: {
 issue_4001: {
     options = {
         collapse_vars: true,
-        ie8: true,
+        ie: true,
         inline: true,
         reduce_vars: true,
         sequences: true,
@@ -2593,7 +2668,7 @@ issue_4001: {
 issue_4015: {
     rename = true
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -2638,7 +2713,7 @@ issue_4019: {
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -2667,7 +2742,7 @@ issue_4028: {
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
     }
     input: {
         function a() {
@@ -2692,7 +2767,7 @@ issue_4028: {
 
 issue_2737: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2715,7 +2790,7 @@ issue_2737: {
 
 single_use_catch_redefined: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -2747,7 +2822,7 @@ single_use_catch_redefined: {
 
 single_use_inline_catch_redefined: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         reduce_vars: true,
         toplevel: true,
@@ -2780,7 +2855,7 @@ single_use_inline_catch_redefined: {
 
 direct_inline_catch_redefined: {
     options = {
-        ie8: true,
+        ie: true,
         inline: true,
         reduce_vars: true,
         toplevel: true,
@@ -2822,13 +2897,13 @@ issue_4186: {
     options = {
         dead_code: true,
         evaluate: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
     }
     mangle = {
-        ie8: true,
+        ie: true,
         toplevel: true,
     }
     input: {
@@ -2860,7 +2935,7 @@ issue_4186: {
 
 issue_4235: {
     options = {
-        ie8: true,
+        ie: true,
         unused: true,
     }
     input: {
@@ -2878,7 +2953,7 @@ issue_4235: {
 
 issue_4250: {
     options = {
-        ie8: true,
+        ie: true,
         loops: true,
         unused: true,
     }
@@ -2905,7 +2980,7 @@ issue_4250: {
 
 issue_4568: {
     options = {
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2924,7 +2999,7 @@ issue_4568: {
 
 issue_4729: {
     options = {
-        ie8: true,
+        ie: true,
         pure_getters: true,
         toplevel: true,
         unused: true,
@@ -2950,7 +3025,7 @@ issue_4729: {
 
 issue_4928_1: {
     options = {
-        ie8: true,
+        ie: true,
         toplevel: true,
         unused: true,
     }
@@ -2971,7 +3046,7 @@ issue_4928_1: {
 
 issue_4928_2: {
     options = {
-        ie8: true,
+        ie: true,
         toplevel: true,
         unused: true,
     }
@@ -3001,7 +3076,7 @@ issue_4928_2: {
 issue_4958: {
     options = {
         collapse_vars: true,
-        ie8: true,
+        ie: true,
     }
     input: {
         console.log(function arguments(a) {
@@ -3016,4 +3091,104 @@ issue_4958: {
         }("FAIL"));
     }
     expect_stdout: "42"
+}
+
+issue_5081_call: {
+    options = {
+        ie: false,
+        merge_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return a(b = "A") + (b += "SS");
+        }
+        console.log(f(function() {
+            return "P";
+        }));
+    }
+    expect: {
+        function f(b) {
+            // IE5-10: TypeError: Function expected
+            return b(b = "A") + (b += "SS");
+        }
+        console.log(f(function() {
+            return "P";
+        }));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5081_call_ie: {
+    options = {
+        ie: true,
+        merge_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return a(b = "A") + (b += "SS");
+        }
+        console.log(f(function() {
+            return "P";
+        }));
+    }
+    expect: {
+        function f(a) {
+            var b;
+            return a(b = "A") + (b += "SS");
+        }
+        console.log(f(function() {
+            return "P";
+        }));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5081_property_access: {
+    options = {
+        ie: false,
+        merge_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return a[b = "A"] + (b += "SS");
+        }
+        console.log(f({ A: "P" }));
+    }
+    expect: {
+        function f(b) {
+            return b[b = "A"] + (b += "SS");
+        }
+        // IE9-11: undefinedASS
+        console.log(f({ A: "P" }));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5081_property_access_ie: {
+    options = {
+        ie: true,
+        merge_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            return a[b = "A"] + (b += "SS");
+        }
+        console.log(f({ A: "P" }));
+    }
+    expect: {
+        function f(a) {
+            var b;
+            return a[b = "A"] + (b += "SS");
+        }
+        console.log(f({ A: "P" }));
+    }
+    expect_stdout: "PASS"
 }

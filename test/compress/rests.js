@@ -833,7 +833,7 @@ issue_4562: {
 issue_4575: {
     options = {
         collapse_vars: true,
-        ie8: true,
+        ie: true,
         reduce_vars: true,
         rests: true,
         unused: true,
