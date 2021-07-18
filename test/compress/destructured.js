@@ -2948,3 +2948,53 @@ issue_5074_method_pure_getters: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5085_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        var [ b ] = [ 42, a ], c = b ? 0 : a = "FAIL";
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        var b = [ 42 ][0];
+        b;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5085_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function(b) {
+            [ b ] = [ 42, a ];
+            var c = b ? 0 : a = "FAIL";
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function(b) {
+            b = [ 42 ][0];
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
