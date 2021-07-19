@@ -2998,3 +2998,62 @@ issue_5085_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5087_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        properties: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            (function() {
+                (function([ b ]) {
+                    b && console.log(b);
+                })([ a ]);
+            })();
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            var b;
+            (b = a) && console.log(b);
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5087_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        properties: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            (function() {
+                (function([ b ]) {
+                    b && console.log(b);
+                })([ a ]);
+            })();
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        a && console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
