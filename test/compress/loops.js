@@ -193,9 +193,9 @@ evaluate: {
         } while (false);
     }
     expect: {
-        for(;;)
+        for (;;)
             a();
-        for(;;)
+        for (;;)
             c();
         d();
     }

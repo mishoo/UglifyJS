@@ -943,10 +943,63 @@ issue_4666: {
     expect: {
         var a = 0, b = 0;
         var o = (c => +a + c)([ b ]);
-        for(var k in o)
+        for (var k in o)
             b++;
         console.log(1, b);
     }
     expect_stdout: "1 2"
     node_version: ">=6"
+}
+
+issue_5089_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var {
+            p: [] = 42,
+            ...o
+        } = {
+            p: [],
+        };
+        console.log(o.p);
+    }
+    expect: {
+        var {
+            p: {},
+            ...o
+        } = {
+            p: 0,
+        };
+        console.log(o.p);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=8"
+}
+
+issue_5089_2: {
+    options = {
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        var {
+            p: {} = null,
+            ...o
+        } = {
+            p: {},
+        };
+        console.log(o.p);
+    }
+    expect: {
+        var {
+            p: {},
+            ...o
+        } = {
+            p: 0,
+        };
+        console.log(o.p);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=8"
 }
