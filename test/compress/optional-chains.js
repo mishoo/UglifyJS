@@ -327,3 +327,29 @@ issue_5039: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_5091: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            var b = a.p;
+            var c;
+            b?.[c = "FAIL 2"];
+            return b || c;
+        }
+        console.log(f("FAIL 1") || "PASS");
+    }
+    expect: {
+        function f(b) {
+            var b = b.p;
+            var c;
+            b?.[c = "FAIL 2"];
+            return b || c;
+        }
+        console.log(f("FAIL 1") || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
