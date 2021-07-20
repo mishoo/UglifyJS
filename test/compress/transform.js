@@ -95,7 +95,7 @@ while_if_break: {
         }
     }
     expect: {
-        for(; a && (b && c && d, !e););
+        for (; a && (b && c && d, !e););
     }
 }
 
