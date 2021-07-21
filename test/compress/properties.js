@@ -1463,3 +1463,50 @@ issue_4888: {
     }
     expect_stdout: "object"
 }
+
+issue_5093: {
+    beautify = {
+        keep_quoted_props: true,
+    }
+    input: {
+        console.log({
+            a: true,
+            '42': "PASS",
+            "null": [],
+        }[6 * 7]);
+    }
+    expect_exact: 'console.log({a:true,"42":"PASS","null":[]}[6*7]);'
+    expect_stdout: "PASS"
+}
+
+issue_5093_quote_keys: {
+    beautify = {
+        keep_quoted_props: true,
+        quote_keys: true,
+    }
+    input: {
+        console.log({
+            a: true,
+            '42': "PASS",
+            "null": [],
+        }[6 * 7]);
+    }
+    expect_exact: 'console.log({"a":true,"42":"PASS","null":[]}[6*7]);'
+    expect_stdout: "PASS"
+}
+
+issue_5093_quote_style: {
+    beautify = {
+        keep_quoted_props: true,
+        quote_style: 3,
+    }
+    input: {
+        console.log({
+            a: true,
+            '42': "PASS",
+            "null": [],
+        }[6 * 7]);
+    }
+    expect_exact: 'console.log({a:true,\'42\':"PASS","null":[]}[6*7]);'
+    expect_stdout: "PASS"
+}
