@@ -6535,3 +6535,33 @@ issue_5096_4: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5098: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(o) {
+            function f() {
+                f = console.log;
+                if (o.p++)
+                    throw "FAIL";
+                f("PASS");
+            }
+            return f;
+        })({ p: 0 })();
+    }
+    expect: {
+        (function(o) {
+            function f() {
+                f = console.log;
+                if (o.p++)
+                    throw "FAIL";
+                f("PASS");
+            }
+            return f;
+        })({ p: 0 })();
+    }
+    expect_stdout: "PASS"
+}
