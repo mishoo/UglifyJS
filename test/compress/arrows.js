@@ -556,7 +556,7 @@ reduce_iife_3: {
     node_version: ">=4"
 }
 
-reduce_lambda: {
+reduce_lambda_1: {
     options = {
         evaluate: true,
         reduce_vars: true,
@@ -580,6 +580,43 @@ reduce_lambda: {
         f();
         b = "bar";
         f();
+    }
+    expect_stdout: [
+        "foo 42",
+        "foo bar",
+    ]
+    node_version: ">=4"
+}
+
+reduce_lambda_2: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function(f, a, b) {
+            f = () => {
+                console.log(a, b);
+            };
+            a = "foo", b = 42;
+            f();
+            b = "bar";
+            f();
+        })();
+    }
+    expect: {
+        (function(f, a, b) {
+            f = () => {
+                console.log("foo", b);
+            };
+            b = 42;
+            f();
+            b = "bar";
+            f();
+        })();
     }
     expect_stdout: [
         "foo 42",

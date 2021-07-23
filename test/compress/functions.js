@@ -6413,3 +6413,125 @@ issue_5067: {
     }
     expect: {}
 }
+
+issue_5096_1: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b = "FAIL", c = 1;
+        do {
+            a && a();
+            a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect: {
+        var a, b = "FAIL", c = 1;
+        do {
+            a && a();
+            a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5096_2: {
+    options = {
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b = "FAIL", c = 1;
+        do {
+            a && a();
+            a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect: {
+        var a, b = "FAIL", c = 1;
+        do {
+            a && a();
+            a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5096_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var b = "FAIL", c = 1;
+        do {
+            a && a();
+            var a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect: {
+        var b = "FAIL", c = 1;
+        do {
+            a && a();
+            var a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5096_4: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var b = "FAIL", c = 1;
+        do {
+            a && a();
+            var a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect: {
+        var b = "FAIL", c = 1;
+        do {
+            a && a();
+            var a = function() {
+                b = "PASS";
+            };
+        } while (c--);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
