@@ -1003,3 +1003,69 @@ issue_5089_2: {
     expect_stdout: "undefined"
     node_version: ">=8"
 }
+
+issue_5100_1: {
+    options = {
+        passes: 2,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        [ {
+            p: {},
+            ...a
+        } ] = [ {
+            p: {
+                q: a,
+            } = 42,
+            r: "PASS",
+        } ];
+        console.log(a.r);
+    }
+    expect: {
+        var a;
+        [ {
+            p: {},
+            ...a
+        } ] = [ {
+            p: [ a = 42["q"] ],
+            r: "PASS",
+        } ];
+        console.log(a.r);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5100_2: {
+    options = {
+        passes: 2,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        [ {
+            p: {},
+            ...a
+        } ] = [ {
+            p: (console.log("PASS"), {
+                q: a,
+            } = 42),
+        } ];
+    }
+    expect: {
+        var a;
+        [ {
+            p: {},
+            ...a
+        } ] = [ {
+            p: [ console.log("PASS"), a = 42["q"] ],
+        } ];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
