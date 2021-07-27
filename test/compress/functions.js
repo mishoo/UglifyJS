@@ -1171,11 +1171,11 @@ issue_2620_4: {
     }
     expect: {
         var c = "FAIL";
-        !function() {
+        (function() {
             switch (NaN) {
               case void (c = "PASS"):
             }
-        }();
+        })();
         console.log(c);
     }
     expect_stdout: "PASS"
@@ -6564,4 +6564,39 @@ issue_5098: {
         })({ p: 0 })();
     }
     expect_stdout: "PASS"
+}
+
+shorter_without_void: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a;
+        function f(b) {
+            a = b;
+        }
+        f("foo");
+        console.log(a) || f("bar");
+        console.log(a, f("baz"));
+        console.log(a);
+    }
+    expect: {
+        var a;
+        function f(b) {
+            a = b;
+        }
+        a = "foo";
+        console.log(a) || (a = "bar");
+        console.log(a, f("baz"));
+        console.log(a);
+    }
+    expect_stdout: [
+        "foo",
+        "bar undefined",
+        "baz",
+    ]
 }

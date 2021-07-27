@@ -227,7 +227,7 @@ inline_await_1_trim: {
         console.log("PASS");
     }
     expect: {
-        void 0;
+        0;
         console.log("PASS");
     }
     expect_stdout: "PASS"
@@ -571,7 +571,7 @@ drop_async_1: {
     }
     expect: {
         console.log(function(a) {
-            void (a *= 7);
+            a *= 7;
             return a;
         }(6));
     }
@@ -1774,7 +1774,7 @@ issue_5001: {
     }
     expect: {
         var a = 0;
-        void a++;
+        a++;
         console.log(a ? "PASS" : "FAIL");
     }
     expect_stdout: "PASS"
