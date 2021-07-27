@@ -1557,9 +1557,9 @@ issue_2665: {
     }
     expect: {
         var a = 1;
-        !function g() {
+        (function g() {
             a-- && g();
-        }();
+        })();
         console.log(a);
     }
     expect_stdout: "-1"
@@ -3379,7 +3379,7 @@ issue_4834: {
     }
     expect: {
         try {
-            void b.p;
+            b.p;
         } catch (e) {
             console.log("PASS");
         }
