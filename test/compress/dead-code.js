@@ -1633,3 +1633,39 @@ issue_5030: {
     expect_stdout: "PASS"
     node_version: ">=0.12"
 }
+
+issue_5106_1: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(typeof function(a) {
+            return a = arguments;
+        }("FAIL")[0]);
+    }
+    expect: {
+        console.log(typeof function(a) {
+            return a = arguments;
+        }("FAIL")[0]);
+    }
+    expect_stdout: "object"
+}
+
+issue_5106_2: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        "use strict";
+        console.log(function(a) {
+            return a = arguments;
+        }("PASS")[0]);
+    }
+    expect: {
+        "use strict";
+        console.log(function(a) {
+            return arguments;
+        }("PASS")[0]);
+    }
+    expect_stdout: "PASS"
+}
