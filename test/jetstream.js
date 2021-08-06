@@ -68,6 +68,7 @@ if (typeof phantom == "undefined") {
         (function install() {
             npm([
                 "install",
+                "graceful-fs@4.2.6",
                 "phantomjs-prebuilt@2.1.14",
                 "--no-audit",
                 "--no-optional",
