@@ -1069,3 +1069,25 @@ issue_5100_2: {
     expect_stdout: "PASS"
     node_version: ">=10"
 }
+
+issue_5108: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        rests: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        console.log(function([ ...[ a ] ]) {
+            return a;
+        }([ "PASS", "FAIL" ]));
+    }
+    expect: {
+        console.log(function([]) {
+            return "PASS";
+        }([ "PASS", "FAIL" ]));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
