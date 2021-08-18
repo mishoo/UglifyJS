@@ -9412,3 +9412,73 @@ issue_4977_2: {
     }
     expect_stdout: "PASS PASS"
 }
+
+issue_5112_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                try {
+                    if (console + (a = "PASS", ""))
+                        return "FAIL 1";
+                    a.p;
+                } catch (e) {}
+            } finally {
+                return a;
+            }
+        }("FAIL 2"));
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                try {
+                    if (console + (a = "PASS", ""))
+                        return "FAIL 1";
+                    a.p;
+                } catch (e) {}
+            } finally {
+                return a;
+            }
+        }("FAIL 2"));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5112_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            try {
+                return function() {
+                    try {
+                        if (console + (a = "PASS", ""))
+                            return "FAIL 1";
+                        a.p;
+                    } catch (e) {}
+                }();
+            } finally {
+                return a;
+            }
+        }("FAIL 2"));
+    }
+    expect: {
+        console.log(function(a) {
+            try {
+                return function() {
+                    try {
+                        if (console + (a = "PASS", ""))
+                            return "FAIL 1";
+                        a.p;
+                    } catch (e) {}
+                }();
+            } finally {
+                return a;
+            }
+        }("FAIL 2"));
+    }
+    expect_stdout: "PASS"
+}
