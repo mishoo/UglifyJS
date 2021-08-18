@@ -3057,3 +3057,71 @@ issue_5087_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5114_1: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function({}, a) {})(42);
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        [ {} ] = [ 42 ],
+        void 0;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5114_2: {
+    options = {
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function f([], a) {
+            f.length;
+        })([]);
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        0;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5114_3: {
+    options = {
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function f(a, {}) {
+            f.length;
+        })(null, 42);
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        0;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
