@@ -58,7 +58,7 @@ assign_parentheses_dot: {
     input: {
         (console?.log).name.p = console.log("PASS");
     }
-    expect_exact: '(console?.log.name).p=console.log("PASS");'
+    expect_exact: '(console?.log).name.p=console.log("PASS");'
     expect_stdout: "PASS"
     node_version: ">=14"
 }
@@ -69,6 +69,26 @@ assign_no_parentheses: {
     }
     expect_exact: 'console[console.log?.("PASS")]=42;'
     expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+call_parentheses: {
+    input: {
+        (function(o) {
+            console.log(o.f("FAIL"), (o.f)("FAIL"), (0, o.f)(42));
+            console.log(o?.f("FAIL"), (o?.f)("FAIL"), (0, o?.f)(42));
+        })({
+            a: "PASS",
+            f(b) {
+                return this.a || b;
+            },
+        });
+    }
+    expect_exact: '(function(o){console.log(o.f("FAIL"),o.f("FAIL"),(0,o.f)(42));console.log(o?.f("FAIL"),(o?.f)("FAIL"),(0,o?.f)(42))})({a:"PASS",f(b){return this.a||b}});'
+    expect_stdout: [
+        "PASS PASS 42",
+        "PASS PASS 42",
+    ]
     node_version: ">=14"
 }
 
@@ -234,6 +254,99 @@ trim_2: {
         console.log("PASS");
     }
     expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+trim_dot_call_1: {
+    options = {
+        evaluate: true,
+        optional_chains: true,
+    }
+    input: {
+        console.log(null?.f());
+    }
+    expect: {
+        console.log(void 0);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=14"
+}
+
+trim_dot_call_2: {
+    options = {
+        evaluate: true,
+        optional_chains: true,
+        unsafe: true,
+    }
+    input: {
+        try {
+            (null?.p)();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            (void 0)();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+trim_dot_call_3: {
+    options = {
+        evaluate: true,
+        optional_chains: true,
+        unsafe: true,
+    }
+    input: {
+        try {
+            ({ p: null })?.p();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            null();
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+trim_dot_sub: {
+    options = {
+        evaluate: true,
+        optional_chains: true,
+    }
+    input: {
+        console.log(null?.p[42]);
+    }
+    expect: {
+        console.log(void 0);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=14"
+}
+
+trim_sub_call_call: {
+    options = {
+        evaluate: true,
+        optional_chains: true,
+    }
+    input: {
+        console.log(null?.[42]()());
+    }
+    expect: {
+        console.log(void 0);
+    }
+    expect_stdout: "undefined"
     node_version: ">=14"
 }
 
