@@ -721,6 +721,20 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should throw syntax error (console?.log``)", function(done) {
+        var command = uglifyjscmd + " test/input/invalid/optional-template.js";
+        exec(command, function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr.split(/\n/).slice(0, 4).join("\n"), [
+                "Parse error at test/input/invalid/optional-template.js:1,12",
+                "console?.log``;",
+                "            ^",
+                "ERROR: Invalid template on optional chain",
+            ].join("\n"));
+            done();
+        });
+    });
     it("Should handle literal string as source map input", function(done) {
         var command = [
             uglifyjscmd,
