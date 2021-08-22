@@ -636,6 +636,24 @@ keep_rest_lambda_2: {
     node_version: ">=6"
 }
 
+drop_new_function: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        new function(...{
+            [console.log("PASS")]: a,
+        }) {}();
+    }
+    expect: {
+        void ([ ... {
+            [console.log("PASS")]: [].e,
+        }] = []);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 issue_4525_1: {
     options = {
         arguments: true,
