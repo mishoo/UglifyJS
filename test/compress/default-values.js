@@ -568,6 +568,20 @@ retain_empty_iife: {
     node_version: ">=6"
 }
 
+drop_new_function: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        new function(a = console.log("PASS")) {}();
+    }
+    expect: {
+        void console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 retain_fargs: {
     options = {
         unused: true,
