@@ -6600,3 +6600,32 @@ shorter_without_void: {
         "baz",
     ]
 }
+
+issue_5120: {
+    options = {
+        functions: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            function g() {
+                f || g();
+            }
+            g();
+            return f.valueOf();
+        };
+        console.log(a() === a ? "PASS" : "FAIL");
+    }
+    expect: {
+        function a() {
+            (function g() {
+                a || g();
+            })();
+            return a.valueOf();
+        }
+        console.log(a() === a ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
