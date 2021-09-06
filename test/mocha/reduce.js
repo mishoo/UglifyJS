@@ -282,35 +282,40 @@ describe("test/reduce.js", function() {
         });
         if (result.error) throw result.error;
         assert.deepEqual(result.warnings, []);
-        assert.strictEqual(result.code.replace(/function \(/g, "function("), (semver.satisfies(process.version, "<=0.10") ? [
-            "// Can't reproduce test failure",
-            "// minify options: {",
-            '//   "compress": false,',
-            '//   "mangle": false,',
-            '//   "output": {',
-            '//     "beautify": true',
-            "//   }",
-            "// }",
-        ] : [
-            [
-                "try{",
-                "null[function(){}]",
-                "}catch(e){",
-                "console.log(e)",
-                "}",
-            ].join(""),
-            "// output: TypeError: Cannot read property 'function(){}' of null",
-            "// ",
-            "// minify: TypeError: Cannot read property 'function() {}' of null",
-            "// ",
-            "// options: {",
-            '//   "compress": false,',
-            '//   "mangle": false,',
-            '//   "output": {',
-            '//     "beautify": true',
-            "//   }",
-            "// }",
-        ]).join("\n"));
+        if (semver.satisfies(process.version, "<=0.10")) {
+            assert.strictEqual(result.code, [
+                "// Can't reproduce test failure",
+                "// minify options: {",
+                '//   "compress": false,',
+                '//   "mangle": false,',
+                '//   "output": {',
+                '//     "beautify": true',
+                "//   }",
+                "// }",
+            ].join("\n"));
+        } else {
+            var message = result.code.split(/\n/, 3)[1].slice("// output: ".length);
+            assert.strictEqual(result.code, [
+                [
+                    "try{",
+                    "null[function(){}]",
+                    "}catch(e){",
+                    "console.log(e)",
+                    "}",
+                ].join(""),
+                "// output: " + message,
+                "// ",
+                "// minify: " + message.replace("(){}", "() {}"),
+                "// ",
+                "// options: {",
+                '//   "compress": false,',
+                '//   "mangle": false,',
+                '//   "output": {',
+                '//     "beautify": true',
+                "//   }",
+                "// }",
+            ].join("\n"));
+        }
     });
     it("Should maintain block-scope for const/let", function() {
         if (semver.satisfies(process.version, "<4")) return;
