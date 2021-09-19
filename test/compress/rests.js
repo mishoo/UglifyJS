@@ -1109,3 +1109,45 @@ issue_5108: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5128_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function() {
+            return function f(...[ a ]) {
+                return a;
+            }("PASS");
+        }());
+    }
+    expect: {
+        console.log(function f(...[ a ]) {
+            return a;
+        }("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5128_2: {
+    options = {
+        inline: true,
+        keep_fnames: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return function f(...[ a ]) {
+                return a;
+            }("PASS");
+        }());
+    }
+    expect: {
+        console.log(function f(...[ a ]) {
+            return a;
+        }("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
