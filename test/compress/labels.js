@@ -83,8 +83,9 @@ labels_5: {
         conditionals: true,
         dead_code: true,
         if_return: true,
+        unused: true,
     }
-    // should keep the break-s in the following
+    // should keep `break`s below
     input: {
         while (foo) {
             if (bar) break;
@@ -100,8 +101,8 @@ labels_5: {
             if (bar) break;
             console.log("foo");
         }
-        out: while (foo) {
-            if (bar) break out;
+        while (foo) {
+            if (bar) break;
             console.log("foo");
         }
     }
@@ -189,23 +190,22 @@ labels_10: {
         conditionals: true,
         dead_code: true,
         if_return: true,
+        unused: true,
     }
     input: {
-        out: while (foo) {
-            x();
-            y();
+        out: while (42) {
+            console.log("PASS");
             break out;
-            z();
-            k();
+            console.log("FAIL");
         }
     };
     expect: {
-        out: while (foo) {
-            x();
-            y();
-            break out;
+        while (42) {
+            console.log("PASS");
+            break;
         }
     }
+    expect_stdout: "PASS"
 }
 
 issue_4466_1: {
