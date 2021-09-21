@@ -131,6 +131,105 @@ malformed_escape: {
     node_version: ">=4"
 }
 
+booleans: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        var a;
+        console.log(`$${a}${a}` ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a;
+        console.log("$" + a + a ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+escape_placeholder_1: {
+    options = {
+        templates: true,
+    }
+    input: {
+        console.log(`\${\n`);
+    }
+    expect: {
+        console.log(`\${
+`);
+    }
+    expect_stdout: [
+        "${",
+        "",
+    ]
+    node_version: ">=4"
+}
+
+escape_placeholder_2: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`\n${"${"}\n`);
+    }
+    expect: {
+        console.log(`
+\${
+`);
+    }
+    expect_stdout: [
+        "",
+        "${",
+        "",
+    ]
+    node_version: ">=4"
+}
+
+escape_placeholder_3: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`\n$${"{"}\n`);
+    }
+    expect: {
+        console.log(`
+\${
+`);
+    }
+    expect_stdout: [
+        "",
+        "${",
+        "",
+    ]
+    node_version: ">=4"
+}
+
+escape_placeholder_4: {
+    options = {
+        evaluate: true,
+        templates: true,
+    }
+    input: {
+        console.log(`\n${"$"}${"{"}\n`);
+    }
+    expect: {
+        console.log(`
+\${
+`);
+    }
+    expect_stdout: [
+        "",
+        "${",
+        "",
+    ]
+    node_version: ">=4"
+}
+
 evaluate: {
     options = {
         evaluate: true,
@@ -174,7 +273,7 @@ partial_evaluate: {
         console.log(`${6 * 7} foo ${console ? `PA` + "SS" : `FA` + `IL`}`);
     }
     expect: {
-        console.log(`42 foo ${console ? "PASS" : "FAIL"}`);
+        console.log("42 foo " + (console ? "PASS" : "FAIL"));
     }
     expect_stdout: "42 foo PASS"
     node_version: ">=4"
@@ -204,7 +303,7 @@ malformed_evaluate_2: {
         console.log(`\u0${0}b${5}`);
     }
     expect: {
-        console.log(`\u0${0}b5`);
+        console.log(`\u00b` + 5);
     }
     expect_stdout: true
     node_version: ">=4"
@@ -357,13 +456,14 @@ issue_4604: {
 issue_4606: {
     options = {
         evaluate: true,
+        strings: true,
         templates: true,
     }
     input: {
         console.log(`${typeof A} ${"\r"} ${"\\"} ${"`"}`);
     }
     expect: {
-        console.log(`${typeof A} \r \\ \``);
+        console.log(typeof A + " \r \\ `");
     }
     expect_stdout: "undefined \r \\ `"
     node_version: ">=4"
@@ -432,5 +532,156 @@ issue_4931: {
         "undefined \r",
         "\\ `",
     ]
+    node_version: ">=4"
+}
+
+issue_5125_1: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`PASS ${typeof A}`);
+    }
+    expect: {
+        console.log("PASS " + typeof A);
+    }
+    expect_stdout: "PASS undefined"
+    node_version: ">=4"
+}
+
+issue_5125_2: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`PASS
+${typeof A}`);
+    }
+    expect: {
+        console.log(`PASS
+` + typeof A);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
+
+issue_5125_3: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`PASS\n${typeof A}`);
+    }
+    expect: {
+        console.log(`PASS
+` + typeof A);
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
+
+issue_5125_4: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`PASS
+
+${typeof A}`);
+    }
+    expect: {
+        console.log(`PASS
+
+` + typeof A);
+    }
+    expect_stdout: [
+        "PASS",
+        "",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
+
+issue_5125_5: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`PASS\n\n${typeof A}`);
+    }
+    expect: {
+        console.log(`PASS
+
+` + typeof A);
+    }
+    expect_stdout: [
+        "PASS",
+        "",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
+
+issue_5125_6: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`${typeof A} ${typeof B} PASS`);
+    }
+    expect: {
+        console.log(typeof A + ` ${typeof B} PASS`);
+    }
+    expect_stdout: "undefined undefined PASS"
+    node_version: ">=4"
+}
+
+issue_5125_7: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`${typeof A} ${typeof B} ${typeof C} PASS`);
+    }
+    expect: {
+        console.log(typeof A + ` ${typeof B} ${typeof C} PASS`);
+    }
+    expect_stdout: "undefined undefined undefined PASS"
+    node_version: ">=4"
+}
+
+issue_5125_8: {
+    options = {
+        evaluate: true,
+        strings: true,
+        templates: true,
+    }
+    input: {
+        console.log(`${typeof A}${typeof B}${typeof C} PASS`);
+    }
+    expect: {
+        console.log(typeof A + typeof B + typeof C + " PASS");
+    }
+    expect_stdout: "undefinedundefinedundefined PASS"
     node_version: ">=4"
 }

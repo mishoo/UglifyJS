@@ -34,20 +34,20 @@ describe("Template literals", function() {
         [
             // native line breaks
             [ "`foo\nbar`", "`foo\nbar`" ],
-            [ "`foo\rbar`", "`foo\rbar`" ],
+            [ "`foo\rbar`", "`foo\nbar`" ],
             [ "`foo\r\nbar`", "`foo\nbar`" ],
-            [ "`foo\r\n\rbar`", "`foo\n\rbar`" ],
+            [ "`foo\r\n\rbar`", "`foo\n\nbar`" ],
             // escaped line breaks
             [ "`foo\\nbar`", "`foo\\nbar`" ],
             [ "`foo\\rbar`", "`foo\\rbar`" ],
-            [ "`foo\r\\nbar`", "`foo\r\\nbar`" ],
+            [ "`foo\r\\nbar`", "`foo\n\\nbar`" ],
             [ "`foo\\r\nbar`", "`foo\\r\nbar`" ],
             [ "`foo\\r\\nbar`", "`foo\\r\\nbar`" ],
             // continuation
             [ "`foo\\\nbar`", "`foo\\\nbar`" ],
-            [ "`foo\\\rbar`", "`foo\\\rbar`" ],
+            [ "`foo\\\rbar`", "`foo\\\nbar`" ],
             [ "`foo\\\r\nbar`", "`foo\\\nbar`" ],
-            [ "`foo\\\r\n\rbar`", "`foo\\\n\rbar`" ],
+            [ "`foo\\\r\n\rbar`", "`foo\\\n\nbar`" ],
             [ "`foo\\\\nbar`", "`foo\\\\nbar`" ],
             [ "`foo\\\\rbar`", "`foo\\\\rbar`" ],
             [ "`foo\\\\r\nbar`", "`foo\\\\r\nbar`" ],
