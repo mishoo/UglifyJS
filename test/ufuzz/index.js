@@ -2350,7 +2350,7 @@ function patch_try_catch(orig, toplevel) {
         tries: [],
     } ];
     var tail_throw = '\nif (typeof UFUZZ_ERROR == "object") throw UFUZZ_ERROR;\n';
-    var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^)[{]+)\)|}\s*finally)\s*(?={)/g;
+    var re = /(?:(?:^|[\s{}):;])try|}\s*catch\s*\(([^()[{]+)\)|}\s*finally)\s*(?={)/g;
     while (stack.length) {
         var code = stack[0].code;
         var offset = stack[0].offset;

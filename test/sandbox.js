@@ -28,7 +28,7 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
     if ([
         /\basync[ \t]*\([\s\S]*?\)[ \t]*=>/,
         /\b(async[ \t]+function|Promise|setImmediate|setInterval|setTimeout)\b/,
-        /\basync([ \t]+|[ \t]*#|[ \t]*\*[ \t]*)[^\s()[\]{},.&|!~=*%/+-]+(\s*\(|[ \t]*=>)/,
+        /\basync([ \t]+|[ \t]*#|[ \t]*\*[ \t]*)[^\s()[\]{}#,.&|!~=*%/+-]+(\s*\(|[ \t]*=>)/,
     ].some(function(pattern) {
         return pattern.test(code);
     })) {
@@ -51,13 +51,13 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 };
 exports.patch_module_statements = function(code) {
     var count = 0, imports = [];
-    code = code.replace(/\bexport(?:\s*\{[^}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
+    code = code.replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
         if (!header) return "";
         if (header.length == 1) return "0, " + header;
         return header.slice(0, -1) + " _" + ++count + header.slice(-1);
     }).replace(/\bimport\.meta\b/g, function() {
         return '({ url: "https://example.com/path/index.html" })';
-    }).replace(/\bimport\b(?:\s*([^('"]+)\bfrom\b)?\s*(['"]).*?\2(?:$|\n|;)/g, function(match, symbols) {
+    }).replace(/\bimport\b(?:\s*([^\s('"][^('"]*)\bfrom\b)?\s*(['"]).*?\2(?:$|\n|;)/g, function(match, symbols) {
         if (symbols) {
             if (!/^[{*]/.test(symbols)) symbols = "default:" + symbols;
             symbols = symbols.replace(/[{}]/g, "").trim().replace(/\s*,\s*/g, ",");
