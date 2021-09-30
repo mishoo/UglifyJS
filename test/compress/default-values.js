@@ -1904,3 +1904,37 @@ issue_5065: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5138_1: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(function(a, b = a = "FAIL") {
+            return a;
+        }() && "PASS");
+    }
+    expect: {
+        console.log(function(a, b = a = "FAIL") {
+            return a;
+        }() && "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5138_2: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log(function(a, b = a = "FAIL 1") {
+            return a;
+        }(null, "FAIL 2") || "PASS");
+    }
+    expect: {
+        console.log((null, "PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
