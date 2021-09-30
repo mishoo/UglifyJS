@@ -685,3 +685,17 @@ issue_5125_8: {
     expect_stdout: "undefinedundefinedundefined PASS"
     node_version: ">=4"
 }
+
+issue_5136: {
+    options = {
+        templates: true,
+    }
+    input: {
+        console.log(`${A = []}${A[0] = 42}`);
+    }
+    expect: {
+        console.log(`` + (A = []) + (A[0] = 42));
+    }
+    expect_stdout: "42"
+    node_version: ">=4"
+}
