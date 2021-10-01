@@ -6629,3 +6629,29 @@ issue_5120: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5140: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = 42;
+        function f(b) {
+            return b >> 0;
+        }
+        var a = f(42 in []);
+        console.log(f(A));
+    }
+    expect: {
+        function f(b) {
+            return b >> 0;
+        }
+        A = 42;
+        console.log(A >> 0);
+    }
+    expect_stdout: "42"
+}
