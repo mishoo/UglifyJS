@@ -2066,3 +2066,34 @@ issue_5082_2: {
     expect_stdout: "PASS"
     node_version: ">=12"
 }
+
+issue_5142: {
+    options = {
+        evaluate: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0, b;
+        if (++a)
+            new class {
+                p = b = null;
+                constructor(c) {
+                    console.log(c ? "FAIL" : "PASS");
+                }
+            }(b, a);
+    }
+    expect: {
+        var a = 0, b;
+        if (++a)
+            new class {
+                p = b = null;
+                constructor(c) {
+                    console.log(c ? "FAIL" : "PASS");
+                }
+            }(b, 1);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
