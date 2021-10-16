@@ -1199,6 +1199,17 @@ To allow for better optimizations, the compiler makes various assumptions:
 - Object properties can be added, removed and modified (not prevented with
   `Object.defineProperty()`, `Object.defineProperties()`, `Object.freeze()`,
   `Object.preventExtensions()` or `Object.seal()`).
+- If array destructuring is present, index-like properties in `Array.prototype`
+  have not been overridden:
+  ```javascript
+  Object.prototype[0] = 42;
+  var [ a ] = [];
+  var { 0: b } = {};
+  // 42 undefined
+  console.log([][0], a);
+  // 42 42
+  console.log({}[0], b);
+  ```
 - Earlier versions of JavaScript will throw `SyntaxError` with the following:
   ```javascript
   ({
