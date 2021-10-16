@@ -699,3 +699,47 @@ issue_5136: {
     expect_stdout: "42"
     node_version: ">=4"
 }
+
+issue_5145_1: {
+    options = {
+        strings: true,
+        templates: true,
+    }
+    input: {
+        var a = [];
+        console.log(`${a}${a[0] = 42}
+`);
+    }
+    expect: {
+        var a = [];
+        console.log(`${a}${a[0] = 42}
+`);
+    }
+    expect_stdout: [
+        "42",
+        "",
+    ]
+    node_version: ">=4"
+}
+
+issue_5145_2: {
+    options = {
+        strings: true,
+        templates: true,
+    }
+    input: {
+        var a = [];
+        console.log(`${a}${a}${a[0] = 42}
+`);
+    }
+    expect: {
+        var a = [];
+        console.log("" + a + a + (a[0] = 42) + `
+`);
+    }
+    expect_stdout: [
+        "42",
+        "",
+    ]
+    node_version: ">=4"
+}

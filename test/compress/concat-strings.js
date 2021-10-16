@@ -289,3 +289,18 @@ issue_3689: {
     }
     expect_stdout: "00"
 }
+
+issue_5145: {
+    options = {
+        strings: true,
+    }
+    input: {
+        var a = [];
+        console.log("" + a + ((a[0] = 4) + "2"));
+    }
+    expect: {
+        var a = [];
+        console.log("" + a + (a[0] = 4) + "2");
+    }
+    expect_stdout: "42"
+}
