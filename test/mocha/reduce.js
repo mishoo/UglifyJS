@@ -1,5 +1,4 @@
 var assert = require("assert");
-var exec = require("child_process").exec;
 var fs = require("fs");
 var reduce_test = require("../reduce");
 var semver = require("semver");

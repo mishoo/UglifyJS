@@ -278,11 +278,11 @@ function run_code_exec(code, toplevel, timeout) {
         timeout: timeout || 5000,
     });
     if (result.status === 0) return result.stdout;
+    var msg = ("" + result.stderr).replace(/\r\n/g, "\n");
     if (result.error && result.error.code == "ETIMEDOUT" || /FATAL ERROR:/.test(msg)) {
         return new Error("Script execution timed out.");
     }
     if (result.error) return result.error;
-    var msg = result.stderr.replace(/\r\n/g, "\n");
     var end = msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
     var details;
     if (end >= 0) {

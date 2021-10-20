@@ -2078,8 +2078,8 @@ if (require.main !== module) {
     return;
 }
 
-function run_code(code, toplevel) {
-    return sandbox.run_code(sandbox.patch_module_statements(code), toplevel);
+function run_code(code, toplevel, timeout) {
+    return sandbox.run_code(sandbox.patch_module_statements(code), toplevel, timeout);
 }
 
 function writeln(stream, msg) {

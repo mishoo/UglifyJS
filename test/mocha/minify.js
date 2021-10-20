@@ -25,7 +25,7 @@ describe("minify", function() {
         if (result.error) throw result.error;
         assert.strictEqual(result.code, "print(42);");
         assert.strictEqual(JSON.stringify(options), value);
-    })
+    });
     it("Should skip inherited keys from `files`", function() {
         var files = Object.create({ skip: this });
         files[0] = "alert(1 + 1)";

@@ -215,9 +215,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     // hoist and return expressions from the IIFE function expression
                     var seq = [];
                     node.expression.body.forEach(function(node) {
-                        var expr = expr instanceof U.AST_Exit ? node.value : node.body;
+                        var expr = node instanceof U.AST_Exit ? node.value : node.body;
                         if (expr instanceof U.AST_Node && !U.is_statement(expr) && can_hoist(expr)) {
-                            // collect expressions from each statements' body
+                            // collect expressions from each statement's body
                             seq.push(expr);
                         }
                     });
@@ -395,7 +395,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 var expr = [
                     node.expression,                         // switch expression
                     node.body[0] && node.body[0].expression, // first case expression or undefined
-                    node.body[0] && node.body[0],            // first case body or undefined
+                    node.body[0],                            // first case body or undefined
                 ][ (node.start._permute * steps | 0) % 4 ];
                 node.start._permute += step;
                 if (expr && (!(expr instanceof U.AST_Statement) || !has_loopcontrol(expr, node, parent))) {
