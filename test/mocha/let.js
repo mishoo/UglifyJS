@@ -1,5 +1,5 @@
 var assert = require("assert");
-var UglifyJS = require("../..");
+var UglifyJS = require("../node");
 
 describe("let", function() {
     this.timeout(30000);
@@ -52,6 +52,45 @@ describe("let", function() {
         ].forEach(function(name) {
             assert.notStrictEqual(result.indexOf(name), -1);
             assert.notStrictEqual(result.indexOf('v["' + name + '"]'), -1);
+        });
+    });
+    it("Should parse `let` as name correctly", function() {
+        [
+            "for(var let;let;let)let;",
+            "function let(let){let}",
+        ].forEach(function(code) {
+            var ast = UglifyJS.parse(code);
+            assert.strictEqual(ast.print_to_string(), code);
+            assert.throws(function() {
+                UglifyJS.parse('"use strict";' + code);
+            }, function(e) {
+                return e instanceof UglifyJS.JS_Parse_Error && e.message == "Unexpected let in strict mode";
+            }, code);
+        });
+    });
+    it("Should throw on ambiguous use of `let`", function() {
+        [
+            "export let",
+            [
+                "let",
+                "console.log(42)",
+            ].join("\n"),
+            [
+                "let",
+                "[ console.log(42) ]",
+            ].join("\n"),
+            [
+                "let",
+                "{",
+                "    console.log(42)",
+                "}",
+            ].join("\n"),
+        ].forEach(function(code) {
+            assert.throws(function() {
+                UglifyJS.parse(code);
+            }, function(e) {
+                return e instanceof UglifyJS.JS_Parse_Error;
+            }, code);
         });
     });
 });
