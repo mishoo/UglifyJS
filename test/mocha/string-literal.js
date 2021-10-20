@@ -12,7 +12,7 @@ describe("String literals", function() {
             '"\u2029"',
         ].forEach(function(input) {
             assert.throws(function() {
-                var ast = UglifyJS.parse(input);
+                UglifyJS.parse(input);
             }, function(e) {
                 return e instanceof UglifyJS.JS_Parse_Error
                     && e.message === "Unterminated string constant";
@@ -44,7 +44,7 @@ describe("String literals", function() {
             '"use strict";\n"\\011"',
         ].forEach(function(input) {
             assert.throws(function() {
-                var output = UglifyJS.parse(input);
+                UglifyJS.parse(input);
             }, function(e) {
                 return e instanceof UglifyJS.JS_Parse_Error
                     && e.message === "Legacy octal escape sequences are not allowed in strict mode";

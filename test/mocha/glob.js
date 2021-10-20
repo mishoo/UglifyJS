@@ -1,7 +1,6 @@
 var assert = require("assert");
 var exec = require("child_process").exec;
 var path = require("path");
-var readFileSync = require("fs").readFileSync;
 
 describe("bin/uglifyjs with input file globs", function() {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
