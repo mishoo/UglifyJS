@@ -334,6 +334,7 @@ var VAR_NAMES = [
     "arguments",
     "async",
     "await",
+    "let",
     "yield",
 ];
 var INITIAL_NAMES_LEN = VAR_NAMES.length;
@@ -352,7 +353,7 @@ var TYPEOF_OUTCOMES = [
 ];
 
 var avoid_vars = [];
-var block_vars = [];
+var block_vars = [ "let" ];
 var lambda_vars = [];
 var unique_vars = [];
 var classes = [];
@@ -399,7 +400,7 @@ function mayDefer(code) {
 
 function createTopLevelCode() {
     VAR_NAMES.length = INITIAL_NAMES_LEN; // prune any previous names still in the list
-    block_vars.length = 0;
+    block_vars.length = 1;
     lambda_vars.length = 0;
     unique_vars.length = 0;
     classes.length = 0;
@@ -2027,6 +2028,7 @@ function removeAvoidVar(name) {
 function isBannedKeyword(name) {
     switch (name) {
       case "arguments":
+      case "let":
         return in_class;
       case "await":
         return async !== false;
