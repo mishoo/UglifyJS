@@ -2127,7 +2127,7 @@ issue_4372_2: {
     }
     expect: {
         var a;
-        [ a ] = [ "PASS", "FAIL" ];
+        [ a ] = a = [ "PASS", "FAIL" ];
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -3121,6 +3121,106 @@ issue_5114_3: {
         var a = "PASS";
         0;
         console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5153_array_assign: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = function*() {
+            yield b;
+        }(), b;
+        [ b ] = b = a;
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = function*() {
+            yield b;
+        }(), b;
+        [ b ] = b = a;
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5153_array_var: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = function*() {
+            yield b;
+        }(), [ b ] = b = a;
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = function*() {
+            yield b;
+        }(), [ b ] = b = a;
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5153_object_assign: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = {
+            get p() {
+                return b;
+            },
+        }, b;
+        ({
+            p: b
+        } = b = a);
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = {
+            get p() {
+                return b;
+            },
+        }, b;
+        ({
+            p: b
+        } = b = a);
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5153_object_var: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        var a = {
+            get p() {
+                return b;
+            },
+        }, {
+            p: b
+        } = b = a;
+        console.log(a === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = {
+            get p() {
+                return b;
+            },
+        }, {
+            p: b
+        } = b = a;
+        console.log(a === b ? "PASS" : "FAIL");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
