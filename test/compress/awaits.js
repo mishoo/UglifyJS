@@ -2046,3 +2046,100 @@ issue_5070: {
     expect_stdout: "PASS"
     node_version: ">=10"
 }
+
+issue_5157_async_function: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        async function f() {
+            throw "FAIL";
+        }
+        (async function() {
+            try {
+                return await f();
+            } catch (e) {
+                return "PASS";
+            }
+        })().then(console.log);
+    }
+    expect: {
+        async function f() {
+            throw "FAIL";
+        }
+        (async function() {
+            try {
+                return await f();
+            } catch (e) {
+                return "PASS";
+            }
+        })().then(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5157_async_iife: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            try {
+                return await async function() {
+                    throw "FAIL";
+                }();
+            } catch (e) {
+                return "PASS";
+            }
+        })().then(console.log);
+    }
+    expect: {
+        (async function() {
+            try {
+                return await async function() {
+                    throw "FAIL";
+                }();
+            } catch (e) {
+                return "PASS";
+            }
+        })().then(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5157_promise: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        var p = new Promise(function(resolve, reject) {
+            reject("FAIL");
+        });
+        (async function() {
+            try {
+                return await p;
+            } catch (e) {
+                return "PASS";
+            }
+        })().then(console.log);
+    }
+    expect: {
+        var p = new Promise(function(resolve, reject) {
+            reject("FAIL");
+        });
+        (async function() {
+            try {
+                return await p;
+            } catch (e) {
+                return "PASS";
+            }
+        })().then(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
