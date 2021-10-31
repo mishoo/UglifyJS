@@ -550,6 +550,24 @@ logical_side_effects: {
     node_version: ">=15"
 }
 
+evaluate_lazy_assignment: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        console.log(a &&= "PASS");
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
 issue_4815_1: {
     options = {
         evaluate: true,
