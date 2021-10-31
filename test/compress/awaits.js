@@ -2143,3 +2143,72 @@ issue_5157_promise: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5159_1: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            try {
+                throw "foo";
+            } catch (e) {
+                return await "bar";
+            } finally {
+                console.log("baz");
+            }
+        })().catch(console.log).then(console.log);
+        console.log("moo");
+    }
+    expect: {
+        (async function() {
+            try {
+                throw "foo";
+            } catch (e) {
+                return await "bar";
+            } finally {
+                console.log("baz");
+            }
+        })().catch(console.log).then(console.log);
+        console.log("moo");
+    }
+    expect_stdout: [
+        "moo",
+        "baz",
+        "bar",
+    ]
+    node_version: ">=8"
+}
+
+issue_5159_2: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        (async function() {
+            try {
+                throw "foo";
+            } catch (e) {
+                return await "bar";
+            }
+        })().catch(console.log).then(console.log);
+        console.log("baz");
+    }
+    expect: {
+        (async function() {
+            try {
+                throw "foo";
+            } catch (e) {
+                return "bar";
+            }
+        })().catch(console.log).then(console.log);
+        console.log("baz");
+    }
+    expect_stdout: [
+        "baz",
+        "bar",
+    ]
+    node_version: ">=8"
+}
