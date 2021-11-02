@@ -507,7 +507,7 @@ chained_assignments: {
     expect_stdout: "PASS"
 }
 
-folded_assignments: {
+folded_assignments_1: {
     options = {
         evaluate: true,
         join_vars: true,
@@ -522,6 +522,30 @@ folded_assignments: {
             PASS: 42,
             42: "PASS",
         };
+        console.log(a[42], a.PASS);
+    }
+    expect_stdout: "PASS 42"
+}
+
+folded_assignments_2: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        "use strict";
+        var a = {};
+        a[42] = "FAIL";
+        a[a.PASS = 42] = "PASS";
+        console.log(a[42], a.PASS);
+    }
+    expect: {
+        "use strict";
+        var a = {
+            42: "FAIL",
+            PASS: 42,
+        };
+        a[42] = "PASS";
         console.log(a[42], a.PASS);
     }
     expect_stdout: "PASS 42"
@@ -550,6 +574,7 @@ typescript_enum: {
     rename = true
     options = {
         assignments: true,
+        collapse_vars: true,
         evaluate: true,
         hoist_props: true,
         inline: true,
