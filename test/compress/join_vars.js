@@ -489,6 +489,91 @@ join_object_assignments_regex: {
     expect_stdout: "1"
 }
 
+chained_assignments: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        var a, b = a = {};
+        b.p = "PASS";
+        console.log(a.p);
+    }
+    expect: {
+        var a, b = a = {
+            p: "PASS",
+        };
+        console.log(a.p);
+    }
+    expect_stdout: "PASS"
+}
+
+folded_assignments: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        var a = {};
+        a[a.PASS = 42] = "PASS";
+        console.log(a[42], a.PASS);
+    }
+    expect: {
+        var a = {
+            PASS: 42,
+            42: "PASS",
+        };
+        console.log(a[42], a.PASS);
+    }
+    expect_stdout: "PASS 42"
+}
+
+inlined_assignments: {
+    options = {
+        join_vars: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (a = {}).p = "PASS";
+        console.log(a.p);
+    }
+    expect: {
+        var a = {
+            p: "PASS",
+        };
+        console.log(a.p);
+    }
+    expect_stdout: "PASS"
+}
+
+typescript_enum: {
+    rename = true
+    options = {
+        assignments: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        join_vars: true,
+        passes: 4,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var Enum;
+        (function (Enum) {
+            Enum[Enum.PASS = 42] = "PASS";
+        })(Enum || (Enum = {}));
+        console.log(Enum[42], Enum.PASS);
+    }
+    expect: {
+        console.log("PASS", 42);
+    }
+    expect_stdout: "PASS 42"
+}
+
 issue_2816: {
     options = {
         join_vars: true,
