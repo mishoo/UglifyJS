@@ -1151,3 +1151,57 @@ issue_5128_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5165_1: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+        rests: true,
+        side_effects: true,
+        switches: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(function([ ...a ]) {
+            switch (a) {
+              case a:
+                return "PASS";
+            }
+        }([]));
+    }
+    expect: {
+        console.log(function([ ...a ]) {
+            return "PASS";
+        }([]));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5165_2: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        reduce_vars: true,
+        rests: true,
+        side_effects: true,
+        switches: true,
+        unsafe: true,
+    }
+    input: {
+        console.log(function(...a) {
+            switch (a) {
+              case a:
+                return "PASS";
+            }
+        }());
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
