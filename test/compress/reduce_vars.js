@@ -7320,6 +7320,46 @@ local_assignment_loop: {
     expect_stdout: "PASS"
 }
 
+local_assignment_modified: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a;
+        (a = a || {}).p = 42;
+        console.log(a.p);
+    }
+    expect: {
+        var a;
+        (a = {}).p = 42;
+        console.log(a.p);
+    }
+    expect_stdout: "42"
+}
+
+local_definition_modified: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = a || {};
+        a.p = 42;
+        console.log(a.p);
+    }
+    expect: {
+        var a = {};
+        a.p = 42;
+        console.log(a.p);
+    }
+    expect_stdout: "42"
+}
+
 issue_3957_1: {
     options = {
         evaluate: true,
@@ -7435,6 +7475,7 @@ issue_4030: {
         collapse_vars: true,
         evaluate: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
