@@ -69,6 +69,7 @@ if (typeof phantom == "undefined") {
             npm([
                 "install",
                 "graceful-fs@4.2.6",
+                "is-my-json-valid@2.20.5",
                 "phantomjs-prebuilt@2.1.14",
                 "--no-audit",
                 "--no-optional",
