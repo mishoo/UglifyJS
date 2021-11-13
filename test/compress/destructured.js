@@ -3225,3 +3225,31 @@ issue_5153_object_var: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5168: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        (function a({
+            [console.log(typeof function() {
+                ++a;
+                return a;
+            }())]: b,
+        }) {
+            var a;
+        })({});
+    }
+    expect: {
+        (function a({
+            [console.log(typeof function() {
+                ++a;
+                return a;
+            }())]: b,
+        }) {
+            var a;
+        })({});
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
