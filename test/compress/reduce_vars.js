@@ -7340,6 +7340,24 @@ local_assignment_modified: {
     expect_stdout: "42"
 }
 
+local_declaration: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a;
+        a || console.log(a = "PASS");
+    }
+    expect: {
+        var a;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
 local_definition_modified: {
     options = {
         evaluate: true,

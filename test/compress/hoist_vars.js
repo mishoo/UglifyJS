@@ -135,7 +135,7 @@ issue_2295: {
     }
 }
 
-issue_4487: {
+issue_4487_1: {
     options = {
         functions: true,
         hoist_vars: true,
@@ -152,10 +152,33 @@ issue_4487: {
     }
     expect: {
         function a() {
-            var f;
-            console.log(typeof f);
+            var f = console.log(typeof f);
         }
         a();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4487_2: {
+    options = {
+        functions: true,
+        hoist_vars: true,
+        keep_fnames: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            var f = console.log(typeof f);
+        };
+        var b = a();
+    }
+    expect: {
+        (function a() {
+            console.log(typeof void 0);
+        })();
     }
     expect_stdout: "undefined"
 }

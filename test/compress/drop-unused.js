@@ -3062,7 +3062,7 @@ issue_4184: {
     expect_stdout: "42"
 }
 
-issue_4235: {
+issue_4235_1: {
     options = {
         inline: true,
         reduce_vars: true,
@@ -3081,9 +3081,33 @@ issue_4235: {
     }
     expect: {
         void function() {
-            var f;
-            console.log(f);
+            var f = console.log(f);
         }();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4235_2: {
+    options = {
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        (function() {
+            {
+                const f = 0;
+            }
+            (function f() {
+                var f = console.log(f);
+            })();
+        })();
+    }
+    expect: {
+        console.log(void 0);
     }
     expect_stdout: "undefined"
 }
