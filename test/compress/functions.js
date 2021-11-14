@@ -6655,3 +6655,49 @@ issue_5140: {
     }
     expect_stdout: "42"
 }
+
+issue_5173_1: {
+    options = {
+        conditionals: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a, b) {
+            console.log(b);
+        }
+        f([ A = 42, [] + "" || (A = f) ]);
+    }
+    expect: {
+        function f(a, b) {
+            console.log(b);
+        }
+        f([ A = 42, [] + "" || (A = f) ]);
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5173_2: {
+    options = {
+        conditionals: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            console.log(b);
+        }
+        f([ A = 42, [] + "" || (A = f) ]);
+    }
+    expect: {
+        function f(a, b) {
+            console.log(b);
+        }
+        f(A = [] + "" ? 42 : f);
+    }
+    expect_stdout: "undefined"
+}
