@@ -1293,3 +1293,26 @@ assign_sequence_var: {
         "1 2 3",
     ]
 }
+
+issue_5175: {
+    options = {
+        join_vars: true,
+    }
+    input: {
+        function log(f) {
+            console.log(f(), A.p);
+        }
+        log(function() {
+            return (A = {}).p = "PASS";
+        });
+    }
+    expect: {
+        function log(f) {
+            console.log(f(), A.p);
+        }
+        log(function() {
+            return (A = {}).p = "PASS";
+        });
+    }
+    expect_stdout: "PASS PASS"
+}
