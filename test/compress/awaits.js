@@ -453,7 +453,7 @@ object_function: {
         }).f();
     }
     expect: {
-        (async function() {
+        (async () => {
             console.log("PASS");
         })();
     }
@@ -2210,5 +2210,31 @@ issue_5159_2: {
         "baz",
         "bar",
     ]
+    node_version: ">=8"
+}
+
+issue_5177: {
+    options = {
+        properties: true,
+    }
+    input: {
+        (async function() {
+            return {
+                p(await) {},
+            }.p;
+        })().then(function(a) {
+            console.log(typeof a);
+        });
+    }
+    expect: {
+        (async function() {
+            return {
+                p(await) {},
+            }.p;
+        })().then(function(a) {
+            console.log(typeof a);
+        });
+    }
+    expect_stdout: "function"
     node_version: ">=8"
 }

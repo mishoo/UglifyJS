@@ -96,7 +96,7 @@ pause_resume: {
     node_version: ">=4"
 }
 
-arrow_yield: {
+arrow_yield_1: {
     input: {
         yield = "PASS";
         console.log(function*() {
@@ -106,6 +106,18 @@ arrow_yield: {
     expect_exact: 'yield="PASS";console.log(function*(){return()=>yield||"FAIL"}().next().value());'
     expect_stdout: "PASS"
     node_version: ">=4"
+}
+
+arrow_yield_2: {
+    input: {
+        console.log(typeof function *() {
+            // Syntax error on Node.js v6+
+            return (yield) => {};
+        }().next().value);
+    }
+    expect_exact: "console.log(typeof function*(){return(yield)=>{}}().next().value);"
+    expect_stdout: "function"
+    node_version: "4"
 }
 
 for_of: {
@@ -1274,4 +1286,26 @@ issue_5076: {
     }
     expect_stdout: "PASS"
     node_version: ">=6"
+}
+
+issue_5177: {
+    options = {
+        properties: true,
+    }
+    input: {
+        console.log(typeof function*() {
+            return {
+                p(yield) {},
+            }.p;
+        }().next().value);
+    }
+    expect: {
+        console.log(typeof function*() {
+            return {
+                p(yield) {},
+            }.p;
+        }().next().value);
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
 }
