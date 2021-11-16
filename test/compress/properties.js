@@ -1510,3 +1510,71 @@ issue_5093_quote_style: {
     expect_exact: 'console.log({a:true,\'42\':"PASS","null":[]}[6*7]);'
     expect_stdout: "PASS"
 }
+
+object_methods: {
+    options = {
+        properties: true,
+    }
+    input: {
+        ({
+            p() {
+                console.log("FAIL 1");
+            },
+            *q() {
+                console.log("FAIL 2");
+            },
+            async r() {
+                console.log("FAIL 3");
+            },
+            async *s() {
+                console.log("PASS");
+            },
+        }).s().next();
+    }
+    expect: {
+        [
+            () => {
+                console.log("FAIL 1");
+            },
+            function*() {
+                console.log("FAIL 2");
+            },
+            async () => {
+                console.log("FAIL 3");
+            },
+            async function*() {
+                console.log("PASS");
+            },
+        ][3]().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
+
+issue_5177: {
+    options = {
+        properties: true,
+    }
+    input: {
+        var a = "FAIL";
+        var o = { a: "PASS" };
+        o.p = {
+            q() {
+                return this.a;
+            },
+        }.q;
+        console.log(o.p());
+    }
+    expect: {
+        var a = "FAIL";
+        var o = { a: "PASS" };
+        o.p = {
+            q() {
+                return this.a;
+            },
+        }.q;
+        console.log(o.p());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
