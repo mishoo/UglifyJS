@@ -1044,13 +1044,13 @@ issue_5100_1: {
     }
     expect: {
         var a;
-        [ {
+        ({
             p: {},
             ...a
-        } ] = [ {
+        } = [ {
             p: [ a = 42["q"] ],
             r: "PASS",
-        } ];
+        } ][0]);
         console.log(a.r);
     }
     expect_stdout: "PASS"
@@ -1077,12 +1077,12 @@ issue_5100_2: {
     }
     expect: {
         var a;
-        [ {
+        ({
             p: {},
             ...a
-        } ] = [ {
+        } = [ {
             p: [ console.log("PASS"), a = 42["q"] ],
-        } ];
+        } ][0]);
     }
     expect_stdout: "PASS"
     node_version: ">=10"

@@ -1581,6 +1581,75 @@ hoist_vars: {
     node_version: ">=6"
 }
 
+singleton_1: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var [ a ] = "P", b, o = {};
+        [ { 1: o.p } ] = [ "FAIL" ];
+        ({ foo: [ o.q ] } = { foo: "S" });
+        [ b = "S" ] = [];
+        console.log(a + o.p + o.q + b);
+    }
+    expect: {
+        var b, a = "P"[0], o = {};
+        o.p = [ "FAIL"["1"] ][0];
+        o.q = { foo: "S"[0] }["foo"];
+        [ b = "S" ] = [];
+        console.log(a + o.p + o.q + b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+singleton_2: {
+    options = {
+        evaluate: true,
+        passes: 2,
+        pure_getters: true,
+        side_effects: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var [ a ] = "P", b, o = {};
+        [ { 1: o.p } ] = [ "FAIL" ];
+        ({ foo: [ o.q ] } = { foo: "S" });
+        [ b = "S" ] = [];
+        console.log(a + o.p + o.q + b);
+    }
+    expect: {
+        var b, a = "P", o = {};
+        o.p = "A";
+        o.q = "S";
+        [ b = "S" ] = [];
+        console.log(a + o.p + o.q + b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+singleton_side_effects: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        [ 42[console.log("foo")] ] = [ console.log("bar") ];
+    }
+    expect: {
+        [ 42[console.log("foo")] ] = [ console.log("bar") ];
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+    node_version: ">=6"
+}
+
 issue_4280: {
     options = {
         evaluate: true,
