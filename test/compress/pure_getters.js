@@ -1640,6 +1640,26 @@ nested_property_assignments_3: {
     expect_stdout: "PASS"
 }
 
+nested_property_assignments_4: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var n, o = { p: { q: { r: "PASS" } } };
+        (n = o.p).r = n.q.r;
+        console.log(o.p.r);
+    }
+    expect: {
+        var n, o = { p: { q: { r: "PASS" } } };
+        (n = o.p).r = n.q.r;
+        console.log(o.p.r);
+    }
+    expect_stdout: "PASS"
+}
+
 issue_4939: {
     options = {
         pure_getters: "strict",
