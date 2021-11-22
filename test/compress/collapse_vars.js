@@ -9253,13 +9253,13 @@ issue_4920_2: {
         console.log(b);
     }
     expect: {
-        var o = {
+        var o;
+        var a = "PASS", b;
+        ({
             get PASS() {
                 a = "FAIL";
             },
-        };
-        var a = "PASS", b;
-        o[b = a];
+        })[b = a];
         console.log(b);
     }
     expect_stdout: "PASS"
@@ -9283,9 +9283,39 @@ issue_4920_3: {
     }
     expect: {
         var log = console.log;
-        var o = {
+        var o;
+        var a = "PASS", b;
+        ({
             get PASS() {
                 a = "FAIL";
+            },
+        })[b = a];
+        log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4920_4: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var o = {
+            get [(a = "FAIL 1", "PASS")]() {
+                a = "FAIL 2";
+            },
+        };
+        var a = "PASS", b;
+        o[b = a];
+        log(b);
+    }
+    expect: {
+        var log = console.log;
+        var o = {
+            get [(a = "FAIL 1", "PASS")]() {
+                a = "FAIL 2";
             },
         };
         var a = "PASS", b;
@@ -9293,6 +9323,7 @@ issue_4920_3: {
         log(b);
     }
     expect_stdout: "PASS"
+    node_version: ">=4"
 }
 
 issue_4935: {
@@ -9481,4 +9512,57 @@ issue_5112_2: {
         }("FAIL 2"));
     }
     expect_stdout: "PASS"
+}
+
+issue_5182: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        merge_vars: true,
+        passes: 3,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var con = console;
+        global.log = con.log;
+        var jump = function(x) {
+            console.log("JUMP:", x * 10);
+            return x + x;
+        };
+        var jump2 = jump;
+        var run = function(x) {
+            console.log("RUN:", x * -10);
+            return x * x;
+        };
+        var run2 = run;
+        var bar = (x, y) => {
+            console.log("BAR:", x + y);
+            return x - y;
+        };
+        var bar2 = bar;
+        var obj = {
+            foo: bar2,
+            go: run2,
+            not_used: jump2,
+        };
+        console.log(obj.foo(1, 2), global.log("PASS"));
+    }
+    expect: {
+        var obj = console;
+        global.log = obj.log,
+        console.log((console.log("BAR:", 3), -1), global.log("PASS"));
+    }
+    expect_stdout: [
+        "BAR: 3",
+        "PASS",
+        "-1 undefined",
+    ]
+    node_version: ">=4"
 }
