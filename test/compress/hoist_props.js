@@ -217,7 +217,8 @@ name_collision_1: {
         var obj_foo = 1;
         var obj_bar = 2;
         function f() {
-            var obj_foo$0 = 3,
+            var obj,
+                obj_foo$0 = 3,
                 obj_bar = 4,
                 obj_b_r = 5,
                 obj_b_r$0 = 6,
@@ -249,7 +250,8 @@ name_collision_2: {
         console.log(o.p === o.p, o["+"](4), o["-"](5), o__$0, o__$1);
     }
     expect: {
-        var o_p = 1,
+        var o,
+            o_p = 1,
             o__ = function(x) {
                 return x;
             },
@@ -283,7 +285,8 @@ name_collision_3: {
         console.log(o.p === o.p, o["+"](4), o["-"](5));
     }
     expect: {
-        var o_p = 1,
+        var o,
+            o_p = 1,
             o__ = function(x) {
                 return x;
             },
@@ -315,7 +318,7 @@ name_collision_4: {
     }
     expect: {
         console.log(function() {
-            var o_p$0 = 0, o_q = "PASS";
+            var o, o_p$0 = 0, o_q = "PASS";
             return function(o_p) {
                 if (!o_p$0) return o_p;
             }(o_q);
@@ -768,7 +771,7 @@ issue_3046: {
     expect: {
         console.log(function(a) {
             do {
-                var b_c = a++;
+                var b, b_c = a++;
             } while (b_c && a);
             return a;
         }(0));
@@ -931,7 +934,7 @@ issue_3411: {
     expect: {
         var c = 1;
         !function f() {
-            var o_p = --c && f();
+            var o, o_p = --c && f();
             +{} || console.log("PASS");
         }();
     }
@@ -1042,9 +1045,7 @@ issue_3945_1: {
     expect: {
         function f() {
             o.p;
-            var o = {
-                q: 0,
-            };
+            var o, o_q = 0;
         }
     }
 }
@@ -1063,9 +1064,7 @@ issue_3945_2: {
     }
     expect: {
         console.log(typeof o);
-        var o = {
-            p: 0,
-        };
+        var o, o_p = 0;
     }
     expect_stdout: "undefined"
 }
@@ -1134,10 +1133,46 @@ issue_4985: {
         }());
     }
     expect: {
-        var a_p = 42;
+        var a, a_p = 42;
         console.log(function() {
             ({});
         }());
     }
     expect_stdout: "undefined"
+}
+
+issue_5182: {
+    options = {
+        hoist_props: true,
+        merge_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var o = console;
+        log = o.log;
+        o = {
+            p: function(a) {
+                console.log(a ? "PASS" : "FAIL");
+                return a;
+            },
+        };
+        log(o.p(42));
+    }
+    expect: {
+        var o_p = console;
+        log = o_p.log;
+        o_p = function(a) {
+            console.log(a ? "PASS" : "FAIL");
+            return a;
+        };
+        log(o_p(42));
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
 }

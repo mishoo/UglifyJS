@@ -111,7 +111,7 @@ hoist_props_const: {
         }
     }
     expect: {
-        var o_p = "PASS";
+        var o = 0, o_p = "PASS";
         console.log(o_p);
     }
     expect_stdout: "PASS"
@@ -136,7 +136,7 @@ hoist_props_let: {
     }
     expect: {
         "use strict";
-        var o_p = "PASS";
+        var o, o_p = "PASS";
         console.log(o_p);
     }
     expect_stdout: "PASS"
