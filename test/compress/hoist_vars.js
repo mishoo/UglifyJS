@@ -418,3 +418,32 @@ issue_4898: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5187: {
+    options = {
+        hoist_props: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a = 42;
+            do {
+                var b = { 0: a++ };
+            } while (console.log(b[b ^= 0]));
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            var b, a = 42;
+            do {
+                b = { 0: a++ };
+            } while (console.log(b[b ^= 0]));
+        })();
+    }
+    expect_stdout: "42"
+}
