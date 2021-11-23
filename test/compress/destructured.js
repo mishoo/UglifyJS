@@ -3322,3 +3322,47 @@ issue_5168: {
     expect_stdout: "function"
     node_version: ">=6"
 }
+
+issue_5189_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        [ a.p ] = a = "PASS";
+        console.log(a);
+    }
+    expect: {
+        var a;
+        [ a.p ] = a = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5189_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        ({ p: a.q } = a = "PASS");
+        console.log(a);
+    }
+    expect: {
+        var a;
+        ({ p: a.q } = a = "PASS");
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
