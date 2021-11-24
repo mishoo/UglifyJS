@@ -151,9 +151,9 @@ issue_4487_1: {
         var b = a();
     }
     expect: {
-        function a() {
+        var a = function f() {
             var f = console.log(typeof f);
-        }
+        };
         a();
     }
     expect_stdout: "undefined"
@@ -165,6 +165,31 @@ issue_4487_2: {
         hoist_vars: true,
         keep_fnames: true,
         passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f() {
+            var f = console.log(typeof f);
+        };
+        var b = a();
+    }
+    expect: {
+        function a() {
+            var f = console.log(typeof f);
+        }
+        a();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4487_3: {
+    options = {
+        functions: true,
+        hoist_vars: true,
+        keep_fnames: true,
+        passes: 3,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -256,9 +281,8 @@ issue_4736: {
     expect: {
         (function() {
             (function() {
-                var b = 1 << 30;
                 0,
-                console.log(b);
+                console.log(1073741824);
             })();
         })();
     }
@@ -275,18 +299,18 @@ issue_4839: {
         unused: true,
     }
     input: {
-        var o = function(a, b) {
+        var log = console.log, o = function(a, b) {
             return b && b;
         }("foo");
         for (var k in o)
             throw "FAIL";
-        console.log("PASS");
+        log("PASS");
     }
     expect: {
-        var k, o = void 0;
-        for (k in o)
+        var k, log = console.log;
+        for (k in void 0)
             throw "FAIL";
-        console.log("PASS");
+        log("PASS");
     }
     expect_stdout: "PASS"
 }
@@ -312,8 +336,7 @@ issue_4859: {
     }
     expect: {
         (function f(a) {
-            var d = 1 / 0, d = Infinity;
-            console.log(d);
+            console.log(Infinity);
             return f;
         })();
     }
@@ -447,4 +470,33 @@ issue_5187: {
         })();
     }
     expect_stdout: "42"
+}
+
+issue_5195: {
+    options = {
+        hoist_props: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            var a;
+            do {
+                var b = { p: a };
+            } while (console.log(b += ""));
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            var a, b;
+            do {
+                b = { p: a };
+            } while (console.log(b += ""));
+        })();
+    }
+    expect_stdout: "[object Object]"
 }
