@@ -476,9 +476,9 @@ issue_4112: {
             try {
                 throw 42;
             } catch (e) {
-                var a = e;
-                for (e in a);
-                a = function() {};
+                var o = e;
+                for (e in o);
+                function a() {}
                 console.log(typeof a);
                 return a;
             }
@@ -3376,4 +3376,61 @@ issue_4956_2: {
         f(1);
     }
     expect_stdout: "42"
+}
+
+issue_5182: {
+    options = {
+        arrows: true,
+        collapse_vars: true,
+        evaluate: true,
+        hoist_props: true,
+        inline: true,
+        merge_vars: true,
+        passes: 4,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            var con = console;
+        } catch (x) {}
+        global.log = con.log;
+        var jump = function(x) {
+            console.log("JUMP:", x * 10);
+            return x + x;
+        };
+        var jump2 = jump;
+        var run = function(x) {
+            console.log("RUN:", x * -10);
+            return x * x;
+        };
+        var run2 = run;
+        var bar = (x, y) => {
+            console.log("BAR:", x + y);
+            return x - y;
+        };
+        var bar2 = bar;
+        var obj = {
+            foo: bar2,
+            go: run2,
+            not_used: jump2,
+        };
+        console.log(obj.foo(1, 2), global.log("PASS"));
+    }
+    expect: {
+        try {
+            var con = console;
+        } catch (x) {}
+        global.log = con.log,
+        console.log((console.log("BAR:", 3), -1), global.log("PASS"));
+    }
+    expect_stdout: [
+        "BAR: 3",
+        "PASS",
+        "-1 undefined",
+    ]
+    node_version: ">=4"
 }

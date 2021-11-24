@@ -4857,8 +4857,9 @@ issue_4155: {
     }
     expect: {
         (function() {
-            void console.log(b);
-            var b = function() {};
+            var a;
+            void console.log(a);
+            function b() {}
             b && console.log(typeof b);
         })();
     }

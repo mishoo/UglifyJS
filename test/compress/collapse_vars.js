@@ -9522,7 +9522,7 @@ issue_5182: {
         hoist_props: true,
         inline: true,
         merge_vars: true,
-        passes: 3,
+        passes: 4,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -9555,8 +9555,8 @@ issue_5182: {
         console.log(obj.foo(1, 2), global.log("PASS"));
     }
     expect: {
-        var obj = console;
-        global.log = obj.log,
+        var con = console;
+        global.log = con.log,
         console.log((console.log("BAR:", 3), -1), global.log("PASS"));
     }
     expect_stdout: [
