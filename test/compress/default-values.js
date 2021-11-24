@@ -1938,3 +1938,22 @@ issue_5138_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5192: {
+    options = {
+        dead_code: true,
+        ie: true,
+    }
+    input: {
+        (function a(a,  [] = a = "PASS") {
+            console.log(a);
+        })("FAIL");
+    }
+    expect: {
+        (function a(a,  [] = a = "PASS") {
+            console.log(a);
+        })("FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
