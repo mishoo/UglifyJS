@@ -2916,7 +2916,7 @@ issue_4133: {
         console.log(a);
     }
     expect: {
-        var b = 1;
+        var a = 1;
         console.log(0);
     }
     expect_stdout: "0"
