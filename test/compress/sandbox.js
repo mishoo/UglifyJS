@@ -201,3 +201,20 @@ issue_4811_2: {
     expect_stdout: "PASS [object global] true"
     node_version: ">=8"
 }
+
+issue_5197: {
+    rename = true
+    input: {
+        function f(async) {
+            async(")=>{}");
+        }
+        console.log("" + this.__proto__);
+    }
+    expect: {
+        function f(a) {
+            a(")=>{}");
+        }
+        console.log("" + this.__proto__);
+    }
+    expect_stdout: "[object global]"
+}
