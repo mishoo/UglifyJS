@@ -743,3 +743,29 @@ issue_5145_2: {
     ]
     node_version: ">=4"
 }
+
+issue_5199: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function() {
+            console.log(typeof b);
+        }``;
+        {
+            const b = a;
+        }
+    }
+    expect: {
+        var a = function() {
+            console.log(typeof b);
+        }``;
+        {
+            const b = a;
+        }
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
