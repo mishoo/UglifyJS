@@ -202,13 +202,11 @@ function setup(global, builtins, setup_log, setup_tty) {
     });
     Object.defineProperties(global, props);
     // for Node.js v8+
-    if (global.toString !== Object.prototype.toString) {
-        global.__proto__ = Object.defineProperty(Object.create(global.__proto__), "toString", {
-            value: function() {
-                return "[object global]";
-            },
-        });
-    }
+    global.__proto__ = Object.defineProperty(Object.create(global.__proto__), "toString", {
+        value: function() {
+            return "[object global]";
+        },
+    });
 
     function self() {
         return this;
