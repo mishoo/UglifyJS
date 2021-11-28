@@ -4,34 +4,27 @@ var UglifyJS = require("../..");
 
 describe("spidermonkey export/import sanity test", function() {
     it("Should produce a functional build when using --self with spidermonkey", function(done) {
-        this.timeout(60000);
-
+        this.timeout(120000);
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
-        var command = uglifyjs + " --self -cm --wrap SpiderUglify -o spidermonkey | " +
-            uglifyjs + " -p spidermonkey -cm";
-
-        exec(command, {
-            maxBuffer: 1048576
-        }, function(err, stdout) {
+        var command = [
+            uglifyjs + " --self -cm --wrap SpiderUglify -o spidermonkey",
+            uglifyjs + " -p spidermonkey -cm",
+        ].join(" | ");
+        exec(command, { maxBuffer: 1048576 }, function(err, stdout) {
             if (err) throw err;
-
             eval(stdout);
             assert.strictEqual(typeof SpiderUglify, "object");
             var result = SpiderUglify.minify("foo([true,,2+3]);");
             assert.strictEqual(result.error, undefined);
             assert.strictEqual(result.code, "foo([!0,,5]);");
-
             done();
         });
     });
 
-    it("Should not add unnecessary escape slashes to regexps", function() {
+    it("Should not add unnecessary escape slashes to RegExp", function() {
         var input = "/[\\\\/]/;";
         var ast = UglifyJS.parse(input).to_mozilla_ast();
-        assert.equal(
-            UglifyJS.AST_Node.from_mozilla_ast(ast).print_to_string(),
-            input
-        );
+        assert.strictEqual(UglifyJS.AST_Node.from_mozilla_ast(ast).print_to_string(), input);
     });
 
     it("Should judge between directives and strings correctly on import", function() {
