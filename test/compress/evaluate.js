@@ -3203,7 +3203,7 @@ issue_4552: {
     expect_stdout: "NaN"
 }
 
-issue_4886: {
+issue_4886_1: {
     options = {
         evaluate: true,
         unsafe: true,
@@ -3218,6 +3218,26 @@ issue_4886: {
         console.log("length" in {
             __proto__: function() {},
             length: void 0,
+        });
+    }
+    expect_stdout: "true"
+}
+
+issue_4886_2: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        console.log("foo" in {
+            "foo": null,
+            __proto__: 42,
+        });
+    }
+    expect: {
+        console.log("foo" in {
+            "foo": null,
+            __proto__: 42,
         });
     }
     expect_stdout: "true"
