@@ -519,7 +519,7 @@ function read_file(path, default_value) {
 }
 
 function parse_js(value, options, flag) {
-    if (!options || typeof options != "object") options = {};
+    if (!options || typeof options != "object") options = Object.create(null);
     if (typeof value == "string") try {
         UglifyJS.parse(value, {
             expression: true
