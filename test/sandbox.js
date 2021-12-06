@@ -295,7 +295,7 @@ function run_code_exec(code, toplevel, timeout) {
         } catch (e) {}
     }
     var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
-    if (!match) return details || new Error(msg);
+    if (!match) return details || new Error("Script execution aborted.");
     var ex = new global[match[1]](match[2]);
     ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
     if (typeof details == "object") {
