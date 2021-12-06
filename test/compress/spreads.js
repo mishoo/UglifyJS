@@ -341,7 +341,7 @@ convert_setter: {
             console.log(k, o[k]);
     }
     expect_stdout: "PASS undefined"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 keep_getter_1: {
@@ -370,7 +370,7 @@ keep_getter_1: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 keep_getter_2: {
@@ -399,7 +399,7 @@ keep_getter_2: {
         "foo",
         "bar",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 keep_getter_3: {
@@ -429,7 +429,7 @@ keep_getter_3: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 keep_getter_4: {
@@ -460,7 +460,7 @@ keep_getter_4: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 keep_accessor: {
@@ -508,7 +508,7 @@ keep_accessor: {
         "q undefined",
         "r null",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 object_key_order_1: {
@@ -538,7 +538,7 @@ object_key_order_1: {
         "a 3",
         "b 2",
     ]
-    node_version: ">=8 <=10"
+    node_version: ">=8.3.0 <=10"
 }
 
 object_key_order_2: {
@@ -568,7 +568,7 @@ object_key_order_2: {
         "a 3",
         "b 2",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 object_key_order_3: {
@@ -598,7 +598,7 @@ object_key_order_3: {
         "a 3",
         "b 2",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 object_key_order_4: {
@@ -628,7 +628,7 @@ object_key_order_4: {
         "a 3",
         "b 2",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 object_spread_array: {
@@ -654,7 +654,7 @@ object_spread_array: {
         "0 foo",
         "1 bar",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 object_spread_string: {
@@ -681,7 +681,7 @@ object_spread_string: {
         "1 o",
         "2 o",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 unused_var_side_effects: {
@@ -711,7 +711,7 @@ unused_var_side_effects: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 unsafe_join_1: {
@@ -793,7 +793,7 @@ issue_4329: {
         }[0]);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4331: {
@@ -871,7 +871,7 @@ issue_4345: {
         }[42]);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4361: {
@@ -901,7 +901,7 @@ issue_4361: {
         "foo",
         "undefined",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4363: {
@@ -922,7 +922,7 @@ issue_4363: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4556: {
@@ -994,7 +994,7 @@ issue_4849: {
         }()));
     }
     expect_stdout: "object"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4882_1: {
@@ -1026,7 +1026,7 @@ issue_4882_1: {
         "PASS",
         "undefined",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4882_2: {
@@ -1052,7 +1052,7 @@ issue_4882_2: {
         "42",
         "PASS",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4882_3: {
@@ -1082,7 +1082,7 @@ issue_4882_3: {
         "PASS",
         "42",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_5006: {

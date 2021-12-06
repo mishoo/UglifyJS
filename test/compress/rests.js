@@ -51,7 +51,7 @@ arrow_destructured_object_1: {
     }
     expect_exact: "var f=({...a})=>a,o=f({PASS:42});for(var k in o)console.log(k,o[k]);"
     expect_stdout: "PASS 42"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 arrow_destructured_object_2: {
@@ -62,7 +62,7 @@ arrow_destructured_object_2: {
     }
     expect_exact: "var f=({FAIL:a,...b})=>b,o=f({PASS:42,FAIL:null});for(var k in o)console.log(k,o[k]);"
     expect_stdout: "PASS 42"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 arrow_destructured_object_3: {
@@ -79,7 +79,7 @@ arrow_destructured_object_3: {
         "2 S",
         "3 S",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 funarg_1: {
@@ -131,7 +131,7 @@ destructured_object_1: {
     }
     expect_exact: 'var{...a}=["FAIL","PASS",42];console.log(a[1],a[2]);'
     expect_stdout: "PASS 42"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 destructured_object_2: {
@@ -141,7 +141,7 @@ destructured_object_2: {
     }
     expect_exact: 'var{0:a,...b}=["FAIL","PASS",42];console.log(b[1],b[2]);'
     expect_stdout: "PASS 42"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 drop_fargs: {
@@ -231,7 +231,7 @@ reduce_destructured_object: {
         console.log(a[0]);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 retain_destructured_array: {
@@ -270,7 +270,7 @@ retain_destructured_object_1: {
         "1 PASS",
         "2 42",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 retain_destructured_object_2: {
@@ -292,7 +292,7 @@ retain_destructured_object_2: {
         "bar PASS",
         "baz 42",
     ]
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 retain_funarg_destructured_array_1: {
@@ -344,7 +344,7 @@ retain_funarg_destructured_object_1: {
         console.log((({ ...a }) => a)([ "PASS" ])[0]);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 retain_funarg_destructured_object_2: {
@@ -362,7 +362,7 @@ retain_funarg_destructured_object_2: {
         }({ p: "FAIL" }).p || "PASS");
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 drop_unused_call_args_1: {
@@ -482,7 +482,7 @@ merge_funarg_destructured_object: {
         })([ "PASS" ]);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 keep_arguments: {
@@ -992,7 +992,7 @@ issue_5089_1: {
         console.log(o.p);
     }
     expect_stdout: "undefined"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_5089_2: {
@@ -1019,7 +1019,7 @@ issue_5089_2: {
         console.log(o.p);
     }
     expect_stdout: "undefined"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_5100_1: {
@@ -1054,7 +1054,7 @@ issue_5100_1: {
         console.log(a.r);
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_5100_2: {
@@ -1085,7 +1085,7 @@ issue_5100_2: {
         } ][0]);
     }
     expect_stdout: "PASS"
-    node_version: ">=10"
+    node_version: ">=10.22.0"
 }
 
 issue_5108: {

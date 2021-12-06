@@ -337,7 +337,7 @@ malformed_evaluate_4: {
         console.log("\\u00b5");
     }
     expect_stdout: "\\u00b5"
-    node_version: ">=8"
+    node_version: ">=8.10.0"
 }
 
 unsafe_evaluate: {
@@ -353,7 +353,7 @@ unsafe_evaluate: {
         console.log("\\uFo");
     }
     expect_stdout: "\\uFo"
-    node_version: ">=8"
+    node_version: ">=8.10.0"
 }
 
 side_effects_1: {

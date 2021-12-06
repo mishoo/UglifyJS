@@ -970,7 +970,7 @@ issue_4639_1: {
         }().next().value());
     }
     expect_stdout: "PASS"
-    node_version: ">=4"
+    node_version: ">=4 <7 || >=8.7.0"
 }
 
 issue_4639_2: {

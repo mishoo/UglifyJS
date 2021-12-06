@@ -1037,7 +1037,7 @@ mangle_arrow_1: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
+    node_version: ">=6.9.3"
 }
 
 mangle_arrow_1_toplevel: {
@@ -1073,7 +1073,7 @@ mangle_arrow_1_toplevel: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
+    node_version: ">=6.9.3"
 }
 
 mangle_arrow_2: {
@@ -1109,7 +1109,7 @@ mangle_arrow_2: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
+    node_version: ">=6.9.3"
 }
 
 mangle_arrow_2_toplevel: {
@@ -1145,7 +1145,7 @@ mangle_arrow_2_toplevel: {
         });
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
+    node_version: ">=6.9.3"
 }
 
 issue_4444: {
@@ -1587,7 +1587,7 @@ issue_4510_2: {
         };
     }
     expect_stdout: "PASS"
-    node_version: ">=8"
+    node_version: ">=8.3.0"
 }
 
 issue_4523: {

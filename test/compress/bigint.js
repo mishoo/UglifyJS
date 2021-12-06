@@ -4,7 +4,7 @@ arithmetic: {
     }
     expect_exact: "console.log((1n+0x2n)*(0o3n- -4n)>>5n-6n);"
     expect_stdout: "42n"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
 
 minus_dot: {
@@ -13,7 +13,7 @@ minus_dot: {
     }
     expect_exact: "console.log(typeof-42n.toString(),typeof(-42n).toString());"
     expect_stdout: "number string"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
 
 evaluate: {
@@ -28,7 +28,7 @@ evaluate: {
         console.log(0xdeadbeefn.toString(16));
     }
     expect_stdout: "deadbeef"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
 
 Number: {
@@ -42,7 +42,7 @@ Number: {
         console.log(+("" + -0xfeed_dead_beef_badn));
     }
     expect_stdout: "-1148098955808013200"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
 
 issue_4590: {
@@ -58,7 +58,7 @@ issue_4590: {
         0n || console.log("PASS");
     }
     expect_stdout: "PASS"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
 
 issue_4801: {
@@ -88,5 +88,5 @@ issue_4801: {
         }
     }
     expect_stdout: "PASS"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
