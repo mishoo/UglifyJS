@@ -62,7 +62,7 @@ assignment_2: {
     }
     expect_exact: "var a=8n;a**=a;console.log(a);"
     expect_stdout: "16777216n"
-    node_version: ">=10"
+    node_version: ">=10.4.0"
 }
 
 evaluate: {

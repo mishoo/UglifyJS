@@ -220,7 +220,7 @@ funarg_side_effects_2: {
         }
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
+    node_version: ">=6.9.2"
 }
 
 funarg_side_effects_3: {
@@ -254,7 +254,7 @@ funarg_side_effects_3: {
         }
     }
     expect_stdout: "PASS"
-    node_version: ">=6"
+    node_version: ">=6.9.2"
 }
 
 funarg_unused_1: {

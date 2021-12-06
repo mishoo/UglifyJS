@@ -253,7 +253,10 @@ function run_code_vm(code, toplevel, timeout) {
         // for Node.js v6
         vm.runInContext(setup_code, ctx);
         vm.runInContext(toplevel ? "(function(){" + code + "})();" : code, ctx, { timeout: timeout });
-        return strip_color_codes(stdout);
+        // for Node.js v4
+        return strip_color_codes(stdout.replace(/\b(Array \[|Object {)/g, function(match) {
+            return match.slice(-1);
+        }));
     } catch (ex) {
         return ex;
     } finally {
@@ -292,7 +295,7 @@ function run_code_exec(code, toplevel, timeout) {
         } catch (e) {}
     }
     var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
-    if (!match) return details;
+    if (!match) return details || new Error(msg);
     var ex = new global[match[1]](match[2]);
     ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
     if (typeof details == "object") {
