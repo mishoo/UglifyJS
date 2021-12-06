@@ -442,9 +442,9 @@ compress_annotations_disabled_output_annotations_enabled: {
     }
     expect_exact: [
         "/*@__PURE__*/a(3),",
-        "/*#__PURE__*/b(5),",
+        "/*@__PURE__*/b(5),",
         "c(side_effect),",
-        "/*#__PURE__*/d(effect());",
+        "/*@__PURE__*/d(effect());",
     ]
 }
 
