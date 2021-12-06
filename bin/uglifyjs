@@ -10,7 +10,9 @@ var info = require("../package.json");
 var path = require("path");
 var UglifyJS = require("../tools/node");
 
-var skip_keys = [ "cname", "fixed", "inlined", "parent_scope", "scope", "uses_eval", "uses_with" ];
+var skip_keys = [ "cname", "fixed", "inlined", "length_read", "parent_scope", "scope" ];
+var truthy_keys = [ "optional", "pure", "terminal", "uses_arguments", "uses_eval", "uses_with" ];
+
 var files = {};
 var options = {};
 var short_forms = {
@@ -430,7 +432,7 @@ function run() {
               case "thedef":
                 return symdef(value);
             }
-            if (skip_key(key)) return;
+            if (skip_property(key, value)) return;
             if (value instanceof UglifyJS.AST_Token) return;
             if (value instanceof UglifyJS.Dictionary) return;
             if (value instanceof UglifyJS.AST_Node) {
@@ -559,8 +561,10 @@ function parse_js(value, options, flag) {
     return options;
 }
 
-function skip_key(key) {
-    return skip_keys.indexOf(key) >= 0;
+function skip_property(key, value) {
+    return skip_keys.indexOf(key) >= 0
+        // only skip truthy_keys if their value is falsy
+        || truthy_keys.indexOf(key) >= 0 && !value;
 }
 
 function symdef(def) {
