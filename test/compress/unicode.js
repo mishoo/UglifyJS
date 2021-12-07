@@ -67,7 +67,8 @@ unicode_escaped_identifier_2: {
     }
     expect_exact: 'var a="foo";var \u{10000}="bar";console.log(a,\u{10000});'
     expect_stdout: "foo bar"
-    node_version: ">=4"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
 }
 
 unicode_identifier_ascii_only: {
@@ -200,7 +201,8 @@ surrogate_pair: {
     }
     expect_exact: 'var \ud87e\udc00={"\ud87e\udc01":"\udbc0\udc00"};\ud87e\udc00.\ud87e\udc02="\udbc0\udc01";console.log(typeof \ud87e\udc00,\ud87e\udc00.\ud87e\udc01,\ud87e\udc00["\ud87e\udc02"]);'
     expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
-    node_version: ">=4"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
 }
 
 surrogate_pair_ascii: {
@@ -216,5 +218,6 @@ surrogate_pair_ascii: {
     }
     expect_exact: 'var \\u{2f800}={"\\ud87e\\udc01":"\\udbc0\\udc00"};\\u{2f800}.\\u{2f802}="\\udbc0\\udc01";console.log(typeof \\u{2f800},\\u{2f800}.\\u{2f801},\\u{2f800}["\\ud87e\\udc02"]);'
     expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
-    node_version: ">=4"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
 }
