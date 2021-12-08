@@ -10,7 +10,7 @@ var info = require("../package.json");
 var path = require("path");
 var UglifyJS = require("../tools/node");
 
-var skip_keys = [ "cname", "fixed", "inlined", "length_read", "parent_scope", "scope" ];
+var skip_keys = [ "cname", "fixed", "in_arg", "inlined", "length_read", "parent_scope", "redef", "scope", "unused" ];
 var truthy_keys = [ "optional", "pure", "terminal", "uses_arguments", "uses_eval", "uses_with" ];
 
 var files = {};
