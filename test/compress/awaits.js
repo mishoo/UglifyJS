@@ -340,6 +340,33 @@ inline_await_3_trim: {
     node_version: ">=8"
 }
 
+inline_await_this: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        var p = "FAIL";
+        ({
+            p: "PASS",
+            async f() {
+                return await (async () => this.p)();
+            },
+        }).f().then(console.log);
+    }
+    expect: {
+        var p = "FAIL";
+        ({
+            p: "PASS",
+            async f() {
+                return await this.p;
+            },
+        }).f().then(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 await_unary: {
     options = {
         awaits: true,

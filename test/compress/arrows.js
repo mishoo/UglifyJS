@@ -367,6 +367,28 @@ inline_this: {
         inline: true,
     }
     input: {
+        var p = "PASS";
+        console.log({
+            p: "FAIL",
+            q: (() => this.p)(),
+        }.q);
+    }
+    expect: {
+        var p = "PASS";
+        console.log({
+            p: "FAIL",
+            q: this.p,
+        }.q);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+dont_inline_this: {
+    options = {
+        inline: true,
+    }
+    input: {
         var o = {
             p: function() {
                 return function() {
