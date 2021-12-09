@@ -252,7 +252,7 @@ function run_code_vm(code, toplevel, timeout) {
         var ctx = vm.createContext({ console: console });
         // for Node.js v6
         vm.runInContext(setup_code, ctx);
-        vm.runInContext(toplevel ? "(function(){" + code + "})();" : code, ctx, { timeout: timeout });
+        vm.runInContext(toplevel ? "(function(){\n" + code + "\n})();" : code, ctx, { timeout: timeout });
         // for Node.js v4
         return strip_color_codes(stdout.replace(/\b(Array \[|Object {)/g, function(match) {
             return match.slice(-1);
@@ -266,7 +266,7 @@ function run_code_vm(code, toplevel, timeout) {
 
 function run_code_exec(code, toplevel, timeout) {
     if (toplevel) {
-        code = setup_code + "(function(){" + code + "})();";
+        code = setup_code + "(function(){\n" + code + "\n})();";
     } else {
         code = code.replace(/^((["'])[^"']*\2(;|$))?/, function(directive) {
             return directive + setup_code;

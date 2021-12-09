@@ -198,9 +198,9 @@ numeric_literal: {
     expect_exact: [
         'var obj = {',
         '    0: 0,',
-        '    37: 4,',
-        '    42: 3,',
         '    "-0": 1,',
+        '    42: 3,',
+        '    37: 4,',
         '    o: 5,',
         '    1e42: 8,',
         '    b: 7',
@@ -520,4 +520,26 @@ issue_4415: {
     }
     expect_stdout: "PASS"
     node_version: ">=4"
+}
+
+issue_5213: {
+    options = {
+        objects: true,
+    }
+    input: {
+        var a = "FAIL";
+        console.log({
+            p: a = "PASS",
+            0: a,
+            p: null,
+        }[0]);
+    }
+    expect: {
+        var a = "FAIL";
+        console.log({
+            p: (a = "PASS", null),
+            0: a,
+        }[0]);
+    }
+    expect_stdout: "PASS"
 }
