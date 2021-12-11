@@ -2469,8 +2469,10 @@ for (var round = 1; round <= num_iterations; round++) {
         println("original result:");
         println(result);
         println();
-        // ignore v8 parser bug
-        return bug_async_arrow_rest(result);
+            // ignore v8 parser bug
+        return bug_async_arrow_rest(result)
+            // ignore runtime platform bugs
+            || result.message == "Script execution aborted.";
     })) continue;
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
@@ -2485,6 +2487,8 @@ for (var round = 1; round <= num_iterations; round++) {
             ok = sandbox.same_stdout(original_result, uglify_result);
             // ignore v8 parser bug
             if (!ok && bug_async_arrow_rest(uglify_result)) ok = true;
+            // ignore runtime platform bugs
+            if (!ok && uglify_result.message == "Script execution aborted.") ok = true;
             // handle difference caused by time-outs
             if (!ok && errored && is_error_timeout(original_result)) {
                 if (is_error_timeout(uglify_result)) {
