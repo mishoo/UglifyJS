@@ -864,10 +864,10 @@ issue_4454_2: {
         f("PASS");
     }
     expect: {
-        function f(b) {
-            (function*(c = console.log(b)) {})();
-            var b = 42..toString();
-            console.log(b);
+        function f(a) {
+            (function*(c = console.log(a)) {})();
+            var a = 42..toString();
+            console.log(a);
         }
         f("PASS");
     }
@@ -1177,10 +1177,10 @@ issue_5032_normal: {
             console.log(value);
             return value;
         }
-        function *f(c) {
-            var b = log(c), c = b;
+        function *f(a) {
+            var b = log(a), a = b;
             log(b);
-            log(c);
+            log(a);
         }
         f("PASS").next();
     }

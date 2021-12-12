@@ -3109,9 +3109,9 @@ issue_5081_call: {
         }));
     }
     expect: {
-        function f(b) {
+        function f(a) {
             // IE5-10: TypeError: Function expected
-            return b(b = "A") + (b += "SS");
+            return a(a = "A") + (a += "SS");
         }
         console.log(f(function() {
             return "P";
@@ -3161,8 +3161,8 @@ issue_5081_property_access: {
         console.log(f({ A: "P" }));
     }
     expect: {
-        function f(b) {
-            return b[b = "A"] + (b += "SS");
+        function f(a) {
+            return a[a = "A"] + (a += "SS");
         }
         // IE9-11: undefinedASS
         console.log(f({ A: "P" }));

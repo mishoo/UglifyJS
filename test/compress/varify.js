@@ -13,10 +13,10 @@ reduce_merge_const: {
         console.log(b);
     }
     expect: {
-        var b = console;
-        console.log(typeof b);
-        b = typeof b;
-        console.log(b);
+        var a = console;
+        console.log(typeof a);
+        a = typeof a;
+        console.log(a);
     }
     expect_stdout: [
         "object",
@@ -41,10 +41,10 @@ reduce_merge_let: {
     }
     expect: {
         "use strict";
-        var b = console;
-        console.log(typeof b);
-        b = typeof b;
-        console.log(b);
+        var a = console;
+        console.log(typeof a);
+        a = typeof a;
+        console.log(a);
     }
     expect_stdout: [
         "object",
