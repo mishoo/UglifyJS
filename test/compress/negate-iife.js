@@ -389,6 +389,7 @@ issue_1288_side_effects: {
     options = {
         conditionals: true,
         negate_iife: true,
+        sequences: true,
         side_effects: true,
     }
     input: {
@@ -409,10 +410,10 @@ issue_1288_side_effects: {
             })(0);
     }
     expect: {
-        w;
+        w,
         x || function() {
             x = {};
-        }();
+        }(),
         y;
     }
 }
