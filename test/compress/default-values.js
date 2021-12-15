@@ -1957,3 +1957,37 @@ issue_5192: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5222: {
+    options = {
+        hoist_props: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            do {
+                (function() {
+                    var a = {
+                        p: [ a ] = [],
+                    };
+                })();
+            } while (console.log("PASS"));
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            do {
+                a = void 0,
+                [ a ] = [];
+            } while (console.log("PASS"));
+            var a;
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
