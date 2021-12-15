@@ -3862,6 +3862,7 @@ issue_3679_1: {
     options = {
         collapse_vars: true,
         inline: true,
+        passes: 2,
         pure_getters: "strict",
         reduce_vars: true,
         side_effects: true,

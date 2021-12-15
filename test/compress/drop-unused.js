@@ -1765,7 +1765,7 @@ issue_2846: {
 issue_805_1: {
     options = {
         inline: true,
-        passes: 2,
+        passes: 3,
         pure_getters: "strict",
         reduce_vars: true,
         sequences: true,
@@ -1798,7 +1798,7 @@ issue_805_1: {
 issue_805_2: {
     options = {
         inline: true,
-        passes: 2,
+        passes: 3,
         pure_getters: "strict",
         reduce_vars: true,
         sequences: true,

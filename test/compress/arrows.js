@@ -508,7 +508,7 @@ drop_value: {
         ((a, b) => a + b)(console.log(42));
     }
     expect: {
-        ((a, b) => {})(console.log(42));
+        void console.log(42);
     }
     expect_stdout: "42"
     node_version: ">=4"

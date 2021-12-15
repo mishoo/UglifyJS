@@ -866,9 +866,9 @@ issue_4575: {
     }
     expect: {
         (function(a) {
-            (function a(...d) {
+            (function(d) {
                 console.log(d.length);
-            })();
+            })([]);
         })();
     }
     expect_stdout: "0"
