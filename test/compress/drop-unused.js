@@ -3516,3 +3516,47 @@ issue_5079: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5224: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            try {
+                var b = function() {
+                    var a = "FAIL 1";
+                    null && a;
+                    a = console.log(a);
+                }(new function(c, d) {
+                    console.log(d);
+                    a;
+                }("FAIL 2", Infinity));
+            } finally {
+                return f;
+            }
+        }
+        f();
+    }
+    expect: {
+        (function f() {
+            try {
+                (function() {
+                    var a = "FAIL 1";
+                    null;
+                    a = console.log(a);
+                })(function() {
+                    console.log(1 / 0);
+                    a;
+                }());
+            } finally {
+                return f;
+            }
+        })();
+    }
+    expect_stdout: "Infinity"
+}
