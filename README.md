@@ -707,7 +707,8 @@ to be `false` and all symbol names will be omitted.
   - `1` — inline simple functions
   - `2` — inline functions with arguments
   - `3` — inline functions with arguments and variables
-  - `true` — same as `3`
+  - `4` — inline functions with arguments, variables and statements
+  - `true` — same as `4`
 
 - `join_vars` (default: `true`) — join consecutive `var` statements
 

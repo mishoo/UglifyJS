@@ -545,7 +545,36 @@ if_body_return_3: {
     ]
 }
 
-issue_3600: {
+issue_3600_1: {
+    options = {
+        if_return: true,
+        inline: 3,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var c = 0;
+        (function() {
+            if ([ ][c++]); else return;
+            return void function() {
+                var b = --b, a = c = 42;
+                return c;
+            }();
+        })();
+        console.log(c);
+    }
+    expect: {
+        var c = 0;
+        (function() {
+            if ([][c++]) b = --b, c = 42;
+            var b;
+        })();
+        console.log(c);
+    }
+    expect_stdout: "1"
+}
+
+issue_3600_2: {
     options = {
         if_return: true,
         inline: true,
@@ -566,8 +595,10 @@ issue_3600: {
     expect: {
         var c = 0;
         (function() {
-            if ([][c++]) b = --b, c = 42;
-            var b;
+            if ([][c++]) {
+                var b = --b;
+                c = 42;
+            }
         })();
         console.log(c);
     }

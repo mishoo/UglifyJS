@@ -1310,6 +1310,7 @@ issue_4725_1: {
 
 issue_4725_2: {
     options = {
+        if_return: true,
         inline: true,
     }
     input: {

@@ -1217,6 +1217,7 @@ issues_3267_1: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        negate_iife: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,

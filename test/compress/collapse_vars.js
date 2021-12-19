@@ -3731,6 +3731,7 @@ issue_2437_1: {
     options = {
         collapse_vars: true,
         conditionals: true,
+        if_return: true,
         inline: true,
         join_vars: true,
         passes: 2,
@@ -3783,6 +3784,7 @@ issue_2437_2: {
         conditionals: true,
         inline: true,
         join_vars: true,
+        negate_iife: true,
         passes: 3,
         reduce_funcs: true,
         reduce_vars: true,
@@ -9374,9 +9376,8 @@ inline_throw: {
     expect: {
         try {
             (function(a) {
-                return function() {
-                    throw a;
-                }();
+                throw a;
+                return;
             })("PASS");
         } catch (e) {
             console.log(e);
