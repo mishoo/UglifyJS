@@ -181,10 +181,10 @@ issue_2203_2: {
             a: "FAIL",
             b: function() {
                 return function() {
-                    return (String, (Object, function() {
+                    return (Object, function() {
                         return this;
-                    }())).a;
-                }();
+                    }()).a;
+                }(String);
             }
         }.b());
     }

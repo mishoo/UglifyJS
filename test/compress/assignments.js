@@ -489,7 +489,7 @@ logical_assignments: {
     node_version: ">=15"
 }
 
-logical_collapse_vars: {
+logical_collapse_vars_1: {
     options = {
         collapse_vars: true,
     }
@@ -504,6 +504,27 @@ logical_collapse_vars: {
         a = "PASS";
         b ??= a;
         console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+logical_collapse_vars_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS";
+        (function(b) {
+            b ||= (a = "FAIL", {});
+            return b;
+        })(console).log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function(b) {
+            return b ||= (a = "FAIL", {});
+        })(console).log(a);
     }
     expect_stdout: "PASS"
     node_version: ">=15"

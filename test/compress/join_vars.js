@@ -1282,10 +1282,7 @@ assign_sequence_var: {
         console.log(a, b, c);
     }
     expect: {
-        var a = 0, b = 1;
-        console.log(a),
-        a++;
-        var b = 2, c = 3;
+        var a = 0, b = 1, c = (console.log(a), a++, b = 2, 3);
         console.log(a, b, c);
     }
     expect_stdout: [

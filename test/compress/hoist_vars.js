@@ -282,7 +282,7 @@ issue_4736: {
         (function() {
             (function() {
                 0,
-                console.log(1073741824);
+                console.log(1 << 30);
             })();
         })();
     }
@@ -336,7 +336,7 @@ issue_4859: {
     }
     expect: {
         (function f(a) {
-            console.log(Infinity);
+            console.log(2 + 1 / 0);
             return f;
         })();
     }

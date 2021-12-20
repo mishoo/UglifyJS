@@ -346,9 +346,7 @@ collapse_vars_if: {
             return "x" != "Bar" + x / 4 ? g9 : g5;
         }
         function f3(x) {
-            if (x)
-                return 1;
-            return 2;
+            return x ? 1 : 2;
         }
     }
 }
@@ -1912,6 +1910,42 @@ collapse_vars_regexp: {
     ]
 }
 
+collapse_arg_sequence: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            a("foo");
+        })((console.log("bar"), console.log));
+    }
+    expect: {
+        (function(a) {
+            (0, console.log)("foo");
+        })(console.log("bar"));
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+}
+
+collapse_for_init: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a = (Math, console), b = a.log("PASS"); b;);
+    }
+    expect: {
+        Math;
+        for (var a, b = console.log("PASS"); b;);
+    }
+    expect_stdout: "PASS"
+}
+
 issue_1537: {
     options = {
         collapse_vars: true,
@@ -2667,6 +2701,24 @@ chained_4: {
     expect_stdout: "foo undefined"
 }
 
+chained_5: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = "PASS";
+        var a = (console, console.log(a));
+        a && ++a;
+    }
+    expect: {
+        var a = "PASS";
+        console;
+        var a;
+        (a = console.log(a)) && ++a;
+    }
+    expect_stdout: "PASS"
+}
+
 boolean_binary_1: {
     options = {
         collapse_vars: true,
@@ -2906,6 +2958,43 @@ compound_assignment_2: {
     expect_stdout: "4"
 }
 
+compound_assignment_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 1;
+        a += (console.log("PASS"), 2);
+        a.p;
+    }
+    expect: {
+        var a = 1;
+        (a += (console.log("PASS"), 2)).p;
+    }
+    expect_stdout: "PASS"
+}
+
+compound_assignment_4: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+    }
+    input: {
+        A = "PASS";
+        var a = "";
+        a += (a = "FAIL", A);
+        a.p;
+        console.log(a);
+    }
+    expect: {
+        A = "PASS";
+        var a = "";
+        (a += (a = "FAIL", A)).p;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
 issue_2187_1: {
     options = {
         collapse_vars: true,
@@ -3030,10 +3119,10 @@ issue_2203_2: {
             a: "FAIL",
             b: function() {
                 return function(c) {
-                    return (String, (Object, function() {
+                    return (Object, function() {
                         return this;
-                    }())).a;
-                }();
+                    }()).a;
+                }(String);
             }
         }.b());
     }
@@ -3764,17 +3853,17 @@ issue_2437_1: {
         console.log(foo());
     }
     expect: {
-        console.log(function() {
-            if (xhrDesc) {
-                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
-                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
-                    result;
-            }
-            var req = new XMLHttpRequest(), detectFunc = function(){};
-            return req.onreadystatechange = detectFunc,
-            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
-            req.onreadystatechange = null, result;
-        }());
+        var req, detectFunc, result;
+        console.log((
+            xhrDesc ? (result = !!(req = new XMLHttpRequest).onreadystatechange,
+                Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc||{})
+            ) : (
+                (req = new XMLHttpRequest).onreadystatechange = detectFunc = function(){},
+                result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
+                req.onreadystatechange = null
+            ),
+            result
+        ));
     }
 }
 
@@ -3815,15 +3904,15 @@ issue_2437_2: {
         foo();
     }
     expect: {
-        !function() {
-            if (xhrDesc)
-                return (req = new XMLHttpRequest()).onreadystatechange,
-                    Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {});
-            var req = new XMLHttpRequest();
-            req.onreadystatechange = function(){},
+        var req;
+        xhrDesc ? (
+            (req = new XMLHttpRequest).onreadystatechange,
+            Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {})
+        ) : (
+            (req = new XMLHttpRequest).onreadystatechange = function(){},
             req[SYMBOL_FAKE_ONREADYSTATECHANGE_1],
-            req.onreadystatechange = null;
-        }();
+            req.onreadystatechange = null
+        );
     }
 }
 
@@ -6445,7 +6534,8 @@ assign_undeclared: {
         console.log(typeof B);
     }
     expect: {
-        B = new (console.log(42), function() {})();
+        console.log(42);
+        B = new function() {}();
         console.log(typeof B);
     }
     expect_stdout: [
@@ -9141,9 +9231,7 @@ issue_4908: {
         console.log(d[1]);
     }
     expect: {
-        var a = 0, b;
-        console || a++;
-        var c = a, d = [ (d = a) && d, d += 42 ];
+        var a = 0, b, c = (console || a++, a), d = [ (d = a) && d, d += 42 ];
         console.log(d[1]);
     }
     expect_stdout: "42"

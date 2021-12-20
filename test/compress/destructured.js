@@ -395,7 +395,8 @@ funarg_unused_6_keep_fargs: {
     }
     expect: {
         (function() {
-            var {} = (console, 42);
+            console;
+            var {} = 42;
         })();
         console.log(typeof a);
     }
