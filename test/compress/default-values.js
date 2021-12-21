@@ -1866,7 +1866,7 @@ issue_5057_2: {
 
 issue_5057_3: {
     options = {
-        inline: true,
+        inline: 3,
         unused: true,
     }
     input: {
@@ -1883,6 +1883,31 @@ issue_5057_3: {
                 (function(a = console.log("FAIL 1")) {})(b);
                 console.log(a);
             })("FAIL 2");
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5057_4: {
+    options = {
+        if_return: true,
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            (function f(b) {
+                (function(a = console.log("FAIL 1")) {})(b);
+                console.log(a);
+            })("FAIL 2");
+        })("PASS");
+    }
+    expect: {
+        (function(a) {
+            var b = "FAIL 2";
+            (function(a = console.log("FAIL 1")) {})(b);
+            console.log(a);
         })("PASS");
     }
     expect_stdout: "PASS"

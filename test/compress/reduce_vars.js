@@ -6671,6 +6671,7 @@ issues_3267_1: {
         dead_code: true,
         evaluate: true,
         inline: true,
+        negate_iife: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -6688,7 +6689,7 @@ issues_3267_1: {
         });
     }
     expect: {
-        !function(i) {
+        !function(x) {
             if (Object())
                 return console.log("PASS");
             throw "FAIL";
@@ -6705,6 +6706,7 @@ issues_3267_2: {
         evaluate: true,
         inline: true,
         keep_fargs: false,
+        negate_iife: true,
         passes: 2,
         reduce_vars: true,
         sequences: true,

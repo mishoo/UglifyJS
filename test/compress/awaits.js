@@ -182,6 +182,34 @@ dont_inline: {
     node_version: ">=8"
 }
 
+dont_inline_nested: {
+    options = {
+        inline: true,
+    }
+    input: {
+        function await() {
+            return "PASS";
+        }
+        (async function() {
+            (function() {
+                console.log(await("FAIL"));
+            })();
+        })();
+    }
+    expect: {
+        function await() {
+            return "PASS";
+        }
+        (async function() {
+            (function() {
+                console.log(await("FAIL"));
+            })();
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 inline_await_1: {
     options = {
         awaits: true,

@@ -2069,7 +2069,7 @@ issue_4319: {
 
 issue_4321: {
     options = {
-        inline: true,
+        inline: 3,
         keep_fargs: false,
     }
     input: {

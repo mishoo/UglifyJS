@@ -147,7 +147,7 @@ dont_inline: {
     node_version: ">=6"
 }
 
-do_inline: {
+do_inline_1: {
     options = {
         inline: true,
         spreads: true,
@@ -159,6 +159,48 @@ do_inline: {
     }
     expect: {
         console.log(("FAIL", "PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+do_inline_2: {
+    options = {
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            (function() {
+                console.log("PASS");
+            })(..."");
+        })();
+    }
+    expect: {
+        [] = [ ..."" ],
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+do_inline_3: {
+    options = {
+        if_return: true,
+        inline: true,
+    }
+    input: {
+        (function() {
+            (function() {
+                while (console.log("PASS"));
+            })(..."");
+        })();
+    }
+    expect: {
+        (function() {
+            var [] = [ ..."" ];
+            while (console.log("PASS"));
+        })();
     }
     expect_stdout: "PASS"
     node_version: ">=6"

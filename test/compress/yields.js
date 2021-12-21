@@ -784,6 +784,30 @@ inline_nested_yield: {
     node_version: ">=4"
 }
 
+dont_inline_nested: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var yield = "PASS";
+        (function*() {
+            (function() {
+                console.log(yield);
+            })();
+        })().next();
+    }
+    expect: {
+        var yield = "PASS";
+        (function*() {
+            (function() {
+                console.log(yield);
+            })();
+        })().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 drop_body: {
     options = {
         side_effects: true,
