@@ -697,3 +697,30 @@ issue_5041_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5228: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        inline: true,
+        passes: 2,
+    }
+    input: {
+        console.log(function() {
+            return !function() {
+                do {
+                    return null;
+                } while (console);
+            }();
+        }());
+    }
+    expect: {
+        console.log(function() {
+            do {
+                return !0;
+            } while (console);
+            return !0;
+        }());
+    }
+    expect_stdout: "true"
+}
