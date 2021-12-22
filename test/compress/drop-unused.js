@@ -1728,7 +1728,8 @@ issue_2768: {
     }
     expect: {
         var a = "FAIL";
-        var c = (d = a, void (d && (a = "PASS")));
+        d = a;
+        var c = void (d && (a = "PASS"));
         var d;
         console.log(a, typeof c);
     }
@@ -2382,7 +2383,8 @@ issue_3664: {
     }
     expect: {
         console.log(function() {
-            var a, b = (a = (a = [ b && console.log("FAIL") ]).p = 0, 0);
+            a = (a = [ b && console.log("FAIL") ]).p = 0;
+            var a, b = 0;
             return "PASS";
         }());
     }
@@ -2551,10 +2553,9 @@ issue_3899: {
         console.log(typeof a);
     }
     expect: {
-        function a() {
+        console.log(typeof function() {
             return 2;
-        }
-        console.log(typeof a);
+        });
     }
     expect_stdout: "function"
 }

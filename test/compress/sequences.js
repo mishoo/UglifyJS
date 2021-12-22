@@ -910,9 +910,7 @@ hoist_decl: {
         var d;
     }
     expect: {
-        var a;
-        w();
-        var b = x(), c, d;
+        var a, b = (w(), x()), c, d;
         for (y(); 0;) z();
     }
 }

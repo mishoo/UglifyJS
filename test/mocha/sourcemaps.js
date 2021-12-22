@@ -205,8 +205,8 @@ describe("sourcemaps", function() {
             });
             if (result.error) throw result.error;
             assert.strictEqual(result.code, [
-                "var Foo=function(){console.log(3)};new Foo;var bar=function(o){return o};",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwiMSJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFdBQWdCQyxRQUFRQyxJQUFJLElBQVMsSUFBSUYsSUNBbkQsSUFBSUcsSUFDQSxTQUFjQSxHQUNWLE9BQU9BIn0=",
+                "var Foo=function(){console.log(3)},bar=(new Foo,function(o){return o});",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwiMSJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFdBQWdCQyxRQUFRQyxJQUFJLElDQWxDQyxLREEyQyxJQUFJSCxJQ0MvQyxTQUFjRyxHQUNWLE9BQU9BIn0=",
             ].join("\n"));
             assert.deepEqual(result.warnings, [ "WARN: inline source map not found: 1" ]);
         });

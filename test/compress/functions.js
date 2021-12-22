@@ -3039,18 +3039,17 @@ issue_2437: {
         console.log(foo());
     }
     expect: {
-        console.log(function() {
-            if (xhrDesc) {
-                var result = !!(req = new XMLHttpRequest()).onreadystatechange;
-                return Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {}),
-                    result;
-            }
-            function detectFunc() {}
-            var req = new XMLHttpRequest();
-            return req.onreadystatechange = detectFunc,
-            result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,
-            req.onreadystatechange = null, result;
-        }());
+        var req, detectFunc, result;
+        console.log((
+            xhrDesc ? (
+                result = !!(req = new XMLHttpRequest).onreadystatechange,
+                Object.defineProperty(XMLHttpRequest.prototype, "onreadystatechange", xhrDesc || {})
+            ) : (
+                (req = new XMLHttpRequest).onreadystatechange = detectFunc = function(){},
+                result = req[SYMBOL_FAKE_ONREADYSTATECHANGE_1] === detectFunc,req.onreadystatechange = null
+            ),
+            result
+        ));
     }
 }
 
@@ -3826,16 +3825,14 @@ inlined_single_use: {
     }
     expect: {
         console.log(function(f) {
-            var a = function() {
+            a = function() {
                 A;
-            };
-            var b = function() {
+            },
+            b = function() {
                 a(B);
-            };
-            (function() {
-                b;
-            });
-            return;
+            },
+            void 0;
+            var a, b;
         }());
     }
     expect_stdout: "undefined"
@@ -5288,6 +5285,42 @@ direct_inline_catch_redefined: {
         console.log(a, a, g());
     }
     expect_stdout: true
+}
+
+statement_var_inline: {
+    options = {
+        inline: true,
+        join_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            (function() {
+                var a = {};
+                function g() {
+                    a.p;
+                }
+                g(console.log("PASS"));
+                var b = function h(c) {
+                    c && c.q;
+                }();
+            })();
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            var c, a = {};
+            function g() {
+                a.p;
+            }
+            g(console.log("PASS"));
+            c && c.q;
+            return;
+        }
+        f();
+    }
+    expect_stdout: "PASS"
 }
 
 issue_4171_1: {

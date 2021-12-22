@@ -158,6 +158,28 @@ process_boolean_returns: {
     node_version: ">=6"
 }
 
+collapse_arg_sequence: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a = (console.log("bar"), console.log)) {
+            a("foo");
+        })();
+    }
+    expect: {
+        (function(a = console.log("bar")) {
+            (0, console.log)("foo");
+        })();
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+    node_version: ">=6"
+}
+
 collapse_value_1: {
     options = {
         collapse_vars: true,
