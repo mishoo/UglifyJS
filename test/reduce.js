@@ -548,7 +548,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }));
             var before_iterations = testcase;
             for (var c = 0; c < max_iterations; ++c) {
-                if (verbose && pass == 1 && c % 25 == 0) {
+                if (verbose && c % (pass == 1 ? 25 : 100) == 0) {
                     log("// reduce test pass " + pass + ", iteration " + c + ": " + testcase.length + " bytes");
                 }
                 var CHANGED = false;
