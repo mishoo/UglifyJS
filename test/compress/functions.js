@@ -7071,3 +7071,35 @@ issue_5173_2: {
     }
     expect_stdout: "undefined"
 }
+
+issue_5230: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        while (function() {
+            function f(a) {
+                var b = 42, c = (console, [ a ]);
+                for (var k in c)
+                    c, console.log(b++);
+            }
+            f(f);
+        }());
+    }
+    expect: {
+        while (void (f = function(c) {
+            var b = 42;
+            console;
+            var c;
+            for (var k in c = [ c ])
+                console.log(b++);
+        })(f));
+        var f;
+    }
+    expect_stdout: "42"
+}
