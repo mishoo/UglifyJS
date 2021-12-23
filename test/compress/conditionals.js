@@ -1924,3 +1924,86 @@ object_super: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5232_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        (function() {
+            if (Math) {
+                function f() {}
+                for (var a in [ 42 ])
+                    console.log(typeof f);
+            } else {
+                var b = null;
+                return true;
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            var b;
+            if (!Math)
+                return b = null, true;
+            function f() {}
+            for (var a in [ 42 ]) console.log(typeof f);
+        })();
+    }
+    expect_stdout: "function"
+}
+
+issue_5232_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        console.log(function() {
+            if (!Math);
+            else {
+                var b = null;
+                return "PASS";
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var b;
+            if (Math)
+                return b = null, "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5232_3: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        console.log(function() {
+            return function() {
+                if (console)
+                    console.log("PASS");
+                else {
+                    var a = null;
+                    return "FAIL";
+                }
+            };
+        }()());
+    }
+    expect: {
+        console.log(function() {
+            return function() {
+                var a;
+                if (!console)
+                    return a = null, "FAIL";
+                console.log("PASS");
+            };
+        }()());
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+    ]
+}
