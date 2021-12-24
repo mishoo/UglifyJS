@@ -418,4 +418,20 @@ describe("test/reduce.js", function() {
         if (result.error) throw result.error;
         assert.deepEqual(result.warnings, []);
     });
+    it("Should handle thrown falsy values gracefully", function() {
+        var code = [
+            "throw 0;",
+            "setTimeout(null, 42);",
+        ].join("\n");
+        var result = reduce_test(code, {
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
 });
