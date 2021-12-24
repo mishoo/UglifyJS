@@ -146,7 +146,8 @@ function setup(global, builtins, setup_log, setup_tty) {
                     delete ex[name];
                 }
             }
-            process.stderr.write(inspect(value) + "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
+            var marker = "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n";
+            process.stderr.write(marker + inspect(value) + marker);
             throw ex;
         }).on("unhandledRejection", function() {});
     }
@@ -284,18 +285,22 @@ function run_code_exec(code, toplevel, timeout) {
         return new Error("Script execution timed out.");
     }
     if (result.error) return result.error;
-    var end = msg.indexOf("\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n");
+    var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
+    var marker = "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n";
+    var start = msg.indexOf(marker) + marker.length;
+    var end = msg.indexOf(marker, start);
     var details;
     if (end >= 0) {
-        details = msg.slice(0, end).replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
+        details = msg.slice(start, end).replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
             return new Array(+count).join();
         });
         try {
             details = vm.runInNewContext("(" + details + ")");
         } catch (e) {}
+    } else if (!match) {
+        new Error("Script execution aborted.");
     }
-    var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
-    if (!match) return details || new Error("Script execution aborted.");
+    if (!match) return details;
     var ex = new global[match[1]](match[2]);
     ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
     if (typeof details == "object") {
