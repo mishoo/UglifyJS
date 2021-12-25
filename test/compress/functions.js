@@ -7103,3 +7103,35 @@ issue_5230: {
     }
     expect_stdout: "42"
 }
+
+issue_5237: {
+    options = {
+        evaluate: true,
+        inline: true,
+    }
+    input: {
+        function f() {
+            (function() {
+                while (console.log(0/0));
+            })();
+            (function() {
+                var NaN = console && console.log(NaN);
+            })();
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            (function() {
+                while (console.log(0/0));
+            })();
+            var NaN = console && console.log(NaN);
+            return;
+        }
+        f();
+    }
+    expect_stdout: [
+        "NaN",
+        "undefined",
+    ]
+}
