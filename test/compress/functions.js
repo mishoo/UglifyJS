@@ -7135,3 +7135,105 @@ issue_5237: {
         "undefined",
     ]
 }
+
+issue_5239: {
+    options = {
+        functions: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            (function(f) {
+                var a = 42, f = function() {};
+                while (console.log(f.p || a++));
+            })();
+        })();
+    }
+    expect: {
+        (function() {
+            var f = void 0;
+            var a = 42, f = function() {};
+            while (console.log(f.p || a++));
+            return;
+        })();
+    }
+    expect_stdout: "42"
+}
+
+issue_5240_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw "FAIL 1";
+            } catch (e) {
+                return function() {
+                    if (console) {
+                        console.log(e);
+                        var e = "FAIL 2";
+                    }
+                }();
+            }
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            try {
+                throw "FAIL 1";
+            } catch (e) {
+                return function() {
+                    if (console) {
+                        console.log(e);
+                        var e = "FAIL 2";
+                    }
+                }();
+            }
+        }
+        f();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5240_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw "FAIL 1";
+            } catch (e) {
+                {
+                    return function() {
+                        if (console) {
+                            console.log(e);
+                            var e = "FAIL 2";
+                        }
+                    }();
+                }
+            }
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            try {
+                throw "FAIL 1";
+            } catch (e) {
+                return function() {
+                    if (console) {
+                        console.log(e);
+                        var e = "FAIL 2";
+                    }
+                }();
+            }
+        }
+        f();
+    }
+    expect_stdout: "undefined"
+}
