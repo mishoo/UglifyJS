@@ -1747,3 +1747,48 @@ issue_4985: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_5240: {
+    options = {
+        inline: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            if (console) {
+                let g = function() {
+                    e;
+                }, e;
+                (function() {
+                    if (console) {
+                        console.log(e);
+                        var e = "FAIL";
+                    }
+                })(console.log(e));
+            }
+        }
+        f();
+    }
+    expect: {
+        "use strict";
+        function f() {
+            if (console) {
+                let g = function() {
+                    e;
+                }, e;
+                (function() {
+                    if (console) {
+                        console.log(e);
+                        var e = "FAIL";
+                    }
+                })(console.log(e));
+            }
+        }
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
