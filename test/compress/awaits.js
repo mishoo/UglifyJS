@@ -395,6 +395,253 @@ inline_await_this: {
     node_version: ">=8"
 }
 
+inline_block: {
+    options = {
+        awaits: true,
+        if_return: true,
+        inline: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            (async function() {
+                for (var a of [ "baz" ])
+                    return a;
+            })();
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            for (var a of [ "baz" ])
+                return void await a;
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
+
+inline_block_async: {
+    options = {
+        awaits: true,
+        if_return: true,
+        inline: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            (async function() {
+                for (var a of [ "baz" ])
+                    return {
+                        then(r) {
+                            console.log("moo");
+                            r(a);
+                        },
+                    };
+            })();
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            for (var a of [ "baz" ])
+                return void await {
+                    then(r) {
+                        console.log("moo");
+                        r(a);
+                    },
+                };
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moz",
+        "moo",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
+
+inline_block_await: {
+    options = {
+        awaits: true,
+        if_return: true,
+        inline: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            await async function() {
+                for (var a of [ "baz" ])
+                    return a;
+            }();
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            for (var a of [ "baz" ])
+                return void await a;
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
+
+inline_block_await_async: {
+    options = {
+        awaits: true,
+        if_return: true,
+        inline: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            await async function() {
+                for (var a of [ "baz" ])
+                    return {
+                        then(r) {
+                            console.log("moo");
+                            r(a);
+                        },
+                    };
+            }();
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            for (var a of [ "baz" ])
+                return void await {
+                    then(r) {
+                        console.log("moo");
+                        r(a);
+                    },
+                };;
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moz",
+        "moo",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
+
+inline_block_return: {
+    options = {
+        awaits: true,
+        if_return: true,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            return async function() {
+                for (var a of [ "baz" ])
+                    return a;
+            }();
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            for (var a of [ "baz" ])
+                return a;
+        })().then(console.log);
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+inline_block_return_async: {
+    options = {
+        awaits: true,
+        if_return: true,
+        inline: true,
+        passes: 2,
+        side_effects: true,
+    }
+    input: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            return async function() {
+                for (var a of [ "baz" ])
+                    return {
+                        then(r) {
+                            console.log("moo");
+                            r(a);
+                        },
+                    };
+            }();
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect: {
+        console.log("foo");
+        (async function() {
+            console.log("bar");
+            for (var a of [ "baz" ])
+                return {
+                    then(r) {
+                        console.log("moo");
+                        r(a);
+                    },
+                };
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moz",
+        "moo",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
 await_unary: {
     options = {
         awaits: true,

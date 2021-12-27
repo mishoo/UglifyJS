@@ -749,7 +749,7 @@ lift_sequence: {
     node_version: ">=4"
 }
 
-inline_nested_yield: {
+inline_nested: {
     options = {
         inline: true,
         sequences: true,
@@ -779,6 +779,94 @@ inline_nested_yield: {
     }
     expect_stdout: [
         "foo",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
+
+inline_nested_async: {
+    options = {
+        awaits: true,
+        inline: true,
+        sequences: true,
+        side_effects: true,
+        yields: true,
+    }
+    input: {
+        console.log("foo");
+        var a = async function*() {
+            console.log(await(yield* async function*() {
+                yield {
+                    then: r => r("bar"),
+                };
+                return "baz";
+            }()));
+        }();
+        console.log("moo");
+        a.next().then(function f(b) {
+            console.log(b.value);
+            b.done || a.next().then(f);
+        });
+        console.log("moz");
+    }
+    expect: {
+        console.log("foo");
+        var a = async function*() {
+            console.log((yield {
+                then: r => r("bar"),
+            }, await "baz"));
+        }();
+        console.log("moo"),
+        a.next().then(function f(b) {
+            console.log(b.value),
+            b.done || a.next().then(f);
+        }),
+        console.log("moz");
+    }
+    expect_stdout: [
+        "foo",
+        "moo",
+        "moz",
+        "bar",
+        "baz",
+        "undefined",
+    ]
+    node_version: ">=10"
+}
+
+inline_nested_block: {
+    options = {
+        if_return: true,
+        inline: true,
+        yields: true,
+    }
+    input: {
+        var a = function*() {
+            yield* function*() {
+                for (var a of [ "foo", "bar" ])
+                    yield a;
+                return "FAIL";
+            }();
+        }(), b;
+        do {
+            b = a.next();
+            console.log(b.value);
+        } while (!b.done);
+    }
+    expect: {
+        var a = function*() {
+            for (var a of [ "foo", "bar" ])
+                yield a;
+            "FAIL";
+        }(), b;
+        do {
+            b = a.next();
+            console.log(b.value);
+        } while (!b.done);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
         "undefined",
     ]
     node_version: ">=4"
