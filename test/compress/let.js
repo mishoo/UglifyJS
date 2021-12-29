@@ -1,4 +1,4 @@
-retain_block: {
+retain_block_1: {
     options = {}
     input: {
         "use strict";
@@ -18,6 +18,94 @@ retain_block: {
     }
     expect_stdout: "PASS"
     node_version: ">=4"
+}
+
+retain_block_2: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        {
+            var a;
+            let a;
+        }
+    }
+    expect: {
+        "use strict";
+        {
+            var a;
+            let a;
+        }
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+retain_block_2_mangle: {
+    rename = true
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        {
+            var a;
+            let a;
+        }
+    }
+    expect: {
+        "use strict";
+        {
+            var t;
+            let t;
+        }
+    }
+}
+
+retain_block_3: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        {
+            let a;
+            var a;
+        }
+    }
+    expect: {
+        "use strict";
+        {
+            let a;
+            var a;
+        }
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+retain_block_3_mangle: {
+    rename = true
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        {
+            let a;
+            var a;
+        }
+    }
+    expect: {
+        "use strict";
+        {
+            let t;
+            var t;
+        }
+    }
 }
 
 retain_assignment: {
