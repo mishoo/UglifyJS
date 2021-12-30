@@ -359,7 +359,7 @@ retain_funarg_destructured_object_2: {
     expect: {
         console.log(function({ p: a, ... b }) {
             return b;
-        }({ p: "FAIL" }).p || "PASS");
+        }({}).p || "PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=8.3.0"
@@ -1104,7 +1104,7 @@ issue_5108: {
     expect: {
         console.log(function([]) {
             return "PASS";
-        }([ "PASS", "FAIL" ]));
+        }([]));
     }
     expect_stdout: "PASS"
     node_version: ">=6"
@@ -1201,6 +1201,65 @@ issue_5165_2: {
     }
     expect: {
         console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5246_1: {
+    options = {
+        reduce_vars: true,
+        rests: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function([ , ...a ]) {
+            return this && a;
+        }([ , function(){} ])[0]);
+    }
+    expect: {
+        console.log(typeof function([]) {
+            return this && [ function(){} ];
+        }([])[0]);
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
+
+issue_5246_2: {
+    options = {
+        reduce_vars: true,
+        rests: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = [ , "PASS", "FAIL" ];
+        var  [ , ...a ] = [ ... A ];
+        console.log(a[0]);
+    }
+    expect: {
+        A = [ , "PASS", "FAIL" ];
+        var  [ , ...a ] = [ ... A ];
+        console.log(a[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5246_3: {
+    options = {
+        unused: true,
+    }
+    input: {
+        (function f(...[ [ a ] ]) {
+            console.log(a);
+        })([ "PASS" ]);
+    }
+    expect: {
+        (function(...[ a ]) {
+            console.log(a);
+        })([ "PASS" ][0]);
     }
     expect_stdout: "PASS"
     node_version: ">=6"

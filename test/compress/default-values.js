@@ -2038,3 +2038,59 @@ issue_5222: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5246_1: {
+    options = {
+        pure_getters: true,
+        unused: true,
+    }
+    input: {
+        console.log(function({} = 42) {
+            return "PASS";
+        }("foo"));
+    }
+    expect: {
+        console.log(function({} = 0) {
+            return "PASS";
+        }("foo"));
+    }
+    expect_stdout: "PASS"
+    expect_warnings: [
+        "INFO: Dropping unused default argument value {}=42 [test/compress/default-values.js:1,29]",
+        "INFO: Dropping unused default argument value {}=0 [test/compress/default-values.js:1,29]",
+    ]
+    node_version: ">=6"
+}
+
+issue_5246_2: {
+    options = {
+        unused: true,
+    }
+    input: {
+        (function f(a = "FAIL", [] = 42) {
+            console.log(a);
+        })("PASS", []);
+    }
+    expect: {
+        (function(a = "FAIL", []) {
+            console.log(a);
+        })("PASS", []);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5246_3: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f([ , {} ] = null){}([ , {} ]));
+    }
+    expect: {
+        console.log(function([ {} ]){}([ {} ]));
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
