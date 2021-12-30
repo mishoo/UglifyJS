@@ -1371,12 +1371,12 @@ issue_5034: {
     node_version: ">=4"
 }
 
-issue_5076: {
+issue_5076_1: {
     options = {
         evaluate: true,
         hoist_vars: true,
-        passes: 2,
         pure_getters: "strict",
+        sequences: true,
         side_effects: true,
         toplevel: true,
         unused: true,
@@ -1393,8 +1393,36 @@ issue_5076: {
     }
     expect: {
         var a;
-        console.log("PASS");
+        console.log("PASS"),
         a = 42["a"];
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5076_2: {
+    options = {
+        evaluate: true,
+        hoist_vars: true,
+        passes: 2,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a;
+        console.log("PASS");
+        var b = function*({
+            p: {},
+        }) {}({
+            p: { a } = 42,
+        });
+    }
+    expect: {
+        console.log("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
