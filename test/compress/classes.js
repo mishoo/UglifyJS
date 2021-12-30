@@ -1646,10 +1646,8 @@ issue_4962_1: {
         })(function g() {});
     }
     expect: {
-        (function g() {}),
-        void function() {
-            while (console.log(typeof g));
-        }();
+        (function g() {});
+        while (console.log(typeof g));
     }
     expect_stdout: "undefined"
     node_version: ">=12"

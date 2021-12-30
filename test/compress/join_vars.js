@@ -570,6 +570,50 @@ inlined_assignments: {
     expect_stdout: "PASS"
 }
 
+inilne_for: {
+    options = {
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function() {
+            for (; console.log("PASS"););
+        };
+        a();
+    }
+    expect: {
+        for (; console.log("PASS"););
+    }
+    expect_stdout: "PASS"
+}
+
+inilne_var: {
+    options = {
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        var a = function() {
+            var b = A;
+            for (b in console.log(b));
+        };
+        a();
+    }
+    expect: {
+        A = "PASS";
+        var b = A;
+        for (b in console.log(b));
+    }
+    expect_stdout: "PASS"
+}
+
 typescript_enum: {
     rename = true
     options = {

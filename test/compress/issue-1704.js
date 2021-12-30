@@ -356,6 +356,7 @@ mangle_catch_redef_3: {
         try {
             throw 0;
         } catch (o) {
+            // prints "FAIL" if inlined on Node.js v4-
             (function() {
                 function f() {
                     o = "FAIL";
@@ -366,7 +367,8 @@ mangle_catch_redef_3: {
         console.log(o);
     }
     expect_exact: 'var o="PASS";try{throw 0}catch(o){(function(){function c(){o="FAIL"}c(),c()})()}console.log(o);'
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=6"
 }
 
 mangle_catch_redef_3_toplevel: {
@@ -379,6 +381,7 @@ mangle_catch_redef_3_toplevel: {
         try {
             throw 0;
         } catch (o) {
+            // prints "FAIL" if inlined on Node.js v4-
             (function() {
                 function f() {
                     o = "FAIL";
@@ -389,7 +392,8 @@ mangle_catch_redef_3_toplevel: {
         console.log(o);
     }
     expect_exact: 'var c="PASS";try{throw 0}catch(c){(function(){function o(){c="FAIL"}o(),o()})()}console.log(c);'
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=6"
 }
 
 mangle_catch_redef_3_ie8: {
@@ -402,6 +406,7 @@ mangle_catch_redef_3_ie8: {
         try {
             throw 0;
         } catch (o) {
+            // prints "FAIL" if inlined on Node.js v4-
             (function() {
                 function f() {
                     o = "FAIL";
@@ -412,7 +417,8 @@ mangle_catch_redef_3_ie8: {
         console.log(o);
     }
     expect_exact: 'var o="PASS";try{throw 0}catch(o){(function(){function c(){o="FAIL"}c(),c()})()}console.log(o);'
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=6"
 }
 
 mangle_catch_redef_3_ie8_toplevel: {
@@ -425,6 +431,7 @@ mangle_catch_redef_3_ie8_toplevel: {
         try {
             throw 0;
         } catch (o) {
+            // prints "FAIL" if inlined on Node.js v4-
             (function() {
                 function f() {
                     o = "FAIL";
@@ -435,5 +442,6 @@ mangle_catch_redef_3_ie8_toplevel: {
         console.log(o);
     }
     expect_exact: 'var c="PASS";try{throw 0}catch(c){(function(){function o(){c="FAIL"}o(),o()})()}console.log(c);'
-    expect_stdout: true
+    expect_stdout: "PASS"
+    node_version: ">=6"
 }

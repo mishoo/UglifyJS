@@ -1,6 +1,4 @@
 dont_mangle_arguments: {
-    mangle = {
-    };
     options = {
         booleans: true,
         comparisons: true,
@@ -21,12 +19,13 @@ dont_mangle_arguments: {
         side_effects: true,
         unused: true,
     }
+    mangle = {}
     input: {
         (function(){
             var arguments = arguments, not_arguments = 9;
             console.log(not_arguments, arguments);
-        })(5,6,7);
+        })(5, 6, 7);
     }
-    expect_exact: "(function(){var arguments=arguments,o=9;console.log(o,arguments)})(5,6,7);"
+    expect_exact: "(function(){var arguments,o=9;console.log(o,arguments)})(5,6,7);"
     expect_stdout: true
 }

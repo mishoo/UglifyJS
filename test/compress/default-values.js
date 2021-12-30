@@ -2027,13 +2027,11 @@ issue_5222: {
         f();
     }
     expect: {
-        (function() {
-            do {
-                a = void 0,
-                [ a ] = [];
-            } while (console.log("PASS"));
-            var a;
-        })();
+        do {
+            a = void 0,
+            [ a ] = [];
+        } while (console.log("PASS"));
+        var a;
     }
     expect_stdout: "PASS"
     node_version: ">=6"

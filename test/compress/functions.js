@@ -604,6 +604,254 @@ empty_body: {
     }
 }
 
+inline_binary_and: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function() {
+            (function() {
+                while (console.log("foo"));
+                return "bar";
+            })() && (function() {
+                while (console.log("baz"));
+                return "moo";
+            })();
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (function() {
+                while (console.log("foo"));
+                return "bar";
+            }()) {
+                while (console.log("baz"));
+                return void "moo";
+                return;
+            }
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "undefined",
+    ]
+}
+
+inline_binary_or: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function() {
+            while (console.log("foo"));
+        })() || (function() {
+            while (console.log("bar"));
+        })();
+    }
+    expect: {
+        if (!function() {
+            while (console.log("foo"));
+        }())
+            while (console.log("bar"));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+inline_conditional: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function() {
+            while (console.log("foo"));
+        })() ? (function() {
+            while (console.log("bar"));
+        })() : (function() {
+            while (console.log("baz"));
+        })();
+    }
+    expect: {
+        if (function() {
+            while (console.log("foo"));
+        }())
+            while (console.log("bar"));
+        else
+            while (console.log("baz"));
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+    ]
+}
+
+inline_do: {
+    options = {
+        inline: true,
+    }
+    input: {
+        do (function() {
+            while (console.log("foo"));
+        })();
+        while (function() {
+            while (console.log("bar"));
+        }());
+    }
+    expect: {
+        do {
+            while (console.log("foo"));
+        } while (function() {
+            while (console.log("bar"));
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+inline_finally_return: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function() {
+            try {
+                throw "FAIL";
+            } finally {
+                return function() {
+                    while (console.log("PASS"));
+                }(), 42;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            try {
+                throw "FAIL";
+            } finally {
+                while (console.log("PASS"));
+                return 42;
+            }
+        }());
+    }
+    expect_stdout: [
+        "PASS",
+        "42",
+    ]
+}
+
+inline_for_init: {
+    options = {
+        inline: true,
+    }
+    input: {
+        for (function() {
+            while (console.log("foo"));
+        }(); function() {
+            while (console.log("bar"));
+        }(); function() {
+            while (console.log("baz"));
+        }()) (function() {
+            while (console.log("moo"));
+        })();
+    }
+    expect: {
+        while (console.log("foo"));
+        for (; function() {
+            while (console.log("bar"));
+        }(); function() {
+            while (console.log("baz"));
+        }()) {
+            while (console.log("moo"));
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+inline_for_object: {
+    options = {
+        inline: true,
+    }
+    input: {
+        for (var a in function() {
+            while (console.log("foo"));
+        }(), function() {
+            while (console.log("bar"));
+        }()) (function() {
+            while (console.log("baz"));
+        })();
+    }
+    expect: {
+        while (console.log("foo"));
+        for (var a in function() {
+            while (console.log("bar"));
+        }()) {
+            while (console.log("baz"));
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+inline_if_else: {
+    options = {
+        inline: true,
+    }
+    input: {
+        if (function() {
+            while (console.log("foo"));
+        }(), function() {
+            while (console.log("bar"));
+        }()) (function() {
+            while (console.log("baz"));
+        })();
+        else (function() {
+            while (console.log("moo"));
+        })();
+    }
+    expect: {
+        while (console.log("foo"));
+        if (function() {
+            while (console.log("bar"));
+        }()) {
+            while (console.log("baz"));
+        } else {
+            while (console.log("moo"));
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+    ]
+}
+
+inline_label: {
+    options = {
+        inline: true,
+    }
+    input: {
+        L: (function() {
+            while (console.log("PASS"));
+        })()
+    }
+    expect: {
+        L: {
+            while (console.log("PASS"));
+        }
+    }
+    expect_stdout: "PASS"
+}
+
 inline_loop_1: {
     options = {
         inline: true,
@@ -679,6 +927,86 @@ inline_loop_4: {
     }
 }
 
+inline_loop_5: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a in "foo") {
+            (function() {
+                function f() {}
+                var f;
+                console.log(typeof f, a - f);
+            })();
+        }
+    }
+    expect: {
+        for (var a in "foo")
+            f = function() {},
+            void console.log(typeof f, a - f);
+        var f;
+    }
+    expect_stdout: [
+        "function NaN",
+        "function NaN",
+        "function NaN",
+    ]
+}
+
+inline_loop_6: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a in "foo") {
+            (function() {
+                var f;
+                function f() {}
+                console.log(typeof f, a - f);
+            })();
+        }
+    }
+    expect: {
+        for (var a in "foo")
+            f = function() {},
+            void console.log(typeof f, a - f);
+        var f;
+    }
+    expect_stdout: [
+        "function NaN",
+        "function NaN",
+        "function NaN",
+    ]
+}
+
+inline_loop_7: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a = 0; a < 2; a++) {
+            (function() {
+                var b = b && b[console.log("FAIL")] || "PASS";
+                while (console.log(b));
+            })();
+        }
+    }
+    expect: {
+        for (var a = 0; a < 2; a++) {
+            b = void 0;
+            var b = b && b[console.log("FAIL")] || "PASS";
+            while (console.log(b));
+        }
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
+
 inline_negate_iife: {
     options = {
         inline: true,
@@ -697,6 +1025,111 @@ inline_negate_iife: {
         }());
     }
     expect_stdout: "true"
+}
+
+inline_return_binary: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function() {
+            return function() {
+                while (console.log("foo"));
+                return "bar";
+            }() || function() {
+                while (console.log("baz"));
+                return "moo";
+            }();
+        }());
+    }
+    expect: {
+        console.log(function() {
+            while (console.log("foo"));
+            return "bar";
+        }() || function() {
+            while (console.log("baz"));
+            return "moo";
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+inline_return_conditional: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function() {
+            return console ? "foo" : function() {
+                while (console.log("bar"));
+                return "baz";
+            }();
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (console)
+                return "foo";
+            else {
+                while (console.log("bar"));
+                return "baz";
+                return;
+            }
+        }());
+    }
+    expect_stdout: "foo"
+}
+
+inline_while: {
+    options = {
+        inline: true,
+    }
+    input: {
+        while (function() {
+            while (console.log("foo"));
+        }()) (function() {
+            while (console.log("bar"));
+        })();
+    }
+    expect: {
+        while (function() {
+            while (console.log("foo"));
+        }()) {
+            while (console.log("bar"));
+        }
+    }
+    expect_stdout: "foo"
+}
+
+inline_with: {
+    options = {
+        inline: true,
+    }
+    input: {
+        with (+function() {
+            while (console.log("foo"));
+        }(), -function() {
+            while (console.log("bar"));
+        }()) ~function() {
+            while (console.log("baz"));
+        }();
+    }
+    expect: {
+        while (console.log("foo"));
+        with (-function() {
+            while (console.log("bar"));
+        }()) {
+            while (console.log("baz"));
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
 }
 
 issue_2476: {
@@ -820,16 +1253,14 @@ issue_2604_1: {
     }
     expect: {
         var a = "FAIL";
-        (function() {
-            try {
-                throw 1;
-            } catch (b) {
-                (function(b) {
-                    b && b();
-                })();
-                b && (a = "PASS");
-            }
-        })();
+        try {
+            throw 1;
+        } catch (b) {
+            (function(b) {
+                b && b();
+            })();
+            b && (a = "PASS");
+        }
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -862,13 +1293,11 @@ issue_2604_2: {
     }
     expect: {
         var a = "FAIL";
-        (function() {
-            try {
-                throw 1;
-            } catch (o) {
-                o && (a = "PASS");
-            }
-        })();
+        try {
+            throw 1;
+        } catch (o) {
+            o && (a = "PASS");
+        }
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -1305,9 +1734,7 @@ issue_2630_1: {
     }
     expect: {
         var c = 0;
-        (function() {
-            while (void (c = 1 + ++c));
-        })(),
+        while (void (c = 1 + ++c));
         console.log(c);
     }
     expect_stdout: "2"
@@ -1338,9 +1765,8 @@ issue_2630_2: {
     }
     expect: {
         var c = 0;
-        !function() {
-            while (void (c = 1 + (c += 1)));
-        }(), console.log(c);
+        while (void (c = 1 + (c += 1)));
+        console.log(c);
     }
     expect_stdout: "2"
 }
@@ -1384,7 +1810,7 @@ issue_2630_3: {
 issue_2630_4: {
     options = {
         collapse_vars: true,
-        inline: true,
+        inline: 3,
         reduce_vars: true,
         side_effects: true,
         unused: true,
@@ -1412,6 +1838,35 @@ issue_2630_4: {
 }
 
 issue_2630_5: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var x = 3, a = 1, b = 2;
+        (function() {
+            (function f1() {
+                while (--x >= 0 && f2());
+            }());
+            function f2() {
+                a++ + (b += a);
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var x = 3, a = 1, b = 2;
+        while (--x >= 0 && void (b += ++a));
+        console.log(a);
+    }
+    expect_stdout: "2"
+}
+
+issue_2630_6: {
     options = {
         assignments: true,
         collapse_vars: true,
@@ -4981,10 +5436,9 @@ issue_3833_2: {
         f();
     }
     expect: {
-        (function(a) {
-            while (a);
-            console.log("PASS");
-        })();
+        var a = void 0;
+        while (a);
+        console.log("PASS");
     }
     expect_stdout: "PASS"
 }
@@ -5605,17 +6059,15 @@ issue_4261: {
         try {
             throw 42;
         } catch (e) {
-            (function() {
-                function g() {
-                    // `ReferenceError: e is not defined` on Node.js v0.10
-                    while (void e.p);
-                }
-                while (console.log(g()));
-            })();
+            function g() {
+                // `ReferenceError: e is not defined` on Node.js v4-
+                while (void e.p);
+            }
+            while (console.log(g()));
         }
     }
     expect_stdout: "undefined"
-    node_version: "<0.10 || >=0.12"
+    node_version: ">=6"
 }
 
 issue_4265: {
@@ -5975,9 +6427,8 @@ issue_4659_3: {
             function f() {
                 return a++;
             }
-            (function() {
-                while (!console);
-            })(f && a++);
+            f && a++;
+            while (!console);
             (function() {
                 var a = console && a;
             })();
@@ -7122,9 +7573,7 @@ issue_5237: {
     }
     expect: {
         function f() {
-            (function() {
-                while (console.log(0/0));
-            })();
+            while (console.log(0/0));
             var NaN = console && console.log(NaN);
             return;
         }

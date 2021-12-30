@@ -197,10 +197,8 @@ do_inline_3: {
         })();
     }
     expect: {
-        (function() {
-            var [] = [ ..."" ];
-            while (console.log("PASS"));
-        })();
+        var [] = [ ..."" ];
+        while (console.log("PASS"));
     }
     expect_stdout: "PASS"
     node_version: ">=6"
