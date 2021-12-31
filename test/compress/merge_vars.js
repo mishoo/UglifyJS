@@ -3228,10 +3228,10 @@ issue_4653: {
         f(a++ + (b = b), b |= console.log(a));
     }
     expect: {
-        var b = 1;
+        var b, a = 1;
         (function(c, d) {
             c || console.log(d);
-        })(+b + (b = void 0), b |= console.log(2));
+        })(+a + (b = b), b |= console.log(2));
     }
     expect_stdout: [
         "2",
