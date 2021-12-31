@@ -2752,8 +2752,7 @@ issue_3944: {
     }
     expect: {
         void function f() {
-            while (a = 0 == (a = void 0), console.log(a), void 0);
-            var a;
+            while (0 == void 0, console.log(false), void 0);
             f;
         }();
     }

@@ -905,7 +905,7 @@ use_before_var: {
     }
     expect: {
         function f(){
-            console.log(void 0);
+            console.log(t);
             var t = 1;
         }
     }
@@ -981,7 +981,7 @@ inner_var_for_1: {
     expect: {
         function f() {
             var a = 1;
-            x(1, void 0, d);
+            x(1, b, d);
             for (var b = 2, c = 3; x(1, 2, 3, d); x(1, 2, 3, d)) {
                 var d = 4, e = 5;
                 x(1, 2, 3, d, e);
