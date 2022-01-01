@@ -2,6 +2,7 @@ var assert = require("assert");
 var exec = require("child_process").exec;
 var fs = require("fs");
 var run_code = require("../sandbox").run_code;
+var semver = require("semver");
 var to_ascii = require("../node").to_ascii;
 
 function read(path) {
@@ -12,10 +13,13 @@ describe("bin/uglifyjs", function() {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("Should produce a functional build when using --self", function(done) {
         this.timeout(30000);
-        var command = uglifyjscmd + ' --self -cm --wrap WrappedUglifyJS';
-        exec(command, {
-            maxBuffer: 1048576
-        }, function(err, stdout) {
+        var command = [
+            uglifyjscmd,
+            "--self",
+            semver.satisfies(process.version, "<=0.12") ? "-mc hoist_funs" : "-mc",
+            "--wrap WrappedUglifyJS",
+        ].join(" ");
+        exec(command, { maxBuffer: 1048576 }, function(err, stdout) {
             if (err) throw err;
             eval(stdout);
             assert.strictEqual(typeof WrappedUglifyJS, "object");

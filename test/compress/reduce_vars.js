@@ -41,10 +41,8 @@ reduce_vars: {
     }
     expect: {
         var A = 1;
-        (function() {
-            console.log(-3);
-            console.log(A - 5);
-        })();
+        console.log(-3);
+        console.log(A - 5);
         (function f1() {
             var a = 2;
             console.log(a - 5);
@@ -6690,7 +6688,8 @@ issues_3267_1: {
     }
     expect: {
         !function(x) {
-            if (Object())
+            var i = Object();
+            if (i)
                 return console.log("PASS");
             throw "FAIL";
         }();

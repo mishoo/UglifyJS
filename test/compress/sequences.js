@@ -1160,10 +1160,8 @@ issue_3490_1: {
     }
     expect: {
         var b = 42, c = "FAIL";
-        if (function() {
-            var a;
-            a && a.p;
-        }(), c = "PASS", b) while ("" == typeof d);
+        var a;
+        if (a && a.p, c = "PASS", b) while ("" == typeof d);
         console.log(c, b);
     }
     expect_stdout: "PASS 42"
@@ -1193,9 +1191,8 @@ issue_3490_2: {
     }
     expect: {
         var b = 42, c = "FAIL";
-        for (function() {
-            var a;
-        }(), c = "PASS", b; "" == typeof d;);
+        var a;
+        for (c = "PASS", b; "" == typeof d;);
         console.log(c, b);
     }
     expect_stdout: "PASS 42"

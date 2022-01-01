@@ -838,12 +838,10 @@ issue_4202: {
     expect: {
         {
             const o = {};
-            (function() {
-                function f() {
-                    o.p = 42;
-                }
-                f(f);
-            })();
+            function f() {
+                o.p = 42;
+            }
+            f(f);
             console.log(o.p++);
         }
     }
@@ -1287,12 +1285,10 @@ issue_4261_2: {
     expect: {
         {
             const a = 42;
-            (function() {
-                function g() {
-                    while (void console.log(a));
-                }
-                while (g());
-            })();
+            function g() {
+                while (void console.log(a));
+            }
+            while (g());
         }
     }
     expect_stdout: "42"

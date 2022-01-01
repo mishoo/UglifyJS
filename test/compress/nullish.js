@@ -262,6 +262,30 @@ de_morgan_2e: {
     node_version: ">=14"
 }
 
+inline_binary_nullish: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function() {
+            while (console.log("foo"));
+        })() ?? (function() {
+            while (console.log("bar"));
+        })();
+    }
+    expect: {
+        if (void 0 === function() {
+            while (console.log("foo"));
+        }())
+            while (console.log("bar"));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=14"
+}
+
 issue_4679: {
     options = {
         comparisons: true,

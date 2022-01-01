@@ -1054,12 +1054,10 @@ issue_4202: {
         "use strict";
         {
             let o = {};
-            (function() {
-                function f() {
-                    o.p = 42;
-                }
-                f(f);
-            })();
+            function f() {
+                o.p = 42;
+            }
+            f(f);
             console.log(o.p++);
         }
     }

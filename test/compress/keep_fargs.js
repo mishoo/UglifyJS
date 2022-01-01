@@ -1236,7 +1236,8 @@ issues_3267_1: {
     }
     expect: {
         !function() {
-            if (Object())
+            var i = Object();
+            if (i)
                 return console.log("PASS");
             throw "FAIL";
         }();
