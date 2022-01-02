@@ -906,3 +906,24 @@ issue_4772: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5251: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        (() => {
+            while (console.log(arguments))
+                var arguments = "FAIL";
+        })();
+    }
+    expect: {
+        (() => {
+            while (console.log(arguments))
+                var arguments = "FAIL";
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
