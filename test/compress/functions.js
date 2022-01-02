@@ -944,6 +944,7 @@ inline_loop_5: {
     }
     expect: {
         for (var a in "foo")
+            f = void 0,
             f = function() {},
             void console.log(typeof f, a - f);
         var f;
@@ -971,6 +972,7 @@ inline_loop_6: {
     }
     expect: {
         for (var a in "foo")
+            f = void 0,
             f = function() {},
             void console.log(typeof f, a - f);
         var f;
@@ -983,6 +985,64 @@ inline_loop_6: {
 }
 
 inline_loop_7: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a in "foo") {
+            (function() {
+                function f() {}
+                var f;
+                while (console.log(typeof f, a - f));
+            })();
+        }
+    }
+    expect: {
+        for (var a in "foo") {
+            f = void 0;
+            var f = function() {};
+            var f;
+            while (console.log(typeof f, a - f));
+        }
+    }
+    expect_stdout: [
+        "function NaN",
+        "function NaN",
+        "function NaN",
+    ]
+}
+
+inline_loop_8: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a in "foo") {
+            (function() {
+                var f;
+                function f() {}
+                while (console.log(typeof f, a - f));
+            })();
+        }
+    }
+    expect: {
+        for (var a in "foo") {
+            f = void 0;
+            var f = function() {};
+            var f;
+            while (console.log(typeof f, a - f));
+        }
+    }
+    expect_stdout: [
+        "function NaN",
+        "function NaN",
+        "function NaN",
+    ]
+}
+
+inline_loop_9: {
     options = {
         inline: true,
         toplevel: true,
@@ -6797,10 +6857,10 @@ issue_4753_2: {
     }
     expect: {
         do {
+            a = void 0,
             f = function() {
                 return "PASS";
             },
-            a = void 0,
             a = f(),
             console.log(a);
         } while (0);
@@ -7749,4 +7809,69 @@ issue_5249_2: {
         }());
     }
     expect_stdout: "undefined"
+}
+
+issue_5254_1: {
+    options = {
+        inline: 3,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            while (a--)
+                (function f() {
+                    var f = new function() {
+                        console.log(f);
+                    }();
+                })();
+        })(2);
+    }
+    expect: {
+        (function(a) {
+            while (a--)
+                f = void 0,
+                f = new function() {
+                    console.log(f);
+                }(),
+                void 0;
+            var f;
+        })(2);
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+}
+
+issue_5254_2: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            while (a--)
+                (function f() {
+                    var f = new function() {
+                        console.log(f);
+                    }();
+                    while (!console);
+                })();
+        })(2);
+    }
+    expect: {
+        (function(a) {
+            while (a--) {
+                f = void 0;
+                var f = new function() {
+                    console.log(f);
+                }();
+                while (!console);
+            }
+        })(2);
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
 }

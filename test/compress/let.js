@@ -1878,3 +1878,31 @@ issue_5240: {
     ]
     node_version: ">=4"
 }
+
+issue_5254: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        do {
+            (function() {
+                let a = console.log;
+                a && a("foo");
+            })();
+        } while (console.log("bar"));
+    }
+    expect: {
+        "use strict";
+        do {
+            let a = console.log;
+            a && a("foo");
+        } while (console.log("bar"));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
+}

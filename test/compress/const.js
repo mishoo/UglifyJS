@@ -1727,3 +1727,28 @@ issue_4965_2: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_5254: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        do {
+            (function() {
+                const a = console.log;
+                a && a("foo");
+            })();
+        } while (console.log("bar"));
+    }
+    expect: {
+        do {
+            const a = console.log;
+            a && a("foo");
+        } while (console.log("bar"));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
