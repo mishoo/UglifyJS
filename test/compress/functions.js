@@ -628,7 +628,8 @@ inline_binary_and: {
                 while (console.log("baz"));
                 return void "moo";
                 return;
-            }
+            } else
+                return;
         }());
     }
     expect_stdout: [
@@ -7683,6 +7684,69 @@ issue_5240_2: {
             }
         }
         f();
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5249_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(function() {
+            if (!console)
+                var a = "FAIL 1";
+            else
+                return void (a && function() {
+                    while (console.log("FAIL 2"));
+                }());
+            throw "FAIL 3";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (!console)
+                var a = "FAIL 1";
+            else if (a) {
+                while (console.log("FAIL 2"));
+                return;
+            } else
+                return;
+            throw "FAIL 3";
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5249_2: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            if (!console)
+                var a = "FAIL 1";
+            else
+                return void (a && function() {
+                    while (console.log("FAIL 2"));
+                }());
+            throw "FAIL 3";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (!console)
+                throw "FAIL 3";
+        }());
     }
     expect_stdout: "undefined"
 }
