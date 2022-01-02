@@ -513,6 +513,42 @@ inline_block_await: {
 
 inline_block_await_async: {
     options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            console.log("foo");
+            await (async function() {
+                while (await console.log("bar"));
+                console.log("baz");
+            })();
+            console.log("moo");
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect: {
+        (async function() {
+            console.log("foo");
+            while (await console.log("bar"));
+            console.log("baz");
+            await 0;
+            console.log("moo");
+        })().then(console.log);
+        console.log("moz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moz",
+        "baz",
+        "moo",
+        "undefined",
+    ]
+    node_version: ">=8"
+}
+
+inline_block_await_async_return: {
+    options = {
         awaits: true,
         if_return: true,
         inline: true,
@@ -2538,5 +2574,34 @@ issue_5177: {
         });
     }
     expect_stdout: "function"
+    node_version: ">=8"
+}
+
+issue_5250: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await function() {
+                while (console.log("foo"));
+            }();
+            console.log("bar");
+        })();
+        console.log("baz");
+    }
+    expect: {
+        (async function() {
+            while (console.log("foo"));
+            await 0;
+            console.log("bar");
+        })();
+        console.log("baz");
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
     node_version: ">=8"
 }
