@@ -2605,3 +2605,59 @@ issue_5250: {
     ]
     node_version: ">=8"
 }
+
+issue_5258_1: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        (async function() {
+            (async function() {
+                throw "FAIL";
+            })();
+            return "PASS";
+        })().catch(console.log).then(console.log);
+    }
+    expect: {
+        (async function() {
+            (async function() {
+                throw "FAIL";
+            })();
+            return "PASS";
+        })().catch(console.log).then(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5258_2: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        function f() {
+            throw "FAIL";
+        }
+        (async function() {
+            (async function() {
+                f();
+            })();
+            return "PASS";
+        })().catch(console.log).then(console.log);
+    }
+    expect: {
+        function f() {
+            throw "FAIL";
+        }
+        (async function() {
+            (async function() {
+                f();
+            })();
+            return "PASS";
+        })().catch(console.log).then(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
