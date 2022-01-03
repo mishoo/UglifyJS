@@ -2092,3 +2092,24 @@ issue_5246_3: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_5256: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function(arguments = console.log) {
+            console;
+        })();
+        console.log(typeof arguments);
+    }
+    expect: {
+        // Syntax error on Node.js v6
+        (function(arguments = console.log) {
+            console;
+        })();
+        console.log(typeof arguments);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=8"
+}
