@@ -1752,3 +1752,38 @@ issue_5254: {
         "bar",
     ]
 }
+
+issue_5260: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var a = "foo", o;
+        while (console.log("bar"));
+        o = {
+            baz: function(b) {
+                console.log(a, b);
+            },
+        };
+        for (const a in o)
+            o[a](a);
+    }
+    expect: {
+        "use strict";
+        var a = "foo", o;
+        while (console.log("bar"));
+        o = {
+            baz: function(b) {
+                console.log(a, b);
+            },
+        };
+        for (const a in o)
+            o[a](a);
+    }
+    expect_stdout: [
+        "bar",
+        "foo baz",
+    ]
+    node_version: ">=4"
+}
