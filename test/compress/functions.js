@@ -7875,3 +7875,105 @@ issue_5254_2: {
         "undefined",
     ]
 }
+
+issue_5263: {
+    options = {
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        for (var i = 0; i < 2; i++) (function() {
+            while (console.log(i));
+            (function(a) {
+                console.log(a) && a,
+                a++;
+            })();
+        })();
+    }
+    expect: {
+        for (var i = 0; i < 2; i++) {
+            a = void 0;
+            while (console.log(i));
+            console.log(a),
+            a++;
+            var a;
+        }
+    }
+    expect_stdout: [
+        "0",
+        "undefined",
+        "1",
+        "undefined",
+    ]
+}
+
+issue_5264_1: {
+    options = {
+        if_return: true,
+        inline: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function f(arguments) {
+                console.log(arguments);
+                (function() {
+                    while (console.log("foo"));
+                })();
+            }
+            f("bar");
+            return arguments;
+        }("baz")[0]);
+    }
+    expect: {
+        console.log(function() {
+            (function(arguments) {
+                console.log(arguments);
+                while (console.log("foo"));
+            })("bar");
+            return arguments;
+        }("baz")[0]);
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "baz",
+    ]
+}
+
+issue_5264_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            function f(arguments) {
+                console.log(arguments);
+                (function() {
+                    while (console.log("foo"));
+                })();
+            }
+            f("bar");
+            return arguments;
+        }("baz")[0]);
+    }
+    expect: {
+        console.log(function() {
+            (function(arguments) {
+                console.log(arguments);
+                while (console.log("foo"));
+            })("bar");
+            return arguments;
+        }("baz")[0]);
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "baz",
+    ]
+}
