@@ -274,7 +274,7 @@ inline_binary_nullish: {
         })();
     }
     expect: {
-        if (void 0 === function() {
+        if (null == function() {
             while (console.log("foo"));
         }())
             while (console.log("bar"));
@@ -302,5 +302,44 @@ issue_4679: {
             console.log("PASS");
     }
     expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+issue_5266: {
+    options = {
+        inline: true,
+    }
+    input: {
+        [
+            42,
+            null,
+            false,
+            void 0,
+            "FAIL",
+        ].forEach(function (a) {
+            a ?? function() {
+                while (console.log(a));
+            }();
+        });
+    }
+    expect: {
+        [
+            42,
+            null,
+            false,
+            void 0,
+            "FAIL",
+        ].forEach(function (a) {
+            if (null == a) {
+                while (console.log(a));
+                return;
+            } else
+                return;
+        });
+    }
+    expect_stdout: [
+        "null",
+        "undefined",
+    ]
     node_version: ">=14"
 }
