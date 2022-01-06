@@ -2995,6 +2995,43 @@ compound_assignment_4: {
     expect_stdout: "PASS"
 }
 
+compound_assignment_5: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 0, b;
+        a += 42;
+        b && (a *= null);
+        console.log(a);
+    }
+    expect: {
+        var a = 0, b;
+        a += 42;
+        b && (a *= null);
+        console.log(a);
+    }
+    expect_stdout: "42"
+}
+
+compound_assignment_6: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a;
+        a ^= 6;
+        a *= a + 1;
+        console.log(a);
+    }
+    expect: {
+        var a;
+        a = (a ^= 6) * (a + 1);
+        console.log(a);
+    }
+    expect_stdout: "42"
+}
+
 issue_2187_1: {
     options = {
         collapse_vars: true,

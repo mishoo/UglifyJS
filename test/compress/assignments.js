@@ -530,6 +530,25 @@ logical_collapse_vars_2: {
     node_version: ">=15"
 }
 
+logical_collapse_vars_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var a = 6;
+        a *= 7;
+        a ??= "FAIL";
+        console.log(a);
+    }
+    expect: {
+        var a = 6;
+        a = a * 7 ?? "FAIL";
+        console.log(a);
+    }
+    expect_stdout: "42"
+    node_version: ">=15"
+}
+
 logical_reduce_vars: {
     options = {
         evaluate: true,

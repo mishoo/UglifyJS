@@ -774,7 +774,7 @@ side_effects_cascade_3: {
     }
     expect: {
         function f(a, b) {
-            (b += a) || (b = a) || (b -= a, b ^= a),
+            (b += a) || (b = a) || (b = b - a ^ a),
             a--;
         }
     }
