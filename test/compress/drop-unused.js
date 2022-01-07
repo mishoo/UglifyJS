@@ -3561,3 +3561,29 @@ issue_5224: {
     }
     expect_stdout: "Infinity"
 }
+
+issue_5271: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            do {
+                var a = b = 0 ^ f, b = b;
+            } while (console.log(42 - b));
+        }
+        f();
+    }
+    expect: {
+        (function f() {
+            do {
+                var b;
+                b = 0 ^ f;
+            } while (console.log(42 - b));
+        })();
+    }
+    expect_stdout: "42"
+}
