@@ -3032,6 +3032,54 @@ compound_assignment_6: {
     expect_stdout: "42"
 }
 
+compound_assignment_7: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "FA";
+        a = a + "I";
+        a = a + "L";
+        if (console)
+            a = "PASS";
+        console.log(a);
+    }
+    expect: {
+        var a = "FA";
+        a = a + "I" + "L";
+        if (console)
+            a = "PASS";
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
+
+compound_assignment_8: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 2;
+        a = 3 * a;
+        a = 7 * a;
+        console || (a = "FAIL");
+        console.log(a);
+    }
+    expect: {
+        var a = 2;
+        a = a * 3 * 7;
+        console || (a = "FAIL");
+        console.log(a);
+    }
+    expect_stdout: "42"
+}
+
 issue_2187_1: {
     options = {
         collapse_vars: true,
@@ -8285,9 +8333,9 @@ issue_3884_1: {
         console.log(a, b);
     }
     expect: {
-        var a = 100, b = 1;
-        b <<= ++a;
-        console.log(a, b);
+        var a = 100;
+        ++a;
+        console.log(a, 32);
     }
     expect_stdout: "101 32"
 }
@@ -9715,9 +9763,30 @@ issue_5273: {
         function f(c, d) {
             return d;
         }
-        b = (b + a) * a,
+        b = 1100,
         f,
         console.log(b);
     }
     expect_stdout: "1100"
+}
+
+issue_5276: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = A = "PASS";
+        a.p += null;
+        a.p -= 42;
+        console.log(a);
+    }
+    expect: {
+        var a = A = "PASS";
+        a.p = a.p + null - 42;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
 }
