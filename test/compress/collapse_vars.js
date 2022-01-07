@@ -9692,3 +9692,32 @@ issue_5182: {
     ]
     node_version: ">=4"
 }
+
+issue_5273: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "10", b = 1;
+        function f(c, d) {
+            return d;
+        }
+        f((b += a, b *= a), f);
+        console.log(b);
+    }
+    expect: {
+        var a = "10", b = 1;
+        function f(c, d) {
+            return d;
+        }
+        b = (b + a) * a,
+        f,
+        console.log(b);
+    }
+    expect_stdout: "1100"
+}
