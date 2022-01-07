@@ -3192,3 +3192,219 @@ issue_5081_property_access_ie: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5269_1: {
+    options = {
+        ie: false,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        do {
+            (function() {
+                try {
+                    throw "PASS";
+                } catch (e) {
+                    console.log(e);
+                }
+            })();
+        } while (!console);
+    }
+    expect: {
+        "use strict";
+        do {
+            try {
+                throw "PASS";
+            } catch (e) {
+                console.log(e);
+            }
+        } while (!console);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5269_1_ie: {
+    options = {
+        ie: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        do {
+            (function() {
+                try {
+                    throw "PASS";
+                } catch (e) {
+                    console.log(e);
+                }
+            })();
+        } while (!console);
+    }
+    expect: {
+        "use strict";
+        do {
+            try {
+                throw "PASS";
+            } catch (e) {
+                console.log(e);
+            }
+        } while (!console);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5269_2: {
+    options = {
+        ie: false,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var i = 0; i < 2; i++)
+            (function() {
+                console.log(e);
+                try {
+                    console;
+                } catch (e) {
+                    var e = "FAIL 1";
+                }
+                e = "FAIL 2";
+                console;
+            })();
+    }
+    expect: {
+        for (var i = 0; i < 2; i++) {
+            e = void 0;
+            console.log(e);
+            try {
+                console;
+            } catch (e) {
+                var e = "FAIL 1";
+            }
+            e = "FAIL 2";
+            console;
+        }
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+}
+
+issue_5269_2_ie: {
+    options = {
+        ie: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var i = 0; i < 2; i++)
+            (function() {
+                console.log(e);
+                try {
+                    console;
+                } catch (e) {
+                    var e = "FAIL 1";
+                }
+                e = "FAIL 2";
+                console;
+            })();
+    }
+    expect: {
+        for (var i = 0; i < 2; i++) {
+            e = void 0;
+            console.log(e);
+            try {
+                console;
+            } catch (e) {
+                var e = "FAIL 1";
+            }
+            e = "FAIL 2";
+            console;
+        }
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+}
+
+issue_5269_3: {
+    options = {
+        ie: false,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        e = "foo";
+        for (var i = 0; i < 2; i++)
+            (function() {
+                console.log(e);
+                try {
+                    console;
+                } catch (e) {
+                    e = "FAIL";
+                }
+                e = "bar";
+                console;
+            })();
+    }
+    expect: {
+        e = "foo";
+        for (var i = 0; i < 2; i++) {
+            console.log(e);
+            try {
+                console;
+            } catch (e) {
+                e = "FAIL";
+            }
+            e = "bar";
+            console;
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+issue_5269_3_ie: {
+    options = {
+        ie: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        e = "foo";
+        for (var i = 0; i < 2; i++)
+            (function() {
+                console.log(e);
+                try {
+                    console;
+                } catch (e) {
+                    e = "FAIL";
+                }
+                e = "bar";
+                console;
+            })();
+    }
+    expect: {
+        e = "foo";
+        for (var i = 0; i < 2; i++) {
+            console.log(e);
+            try {
+                console;
+            } catch (e) {
+                e = "FAIL";
+            }
+            e = "bar";
+            console;
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
