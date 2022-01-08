@@ -9790,3 +9790,23 @@ issue_5276: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5277: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            var a = function() {
+                a += null;
+                a -= 42;
+            };
+        }());
+    }
+    expect: {
+        console.log(function() {}());
+    }
+    expect_stdout: "undefined"
+}
