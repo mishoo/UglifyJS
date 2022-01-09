@@ -2519,8 +2519,13 @@ for (var round = 1; round <= num_iterations; round++) {
             // ignore difference in error message caused by Temporal Dead Zone
             if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
             // ignore difference due to implicit strict-mode in `class`
-            if (!ok && uglify_result.name == "SyntaxError" && /\bclass\b/.test(original_code)) {
-                ok = typeof run_code('"use strict";\n' + original_code, toplevel) != "string";
+            if (!ok && /\bclass\b/.test(original_code)) {
+                var original_strict = run_code('"use strict";\n' + original_code, toplevel);
+                if (/^(Syntax|Type)Error$/.test(uglify_result.name)) {
+                    ok = typeof original_strict != "string";
+                } else {
+                    ok = sandbox.same_stdout(original_strict, uglify_result);
+                }
             }
             // ignore difference in error message caused by `import` symbol redeclaration
             if (!ok && errored && /\bimport\b/.test(original_code)) {
