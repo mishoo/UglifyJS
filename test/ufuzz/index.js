@@ -2501,7 +2501,7 @@ for (var round = 1; round <= num_iterations; round++) {
                 }
             }
             // ignore declaration order of global variables
-            if (!ok && !toplevel) {
+            if (!ok && !toplevel && uglify_result.name != "SyntaxError" && original_result.name != "SyntaxError") {
                 ok = sandbox.same_stdout(run_code(sort_globals(original_code)), run_code(sort_globals(uglify_code)));
             }
             // ignore numerical imprecision caused by `unsafe_math`
@@ -2519,14 +2519,8 @@ for (var round = 1; round <= num_iterations; round++) {
             // ignore difference in error message caused by Temporal Dead Zone
             if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
             // ignore difference due to implicit strict-mode in `class`
-            if (!ok && /\bclass\b/.test(original_code)) {
-                var original_strict = run_code('"use strict";\n' + original_code, toplevel);
-                var uglify_strict = run_code('"use strict";\n' + uglify_code, toplevel);
-                if (typeof original_strict != "string") {
-                    ok = typeof uglify_strict != "string";
-                } else {
-                    ok = sandbox.same_stdout(original_strict, uglify_strict);
-                }
+            if (!ok && uglify_result.name == "SyntaxError" && /\bclass\b/.test(original_code)) {
+                ok = typeof run_code('"use strict";\n' + original_code, toplevel) != "string";
             }
             // ignore difference in error message caused by `import` symbol redeclaration
             if (!ok && errored && /\bimport\b/.test(original_code)) {
