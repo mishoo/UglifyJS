@@ -2290,7 +2290,7 @@ function fuzzy_match(original, uglified) {
     return true;
 
     function collect(input, nums) {
-        return input.replace(/-?([1-9][0-9]*(\.[0-9]+)?|0\.[0-9]+)(e-?[1-9][0-9]*)?/ig, function(num) {
+        return input.replace(/-?([1-9][0-9]*(\.[0-9]+)?|0\.[0-9]+)(e-?[1-9][0-9]*)?/gi, function(num) {
             return "<|" + nums.push(+num) + "|>";
         });
     }
