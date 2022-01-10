@@ -11,6 +11,21 @@ async_arrow: {
     node_version: ">=8"
 }
 
+async_computed: {
+    input: {
+        var o = {
+            async [42]() {
+                return this.p;
+            },
+            p: "PASS",
+        };
+        o[42]().then(console.log);
+    }
+    expect_exact: 'var o={async[42](){return this.p},p:"PASS"};o[42]().then(console.log);'
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 async_label: {
     input: {
         (async function() {
