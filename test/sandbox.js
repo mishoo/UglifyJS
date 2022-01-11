@@ -300,7 +300,7 @@ function run_code_exec(code, toplevel, timeout) {
             details = vm.runInNewContext("(" + details + ")");
         } catch (e) {}
     } else if (!match) {
-        new Error("Script execution aborted.");
+        return new Error("Script execution aborted.");
     }
     if (!match) return details;
     var ex = new global[match[1]](match[2]);
