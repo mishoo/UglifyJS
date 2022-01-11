@@ -436,6 +436,149 @@ emberjs_global: {
     expect_stdout: Error("PASS")
 }
 
+reassign: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        typeofs: true,
+    }
+    input: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            A = void 0;
+            while (console.log(void 0 === A ? "PASS" : "FAIL 2"));
+        }
+    }
+    expect: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            A = void 0;
+            while (console.log(void 0 === A ? "PASS" : "FAIL 2"));
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+reassign_call: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        typeofs: true,
+    }
+    input: {
+        A = console;
+        function f() {
+            A = void 0;
+        }
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            f();
+            while (console.log(void 0 === A ? "PASS" : "FAIL 2"));
+        }
+    }
+    expect: {
+        A = console;
+        function f() {
+            A = void 0;
+        }
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            f();
+            while (console.log(void 0 === A ? "PASS" : "FAIL 2"));
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+reassign_conditional: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        typeofs: true,
+    }
+    input: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            A &&= void 0;
+            while (console.log(void 0 === A ? "PASS" : "FAIL 2"));
+        }
+    }
+    expect: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            A &&= void 0;
+            while (console.log(void 0 === A ? "PASS" : "FAIL 2"));
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=15"
+}
+
+reassign_iife: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        typeofs: true,
+    }
+    input: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else (function() {
+            A = void 0;
+        })(console.log(void 0 === A ? "FAIL 2" : "PASS"));
+    }
+    expect: {
+        A = console;
+        "undefined" == typeof A ? console.log("FAIL 1") : function() {
+            A = void 0;
+        }(console.log((A, false) ? "FAIL 2" : "PASS"));
+    }
+    expect_stdout: "PASS"
+}
+
+reassign_property: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        typeofs: true,
+    }
+    input: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            A.p = void 0;
+            while (console.log(void 0 === A ? "FAIL 2" : "PASS"));
+        }
+    }
+    expect: {
+        A = console;
+        if ("undefined" == typeof A)
+            console.log("FAIL 1");
+        else {
+            A.p = void 0;
+            while (console.log((A, false) ? "FAIL 2" : "PASS"));
+        }
+    }
+    expect_stdout: "PASS"
+}
+
 issue_3817: {
     options = {
         comparisons: true,
