@@ -3367,3 +3367,28 @@ issue_5189_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5288: {
+    options = {
+        conditionals: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        while (function([]) {}([ function f() {
+            if (console)
+                return console.log("PASS");
+            else {
+                let a = 0;
+            }
+        }() ]));
+    }
+    expect: {
+        while ([ [ console ? console.log("PASS") : 0 ] ], void 0);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
