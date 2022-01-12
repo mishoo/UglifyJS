@@ -106,6 +106,22 @@ drop_unused: {
     }
 }
 
+drop_side_effect_free: {
+    options = {
+        imports: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        import foo from "bar";
+        var a = foo;
+    }
+    expect: {
+        import "bar";
+    }
+}
+
 mangle: {
     rename = false
     mangle = {
