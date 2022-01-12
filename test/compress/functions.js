@@ -8014,3 +8014,35 @@ issue_5283: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5290: {
+    options = {
+        functions: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 1;
+        while (a--) new function(b) {
+            switch (b) {
+              case b.p:
+              case console.log("PASS"):
+            }
+        }(function() {});
+    }
+    expect: {
+        var a = 1;
+        while (a--) {
+            b = void 0;
+            var b = function() {};
+            switch (b) {
+              case b.p:
+              case console.log("PASS"):
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
