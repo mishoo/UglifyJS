@@ -2029,7 +2029,9 @@ issue_5222: {
     expect: {
         do {
             a = void 0,
-            [ a ] = [];
+            a = {
+                p: [ a ] = [],
+            };
         } while (console.log("PASS"));
         var a;
     }
