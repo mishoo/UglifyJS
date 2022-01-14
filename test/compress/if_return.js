@@ -595,10 +595,10 @@ issue_3600_2: {
     expect: {
         var c = 0;
         (function() {
-            if ([][c++]) {
-                var b = --b;
+            if ([][c++])
+                b = --b,
                 c = 42;
-            }
+            var b;
         })();
         console.log(c);
     }
