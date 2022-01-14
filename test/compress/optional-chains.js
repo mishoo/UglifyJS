@@ -361,7 +361,9 @@ issue_4906: {
         } while (console.log("PASS"));
     }
     expect: {
-        do {} while (console.log("PASS"));
+        do {
+            var a = a?.[42];
+        } while (console.log("PASS"));
     }
     expect_stdout: "PASS"
     node_version: ">=14"
@@ -434,7 +436,7 @@ issue_5039: {
         console.log("PASS");
     }
     expect: {
-        (function f() {});
+        var a = a?.[function f() {}];
         console.log("PASS");
     }
     expect_stdout: "PASS"
@@ -464,5 +466,154 @@ issue_5091: {
         console.log(f("FAIL 1") || "PASS");
     }
     expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+issue_5292_dot: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            }
+        };
+        o?.p;
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            }
+        };
+        o?.p;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+issue_5292_dot_pure_getters: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            }
+        };
+        o?.p;
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            }
+        };
+    }
+}
+
+issue_5292_dot_pure_getters_strict: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            }
+        };
+        o?.p;
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("PASS");
+            }
+        };
+        o?.p;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+issue_5292_sub: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("foo");
+            }
+        };
+        o?.[console.log("bar"), "p"];
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("foo");
+            }
+        };
+        o?.[console.log("bar"), "p"];
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
+    node_version: ">=14"
+}
+
+issue_5292_sub_pure_getters: {
+    options = {
+        pure_getters: true,
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("foo");
+            }
+        };
+        o?.[console.log("bar"), "p"];
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("foo");
+            }
+        };
+        console.log("bar");
+    }
+}
+
+issue_5292_sub_pure_getters_strict: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        var o = {
+            get p() {
+                console.log("foo");
+            }
+        };
+        o?.[console.log("bar"), "p"];
+    }
+    expect: {
+        var o = {
+            get p() {
+                console.log("foo");
+            }
+        };
+        o?.[console.log("bar"), "p"];
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+    ]
     node_version: ">=14"
 }
