@@ -1233,8 +1233,11 @@ issue_2105_2: {
 issue_2105_3: {
     options = {
         inline: true,
-        passes: 2,
+        join_vars: true,
+        passes: 3,
         reduce_vars: true,
+        side_effects: true,
+        sequences: true,
         unused: true,
     }
     input: {
@@ -1258,12 +1261,12 @@ issue_2105_3: {
         });
     }
     expect: {
-        !void void {
+        ({
             prop: function() {
-                console.log;
-                void console.log("PASS");
-            }
-        }.prop();
+                console.log,
+                console.log("PASS");
+            },
+        }).prop();
     }
     expect_stdout: "PASS"
 }

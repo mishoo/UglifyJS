@@ -6152,10 +6152,8 @@ issue_4265: {
     }
     expect: {
         function f() {
-            return console, function() {
-                console.log(a);
-                var a;
-            }(), 0;
+            var a;
+            return console, console.log(a), 0;
         }
         f();
     }
@@ -8043,6 +8041,43 @@ issue_5290: {
               case console.log("PASS"):
             }
         }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5296: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            for (var i = 0; i < 2; i++)
+                try {
+                    return function() {
+                        while (!console);
+                        var b = b && (a = b) || "FAIL";
+                    }();
+                } finally {
+                    continue;
+                }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            for (var i = 0; i < 2; i++)
+                try {
+                    b = void 0;
+                    while (!console);
+                    var b = b && (a = b) || "FAIL";
+                    return;
+                } finally {
+                    continue;
+                }
+        })();
+        console.log(a);
     }
     expect_stdout: "PASS"
 }
