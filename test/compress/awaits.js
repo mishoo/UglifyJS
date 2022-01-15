@@ -2676,3 +2676,26 @@ issue_5258_2: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5298: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        (async function() {
+            for (a in [ 42 in null ]);
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (async function() {
+            for (a in [ 42 in null ]);
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
