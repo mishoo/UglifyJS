@@ -1639,7 +1639,7 @@ issue_4438: {
                 ;
             else {
                 let a = console.log;
-                a("PASS");
+                void a("PASS");
             }
         }
         f();
