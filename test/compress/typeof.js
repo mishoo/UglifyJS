@@ -527,6 +527,102 @@ reassign_conditional: {
     node_version: ">=15"
 }
 
+reassign_do: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        if_return: true,
+        passes: 2,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        A = console;
+        (function() {
+            if ("undefined" == typeof A)
+                return;
+            var a = A, i = 2;
+            do {
+                console.log(void 0 === A, void 0 === a);
+                A = void 0;
+            } while (--i);
+        })();
+    }
+    expect: {
+        A = console;
+        (function() {
+            if ("undefined" != typeof A) {
+                var a = A, i = 2;
+                do {
+                    console.log(void 0 === A, (a, false));
+                    A = void 0;
+                } while (--i);
+            }
+        })();
+    }
+    expect_stdout: [
+        "false false",
+        "true false",
+    ]
+}
+
+reassign_for: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        typeofs: true,
+    }
+    input: {
+        if (A = console, "undefined" != typeof A)
+            for (var a = A, i = 0; i < 2; i++)
+                console.log(void 0 === A, void 0 === a),
+                A = void 0;
+    }
+    expect: {
+        if (A = console, "undefined" != typeof A)
+            for (var a = A, i = 0; i < 2; i++)
+                console.log(void 0 === A, (a, false)),
+                A = void 0;
+    }
+    expect_stdout: [
+        "false false",
+        "true false",
+    ]
+}
+
+reassign_for_in: {
+    options = {
+        comparisons: true,
+        conditionals: true,
+        passes: 2,
+        reduce_vars: true,
+        typeofs: true,
+    }
+    input: {
+        (A = console) && "undefined" != typeof A && function(a) {
+            for (var k in [ a = A, 42 ]) {
+                console.log(void 0 === A, void 0 === a);
+                A = void 0;
+            }
+        }();
+    }
+    expect: {
+        (A = console) && "undefined" != typeof A && function(a) {
+            for (var k in [ a = A, 42 ]) {
+                console.log(void 0 === A, (a, false));
+                A = void 0;
+            }
+        }();
+    }
+    expect_stdout: [
+        "false false",
+        "true false",
+    ]
+}
+
 reassign_iife: {
     options = {
         comparisons: true,
@@ -564,7 +660,7 @@ reassign_property: {
             console.log("FAIL 1");
         else {
             A.p = void 0;
-            while (console.log(void 0 === A ? "FAIL 2" : "PASS"));
+            console.log(void 0 === A ? "FAIL 2" : "PASS");
         }
     }
     expect: {
@@ -573,7 +669,7 @@ reassign_property: {
             console.log("FAIL 1");
         else {
             A.p = void 0;
-            while (console.log((A, false) ? "FAIL 2" : "PASS"));
+            console.log((A, false) ? "FAIL 2" : "PASS");
         }
     }
     expect_stdout: "PASS"
