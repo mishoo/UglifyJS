@@ -6146,18 +6146,21 @@ issue_4265: {
                 a;
                 var a;
             }() ]);
-            return 0;
+            return 42;
         }
-        f();
+        console.log(f());
     }
     expect: {
         function f() {
             var a;
-            return console, console.log(a), 0;
+            return console, console.log(a), 42;
         }
-        f();
+        console.log(f());
     }
-    expect_stdout: "undefined"
+    expect_stdout: [
+        "undefined",
+        "42",
+    ]
 }
 
 trailing_comma: {
