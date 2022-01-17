@@ -693,7 +693,124 @@ inline_block_return_async: {
     node_version: ">=8"
 }
 
-await_unary: {
+await_then: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            f(), await 42;
+            while (console.log(a));
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await !f();
+            while (console.log(a));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+await_unary_1: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await !f();
+            while (console.log(a));
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await !f();
+            while (console.log(a));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+await_unary_2: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await ~f();
+            while (console.log(a));
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await !f();
+            while (console.log(a));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+await_unary_3: {
     options = {
         awaits: true,
         side_effects: true,
@@ -720,7 +837,46 @@ await_unary: {
     node_version: ">=8"
 }
 
-await_void: {
+await_void_1: {
+    options = {
+        awaits: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await void f();
+            while (console.log(a));
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        function f() {
+            return {
+                then: function(r) {
+                    a = "FAIL";
+                    r();
+                },
+            };
+        }
+        (async function() {
+            await !f();
+            while (console.log(a));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+await_void_2: {
     options = {
         awaits: true,
         if_return: true,
@@ -735,7 +891,7 @@ await_void: {
     }
     expect: {
         (async function() {
-            await console.log("PASS");
+            console.log("PASS");
         })();
     }
     expect_stdout: "PASS"
