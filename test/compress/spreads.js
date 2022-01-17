@@ -241,7 +241,29 @@ drop_empty_call_2: {
     node_version: ">=6"
 }
 
-convert_hole: {
+convert_hole_array: {
+    options = {
+        spreads: true,
+    }
+    input: {
+        [ ...[ "PASS", , 42 ] ].forEach(function(a) {
+            console.log(a);
+        });
+    }
+    expect: {
+        [ "PASS", void 0, 42 ].forEach(function(a) {
+            console.log(a);
+        });
+    }
+    expect_stdout: [
+        "PASS",
+        "undefined",
+        "42",
+    ]
+    node_version: ">=6"
+}
+
+convert_hole_call: {
     options = {
         spreads: true,
     }
