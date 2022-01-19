@@ -496,6 +496,7 @@ inline_block_await: {
         awaits: true,
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         console.log("foo");
@@ -567,6 +568,7 @@ inline_block_await_async_return: {
         awaits: true,
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         console.log("foo");
@@ -2850,6 +2852,108 @@ issue_5298: {
         (async function() {
             for (a in [ 42 in null ]);
         })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5305_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var a = "PASS";
+        (async function() {
+            try {
+                return await function() {
+                    while (!console);
+                }();
+            } finally {
+                a = "FAIL";
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (async function() {
+            try {
+                while (!console);
+                return await void 0;
+            } finally {
+                a = "FAIL";
+            }
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5305_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var a = "PASS";
+        (async function() {
+            try {
+                throw null;
+            } catch (e) {
+                return await function() {
+                    while (!console);
+                }();
+            } finally {
+                a = "FAIL";
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        (async function() {
+            try {
+                throw null;
+            } catch (e) {
+                while (!console);
+                return await void 0;
+            } finally {
+                a = "FAIL";
+            }
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5305_3: {
+    options = {
+        awaits: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "PASS";
+        (async function() {
+            try {
+                await function() {
+                    while (!console);
+                }();
+            } catch (e) {
+                a = "FAIL";
+            }
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        try {
+            while (!console);
+        } catch (e) {
+            a = "FAIL";
+        }
         console.log(a);
     }
     expect_stdout: "PASS"
