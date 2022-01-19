@@ -436,9 +436,9 @@ merge_funarg: {
         })();
     }
     expect: {
-        (function(...b) {
-            var b = b.length;
-            console.log(b);
+        (function(...a) {
+            var a = a.length;
+            console.log(a);
         })();
     }
     expect_stdout: "0"
@@ -456,9 +456,9 @@ merge_funarg_destructured_array: {
         })([]);
     }
     expect: {
-        (function([ ...b ]) {
-            var b = b.length;
-            console.log(b);
+        (function([ ...a ]) {
+            var a = a.length;
+            console.log(a);
         })([]);
     }
     expect_stdout: "0"
@@ -476,9 +476,9 @@ merge_funarg_destructured_object: {
         })([ "PASS" ]);
     }
     expect: {
-        (function({ ...b }) {
-            var b = b[0];
-            console.log(b);
+        (function({ ...a }) {
+            var a = a[0];
+            console.log(a);
         })([ "PASS" ]);
     }
     expect_stdout: "PASS"

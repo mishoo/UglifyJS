@@ -7605,11 +7605,11 @@ issue_5230: {
         }());
     }
     expect: {
-        while (void (f = function(c) {
+        while (void (f = function(a) {
             var b = 42;
             console;
-            var c;
-            for (var k in c = [ c ])
+            var a;
+            for (var k in a = [ a ])
                 console.log(b++);
         })(f));
         var f;

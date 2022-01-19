@@ -280,6 +280,38 @@ merge_vars_3: {
     node_version: ">=4"
 }
 
+merge_vars_4: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        var a = 1;
+        console.log(typeof a);
+        {
+            var b = console;
+            console.log(typeof b);
+            let a = 0;
+        }
+    }
+    expect: {
+        "use strict";
+        var a = 1;
+        console.log(typeof a);
+        {
+            var b = console;
+            console.log(typeof b);
+            let a = 0;
+        }
+    }
+    expect_stdout: [
+        "number",
+        "object",
+    ]
+    node_version: ">=4"
+}
+
 use_before_init_1: {
     options = {
         evaluate: true,

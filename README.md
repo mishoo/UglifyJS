@@ -115,6 +115,7 @@ a double dash to prevent input files being used as option arguments:
                                 Equivalent to setting `ie: true` in `minify()`
                                 for `compress`, `mangle` and `output` options.
                                 By default UglifyJS will not try to be IE-proof.
+    --keep-fargs                Do not mangle/drop function arguments.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
     --name-cache <file>         File to hold mangled name mappings.
@@ -504,6 +505,9 @@ if (result.error) throw result.error;
 
 - `ie` (default: `false`) — enable workarounds for Internet Explorer bugs.
 
+- `keep_fargs` (default: `false`) — pass `true` to prevent discarding or mangling
+  of function arguments.
+
 - `keep_fnames` (default: `false`) — pass `true` to prevent discarding or mangling
   of function names.  Useful for code relying on `Function.prototype.name`.
 
@@ -867,6 +871,9 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 - `debug` (default: `false`) — Mangle names with the original name still present.
   Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
+
+- `keep_fargs` (default: `false`) — Use `true` to prevent mangling of function
+  arguments.
 
 - `keep_quoted` (default: `false`) — Only mangle unquoted property names.
 

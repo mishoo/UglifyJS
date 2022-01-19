@@ -1845,13 +1845,13 @@ issue_4294: {
     expect: {
         A = "PASS";
         (function() {
-            var b = function({
-                [b]: {},
+            var a = function({
+                [a]: {},
             }) {}({
-                [b]: 0,
+                [a]: 0,
             });
-            var b = A;
-            console.log(b);
+            var a = A;
+            console.log(a);
         })();
     }
     expect_stdout: "PASS"
