@@ -270,8 +270,8 @@ merge_vars_3: {
             var b = console;
             console.log(typeof b);
         }
-        var a = 1;
-        console.log(typeof a);
+        var b = 1;
+        console.log(typeof b);
     }
     expect_stdout: [
         "object",
