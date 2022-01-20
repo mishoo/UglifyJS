@@ -188,6 +188,30 @@ describe("bin/uglifyjs", function() {
             child.stdin.end(read("test/input/issue-3040/input.js"));
         }, 1000);
     });
+    it("Should work with --keep-fargs (mangle only)", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fargs -m';
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "function f(x){return function(){function n(a){return a*a}return x(n)}}function g(op){return op(1)+op(2)}console.log(f(g)()==5);\n");
+            done();
+        });
+    });
+    it("Should work with --keep-fargs (mangle & compress)", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fargs -m -c';
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "function f(x){return function(){return x(function(a){return a*a})}}function g(op){return op(1)+op(2)}console.log(5==f(g)());\n");
+            done();
+        });
+    });
+    it("Should work with keep_fargs under mangler options", function(done) {
+        var command = uglifyjscmd + ' test/input/issue-1431/sample.js -m keep_fargs=true';
+        exec(command, function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "function f(x){return function(){function n(a){return a*a}return x(n)}}function g(op){return op(1)+op(2)}console.log(f(g)()==5);\n");
+            done();
+        });
+    });
     it("Should work with --keep-fnames (mangle only)", function(done) {
         var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m';
         exec(command, function(err, stdout) {
@@ -197,10 +221,10 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with --keep-fnames (mangle & compress)", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c unused=false';
+        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c';
         exec(command, function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(5==f(g)());\n");
+            assert.strictEqual(stdout, "function f(n){return function(){return n(function n(r){return r*r})}}function g(n){return n(1)+n(2)}console.log(5==f(g)());\n");
             done();
         });
     });

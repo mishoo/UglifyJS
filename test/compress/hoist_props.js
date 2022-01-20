@@ -1163,13 +1163,13 @@ issue_5182: {
         log(o.p(42));
     }
     expect: {
-        var o_p = console;
-        log = o_p.log;
-        o_p = function(a) {
+        var o = console;
+        log = o.log;
+        o = function(a) {
             console.log(a ? "PASS" : "FAIL");
             return a;
         };
-        log(o_p(42));
+        log(o(42));
     }
     expect_stdout: [
         "PASS",

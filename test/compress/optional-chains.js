@@ -457,11 +457,11 @@ issue_5091: {
         console.log(f("FAIL 1") || "PASS");
     }
     expect: {
-        function f(b) {
-            var b = b.p;
+        function f(a) {
+            var a = a.p;
             var c;
-            b?.[c = "FAIL 2"];
-            return b || c;
+            a?.[c = "FAIL 2"];
+            return a || c;
         }
         console.log(f("FAIL 1") || "PASS");
     }

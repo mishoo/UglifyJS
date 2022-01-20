@@ -220,6 +220,32 @@ merge_vars_3: {
     expect_stdout: true
 }
 
+merge_vars_4: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 1;
+        console.log(typeof a);
+        {
+            var b = console;
+            console.log(typeof b);
+            const a = 0;
+        }
+    }
+    expect: {
+        var a = 1;
+        console.log(typeof a);
+        {
+            var b = console;
+            console.log(typeof b);
+            const a = 0;
+        }
+    }
+    expect_stdout: true
+}
+
 use_before_init_1: {
     options = {
         reduce_vars: true,

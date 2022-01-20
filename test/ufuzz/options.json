@@ -26,6 +26,7 @@
             "passes": 1e6,
             "unsafe": true
         },
+        "keep_fargs": true,
         "keep_fnames": true,
         "toplevel": true
     },

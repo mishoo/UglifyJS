@@ -72,6 +72,7 @@ function process_option(name, no_value) {
                 } else {
                     if (padding.length < name.length) padding = Array(name.length + 1).join(" ");
                     toplevels.push([ {
+                        keep_fargs: "keep-fargs",
                         keep_fnames: "keep-fnames",
                         nameCache: "name-cache",
                     }[name] || name, option ]);
@@ -104,6 +105,7 @@ function process_option(name, no_value) {
                 "  -d, --define <expr>[=value]              Global definitions.",
                 "  -e, --enclose [arg[,...][:value[,...]]]  Embed everything in a big function, with configurable argument(s) & value(s).",
                 "  --ie                                     Support non-standard Internet Explorer.",
+                "  --keep-fargs                             Do not mangle/drop function arguments.",
                 "  --keep-fnames                            Do not mangle/drop function names. Useful for code relying on Function.prototype.name.",
                 "  --name-cache <file>                      File to hold mangled name mappings.",
                 "  --rename                                 Force symbol expansion.",
@@ -159,6 +161,9 @@ function process_option(name, no_value) {
         break;
       case "no-annotations":
         options.annotations = false;
+        break;
+      case "keep-fargs":
+        options.keep_fargs = true;
         break;
       case "keep-fnames":
         options.keep_fnames = true;
