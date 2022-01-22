@@ -9810,3 +9810,38 @@ issue_5277: {
     }
     expect_stdout: "undefined"
 }
+
+issue_5309_1: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        toplevel: true,
+    }
+    input: {
+        if (console)
+            var a = (console.log("PASS"), b), b = a;
+        else
+            console.log("FAIL");
+    }
+    expect: {
+        var a, b;
+        console ? (console.log("PASS"), b = b) : console.log("FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5309_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b;
+        console ? (a = (console.log("PASS"), b), b = a) : console.log("FAIL");
+    }
+    expect: {
+        var a, b;
+        console ? (console.log("PASS"), b = b) : console.log("FAIL");
+    }
+    expect_stdout: "PASS"
+}
