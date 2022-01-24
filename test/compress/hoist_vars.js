@@ -250,8 +250,7 @@ issue_4517: {
     expect: {
         console.log(function() {
             var a = 2;
-            A = a;
-            return A + typeof !1;
+            return (A = a) + typeof !1;
         }());
     }
     expect_stdout: "2boolean"

@@ -673,8 +673,7 @@ issue_4827_1: {
         c &&= b = a, console.log(b);
     }
     expect: {
-        A = "FAIL";
-        var a = A, b = "PASS", c;
+        var a = A = "FAIL", b = "PASS", c;
         c &&= b = a, console.log(b);
     }
     expect_stdout: "PASS"
