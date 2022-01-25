@@ -2005,40 +2005,6 @@ issue_5192: {
     node_version: ">=6"
 }
 
-issue_5222: {
-    options = {
-        hoist_props: true,
-        inline: true,
-        reduce_vars: true,
-        side_effects: true,
-        toplevel: true,
-        unused: true,
-    }
-    input: {
-        function f() {
-            do {
-                (function() {
-                    var a = {
-                        p: [ a ] = [],
-                    };
-                })();
-            } while (console.log("PASS"));
-        }
-        f();
-    }
-    expect: {
-        do {
-            a = void 0,
-            a = {
-                p: [ a ] = [],
-            };
-        } while (console.log("PASS"));
-        var a;
-    }
-    expect_stdout: "PASS"
-    node_version: ">=6"
-}
-
 issue_5246_1: {
     options = {
         pure_getters: true,
