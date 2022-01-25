@@ -2579,7 +2579,7 @@ side_effects_property: {
     expect_stdout: true
 }
 
-undeclared: {
+undeclared_1: {
     options = {
         collapse_vars: true,
         unused: true,
@@ -2594,8 +2594,68 @@ undeclared: {
     }
     expect: {
         function f(x, y) {
+            return (b = y) + x;
+        }
+    }
+}
+
+undeclared_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(x, y) {
+            var a;
+            a = x;
             b = y;
-            return b + x;
+            return a + b;
+        }
+    }
+    expect: {
+        function f(x, y) {
+            return x + (b = y);
+        }
+    }
+}
+
+undeclared_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(x, y) {
+            var a;
+            a = x;
+            b = y;
+            return b + a();
+        }
+    }
+    expect: {
+        function f(x, y) {
+            return (b = y) + x();
+        }
+    }
+}
+
+undeclared_4: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        function f(x, y) {
+            var a;
+            a = x;
+            b = y;
+            return a() + b;
+        }
+    }
+    expect: {
+        function f(x, y) {
+            b = y;
+            return x() + b;
         }
     }
 }
@@ -2987,9 +3047,8 @@ compound_assignment_4: {
         console.log(a);
     }
     expect: {
-        A = "PASS";
         var a = "";
-        (a += (a = "FAIL", A)).p;
+        (a += (a = "FAIL", A = "PASS")).p;
         console.log(a);
     }
     expect_stdout: "PASS"
