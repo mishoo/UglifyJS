@@ -3426,3 +3426,51 @@ issue_5288: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5314_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        A = this;
+        new function() {
+            (function({
+                [console.log(this === A ? "PASS" : "FAIL")]: a,
+            }) {})(42);
+        }();
+    }
+    expect: {
+        A = this;
+        (function() {
+            (function({
+                [console.log(this === A ? "PASS" : "FAIL")]: a,
+            }) {})(42);
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5314_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        A = this;
+        new function() {
+            (({
+                [console.log(this === A ? "FAIL" : "PASS")]: a,
+            }) => {})(42);
+        }();
+    }
+    expect: {
+        A = this;
+        new function() {
+            [ {
+                [console.log(this === A ? "FAIL" : "PASS")]: [].e,
+            } ] = [ 42 ];
+        }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
