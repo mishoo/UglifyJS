@@ -97,10 +97,10 @@ return_5: {
     }
     expect_exact: [
         "_is_selected=function(tags,slug){",
-        "var ref",
+        "var ref;",
         "",
         "",
-        ";return null!=(ref=_.find(tags,{slug:slug}))?ref.selected:void 0};",
+        "return null!=(ref=_.find(tags,{slug:slug}))?ref.selected:void 0};",
     ]
 }
 
@@ -146,10 +146,10 @@ return_7: {
     }
     expect_exact: [
         "_is_selected=function(e,l){",
-        "var n",
+        "var n;",
         "",
         "",
-        ";return null!=(n=_.find(e,{slug:l}))?n.selected:void 0};",
+        "return null!=(n=_.find(e,{slug:l}))?n.selected:void 0};",
     ]
 }
 
