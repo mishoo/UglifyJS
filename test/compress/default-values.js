@@ -2081,3 +2081,43 @@ issue_5256: {
     expect_stdout: "undefined"
     node_version: ">=8"
 }
+
+issue_5314_1: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        A = this;
+        new function() {
+            (function(a = console.log(this === A ? "PASS" : "FAIL")) {})();
+        }();
+    }
+    expect: {
+        A = this;
+        (function() {
+            (function(a = console.log(this === A ? "PASS" : "FAIL")) {})();
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5314_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        A = this;
+        new function() {
+            ((a = console.log(this === A ? "FAIL" : "PASS")) => {})();
+        }();
+    }
+    expect: {
+        A = this;
+        new function() {
+            console.log(this === A ? "FAIL" : "PASS");
+        }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
