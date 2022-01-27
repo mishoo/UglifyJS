@@ -917,9 +917,11 @@ can pass additional arguments that control the code output:
 
 - `galio` (default: `false`) — enable workarounds for ANT Galio bugs
 
-- `indent_level` (default: `4`)
+- `indent_level` (default: `4`) — indent by specified number of spaces or the
+  exact whitespace sequence supplied, e.g. `"\t"`.
 
-- `indent_start` (default: `0`) — prefix all lines by that many spaces
+- `indent_start` (default: `0`) — prefix all lines by whitespace sequence
+  specified in the same format as `indent_level`.
 
 - `inline_script` (default: `true`) — escape HTML comments and the slash in
   occurrences of `</script>` in strings
