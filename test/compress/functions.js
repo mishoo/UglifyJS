@@ -8084,3 +8084,53 @@ issue_5296: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5316_1: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        do {
+            console.log("PASS");
+        } while (function() {
+            var a, b = 42 && (console[a = b] = a++);
+        }());
+    }
+    expect: {
+        do {
+            console.log("PASS");
+        } while (b = a = void 0, b = (42, console[a = a] = a++), void 0);
+        var a, b;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5316_2: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        do {
+            (function() {
+                var a, b = 42 && (console[a = b] = a++);
+                while (console.log("PASS"));
+            })();
+        } while (!console);
+    }
+    expect: {
+        do {
+            a = void 0;
+            var a, b = (42, console[a = b = void 0] = a++);
+            while (console.log("PASS"));
+        } while (!console);
+    }
+    expect_stdout: "PASS"
+}
