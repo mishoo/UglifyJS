@@ -1813,3 +1813,33 @@ issue_5260: {
     ]
     node_version: ">=4"
 }
+
+issue_5319: {
+    options = {
+        collapse_vars: true,
+        merge_vars: true,
+    }
+    input: {
+        (function(a, c) {
+            var b = a, c = b;
+            {
+                const a = c;
+                console.log(c());
+            }
+        })(function() {
+            return "PASS";
+        });
+    }
+    expect: {
+        (function(a, c) {
+            var b = a, c;
+            {
+                const a = c = b;
+                console.log(c());
+            }
+        })(function() {
+            return "PASS";
+        });
+    }
+    expect_stdout: true
+}

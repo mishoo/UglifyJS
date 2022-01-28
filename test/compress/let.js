@@ -1973,3 +1973,36 @@ issue_5260: {
     ]
     node_version: ">=4"
 }
+
+issue_5319: {
+    options = {
+        collapse_vars: true,
+        merge_vars: true,
+    }
+    input: {
+        "use strict";
+        (function(a, c) {
+            var b = a, c = b;
+            {
+                let a = c;
+                console.log(c());
+            }
+        })(function() {
+            return "PASS";
+        });
+    }
+    expect: {
+        "use strict";
+        (function(a, c) {
+            var b = a, c;
+            {
+                let a = c = b;
+                console.log(c());
+            }
+        })(function() {
+            return "PASS";
+        });
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
