@@ -2656,7 +2656,7 @@ issue_3956: {
         collapse_vars: true,
         evaluate: true,
         inline: true,
-        passes: 2,
+        passes: 3,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -2787,7 +2787,7 @@ issue_3986: {
     expect_stdout: "0"
 }
 
-issue_4017: {
+issue_4017_1: {
     options = {
         pure_getters: "strict",
         reduce_vars: true,
@@ -2805,7 +2805,31 @@ issue_4017: {
         var a = 0;
         console.log(function() {
             c &= 0;
-            var c;
+            var c = a++ + (A = a);
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4017_2: {
+    options = {
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = 0;
+        console.log(function f() {
+            var b = c &= 0;
+            var c = a++ + (A = a);
+            var d = c && c[f];
+        }());
+    }
+    expect: {
+        var a = 0;
+        console.log(function() {
+            0;
             a++,
             A = a;
         }());
@@ -3248,7 +3272,7 @@ issue_4558_1: {
     expect: {
         var a = 0;
         var b = c >>>= a;
-        var c;
+        var c = 0;
         b && a++,
         console.log(a);
     }

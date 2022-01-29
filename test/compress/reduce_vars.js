@@ -7832,3 +7832,32 @@ issue_5055_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5324: {
+    options = {
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = 0;
+        do {
+            var a, b = A;
+            for (a in b)
+                var c = b;
+        } while (function() {
+            var d;
+            console.log(d *= A);
+        }());
+    }
+    expect: {
+        A = 0;
+        do {
+            var a, b = A;
+            for (a in b);
+        } while (b = void 0, void console.log(b *= A));
+    }
+    expect_stdout: "NaN"
+}
