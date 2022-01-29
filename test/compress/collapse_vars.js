@@ -9014,6 +9014,27 @@ collapse_and_assign: {
     expect_stdout: "PASS"
 }
 
+collapse_and_assign_property: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function f() {
+            f && (f.p = "PASS");
+            return f.p;
+        }());
+    }
+    expect: {
+        console.log(function f() {
+            return f.p = f ? "PASS" : f.p;
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
 collapse_or_assign: {
     options = {
         collapse_vars: true,
@@ -9031,7 +9052,7 @@ collapse_or_assign: {
         var a = {
             p: "PASS",
         };
-        log(a = !a.q ? a.p : a);
+        log(a = a.q ? a: a.p);
     }
     expect_stdout: "PASS"
 }
