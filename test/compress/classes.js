@@ -2449,3 +2449,30 @@ issue_5294_4: {
     expect_stdout: "PASS"
     node_version: ">=12"
 }
+
+issue_5322: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = 41;
+        class A {
+            static p() {
+                console.log(++a);
+            }
+            static q = this.p();
+        }
+    }
+    expect: {
+        var a = 41;
+        (class {
+            static p() {
+                console.log(++a);
+            }
+            static q = this.p();
+        });
+    }
+    expect_stdout: "42"
+    node_version: ">=12"
+}
