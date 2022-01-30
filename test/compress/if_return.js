@@ -327,7 +327,7 @@ issue_512: {
     }
 }
 
-if_var_return: {
+if_var_return_1: {
     options = {
         conditionals: true,
         if_return: true,
@@ -369,6 +369,52 @@ if_var_return: {
         function g() {
             var a, b, c, d, e, f, g, h, i, j;
             return u() ? v() : w() ? x() : (y(), z(), void 0);
+        }
+    }
+}
+
+if_var_return_2: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+    }
+    input: {
+        (function() {
+            var a = w();
+            if (x())
+                return y();
+            z();
+        })();
+    }
+    expect: {
+        (function() {
+            var a = w();
+            return x() ? y() : (z(), void 0);
+        })();
+    }
+}
+
+if_var_return_3: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+    }
+    input: {
+        function f() {
+            if (u())
+                return v();
+            var a = w();
+            if (x())
+                return y();
+            z();
+        }
+    }
+    expect: {
+        function f() {
+            return u() ? v() : (a = w(), x() ? y() : (z(), void 0));
+            var a;
         }
     }
 }
