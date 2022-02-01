@@ -2139,7 +2139,7 @@ function log_suspects(minify_options, component) {
     var defs = default_options[component];
     var toplevel = sandbox.has_toplevel(minify_options);
     var suspects = Object.keys(defs).filter(function(name) {
-        var flip = name == "keep_fargs";
+        var flip = component == "compress" && name == "keep_fargs";
         if (flip !== (name in options ? options : defs)[name]) {
             var m = JSON.parse(JSON.stringify(minify_options));
             var o = JSON.parse(JSON.stringify(options));
@@ -2490,14 +2490,20 @@ for (var round = 1; round <= num_iterations; round++) {
             // ignore runtime platform bugs
             if (!ok && uglify_result.message == "Script execution aborted.") ok = true;
             // handle difference caused by time-outs
-            if (!ok && errored && is_error_timeout(original_result)) {
-                if (is_error_timeout(uglify_result)) {
-                    // ignore difference in error message
-                    ok = true;
-                } else {
+            if (!ok) {
+                if (errored && is_error_timeout(original_result)) {
+                    if (is_error_timeout(uglify_result)) {
+                        // ignore difference in error message
+                        ok = true;
+                    } else {
+                        // ignore spurious time-outs
+                        if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = run_code(original_code, toplevel, 10000);
+                        ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
+                    }
+                } else if (is_error_timeout(uglify_result)) {
                     // ignore spurious time-outs
-                    if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = run_code(original_code, toplevel, 10000);
-                    ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
+                    var waited_result = run_code(uglify_code, toplevel, 10000);
+                    ok = sandbox.same_stdout(original_result, waited_result);
                 }
             }
             // ignore declaration order of global variables
