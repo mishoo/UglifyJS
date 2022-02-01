@@ -8134,3 +8134,20 @@ issue_5316_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5328: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function(arguments) {
+            console.log(Object.keys(arguments).join());
+        })(this);
+    }
+    expect: {
+        (function(arguments) {
+            console.log(Object.keys(arguments).join());
+        })(this);
+    }
+    expect_stdout: ""
+}
