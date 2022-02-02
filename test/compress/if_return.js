@@ -395,7 +395,31 @@ if_var_return_2: {
     }
 }
 
-if_var_return_3: {
+if_var_retrn_3: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+    }
+    input: {
+        f(function() {
+            var a = w();
+            if (x())
+                return y(a);
+            z();
+        });
+    }
+    expect: {
+        f(function() {
+            var a = w();
+            if (x())
+                return y(a);
+            z();
+        });
+    }
+}
+
+if_var_return_4: {
     options = {
         conditionals: true,
         if_return: true,
