@@ -1375,6 +1375,7 @@ issue_5076_1: {
     options = {
         evaluate: true,
         hoist_vars: true,
+        keep_fargs: false,
         pure_getters: "strict",
         sequences: true,
         side_effects: true,
@@ -1404,6 +1405,7 @@ issue_5076_2: {
     options = {
         evaluate: true,
         hoist_vars: true,
+        keep_fargs: false,
         passes: 2,
         pure_getters: "strict",
         sequences: true,

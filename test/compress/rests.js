@@ -349,6 +349,7 @@ retain_funarg_destructured_object_1: {
 
 retain_funarg_destructured_object_2: {
     options = {
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -1091,6 +1092,7 @@ issue_5100_2: {
 issue_5108: {
     options = {
         evaluate: true,
+        keep_fargs: false,
         reduce_vars: true,
         rests: true,
         unsafe: true,
@@ -1102,9 +1104,7 @@ issue_5108: {
         }([ "PASS", "FAIL" ]));
     }
     expect: {
-        console.log(function([]) {
-            return "PASS";
-        }([]));
+        console.log("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
@@ -1208,6 +1208,7 @@ issue_5165_2: {
 
 issue_5246_1: {
     options = {
+        keep_fargs: false,
         reduce_vars: true,
         rests: true,
         unused: true,
@@ -1218,9 +1219,9 @@ issue_5246_1: {
         }([ , function(){} ])[0]);
     }
     expect: {
-        console.log(typeof function([]) {
+        console.log(typeof function() {
             return this && [ function(){} ];
-        }([])[0]);
+        }()[0]);
     }
     expect_stdout: "function"
     node_version: ">=6"
@@ -1228,6 +1229,7 @@ issue_5246_1: {
 
 issue_5246_2: {
     options = {
+        keep_fargs: false,
         reduce_vars: true,
         rests: true,
         toplevel: true,
@@ -1249,6 +1251,7 @@ issue_5246_2: {
 
 issue_5246_3: {
     options = {
+        keep_fargs: false,
         unused: true,
     }
     input: {

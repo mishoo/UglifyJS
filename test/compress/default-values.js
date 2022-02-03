@@ -2007,6 +2007,7 @@ issue_5192: {
 
 issue_5246_1: {
     options = {
+        keep_fargs: false,
         pure_getters: true,
         unused: true,
     }
@@ -2016,20 +2017,20 @@ issue_5246_1: {
         }("foo"));
     }
     expect: {
-        console.log(function({} = 0) {
+        console.log(function() {
             return "PASS";
-        }("foo"));
+        }());
     }
     expect_stdout: "PASS"
     expect_warnings: [
-        "INFO: Dropping unused default argument value {}=42 [test/compress/default-values.js:1,29]",
-        "INFO: Dropping unused default argument value {}=0 [test/compress/default-values.js:1,29]",
+        "INFO: Dropping unused default argument {}=42 [test/compress/default-values.js:1,29]",
     ]
     node_version: ">=6"
 }
 
 issue_5246_2: {
     options = {
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -2038,9 +2039,9 @@ issue_5246_2: {
         })("PASS", []);
     }
     expect: {
-        (function(a = "FAIL", []) {
+        (function(a = "FAIL") {
             console.log(a);
-        })("PASS", []);
+        })("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=6"
@@ -2049,6 +2050,7 @@ issue_5246_2: {
 issue_5246_3: {
     options = {
         default_values: true,
+        keep_fargs: false,
         unused: true,
     }
     input: {
@@ -2117,6 +2119,31 @@ issue_5314_2: {
         new function() {
             console.log(this === A ? "FAIL" : "PASS");
         }();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5336: {
+    options = {
+        default_values: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        do {
+            (function f(b = console.log("PASS")) {
+                a = f;
+            })(42);
+        } while (a());
+    }
+    expect: {
+        var a;
+        do {
+            (function f(b = console.log("PASS")) {
+                a = f;
+            })(42);
+        } while (a());
     }
     expect_stdout: "PASS"
     node_version: ">=6"

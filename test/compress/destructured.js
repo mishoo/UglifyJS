@@ -1130,7 +1130,7 @@ drop_unused_2: {
         }
         f();
     }
-    expect:{
+    expect: {
         (function(a) {
             console.log("PASS");
         })();
@@ -3406,6 +3406,7 @@ issue_5288: {
     options = {
         conditionals: true,
         inline: true,
+        keep_fargs: false,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -3421,7 +3422,7 @@ issue_5288: {
         }() ]));
     }
     expect: {
-        while ([ [ console ? console.log("PASS") : 0 ] ], void 0);
+        while (console ? console.log("PASS") : 0, void 0);
     }
     expect_stdout: "PASS"
     node_version: ">=6"
