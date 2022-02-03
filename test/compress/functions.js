@@ -8151,3 +8151,59 @@ issue_5328: {
     }
     expect_stdout: ""
 }
+
+issue_5332_1: {
+    options = {
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        do {
+            var a = {};
+            for (A in a)
+                a;
+        } while (function() {
+            console.log(b);
+            var b = b;
+        }());
+    }
+    expect: {
+        do {
+            var a = {};
+            for (A in a);
+        } while (a = void 0, void console.log(a));
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5332_2: {
+    options = {
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        do {
+            var a = 42 in [];
+            for (A in a)
+                a;
+        } while (function() {
+            console.log(++b);
+            var b = b;
+        }());
+    }
+    expect: {
+        do {
+            var a = 42 in [];
+            for (A in a);
+        } while (a = void 0, void console.log(++a));
+    }
+    expect_stdout: "NaN"
+}
