@@ -2007,3 +2007,58 @@ issue_5232_3: {
         "undefined",
     ]
 }
+
+issue_5334_1: {
+    options = {
+        conditionals: true,
+        hoist_props: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            if (console.log("PASS"))
+                var o = true, o = {
+                    p: o += console.log("FAIL"),
+                };
+        }
+        f();
+    }
+    expect: {
+        (function() {
+            var o;
+            console.log("PASS") && (o = true, o = {
+                p: o += console.log("FAIL"),
+            });
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5334_2: {
+    options = {
+        conditionals: true,
+        hoist_props: true,
+        inline: true,
+        passes: 3,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            if (console.log("PASS"))
+                var o = true, o = {
+                    p: o += console.log("FAIL"),
+                };
+        }
+        f();
+    }
+    expect: {
+        console.log("PASS") && console.log("FAIL");
+    }
+    expect_stdout: "PASS"
+}
