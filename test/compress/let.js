@@ -2006,3 +2006,20 @@ issue_5319: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5338: {
+    options = {
+        unused: true,
+    }
+    input: {
+        "use strict";
+        let a = a;
+    }
+    expect: {
+        "use strict";
+        a;
+        let a;
+    }
+    expect_stdout: ReferenceError("a is not defined")
+    node_version: ">=4"
+}

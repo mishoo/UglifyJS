@@ -1843,3 +1843,16 @@ issue_5319: {
     }
     expect_stdout: true
 }
+
+issue_5338: {
+    options = {
+        unused: true,
+    }
+    input: {
+        const a = a;
+    }
+    expect: {
+        const a = a;
+    }
+    expect_stdout: true
+}
