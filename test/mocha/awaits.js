@@ -7,7 +7,7 @@ describe("async", function() {
             "function await() {}",
             "function(await) {}",
             "function() { await; }",
-            "function() { await:{} }",
+            "function() { await: {} }",
             "function() { var await; }",
             "function() { function await() {} }",
             "function() { try {} catch (await) {} }",

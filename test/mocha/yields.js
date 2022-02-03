@@ -6,7 +6,7 @@ describe("generator", function() {
         [
             "function yield() {}",
             "function(yield) {}",
-            "function() { yield:{} }",
+            "function() { yield: {} }",
             "function() { var yield; }",
             "function() { function yield() {} }",
             "function() { try {} catch (yield) {} }",
