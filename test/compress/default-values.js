@@ -2148,3 +2148,64 @@ issue_5336: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5340_1: {
+    options = {
+        keep_fargs: true,
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b = 42) {})(({ p: a } = true).q);
+        console.log(a);
+    }
+    expect: {
+        var a;
+        (function(b = 0) {})(({ p: a } = true).q);
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+issue_5340_2: {
+    options = {
+        keep_fargs: true,
+        pure_getters: "strict",
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b = 42) {})(({ p: a } = true).q);
+        console.log(a);
+    }
+    expect: {
+        var a;
+        [ [].e = 0 ] = [ ({ p: a } = true).q ];
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+issue_5340_3: {
+    options = {
+        keep_fargs: false,
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b = 42) {})(({ p: a } = true).q);
+        console.log(a);
+    }
+    expect: {
+        var a;
+        (function() {})(a = true["p"]);
+        console.log(a);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=6"
+}
