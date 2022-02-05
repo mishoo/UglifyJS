@@ -1713,16 +1713,14 @@ issue_2620_5: {
     }
     expect: {
         var c = "FAIL";
-        (function() {
-            var a = 0/0;
-            var NaN = void 0;
+        !function(a, NaN) {
             switch (a) {
               case a:
                 break;
               case c = "PASS", NaN:
                 break;
             }
-        })();
+        }(NaN);
         console.log(c);
     }
     expect_stdout: "PASS"
@@ -7635,9 +7633,10 @@ issue_5237: {
     }
     expect: {
         function f() {
-            while (console.log(0/0));
-            var NaN = console && console.log(NaN);
-            return;
+            while (console.log(NaN));
+            (function() {
+                var NaN = console && console.log(NaN);
+            })();
         }
         f();
     }
