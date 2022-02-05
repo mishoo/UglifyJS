@@ -927,3 +927,78 @@ issue_5251: {
     expect_stdout: true
     node_version: ">=4"
 }
+
+issue_5342_1: {
+    options = {
+        dead_code: true,
+        inline: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var a in 0) {
+            (() => {
+                while (1);
+            })(new function(NaN) {
+                a.p;
+            }());
+        }
+        console.log(function() {
+            return b;
+            try {
+                b;
+            } catch (e) {
+                var b;
+            }
+        }());
+    }
+    expect: {
+        for (var a in 0) {
+            (function(NaN) {
+                a.p;
+            })();
+            while (1);
+        }
+        console.log(b);
+        var b;
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+issue_5342_2: {
+    rename = true
+    options = {
+        dead_code: true,
+        inline: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        for (var a in 0) {
+            (() => {
+                while (1);
+            })(new function(NaN) {
+                a.p;
+            }());
+        }
+        console.log(function() {
+            return b;
+            try {
+                b;
+            } catch (e) {
+                var b;
+            }
+        }());
+    }
+    expect: {
+        for (var a in 0) {
+            a.p;
+            while (1);
+        }
+        console.log(c);
+        var c;
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
