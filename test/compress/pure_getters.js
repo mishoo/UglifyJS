@@ -1289,6 +1289,7 @@ issue_2878: {
         collapse_vars: true,
         pure_getters: true,
         sequences: true,
+        side_effects: true,
     }
     input: {
         var c = 0;

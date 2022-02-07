@@ -122,13 +122,41 @@ negate_iife_4: {
         sequences: true,
     }
     input: {
-        (function(){ return t })() ? console.log(true) : console.log(false);
-        (function(){
+        (function() {
+            return t;
+        })() ? console.log(true) : console.log(false);
+        (function() {
             console.log("something");
         })();
     }
     expect: {
-        !function(){ return t }() ? console.log(false) : console.log(true), function(){
+        !function() {
+            return t;
+        }() ? console.log(false) : console.log(true), !function() {
+            console.log("something");
+        }();
+    }
+}
+
+negate_iife_4_drop_side_effect_free: {
+    options = {
+        conditionals: true,
+        negate_iife: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        (function() {
+            return t;
+        })() ? console.log(true) : console.log(false);
+        (function() {
+            console.log("something");
+        })();
+    }
+    expect: {
+        !function() {
+            return t;
+        }() ? console.log(false) : console.log(true), function() {
             console.log("something");
         }();
     }
@@ -176,17 +204,49 @@ negate_iife_5: {
         sequences: true,
     }
     input: {
-        if ((function(){ return t })()) {
+        if (function() {
+            return t;
+        }()) {
             foo(true);
         } else {
             bar(false);
         }
-        (function(){
+        (function() {
             console.log("something");
         })();
     }
     expect: {
-        !function(){ return t }() ? bar(false) : foo(true), function(){
+        !function() {
+            return t;
+        }() ? bar(false) : foo(true), !function() {
+            console.log("something");
+        }();
+    }
+}
+
+negate_iife_5_drop_side_effect_free: {
+    options = {
+        conditionals: true,
+        negate_iife: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        if (function() {
+            return t;
+        }()) {
+            foo(true);
+        } else {
+            bar(false);
+        }
+        (function() {
+            console.log("something");
+        })();
+    }
+    expect: {
+        !function() {
+            return t;
+        }() ? bar(false) : foo(true), function() {
             console.log("something");
         }();
     }
