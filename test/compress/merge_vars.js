@@ -253,6 +253,7 @@ read_before_assign_1: {
         inline: true,
         merge_vars: true,
         sequences: true,
+        side_effects: true,
         toplevel: true,
     }
     input: {

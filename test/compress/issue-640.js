@@ -317,7 +317,35 @@ iife: {
         typeof function g() {}();
     }
     expect: {
-        x = 42, function a() {}(), function b() {}(), function c() {}(),
-        function d() {}(), function e() {}(), function f() {}(), typeof function g() {}();
+        x = 42,
+        function a() {}(),
+        !function b() {}(),
+        ~function c() {}(),
+        +function d() {}(),
+        -function e() {}(),
+        void function f() {}(),
+        typeof function g() {}();
+    }
+}
+
+iife_drop_side_effect_free: {
+    options = {
+        expression: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        x = 42;
+        (function a() {})();
+        !function b() {}();
+        ~function c() {}();
+        +function d() {}();
+        -function e() {}();
+        void function f() {}();
+        typeof function g() {}();
+    }
+    expect: {
+        x = 42,
+        typeof void 0;
     }
 }

@@ -2631,13 +2631,14 @@ issue_3999: {
     ]
 }
 
-issue_4001: {
+issue_4001_1: {
     options = {
         collapse_vars: true,
         ie: true,
         inline: true,
         reduce_vars: true,
         sequences: true,
+        side_effects: false,
         toplevel: true,
         unused: true,
     }
@@ -2660,7 +2661,42 @@ issue_4001: {
             return a;
         }
         var a;
-        console.log((a = 42, void f()[42], void function a() {}));
+        console.log((a = 42, f()[42], void f, void function a() {}));
+    }
+    expect_stdout: "undefined"
+}
+
+issue_4001_2: {
+    options = {
+        collapse_vars: true,
+        ie: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            function f() {
+                return a;
+                var b;
+            }
+            var c = f();
+            (function g() {
+                c[42];
+                f;
+            })();
+            (function a() {});
+        }(42));
+    }
+    expect: {
+        function f() {
+            return a;
+        }
+        var a;
+        console.log((a = 42, void f()[42]));
     }
     expect_stdout: "undefined"
 }

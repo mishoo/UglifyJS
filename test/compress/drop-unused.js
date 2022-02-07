@@ -3358,6 +3358,7 @@ issue_4806_1: {
 issue_4806_2: {
     options = {
         sequences: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }

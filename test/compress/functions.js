@@ -6135,6 +6135,7 @@ issue_4265: {
         dead_code: true,
         inline: true,
         sequences: true,
+        side_effects: true,
     }
     input: {
         function f() {
