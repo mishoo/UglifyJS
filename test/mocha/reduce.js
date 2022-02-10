@@ -434,4 +434,18 @@ describe("test/reduce.js", function() {
             "// }",
         ].join("\n"));
     });
+    it("Should transform `export default` correctly", function() {
+        var result = reduce_test(read("test/input/reduce/export_default.js"), {
+            compress: false,
+            toplevel: true,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "compress": false,',
+            '//   "toplevel": true',
+            "// }",
+        ].join("\n"));
+    });
 });
