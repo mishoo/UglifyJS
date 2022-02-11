@@ -617,7 +617,7 @@ issue_4730_2: {
     }
     expect: {
         var a;
-        !console.log("PASS") || a && a[a.p];
+        console.log("PASS") && a && a[a.p];
     }
     expect_stdout: "PASS"
 }

@@ -1,4 +1,4 @@
-issue979_reported: {
+reported: {
     options = {
         booleans: true,
         comparisons: true,
@@ -17,29 +17,26 @@ issue979_reported: {
     }
     input: {
         function f1() {
-            if (a == 1 || b == 2) {
+            if (a == 1 || b == 2)
                 foo();
-            }
         }
         function f2() {
-            if (!(a == 1 || b == 2)) {
-            }
-            else {
+            if (!(a == 1 || b == 2));
+            else
                 foo();
-            }
         }
     }
     expect: {
         function f1() {
-            1!=a&&2!=b||foo();
+            1 != a && 2 != b || foo();
         }
         function f2() {
-            1!=a&&2!=b||foo();
+            1 != a && 2 != b || foo();
         }
     }
 }
 
-issue979_test_negated_is_best: {
+test_negated_is_best: {
     options = {
         booleans: true,
         comparisons: true,
@@ -58,53 +55,47 @@ issue979_test_negated_is_best: {
     }
     input: {
         function f3() {
-            if (a == 1 | b == 2) {
+            if (a == 1 | b == 2)
                 foo();
-            }
         }
         function f4() {
-            if (!(a == 1 | b == 2)) {
-            }
-            else {
+            if (!(a == 1 | b == 2));
+            else
                 foo();
-            }
         }
         function f5() {
-            if (a == 1 && b == 2) {
+            if (a == 1 && b == 2)
                 foo();
-            }
         }
         function f6() {
-            if (!(a == 1 && b == 2)) {
-            }
-            else {
+            if (!(a == 1 && b == 2));
+            else
                 foo();
-            }
         }
         function f7() {
-            if (a == 1 || b == 2) {
+            if (a == 1 || b == 2)
                 foo();
-            }
-            else {
+            else
                 return bar();
-            }
         }
     }
     expect: {
         function f3() {
-            1==a|2==b&&foo();
+            1 == a | 2 == b && foo();
         }
         function f4() {
-            1==a|2==b&&foo();
+            1 == a | 2 == b && foo();
         }
         function f5() {
-            1==a&&2==b&&foo();
+            1 == a && 2 == b && foo();
         }
         function f6() {
-            1!=a||2!=b||foo();
+            1 == a && 2 == b && foo();
         }
         function f7() {
-            if(1!=a&&2!=b)return bar();foo()
+            if (1 != a && 2 != b)
+                return bar();
+            foo();
         }
     }
 }
