@@ -169,6 +169,158 @@ conditional_branch: {
     expect_stdout: "PASS"
 }
 
+conditional_chain_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c, d;
+            if (a && (c = a))
+                console.log(c);
+            else
+                b || (d = b) ? console.log("foo") : console.log(d);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect: {
+        function f(a, b) {
+            var a, a;
+            if (a && (a = a))
+                console.log(a);
+            else
+                b || (a = b) ? console.log("foo") : console.log(a);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect_stdout: [
+        "null",
+        "foo",
+        "42",
+        "42",
+    ]
+}
+
+conditional_chain_2: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c, d;
+            if (a && (c = a))
+                console.log(c);
+            else
+                b || (d = b) ? console.log(c) : console.log(d);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect: {
+        function f(a, b) {
+            var c, a;
+            if (a && (c = a))
+                console.log(c);
+            else
+                b || (a = b) ? console.log(c) : console.log(a);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect_stdout: [
+        "null",
+        "undefined",
+        "42",
+        "42",
+    ]
+}
+
+conditional_chain_3: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c, d;
+            if (a && (c = a) || b || (d = b))
+                console.log(c);
+            else
+                console.log(d);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect: {
+        function f(a, b) {
+            var c, a;
+            if (a && (c = a) || b || (a = b))
+                console.log(c);
+            else
+                console.log(a);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect_stdout: [
+        "null",
+        "undefined",
+        "42",
+        "42",
+    ]
+}
+
+conditional_chain_4: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a, b) {
+            var c, d;
+            if (a && b ? c = a : d = b)
+                console.log(c);
+            else
+                console.log(d);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect: {
+        function f(a, b) {
+            var c, d;
+            if (a && b ? c = a : d = b)
+                console.log(c);
+            else
+                console.log(d);
+        }
+        f("", null);
+        f("", true);
+        f(42, null);
+        f(42, true);
+    }
+    expect_stdout: [
+        "null",
+        "undefined",
+        "null",
+        "42",
+    ]
+}
+
 if_branch: {
     options = {
         merge_vars: true,
