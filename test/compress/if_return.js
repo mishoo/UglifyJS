@@ -698,7 +698,9 @@ iife_if_return_simple: {
 
 nested_if_break: {
     options = {
+        conditionals: true,
         if_return: true,
+        side_effects: true,
     }
     input: {
         for (var i = 0; i < 3; i++)
@@ -709,8 +711,7 @@ nested_if_break: {
     }
     expect: {
         for (var i = 0; i < 3; i++)
-            L1: if ("number" == typeof i)
-                if (0 !== i) console.log(i);
+            L1: "number" == typeof i && 0 !== i && console.log(i);
     }
     expect_stdout: [
         "1",
@@ -749,11 +750,11 @@ nested_if_continue: {
         function f(n) {
             for (var i = 0;
                 "number" == typeof n
-                    && (0 !== n
-                        ? 1 !== n
-                            ? i++
-                            : console.log("odd", i)
-                        : console.log("even", i)),
+                    && (0 === n
+                        ? console.log("even", i)
+                        : 1 === n
+                        ? console.log("odd", i)
+                        : i++),
                 0 <= (n -= 2););
         }
         f(37);

@@ -7981,6 +7981,7 @@ issue_5264_2: {
 
 issue_5283: {
     options = {
+        conditionals: true,
         if_return: true,
         inline: true,
         pure_getters: "strict",
@@ -8005,11 +8006,10 @@ issue_5283: {
         var a = "FAIL 1";
         (function() {
             a = "PASS";
-            if (!console)
-                (function(a) {
-                    console.log("FAIL 2");
-                    a.p;
-                })();
+            console || function(a) {
+                console.log("FAIL 2");
+                a.p;
+            }();
         })();
         console.log(a);
     }

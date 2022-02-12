@@ -912,8 +912,7 @@ do_if_continue_1: {
     expect: {
         "use strict";
         do {
-            if (!console);
-            else {
+            if (console) {
                 console.log("PASS");
                 {
                     let a = 0;
@@ -946,8 +945,7 @@ do_if_continue_2: {
     expect: {
         "use strict";
         do {
-            if (!console);
-            else {
+            if (console) {
                 console.log("FAIL");
                 {
                     let a = 0;
@@ -1667,9 +1665,7 @@ issue_4438: {
     expect: {
         "use strict";
         function f() {
-            if (!console)
-                ;
-            else {
+            if (console) {
                 let a = console.log;
                 void a("PASS");
             }
@@ -1757,6 +1753,7 @@ issue_4689: {
 
 issue_4691: {
     options = {
+        conditionals: true,
         if_return: true,
         toplevel: true,
     }

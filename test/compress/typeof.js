@@ -307,7 +307,7 @@ typeof_defined_1: {
     }
     expect: {
         "undefined" == typeof A && A;
-        "undefined" != typeof A || A;
+        "undefined" == typeof A && A;
     }
 }
 
@@ -324,7 +324,7 @@ typeof_defined_2: {
     }
     expect: {
         "function" != typeof A && A;
-        "function" == typeof A || A;
+        "function" != typeof A && A;
     }
 }
 
@@ -355,16 +355,19 @@ typeof_defined_3: {
         "undefined" == typeof A && "undefined" == typeof B && (A, B);
         "undefined" == typeof A && "undefined" != typeof B && A;
         "undefined" != typeof A && "undefined" == typeof B && B;
+        // dropped
         "undefined" == typeof A && "undefined" == typeof B || (A, B);
         "undefined" == typeof A && "undefined" != typeof B || (A, B);
         "undefined" != typeof A && "undefined" == typeof B || (A, B);
         "undefined" != typeof A && "undefined" != typeof B || (A, B);
-        "undefined" == typeof A || "undefined" == typeof B && B;
-        "undefined" != typeof A || "undefined" == typeof B && (A, B);
-        "undefined" != typeof A || "undefined" != typeof B && A;
-        "undefined" == typeof A || "undefined" != typeof B || B;
-        "undefined" != typeof A || "undefined" == typeof B || A;
-        "undefined" != typeof A || "undefined" != typeof B || (A, B);
+        "undefined" != typeof A && "undefined" == typeof B && B;
+        // dropped
+        "undefined" == typeof A && "undefined" == typeof B && (A, B);
+        "undefined" == typeof A && "undefined" != typeof B && A;
+        // dropped
+        "undefined" != typeof A && "undefined" == typeof B && B;
+        "undefined" == typeof A && "undefined" != typeof B && A;
+        "undefined" == typeof A && "undefined" == typeof B && (A, B);
     }
 }
 
@@ -392,6 +395,7 @@ typeof_defined_4: {
         "object" != typeof A || "object" != typeof B || (A, B);
     }
     expect: {
+        // dropped
         "object" == typeof A && "object" != typeof B && B;
         "object" != typeof A && "object" == typeof B && A;
         "object" != typeof A && "object" != typeof B && (A, B);
@@ -399,12 +403,14 @@ typeof_defined_4: {
         "object" == typeof A && "object" != typeof B || (A, B);
         "object" != typeof A && "object" == typeof B || (A, B);
         "object" != typeof A && "object" != typeof B || (A, B);
-        "object" == typeof A || "object" == typeof B && A;
-        "object" == typeof A || "object" != typeof B && (A, B);
-        "object" != typeof A || "object" != typeof B && B;
-        "object" == typeof A || "object" == typeof B || (A, B);
-        "object" == typeof A || "object" != typeof B || A;
-        "object" != typeof A || "object" == typeof B || B;
+        "object" != typeof A && "object" == typeof B && A;
+        "object" != typeof A && "object" != typeof B && (A, B);
+        // dropped
+        "object" == typeof A && "object" != typeof B && B;
+        "object" != typeof A && "object" != typeof B && (A, B);
+        "object" != typeof A && "object" == typeof B && A;
+        "object" == typeof A && "object" != typeof B && B;
+        // dropped
     }
 }
 

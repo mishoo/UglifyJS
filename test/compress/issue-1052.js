@@ -4,22 +4,21 @@ multiple_functions: {
         if_return: true,
     }
     input: {
-        ( function() {
-            if ( !window ) {
+        (function() {
+            if (!window)
                 return;
-            }
             function f() {}
             function g() {}
-        } )();
+        })();
     }
     expect: {
-        ( function() {
+        (function() {
             // NOTE: other compression steps will reduce this
             // down to just `window`.
-            if ( !window );
+            if (!window);
             function f() {}
             function g() {}
-        } )();
+        })();
     }
 }
 
@@ -29,18 +28,17 @@ single_function: {
         if_return: true,
     }
     input: {
-        ( function() {
-            if ( !window ) {
+        (function() {
+            if (!window)
                 return;
-            }
             function f() {}
-        } )();
+        })();
     }
     expect: {
-        ( function() {
-            if ( !window );
+        (function() {
+            if (!window);
             function f() {}
-        } )();
+        })();
     }
 }
 
@@ -50,28 +48,26 @@ deeply_nested: {
         if_return: true,
     }
     input: {
-        ( function() {
-            if ( !window ) {
+        (function() {
+            if (!window)
                 return;
-            }
             function f() {}
             function g() {}
-            if ( !document ) {
+            if (!document)
                 return;
-            }
             function h() {}
-        } )();
+        })();
     }
     expect: {
-        ( function() {
+        (function() {
             // NOTE: other compression steps will reduce this
             // down to just `window`.
-            if ( window )
-                if ( !document );
+            if (!window);
+            else if (!document);
             function f() {}
             function g() {}
             function h() {}
-        } )();
+        })();
     }
 }
 
@@ -81,18 +77,18 @@ not_hoisted_when_already_nested: {
         if_return: true,
     }
     input: {
-        ( function() {
-            if ( !window ) {
+        (function() {
+            if (!window)
                 return;
-            }
-            if ( foo ) function f() {}
-        } )();
+            if (foo) function f() {}
+        })();
     }
     expect: {
-        ( function() {
-            if ( window )
-                if ( foo ) function f() {}
-        } )();
+        (function() {
+            if (!window);
+            else if (foo)
+                function f() {}
+        })();
     }
 }
 
@@ -104,15 +100,19 @@ defun_if_return: {
     input: {
         function e() {
             function f() {}
-            if (!window) return;
-            else function g() {}
+            if (!window)
+                return;
+            else
+                function g() {}
             function h() {}
         }
     }
     expect: {
         function e() {
             function f() {}
-            if (window) function g() {}
+            if (!window);
+            else
+                function g() {}
             function h() {}
         }
     }
@@ -126,8 +126,10 @@ defun_hoist_funs: {
     input: {
         function e() {
             function f() {}
-            if (!window) return;
-            else function g() {}
+            if (!window)
+                return;
+            else
+                function g() {}
             function h() {}
         }
     }
@@ -136,7 +138,7 @@ defun_hoist_funs: {
             function f() {}
             function g() {}
             function h() {}
-            if (window);
+            if (!window);
         }
     }
 }
@@ -149,15 +151,18 @@ defun_else_if_return: {
     input: {
         function e() {
             function f() {}
-            if (window) function g() {}
-            else return;
+            if (window)
+                function g() {}
+            else
+                return;
             function h() {}
         }
     }
     expect: {
         function e() {
             function f() {}
-            if (window) function g() {}
+            if (window)
+                function g() {}
             function h() {}
         }
     }

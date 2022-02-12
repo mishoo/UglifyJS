@@ -597,8 +597,7 @@ do_if_continue_1: {
     }
     expect: {
         do {
-            if (!console);
-            else {
+            if (console) {
                 console.log("PASS");
                 {
                     const a = 0;
@@ -628,8 +627,7 @@ do_if_continue_2: {
     }
     expect: {
         do {
-            if (!console);
-            else {
+            if (console) {
                 console.log("PASS");
                 {
                     const a = 0;
@@ -1518,6 +1516,7 @@ issue_4689: {
 
 issue_4691: {
     options = {
+        conditionals: true,
         if_return: true,
         toplevel: true,
     }
