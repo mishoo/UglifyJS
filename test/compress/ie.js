@@ -3444,3 +3444,33 @@ issue_5269_3_ie: {
         "bar",
     ]
 }
+
+issue_5350: {
+    options = {
+        ie: false,
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(typeof f, [ 42, function f() {} ][0]);
+    }
+    expect: {
+        console.log(typeof f, 42);
+    }
+    expect_stdout: "undefined 42"
+}
+
+issue_5350_ie: {
+    options = {
+        ie: true,
+        properties: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(typeof f, [ 42, function f() {} ][0]);
+    }
+    expect: {
+        console.log(typeof f, (function f() {}, 42));
+    }
+    expect_stdout: "undefined 42"
+}
