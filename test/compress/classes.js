@@ -2476,3 +2476,29 @@ issue_5322: {
     expect_stdout: "42"
     node_version: ">=12"
 }
+
+issue_5352: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            var b;
+            new class {
+                [b = console.log(a)] = b;
+            }(a.p);
+        }
+        f("PASS");
+    }
+    expect: {
+        function f(a) {
+            var b;
+            new class {
+                [b = console.log(a)] = b;
+            }(a.p);
+        }
+        f("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
