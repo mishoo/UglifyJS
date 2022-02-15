@@ -745,7 +745,7 @@ call_args: {
     expect: {
         var a = 1;
         console.log(1);
-        +(1, 1);
+        1, 1;
     }
     expect_stdout: true
 }
@@ -769,7 +769,7 @@ call_args_drop_param: {
     }
     expect: {
         console.log(1);
-        +(b, 1);
+        b, 1;
     }
     expect_stdout: true
 }
@@ -3240,4 +3240,36 @@ issue_4886_2: {
         });
     }
     expect_stdout: "true"
+}
+
+issue_5354: {
+    options = {
+        evaluate: true,
+        unsafe: true,
+    }
+    input: {
+        function f(a) {
+            return +a.toExponential(1);
+        }
+        function g(b) {
+            return 0 + b.toFixed(2);
+        }
+        function h(c) {
+            return 1 * c.toPrecision(3);
+        }
+        console.log(typeof f(45), typeof g(67), typeof h(89));
+    }
+    expect: {
+        function f(a) {
+            return +a.toExponential(1);
+        }
+        function g(b) {
+            return 0 + b.toFixed(2);
+        }
+        function h(c) {
+            return +c.toPrecision(3);
+        }
+        console.log(typeof f(45), typeof g(67), typeof h(89));
+    }
+    expect_stdout: "number string number"
 }
