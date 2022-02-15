@@ -3273,3 +3273,24 @@ issue_5354: {
     }
     expect_stdout: "number string number"
 }
+
+issue_5356: {
+    options = {
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return a++;
+            var a = a;
+        }());
+    }
+    expect: {
+        console.log(+a);
+        var a;
+    }
+    expect_stdout: "NaN"
+}

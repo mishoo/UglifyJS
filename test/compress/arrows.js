@@ -1002,3 +1002,19 @@ issue_5342_2: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_5356: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log((a => a++)(console));
+    }
+    expect: {
+        console.log((a => +a)(console));
+    }
+    expect_stdout: "NaN"
+    node_version: ">=4"
+}
