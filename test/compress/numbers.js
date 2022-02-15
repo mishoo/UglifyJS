@@ -842,9 +842,9 @@ unary_binary_parentheses: {
         v.forEach(function(x) {
             v.forEach(function(y) {
                 console.log(
-                    +x*y,
-                    +x/y,
-                    +x%y,
+                    x*y,
+                    x/y,
+                    x%y,
                     -x*y,
                     -x/y,
                     -x%y
@@ -1397,7 +1397,7 @@ issue_3695: {
     }
     expect: {
         var a = [];
-        console.log(+(a * (a[0] = false)));
+        console.log(a * (a[0] = false));
     }
     expect_stdout: "NaN"
 }
