@@ -493,3 +493,32 @@ issue_3413: {
     }
     expect_stdout: "PASS"
 }
+
+nullish_assign: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        var a;
+        void 0 !== (a = "PASS".split("")) && null !== a && console.log(a.join("-"));
+    }
+    expect: {
+        var a;
+        null != (a = "PASS".split("")) && console.log(a.join("-"));
+    }
+    expect_stdout: "P-A-S-S"
+}
+
+nullish_chain: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        var a;
+        A || B || void 0 === a || null === a || C;
+    }
+    expect: {
+        var a;
+        A || B || null == a || C;
+    }
+}

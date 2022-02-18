@@ -17,6 +17,7 @@ var urls = [
     "https://unpkg.com/mathjs@6.2.3/dist/math.js",
     "https://unpkg.com/react@15.3.2/dist/react.js",
     "https://cdnjs.cloudflare.com/ajax/libs/d3/6.7.0/d3.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/antd/4.18.7/antd.js",
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js",
     "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.js",
     "https://cdnjs.cloudflare.com/ajax/libs/ember.js/2.12.2/ember.prod.js",
