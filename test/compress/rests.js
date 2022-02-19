@@ -1049,7 +1049,9 @@ issue_5100_1: {
             p: {},
             ...a
         } = [ {
-            p: [ a = 42["q"] ],
+            p: {
+                q: a,
+            } = 42,
             r: "PASS",
         } ][0]);
         console.log(a.r);
@@ -1082,7 +1084,9 @@ issue_5100_2: {
             p: {},
             ...a
         } = [ {
-            p: [ console.log("PASS"), a = 42["q"] ],
+            p: (console.log("PASS"), {
+                q: a,
+            } = 42),
         } ][0]);
     }
     expect_stdout: "PASS"
@@ -1266,4 +1270,32 @@ issue_5246_3: {
     }
     expect_stdout: "PASS"
     node_version: ">=6"
+}
+
+issue_5360: {
+    options = {
+        keep_fargs: false,
+        pure_getters: "strict",
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(function({ p: {}, ...b }) {
+            return b.q;
+        }({
+            p: ~a && ([ a ] = []),
+            q: "PASS",
+        }));
+    }
+    expect: {
+        var a;
+        console.log(function({ p: {}, ...b }) {
+            return b.q;
+        }({
+            p: ~a && ([ a ] = []),
+            q: "PASS",
+        }));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8.3.0"
 }
