@@ -448,6 +448,23 @@ concat_truthy: {
     ]
 }
 
+process_returns: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        (function() {
+            return 42;
+        })() && console.log("PASS");
+    }
+    expect: {
+        (function() {
+            return 42;
+        })() && console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
 issue_3465_1: {
     options = {
         booleans: true,

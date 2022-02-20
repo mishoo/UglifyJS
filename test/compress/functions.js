@@ -6341,7 +6341,7 @@ issue_4612_4: {
     expect: {
         console.log(function() {
             function f() {
-                return h();
+                h();
             }
             function g() {
                 return h();

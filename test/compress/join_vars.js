@@ -1144,7 +1144,7 @@ conditional_assignments_3: {
     expect_stdout: "PASS"
 }
 
-issue_3856: {
+issue_3856_1: {
     options = {
         booleans: true,
         conditionals: true,
@@ -1169,9 +1169,46 @@ issue_3856: {
         console.log(function() {
             (function() {
                 var a, b;
-                if (a) return a, 1;
-                for (a = 0; !console;);
-                return 0;
+                if (a) a;
+                else {
+                    a = 0;
+                    for (; !console;);
+                }
+            })();
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3856_2: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        if_return: true,
+        join_vars: true,
+        passes: 2,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function() {
+            (function() {
+                var a;
+                if (!a) {
+                    a = 0;
+                    for (var b; !console;);
+                    return 0;
+                }
+                if (a) return 1;
+            })();
+        }());
+    }
+    expect: {
+        console.log(function() {
+            (function() {
+                var a, b;
+                if (!a)
+                    for (a = 0; !console;);
             })();
         }());
     }
