@@ -3294,3 +3294,39 @@ issue_5356: {
     }
     expect_stdout: "NaN"
 }
+
+issue_5362_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = -console;
+        console.log(delete +a);
+    }
+    expect: {
+        var a = -console;
+        console.log((+a, true));
+    }
+    expect_stdout: "true"
+}
+
+issue_5362_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var a = -console;
+        console.log(delete +a);
+    }
+    expect: {
+        console.log(true);
+    }
+    expect_stdout: "true"
+}
