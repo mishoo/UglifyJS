@@ -427,6 +427,27 @@ negated_if: {
     expect_stdout: "PASS"
 }
 
+concat_truthy: {
+    options = {
+        booleans: true,
+        evaluate: true,
+    }
+    input: {
+        console.log("foo") + (console.log("bar"), "baz") || console.log("moo");
+    }
+    expect: {
+        console.log("foo") + (console.log("bar"), "baz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    expect_warnings: [
+        "WARN: + in boolean context always true [test/compress/booleans.js:1,8]",
+        "WARN: Condition left of || always true [test/compress/booleans.js:1,8]",
+    ]
+}
+
 issue_3465_1: {
     options = {
         booleans: true,

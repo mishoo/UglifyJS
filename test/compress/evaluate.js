@@ -888,6 +888,25 @@ unsafe_charAt_noop: {
     expect_stdout: "f  n"
 }
 
+chained_side_effects: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log("foo") || (console.log("bar"), "baz") || console.log("moo");
+    }
+    expect: {
+        console.log("foo") || (console.log("bar"), "baz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    expect_warnings: [
+        "WARN: Condition left of || always true [test/compress/evaluate.js:1,8]",
+    ]
+}
+
 issue_1649: {
     options = {
         evaluate: true,
