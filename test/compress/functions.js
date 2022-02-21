@@ -8207,3 +8207,24 @@ issue_5332_2: {
     }
     expect_stdout: "NaN"
 }
+
+issue_5366: {
+    options = {
+        inline: true,
+    }
+    input: {
+        for (console.log("foo") || function() {
+            while (console.log("bar"));
+        }(); console.log("baz") ;);
+    }
+    expect: {
+        if (!console.log("foo"))
+            while (console.log("bar"));
+        for (;console.log("baz"););
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
+}
