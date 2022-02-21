@@ -692,7 +692,7 @@ funarg_inline: {
     node_version: ">=6"
 }
 
-process_boolean_returns: {
+process_returns: {
     options = {
         booleans: true,
     }
@@ -706,9 +706,7 @@ process_boolean_returns: {
     expect: {
         console.log(function({ length }) {
             return length ? "FAIL" : "PASS";
-        }(function() {
-            return 42;
-        }));
+        }(function() {}));
     }
     expect_stdout: "PASS"
     node_version: ">=6"
