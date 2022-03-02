@@ -82,14 +82,14 @@ ifs_3_should_warn: {
         "WARN: Boolean && always false [test/compress/conditionals.js:3,12]",
         "WARN: Condition left of && always false [test/compress/conditionals.js:3,12]",
         "WARN: Condition always false [test/compress/conditionals.js:3,12]",
+        "WARN: Dropping side-effect-free statement [test/compress/conditionals.js:3,12]",
         "WARN: Dropping unreachable code [test/compress/conditionals.js:3,34]",
         "WARN: + in boolean context always true [test/compress/conditionals.js:10,19]",
         "WARN: Boolean || always true [test/compress/conditionals.js:10,12]",
         "WARN: Condition left of || always true [test/compress/conditionals.js:10,12]",
         "WARN: Condition always true [test/compress/conditionals.js:10,12]",
-        "WARN: Dropping unreachable code [test/compress/conditionals.js:12,15]",
-        "WARN: Dropping side-effect-free statement [test/compress/conditionals.js:3,12]",
         "WARN: Dropping side-effect-free statement [test/compress/conditionals.js:10,12]",
+        "WARN: Dropping unreachable code [test/compress/conditionals.js:12,15]",
     ]
 }
 
