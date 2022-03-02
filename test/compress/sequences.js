@@ -1329,7 +1329,7 @@ issue_3490_2: {
     expect: {
         var b = 42, c = "FAIL";
         var a;
-        for (c = "PASS", b; "" == typeof d;);
+        for (c = "PASS"; "" == typeof d;);
         console.log(c, b);
     }
     expect_stdout: "PASS 42"
