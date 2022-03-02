@@ -1299,3 +1299,27 @@ issue_5360: {
     expect_stdout: "PASS"
     node_version: ">=8.3.0"
 }
+
+issue_5370: {
+    options = {
+        dead_code: true,
+        ie: true,
+        unused: true,
+    }
+    input: {
+        console.log(function arguments(...a) {
+            return arguments;
+            try {} catch (e) {
+                var arguments;
+            }
+        }());
+    }
+    expect: {
+        console.log(function arguments(...a) {
+            return arguments;
+            var arguments;
+        }());
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
