@@ -3473,3 +3473,27 @@ issue_5314_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5370: {
+    options = {
+        dead_code: true,
+        ie: true,
+        unused: true,
+    }
+    input: {
+        console.log(function arguments({}) {
+            return arguments;
+            try {} catch (e) {
+                var arguments;
+            }
+        }(42));
+    }
+    expect: {
+        console.log(function arguments({}) {
+            return arguments;
+            var arguments;
+        }(42));
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
