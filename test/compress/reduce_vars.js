@@ -6,6 +6,7 @@ reduce_vars: {
             C: 0,
         },
         inline: true,
+        passes: 2,
         reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
