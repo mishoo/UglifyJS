@@ -1508,6 +1508,48 @@ unsafe_call_3: {
     expect_stdout: "3"
 }
 
+inline_eval_inner: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function() {
+            console.log(typeof eval("arguments"));
+        })();
+    }
+    expect: {
+        (function() {
+            console.log(typeof eval("arguments"));
+        })();
+    }
+    expect_stdout: "object"
+}
+
+inline_eval_outer: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        A = 42;
+        (function(a) {
+            console.log(a);
+        })(A);
+        console.log(eval("typeof a"));
+    }
+    expect: {
+        A = 42;
+        (function(a) {
+            console.log(a);
+        })(A);
+        console.log(eval("typeof a"));
+    }
+    expect_stdout: [
+        "42",
+        "undefined",
+    ]
+}
+
 issue_2616: {
     options = {
         evaluate: true,
