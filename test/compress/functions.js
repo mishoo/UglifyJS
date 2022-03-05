@@ -8270,3 +8270,62 @@ issue_5366: {
         "baz",
     ]
 }
+
+issue_5376_1: {
+    options = {
+        evaluate: true,
+        inline: true,
+        join_vars: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var a;
+        for (;42;)
+            var b = function() {
+                var c;
+                throw new Error(c++);
+            }();
+    }
+    expect: {
+        "use strict";
+        for (;;) {
+            42;
+            throw new Error(NaN);
+        }
+    }
+    expect_stdout: Error("NaN")
+}
+
+issue_5376_2: {
+    options = {
+        evaluate: true,
+        inline: true,
+        join_vars: true,
+        loops: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var a;
+        for (;42;)
+            var b = function() {
+                var c;
+                c++;
+                throw new Error("PASS");
+            }();
+    }
+    expect: {
+        "use strict";
+        for (;;) {
+            0;
+            throw new Error("PASS");
+        }
+    }
+    expect_stdout: Error("PASS")
+}
