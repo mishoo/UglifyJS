@@ -499,3 +499,34 @@ issue_5195: {
     }
     expect_stdout: "[object Object]"
 }
+
+issue_5378: {
+    options = {
+        hoist_vars: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 2;
+        while (a--)
+            (function() {
+                var b;
+                var c;
+                while (console.log(b));
+                --b;
+            })();
+    }
+    expect: {
+        var a = 2;
+        while (a--) {
+            b = void 0;
+            var b, c;
+            while (console.log(b));
+            --b;
+        }
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+}
