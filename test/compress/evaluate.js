@@ -3349,3 +3349,30 @@ issue_5362_2: {
     }
     expect_stdout: "true"
 }
+
+issue_5380: {
+    options = {
+        evaluate: true,
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function f(b) {
+            return function g() {
+                for (b in { PASS: 42 });
+            }(), b;
+        }("FAIL");
+        console.log(a);
+    }
+    expect: {
+        var a = function f(b) {
+            return function g() {
+                for (b in { PASS: 42 });
+            }(), b;
+        }("FAIL");
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+}
