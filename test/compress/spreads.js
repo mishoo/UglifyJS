@@ -1166,3 +1166,31 @@ issue_5006: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5382: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({
+            f() {
+                ({ ...this });
+            },
+            get p() {
+                console.log("PASS");
+            },
+        }).f();
+    }
+    expect: {
+        ({
+            f() {
+                ({ ...this });
+            },
+            get p() {
+                console.log("PASS");
+            },
+        }).f();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8.3.0"
+}
