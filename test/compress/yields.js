@@ -1451,3 +1451,77 @@ issue_5177: {
     expect_stdout: "function"
     node_version: ">=4"
 }
+
+issue_5385_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function*() {
+            (function() {
+                try {
+                    return console.log("foo");
+                } finally {
+                    return console.log("bar");
+                }
+                console.log("baz");
+            })();
+        })().next();
+        console.log("moo");
+    }
+    expect: {
+        (async function*() {
+            (function() {
+                try {
+                    return console.log("foo");
+                } finally {
+                    return console.log("bar");
+                }
+                console.log("baz");
+            })();
+        })().next();
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+    ]
+    node_version: ">=10"
+}
+
+issue_5385_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function*() {
+            return function() {
+                try {
+                    return console.log("foo");
+                } finally {
+                    return console.log("bar");
+                }
+            }();
+        })().next();
+        console.log("moo");
+    }
+    expect: {
+        (async function*() {
+            return function() {
+                try {
+                    return console.log("foo");
+                } finally {
+                    return console.log("bar");
+                }
+            }();
+        })().next();
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+    ]
+    node_version: ">=10"
+}
