@@ -2502,3 +2502,39 @@ issue_5352: {
     expect_stdout: "PASS"
     node_version: ">=12"
 }
+
+issue_5387: {
+    options = {
+        properties: true,
+    }
+    input: {
+        "use strict";
+        (function(a) {
+            try {
+                class A extends a {}
+            } catch (e) {
+                console.log("PASS");
+            }
+        })({
+            f() {
+                return this;
+            }
+        }.f);
+    }
+    expect: {
+        "use strict";
+        (function(a) {
+            try {
+                class A extends a {}
+            } catch (e) {
+                console.log("PASS");
+            }
+        })({
+            f() {
+                return this;
+            }
+        }.f);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
