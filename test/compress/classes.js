@@ -2538,3 +2538,34 @@ issue_5387: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5389: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function log(m, n) {
+            console.log(m, n);
+        }
+        var a = log;
+        class A {
+            [a = "FAIL"] = a = "PASS";
+        }
+        var b = new A();
+        log(a, b.FAIL);
+    }
+    expect: {
+        function log(m, n) {
+            console.log(m, n);
+        }
+        var a = log;
+        class A {
+            [a = "FAIL"] = a = "PASS";
+        }
+        var b = new A();
+        log(a, b.FAIL);
+    }
+    expect_stdout: "PASS PASS"
+    node_version: ">=12"
+}
