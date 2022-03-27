@@ -1323,3 +1323,43 @@ issue_5370: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_5391: {
+    options = {
+        evaluate: true,
+        keep_fargs: false,
+        objects: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b = function f({
+            p: {},
+            ...c
+        }) {
+            while (c.q);
+        }({
+            p: {
+                r: a++,
+                r: 0,
+            }
+        });
+        console.log(a);
+    }
+    expect: {
+        (function({
+            p: {},
+            ...c
+        }) {
+            while (c.q);
+        })({
+            p: 0,
+        });
+        console.log(NaN);
+    }
+    expect_stdout: "NaN"
+    node_version: ">=8.3.0"
+}
