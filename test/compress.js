@@ -183,13 +183,11 @@ function parse_test(file) {
 function reminify(orig_options, input_code, input_formatted, stdout) {
     for (var i = 0; i < minify_options.length; i++) {
         var options = JSON.parse(minify_options[i]);
-        if (options.compress) [
+        [
             "keep_fargs",
             "keep_fnames",
         ].forEach(function(name) {
-            if (name in orig_options) {
-                options.compress[name] = orig_options[name];
-            }
+            if (name in orig_options) options[name] = orig_options[name];
         });
         var options_formatted = JSON.stringify(options, null, 4);
         options.validate = true;

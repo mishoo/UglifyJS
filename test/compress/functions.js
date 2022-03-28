@@ -3557,6 +3557,27 @@ functions_inner_var: {
     expect_stdout: "undefined undefined"
 }
 
+functions_keep_fnames: {
+    options = {
+        functions: true,
+        keep_fnames: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var FAIL = function PASS() {};
+        FAIL.p = 42;
+        console.log(FAIL.name, FAIL.p);
+    }
+    expect: {
+        var FAIL = function PASS() {};
+        FAIL.p = 42;
+        console.log(FAIL.name, FAIL.p);
+    }
+    expect_stdout: "PASS 42"
+}
+
 issue_2437: {
     options = {
         collapse_vars: true,

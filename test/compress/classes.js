@@ -939,6 +939,8 @@ keep_fnames: {
         class Foo {}
         console.log(Foo.name, class Bar {}.name);
     }
+    expect_stdout: "Foo Bar"
+    node_version: ">=4"
 }
 
 issue_805_1: {
