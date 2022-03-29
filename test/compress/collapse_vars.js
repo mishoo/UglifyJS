@@ -9925,3 +9925,25 @@ issue_5309_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5394: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+    }
+    input: {
+        try {
+            throw A.p = (console.log("FAIL"), []), !1;
+        } catch (e) {
+            console.log(typeof e);
+        }
+    }
+    expect: {
+        try {
+            throw !(A.p = (console.log("FAIL"), []));
+        } catch (e) {
+            console.log(typeof e);
+        }
+    }
+    expect_stdout: "object"
+}
