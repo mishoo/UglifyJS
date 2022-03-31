@@ -9947,3 +9947,35 @@ issue_5394: {
     }
     expect_stdout: "object"
 }
+
+issue_5396: {
+    options = {
+        collapse_vars: true,
+        merge_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a, b;
+        function f() {}
+        b = 0;
+        new function g(c) {
+            var d = a && g(e), e = ++d, i = [ 42 ];
+            for (var j in i)
+                console.log("PASS"),
+                i;
+        }();
+    }
+    expect: {
+        var a, b;
+        function f() {}
+        b = 0;
+        (function g(c) {
+            a && g();
+            for (var j in [ 42 ])
+                console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
