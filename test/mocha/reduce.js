@@ -434,7 +434,7 @@ describe("test/reduce.js", function() {
             "// }",
         ].join("\n"));
     });
-    it("Should transform `export default` correctly", function() {
+    it("Should transform `export default class` correctly", function() {
         var result = reduce_test(read("test/input/reduce/export_default.js"), {
             compress: false,
             toplevel: true,
@@ -445,6 +445,24 @@ describe("test/reduce.js", function() {
             "// minify options: {",
             '//   "compress": false,',
             '//   "toplevel": true',
+            "// }",
+        ].join("\n"));
+    });
+    it("Should transform `export default function` correctly", function() {
+        var code = [
+            "for (var k in this)",
+            "    console.log(k);",
+            "export default (function f() {});",
+            "console.log(k);",
+        ].join("\n");
+        var result = reduce_test(code, {
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "mangle": false',
             "// }",
         ].join("\n"));
     });

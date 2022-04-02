@@ -52,12 +52,14 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
     return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
 exports.patch_module_statements = function(code) {
-    var count = 0, imports = [];
+    var count = 0, has_default = "", imports = [];
     code = code.replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
         if (!header) return "";
+        has_default = "var _uglify_export_default_;";
         if (header.length == 1) return "0, " + header;
-        do {
-            var name = "_export_default_" + ++count;
+        var name = "_uglify_export_default_";
+        if (/^class\b/.test(header)) do {
+            name = "_uglify_export_default_" + ++count;
         } while (code.indexOf(name) >= 0);
         return header.slice(0, -1) + " " + name + header.slice(-1);
     }).replace(/\bimport\.meta\b/g, function() {
@@ -76,7 +78,7 @@ exports.patch_module_statements = function(code) {
         return "";
     });
     imports.push("");
-    return imports.join("\n") + code;
+    return has_default + imports.join("\n") + code;
 };
 
 function is_error(result) {
