@@ -8350,3 +8350,23 @@ issue_5376_2: {
     }
     expect_stdout: Error("PASS")
 }
+
+issue_5401: {
+    options = {
+        inline: true,
+    }
+    input: {
+        L: for (var a in function() {
+            while (console.log("PASS"));
+        }(), a) do {
+            continue L;
+        } while (console.log("FAIL"));
+    }
+    expect: {
+        while (console.log("PASS"));
+        L: for (var a in a) do {
+            continue L;
+        } while (console.log("FAIL"));
+    }
+    expect_stdout: "PASS"
+}
