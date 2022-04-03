@@ -3497,3 +3497,41 @@ issue_5370: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_5405_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var [ a ] = [ {} ];
+        console.log(a === a ? "PASS" : "FAIL");
+    }
+    expect: {
+        var [ a ] = [ {} ];
+        console.log(true ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5405_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        var { p: a } = { p: [] };
+        console.log(a === a ? "PASS" : "FAIL");
+    }
+    expect: {
+        var { p: a } = { p: [] };
+        console.log(true ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
