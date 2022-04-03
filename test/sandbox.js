@@ -54,8 +54,8 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 exports.patch_module_statements = function(code) {
     var count = 0, has_default = "", imports = [];
     code = code.replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
+        if (/^export\s+default/.test(match)) has_default = "var _uglify_export_default_;";
         if (!header) return "";
-        has_default = "var _uglify_export_default_;";
         if (header.length == 1) return "0, " + header;
         var name = "_uglify_export_default_";
         if (/^class\b/.test(header)) do {

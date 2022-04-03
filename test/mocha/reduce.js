@@ -466,4 +466,23 @@ describe("test/reduce.js", function() {
             "// }",
         ].join("\n"));
     });
+    it("Should transform `export default (42)` correctly", function() {
+        var code = [
+            "export default (42);",
+            "for (var k in this)",
+            "    console.log(k);",
+        ].join("\n");
+        var result = reduce_test(code, {
+            compress: false,
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "compress": false,',
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
 });
