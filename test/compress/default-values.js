@@ -2209,3 +2209,33 @@ issue_5340_3: {
     expect_stdout: "undefined"
     node_version: ">=6"
 }
+
+issue_5407: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a) {
+            for (var i = 0; i < 2; i++)
+                (function(b = 4) {
+                    console.log(b);
+                    a = 2;
+                })(a);
+        })();
+    }
+    expect: {
+        (function(a) {
+            for (var i = 0; i < 2; i++)
+                (function(b = 4) {
+                    console.log(b);
+                    a = 2;
+                })(a);
+        })();
+    }
+    expect_stdout: [
+        "4",
+        "2",
+    ]
+    node_version: ">=6"
+}
