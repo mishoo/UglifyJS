@@ -6689,8 +6689,7 @@ issues_3267_1: {
     }
     expect: {
         !function(x) {
-            var i = Object();
-            if (i)
+            if (Object())
                 return console.log("PASS");
             throw "FAIL";
         }();
