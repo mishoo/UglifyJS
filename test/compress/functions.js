@@ -8370,3 +8370,31 @@ issue_5401: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5409: {
+    options = {
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a) {
+            (a = console) || FAIL(a);
+            (function(b) {
+                console.log(b && b);
+                while (!console);
+            })();
+        })();
+    }
+    expect: {
+        (function(a) {
+            (a = console) || FAIL(a);
+            a = void 0;
+            console.log(a && a);
+            while (!console);
+            return;
+        })();
+    }
+    expect_stdout: "undefined"
+}
