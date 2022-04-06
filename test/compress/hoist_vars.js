@@ -224,8 +224,7 @@ issue_4489: {
         console.log(k);
     }
     expect: {
-        !(A = 0);
-        for (var k in true);
+        for (var k in !(A = 0));
         console.log(k);
     }
     expect_stdout: "undefined"
@@ -407,9 +406,9 @@ issue_4893_2: {
     expect: {
         try{
             (function() {
-                var b;
-                b = null;
-                b.p += 42;
+                var a;
+                a = null;
+                a.p += 42;
             })();
         } catch (e) {
             console.log("PASS");
@@ -529,4 +528,78 @@ issue_5378: {
         "undefined",
         "undefined",
     ]
+}
+
+issue_5411_1: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "PASS";
+        b++;
+        b = a;
+        var b = b, c = c && c[b];
+        console.log(b);
+    }
+    expect: {
+        var b, c, a = "PASS";
+        b++;
+        b = a;
+        c = c && c[b];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5411_2: {
+    options = {
+        collapse_vars: true,
+        dead_code: true,
+        evaluate: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        b++;
+        b = a;
+        var b = b, c = c && c[b];
+        console.log(b);
+    }
+    expect: {
+        var b, c;
+        b++;
+        b = "PASS",
+        c = c && c[b];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5411_3: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = console;
+        a++;
+        var a = A = a;
+        console.log(A);
+    }
+    expect: {
+        var a = console;
+        a = A = ++a;
+        console.log(A);
+    }
+    expect_stdout: "NaN"
 }
