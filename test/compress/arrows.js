@@ -1018,3 +1018,57 @@ issue_5356: {
     expect_stdout: "NaN"
     node_version: ">=4"
 }
+
+issue_5414_1: {
+    options = {
+        arrows: true,
+        if_return: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        (() => {
+            (() => {
+                if (!console)
+                    var arguments = 42;
+                while (console.log(arguments));
+            })();
+        })();
+    }
+    expect: {
+        (() => {
+            if (!console)
+                var arguments = 42;
+            while (console.log(arguments));
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
+
+issue_5414_2: {
+    options = {
+        arrows: true,
+        inline: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        (() => {
+            (() => {
+                if (!console)
+                    var arguments = 42;
+                while (console.log(arguments));
+            })();
+        })();
+    }
+    expect: {
+        (() => {
+            if (!console)
+                var arguments = 42;
+            while (console.log(arguments));
+        })();
+    }
+    expect_stdout: true
+    node_version: ">=4"
+}
