@@ -1072,3 +1072,37 @@ issue_5414_2: {
     expect_stdout: true
     node_version: ">=4"
 }
+
+issue_5416: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var f = () => {
+            while ((() => {
+                console;
+                var a = function g(arguments) {
+                    console.log(arguments);
+                }();
+            })());
+        };
+        f();
+    }
+    expect: {
+        var f = () => {
+            {
+                arguments = void 0;
+                console;
+                console.log(arguments);
+                var arguments;
+            }
+        };
+        f();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
