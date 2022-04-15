@@ -52,8 +52,11 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
     return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
 exports.patch_module_statements = function(code) {
-    var count = 0, has_default = "", imports = [];
-    code = code.replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
+    var count = 0, has_default = "", imports = [], strict_mode = "";
+    code = code.replace(/^\s*("|')use strict\1\s*;?/, function(match) {
+        strict_mode = match;
+        return "";
+    }).replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
         if (/^export\s+default/.test(match)) has_default = "var _uglify_export_default_;";
         if (!header) return "";
         if (header.length == 1) return "0, " + header;
@@ -78,7 +81,7 @@ exports.patch_module_statements = function(code) {
         return "";
     });
     imports.push("");
-    return has_default + imports.join("\n") + code;
+    return strict_mode + has_default + imports.join("\n") + code;
 };
 
 function is_error(result) {
