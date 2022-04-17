@@ -3702,3 +3702,33 @@ issue_5182: {
     ]
     node_version: ">=4"
 }
+
+issue_5420: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        do {
+            var a = "FAIL 1";
+            a && a.p;
+            a = "FAIL 2";
+            try {
+                continue;
+            } catch (e) {}
+            var b = "FAIL 3";
+        } while (console.log(b || "PASS"));
+    }
+    expect: {
+        do {
+            var a = "FAIL 1";
+            a && a.p;
+            a = "FAIL 2";
+            try {
+                continue;
+            } catch (e) {}
+            var b = "FAIL 3";
+        } while (console.log(b || "PASS"));
+    }
+    expect_stdout: "PASS"
+}
