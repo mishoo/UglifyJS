@@ -128,7 +128,7 @@ for (var i = 2; i < process.argv.length; ++i) {
 
 var SUPPORT = function(matrix) {
     for (var name in matrix) {
-        matrix[name] = typeof sandbox.run_code(matrix[name]) == "string";
+        matrix[name] = !sandbox.is_error(sandbox.run_code(matrix[name]));
     }
     return matrix;
 }({
@@ -2110,7 +2110,7 @@ function try_beautify(code, toplevel, result, printfn, options) {
     } else if (options) {
         var uglified = UglifyJS.minify(beautified.code, JSON.parse(options));
         var expected, actual;
-        if (typeof uglify_code != "string" || uglified.error) {
+        if (sandbox.is_error(uglify_code) || uglified.error) {
             expected = uglify_code;
             actual = uglified.error;
         } else {
@@ -2147,7 +2147,7 @@ function log_suspects(minify_options, component) {
             m[component] = o;
             m.validate = true;
             var result = UglifyJS.minify(original_code, m);
-            if (typeof uglify_code != "string") {
+            if (sandbox.is_error(uglify_code)) {
                 return !sandbox.same_stdout(uglify_code, result.error);
             } else if (result.error) {
                 errorln("Error testing options." + component + "." + name);
@@ -2175,7 +2175,7 @@ function log_suspects_global(options, toplevel) {
         m[component] = false;
         m.validate = true;
         var result = UglifyJS.minify(original_code, m);
-        if (typeof uglify_code != "string") {
+        if (sandbox.is_error(uglify_code)) {
             return !sandbox.same_stdout(uglify_code, result.error);
         } else if (result.error) {
             errorln("Error testing options." + component);
@@ -2204,7 +2204,16 @@ function log(options) {
     errorln();
     errorln();
     errorln("//-------------------------------------------------------------");
-    if (typeof uglify_code == "string") {
+    if (sandbox.is_error(uglify_code)) {
+        errorln("// !!! uglify failed !!!");
+        errorln(uglify_code);
+        if (original_erred) {
+            errorln();
+            errorln();
+            errorln("original stacktrace:");
+            errorln(original_result);
+        }
+    } else {
         errorln("// uglified code");
         try_beautify(uglify_code, toplevel, uglify_result, errorln);
         errorln();
@@ -2213,15 +2222,6 @@ function log(options) {
         errorln(original_result);
         errorln("uglified result:");
         errorln(uglify_result);
-    } else {
-        errorln("// !!! uglify failed !!!");
-        errorln(uglify_code);
-        if (errored) {
-            errorln();
-            errorln();
-            errorln("original stacktrace:");
-            errorln(original_result);
-        }
     }
     errorln("//-------------------------------------------------------------");
     if (!ok) {
@@ -2426,22 +2426,22 @@ var beautify_options = {
     },
 };
 var minify_options = require("./options.json");
-if (typeof sandbox.run_code("A:if (0) B:; else B:;") != "string") {
+if (sandbox.is_error(sandbox.run_code("A:if (0) B:; else B:;"))) {
     minify_options.forEach(function(o) {
         if (!("mangle" in o)) o.mangle = {};
         if (o.mangle) o.mangle.v8 = true;
     });
 }
 var bug_async_arrow_rest = function() {};
-if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && typeof sandbox.run_code("async (a = f(...[], b)) => 0;") != "string") {
+if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && sandbox.is_error(sandbox.run_code("async (a = f(...[], b)) => 0;"))) {
     bug_async_arrow_rest = function(ex) {
         return ex.name == "SyntaxError" && ex.message == "Rest parameter must be last formal parameter";
     };
 }
-var bug_async_class_await = SUPPORT.async && SUPPORT.class_field && typeof sandbox.run_code("var await; async function f() { class A { static p = await; } }") != "string";
-var bug_for_of_async = SUPPORT.for_await_of && typeof sandbox.run_code("var async; for (async of []);") != "string";
-var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && typeof sandbox.run_code("try {} catch (e) { for (var e of []); }") != "string";
-if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2);") != "string") {
+var bug_async_class_await = SUPPORT.async && SUPPORT.class_field && sandbox.is_error(sandbox.run_code("var await; async function f() { class A { static p = await; } }"));
+var bug_for_of_async = SUPPORT.for_await_of && sandbox.is_error(sandbox.run_code("var async; for (async of []);"));
+var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && sandbox.is_error(sandbox.run_code("try {} catch (e) { for (var e of []); }"));
+if (SUPPORT.destructuring && sandbox.is_error(sandbox.run_code("console.log([ 1 ], {} = 2);"))) {
     beautify_options.output.v8 = true;
     minify_options.forEach(function(o) {
         if (!("output" in o)) o.output = {};
@@ -2450,7 +2450,7 @@ if (SUPPORT.destructuring && typeof sandbox.run_code("console.log([ 1 ], {} = 2)
 }
 beautify_options = JSON.stringify(beautify_options);
 minify_options = minify_options.map(JSON.stringify);
-var original_code, original_result, errored;
+var original_code, original_result, original_erred;
 var uglify_code, uglify_result, ok;
 for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
@@ -2458,7 +2458,7 @@ for (var round = 1; round <= num_iterations; round++) {
     original_code = createTopLevelCode();
     var orig_result = [ run_code(original_code), run_code(original_code, true) ];
     if (orig_result.some(function(result, toplevel) {
-        if (typeof result == "string") return;
+        if (!sandbox.is_error(result)) return;
         println();
         println();
         println("//=============================================================");
@@ -2480,19 +2480,20 @@ for (var round = 1; round <= num_iterations; round++) {
         o.validate = true;
         uglify_code = UglifyJS.minify(original_code, o);
         original_result = orig_result[toplevel ? 1 : 0];
-        errored = typeof original_result != "string";
+        original_erred = sandbox.is_error(original_result);
         if (!uglify_code.error) {
             uglify_code = uglify_code.code;
             uglify_result = run_code(uglify_code, toplevel);
             ok = sandbox.same_stdout(original_result, uglify_result);
+            var uglify_erred = sandbox.is_error(uglify_result);
             // ignore v8 parser bug
-            if (!ok && bug_async_arrow_rest(uglify_result)) ok = true;
+            if (!ok && uglify_erred && bug_async_arrow_rest(uglify_result)) ok = true;
             // ignore runtime platform bugs
-            if (!ok && uglify_result.message == "Script execution aborted.") ok = true;
+            if (!ok && uglify_erred && uglify_result.message == "Script execution aborted.") ok = true;
             // handle difference caused by time-outs
             if (!ok) {
-                if (errored && is_error_timeout(original_result)) {
-                    if (is_error_timeout(uglify_result)) {
+                if (original_erred && is_error_timeout(original_result)) {
+                    if (uglify_erred && is_error_timeout(uglify_result)) {
                         // ignore difference in error message
                         ok = true;
                     } else {
@@ -2500,21 +2501,23 @@ for (var round = 1; round <= num_iterations; round++) {
                         if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = run_code(original_code, toplevel, 10000);
                         ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
                     }
-                } else if (is_error_timeout(uglify_result)) {
+                } else if (uglify_erred && is_error_timeout(uglify_result)) {
                     // ignore spurious time-outs
                     var waited_result = run_code(uglify_code, toplevel, 10000);
                     ok = sandbox.same_stdout(original_result, waited_result);
                 }
             }
             // ignore declaration order of global variables
-            if (!ok && !toplevel && uglify_result.name != "SyntaxError" && original_result.name != "SyntaxError") {
-                ok = sandbox.same_stdout(run_code(sort_globals(original_code)), run_code(sort_globals(uglify_code)));
+            if (!ok && !toplevel) {
+                if (!(original_erred && original_result.name == "SyntaxError") && !(uglify_erred && uglify_result.name == "SyntaxError")) {
+                    ok = sandbox.same_stdout(run_code(sort_globals(original_code)), run_code(sort_globals(uglify_code)));
+                }
             }
             // ignore numerical imprecision caused by `unsafe_math`
-            if (!ok && o.compress && o.compress.unsafe_math && typeof original_result == typeof uglify_result) {
-                if (typeof original_result == "string") {
+            if (!ok && o.compress && o.compress.unsafe_math) {
+                if (typeof original_result == "string" && typeof uglify_result == "string") {
                     ok = fuzzy_match(original_result, uglify_result);
-                } else if (sandbox.is_error(original_result)) {
+                } else if (original_erred && uglify_erred) {
                     ok = original_result.name == uglify_result.name && fuzzy_match(original_result.message, uglify_result.message);
                 }
                 if (!ok) {
@@ -2523,19 +2526,19 @@ for (var round = 1; round <= num_iterations; round++) {
                 }
             }
             // ignore difference in error message caused by Temporal Dead Zone
-            if (!ok && errored && uglify_result.name == "ReferenceError" && original_result.name == "ReferenceError") ok = true;
+            if (!ok && original_erred && uglify_erred && original_result.name == "ReferenceError" && uglify_result.name == "ReferenceError") ok = true;
             // ignore difference due to implicit strict-mode in `class`
             if (!ok && /\bclass\b/.test(original_code)) {
                 var original_strict = run_code('"use strict";\n' + original_code, toplevel);
-                if (/^(Syntax|Type)Error$/.test(uglify_result.name)) {
-                    ok = typeof original_strict != "string";
+                if (uglify_erred && /^(Syntax|Type)Error$/.test(uglify_result.name)) {
+                    ok = sandbox.is_error(original_strict);
                 } else {
                     ok = sandbox.same_stdout(original_strict, uglify_result);
                 }
             }
             // ignore difference in error message caused by `import` symbol redeclaration
-            if (!ok && errored && /\bimport\b/.test(original_code)) {
-                if (is_error_redeclaration(uglify_result) && is_error_redeclaration(original_result)) ok = true;
+            if (!ok && original_erred && uglify_erred && /\bimport\b/.test(original_code)) {
+                if (is_error_redeclaration(original_result) && is_error_redeclaration(uglify_result)) ok = true;
             }
             // ignore difference due to `__proto__` assignment
             if (!ok && /\b__proto__\b/.test(original_code)) {
@@ -2544,24 +2547,32 @@ for (var round = 1; round <= num_iterations; round++) {
                 ok = sandbox.same_stdout(original_proto, uglify_proto);
             }
             // ignore difference in error message caused by `in`
-            if (!ok && errored && is_error_in(uglify_result) && is_error_in(original_result)) ok = true;
+            if (!ok && original_erred && uglify_erred) {
+                if (is_error_in(original_result) && is_error_in(uglify_result)) ok = true;
+            }
             // ignore difference in error message caused by spread syntax
-            if (!ok && errored && is_error_spread(uglify_result) && is_error_spread(original_result)) ok = true;
+            if (!ok && original_erred && uglify_erred) {
+                if (is_error_spread(original_result) && is_error_spread(uglify_result)) ok = true;
+            }
             // ignore difference in depth of termination caused by infinite recursion
-            if (!ok && errored && is_error_recursion(original_result)) {
-                if (is_error_recursion(uglify_result) || typeof uglify_result == "string") ok = true;
+            if (!ok && original_erred && is_error_recursion(original_result)) {
+                if (!uglify_erred || is_error_recursion(uglify_result)) ok = true;
             }
             // ignore difference in error message caused by destructuring
-            if (!ok && errored && is_error_destructuring(uglify_result) && is_error_destructuring(original_result)) {
-                ok = true;
+            if (!ok && original_erred && uglify_erred) {
+                if (is_error_destructuring(original_result) && is_error_destructuring(uglify_result)) ok = true;
             }
             // ignore difference in error message caused by call on class
-            if (!ok && errored && is_error_class_constructor(uglify_result) && is_error_class_constructor(original_result)) {
-                ok = true;
+            if (!ok && original_erred && uglify_erred) {
+                if (is_error_class_constructor(original_result) && is_error_class_constructor(uglify_result)) {
+                    ok = true;
+                }
             }
             // ignore difference in error message caused by setting getter-only property
-            if (!ok && errored && is_error_getter_only_property(uglify_result) && is_error_getter_only_property(original_result)) {
-                ok = true;
+            if (!ok && original_erred && uglify_erred) {
+                if (is_error_getter_only_property(original_result) && is_error_getter_only_property(uglify_result)) {
+                    ok = true;
+                }
             }
             // ignore errors above when caught by try-catch
             if (!ok) {
@@ -2573,7 +2584,7 @@ for (var round = 1; round <= num_iterations; round++) {
             }
         } else {
             uglify_code = uglify_code.error;
-            ok = errored && uglify_code.name == original_result.name;
+            ok = original_erred && uglify_code.name == original_result.name;
         }
         if (verbose || (verbose_interval && !(round % INTERVAL_COUNT)) || !ok) log(options);
         if (!ok && isFinite(num_iterations)) {
