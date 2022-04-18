@@ -3535,3 +3535,34 @@ issue_5405_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5423: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a, b;
+        function f({
+            [function() {
+                if (++a)
+                    return 42;
+            }()]: c
+        }) {}
+        f(b = f);
+        console.log(typeof b);
+    }
+    expect: {
+        var a, b;
+        function f({
+            [function() {
+                if (++a)
+                    return 42;
+            }()]: c
+        }) {}
+        f(b = f);
+        console.log(typeof b);
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
