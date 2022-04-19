@@ -1525,3 +1525,25 @@ issue_5385_2: {
     ]
     node_version: ">=10"
 }
+
+issue_5425: {
+    options = {
+        assignments: true,
+        ie: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a = "FAIL";
+        var b = function* f() {}(a ? a = "PASS" : 42);
+        console.log(a, typeof f);
+    }
+    expect: {
+        var a = "FAIL";
+        (function* f() {})(a && (a = "PASS"));
+        console.log(a, typeof f);
+    }
+    expect_stdout: "PASS undefined"
+    node_version: ">=4"
+}
