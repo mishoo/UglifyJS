@@ -1373,3 +1373,19 @@ To allow for better optimizations, the compiler makes various assumptions:
   // TypeError: const 'a' has already been declared
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Later versions of Chrome and Node.js will give incorrect results with the
+  following:
+  ```javascript
+  try {
+      class A {
+          static 42;
+          static get 42() {}
+      }
+      console.log("PASS");
+  } catch (e) {
+      console.log("FAIL");
+  }
+  // Expected: "PASS"
+  // Actual:   "FAIL"
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
