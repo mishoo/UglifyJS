@@ -1824,7 +1824,13 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
             declared.push(internal);
         }
         if (SUPPORT.class_field && rng(2)) {
-            s += internal || createObjectKey(recurmax, stmtDepth, canThrow);
+            if (internal) {
+                s += internal;
+            } else if (fixed && bug_static_class_field) {
+                s += getDotKey();
+            } else {
+                s += createObjectKey(recurmax, stmtDepth, canThrow);
+            }
             if (rng(5)) {
                 async = bug_async_class_await && fixed && 0;
                 generator = false;
@@ -2441,6 +2447,7 @@ if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && sandbox.is_error(sandbox.r
 var bug_async_class_await = SUPPORT.async && SUPPORT.class_field && sandbox.is_error(sandbox.run_code("var await; async function f() { class A { static p = await; } }"));
 var bug_for_of_async = SUPPORT.for_await_of && sandbox.is_error(sandbox.run_code("var async; for (async of []);"));
 var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && sandbox.is_error(sandbox.run_code("try {} catch (e) { for (var e of []); }"));
+var bug_static_class_field = SUPPORT.class_field && sandbox.is_error(sandbox.run_code("class A { static 42; static get 42() {} }"));
 if (SUPPORT.destructuring && sandbox.is_error(sandbox.run_code("console.log([ 1 ], {} = 2);"))) {
     beautify_options.output.v8 = true;
     minify_options.forEach(function(o) {
