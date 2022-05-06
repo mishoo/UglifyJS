@@ -7861,3 +7861,38 @@ issue_5324: {
     }
     expect_stdout: "NaN"
 }
+
+issue_5434: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function(a) {
+            for (var i = 0; i < 2; i++) {
+                var b = "FAIL";
+                f && f();
+                a = b;
+                var f = function() {
+                    b = "PASS";
+                };
+            }
+            return a;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            for (var i = 0; i < 2; i++) {
+                var b = "FAIL";
+                f && f();
+                a = b;
+                var f = function() {
+                    b = "PASS";
+                };
+            }
+            return a;
+        }());
+    }
+    expect_stdout: "PASS"
+}
