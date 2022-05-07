@@ -2571,3 +2571,33 @@ issue_5389: {
     expect_stdout: "PASS PASS"
     node_version: ">=12"
 }
+
+issue_5436: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a) {
+            class A {
+                p = a;
+            }
+            var b = "FAIL";
+            A == b && b();
+            return new A();
+        }
+        console.log(f("PASS").p);
+    }
+    expect: {
+        function f(a) {
+            class A {
+                p = a;
+            }
+            var b = "FAIL";
+            A == b && b();
+            return new A();
+        }
+        console.log(f("PASS").p);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
