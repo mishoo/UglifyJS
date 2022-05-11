@@ -210,10 +210,10 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
             if (node.expression instanceof U.AST_Function) {
                 // hoist and return expressions from the IIFE function expression
-                var seq = [];
+                var scope = tt.find_parent(U.AST_Scope), seq = [];
                 node.expression.body.forEach(function(node) {
                     var expr = node instanceof U.AST_Exit ? node.value : node.body;
-                    if (expr instanceof U.AST_Node && !U.is_statement(expr) && can_hoist(expr)) {
+                    if (expr instanceof U.AST_Node && !U.is_statement(expr) && can_hoist(expr, scope)) {
                         // collect expressions from each statement's body
                         seq.push(expr);
                     }
@@ -264,11 +264,12 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 CHANGED = true;
                 return List.skip;
               default:
-                if (!has_exit(node) && can_hoist(node)) {
+                if (can_hoist(node, tt.find_parent(U.AST_Scope))) {
                     // hoist function declaration body
                     var body = node.body;
                     node.body = [];
-                    body.push(node); // retain function with empty body to be dropped later
+                    // retain function with empty body to be dropped later
+                    body.push(node);
                     CHANGED = true;
                     return List.splice(body);
                 }
@@ -382,7 +383,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             if (node.body instanceof U.AST_Call && node.body.expression instanceof U.AST_Function) {
                 // hoist simple statement IIFE function expression body
                 node.start._permute++;
-                if (!has_exit(node.body.expression) && can_hoist(node.body.expression)) {
+                if (can_hoist(node.body.expression, tt.find_parent(U.AST_Scope))) {
                     CHANGED = true;
                     return List.splice(node.body.expression.body);
                 }
@@ -647,21 +648,6 @@ function trim_trailing_whitespace(value) {
     return ("" + value).replace(/\s+$/, "");
 }
 
-function has_exit(fn) {
-    var found = false;
-    var tw = new U.TreeWalker(function(node) {
-        if (found) return found;
-        if (node instanceof U.AST_Exit) {
-            return found = true;
-        }
-        if (node instanceof U.AST_Scope && node !== fn) {
-            return true; // don't descend into nested functions
-        }
-    });
-    fn.walk(tw);
-    return found;
-}
-
 function has_loopcontrol(body, loop, label) {
     var found = false;
     var tw = new U.TreeWalker(function(node) {
@@ -676,17 +662,31 @@ function has_loopcontrol(body, loop, label) {
     return found;
 }
 
-function can_hoist(body) {
+function can_hoist(body, scope) {
     var found = false;
-    body.walk(new U.TreeWalker(function(node) {
+    var tw = new U.TreeWalker(function(node) {
         if (found) return true;
+        if (node instanceof U.AST_Exit) return found = true;
         if (node instanceof U.AST_NewTarget) return found = true;
         if (node instanceof U.AST_Scope) {
             if (node === body) return;
+            if (node instanceof U.AST_Arrow || node instanceof U.AST_AsyncArrow) node.argnames.forEach(function(sym) {
+                sym.walk(tw);
+            });
+            // don't descend into nested functions
             return true;
         }
         if (node instanceof U.AST_Super) return found = true;
-    }));
+        if (node instanceof U.AST_SymbolDeclaration || node instanceof U.AST_SymbolRef) switch (node.name) {
+          case "await":
+            if (/^Async/.test(scope.TYPE)) return found = true;
+            return;
+          case "yield":
+            if (/Generator/.test(scope.TYPE)) return found = true;
+            return;
+        }
+    });
+    body.walk(tw);
     return !found;
 }
 
