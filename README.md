@@ -1389,3 +1389,16 @@ To allow for better optimizations, the compiler makes various assumptions:
   // Actual:   "FAIL"
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Some versions of Chrome and Node.js will give incorrect results with the
+  following:
+  ```javascript
+  (async function(a) {
+      (function() {
+          var b = await => console.log("PASS");
+          b();
+      })();
+  })().catch(console.error);
+  // Expected: "PASS"
+  // Actual:   SyntaxError: Unexpected reserved word
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
