@@ -2534,15 +2534,6 @@ for (var round = 1; round <= num_iterations; round++) {
             }
             // ignore difference in error message caused by Temporal Dead Zone
             if (!ok && original_erred && uglify_erred && original_result.name == "ReferenceError" && uglify_result.name == "ReferenceError") ok = true;
-            // ignore difference due to implicit strict-mode in `class`
-            if (!ok && /\bclass\b/.test(original_code)) {
-                var original_strict = run_code('"use strict";\n' + original_code, toplevel);
-                if (uglify_erred && /^(Syntax|Type)Error$/.test(uglify_result.name)) {
-                    ok = sandbox.is_error(original_strict);
-                } else {
-                    ok = sandbox.same_stdout(original_strict, uglify_result);
-                }
-            }
             // ignore difference in error message caused by `import` symbol redeclaration
             if (!ok && original_erred && uglify_erred && /\bimport\b/.test(original_code)) {
                 if (is_error_redeclaration(original_result) && is_error_redeclaration(uglify_result)) ok = true;
