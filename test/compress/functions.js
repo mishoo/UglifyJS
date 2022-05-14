@@ -8398,3 +8398,228 @@ issue_5409: {
     }
     expect_stdout: "undefined"
 }
+
+mixed_mode_inline_1: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return this;
+        }
+        console.log(function() {
+            return f();
+        }() ? "PASS" : "FAIL");
+    }
+    expect: {
+        console.log(function() {
+            return this;
+        }() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_1_strict: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            return this;
+        }
+        console.log(function() {
+            return f();
+        }() ? "FAIL" : "PASS");
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            return this;
+        }() ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_2: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            "use strict";
+            return this;
+        }
+        console.log(function() {
+            return f();
+        }() ? "FAIL" : "PASS");
+    }
+    expect: {
+        console.log(function() {
+            "use strict";
+            return this;
+        }() ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_2_strict: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            "use strict";
+            return this;
+        }
+        console.log(function() {
+            return f();
+        }() ? "FAIL" : "PASS");
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            return this;
+        }() ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_3: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return this;
+        }
+        console.log(function() {
+            "use strict";
+            return f();
+        }() ? "PASS" : "FAIL");
+    }
+    expect: {
+        function f() {
+            return this;
+        }
+        console.log(function() {
+            "use strict";
+            return f();
+        }() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_3_strict: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            return this;
+        }
+        console.log(function() {
+            "use strict";
+            return f();
+        }() ? "FAIL" : "PASS");
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            return this;
+        }() ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_4: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            "use strict";
+            return this;
+        }
+        console.log(function() {
+            "use strict";
+            return f();
+        }() ? "FAIL" : "PASS");
+    }
+    expect: {
+        console.log(function() {
+            "use strict";
+            return function() {
+                "use strict";
+                return this;
+            }();
+        }() ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+mixed_mode_inline_4_strict: {
+    options = {
+        directives: true,
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            "use strict";
+            return this;
+        }
+        console.log(function() {
+            "use strict";
+            return f();
+        }() ? "FAIL" : "PASS");
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            return this;
+        }() ? "FAIL" : "PASS");
+    }
+    expect_stdout: "PASS"
+}
