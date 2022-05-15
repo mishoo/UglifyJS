@@ -1176,3 +1176,30 @@ issue_5182: {
         "42",
     ]
 }
+
+issue_5441: {
+    options = {
+        hoist_props: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(function(a) {
+            (function() {
+                a = { p: this };
+            })();
+            return typeof a;
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            (function() {
+                a_p = this;
+            })();
+            var a_p;
+            return typeof {};
+        }());
+    }
+    expect_stdout: "object"
+}
