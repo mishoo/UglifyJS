@@ -69,9 +69,7 @@ function make_code(ast, options) {
 function parse_test(file) {
     var script = fs.readFileSync(file, "utf8");
     try {
-        var ast = U.parse(script, {
-            filename: file
-        });
+        var ast = U.parse(script, { filename: file });
     } catch (e) {
         console.error("Caught error while parsing tests in " + file);
         console.error(e);
@@ -98,14 +96,14 @@ function parse_test(file) {
             file: file,
             line: node.start.line,
             col: node.start.col,
-            code: make_code(node, { beautify: false })
+            code: make_code(node, { beautify: false }),
         }));
     }
 
     function read_string(stat) {
         if (stat.TYPE == "SimpleStatement") {
             var body = stat.body;
-            switch(body.TYPE) {
+            switch (body.TYPE) {
               case "String":
                 return body.value;
               case "Array":
@@ -142,7 +140,7 @@ function parse_test(file) {
                 ].indexOf(label.name) >= 0, tmpl("Unsupported label {name} [{line},{col}]", {
                     name: label.name,
                     line: label.start.line,
-                    col: label.start.col
+                    col: label.start.col,
                 }));
                 var stat = node.body;
                 if (label.name == "expect_exact" || label.name == "node_version") {
@@ -155,12 +153,12 @@ function parse_test(file) {
                         var ctor = global[body.expression.name];
                         assert.ok(ctor === Error || ctor.prototype instanceof Error, tmpl("Unsupported expect_stdout format [{line},{col}]", {
                             line: label.start.line,
-                            col: label.start.col
+                            col: label.start.col,
                         }));
                         test[label.name] = ctor.apply(null, body.args.map(function(node) {
                             assert.ok(node instanceof U.AST_Constant, tmpl("Unsupported expect_stdout format [{line},{col}]", {
                                 line: label.start.line,
-                                col: label.start.col
+                                col: label.start.col,
                             }));
                             return node.value;
                         }));

@@ -2239,3 +2239,77 @@ issue_5407: {
     ]
     node_version: ">=6"
 }
+
+issue_5444_1: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 42;
+        var b = function({} = setImmediate(function() {
+            console.log(a++);
+        })) {
+            return this;
+        }();
+        console.log(typeof b);
+    }
+    expect: {
+        var a = 42;
+        var b = function({} = setImmediate(function() {
+            console.log(a++);
+        })) {
+            return this;
+        }();
+        console.log(typeof b);
+    }
+    expect_stdout: [
+        "object",
+        "42",
+    ]
+    node_version: ">=6"
+}
+
+issue_5444_2: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a, b = a++) {
+            return b;
+        }
+        console.log(f("FAIL") || "PASS");
+    }
+    expect: {
+        function f(a, b = a++) {
+            return b;
+        }
+        console.log(f("FAIL") || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5444_3: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        function f(a, b = function(c = a *= this) {
+            return c;
+        }()) {
+            return b;
+        }
+        console.log(f("FAIL") || "PASS");
+    }
+    expect: {
+        function f(a, b = function(c = a *= this) {
+            return c;
+        }()) {
+            return b;
+        }
+        console.log(f("FAIL") || "PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}

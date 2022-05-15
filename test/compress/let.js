@@ -237,12 +237,12 @@ merge_vars_2: {
         "use strict";
         var a = 0;
         1 && --a,
-        b = function f() {
+        a = function f() {
             let c = a && f;
             c.var += 0;
         }(),
-        void console.log(b);
-        var b;
+        void console.log(a);
+        var a;
     }
     expect_stdout: "undefined"
     node_version: ">=4"

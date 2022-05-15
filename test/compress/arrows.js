@@ -726,8 +726,8 @@ issue_4401: {
     expect: {
         (function() {
             var a = (b => b(a))(console.log || a);
-            var c = console.log;
-            c && c(typeof b);
+            var a = console.log;
+            a && a(typeof b);
         })();
     }
     expect_stdout: [
