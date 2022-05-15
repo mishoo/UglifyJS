@@ -496,3 +496,16 @@ issue_4766: {
         export var a = "bar";
     }
 }
+
+issue_5444: {
+    options = {
+        unused: true,
+    }
+    input: {
+        export var a = (console, console);
+    }
+    expect: {
+        console;
+        export var a = console;
+    }
+}
