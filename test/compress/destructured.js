@@ -1815,8 +1815,8 @@ issue_4288: {
                 console.log(typeof b);
             }()]: a,
         }) {
-            var b = a;
-            b++;
+            var a = a;
+            a++;
         }
         f(0);
     }

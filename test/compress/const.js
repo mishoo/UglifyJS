@@ -184,12 +184,12 @@ merge_vars_2: {
     expect: {
         var a = 0;
         1 && --a,
-        b = function f() {
+        a = function f() {
             const c = a && f;
             c.var += 0;
         }(),
-        void console.log(b);
-        var b;
+        void console.log(a);
+        var a;
     }
     expect_stdout: "undefined"
 }
