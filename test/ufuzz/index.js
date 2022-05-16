@@ -1805,7 +1805,7 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
         if (canThrow && rng(20) == 0) {
             s += p;
         } else {
-            s += "(typeof " + p + ' == "function" && typeof ' + p + '.prototype == "object" ? ' + p + " : function() {})";
+            s += "(typeof " + p + ' == "function" && typeof ' + p + '.prototype == "object" && ' + p + ".constructor === Function ? " + p + " : function() {})";
         }
     }
     s += " {\n";
