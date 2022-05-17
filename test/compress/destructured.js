@@ -3020,6 +3020,7 @@ issue_5074_method_pure_getters: {
 issue_5085_1: {
     options = {
         evaluate: true,
+        passes: 2,
         reduce_vars: true,
         toplevel: true,
         unsafe: true,
@@ -3032,8 +3033,7 @@ issue_5085_1: {
     }
     expect: {
         var a = "PASS";
-        var b = [ 42 ][0];
-        b;
+        42;
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -3043,6 +3043,7 @@ issue_5085_1: {
 issue_5085_2: {
     options = {
         evaluate: true,
+        passes: 2,
         reduce_vars: true,
         side_effects: true,
         unsafe: true,
@@ -3059,7 +3060,7 @@ issue_5085_2: {
     expect: {
         var a = "PASS";
         (function(b) {
-            b = [ 42 ][0];
+            0;
         })();
         console.log(a);
     }
