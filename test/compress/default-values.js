@@ -2313,3 +2313,85 @@ issue_5444_3: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5448_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a = typeof console.log) {
+            do {
+                var b = [ ...a ];
+            } while (console.log("PASS"));
+        })();
+    }
+    expect: {
+        (function(a = console.log) {
+            do {} while (console.log("PASS"));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5448_2: {
+    options = {
+        keep_fargs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a = typeof console) {
+            do {
+                var b = [ ...a ];
+            } while (console.log("PASS"));
+        })();
+    }
+    expect: {
+        (function(a = 0) {
+            do {} while (console.log("PASS"));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5448_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var [ a = typeof console ] = [ void console.log("PASS") ];
+        var b = [ ...a ];
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5448_4: {
+    options = {
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        var { p: a = typeof console } = { p: void console.log("PASS") };
+        var b = [ ...a ];
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
