@@ -3732,3 +3732,25 @@ issue_5420: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5451: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        A = 1;
+        var a = 1, b;
+        console.log(function f() {
+            return a-- && f(b = A, b);
+        }());
+    }
+    expect: {
+        A = 1;
+        var a = 1, b;
+        console.log(function f() {
+            return a-- && f(b = A, b);
+        }());
+    }
+    expect_stdout: "0"
+}
