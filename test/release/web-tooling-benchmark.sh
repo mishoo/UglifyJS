@@ -54,7 +54,7 @@ ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
 minify_in_situ "src" \
 && minify_in_situ "third_party" \
 && rm -rf node_modules \
-&& npm_install \
+&& npm_install --package-lock \
 && rm -rf build/* \
 && npm run build:terser-bundled \
 && npm run build:uglify-js-bundled \
