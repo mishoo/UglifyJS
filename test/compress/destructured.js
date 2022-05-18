@@ -3567,3 +3567,32 @@ issue_5423: {
     expect_stdout: "function"
     node_version: ">=6"
 }
+
+issue_5454: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            var a = 42, a = {
+                p: [ a ] = [],
+            };
+            return "PASS";
+        }
+        console.log(f());
+    }
+    expect: {
+        console.log(function(a) {
+            a = 42, a = {
+                p: [ a ] = [],
+            };
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
