@@ -978,8 +978,8 @@ issue_4454_2: {
     expect: {
         function f(a) {
             (function*(c = console.log(a)) {})();
-            var a = 42..toString();
-            console.log(a);
+            var b = 42..toString();
+            console.log(b);
         }
         f("PASS");
     }
@@ -1545,5 +1545,47 @@ issue_5425: {
         console.log(a, typeof f);
     }
     expect_stdout: "PASS undefined"
+    node_version: ">=4"
+}
+
+issue_5456: {
+    options = {
+        inline: true,
+        merge_vars: true,
+    }
+    input: {
+        var a = true;
+        (function() {
+            (function(b, c) {
+                var d = function*() {
+                    c = null;
+                }();
+                var e = function() {
+                    if (c)
+                        console.log(typeof d);
+                    while (b);
+                }();
+            })(function(i) {
+                return console.log("foo") && i;
+            }(a));
+        })();
+    }
+    expect: {
+        var a = true;
+        (function() {
+            b = (i = a, console.log("foo") && i),
+            i = function*() {
+                c = null;
+            }(),
+            e = function() {
+                if (c) console.log(typeof i);
+                while (b);
+            }(),
+            void 0;
+            var b, c, i, e;
+            var i;
+        })();
+    }
+    expect_stdout: "foo"
     node_version: ">=4"
 }
