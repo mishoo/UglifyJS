@@ -1826,13 +1826,13 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
         if (SUPPORT.class_field && rng(2)) {
             if (internal) {
                 s += internal;
-            } else if (fixed && bug_static_class_field) {
+            } else if (fixed && bug_class_static_nontrivial) {
                 s += getDotKey();
             } else {
                 s += createObjectKey(recurmax, stmtDepth, canThrow);
             }
             if (rng(5)) {
-                async = bug_async_class_await && fixed && 0;
+                async = false;
                 generator = false;
                 s += " = " + createExpression(recurmax, NO_COMMA, stmtDepth, fixed ? canThrow : CANNOT_THROW);
                 generator = save_generator;
@@ -2037,7 +2037,7 @@ function isBannedKeyword(name) {
       case "let":
         return in_class;
       case "await":
-        return async !== false;
+        return async || in_class && bug_class_static_await;
       case "yield":
         return generator || in_class;
     }
@@ -2444,10 +2444,10 @@ if (SUPPORT.arrow && SUPPORT.async && SUPPORT.rest && sandbox.is_error(sandbox.r
         return ex.name == "SyntaxError" && ex.message == "Rest parameter must be last formal parameter";
     };
 }
-var bug_async_class_await = SUPPORT.async && SUPPORT.class_field && sandbox.is_error(sandbox.run_code("var await; async function f() { class A { static p = await; } }"));
+var bug_class_static_await = SUPPORT.async && SUPPORT.class_field && sandbox.is_error(sandbox.run_code("var await; class A { static p = await; }"));
+var bug_class_static_nontrivial = SUPPORT.class_field && sandbox.is_error(sandbox.run_code("class A { static 42; static get 42() {} }"));
 var bug_for_of_async = SUPPORT.for_await_of && sandbox.is_error(sandbox.run_code("var async; for (async of []);"));
 var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && sandbox.is_error(sandbox.run_code("try {} catch (e) { for (var e of []); }"));
-var bug_static_class_field = SUPPORT.class_field && sandbox.is_error(sandbox.run_code("class A { static 42; static get 42() {} }"));
 if (SUPPORT.destructuring && sandbox.is_error(sandbox.run_code("console.log([ 1 ], {} = 2);"))) {
     beautify_options.output.v8 = true;
     minify_options.forEach(function(o) {

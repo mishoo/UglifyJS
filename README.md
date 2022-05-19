@@ -1331,10 +1331,8 @@ To allow for better optimizations, the compiler makes various assumptions:
 - Later versions of JavaScript will throw `SyntaxError` with the following:
   ```javascript
   var await;
-  async function f() {
-      class A {
-          static p = await;
-      }
+  class A {
+      static p = await;
   }
   // SyntaxError: Unexpected reserved word
   ```
