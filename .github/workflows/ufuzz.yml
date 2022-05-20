@@ -19,11 +19,11 @@ jobs:
         include:
           - node: '16'
             os: macos-latest
-          - node: '8'
+          - node: '12'
             os: ubuntu-latest
           - node: '8'
             os: ubuntu-latest
-          - node: '8'
+          - node: '12'
             os: windows-latest
           - node: '8'
             os: windows-latest
