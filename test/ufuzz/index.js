@@ -2337,7 +2337,7 @@ function is_error_redeclaration(ex) {
 }
 
 function is_error_destructuring(ex) {
-    return ex.name == "TypeError" && /^Cannot destructure /.test(ex.message);
+    return ex.name == "TypeError" && /^Cannot (destructure|read propert)/.test(ex.message);
 }
 
 function is_error_class_constructor(ex) {
