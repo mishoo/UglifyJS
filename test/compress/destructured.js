@@ -3401,7 +3401,7 @@ issue_5222: {
     node_version: ">=6"
 }
 
-issue_5288: {
+issue_5288_1: {
     options = {
         conditionals: true,
         inline: true,
@@ -3421,7 +3421,37 @@ issue_5288: {
         }() ]));
     }
     expect: {
-        while (console ? console.log("PASS") : 0, void 0);
+        while (function() {
+            if (console)
+                console.log("PASS");
+        }(), void 0);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5288_2: {
+    options = {
+        conditionals: true,
+        inline: true,
+        keep_fargs: false,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        while (function([]) {}([ function f() {
+            if (console)
+                return console.log("PASS");
+            else {
+                let a = 0;
+            }
+        }() ]));
+    }
+    expect: {
+        while (console && console.log("PASS"), void 0);
     }
     expect_stdout: "PASS"
     node_version: ">=6"
