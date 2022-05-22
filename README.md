@@ -118,6 +118,7 @@ a double dash to prevent input files being used as option arguments:
     --keep-fargs                Do not mangle/drop function arguments.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
+    --module                    Process input as ES module (implies --toplevel)
     --name-cache <file>         File to hold mangled name mappings.
     --self                      Build UglifyJS as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
@@ -517,6 +518,9 @@ if (result.error) throw result.error;
   - `mangle.properties` (default: `false`) — a subcategory of the mangle option.
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
+- `module` (default: `false`) — set to `true` if you wish to process input as
+  ES module, i.e. implicit `"use strict";` alongside with `toplevel` enabled.
+
 - `nameCache` (default: `null`) — pass an empty object `{}` or a previously
   used `nameCache` object if you wish to cache mangled variable and
   property names across multiple invocations of `minify()`. Note: this is
@@ -727,6 +731,9 @@ to be `false` and all symbol names will be omitted.
   when we can statically determine the condition.
 
 - `merge_vars` (default: `true`) — combine and reuse variables.
+
+- `module` (default: `false`) — set to `true` if you wish to process input as
+  ES module, i.e. implicit `"use strict";` alongside with `toplevel` enabled.
 
 - `negate_iife` (default: `true`) — negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parens that the

@@ -928,6 +928,14 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should work with --module", function(done) {
+        var command = uglifyjscmd + " test/input/module/input.js --module -mc";
+        exec(command, function(err, stdout, stderr) {
+            if (err) throw err;
+            assert.strictEqual(stdout, read("test/input/module/expect.js"));
+            done();
+        });
+    });
     it("Should compress swarm of unused variables with reasonable performance", function(done) {
         var code = [
             "console.log(function() {",
