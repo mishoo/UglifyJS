@@ -341,7 +341,7 @@ drop_extends: {
     node_version: ">=4"
 }
 
-keep_extends: {
+keep_extends_1: {
     options = {
         toplevel: true,
         unused: true,
@@ -361,6 +361,43 @@ keep_extends: {
         } catch (e) {
             console.log("PASS");
         }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+keep_extends_2: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        (class extends Function {});
+        console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        (class extends Function {});
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+keep_extends_3: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A extends Function {}
+        console.log("PASS");
+    }
+    expect: {
+        "use strict";
+        (class extends Function {});
+        console.log("PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=4"
@@ -668,6 +705,58 @@ single_use_7: {
     }
     expect_stdout: "true"
     node_version: ">=4"
+}
+
+single_use_extends: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A extends class B {
+            f() {
+                return "PASS";
+            }
+        } {}
+        console.log(new A().f());
+    }
+    expect: {
+        "use strict";
+        console.log(new class extends class {
+            f() {
+                return "PASS";
+            }
+        } {}().f());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+single_use_extends_non_strict: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A extends class B {
+            f() {
+                return "PASS";
+            }
+        } {}
+        console.log(new A().f());
+    }
+    expect: {
+        console.log(new class extends class {
+            f() {
+                return "PASS";
+            }
+        } {}().f());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
 }
 
 collapse_non_strict: {
