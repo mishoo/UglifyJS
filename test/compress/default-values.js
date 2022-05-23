@@ -2421,3 +2421,30 @@ issue_5463: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5465: {
+    options = {
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b) {
+            (function(c = b = "FAIL 2") {
+                this && console.log(b || "PASS");
+            })(42 - a && a);
+        }
+        f("FAIL 1");
+    }
+    expect: {
+        a = "FAIL 1",
+        void function(c = b = "FAIL 2") {
+            this && console.log(b || "PASS");
+        }(42 - a && a);
+        var a, b;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}

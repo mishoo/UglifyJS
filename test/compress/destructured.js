@@ -1815,8 +1815,8 @@ issue_4288: {
                 console.log(typeof b);
             }()]: a,
         }) {
-            var a = a;
-            a++;
+            var b = a;
+            b++;
         }
         f(0);
     }
@@ -1848,8 +1848,8 @@ issue_4294: {
             }) {}({
                 [a]: 0,
             });
-            var a = A;
-            console.log(a);
+            var b = A;
+            console.log(b);
         })();
     }
     expect_stdout: "PASS"
