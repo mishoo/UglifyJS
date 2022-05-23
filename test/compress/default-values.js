@@ -2395,3 +2395,29 @@ issue_5448_4: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5463: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unsafe: true,
+    }
+    input: {
+        if (console.log("PASS"))
+            var a = void 0,
+                b = void 0,
+                b = ([ a = FAIL ] = b && b);
+    }
+    expect: {
+        var a, b, b;
+        console.log("PASS") && (
+            b = a = void 0,
+            b = [a = FAIL] = a && a
+        );
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
