@@ -107,6 +107,7 @@ function process_option(name, no_value) {
                 "  --ie                                     Support non-standard Internet Explorer.",
                 "  --keep-fargs                             Do not mangle/drop function arguments.",
                 "  --keep-fnames                            Do not mangle/drop function names. Useful for code relying on Function.prototype.name.",
+                "  --module                                 Process input as ES module (implies --toplevel)",
                 "  --name-cache <file>                      File to hold mangled name mappings.",
                 "  --rename                                 Force symbol expansion.",
                 "  --no-rename                              Disable symbol expansion.",
@@ -152,6 +153,7 @@ function process_option(name, no_value) {
       case "annotations":
       case "ie":
       case "ie8":
+      case "module":
       case "timings":
       case "toplevel":
       case "v8":
