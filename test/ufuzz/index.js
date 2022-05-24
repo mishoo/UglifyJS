@@ -2332,6 +2332,10 @@ function is_error_recursion(ex) {
     return ex.name == "RangeError" && /Invalid string length|Maximum call stack size exceeded/.test(ex.message);
 }
 
+function is_error_set_property(ex) {
+    return ex.name == "TypeError" && /^Cannot set propert[\s\S]+? of (null|undefined)/.test(ex.message);
+}
+
 function is_error_redeclaration(ex) {
     return ex.name == "SyntaxError" && /already been declared|redeclaration/.test(ex.message);
 }
@@ -2351,6 +2355,7 @@ function is_error_getter_only_property(ex) {
 }
 
 function patch_try_catch(orig, toplevel) {
+    var patches = [];
     var stack = [ {
         code: orig,
         index: 0,
@@ -2401,26 +2406,33 @@ function patch_try_catch(orig, toplevel) {
                 code = new_code;
             } else if (is_error_in(result)) {
                 index = result.ufuzz_catch;
-                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("invalid `in`");' + orig.slice(index);
+                patches.unshift([ index, result.ufuzz_var + ' = new Error("invalid `in`");' ]);
             } else if (is_error_spread(result)) {
                 index = result.ufuzz_catch;
-                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("spread not iterable");' + orig.slice(index);
+                patches.unshift([ index, result.ufuzz_var + ' = new Error("spread not iterable");' ]);
             } else if (is_error_recursion(result)) {
                 index = result.ufuzz_try;
-                return orig.slice(0, index) + 'throw new Error("skipping infinite recursion");' + orig.slice(index);
+                patches.unshift([ index, 'throw new Error("skipping infinite recursion");' ]);
+            } else if (is_error_set_property(result)) {
+                index = result.ufuzz_catch;
+                patches.unshift([ index, result.ufuzz_var + ' = new Error("cannot set property");' ]);
             } else if (is_error_destructuring(result)) {
                 index = result.ufuzz_catch;
-                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("cannot destructure");' + orig.slice(index);
+                patches.unshift([ index, result.ufuzz_var + ' = new Error("cannot destructure");' ]);
             } else if (is_error_class_constructor(result)) {
                 index = result.ufuzz_catch;
-                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("missing new for class");' + orig.slice(index);
+                patches.unshift([ index, result.ufuzz_var + ' = new Error("missing new for class");' ]);
             } else if (is_error_getter_only_property(result)) {
                 index = result.ufuzz_catch;
-                return orig.slice(0, index) + result.ufuzz_var + ' = new Error("setting getter-only property");' + orig.slice(index);
+                patches.unshift([ index, result.ufuzz_var + ' = new Error("setting getter-only property");' ]);
             }
         }
         stack.filled = true;
     }
+    if (patches.length) return patches.reduce(function(code, patch) {
+        var index = patch[0];
+        return code.slice(0, index) + patch[1] + code.slice(index);
+    }, orig);
 }
 
 var beautify_options = {
