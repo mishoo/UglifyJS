@@ -762,3 +762,27 @@ issue_5228: {
     }
     expect_stdout: "true"
 }
+
+issue_5469: {
+    options = {
+        assignments: true,
+        booleans: true,
+        conditionals: true,
+        dead_code: true,
+        evaluate: true,
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        console.log(function f(a) {
+            a && 42[a = A && null];
+        }());
+    }
+    expect: {
+        console.log(function f(a) {
+            a && A,
+            0;
+        }());
+    }
+    expect_stdout: "undefined"
+}
