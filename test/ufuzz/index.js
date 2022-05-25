@@ -2355,6 +2355,7 @@ function is_error_getter_only_property(ex) {
 }
 
 function patch_try_catch(orig, toplevel) {
+    var patched = Object.create(null);
     var patches = [];
     var stack = [ {
         code: orig,
@@ -2405,26 +2406,19 @@ function patch_try_catch(orig, toplevel) {
                 offset += insert.length;
                 code = new_code;
             } else if (is_error_in(result)) {
-                index = result.ufuzz_catch;
-                patches.unshift([ index, result.ufuzz_var + ' = new Error("invalid `in`");' ]);
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("invalid `in`");');
             } else if (is_error_spread(result)) {
-                index = result.ufuzz_catch;
-                patches.unshift([ index, result.ufuzz_var + ' = new Error("spread not iterable");' ]);
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("spread not iterable");');
             } else if (is_error_recursion(result)) {
-                index = result.ufuzz_try;
-                patches.unshift([ index, 'throw new Error("skipping infinite recursion");' ]);
+                patch(result.ufuzz_try, 'throw new Error("skipping infinite recursion");');
             } else if (is_error_set_property(result)) {
-                index = result.ufuzz_catch;
-                patches.unshift([ index, result.ufuzz_var + ' = new Error("cannot set property");' ]);
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("cannot set property");');
             } else if (is_error_destructuring(result)) {
-                index = result.ufuzz_catch;
-                patches.unshift([ index, result.ufuzz_var + ' = new Error("cannot destructure");' ]);
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("cannot destructure");');
             } else if (is_error_class_constructor(result)) {
-                index = result.ufuzz_catch;
-                patches.unshift([ index, result.ufuzz_var + ' = new Error("missing new for class");' ]);
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("missing new for class");');
             } else if (is_error_getter_only_property(result)) {
-                index = result.ufuzz_catch;
-                patches.unshift([ index, result.ufuzz_var + ' = new Error("setting getter-only property");' ]);
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("setting getter-only property");');
             }
         }
         stack.filled = true;
@@ -2433,6 +2427,12 @@ function patch_try_catch(orig, toplevel) {
         var index = patch[0];
         return code.slice(0, index) + patch[1] + code.slice(index);
     }, orig);
+
+    function patch(index, code) {
+        if (patched[index]) return;
+        patched[index] = true;
+        patches.unshift([ index, code ]);
+    }
 }
 
 var beautify_options = {
@@ -2544,45 +2544,33 @@ for (var round = 1; round <= num_iterations; round++) {
                     ok = sandbox.same_stdout(fuzzy_result, uglify_result);
                 }
             }
-            // ignore difference in error message caused by Temporal Dead Zone
-            if (!ok && original_erred && uglify_erred && original_result.name == "ReferenceError" && uglify_result.name == "ReferenceError") ok = true;
-            // ignore difference in error message caused by `import` symbol redeclaration
-            if (!ok && original_erred && uglify_erred && /\bimport\b/.test(original_code)) {
-                if (is_error_redeclaration(original_result) && is_error_redeclaration(uglify_result)) ok = true;
-            }
+            if (!ok && original_erred && uglify_erred && (
+                // ignore difference in error message caused by Temporal Dead Zone
+                original_result.name == "ReferenceError" && uglify_result.name == "ReferenceError"
+                // ignore difference in error message caused by `in`
+                || is_error_in(original_result) && is_error_in(uglify_result)
+                // ignore difference in error message caused by spread syntax
+                || is_error_spread(original_result) && is_error_spread(uglify_result)
+                // ignore difference in error message caused by destructuring assignment
+                || is_error_set_property(original_result) && is_error_set_property(uglify_result)
+                // ignore difference in error message caused by `import` symbol redeclaration
+                || /\bimport\b/.test(original_code) && is_error_redeclaration(original_result) && is_error_redeclaration(uglify_result)
+                // ignore difference in error message caused by destructuring
+                || is_error_destructuring(original_result) && is_error_destructuring(uglify_result)
+                // ignore difference in error message caused by call on class
+                || is_error_class_constructor(original_result) && is_error_class_constructor(uglify_result)
+                // ignore difference in error message caused by setting getter-only property
+                || is_error_getter_only_property(original_result) && is_error_getter_only_property(uglify_result)
+            )) ok = true;
             // ignore difference due to `__proto__` assignment
             if (!ok && /\b__proto__\b/.test(original_code)) {
                 var original_proto = run_code("(" + patch_proto + ")();\n" + original_code, toplevel);
                 var uglify_proto = run_code("(" + patch_proto + ")();\n" + uglify_code, toplevel);
                 ok = sandbox.same_stdout(original_proto, uglify_proto);
             }
-            // ignore difference in error message caused by `in`
-            if (!ok && original_erred && uglify_erred) {
-                if (is_error_in(original_result) && is_error_in(uglify_result)) ok = true;
-            }
-            // ignore difference in error message caused by spread syntax
-            if (!ok && original_erred && uglify_erred) {
-                if (is_error_spread(original_result) && is_error_spread(uglify_result)) ok = true;
-            }
             // ignore difference in depth of termination caused by infinite recursion
             if (!ok && original_erred && is_error_recursion(original_result)) {
                 if (!uglify_erred || is_error_recursion(uglify_result)) ok = true;
-            }
-            // ignore difference in error message caused by destructuring
-            if (!ok && original_erred && uglify_erred) {
-                if (is_error_destructuring(original_result) && is_error_destructuring(uglify_result)) ok = true;
-            }
-            // ignore difference in error message caused by call on class
-            if (!ok && original_erred && uglify_erred) {
-                if (is_error_class_constructor(original_result) && is_error_class_constructor(uglify_result)) {
-                    ok = true;
-                }
-            }
-            // ignore difference in error message caused by setting getter-only property
-            if (!ok && original_erred && uglify_erred) {
-                if (is_error_getter_only_property(original_result) && is_error_getter_only_property(uglify_result)) {
-                    ok = true;
-                }
             }
             // ignore errors above when caught by try-catch
             if (!ok) {
