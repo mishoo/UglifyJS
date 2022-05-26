@@ -2324,6 +2324,10 @@ function is_error_in(ex) {
     return ex.name == "TypeError" && /'in'/.test(ex.message);
 }
 
+function is_error_tdz(ex) {
+    return ex.name == "ReferenceError";
+}
+
 function is_error_spread(ex) {
     return ex.name == "TypeError" && /Found non-callable @@iterator| is not iterable| not a function/.test(ex.message);
 }
@@ -2407,6 +2411,8 @@ function patch_try_catch(orig, toplevel) {
                 code = new_code;
             } else if (is_error_in(result)) {
                 patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("invalid `in`");');
+            } else if (is_error_tdz(result)) {
+                patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("TDZ");');
             } else if (is_error_spread(result)) {
                 patch(result.ufuzz_catch, result.ufuzz_var + ' = new Error("spread not iterable");');
             } else if (is_error_recursion(result)) {
@@ -2545,10 +2551,10 @@ for (var round = 1; round <= num_iterations; round++) {
                 }
             }
             if (!ok && original_erred && uglify_erred && (
-                // ignore difference in error message caused by Temporal Dead Zone
-                original_result.name == "ReferenceError" && uglify_result.name == "ReferenceError"
                 // ignore difference in error message caused by `in`
-                || is_error_in(original_result) && is_error_in(uglify_result)
+                is_error_in(original_result) && is_error_in(uglify_result)
+                // ignore difference in error message caused by Temporal Dead Zone
+                || is_error_tdz(original_result) && is_error_tdz(uglify_result)
                 // ignore difference in error message caused by spread syntax
                 || is_error_spread(original_result) && is_error_spread(uglify_result)
                 // ignore difference in error message caused by destructuring assignment
