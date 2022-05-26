@@ -3754,3 +3754,94 @@ issue_5451: {
     }
     expect_stdout: "0"
 }
+
+issue_5471_1: {
+    options = {
+        conditionals: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL 1";
+        function f(b, c) {
+            function g() {
+                if (console)
+                    return 42;
+                else
+                    c = "FAIL 2";
+            }
+            var d = g();
+            console.log(c || "PASS");
+            var e = function h() {
+                while (b && e);
+            }();
+        }
+        f(a++) && a;
+    }
+    expect: {
+        var a = "FAIL 1";
+        var b, c, e;
+        b = +a,
+        function() {
+            if (console)
+                return;
+            c = "FAIL 2";
+        }(),
+        console.log(c || "PASS"),
+        e = function() {
+            while (b && e);
+        }();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5471_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "FAIL 1";
+        function f(b, c) {
+            function g() {
+                if (console)
+                    return 42;
+                else
+                    c = "FAIL 2";
+            }
+            var d = g();
+            console.log(c || "PASS");
+            var e = function h() {
+                while (b && e);
+            }();
+        }
+        f(a++) && a;
+    }
+    expect: {
+        var a = "FAIL 1";
+        var b, c, e;
+        b = +a,
+        function() {
+            if (console)
+                return;
+            c = "FAIL 2";
+        }(),
+        console.log(c || "PASS"),
+        e = function() {
+            while (b && e);
+        }(),
+        void 0;
+    }
+    expect_stdout: "PASS"
+}

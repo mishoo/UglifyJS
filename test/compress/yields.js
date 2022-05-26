@@ -1574,15 +1574,15 @@ issue_5456: {
         var a = true;
         (function() {
             b = (i = a, console.log("foo") && i),
-            i = function*() {
+            d = function*() {
                 c = null;
             }(),
             e = function() {
-                if (c) console.log(typeof i);
+                if (c) console.log(typeof d);
                 while (b);
             }(),
             void 0;
-            var b, c, i, e;
+            var b, c, d, e;
             var i;
         })();
     }
