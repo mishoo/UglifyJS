@@ -8623,3 +8623,26 @@ mixed_mode_inline_4_strict: {
     }
     expect_stdout: "PASS"
 }
+
+module_inline: {
+    options = {
+        inline: true,
+        module: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = f;
+        function f() {
+            return a;
+        }
+        console.log(f() === a);
+    }
+    expect: {
+        var a = f;
+        function f() {
+            return a;
+        }
+        console.log(a === a);
+    }
+    expect_stdout: "true"
+}
