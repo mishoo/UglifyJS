@@ -2020,3 +2020,23 @@ issue_5338: {
     expect_stdout: ReferenceError("a is not defined")
     node_version: ">=4"
 }
+
+issue_5476: {
+    mangle = {
+        keep_fargs: true,
+    }
+    input: {
+        "use strict";
+        console.log(function(n) {
+            let a;
+        }());
+    }
+    expect: {
+        "use strict";
+        console.log(function(n) {
+            let o;
+        }());
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}

@@ -1855,3 +1855,20 @@ issue_5338: {
     }
     expect_stdout: true
 }
+
+issue_5476: {
+    mangle = {
+        keep_fargs: true,
+    }
+    input: {
+        console.log(function(n) {
+            const a = 42;
+        }());
+    }
+    expect: {
+        console.log(function(n) {
+            const o = 42;
+        }());
+    }
+    expect_stdout: "undefined"
+}
