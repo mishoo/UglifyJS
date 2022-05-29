@@ -2329,7 +2329,7 @@ function is_error_tdz(ex) {
 }
 
 function is_error_spread(ex) {
-    return ex.name == "TypeError" && /Found non-callable @@iterator| is not iterable| not a function/.test(ex.message);
+    return ex.name == "TypeError" && /Found non-callable @@iterator| is not iterable| not a function|Symbol\(Symbol\.iterator\)/.test(ex.message);
 }
 
 function is_error_recursion(ex) {
