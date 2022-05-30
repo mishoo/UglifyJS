@@ -3001,3 +3001,37 @@ issue_5456: {
     expect_stdout: "foo"
     node_version: ">=8"
 }
+
+issue_5478: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        A = {
+            get then() {
+                a = "FAIL";
+            },
+        };
+        var a = "PASS";
+        (async function() {
+            for (var b in "foo")
+                return void A;
+        })();
+        console.log(a);
+    }
+    expect: {
+        A = {
+            get then() {
+                a = "FAIL";
+            },
+        };
+        var a = "PASS";
+        (async function() {
+            for (var b in "foo")
+                return !A;
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
