@@ -147,7 +147,7 @@ a double dash to prevent input files being used as option arguments:
     --warn                      Print warning messages.
     --webkit                    Support non-standard Safari/Webkit.
                                 Equivalent to setting `webkit: true` in `minify()`
-                                for `mangle` and `output` options.
+                                for `compress`, `mangle` and `output` options.
                                 By default UglifyJS will not try to be Safari-proof.
     --wrap <name>               Embed everything in a big function, making the
                                 “exports” and “global” variables available. You
