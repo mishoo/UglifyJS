@@ -2398,7 +2398,7 @@ function patch_try_catch(orig, toplevel) {
                     "throw " + match[1] + ";",
                 ].join("\n");
             }
-            var new_code = code.slice(0, index) + insert + code.slice(index) + tail_throw;
+            var new_code = code.slice(0, index) + insert + code.slice(index) + tail_throw + "var UFUZZ_ERROR;";
             var result = run_code(new_code, toplevel);
             if (!sandbox.is_error(result)) {
                 if (!stack.filled && match[1]) stack.push({

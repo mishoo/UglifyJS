@@ -2852,3 +2852,33 @@ issue_5436: {
     expect_stdout: "PASS"
     node_version: ">=12"
 }
+
+issue_5481: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var a = "FAIL 1", log = console.log;
+        try {
+            a = "PASS";
+            (class extends 42 {});
+            log("FAIL 2", a);
+        } catch (e) {
+            log(a);
+        }
+    }
+    expect: {
+        "use strict";
+        var a = "FAIL 1", log = console.log;
+        try {
+            a = "PASS";
+            (class extends 42 {});
+            log("FAIL 2", a);
+        } catch (e) {
+            log(a);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
