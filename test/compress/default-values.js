@@ -2448,3 +2448,17 @@ issue_5465: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5485: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        (function f(f, a = console.log(void 0 === f ? "PASS" : "FAIL")) {})();
+    }
+    expect: {
+        (function f(f, a = console.log(void 0 === f ? "PASS" : "FAIL")) {})();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
