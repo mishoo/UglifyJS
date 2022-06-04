@@ -1407,3 +1407,17 @@ To allow for better optimizations, the compiler makes various assumptions:
   // Actual:   SyntaxError: Unexpected reserved word
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Later versions of Chrome and Node.js will give incorrect results with the
+  following:
+  ```javascript
+  try {
+      f();
+      function f() {
+          throw 42;
+      }
+  } catch (e) {}
+  console.log(typeof f);
+  // Expected: "function"
+  // Actual:   "undefined"
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.

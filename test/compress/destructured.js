@@ -3626,3 +3626,23 @@ issue_5454: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5485: {
+    options = {
+        comparisons: true,
+    }
+    input: {
+        (function f({
+            p: f,
+            [console.log(void 0 === f ? "PASS" : "FAIL")]: a,
+        }) {})(42);
+    }
+    expect: {
+        (function f({
+            p: f,
+            [console.log(void 0 === f ? "PASS" : "FAIL")]: a,
+        }) {})(42);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
