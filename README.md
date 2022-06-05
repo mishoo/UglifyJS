@@ -519,7 +519,8 @@ if (result.error) throw result.error;
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
 - `module` (default: `false`) — set to `true` if you wish to process input as
-  ES module, i.e. implicit `"use strict";` alongside with `toplevel` enabled.
+  ES module, i.e. implicit `"use strict";` and support for top-level `await`,
+  alongside with `toplevel` enabled.
 
 - `nameCache` (default: `null`) — pass an empty object `{}` or a previously
   used `nameCache` object if you wish to cache mangled variable and
@@ -632,7 +633,13 @@ to be `false` and all symbol names will be omitted.
 
 - `bare_returns` (default: `false`) — support top level `return` statements
 
-- `html5_comments` (default: `true`)
+- `expression` (default: `false`) — parse as a single expression, e.g. JSON
+
+- `html5_comments` (default: `true`) — process HTML comment as workaround for
+  browsers which do not recognise `<script>` tags
+
+- `module` (default: `false`) — set to `true` if you wish to process input as
+  ES module, i.e. implicit `"use strict";` and support for top-level `await`.
 
 - `shebang` (default: `true`) — support `#!command` as the first line
 
@@ -1415,9 +1422,10 @@ To allow for better optimizations, the compiler makes various assumptions:
       function f() {
           throw 42;
       }
-  } catch (e) {}
-  console.log(typeof f);
-  // Expected: "function"
-  // Actual:   "undefined"
+  } catch (e) {
+      console.log(typeof f, e);
+  }
+  // Expected: "function 42"
+  // Actual:   "undefined 42"
   ```
   UglifyJS may modify the input which in turn may suppress those errors.

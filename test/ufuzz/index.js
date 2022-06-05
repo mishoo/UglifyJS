@@ -405,7 +405,7 @@ function createTopLevelCode() {
     unique_vars.length = 0;
     classes.length = 0;
     allow_this = true;
-    async = false;
+    async = SUPPORT.async && rng(200) == 0;
     has_await = false;
     export_default = false;
     generator = false;
@@ -413,7 +413,7 @@ function createTopLevelCode() {
     funcs = 0;
     clazz = 0;
     imports = 0;
-    in_class = 0;
+    in_class = async;
     called = Object.create(null);
     var s = [
         strictMode(),
@@ -2087,6 +2087,7 @@ if (require.main !== module) {
 }
 
 function run_code(code, toplevel, timeout) {
+    if (async && has_await) code = "(async function(){\n" + code + "\n})();";
     return sandbox.run_code(sandbox.patch_module_statements(code), toplevel, timeout);
 }
 
@@ -2502,6 +2503,7 @@ for (var round = 1; round <= num_iterations; round++) {
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
         var toplevel = sandbox.has_toplevel(o);
+        if (async && has_await) o.parse = { module: true };
         o.validate = true;
         uglify_code = UglifyJS.minify(original_code, o);
         original_result = orig_result[toplevel ? 1 : 0];
