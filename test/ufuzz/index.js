@@ -140,6 +140,7 @@ var SUPPORT = function(matrix) {
     class: "class C { f() {} }",
     class_field: "class C { p = 0; }",
     class_private: "class C { #f() {} }",
+    class_static_init: "class C { static {} }",
     computed_key: "({[0]: 0});",
     const_block: "var a; { const a = 0; }",
     default_value: "[ a = 0 ] = [];",
@@ -1181,7 +1182,11 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                 unique_vars.length = unique_len;
             });
         }
-        if (n !== 0) s += " finally { " + createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + " }";
+        if (n !== 0) s += [
+            " finally { ",
+            createStatements(rng(5) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+            " }",
+        ].join("");
         return s;
       case STMT_C:
         return "c = c + 1;";
@@ -1839,6 +1844,16 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
                 async = save_async;
             }
             s += ";\n";
+        } else if (SUPPORT.class_static_init && fixed && !internal && rng(10) == 0) {
+            async = false;
+            generator = false;
+            s += [
+                "{ ",
+                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, stmtDepth),
+                " }\n",
+            ].join("");
+            generator = save_generator;
+            async = save_async;
         } else {
             if (!fixed && !internal && constructor && rng(10) == 0) {
                 internal = constructor;
