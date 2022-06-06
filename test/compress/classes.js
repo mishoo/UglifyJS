@@ -241,6 +241,208 @@ class_super: {
     node_version: ">=4"
 }
 
+static_init: {
+    input: {
+        var a = "foo";
+        var b = null;
+        class A {
+            static {
+                var a = "bar";
+                b = true;
+                var c = 42;
+                console.log(a, b, c);
+            }
+        }
+        console.log(a, b, typeof c);
+    }
+    expect_exact: 'var a="foo";var b=null;class A{static{var a="bar";b=true;var c=42;console.log(a,b,c)}}console.log(a,b,typeof c);'
+    expect_stdout: [
+        "bar true 42",
+        "foo true undefined",
+    ]
+    node_version: ">=16"
+}
+
+static_field_init: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (class {
+            static [console.log("foo")] = console.log("bar");
+            static {
+                console.log("baz");
+            }
+            static [console.log("moo")] = console.log("moz");
+        });
+    }
+    expect: {
+        (class {
+            static [(console.log("foo"), console.log("moo"))] = (
+                console.log("bar"),
+                (() => {
+                    console.log("baz");
+                })(),
+                console.log("moz")
+            );
+        });
+    }
+    expect_stdout: [
+        "foo",
+        "moo",
+        "bar",
+        "baz",
+        "moz",
+    ]
+    node_version: ">=16"
+}
+
+static_field_init_strict: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        (class {
+            static [console.log("foo")] = console.log("bar");
+            static {
+                console.log("baz");
+            }
+            static [console.log("moo")] = console.log("moz");
+        });
+    }
+    expect: {
+        "use strict";
+        console.log("foo"),
+        console.log("moo"),
+        (() => (
+            console.log("bar"),
+            (() => {
+                console.log("baz");
+            })(),
+            console.log("moz")
+        ))();
+    }
+    expect_stdout: [
+        "foo",
+        "moo",
+        "bar",
+        "baz",
+        "moz",
+    ]
+    node_version: ">=16"
+}
+
+static_init_side_effects_1: {
+    options = {
+        merge_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "FAIL";
+        (class {
+            static {
+                a = "PASS";
+            }
+        });
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (class {
+            static {
+                a = "PASS";
+            }
+        });
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
+
+static_init_side_effects_1_strict: {
+    options = {
+        merge_vars: true,
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        var a = "FAIL";
+        (class {
+            static {
+                a = "PASS";
+            }
+        });
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        var a = "FAIL";
+        (() => (() => {
+            a = "PASS";
+        })())();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
+
+static_init_side_effects_2: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "FAIL";
+        (class {
+            static {
+                a = "PASS";
+            }
+        });
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (class {
+            static {
+                a = "PASS";
+            }
+        });
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
+
+static_init_side_effects_2_strict: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        var a = "FAIL";
+        (class {
+            static {
+                a = "PASS";
+            }
+        });
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        var a = "FAIL";
+        (() => (() => {
+            a = "PASS";
+        })())();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
+
 block_scoped: {
     options = {
         evaluate: true,
