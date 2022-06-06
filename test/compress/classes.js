@@ -3084,3 +3084,62 @@ issue_5481: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5489: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        (class {
+            [console.log("foo")];
+            static {
+                console.log("bar");
+            }
+            static [console.log("baz")]() {}
+        });
+    }
+    expect: {
+        (class {
+            [(console.log("foo"), console.log("baz"))];
+            static {
+                console.log("bar");
+            }
+        });
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
+    node_version: ">=16"
+}
+
+issue_5489_strict: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        (class {
+            [console.log("foo")];
+            static {
+                console.log("bar");
+            }
+            static [console.log("baz")]() {}
+        });
+    }
+    expect: {
+        "use strict";
+        console.log("foo"),
+        console.log("baz"),
+        (() => (() => {
+            console.log("bar");
+        })())();
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
+    node_version: ">=16"
+}
