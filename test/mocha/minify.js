@@ -1,6 +1,7 @@
 var assert = require("assert");
 var readFileSync = require("fs").readFileSync;
 var run_code = require("../sandbox").run_code;
+var semver = require("semver");
 var UglifyJS = require("../..");
 
 function read(path) {
@@ -317,6 +318,24 @@ describe("minify", function() {
             });
             assert.ok(stat.body);
             assert.strictEqual(stat.print_to_string(), "a=x()");
+        });
+    });
+
+    describe("module", function() {
+        it("Should not inline `await` variables", function() {
+            if (semver.satisfies(process.version, "<8")) return;
+            var code = [
+                "console.log(function() {",
+                "    return typeof await;",
+                "}());",
+            ].join("\n");
+            assert.strictEqual(run_code("(async function(){" + code + "})();"), "undefined\n");
+            var result = UglifyJS.minify(code, {
+                module: true,
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, "console.log(function(){return typeof await}());");
+            assert.strictEqual(run_code("(async function(){" + result.code + "})();"), "undefined\n");
         });
     });
 
