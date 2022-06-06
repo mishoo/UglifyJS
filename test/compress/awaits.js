@@ -2961,3 +2961,24 @@ issue_5478: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5493: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        (async function(a) {
+            var b = await [ 42 || b, a = b ];
+            console.log(a);
+        })();
+    }
+    expect: {
+        (async function(a) {
+            var b = await [ 42 || b, a = b ];
+            console.log(a);
+        })();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=8"
+}
