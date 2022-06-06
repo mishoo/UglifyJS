@@ -760,9 +760,9 @@ function compare_run_code(code, minify_options, result_cache, max_timeout) {
     if (minified.error) return minified;
 
     var toplevel = sandbox.has_toplevel(minify_options);
-    var unminified = run_code(code, toplevel, result_cache, max_timeout);
+    var unminified = run(code, max_timeout);
     var timeout = Math.min(100 * unminified.elapsed, max_timeout);
-    var minified_result = run_code(minified.code, toplevel, result_cache, timeout).result;
+    var minified_result = run(minified.code, timeout).result;
 
     if (sandbox.same_stdout(unminified.result, minified_result)) {
         return is_timed_out(unminified.result) && is_timed_out(minified_result) && {
@@ -774,6 +774,11 @@ function compare_run_code(code, minify_options, result_cache, max_timeout) {
         minified_result: minified_result,
         elapsed: unminified.elapsed,
     };
+
+    function run(code, timeout) {
+        if (minify_options.module) code = "(async function(){\n" + code + "\n})();";
+        return run_code(code, toplevel, result_cache, timeout);
+    }
 }
 
 function test_minify(code, minify_options) {

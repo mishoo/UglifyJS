@@ -2517,8 +2517,11 @@ for (var round = 1; round <= num_iterations; round++) {
     })) continue;
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
+        if (async && has_await) {
+            o.module = true;
+            options = JSON.stringify(o);
+        }
         var toplevel = sandbox.has_toplevel(o);
-        if (async && has_await) o.parse = { module: true };
         o.validate = true;
         uglify_code = UglifyJS.minify(original_code, o);
         original_result = orig_result[toplevel ? 1 : 0];
