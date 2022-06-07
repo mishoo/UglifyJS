@@ -2102,7 +2102,12 @@ if (require.main !== module) {
 }
 
 function run_code(code, toplevel, timeout) {
-    if (async && has_await) code = "(async function(){\n" + code + "\n})();";
+    if (async && has_await) code = [
+        '"use strict";',
+        "(async function(){",
+        code,
+        "})();"
+    ].join("\n");
     return sandbox.run_code(sandbox.patch_module_statements(code), toplevel, timeout);
 }
 
@@ -2275,12 +2280,27 @@ function log(options) {
 }
 
 function sort_globals(code) {
-    var globals = run_code("throw Object.keys(this).sort(" + function(global) {
+    var injected = "throw Object.keys(this).sort(" + function(global) {
         return function(m, n) {
             return (typeof global[n] == "function") - (typeof global[m] == "function")
                 || (m < n ? -1 : m > n ? 1 : 0);
         };
-    } + "(this));\n" + code);
+    } + "(this));";
+    var save_async = async;
+    if (async && has_await) {
+        async = false;
+        injected = [
+            '"use strict";',
+            injected,
+            "(async function(){",
+            code,
+            "})();"
+        ].join("\n");
+    } else {
+        injected += "\n" + code;
+    }
+    var globals = run_code(injected);
+    async = save_async;
     if (!Array.isArray(globals)) {
         errorln();
         errorln();
@@ -2482,6 +2502,9 @@ var bug_class_static_await = SUPPORT.async && SUPPORT.class_field && sandbox.is_
 var bug_class_static_nontrivial = SUPPORT.class_field && sandbox.is_error(sandbox.run_code("class A { static 42; static get 42() {} }"));
 var bug_for_of_async = SUPPORT.for_await_of && sandbox.is_error(sandbox.run_code("var async; for (async of []);"));
 var bug_for_of_var = SUPPORT.for_of && SUPPORT.let && sandbox.is_error(sandbox.run_code("try {} catch (e) { for (var e of []); }"));
+var bug_proto_stream = function(ex) {
+    return ex.name == "TypeError" && ex.message == "callback is not a function";
+}
 if (SUPPORT.destructuring && sandbox.is_error(sandbox.run_code("console.log([ 1 ], {} = 2);"))) {
     beautify_options.output.v8 = true;
     minify_options.forEach(function(o) {
@@ -2512,6 +2535,8 @@ for (var round = 1; round <= num_iterations; round++) {
         println();
             // ignore v8 parser bug
         return bug_async_arrow_rest(result)
+            // ignore Node.js `__proto__` quirks
+            || bug_proto_stream(result)
             // ignore runtime platform bugs
             || result.message == "Script execution aborted.";
     })) continue;
@@ -2533,6 +2558,8 @@ for (var round = 1; round <= num_iterations; round++) {
             var uglify_erred = sandbox.is_error(uglify_result);
             // ignore v8 parser bug
             if (!ok && uglify_erred && bug_async_arrow_rest(uglify_result)) ok = true;
+            // ignore Node.js `__proto__` quirks
+            if (!ok && uglify_erred && bug_proto_stream(uglify_result)) ok = true;
             // ignore runtime platform bugs
             if (!ok && uglify_erred && uglify_result.message == "Script execution aborted.") ok = true;
             // handle difference caused by time-outs

@@ -776,7 +776,12 @@ function compare_run_code(code, minify_options, result_cache, max_timeout) {
     };
 
     function run(code, timeout) {
-        if (minify_options.module) code = "(async function(){\n" + code + "\n})();";
+        if (minify_options.module) code = [
+            '"use strict";',
+            "(async function(){",
+            code,
+            "})();"
+        ].join("\n");
         return run_code(code, toplevel, result_cache, timeout);
     }
 }
