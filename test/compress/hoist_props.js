@@ -1203,3 +1203,24 @@ issue_5441: {
     }
     expect_stdout: "object"
 }
+
+issue_5498: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var o = {
+            __proto__: 42,
+        };
+        while (console.log(typeof o.__proto__));
+    }
+    expect: {
+        var o = {
+            __proto__: 42,
+        };
+        while (console.log(typeof o.__proto__));
+    }
+    expect_stdout: "object"
+}
