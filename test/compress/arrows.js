@@ -1106,3 +1106,17 @@ issue_5416: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_5495: {
+    input: {
+        console.log((() => {
+            "use strict";
+            return function() {
+                return this;
+            }();
+        })());
+    }
+    expect_exact: 'console.log((()=>{"use strict";return function(){return this}()})());'
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
