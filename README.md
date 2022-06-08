@@ -1429,3 +1429,13 @@ To allow for better optimizations, the compiler makes various assumptions:
   // Actual:   "undefined 42"
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
+- Later versions of JavaScript will throw `SyntaxError` with the following:
+  ```javascript
+  "use strict";
+  console.log(function f() {
+      return f = "PASS";
+  }());
+  // Expected: "PASS"
+  // Actual:   TypeError: invalid assignment to const 'f'
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
