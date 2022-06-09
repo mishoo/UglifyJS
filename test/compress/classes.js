@@ -3179,3 +3179,25 @@ issue_5502: {
     expect_stdout: "PASS 42"
     node_version: ">=12"
 }
+
+issue_5504: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var a;
+        console.log((a = 42, class {
+            static p;
+        }).p);
+    }
+    expect: {
+        "use strict";
+        var a;
+        console.log((a = 42, class {
+            static p;
+        }).p);
+    }
+    expect_stdout: "undefined"
+    node_version: ">=12"
+}
