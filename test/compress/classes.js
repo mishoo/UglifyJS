@@ -3143,3 +3143,39 @@ issue_5489_strict: {
     ]
     node_version: ">=16"
 }
+
+issue_5502: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var a = "FAIL";
+        class A {
+            static p = a;
+            [a = "PASS"];
+        }
+        try {
+            b++;
+        } finally {
+            var a, b = 42;
+        }
+        console.log(a, b);
+    }
+    expect: {
+        "use strict";
+        var a = "FAIL";
+        class A {
+            static p = a;
+            [a = "PASS"];
+        }
+        try {
+            b++;
+        } finally {
+            var a, b = 42;
+        }
+        console.log(a, b);
+    }
+    expect_stdout: "PASS 42"
+    node_version: ">=12"
+}
