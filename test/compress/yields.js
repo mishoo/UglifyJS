@@ -1515,3 +1515,35 @@ issue_5456: {
     expect_stdout: "foo"
     node_version: ">=4"
 }
+
+issue_5506: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = function*() {
+                a = null in (a = "PASS");
+            }();
+            try {
+                b.next();
+            } catch (e) {
+                return a;
+            }
+        }("FAIL"));
+    }
+    expect: {
+        console.log(function(a) {
+            var b = function*() {
+                a = null in (a = "PASS");
+            }();
+            try {
+                b.next();
+            } catch (e) {
+                return a;
+            }
+        }("FAIL"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

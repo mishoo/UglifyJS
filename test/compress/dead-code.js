@@ -1669,3 +1669,41 @@ issue_5106_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5506: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        try {
+            (function(a) {
+                var b = 1;
+                (function f() {
+                    try {
+                        b-- && f();
+                    } catch (c) {}
+                    console.log(a);
+                    a = 42 in (a = "bar");
+                })();
+            })("foo");
+        } catch (e) {}
+    }
+    expect: {
+        try {
+            (function(a) {
+                var b = 1;
+                (function f() {
+                    try {
+                        b-- && f();
+                    } catch (c) {}
+                    console.log(a);
+                    a = 42 in (a = "bar");
+                })();
+            })("foo");
+        } catch (e) {}
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
