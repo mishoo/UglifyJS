@@ -1293,6 +1293,21 @@ functions_inner_var: {
     node_version: ">=8"
 }
 
+instanceof_lambda: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(42 instanceof async function() {});
+    }
+    expect: {
+        console.log(false);
+    }
+    expect_stdout: "false"
+    node_version: ">=8"
+}
+
 issue_4335_1: {
     options = {
         inline: true,

@@ -1266,6 +1266,23 @@ keep_fnames: {
     node_version: ">=4"
 }
 
+instanceof_lambda: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        console.log(42 instanceof class {});
+    }
+    expect: {
+        "use strict";
+        console.log(false);
+    }
+    expect_stdout: "false"
+    node_version: ">=4"
+}
+
 issue_805_1: {
     options = {
         inline: true,

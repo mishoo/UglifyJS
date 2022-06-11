@@ -50,6 +50,22 @@ regexp_properties: {
     expect_stdout: "abc true false 0 false"
 }
 
+instanceof_1: {
+    input: {
+        console.log(/foo/ instanceof RegExp);
+    }
+    expect_exact: "console.log(/foo/ instanceof RegExp);"
+    expect_stdout: "true"
+}
+
+instanceof_2: {
+    input: {
+        console.log(42 + /foo/ instanceof Object);
+    }
+    expect_exact: "console.log(42+/foo/ instanceof Object);"
+    expect_stdout: "false"
+}
+
 issue_3434_1: {
     options = {
         evaluate: true,
