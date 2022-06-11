@@ -2982,3 +2982,27 @@ issue_5493: {
     expect_stdout: "undefined"
     node_version: ">=8"
 }
+
+issue_5506: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function(a) {
+            (async function() {
+                a = null in (a = "PASS");
+            })();
+            return a;
+        }("FAIL"));
+    }
+    expect: {
+        console.log(function(a) {
+            (async function() {
+                a = null in (a = "PASS");
+            })();
+            return a;
+        }("FAIL"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
