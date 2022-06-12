@@ -818,8 +818,9 @@ to be `false` and all symbol names will be omitted.
 
 - `unsafe` (default: `false`) — apply "unsafe" transformations (discussion below)
 
-- `unsafe_comps` (default: `false`) — compress expressions like `a <= b` assuming
-  none of the operands can be (coerced to) `NaN`.
+- `unsafe_comps` (default: `false`) — assume operands cannot be (coerced to) `NaN`
+  in numeric comparisons, e.g. `a <= b`. In addition, expressions involving `in`
+  or `instanceof` would never throw.
 
 - `unsafe_Function` (default: `false`) — compress and mangle `Function(args, code)`
   when both `args` and `code` are string literals.
