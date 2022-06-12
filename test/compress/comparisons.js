@@ -40,6 +40,22 @@ unsafe_comps: {
     }
 }
 
+unsafe_in_instanceof: {
+    options = {
+        side_effects: true,
+        unsafe_comps: true,
+    }
+    input: {
+        var a;
+        42 in a;
+        f() instanceof "foo";
+    }
+    expect: {
+        var a;
+        f();
+    }
+}
+
 dont_change_in_or_instanceof_expressions: {
     input: {
         1 in 1;
