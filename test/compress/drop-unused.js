@@ -671,6 +671,76 @@ iife: {
     }
 }
 
+drop_instanceof: {
+    options = {
+        booleans: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect: {
+        console.log(!1, (Math, !1));
+    }
+    expect_stdout: "false false"
+}
+
+keep_instanceof_1: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        var f;
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect: {
+        function f() {}
+        var f;
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect_stdout: "false false"
+}
+
+keep_instanceof_2: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {}
+        var f = Object;
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect: {
+        function f() {}
+        var f = Object;
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect_stdout: "true true"
+}
+
+keep_instanceof_3: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        f = Object;
+        function f() {}
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect: {
+        f = Object;
+        function f() {}
+        console.log({} instanceof f, Math instanceof f);
+    }
+    expect_stdout: "true true"
+}
+
 issue_1539: {
     options = {
         collapse_vars: true,
