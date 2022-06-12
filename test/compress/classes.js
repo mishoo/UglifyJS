@@ -1283,6 +1283,88 @@ instanceof_lambda: {
     node_version: ">=4"
 }
 
+drop_instanceof: {
+    options = {
+        booleans: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect: {
+        "use strict";
+        console.log(!1, (Math, !1));
+    }
+    expect_stdout: "false false"
+    node_version: ">=4"
+}
+
+keep_instanceof_1: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        var A;
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect: {
+        "use strict";
+        class A {}
+        var A;
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect_stdout: SyntaxError("Identifier has already been declared")
+    node_version: ">=4"
+}
+
+keep_instanceof_2: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var A = Object;
+        class A {}
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect: {
+        "use strict";
+        var A = Object;
+        class A {}
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect_stdout: SyntaxError("Identifier has already been declared")
+    node_version: ">=4"
+}
+
+keep_instanceof_3: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        A = Object;
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect: {
+        "use strict";
+        class A {}
+        A = Object;
+        console.log({} instanceof A, Math instanceof A);
+    }
+    expect_stdout: "true true"
+    node_version: ">=4"
+}
+
 issue_805_1: {
     options = {
         inline: true,

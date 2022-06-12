@@ -417,6 +417,46 @@ hoist_funs: {
     expect_exact: "export function f(){}export default async function*g(){}"
 }
 
+instanceof_default_class: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default class A {
+            f(a) {
+                return a instanceof A;
+            }
+        }
+    }
+    expect: {
+        export default class A {
+            f(a) {
+                return a instanceof A;
+            }
+        }
+    }
+}
+
+instanceof_default_function: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        export default function f() {
+            if (!(this instanceof f))
+                throw new Error("must instantiate");
+        }
+    }
+    expect: {
+        export default function f() {
+            if (!(this instanceof f))
+                throw new Error("must instantiate");
+        }
+    }
+}
+
 issue_4742_join_vars_1: {
     options = {
         join_vars: true,
