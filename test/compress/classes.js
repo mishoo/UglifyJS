@@ -3300,3 +3300,33 @@ issue_5504: {
     expect_stdout: "undefined"
     node_version: ">=12"
 }
+
+issue_5512: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        a = "PASS";
+        class A {
+            static {
+                console.log(a);
+            }
+            static p = "PASS";
+        }
+        var a;
+    }
+    expect: {
+        "use strict";
+        a = "PASS";
+        class A {
+            static {
+                console.log(a);
+            }
+            static p = "PASS";
+        }
+        var a;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
