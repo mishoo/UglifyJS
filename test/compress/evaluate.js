@@ -907,6 +907,20 @@ chained_side_effects: {
     ]
 }
 
+instanceof_lambda: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(42 instanceof function() {});
+    }
+    expect: {
+        console.log(false);
+    }
+    expect_stdout: "false"
+}
+
 issue_1649: {
     options = {
         evaluate: true,

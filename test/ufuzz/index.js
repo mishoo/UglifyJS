@@ -253,7 +253,7 @@ BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 if (SUPPORT.exponentiation) BINARY_OPS.push("**");
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
 BINARY_OPS = BINARY_OPS.concat(BINARY_OPS);
-BINARY_OPS.push(" in ");
+BINARY_OPS.push(" in ", " instanceof ");
 
 var ASSIGNMENTS = [ "=" ];
 ASSIGNMENTS = ASSIGNMENTS.concat(ASSIGNMENTS);
@@ -2009,7 +2009,7 @@ function createBinaryOp(noComma, canThrow) {
     var op;
     do {
         op = BINARY_OPS[rng(BINARY_OPS.length)];
-    } while (noComma && op == "," || !canThrow && op == " in ");
+    } while (noComma && op == "," || !canThrow && /^ in/.test(op));
     return op;
 }
 

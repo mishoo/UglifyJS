@@ -645,3 +645,56 @@ issue_4751: {
     }
     expect_stdout: "PASS"
 }
+
+drop_instanceof: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        42 instanceof function() {};
+        console.log("PASS");
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+drop_instanceof_reference: {
+    options = {
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {}
+        42 instanceof f;
+        console.log("PASS");
+    }
+    expect: {
+        function f() {}
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+retain_instanceof: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        try {
+            42 instanceof "foo";
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            0 instanceof "foo";
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}

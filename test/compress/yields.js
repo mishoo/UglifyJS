@@ -934,6 +934,21 @@ drop_unused_call: {
     node_version: ">=4"
 }
 
+instanceof_lambda: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(42 instanceof function*() {});
+    }
+    expect: {
+        console.log(false);
+    }
+    expect_stdout: "false"
+    node_version: ">=4"
+}
+
 issue_4454_1: {
     rename = false
     options = {
