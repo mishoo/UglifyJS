@@ -613,3 +613,35 @@ issue_4954: {
     ]
     node_version: ">=4"
 }
+
+issue_5516: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        console.log(typeof function() {
+            {
+                let a;
+            }
+            {
+                const a = function() {};
+                return a;
+            }
+        }());
+    }
+    expect: {
+        "use strict";
+        console.log(typeof function() {
+            {
+                const a = function() {};
+                return a;
+            }
+        }());
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}

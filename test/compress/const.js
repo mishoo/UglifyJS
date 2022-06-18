@@ -1872,3 +1872,37 @@ issue_5476: {
     }
     expect_stdout: "undefined"
 }
+
+issue_5516: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(typeof function() {
+            try {} catch (a) {
+                (function f() {
+                    a;
+                })();
+            }
+            {
+                const a = function() {};
+                return a;
+            }
+        }());
+    }
+    expect: {
+        console.log(typeof function() {
+            try {} catch (a) {
+                void a;
+            }
+            {
+                const a = function() {};
+                return a;
+            }
+        }());
+    }
+    expect_stdout: "function"
+}
