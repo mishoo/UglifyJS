@@ -892,6 +892,40 @@ if_return_2: {
     node_version: ">=4"
 }
 
+if_return_3: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        var a = "PASS";
+        function f(b) {
+            if (console) {
+                let b = a;
+                return b;
+            } else
+                while (console.log("FAIL 1"));
+            return b;
+        }
+        console.log(f("FAIL 2"));
+    }
+    expect: {
+        "use strict";
+        var a = "PASS";
+        function f(b) {
+            if (console) {
+                let b = a;
+                return b;
+            } else
+                while (console.log("FAIL 1"));
+            return b;
+        }
+        console.log(f("FAIL 2"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 do_if_continue_1: {
     options = {
         if_return: true,
