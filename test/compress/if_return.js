@@ -850,3 +850,116 @@ issue_866_2: {
         })();
     }
 }
+
+identical_returns_1: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        console.log(function() {
+            if (console.log("foo"))
+                return 42;
+            else
+                while (console.log("bar"));
+            return 42;
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (!console.log("foo"))
+                while (console.log("bar"));
+            return 42;
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "42",
+    ]
+}
+
+identical_returns_2: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        console.log(function() {
+            if (console.log("foo"))
+                while (console.log("FAIL"));
+            else
+                return "bar";
+            return "bar";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (console.log("foo"))
+                while (console.log("FAIL"));
+            return "bar";
+        }());
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+identical_returns_3: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                return 42;
+            if (a)
+                return;
+            return 42;
+        }
+        if (f(console))
+            console.log("PASS");
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                return 42;
+            if (a)
+                ;
+            else
+                return 42;
+        }
+        if (f(console))
+            console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_4374: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        if_return: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            console.log(f(console));
+            function f(a) {
+                if (console) return 0;
+                if (a) return 1;
+                return 0;
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            console.log(function(a) {
+                return !console && a ? 1 : 0;
+            }(console));
+        })();
+    }
+    expect_stdout: "0"
+}
