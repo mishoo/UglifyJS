@@ -963,3 +963,57 @@ issue_4374: {
     }
     expect_stdout: "0"
 }
+
+issue_5521: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        console.log(function() {
+            if (console)
+                try {
+                    return "FAIL";
+                } finally {
+                    return;
+                }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (console)
+                try {
+                    return "FAIL";
+                } finally {
+                    return;
+                }
+        }());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5523: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        console.log(function() {
+            if (console)
+                try {
+                    FAIL;
+                } finally {
+                    return;
+                }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (console)
+                try {
+                    FAIL;
+                } finally {
+                    return;
+                }
+        }());
+    }
+    expect_stdout: "undefined"
+}

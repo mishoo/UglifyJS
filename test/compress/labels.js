@@ -230,7 +230,6 @@ labels_12: {
         conditionals: true,
         dead_code: true,
         if_return: true,
-        unused: true,
     }
     input: {
         L: try {
@@ -246,13 +245,14 @@ labels_12: {
         }
     }
     expect: {
-        try {
+        L: try {
             if (!console.log("foo"))
                 throw "bar";
         } catch (e) {
             console.log(e);
         } finally {
-            console.log("baz")
+            if (console.log("baz"))
+                break L;
         }
     }
     expect_stdout: [
@@ -378,6 +378,56 @@ issue_4466_2_toplevel_v8: {
             e:;
         else
             e:;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5522: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        console.log(function() {
+            L: try {
+                return "FAIL";
+            } finally {
+                break L;
+            }
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            L: try {
+                return "FAIL";
+            } finally {
+                break L;
+            }
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5524: {
+    options = {
+        dead_code: true,
+    }
+    input: {
+        L: try {
+            FAIL;
+        } finally {
+            break L;
+        }
+        console.log("PASS");
+    }
+    expect: {
+        L: try {
+            FAIL;
+        } finally {
+            break L;
+        }
+        console.log("PASS");
     }
     expect_stdout: "PASS"
 }
