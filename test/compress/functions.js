@@ -607,6 +607,7 @@ empty_body: {
 inline_binary_and: {
     options = {
         inline: true,
+        side_effects: true,
     }
     input: {
         console.log(function() {
@@ -626,7 +627,6 @@ inline_binary_and: {
                 return "bar";
             }()) {
                 while (console.log("baz"));
-                return void "moo";
                 return;
             } else
                 return;
@@ -1121,6 +1121,7 @@ inline_return_binary: {
 inline_return_conditional: {
     options = {
         inline: true,
+        side_effects: true,
     }
     input: {
         console.log(function() {
@@ -2295,6 +2296,7 @@ duplicate_argnames_4: {
     options = {
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         (function() {
@@ -5545,6 +5547,7 @@ issue_3833_2: {
         inline: true,
         keep_fargs: false,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -5582,7 +5585,7 @@ issue_3835: {
             return f();
         })();
     }
-    expect_stdout: true
+    expect_stdout: RangeError("Maximum call stack size exceeded")
 }
 
 issue_3836_1: {
@@ -5610,6 +5613,7 @@ issue_3836_2: {
     options = {
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         (function() {
@@ -5867,6 +5871,7 @@ statement_var_inline: {
     options = {
         inline: true,
         join_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -6157,6 +6162,7 @@ issue_4261: {
         inline: true,
         reduce_funcs: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -6449,6 +6455,7 @@ issue_4659_1: {
         if_return: true,
         inline: true,
         reduce_vars: true,
+        side_effects: true,
     }
     input: {
         var a = 0;
@@ -6486,6 +6493,7 @@ issue_4659_2: {
         if_return: true,
         inline: true,
         reduce_vars: true,
+        side_effects: true,
     }
     input: {
         var a = 0;
@@ -6510,7 +6518,7 @@ issue_4659_2: {
             function f() {
                 return a++;
             }
-            void (f && a++);
+            f && a++;
             (function() {
                 var a = console && a;
             })();
@@ -6525,6 +6533,7 @@ issue_4659_3: {
         if_return: true,
         inline: true,
         reduce_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -6731,6 +6740,7 @@ issue_4725_2: {
     options = {
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         var o = {
@@ -7715,6 +7725,7 @@ issue_5239: {
         functions: true,
         inline: true,
         reduce_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -7730,7 +7741,6 @@ issue_5239: {
             var f = void 0;
             var a = 42, f = function() {};
             while (console.log(f.p || a++));
-            return;
         })();
     }
     expect_stdout: "42"
@@ -7833,9 +7843,9 @@ issue_5249_1: {
                 var a = "FAIL 1";
             else if (a) {
                 while (console.log("FAIL 2"));
-                return;
+                return void 0;
             } else
-                return;
+                return void 0;
             throw "FAIL 3";
         }());
     }
@@ -7996,6 +8006,7 @@ issue_5264_1: {
             (function(arguments) {
                 console.log(arguments);
                 while (console.log("foo"));
+                0;
             })("bar");
             return arguments;
         }("baz")[0]);
@@ -8114,6 +8125,7 @@ issue_5290: {
 issue_5296: {
     options = {
         inline: true,
+        side_effects: true,
     }
     input: {
         var a = "PASS";
@@ -8376,6 +8388,7 @@ issue_5409: {
         inline: true,
         merge_vars: true,
         reduce_vars: true,
+        side_effects: true,
         unused: true,
     }
     input: {
@@ -8393,7 +8406,6 @@ issue_5409: {
             a = void 0;
             console.log(a && a);
             while (!console);
-            return;
         })();
     }
     expect_stdout: "undefined"

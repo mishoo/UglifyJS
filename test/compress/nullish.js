@@ -308,6 +308,7 @@ issue_4679: {
 issue_5266: {
     options = {
         inline: true,
+        side_effects: true,
     }
     input: {
         [

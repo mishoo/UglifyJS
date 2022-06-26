@@ -1024,6 +1024,7 @@ issue_5414_1: {
         arrows: true,
         if_return: true,
         inline: true,
+        side_effects: true,
         toplevel: true,
     }
     input: {

@@ -836,8 +836,10 @@ inline_nested_async: {
 
 inline_nested_block: {
     options = {
+        dead_code: true,
         if_return: true,
         inline: true,
+        side_effects: true,
         yields: true,
     }
     input: {
@@ -857,7 +859,6 @@ inline_nested_block: {
         var a = function*() {
             for (var a of [ "foo", "bar" ])
                 yield a;
-            "FAIL";
         }(), b;
         do {
             b = a.next();
@@ -1561,4 +1562,40 @@ issue_5506: {
     }
     expect_stdout: "PASS"
     node_version: ">=4"
+}
+
+issue_5526: {
+    options = {
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        (async function*() {
+            try {
+                return function() {
+                    while (console.log("foo"));
+                }();
+            } finally {
+                console.log("bar");
+            }
+        })().next();
+        console.log("baz");
+    }
+    expect: {
+        (async function*() {
+            try {
+                while (console.log("foo"));
+                return void 0;
+            } finally {
+                console.log("bar");
+            }
+        })().next();
+        console.log("baz");
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
+    node_version: ">=10"
 }

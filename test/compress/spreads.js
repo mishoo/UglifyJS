@@ -188,6 +188,7 @@ do_inline_3: {
     options = {
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         (function() {
