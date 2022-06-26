@@ -1930,6 +1930,7 @@ issue_5057_4: {
             var b = "FAIL 2";
             (function(a = console.log("FAIL 1")) {})(b);
             console.log(a);
+            0;
         })("PASS");
     }
     expect_stdout: "PASS"

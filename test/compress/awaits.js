@@ -415,6 +415,7 @@ inline_block: {
         awaits: true,
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         console.log("foo");
@@ -450,6 +451,7 @@ inline_block_async: {
         awaits: true,
         if_return: true,
         inline: true,
+        side_effects: true,
     }
     input: {
         console.log("foo");
