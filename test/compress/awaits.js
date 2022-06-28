@@ -3023,3 +3023,157 @@ issue_5506: {
     expect_stdout: "PASS"
     node_version: ">=8"
 }
+
+issue_5528_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await function() {
+                try {
+                    return;
+                } finally {
+                    console.log("foo");
+                }
+            }();
+        })();
+        console.log("bar");
+    }
+    expect: {
+        (async function() {
+            await function() {
+                try {
+                    return;
+                } finally {
+                    console.log("foo");
+                }
+            }();
+        })();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
+
+issue_5528_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await function() {
+                try {
+                    return 42;
+                } finally {
+                    console.log("foo");
+                }
+            }();
+        })();
+        console.log("bar");
+    }
+    expect: {
+        (async function() {
+            await function() {
+                try {
+                    return 42;
+                } finally {
+                    console.log("foo");
+                }
+            }();
+        })();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
+
+issue_5528_3: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await function() {
+                try {
+                    FAIL;
+                } catch (e) {
+                    return console.log("foo");
+                } finally {
+                    console.log("bar");
+                }
+            }();
+        })();
+        console.log("baz");
+    }
+    expect: {
+        (async function() {
+            await function() {
+                try {
+                    FAIL;
+                } catch (e) {
+                    return console.log("foo");
+                } finally {
+                    console.log("bar");
+                }
+            }();
+        })();
+        console.log("baz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_5528_4: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await function() {
+                try {
+                    return {
+                        then() {
+                            console.log("foo");
+                        },
+                    };
+                } finally {
+                    console.log("bar");
+                }
+            }();
+        })();
+        console.log("baz");
+    }
+    expect: {
+        (async function() {
+            await function() {
+                try {
+                    return {
+                        then() {
+                            console.log("foo");
+                        },
+                    };
+                } finally {
+                    console.log("bar");
+                }
+            }();
+        })();
+        console.log("baz");
+    }
+    expect_stdout: [
+        "bar",
+        "baz",
+        "foo",
+    ]
+    node_version: ">=8"
+}
