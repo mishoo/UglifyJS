@@ -3331,3 +3331,113 @@ issue_5512: {
     expect_stdout: "PASS"
     node_version: ">=16"
 }
+
+issue_5531_1: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        class A {
+            p = function() {
+                var a = function f() {
+                    if (!a)
+                        console.log("foo");
+                    return 42;
+                }(a++);
+            }();
+        }
+        new A();
+        new A();
+    }
+    expect: {
+        class A {
+            p = function() {
+                var a = function f() {
+                    if (!a)
+                        console.log("foo");
+                    return 42;
+                }(a++);
+            }();
+        }
+        new A();
+        new A();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+    node_version: ">=12"
+}
+
+issue_5531_2: {
+    options = {
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        class A {
+            static p = function() {
+                var a = function f() {
+                    if (!a)
+                        console.log("foo");
+                    return 42;
+                }(a++);
+            }();
+        }
+        new A();
+        new A();
+    }
+    expect: {
+        class A {
+            static p = (a = function f() {
+                if (!a)
+                    console.log("foo");
+                return 42;
+            }(a++), void 0);
+        }
+        var a;
+        new A();
+        new A();
+    }
+    expect_stdout: "foo"
+    node_version: ">=12"
+}
+
+issue_5531_3: {
+    options = {
+        inline: true,
+    }
+    input: {
+        class A {
+            static {
+                (function() {
+                    var a = function f() {
+                        if (!a)
+                            console.log("foo");
+                        return 42;
+                    }(a++);
+                })();
+            }
+        }
+        new A();
+        new A();
+    }
+    expect: {
+        class A {
+            static {
+                a = function f() {
+                    if (!a)
+                        console.log("foo");
+                    return 42;
+                }(a++),
+                void 0;
+                var a;
+            }
+        }
+        new A();
+        new A();
+    }
+    expect_stdout: "foo"
+    node_version: ">=16"
+}
