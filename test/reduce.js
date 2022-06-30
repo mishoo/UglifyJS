@@ -778,9 +778,9 @@ function compare_run_code(code, minify_options, result_cache, max_timeout) {
     function run(code, timeout) {
         if (minify_options.module) code = [
             '"use strict";',
-            "(async ()=>{",
+            "(async()=>{",
             code,
-            "})().catch(e=>console.log(e));",
+            '})().catch(e=>process.on("exit",()=>{throw e}));',
         ].join("\n");
         return run_code(code, toplevel, result_cache, timeout);
     }

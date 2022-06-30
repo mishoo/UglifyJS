@@ -3646,3 +3646,87 @@ issue_5485: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5533_keep_fargs: {
+    options = {
+        evaluate: true,
+        inline: true,
+        join_vars: true,
+        keep_fargs: true,
+        loops: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (function() {
+                var a;
+                for (; 1;)
+                    a = function() {
+                        (function f([ b ]) {
+                            b;
+                            throw "PASS";
+                        })([]);
+                    }();
+            })();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (function() {
+                for (;;)
+                    throw "PASS";
+            })();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5533_drop_fargs: {
+    options = {
+        evaluate: true,
+        inline: true,
+        join_vars: true,
+        keep_fargs: false,
+        loops: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        try {
+            (function() {
+                var a;
+                for (; 1;)
+                    a = function() {
+                        (function f([ b ]) {
+                            b;
+                            throw "PASS";
+                        })([]);
+                    }();
+            })();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect: {
+        "use strict";
+        try {
+            (function() {
+                for (;;)
+                    throw "PASS";
+            })();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
