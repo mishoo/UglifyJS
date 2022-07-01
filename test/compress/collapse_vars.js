@@ -9611,7 +9611,6 @@ inline_throw: {
         collapse_vars: true,
         inline: true,
         keep_fargs: false,
-        side_effects: true,
         unused: true,
     }
     input: {
@@ -9631,6 +9630,7 @@ inline_throw: {
         try {
             (function(a) {
                 throw a;
+                return;
             })("PASS");
         } catch (e) {
             console.log(e);

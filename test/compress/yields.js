@@ -836,10 +836,8 @@ inline_nested_async: {
 
 inline_nested_block: {
     options = {
-        dead_code: true,
         if_return: true,
         inline: true,
-        side_effects: true,
         yields: true,
     }
     input: {
@@ -859,6 +857,7 @@ inline_nested_block: {
         var a = function*() {
             for (var a of [ "foo", "bar" ])
                 yield a;
+            "FAIL";
         }(), b;
         do {
             b = a.next();
@@ -1465,6 +1464,80 @@ issue_5385_2: {
         "bar",
         "moo",
     ]
+    node_version: ">=10"
+}
+
+issue_5385_3: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function*() {
+            return function() {
+                try {
+                    throw console.log("foo");
+                } catch (e) {
+                    return console.log("bar");
+                }
+            }();
+        })().next();
+        console.log("moo");
+    }
+    expect: {
+        (async function*() {
+            try {
+                throw console.log("foo");
+            } catch (e) {
+                return console.log("bar");
+            }
+            return void 0;
+        })().next();
+        console.log("moo");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "moo",
+    ]
+    node_version: ">=10"
+}
+
+issue_5385_4: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        (async function*() {
+            return async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            resolve(console.log("FAIL"));
+                        },
+                    };
+                } finally {
+                    return "PASS";
+                }
+            }();
+        })().next().then(o => console.log(o.value, o.done));
+    }
+    expect: {
+        (async function*() {
+            return async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            resolve(console.log("FAIL"));
+                        },
+                    };
+                } finally {
+                    return "PASS";
+                }
+            }();
+        })().next().then(o => console.log(o.value, o.done));
+    }
+    expect_stdout: "PASS true"
     node_version: ">=10"
 }
 

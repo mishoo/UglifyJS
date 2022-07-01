@@ -1815,7 +1815,6 @@ issue_4725_2: {
     options = {
         if_return: true,
         inline: true,
-        side_effects: true,
     }
     input: {
         "use strict";
