@@ -1287,7 +1287,6 @@ issue_4261_2: {
         inline: true,
         reduce_funcs: true,
         reduce_vars: true,
-        side_effects: true,
         toplevel: true,
         unused: true,
     }
