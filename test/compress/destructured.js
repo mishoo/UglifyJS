@@ -3497,7 +3497,7 @@ issue_5314_2: {
         A = this;
         new function() {
             [ {
-                [console.log(this === A ? "FAIL" : "PASS")]: [].e,
+                [console.log(this === A ? "FAIL" : "PASS")]: [][0],
             } ] = [ 42 ];
         }();
     }

@@ -541,7 +541,7 @@ inline_side_effects_2: {
     }
     expect: {
         var a = 42;
-        [ [].e = --a ] = [ console ];
+        [ [][0] = --a ] = [ console ];
         console.log(a);
     }
     expect_stdout: "42"
@@ -1558,7 +1558,7 @@ issue_4502_4: {
         (function(a, b = console.log("FAIL")) {})(..."" + console.log(42));
     }
     expect: {
-        [ , [].e = console.log("FAIL") ] = [ ..."" + console.log(42) ];
+        [ , [][0] = console.log("FAIL") ] = [ ..."" + console.log(42) ];
     }
     expect_stdout: "42"
     node_version: ">=6"
@@ -2183,7 +2183,7 @@ issue_5340_2: {
     }
     expect: {
         var a;
-        [ [].e = 0 ] = [ ({ p: a } = true).q ];
+        [ [][0] = 0 ] = [ ({ p: a } = true).q ];
         console.log(a);
     }
     expect_stdout: "undefined"
@@ -2804,5 +2804,28 @@ issue_5533_4_drop_fargs: {
         }
     }
     expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5536: {
+    options = {
+        inline: true,
+        keep_fargs: true,
+        unused: true,
+    }
+    input: {
+        (function*() {
+            (([], a = 42) => {})([]);
+            console.log(typeof a);
+        })().next();
+    }
+    expect: {
+        (function*() {
+            [ , [][0] = 0 ] = [ [] ],
+            void 0;
+            console.log(typeof a);
+        })().next();
+    }
+    expect_stdout: "undefined"
     node_version: ">=6"
 }

@@ -648,7 +648,7 @@ drop_new_function: {
     }
     expect: {
         void ([ ... {
-            [console.log("PASS")]: [].e,
+            [console.log("PASS")]: [][0],
         }] = []);
     }
     expect_stdout: "PASS"
