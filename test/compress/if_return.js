@@ -1017,3 +1017,302 @@ issue_5523: {
     }
     expect_stdout: "undefined"
 }
+
+drop_catch: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw 42;
+            } catch (e) {
+                return console.log("foo"), "bar";
+            } finally {
+                console.log("baz");
+            }
+            return "bar";
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            try {
+                throw 42;
+            } catch (e) {
+                console.log("foo");
+            } finally {
+                console.log("baz");
+            }
+            return "bar";
+        }
+        console.log(f());
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
+}
+
+retain_catch: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                throw 42;
+            } catch (e) {
+                return console.log("foo");
+            } finally {
+                console.log("bar");
+            }
+            return console.log("foo");
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            try {
+                throw 42;
+            } catch (e) {
+                return console.log("foo");
+            } finally {
+                console.log("bar");
+            }
+            return console.log("foo");
+        }
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+retain_finally: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                return console.log("foo"), FAIL;
+            } catch (e) {
+                return console.log("bar"), "FAIL";
+            } finally {
+                return console.log("baz"), console.log("moo");
+            }
+            return console.log("moo");
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            try {
+                return console.log("foo"), FAIL;
+            } catch (e) {
+                return console.log("bar"), "FAIL";
+            } finally {
+                return console.log("baz"), console.log("moo");
+            }
+            return console.log("moo");
+        }
+        console.log(f());
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+        "moo",
+        "undefined",
+    ]
+}
+
+drop_try: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                return console.log("foo"), "bar";
+            } finally {
+                console.log("baz");
+            }
+            return "bar";
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            try {
+                console.log("foo");
+            } finally {
+                console.log("baz");
+            }
+            return "bar";
+        }
+        console.log(f());
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "bar",
+    ]
+}
+
+retain_try: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                return console.log("foo");
+            } finally {
+                console.log("bar");
+            }
+            return console.log("foo");
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            try {
+                return console.log("foo");
+            } finally {
+                console.log("bar");
+            }
+            return console.log("foo");
+        }
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+drop_try_catch: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            try {
+                if (a())
+                    return console.log("foo"), console.log("baz");
+            } catch (e) {
+                return console.log("bar"), console.log("baz");
+            }
+            return console.log("baz");
+        }
+        f(function() {
+            return 42;
+        });
+        f(function() {});
+        f();
+    }
+    expect: {
+        function f(a) {
+            try {
+                if (a())
+                    console.log("foo");
+            } catch (e) {
+                console.log("bar");
+            }
+            return console.log("baz");
+        }
+        f(function() {
+            return 42;
+        });
+        f(function() {});
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "baz",
+        "bar",
+        "baz",
+    ]
+}
+
+empty_try: {
+    options = {
+        if_return: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            return f;
+            function f() {
+                try {} finally {}
+                return "PASS";
+            }
+        }()());
+    }
+    expect: {
+        console.log(function() {
+            return function() {
+                try {} finally {}
+                return "PASS";
+            };
+        }()());
+    }
+    expect_stdout: "PASS"
+}
+
+sequence_void_1: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            {
+                if (console)
+                    return console, void console.log("PASS");
+                return;
+            }
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            if (console)
+                return console, void console.log("PASS");
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+sequence_void_2: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f() {
+            {
+                if (console)
+                    return console, void console.log("PASS");
+                return;
+            }
+            FAIL;
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            if (console)
+                console, void console.log("PASS");
+            return;
+            FAIL;
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
