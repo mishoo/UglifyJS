@@ -118,6 +118,7 @@ a double dash to prevent input files being used as option arguments:
     --keep-fargs                Do not mangle/drop function arguments.
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
+    -l, --line-length <value>   Maximum line length for output code.
     --module                    Process input as ES module (implies --toplevel)
     --name-cache <file>         File to hold mangled name mappings.
     --self                      Build UglifyJS as a library (implies --wrap UglifyJS)
