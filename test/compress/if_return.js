@@ -1283,7 +1283,7 @@ sequence_void_1: {
     expect: {
         function f() {
             if (console)
-                return console, void console.log("PASS");
+                console, void console.log("PASS");
         }
         f();
     }
@@ -1309,10 +1309,87 @@ sequence_void_2: {
         function f() {
             if (console)
                 console, void console.log("PASS");
-            return;
-            FAIL;
+            else {
+                return;
+                FAIL;
+            }
         }
         f();
     }
     expect_stdout: "PASS"
+}
+
+tail_match: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a) {
+                console.log("foo");
+                return console.log("bar");
+            }
+            while (console.log("baz"));
+            return console.log("moo"), console.log("bar");
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                console.log("foo");
+            else {
+                while (console.log("baz"));
+                console.log("moo");
+            }
+            return console.log("bar");
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "baz",
+        "moo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+void_match: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a) {
+                console.log("foo");
+                return;
+            }
+            while (console.log("bar"));
+            return console.log("baz"), void console.log("moo");
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                console.log("foo");
+            else {
+                while (console.log("bar"));
+                console.log("baz"),
+                console.log("moo");
+            }
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "bar",
+        "baz",
+        "moo",
+        "foo",
+    ]
 }
