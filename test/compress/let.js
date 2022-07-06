@@ -1659,7 +1659,7 @@ issue_4438: {
         function f() {
             if (console) {
                 let a = console.log;
-                void a("PASS");
+                a("PASS");
             }
         }
         f();

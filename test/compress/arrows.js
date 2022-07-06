@@ -1073,7 +1073,7 @@ issue_5414_2: {
     node_version: ">=4"
 }
 
-issue_5416: {
+issue_5416_1: {
     options = {
         dead_code: true,
         evaluate: true,
@@ -1095,11 +1095,103 @@ issue_5416: {
     expect: {
         var f = () => {
             {
-                arguments = void 0;
                 console;
+                arguments = void 0,
                 console.log(arguments);
                 var arguments;
+                return;
             }
+        };
+        f();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+issue_5416_2: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        inline: true,
+        loops: true,
+        unused: true,
+    }
+    input: {
+        var f = () => {
+            while ((() => {
+                console;
+                var a = function g(arguments) {
+                    while (console.log(arguments));
+                }();
+            })());
+        };
+        f();
+    }
+    expect: {
+        var f = () => {
+            {
+                console;
+                var arguments = void 0;
+                for (; console.log(arguments););
+                return;
+            }
+        };
+        f();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+issue_5416_3: {
+    options = {
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var f = () => {
+            (() => {
+                var a = function g(arguments) {
+                    console.log(arguments);
+                }();
+            })();
+        };
+        f();
+    }
+    expect: {
+        var f = () => {
+            arguments = void 0,
+            console.log(arguments);
+            var arguments;
+        };
+        f();
+    }
+    expect_stdout: "undefined"
+    node_version: ">=4"
+}
+
+issue_5416_4: {
+    options = {
+        arrows: true,
+        inline: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var f = () => {
+            (() => {
+                var a = function g(arguments) {
+                    while (console.log(arguments));
+                }();
+            })();
+        };
+        f();
+    }
+    expect: {
+        var f = () => {
+            var arguments = void 0;
+            while (console.log(arguments));
+            return;
         };
         f();
     }

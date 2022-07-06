@@ -1183,6 +1183,35 @@ issue_4641_2: {
     node_version: ">=10"
 }
 
+issue_4641_3: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        console.log(typeof async function*() {
+            try {
+                return void "FAIL";
+            } finally {
+                console.log("PASS");
+            }
+        }().next().then);
+    }
+    expect: {
+        console.log(typeof async function*() {
+            try {
+                return void "FAIL";
+            } finally {
+                console.log("PASS");
+            }
+        }().next().then);
+    }
+    expect_stdout: [
+        "function",
+        "PASS",
+    ]
+    node_version: ">=10"
+}
+
 issue_4769_1: {
     options = {
         side_effects: true,

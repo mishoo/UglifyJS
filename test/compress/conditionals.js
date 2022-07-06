@@ -1731,7 +1731,7 @@ issue_3576: {
     expect_stdout: "PASS"
 }
 
-issue_3668: {
+issue_3668_1: {
     options = {
         conditionals: true,
         if_return: true,
@@ -1752,10 +1752,43 @@ issue_3668: {
         function f() {
             try {
                 var undefined = typeof f;
+                if (!f) return undefined;
+            } catch (e) {
+                return "FAIL";
+            }
+        }
+        console.log(f());
+    }
+    expect_stdout: "undefined"
+}
+
+issue_3668_2: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f() {
+            try {
+                var undefined = typeof f;
+                if (!f) return undefined;
+                return;
+            } catch (e) {
+                return "FAIL";
+            }
+            FAIL;
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            try {
+                var undefined = typeof f;
                 return f ? void 0 : undefined;
             } catch (e) {
                 return "FAIL";
             }
+            FAIL;
         }
         console.log(f());
     }
