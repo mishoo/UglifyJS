@@ -196,6 +196,88 @@ ifs_7: {
     }
 }
 
+merge_tail_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                while (console.log("bar"));
+                console.log(b);
+            } else {
+                while (console.log("baz"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            var b = "foo";
+            if (a)
+                while (console.log("bar"));
+            else
+                while (console.log("baz"));
+            console.log(b);
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "baz",
+        "foo",
+        "bar",
+        "foo",
+    ]
+}
+
+merge_tail_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                while (console.log("bar"));
+                console.log(b);
+            } else {
+                c = "baz";
+                while (console.log(c));
+                while (console.log("bar"));
+                console.log(b);
+                var c;
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            var b = "foo";
+            if (!a) {
+                c = "baz";
+                while (console.log(c));
+                var c;
+            }
+            while (console.log("bar"));
+            console.log(b);
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "baz",
+        "bar",
+        "foo",
+        "bar",
+        "foo",
+    ]
+}
+
 cond_1: {
     options = {
         conditionals: true,

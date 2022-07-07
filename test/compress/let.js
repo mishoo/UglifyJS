@@ -190,6 +190,96 @@ if_dead_branch: {
     node_version: ">=4"
 }
 
+retain_tail_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                let b = "bar";
+                while (console.log("baz"));
+                console.log(b);
+            } else {
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                let b = "bar";
+                while (console.log("baz"));
+                console.log(b);
+            } else {
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "moo",
+        "foo",
+        "baz",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
+retain_tail_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                while (console.log("bar"));
+                console.log(b);
+            } else {
+                let b = "baz";
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                while (console.log("bar"));
+                console.log(b);
+            } else {
+                let b = "baz";
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "moo",
+        "baz",
+        "bar",
+        "foo",
+    ]
+    node_version: ">=4"
+}
+
 merge_vars_1: {
     options = {
         merge_vars: true,
