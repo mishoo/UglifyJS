@@ -69,7 +69,7 @@ function make_code(ast, options) {
 function parse_test(file) {
     var script = fs.readFileSync(file, "utf8");
     try {
-        var ast = U.parse(script, { filename: file });
+        var ast = U.parse(script, { filename: file, module: "" });
     } catch (e) {
         console.error("Caught error while parsing tests in " + file);
         console.error(e);
