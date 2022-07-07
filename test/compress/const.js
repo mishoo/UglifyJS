@@ -142,6 +142,80 @@ if_dead_branch: {
     expect_stdout: "undefined"
 }
 
+retain_tail_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                const b = "bar";
+                while (console.log("baz"));
+                console.log(b);
+            } else {
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                const b = "bar";
+                while (console.log("baz"));
+                console.log(b);
+            } else {
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: true
+}
+
+retain_tail_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                while (console.log("bar"));
+                console.log(b);
+            } else {
+                const b = "baz";
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            var b = "foo";
+            if (a) {
+                while (console.log("bar"));
+                console.log(b);
+            } else {
+                const b = "baz";
+                while (console.log("moo"));
+                console.log(b);
+            }
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: true
+}
+
 merge_vars_1: {
     options = {
         merge_vars: true,
@@ -575,6 +649,37 @@ dead_block_after_return: {
                 const a = void 0;
             }
         })();
+    }
+    expect_stdout: true
+}
+
+if_return_3: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        var a = "PASS";
+        function f(b) {
+            if (console) {
+                const b = a;
+                return b;
+            } else
+                while (console.log("FAIL 1"));
+            return b;
+        }
+        console.log(f("FAIL 2"));
+    }
+    expect: {
+        var a = "PASS";
+        function f(b) {
+            if (console) {
+                const b = a;
+                return b;
+            } else
+                while (console.log("FAIL 1"));
+            return b;
+        }
+        console.log(f("FAIL 2"));
     }
     expect_stdout: true
 }
