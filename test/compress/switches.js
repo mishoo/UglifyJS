@@ -1608,3 +1608,83 @@ issue_5012: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5543_1: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        var a;
+        switch (a) {
+          default:
+            switch (42) {
+              case a:
+              case console.log("PASS"):
+            }
+            break;
+          case null:
+            switch (false) {
+              case a:
+              case console.log("FAIL"):
+            }
+        }
+    }
+    expect: {
+        var a;
+        switch (a) {
+          default:
+            switch (42) {
+              case a:
+              case console.log("PASS"):
+            }
+            break;
+          case null:
+            switch (false) {
+              case a:
+              case console.log("FAIL"):
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5543_2: {
+    options = {
+        dead_code: true,
+        switches: true,
+    }
+    input: {
+        var a;
+        switch (a) {
+          default:
+            switch (42) {
+              case a:
+              case console.log("PASS"):
+            }
+            break;
+          case null:
+            switch (42) {
+              case a:
+              case console.log("FAIL"):
+            }
+        }
+    }
+    expect: {
+        var a;
+        switch (a) {
+          default:
+            switch (42) {
+              case a:
+              case console.log("PASS"):
+            }
+            break;
+          case null:
+            switch (42) {
+              case a:
+              case console.log("FAIL"):
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}

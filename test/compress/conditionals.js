@@ -2177,3 +2177,69 @@ issue_5334_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5544_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a;
+        if (a)
+            switch (42) {
+              case console.log("FAIL"):
+              case console:
+            }
+        else
+            switch (false) {
+              case console.log("PASS"):
+              case console:
+            }
+    }
+    expect: {
+        var a;
+        if (a)
+            switch (42) {
+              case console.log("FAIL"):
+              case console:
+            }
+        else
+            switch (false) {
+              case console.log("PASS"):
+              case console:
+            }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5544_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a;
+        if (a)
+            switch (42) {
+              case console.log("FAIL"):
+              case console:
+            }
+        else
+            switch (42) {
+              case console.log("PASS"):
+              case console:
+            }
+    }
+    expect: {
+        var a;
+        if (a)
+            switch (42) {
+              case console.log("FAIL"):
+              case console:
+            }
+        else
+            switch (42) {
+              case console.log("PASS"):
+              case console:
+            }
+    }
+    expect_stdout: "PASS"
+}
