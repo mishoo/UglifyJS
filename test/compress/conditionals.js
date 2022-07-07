@@ -2243,3 +2243,110 @@ issue_5544_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5546_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a;
+        if (a)
+            try {
+                console;
+            } finally {
+                console.log("FAIL");
+            }
+        else
+            try {
+                console;
+            } finally {
+                console.log("PASS");
+            }
+    }
+    expect: {
+        var a;
+        if (a)
+            try {
+                console;
+            } finally {
+                console.log("FAIL");
+            }
+        else
+            try {
+                console;
+            } finally {
+                console.log("PASS");
+            }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5546_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a;
+        if (a)
+            try {
+                console;
+            } catch (e) {}
+        else
+            try {
+                console;
+            } finally {
+                console.log("PASS");
+            }
+    }
+    expect: {
+        var a;
+        if (a)
+            try {
+                console;
+            } catch (e) {}
+        else
+            try {
+                console;
+            } finally {
+                console.log("PASS");
+            }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5546_3: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a;
+        if (a)
+            try {
+                FAIL;
+            } catch (e) {
+                console.log("FAIL");
+            }
+        else
+            try {
+                FAIL;
+            } catch (e) {
+                console.log("PASS");
+            }
+    }
+    expect: {
+        var a;
+        if (a)
+            try {
+                FAIL;
+            } catch (e) {
+                console.log("FAIL");
+            }
+        else
+            try {
+                FAIL;
+            } catch (e) {
+                console.log("PASS");
+            }
+    }
+    expect_stdout: "PASS"
+}
