@@ -193,6 +193,22 @@ forbid_merge: {
     }
 }
 
+merge_tail: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        if (console)
+            import "foo";
+        else
+            import "foo";
+    }
+    expect: {
+        console;
+        import "foo";
+    }
+}
+
 issue_4708_1: {
     options = {
         imports: true,
