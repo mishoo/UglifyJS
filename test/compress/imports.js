@@ -227,3 +227,33 @@ issue_4708_2: {
         import a from "foo";
     }
 }
+
+pr_5550_1: {
+    input: {
+        if (console)
+            import("foo");
+        else
+            import.meta.url.replace(/bar/g, console.log);
+    }
+    expect: {
+        if (console)
+            import("foo");
+        else
+            import.meta.url.replace(/bar/g, console.log);
+    }
+}
+
+pr_5550_2: {
+    input: {
+        L: {
+            import("foo");
+            import.meta.url.replace(/bar/g, console.log);
+        }
+    }
+    expect: {
+        L: {
+            import("foo");
+            import.meta.url.replace(/bar/g, console.log);
+        }
+    }
+}
