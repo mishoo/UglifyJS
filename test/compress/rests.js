@@ -1531,3 +1531,96 @@ issue_5533_2_drop_fargs: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5552_1: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var a = f, b = log();
+        function f(...[ c = a = "PASS" ]) {}
+        f((a = "FAIL", b));
+        log(a);
+    }
+    expect: {
+        var log = console.log;
+        var a = f, b = log();
+        function f(...[ c = a = "PASS" ]) {}
+        f((a = "FAIL", b));
+        log(a);
+    }
+    expect_stdout: [
+        "",
+        "PASS",
+    ]
+    node_version: ">=6"
+}
+
+issue_5552_2: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var a = f;
+        function f(...{ [a = "PASS"]: b }) {}
+        f((a = "FAIL", 42));
+        log(a);
+    }
+    expect: {
+        var log = console.log;
+        var a = f;
+        function f(...{ [a = "PASS"]: b }) {}
+        f((a = "FAIL", 42));
+        log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5552_3: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = [ "FAIL", "PASS" ];
+        console.log(function(b, ...[ c = a.pop() ]) {
+            return b;
+        }(a.pop()));
+    }
+    expect: {
+        var a = [ "FAIL", "PASS" ];
+        console.log(function(b, ...[ c = a.pop() ]) {
+            return b;
+        }(a.pop()));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5552_4: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = [ "FAIL", "PASS" ];
+        console.log(function(b, ...{ [a.pop()]: c }) {
+            return b;
+        }(a.pop()));
+    }
+    expect: {
+        var a = [ "FAIL", "PASS" ];
+        console.log(function(b, ...{ [a.pop()]: c }) {
+            return b;
+        }(a.pop()));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
