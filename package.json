@@ -23,7 +23,7 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "acorn": "~8.2.1",
+    "acorn": "~8.7.1",
     "semver": "~6.3.0"
   },
   "scripts": {
