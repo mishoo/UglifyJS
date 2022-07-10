@@ -9,19 +9,22 @@ function beautify(ast) {
     var beautified = UglifyJS.minify(ast, {
         compress: false,
         mangle: false,
+        module: ufuzz.module,
         output: {
+            ast: true,
             beautify: true,
             braces: true,
         },
     });
-    if (beautified.error) return beautified;
-    return UglifyJS.minify(beautified.code, {
-        compress: false,
-        mangle: false,
-        output: {
-            ast: true,
-        },
-    });
+    if (!beautified.error) {
+        var verify = UglifyJS.minify(beautified.code, {
+            compress: false,
+            mangle: false,
+            module: ufuzz.module,
+        });
+        if (verify.error) return verify;
+    }
+    return beautified;
 }
 
 function validate(ast) {
@@ -35,6 +38,7 @@ function validate(ast) {
     return UglifyJS.minify(ast, {
         compress: false,
         mangle: false,
+        module: ufuzz.module,
         output: {
             ast: true,
         },
@@ -115,9 +119,13 @@ for (var round = 1; round <= num_iterations; round++) {
     var code = ufuzz.createTopLevelCode();
     minify_options.forEach(function(options) {
         var ok = true;
-        var input = UglifyJS.minify(options ? UglifyJS.minify(code, JSON.parse(options)).code : code, {
+        var input = UglifyJS.minify(options ? function(options) {
+            options.module = ufuzz.module;
+            return UglifyJS.minify(code, options).code;
+        }(JSON.parse(options)) : code, {
             compress: false,
             mangle: false,
+            module: ufuzz.module,
             output: {
                 ast: true,
             },

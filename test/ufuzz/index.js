@@ -2095,7 +2095,11 @@ function createVarName(maybe, dontStore) {
 }
 
 if (require.main !== module) {
-    exports.createTopLevelCode = createTopLevelCode;
+    exports.createTopLevelCode = function() {
+        var code = createTopLevelCode();
+        exports.module = async && has_await;
+        return code;
+    };
     exports.num_iterations = num_iterations;
     exports.verbose = verbose;
     return;
