@@ -472,6 +472,93 @@ funarg_collapse_vars_3: {
     node_version: ">=6"
 }
 
+funarg_collapse_vars_4: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function(b, { log: c }) {
+            c(b);
+        })(a, console);
+    }
+    expect: {
+        var a = "PASS";
+        (function(b, { log: c }) {
+            c(a);
+        })(0, console);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+funarg_collapse_vars_5: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        B = "PASS";
+        try {
+            console.log(function({}, a) {
+                return a;
+            }(null, A = B));
+        } catch (e) {}
+        console.log(A);
+    }
+    expect: {
+        A = "FAIL";
+        B = "PASS";
+        try {
+            console.log(function({}, a) {
+                return a;
+            }(null, A = B));
+        } catch (e) {}
+        console.log(A);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+funarg_collapse_vars_6: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        B = "PASS";
+        function f() {
+            console.log(function({}, a) {
+                return a;
+            }(null, A = B));
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log(A);
+        }
+    }
+    expect: {
+        A = "FAIL";
+        B = "PASS";
+        function f() {
+            console.log(function({}, a) {
+                return a;
+            }(null, A = B));
+        }
+        try {
+            f();
+        } catch (e) {
+            console.log(A);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 funarg_reduce_vars_1: {
     options = {
         reduce_vars: true,
