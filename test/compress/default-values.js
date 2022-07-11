@@ -1170,6 +1170,49 @@ mangle_arrow_2_toplevel: {
     node_version: ">=6.9.3"
 }
 
+collapse_preceding_simple_arg: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        console.log(function(b, c = "bar") {
+            return b + c;
+        }(a, a));
+    }
+    expect: {
+        var a = "foo";
+        console.log(function(b, c = "bar") {
+            return a + c;
+        }(0, a));
+    }
+    expect_stdout: "foofoo"
+    node_version: ">=6"
+}
+
+drop_preceding_simple_arg: {
+    options = {
+        collapse_vars: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        console.log(function(b, c = "bar") {
+            return b + c;
+        }(a, a));
+    }
+    expect: {
+        var a = "foo";
+        console.log(function(c = "bar") {
+            return a + c;
+        }(a));
+    }
+    expect_stdout: "foofoo"
+    node_version: ">=6"
+}
+
 issue_4444: {
     options = {
         collapse_vars: true,

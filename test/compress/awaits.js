@@ -1046,6 +1046,60 @@ collapse_vars_3: {
     node_version: ">=8"
 }
 
+collapse_funarg_1: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        var a = "PASS";
+        (async function({}, b) {
+            return b;
+        })(null, A = a);
+        console.log(A);
+    }
+    expect: {
+        A = "FAIL";
+        var a = "PASS";
+        (async function({}, b) {
+            return b;
+        })(null, A = a);
+        console.log(A);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+collapse_funarg_2: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        B = "PASS";
+        (async function() {
+            console.log(function({}, a) {
+                return a;
+            }(null, A = B));
+        })();
+        console.log(A);
+    }
+    expect: {
+        A = "FAIL";
+        B = "PASS";
+        (async function() {
+            console.log(function({}, a) {
+                return a;
+            }(null, A = B));
+        })();
+        console.log(A);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 collapse_property_lambda: {
     options = {
         collapse_vars: true,
