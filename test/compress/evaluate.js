@@ -3390,3 +3390,29 @@ issue_5380: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5558: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 99, b = 0;
+        a++;
+        b++;
+        b += a;
+        b *= a;
+        b += a;
+        console.log(a);
+    }
+    expect: {
+        var a = 99, b = 0;
+        b++,
+        b = (b += ++a) * a + a,
+        console.log(a);
+    }
+    expect_stdout: "100"
+}
