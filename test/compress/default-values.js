@@ -180,6 +180,26 @@ collapse_arg_sequence: {
     node_version: ">=6"
 }
 
+collapse_in_arg: {
+    options = {
+        collapse_vars: true,
+        keep_fargs: false,
+        unused: true,
+    }
+    input: {
+        (function(a, b = a) {
+            b("PASS");
+        })(console.log);
+    }
+    expect: {
+        (function(a) {
+            a("PASS");
+        })(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 collapse_value_1: {
     options = {
         collapse_vars: true,
@@ -2870,5 +2890,129 @@ issue_5536: {
         })().next();
     }
     expect_stdout: "undefined"
+    node_version: ">=6"
+}
+
+issue_5566_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            var a = "foo";
+            console.log(a, f());
+        })("bar");
+    }
+    expect: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            var a = "foo";
+            console.log(a, f());
+        })("bar");
+    }
+    expect_stdout: "foo bar"
+    node_version: ">=6"
+}
+
+issue_5566_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            function a() {}
+            console.log(typeof a, typeof f());
+        })(42);
+    }
+    expect: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            function a() {}
+            console.log(typeof a, typeof f());
+        })(42);
+    }
+    expect_stdout: "function number"
+    node_version: ">=6"
+}
+
+issue_5566_3: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            function a() {}
+            console.log(typeof a, typeof f());
+        })(42);
+    }
+    expect: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            function a() {}
+            console.log(typeof a, typeof f());
+        })(42);
+    }
+    expect_stdout: "function number"
+    node_version: ">=6"
+}
+
+issue_5566_4: {
+    options = {
+        collapse_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b = function() {
+            return a;
+        }) {
+            var a = 0;
+            b()("PASS");
+        })(console.log);
+    }
+    expect: {
+        (function(a, b = function() {
+            return a;
+        }) {
+            var a = 0;
+            b()("PASS");
+        })(console.log);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5566_5: {
+    options = {
+        hoist_vars: true,
+    }
+    input: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            var a = "foo";
+            var b;
+            console.log(a, f());
+        })("bar");
+    }
+    expect: {
+        (function(a, f = function() {
+            return a;
+        }) {
+            var b, a = "foo";
+            console.log(a, f());
+        })("bar");
+    }
+    expect_stdout: "foo bar"
     node_version: ">=6"
 }
