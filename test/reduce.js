@@ -460,6 +460,16 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 return to_statement(node.definitions[0].value);
             }
         }
+        else if (node instanceof U.AST_VarDef) {
+            if (node.value) {
+                node.start._permute++;
+                CHANGED = true;
+                return new U.AST_VarDef({
+                    name: node.name,
+                    start: {},
+                });
+            }
+        }
 
         if (in_list) {
             // drop switch branches

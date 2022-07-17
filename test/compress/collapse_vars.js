@@ -9979,3 +9979,25 @@ issue_5396: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5568: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = "FAIL";
+        var a = (A = "PASS", !1);
+        for (var b in a);
+        console.log(A);
+    }
+    expect: {
+        A = "FAIL";
+        for (var b in !(A = "PASS"));
+        console.log(A);
+    }
+    expect_stdout: "PASS"
+}
