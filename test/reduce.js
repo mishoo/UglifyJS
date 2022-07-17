@@ -241,23 +241,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             CHANGED = true;
             return node.name;
         }
-        else if (node instanceof U.AST_DestructuredArray) {
-            var expr = node.elements[0];
-            if (expr && !(expr instanceof U.AST_Hole)) {
-                node.start._permute++;
-                CHANGED = true;
-                return expr;
-            }
-        }
-        else if (node instanceof U.AST_DestructuredObject) {
-            // first property's value
-            var expr = node.properties[0];
-            if (expr) {
-                node.start._permute++;
-                CHANGED = true;
-                return expr.value;
-            }
-        }
         else if (node instanceof U.AST_Defun) {
             switch (((node.start._permute += step) * steps | 0) % 2) {
               case 0:
@@ -273,6 +256,23 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     CHANGED = true;
                     return List.splice(body);
                 }
+            }
+        }
+        else if (node instanceof U.AST_DestructuredArray) {
+            var expr = node.elements[0];
+            if (expr && !(expr instanceof U.AST_Hole)) {
+                node.start._permute++;
+                CHANGED = true;
+                return expr;
+            }
+        }
+        else if (node instanceof U.AST_DestructuredObject) {
+            // first property's value
+            var expr = node.properties[0];
+            if (expr) {
+                node.start._permute++;
+                CHANGED = true;
+                return expr.value;
             }
         }
         else if (node instanceof U.AST_DWLoop) {
@@ -295,6 +295,16 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 CHANGED = true;
                 return to_statement(expr);
             }
+        }
+        else if (node instanceof U.AST_ExportDeclaration) {
+            node.start._permute++;
+            CHANGED = true;
+            return node.body;
+        }
+        else if (node instanceof U.AST_ExportDefault) {
+            node.start._permute++;
+            CHANGED = true;
+            return to_statement(node.body);
         }
         else if (node instanceof U.AST_Finally) {
             // drop finally block
@@ -349,6 +359,15 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 // replace if statement with its condition, then block or else block
                 CHANGED = true;
                 return to_statement(expr);
+            }
+        }
+        else if (node instanceof U.AST_LabeledStatement) {
+            if (node.body instanceof U.AST_Statement
+                && !has_loopcontrol(node.body, node.body, node)) {
+                // replace labelled statement with its non-labelled body
+                node.start._permute = REPLACEMENTS.length;
+                CHANGED = true;
+                return node.body;
             }
         }
         else if (node instanceof U.AST_Object) {
@@ -439,15 +458,6 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 node.start._permute++;
                 CHANGED = true;
                 return to_statement(node.definitions[0].value);
-            }
-        }
-        else if (node instanceof U.AST_LabeledStatement) {
-            if (node.body instanceof U.AST_Statement
-                && !has_loopcontrol(node.body, node.body, node)) {
-                // replace labelled statement with its non-labelled body
-                node.start._permute = REPLACEMENTS.length;
-                CHANGED = true;
-                return node.body;
             }
         }
 
