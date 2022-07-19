@@ -109,6 +109,17 @@ foreign: {
     expect_exact: 'export*from"foo";export{}from"bar";export*as a from"baz";export{default}from"moo";export{b,c as case,default as delete,d}from"moz";'
 }
 
+non_identifiers: {
+    beautify = {
+        quote_style: 3,
+    }
+    input: {
+        export * as "42" from 'foo';
+        export { '42', "delete" as 'foo' } from "bar";
+    }
+    expect_exact: "export*as\"42\"from'foo';export{'42',delete as foo}from\"bar\";"
+}
+
 same_quotes: {
     beautify = {
         beautify: true,

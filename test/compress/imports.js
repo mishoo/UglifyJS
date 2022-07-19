@@ -40,6 +40,17 @@ default_keys: {
     expect_exact: 'import foo,{bar}from"baz";'
 }
 
+non_identifiers: {
+    beautify = {
+        quote_style: 3,
+    }
+    input: {
+        import { '42' as foo } from "bar";
+        import { "foo" as bar } from 'baz';
+    }
+    expect_exact: "import{'42'as foo}from\"bar\";import{foo as bar}from'baz';"
+}
+
 dynamic: {
     input: {
         (async a => await import(a))("foo").then(bar);
