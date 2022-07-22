@@ -1,3 +1,12 @@
+decimal: {
+    input: {
+        console.log({... 0.42});
+    }
+    expect_exact: "console.log({....42});"
+    expect_stdout: "{}"
+    node_version: ">=8.3.0"
+}
+
 collapse_vars_1: {
     options = {
         collapse_vars: true,
