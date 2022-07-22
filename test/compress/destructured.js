@@ -3817,3 +3817,30 @@ issue_5533_drop_fargs: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5573: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log;
+        var a = "FAIL";
+        (function([ { [log(a)]: b } ]) {
+            A = 42;
+        })((a = "PASS", [ {} ]));
+        log(a, A);
+    }
+    expect: {
+        var log = console.log;
+        var a = "FAIL";
+        (function([ { [log(a)]: b } ]) {
+            A = 42;
+        })((a = "PASS", [ {} ]));
+        log(a, A);
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS 42",
+    ]
+    node_version: ">=6"
+}
