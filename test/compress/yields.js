@@ -1701,3 +1701,37 @@ issue_5526: {
     ]
     node_version: ">=10"
 }
+
+issue_5576: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function*() {
+            try {
+                (function() {
+                    while (console.log("foo"));
+                })();
+            } finally {
+                console.log("bar");
+            }
+        })().next();
+        console.log("baz");
+    }
+    expect: {
+        (async function*() {
+            try {
+                while (console.log("foo"));
+            } finally {
+                console.log("bar");
+            }
+        })().next();
+        console.log("baz");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=10"
+}
