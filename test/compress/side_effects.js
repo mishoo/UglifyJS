@@ -318,6 +318,32 @@ unsafe_string_replace: {
     expect_stdout: "PASS"
 }
 
+unsafe_Object_call: {
+    options = {
+        side_effects: true,
+        unsafe: true,
+    }
+    input: {
+        var o = {
+            f: function(a) {
+                console.log(a ? this.p : "FAIL 1");
+            },
+            p: "FAIL 2",
+        }, p = "PASS";
+        Object(o.f)(42);
+    }
+    expect: {
+        var o = {
+            f: function(a) {
+                console.log(a ? this.p : "FAIL 1");
+            },
+            p: "FAIL 2",
+        }, p = "PASS";
+        (0, o.f)(42);
+    }
+    expect_stdout: "PASS"
+}
+
 drop_value: {
     options = {
         side_effects: true,
