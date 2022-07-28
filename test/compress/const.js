@@ -2011,3 +2011,88 @@ issue_5516: {
     }
     expect_stdout: "function"
 }
+
+issue_5580_1: {
+    mangle = {}
+    input: {
+        "use strict";
+        console.log(function(a, b, c) {
+            try {
+                FAIL;
+            } catch (e) {
+                return function() {
+                    var d = e, i, j;
+                    {
+                        const e = j;
+                    }
+                    return a;
+                }();
+            } finally {
+                const e = 42;
+            }
+        }("PASS"));
+    }
+    expect: {
+        "use strict";
+        console.log(function(r, n, t) {
+            try {
+                FAIL;
+            } catch (o) {
+                return function() {
+                    var n = o, t, c;
+                    {
+                        const o = c;
+                    }
+                    return r;
+                }();
+            } finally {
+                const c = 42;
+            }
+        }("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5580_2: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        (function() {
+            try {
+                throw "PASS";
+            } catch (e) {
+                return function() {
+                    console.log(e);
+                    {
+                        const e = "FAIL 1";
+                    }
+                }();
+            } finally {
+                const e = "FAIL 2";
+            }
+        })();
+    }
+    expect: {
+        "use strict";
+        (function() {
+            try {
+                throw "PASS";
+            } catch (e) {
+                console.log(e);
+                {
+                    const e = "FAIL 1";
+                }
+                return;
+            } finally {
+                var e = "FAIL 2";
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
