@@ -160,6 +160,11 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 return expr instanceof U.AST_Spread ? expr.expression : expr;
             }
         }
+        else if (node instanceof U.AST_Await) {
+            node.start._permute++;
+            CHANGED = true;
+            return node.expression;
+        }
         else if (node instanceof U.AST_Binary) {
             var permute = ((node.start._permute += step) * steps | 0) % 4;
             var expr = [
