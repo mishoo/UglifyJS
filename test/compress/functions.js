@@ -8646,3 +8646,42 @@ module_inline: {
     }
     expect_stdout: "true"
 }
+
+single_use_inline_collision: {
+    options = {
+        inline: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        (function() {
+            var f = function() {
+                while (console.log(a));
+            };
+            (function() {
+                (function() {
+                    f();
+                })();
+                (function(a) {
+                    a || a("FAIL");
+                })(console.log);
+            })();
+        })();
+    }
+    expect: {
+        var a = "PASS";
+        (function() {
+            (function() {
+                while (console.log(a));
+                return;
+            })();
+            (function(a) {
+                a || a("FAIL");
+            })(console.log);
+            return;
+        })();
+    }
+    expect_stdout: "PASS"
+}
