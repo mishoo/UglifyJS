@@ -466,7 +466,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
             }
         }
         else if (node instanceof U.AST_VarDef) {
-            if (node.value) {
+            if (node.value && !(parent instanceof U.AST_Const)) {
                 node.start._permute++;
                 CHANGED = true;
                 return new U.AST_VarDef({
