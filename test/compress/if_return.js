@@ -1393,3 +1393,198 @@ void_match: {
         "foo",
     ]
 }
+
+switch_break: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+              default:
+                if (console.log("foo"))
+                    break;
+                while (console.log("bar"));
+              case 42:
+                if (console.log("baz"))
+                    break;
+                while (console.log("moo"));
+                break;
+              case null:
+                if (console.log("moz"))
+                    break;
+            }
+        }
+        f();
+        f(42);
+        f(null);
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+              default:
+                if (console.log("foo"))
+                    break;
+                while (console.log("bar"));
+              case 42:
+                if (!console.log("baz"))
+                    while (console.log("moo"));
+                break;
+              case null:
+                console.log("moz");
+            }
+        }
+        f();
+        f(42);
+        f(null);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+        "moo",
+        "baz",
+        "moo",
+        "moz",
+    ]
+}
+
+switch_return_1: {
+    options = {
+        dead_code: true,
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+              case console.log("PASS"):
+                return;
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+              case console.log("PASS"):
+                return;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+switch_return_2: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+              case console.log("PASS"):
+                if (console)
+                    return;
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+              case console.log("PASS"):
+                if (console);
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+switch_return_3: {
+    options = {
+        if_return: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+              case console.log("foo"):
+                if (console)
+                    return void console.log("bar");
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+              case console.log("foo"):
+                if (console)
+                    console.log("bar");
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+switch_return_4: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        side_effects: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+              case console.log("foo"):
+                if (console) {
+                    console.log("bar");
+                    return;
+                }
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+              case console.log("foo"):
+                console && console.log("bar");
+                break;
+              case 42:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
