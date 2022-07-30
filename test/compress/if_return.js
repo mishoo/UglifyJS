@@ -218,6 +218,79 @@ if_return_8: {
     }
 }
 
+if_return_cond_void_1: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                return console.log("foo") ? console.log("bar") : void 0;
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            return a && console.log("foo") ? console.log("bar") : void 0;
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: "foo"
+}
+
+if_return_cond_void_2: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                return console.log("foo") ? void 0 : console.log("bar");
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            return a || console.log("foo") ? void 0 : console.log("bar");
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+if_return_cond_void_3: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a)
+                return console.log("foo") ? void console.log("bar") : void console.log("baz");
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            if (a)
+                return console.log("foo") ? void console.log("bar") : void console.log("baz");
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+    ]
+}
+
 issue_1089: {
     options = {
         booleans: true,
@@ -1586,5 +1659,171 @@ switch_return_4: {
     expect_stdout: [
         "foo",
         "bar",
+    ]
+}
+
+switch_return_5: {
+    options = {
+        dead_code: true,
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            switch (console.log("foo")) {
+              case console.log("bar"):
+                if (a)
+                    return;
+                return;
+                break;
+              case null:
+                FAIL;
+            }
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            switch (console.log("foo")) {
+              case console.log("bar"):
+                if (a);
+                return;
+              case null:
+                FAIL;
+            }
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "bar",
+    ]
+}
+
+issue_5583: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        side_effects: true,
+    }
+    input: {
+        do {
+            switch (console) {
+              default:
+                if (!console.log("foo"))
+                    continue;
+                break;
+              case console.log("bar"):
+                FAIL;
+            }
+        } while (console.log("baz"));
+    }
+    expect: {
+        do {
+            switch (console) {
+              default:
+                console.log("foo");
+                break;
+              case console.log("bar"):
+                FAIL;
+            }
+        } while (console.log("baz"));
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "baz",
+    ]
+}
+
+issue_5584_1: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+              case 42:
+                if (!console.log("PASS"))
+                    return;
+                return FAIL;
+            }
+        }
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+              case 42:
+                if (console.log("PASS"))
+                    return FAIL;
+            }
+        }
+        f(42);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5584_2: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            switch (a) {
+            case console.log("PASS"):
+                if (console)
+                    break;
+                return FAIL;
+            }
+        }
+        f();
+    }
+    expect: {
+        function f(a) {
+            switch (a) {
+            case console.log("PASS"):
+                if (console)
+                    break;
+                return FAIL;
+            }
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5586: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        L: do {
+            switch (console.log("foo")) {
+              case console.log("bar"):
+                if (console)
+                    break;
+                break L;
+            }
+        } while (console.log("baz"));
+    }
+    expect: {
+        L: do {
+            switch (console.log("foo")) {
+              case console.log("bar"):
+                if (console)
+                    break;
+                break L;
+            }
+        } while (console.log("baz"));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
     ]
 }
