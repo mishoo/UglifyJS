@@ -2096,3 +2096,51 @@ issue_5580_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5591: {
+    options = {
+        dead_code: true,
+        if_return: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            switch (console.log("foo")) {
+              case console.log("bar"):
+                if (console.log("baz"))
+                    return;
+                else {
+                    const a = 42;
+                    return;
+                }
+                break;
+              case null:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect: {
+        "use strict";
+        function f(a) {
+            switch (console.log("foo")) {
+              case console.log("bar"):
+                if (console.log("baz"))
+                    return;
+                else {
+                    const a = 42;
+                    return;
+                }
+              case null:
+                FAIL;
+            }
+        }
+        f();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=4"
+}
