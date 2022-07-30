@@ -254,7 +254,7 @@ if_return_cond_void_2: {
     }
     expect: {
         function f(a) {
-            return a || console.log("foo") ? void 0 : console.log("bar");
+            return !a || console.log("foo") ? void 0 : console.log("bar");
         }
         f();
         f(42);
@@ -1826,4 +1826,48 @@ issue_5586: {
         "bar",
         "baz",
     ]
+}
+
+issue_5587_1: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (console)
+                return a ? void 0 : console.log("PASS");
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            return !console || a ? void 0 : console.log("PASS");
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5587_2: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (console)
+                return a ? console.log("PASS") : void 0;
+        }
+        f();
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            return console && a ? console.log("PASS") : void 0;
+        }
+        f();
+        f(42);
+    }
+    expect_stdout: "PASS"
 }
