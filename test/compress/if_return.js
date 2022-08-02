@@ -218,8 +218,64 @@ if_return_8: {
     }
 }
 
+if_return_9: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+    }
+    input: {
+        !function() {
+            if (console.log("foo"))
+                return 42;
+            var a = console.log("bar");
+        }();
+    }
+    expect: {
+        !function() {
+            var a;
+            return console.log("foo") || (a = console.log("bar"), void 0);
+        }();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
+if_return_10: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+    }
+    input: {
+        !function() {
+            if (console.log("foo"))
+                return 42;
+            if (console.log("bar"))
+                return null;
+            var a = console.log("baz");
+        }();
+    }
+    expect: {
+        !function() {
+            var a;
+            return console.log("foo") || !console.log("bar") && (a = console.log("baz"), void 0);
+        }();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+    ]
+}
+
 if_return_cond_void_1: {
     options = {
+        conditionals: true,
         if_return: true,
     }
     input: {
@@ -242,6 +298,7 @@ if_return_cond_void_1: {
 
 if_return_cond_void_2: {
     options = {
+        conditionals: true,
         if_return: true,
     }
     input: {
@@ -504,14 +561,88 @@ if_var_return_4: {
                 return v();
             var a = w();
             if (x())
-                return y();
+                return y(a);
             z();
         }
     }
     expect: {
         function f() {
-            return u() ? v() : (a = w(), x() ? y() : (z(), void 0));
             var a;
+            return u() ? v() : (a = w(), x() ? y(a) : (z(), void 0));
+        }
+    }
+}
+
+if_var_return_5: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f() {
+            if (w())
+                return x();
+            var a = y();
+            return z(a);
+        }
+    }
+    expect: {
+        function f() {
+            var a;
+            return w() ? x() : (a = y(), z(a));
+        }
+    }
+}
+
+if_defns_return_1: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            if (u())
+                return v();
+            function g() {}
+            if (w())
+                return x(g);
+            var a = y();
+            z(a);
+        }
+    }
+    expect: {
+        function f() {
+            var a;
+            return u() ? v() : w() ? x(g) : (a = y(), void z(a));
+            function g() {}
+        }
+    }
+}
+
+if_defns_return_2: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f(a, b, c) {
+            if (v())
+                return a();
+            if (w())
+                return b();
+            if (x()) {
+                var d = c();
+                return y(d);
+            }
+            return z();
+        }
+    }
+    expect: {
+        function f(a, b, c) {
+            var d;
+            return v() ? a() : w() ? b() : x() ? (d = c(), y(d)) : z();
         }
     }
 }
@@ -1759,7 +1890,8 @@ issue_5584_1: {
         function f(a) {
             switch (a) {
               case 42:
-                return console.log("PASS") ? FAIL : void 0;
+                if (console.log("PASS"))
+                    return FAIL;
             }
         }
         f(42);
@@ -1899,6 +2031,7 @@ issue_5586: {
 
 issue_5587_1: {
     options = {
+        conditionals: true,
         if_return: true,
     }
     input: {
@@ -1921,6 +2054,7 @@ issue_5587_1: {
 
 issue_5587_2: {
     options = {
+        conditionals: true,
         if_return: true,
     }
     input: {
