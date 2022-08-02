@@ -1433,6 +1433,398 @@ condition_matches_alternative: {
     expect_stdout: "null 0 false 5"
 }
 
+condition_sequence_1: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(x, y) {
+            return (console.log(x), x) ? x : y;
+        }
+        console.log(f("foo", "bar"));
+        console.log(f(null, "baz"));
+        console.log(f(42));
+        console.log(f());
+    }
+    expect: {
+        function f(x, y) {
+            return console.log(x), x || y;
+        }
+        console.log(f("foo", "bar")),
+        console.log(f(null, "baz")),
+        console.log(f(42)),
+        console.log(f());
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+        "null",
+        "baz",
+        "42",
+        "42",
+        "undefined",
+        "undefined",
+    ]
+}
+
+condition_sequence_2: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(x, y) {
+            return (console.log(y), y) ? x : y;
+        }
+        console.log(f("foo", "bar"));
+        console.log(f(null, "baz"));
+        console.log(f(42));
+        console.log(f());
+    }
+    expect: {
+        function f(x, y) {
+            return console.log(y), y && x;
+        }
+        console.log(f("foo", "bar")),
+        console.log(f(null, "baz")),
+        console.log(f(42)),
+        console.log(f());
+    }
+    expect_stdout: [
+        "bar",
+        "foo",
+        "baz",
+        "null",
+        "undefined",
+        "undefined",
+        "undefined",
+        "undefined",
+    ]
+}
+
+combine_tail_sequence: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var n = {
+            f: function() {
+                console.log("foo");
+                return this.p;
+            },
+            p: "FAIL 1",
+        };
+        var o = {
+            f: function() {
+                console.log("foz");
+                return this.p;
+            },
+            p: "FAIL 2",
+        };
+        var p = "PASS";
+        function g(a) {
+            return a
+                ? (console.log("baa"), (console.log("bar"), (console.log("baz"), n).f)())
+                : (console.log("moo"), (console.log("mor"), (console.log("moz"), o).f)());
+        }
+        console.log(g());
+        console.log(g(42));
+    }
+    expect: {
+        var n = {
+            f: function() {
+                console.log("foo");
+                return this.p;
+            },
+            p: "FAIL 1",
+        };
+        var o = {
+            f: function() {
+                console.log("foz");
+                return this.p;
+            },
+            p: "FAIL 2",
+        };
+        var p = "PASS";
+        function g(a) {
+            return (0, (a
+                ? (console.log("baa"), console.log("bar"), console.log("baz"), n)
+                : (console.log("moo"), console.log("mor"), console.log("moz"), o)).f)();
+        }
+        console.log(g());
+        console.log(g(42));
+    }
+    expect_stdout: [
+        "moo",
+        "mor",
+        "moz",
+        "foz",
+        "PASS",
+        "baa",
+        "bar",
+        "baz",
+        "foo",
+        "PASS",
+    ]
+}
+
+consequent_sequence_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a) {
+            return x ? (console.log("seq"), y && a) : a;
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect: {
+        function f(x, y, a) {
+            return (!x || (console.log("seq"), y)) && a;
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "seq",
+        "false",
+        "seq",
+        "4",
+    ]
+}
+
+consequent_sequence_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a) {
+            return x ? (console.log("seq"), y || a) : a;
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect: {
+        function f(x, y, a) {
+            return x && (console.log("seq"), y) || a;
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "seq",
+        "3",
+        "seq",
+        "true",
+    ]
+}
+
+consequent_sequence_3: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a, b) {
+            return x ? (console.log("seq"), y ? a : b) : b;
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect: {
+        function f(x, y, a, b) {
+            return x && (console.log("seq"), y) ? a : b;
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect_stdout: [
+        "-1",
+        "-2",
+        "seq",
+        "-3",
+        "seq",
+        "4",
+    ]
+}
+
+consequent_sequence_4: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a, b) {
+            return x ? (console.log("seq"), y ? a : b) : a;
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect: {
+        function f(x, y, a, b) {
+            return !x || (console.log("seq"), y) ? a : b;
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect_stdout: [
+        "1",
+        "2",
+        "seq",
+        "-3",
+        "seq",
+        "4",
+    ]
+}
+
+alternative_sequence_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a) {
+            return x ? a : (console.log("seq"), y && a);
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect: {
+        function f(x, y, a) {
+            return (x || (console.log("seq"), y)) && a;
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect_stdout: [
+        "seq",
+        "false",
+        "seq",
+        "2",
+        "3",
+        "4",
+    ]
+}
+
+alternative_sequence_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a) {
+            return x ? a : (console.log("seq"), y || a);
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect: {
+        function f(x, y, a) {
+            return !x && (console.log("seq"), y) || a;
+        }
+        console.log(f(false, false, 1));
+        console.log(f(false, true, 2));
+        console.log(f(true, false, 3));
+        console.log(f(true, true, 4));
+    }
+    expect_stdout: [
+        "seq",
+        "1",
+        "seq",
+        "true",
+        "3",
+        "4",
+    ]
+}
+
+alternative_sequence_3: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a, b) {
+            return x ? a : (console.log("seq"), y ? a : b);
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect: {
+        function f(x, y, a, b) {
+            return x || (console.log("seq"), y) ? a : b;
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect_stdout: [
+        "seq",
+        "-1",
+        "seq",
+        "2",
+        "3",
+        "4",
+    ]
+}
+
+alternative_sequence_4: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        function f(x, y, a, b) {
+            return x ? b : (console.log("seq"), y ? a : b);
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect: {
+        function f(x, y, a, b) {
+            return !x && (console.log("seq"), y) ? a : b;
+        }
+        console.log(f(false, false, 1, -1));
+        console.log(f(false, true, 2, -2));
+        console.log(f(true, false, 3, -3));
+        console.log(f(true, true, 4, -4));
+    }
+    expect_stdout: [
+        "seq",
+        "-1",
+        "seq",
+        "2",
+        "-3",
+        "-4",
+    ]
+}
+
 delete_conditional_1: {
     options = {
         booleans: true,
