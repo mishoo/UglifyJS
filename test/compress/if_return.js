@@ -2253,3 +2253,29 @@ issue_5592_2: {
         "baz",
     ]
 }
+
+issue_5595: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        function f(a) {
+            if (a) {
+                var b;
+                if (b++)
+                    return "FAIL";
+            } else
+                return "PASS";
+        }
+        console.log(f());
+    }
+    expect: {
+        function f(a) {
+            var b;
+            return a ? b++ ? "FAIL" : void 0 : "PASS";
+        }
+        console.log(f());
+    }
+    expect_stdout: "PASS"
+}
