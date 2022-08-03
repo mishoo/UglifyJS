@@ -2279,3 +2279,29 @@ issue_5595: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5597: {
+    options = {
+        conditionals: true,
+        if_return: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            if (a) L: {
+                return;
+                var b;
+            } else
+                return "FAIL";
+        }
+        console.log(f(42) || "PASS");
+    }
+    expect: {
+        function f(a) {
+            if (!a)
+                return "FAIL";
+        }
+        console.log(f(42) || "PASS");
+    }
+    expect_stdout: "PASS"
+}
