@@ -241,6 +241,94 @@ class_super: {
     node_version: ">=4"
 }
 
+static_newline_1: {
+    input: {
+        class A {
+            static
+            P
+        }
+        console.log("P" in A, "static" in A);
+        console.log("P" in new A(), "static" in new A());
+    }
+    expect_exact: 'class A{static P}console.log("P"in A,"static"in A);console.log("P"in new A,"static"in new A);'
+    expect_stdout: [
+        "true false",
+        "false false",
+    ]
+    node_version: ">=12"
+}
+
+static_newline_2: {
+    input: {
+        class A {
+            static
+            static
+            P
+        }
+        console.log("P" in A, "static" in A);
+        console.log("P" in new A(), "static" in new A());
+    }
+    expect_exact: 'class A{static static;P}console.log("P"in A,"static"in A);console.log("P"in new A,"static"in new A);'
+    expect_stdout: [
+        "false true",
+        "true false",
+    ]
+    node_version: ">=12"
+}
+
+static_newline_3: {
+    input: {
+        class A {
+            static
+            static
+            static
+            P
+        }
+        console.log("P" in A, "static" in A);
+        console.log("P" in new A(), "static" in new A());
+    }
+    expect_exact: 'class A{static static;static P}console.log("P"in A,"static"in A);console.log("P"in new A,"static"in new A);'
+    expect_stdout: [
+        "true true",
+        "false false",
+    ]
+    node_version: ">=12"
+}
+
+static_newline_4: {
+    input: {
+        class A {
+            static
+            static
+            static
+            static
+            P
+        }
+        console.log("P" in A, "static" in A);
+        console.log("P" in new A(), "static" in new A());
+    }
+    expect_exact: 'class A{static static;static static;P}console.log("P"in A,"static"in A);console.log("P"in new A,"static"in new A);'
+    expect_stdout: [
+        "false true",
+        "true false",
+    ]
+    node_version: ">=12"
+}
+
+static_newline_init: {
+    input: {
+        class A {
+            static
+            {
+                console.log("PASS");
+            }
+        }
+    }
+    expect_exact: 'class A{static{console.log("PASS")}}'
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
+
 static_init: {
     input: {
         var a = "foo";
