@@ -206,6 +206,7 @@ mangle_unquoted_properties: {
     }
     mangle = {
         properties: {
+            builtins: true,
             keep_quoted: true,
         },
     }
@@ -305,6 +306,7 @@ mangle_debug_suffix_keep_quoted: {
     }
     mangle = {
         properties: {
+            builtins: true,
             debug: "XYZ",
             keep_quoted: true,
             reserved: [],
