@@ -2086,7 +2086,7 @@ issue_5246_1: {
     }
     expect_stdout: "PASS"
     expect_warnings: [
-        "INFO: Dropping unused default argument {}=42 [test/compress/default-values.js:1,29]",
+        "INFO: Dropping unused default argument {} [test/compress/default-values.js:1,29]",
     ]
     node_version: ">=6"
 }
