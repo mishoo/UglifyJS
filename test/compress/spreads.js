@@ -1203,3 +1203,53 @@ issue_5382: {
     expect_stdout: "PASS"
     node_version: ">=8.3.0"
 }
+
+issue_5602: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        if_return: true,
+        inline: true,
+        passes: 2,
+        sequences: true,
+        spreads: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            try {
+                var b = function(c) {
+                    if (c)
+                        return FAIL;
+                    var d = 42;
+                }(...[ null, A = 0 ]);
+            } catch (e) {
+                b();
+            }
+        })();
+        console.log(A);
+    }
+    expect: {
+        (function() {
+            try {
+                var b = void (A = 0);
+            } catch (e) {
+                b();
+            }
+        })(),
+        console.log(A);
+    }
+    expect_stdout: "0"
+    expect_warnings: [
+        "INFO: Dropping unused variable d [test/compress/spreads.js:6,24]",
+        "INFO: Collapsing c [test/compress/spreads.js:4,24]",
+        "INFO: Dropping unused variable c [test/compress/spreads.js:3,33]",
+        "INFO: pass 0: last_count: Infinity, count: 27",
+        "WARN: Condition always false [test/compress/spreads.js:4,20]",
+        "INFO: Collapsing null [test/compress/spreads.js:7,23]",
+        "INFO: Collapsing 0 [test/compress/spreads.js:3,24]",
+        "INFO: pass 1: last_count: 27, count: 22",
+    ]
+    node_version: ">=6"
+}
