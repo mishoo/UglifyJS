@@ -104,6 +104,7 @@ function process_option(name, no_value) {
                 "  --config-file <file>                     Read minify() options from JSON file.",
                 "  -d, --define <expr>[=value]              Global definitions.",
                 "  -e, --enclose [arg[,...][:value[,...]]]  Embed everything in a big function, with configurable argument(s) & value(s).",
+                "  --expression                             Parse a single expression, rather than a program.",
                 "  --ie                                     Support non-standard Internet Explorer.",
                 "  --keep-fargs                             Do not mangle/drop function arguments.",
                 "  --keep-fnames                            Do not mangle/drop function names. Useful for code relying on Function.prototype.name.",
@@ -151,6 +152,7 @@ function process_option(name, no_value) {
         options[name] = read_value();
         break;
       case "annotations":
+      case "expression":
       case "ie":
       case "ie8":
       case "module":

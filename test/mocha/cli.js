@@ -53,6 +53,23 @@ describe("bin/uglifyjs", function() {
             done();
         });
     });
+    it("Should work with --expression", function(done) {
+        exec([
+            uglifyjscmd,
+            "--expression",
+            "--compress",
+            "--mangle",
+        ].join(" "), function(err, stdout) {
+            if (err) throw err;
+            assert.strictEqual(stdout, "function(n){for(;n(););return 42}(A)\n");
+            done();
+        }).stdin.end([
+            "function(x) {",
+            "    while (x()) {}",
+            "    return 42;",
+            "}(A)",
+        ].join("\n"));
+    });
     it("Should work with --source-map names=true", function(done) {
         exec([
             uglifyjscmd,
@@ -69,7 +86,7 @@ describe("bin/uglifyjs", function() {
                 "    q: b",
                 "};",
                 "//# sourceMappingURL=data:application/json;charset=utf-8;base64,",
-            ].join("\n")
+            ].join("\n");
             assert.strictEqual(stdout.slice(0, expected.length), expected);
             var map = JSON.parse(to_ascii(stdout.slice(expected.length).trim()));
             assert.deepEqual(map.names, [ "obj", "p", "a", "q", "b" ]);
@@ -97,7 +114,7 @@ describe("bin/uglifyjs", function() {
                 "    q: b",
                 "};",
                 "//# sourceMappingURL=data:application/json;charset=utf-8;base64,",
-            ].join("\n")
+            ].join("\n");
             assert.strictEqual(stdout.slice(0, expected.length), expected);
             var map = JSON.parse(to_ascii(stdout.slice(expected.length).trim()));
             assert.deepEqual(map.names, []);

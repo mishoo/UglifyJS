@@ -108,6 +108,7 @@ safe_undefined: {
 }
 
 negate_iife_3: {
+    expression = true
     options = {
         conditionals: true,
         expression: true,
@@ -123,6 +124,7 @@ negate_iife_3: {
 }
 
 negate_iife_3_off: {
+    expression = true
     options = {
         conditionals: true,
         expression: true,
@@ -203,6 +205,7 @@ negate_iife_5_off: {
 }
 
 issue_1254_negate_iife_true: {
+    expression = true
     options = {
         expression: true,
         inline: true,
@@ -215,11 +218,12 @@ issue_1254_negate_iife_true: {
             };
         })()();
     }
-    expect_exact: 'void console.log("test");'
+    expect_exact: 'void console.log("test")'
     expect_stdout: true
 }
 
 issue_1254_negate_iife_nested: {
+    expression = true
     options = {
         expression: true,
         inline: true,
@@ -232,7 +236,7 @@ issue_1254_negate_iife_nested: {
             };
         })()()()()();
     }
-    expect_exact: '(void console.log("test"))()()();'
+    expect_exact: '(void console.log("test"))()()()'
 }
 
 negate_iife_issue_1073: {

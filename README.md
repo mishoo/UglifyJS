@@ -54,8 +54,6 @@ a double dash to prevent input files being used as option arguments:
                                                 modules and Userscripts that may
                                                 be anonymous function wrapped (IIFE)
                                                 by the .user.js engine `caller`.
-                                `expression`  Parse a single expression, rather than
-                                              a program (for parsing JSON).
                                 `spidermonkey`  Assume input files are SpiderMonkey
                                                 AST format (as JSON).
     -c, --compress [options]    Enable compressor/specify compressor options:
@@ -111,6 +109,8 @@ a double dash to prevent input files being used as option arguments:
     -d, --define <expr>[=value] Global definitions.
     -e, --enclose [arg[:value]] Embed everything in a big function, with configurable
                                 argument(s) & value(s).
+    --expression                Parse a single expression, rather than a program
+                                (for parsing JSON).
     --ie                        Support non-standard Internet Explorer.
                                 Equivalent to setting `ie: true` in `minify()`
                                 for `compress`, `mangle` and `output` options.
@@ -504,6 +504,8 @@ if (result.error) throw result.error;
 - `compress` (default: `{}`) — pass `false` to skip compressing entirely.
   Pass an object to specify custom [compress options](#compress-options).
 
+- `expression` (default: `false`) — parse as a single expression, e.g. JSON.
+
 - `ie` (default: `false`) — enable workarounds for Internet Explorer bugs.
 
 - `keep_fargs` (default: `false`) — pass `true` to prevent discarding or mangling
@@ -632,8 +634,6 @@ to be `false` and all symbol names will be omitted.
 ## Parse options
 
 - `bare_returns` (default: `false`) — support top level `return` statements
-
-- `expression` (default: `false`) — parse as a single expression, e.g. JSON
 
 - `html5_comments` (default: `true`) — process HTML comment as workaround for
   browsers which do not recognise `<script>` tags

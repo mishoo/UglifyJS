@@ -50,12 +50,10 @@ describe("Number literals", function() {
             "0.000_000_004_2e+1_0-0B101_010+0x2_A-0o5_2+4_2",
         ].forEach(function(code) {
             var result = UglifyJS.minify(code, {
-                compress: {
-                    expression: true,
-                },
+                expression: true,
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code, "42;");
+            assert.strictEqual(result.code, "42");
         });
     });
     it("Should reject invalid use of underscore", function() {
