@@ -60,8 +60,9 @@ function log() {
     console.log("%s", tmpl.apply(null, arguments));
 }
 
-function make_code(ast, options) {
+function make_code(ast, options, expression) {
     var stream = U.OutputStream(options);
+    if (expression) ast = ast.clone(true).unwrap_expression();
     ast.print(stream);
     return stream.get();
 }
@@ -178,9 +179,18 @@ function parse_test(file) {
 
 // Try to reminify original input with standard options
 // to see if it matches expect_stdout.
-function reminify(orig_options, input_code, input_formatted, stdout) {
+function reminify(expression, orig_options, input_code, input_formatted, stdout) {
     for (var i = 0; i < minify_options.length; i++) {
         var options = JSON.parse(minify_options[i]);
+        if (expression) {
+            if (!options.parse || typeof options.parse != "object") options.parse = {};
+            options.parse.expression = true;
+            if (options.compress == null) options.compress = {};
+            if (options.compress) {
+                if (typeof options.compress != "object") options.compress = {};
+                options.compress.expression = true;
+            }
+        }
         [
             "keep_fargs",
             "keep_fnames",
@@ -210,7 +220,7 @@ function reminify(orig_options, input_code, input_formatted, stdout) {
         } else {
             var toplevel = sandbox.has_toplevel(options);
             var expected = stdout[toplevel ? 1 : 0];
-            var actual = sandbox.run_code(result.code, toplevel);
+            var actual = run_code(expression, result.code, toplevel);
             if (typeof expected != "string" && typeof actual != "string" && expected.name == actual.name) {
                 actual = expected;
             }
@@ -245,18 +255,23 @@ function reminify(orig_options, input_code, input_formatted, stdout) {
     return true;
 }
 
+function run_code(expression, code, toplevel) {
+    return sandbox.run_code(expression ? "console.log(" + code + ");" : code, toplevel);
+}
+
 function test_case(test) {
     log("    Running test [{name}]", { name: test.name });
     U.AST_Node.enable_validation();
     var output_options = test.beautify || {};
     var expect;
     if (test.expect) {
-        expect = make_code(to_toplevel(test.expect, test.mangle), output_options);
+        expect = to_toplevel(test.expect, test.mangle, test.expression);
+        expect = make_code(expect, output_options, test.expression);
     } else {
         expect = test.expect_exact;
     }
-    var input = to_toplevel(test.input, test.mangle);
-    var input_code = make_code(input);
+    var input = to_toplevel(test.input, test.mangle, test.expression);
+    var input_code = make_code(input, {}, test.expression);
     var input_formatted = make_code(test.input, {
         annotations: true,
         beautify: true,
@@ -266,7 +281,7 @@ function test_case(test) {
     });
     try {
         input.validate_ast();
-        U.parse(input_code);
+        U.parse(input_code, { expression: test.expression });
     } catch (ex) {
         log([
             "!!! Cannot parse input",
@@ -310,7 +325,7 @@ function test_case(test) {
         output.mangle_names(test.mangle);
         if (test.mangle.properties) U.mangle_properties(output, test.mangle.properties);
     }
-    var output_code = make_code(output, output_options);
+    var output_code = make_code(output, output_options, test.expression);
     U.AST_Node.log_function();
     if (expect != output_code) {
         log([
@@ -333,7 +348,7 @@ function test_case(test) {
     // expect == output
     try {
         output.validate_ast();
-        U.parse(output_code);
+        U.parse(output_code, { expression: test.expression });
     } catch (ex) {
         log([
             "!!! Test matched expected result but cannot parse output",
@@ -377,7 +392,7 @@ function test_case(test) {
         }
     }
     if (test.expect_stdout && (!test.node_version || semver.satisfies(process.version, test.node_version))) {
-        var stdout = [ sandbox.run_code(input_code), sandbox.run_code(input_code, true) ];
+        var stdout = [ run_code(test.expression, input_code), run_code(test.expression, input_code, true) ];
         var toplevel = sandbox.has_toplevel({
             compress: test.options,
             mangle: test.mangle
@@ -406,7 +421,7 @@ function test_case(test) {
             });
             return false;
         }
-        actual = sandbox.run_code(output_code, toplevel);
+        actual = run_code(test.expression, output_code, toplevel);
         if (!sandbox.same_stdout(test.expect_stdout, actual)) {
             log([
                 "!!! failed",
@@ -427,7 +442,7 @@ function test_case(test) {
             });
             return false;
         }
-        if (!reminify(test.options, input_code, input_formatted, stdout)) {
+        if (!reminify(test.expression, test.options, input_code, input_formatted, stdout)) {
             return false;
         }
     }
@@ -438,20 +453,29 @@ function tmpl() {
     return U.string_template.apply(null, arguments);
 }
 
-function to_toplevel(input, mangle_options) {
+function to_toplevel(input, mangle_options, expression) {
     if (!(input instanceof U.AST_BlockStatement)) throw new Error("Unsupported input syntax");
-    var directive = true;
     var offset = input.start.line;
     var tokens = [];
-    var toplevel = new U.AST_Toplevel(input.transform(new U.TreeTransformer(function(node) {
+    input.walk(new U.TreeWalker(function(node) {
         if (U.push_uniq(tokens, node.start)) node.start.line -= offset;
-        if (!directive || node === input) return;
-        if (node instanceof U.AST_SimpleStatement && node.body instanceof U.AST_String) {
-            return new U.AST_Directive(node.body);
-        } else {
+    }));
+    var toplevel;
+    if (!expression) {
+        var directive = true;
+        toplevel = new U.AST_Toplevel(input.transform(new U.TreeTransformer(function(node) {
+            if (!directive) return node;
+            if (node === input) return;
+            if (node instanceof U.AST_SimpleStatement && node.body instanceof U.AST_String) {
+                return new U.AST_Directive(node.body);
+            }
             directive = false;
-        }
-    })));
+        })));
+    } else if (input.body.length == 1) {
+        toplevel = input.body[0].wrap_expression();
+    } else {
+        throw new Error("Invalid expression");
+    }
     toplevel.figure_out_scope(mangle_options);
     return toplevel;
 }

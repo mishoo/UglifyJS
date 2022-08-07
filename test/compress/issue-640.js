@@ -68,6 +68,7 @@ drop_console_2: {
 }
 
 drop_value: {
+    expression = true
     options = {
         expression: true,
         side_effects: true,
@@ -106,6 +107,7 @@ wrongly_optimized: {
 }
 
 negate_iife_1: {
+    expression = true
     options = {
         expression: true,
         negate_iife: true,
@@ -119,6 +121,7 @@ negate_iife_1: {
 }
 
 negate_iife_3: {
+    expression = true
     options = {
         conditionals: true,
         expression: true,
@@ -133,6 +136,7 @@ negate_iife_3: {
 }
 
 negate_iife_3_off: {
+    expression = true
     options = {
         conditionals: true,
         expression: true,
@@ -215,6 +219,7 @@ negate_iife_5_off: {
 }
 
 issue_1254_negate_iife_true: {
+    expression = true
     options = {
         expression: true,
         negate_iife: true,
@@ -226,11 +231,12 @@ issue_1254_negate_iife_true: {
             };
         })()();
     }
-    expect_exact: '(function(){return function(){console.log("test")}})()();'
+    expect_exact: 'function(){return function(){console.log("test")}}()()'
     expect_stdout: true
 }
 
 issue_1254_negate_iife_nested: {
+    expression = true
     options = {
         expression: true,
         negate_iife: true,
@@ -242,7 +248,7 @@ issue_1254_negate_iife_nested: {
             };
         })()()()()();
     }
-    expect_exact: '(function(){return function(){console.log("test")}})()()()()();'
+    expect_exact: 'function(){return function(){console.log("test")}}()()()()()'
     expect_stdout: true
 }
 

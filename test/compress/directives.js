@@ -131,19 +131,34 @@ valid_after_invalid_2: {
 }
 
 issue_5368_1: {
+    expression = true
     options = {
         directives: true,
         expression: true,
     }
     input: {
-        "foo";
+        "foo"
     }
-    expect: {
-        "foo";
-    }
+    expect_exact: '"foo"'
+    expect_stdout: "foo"
 }
 
 issue_5368_2: {
+    expression = true
+    options = {
+        directives: true,
+        expression: true,
+    }
+    input: {
+        (function() {
+            "foo";
+        })()
+    }
+    expect_exact: "function(){}()"
+    expect_stdout: "undefined"
+}
+
+issue_5368_3: {
     options = {
         directives: true,
         expression: true,
