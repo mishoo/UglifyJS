@@ -143,7 +143,7 @@ describe("bin/uglifyjs", function() {
             if (err) throw err;
             assert.strictEqual(stdout, [
                 "var bar=function(){function foo(bar){return bar}return foo}();",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxHQUNYLENBRUEsT0FBT0MsR0FDVixFQUFFIn0=",
                 "",
             ].join("\n"));
             done();
@@ -330,7 +330,7 @@ describe("bin/uglifyjs", function() {
             if (err) throw err;
             assert.strictEqual(stdout, [
                 "var bar=function(){function foo(bar){return bar}return foo}();",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxJQUdYLE9BQU9DLElBTEQifQ==",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMTMyMy9zYW1wbGUuanMiXSwibmFtZXMiOlsiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFJQSxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxHQUNYLENBRUEsT0FBT0MsR0FDVixFQUFFIn0=",
                 "",
             ].join("\n"));
             var stderrLines = stderr.split("\n");
@@ -350,7 +350,7 @@ describe("bin/uglifyjs", function() {
             if (err) throw err;
             assert.strictEqual(stdout, [
                 "var Foo=function Foo(){console.log(1+2)};new Foo;var bar=function(){function foo(bar){return bar}return foo}();",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwidGVzdC9pbnB1dC9pc3N1ZS0xMzIzL3NhbXBsZS5qcyJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFNBQUVBLE1BQWNDLFFBQVFDLElBQUksRUFBRSxJQUFPLElBQUlGLElDQW5ELElBQUlHLElBQU0sV0FDTixTQUFTQyxJQUFLRCxLQUNWLE9BQU9BLElBR1gsT0FBT0MsSUFMRCJ9",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwidGVzdC9pbnB1dC9pc3N1ZS0xMzIzL3NhbXBsZS5qcyJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIiwiZm9vIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFNBQUVBLE1BQWNDLFFBQVFDLElBQUksRUFBRSxDQUFDLENBQUUsRUFBSSxJQUFJRixJQ0FuRCxJQUFJRyxJQUFNLFdBQ04sU0FBU0MsSUFBS0QsS0FDVixPQUFPQSxHQUNYLENBRUEsT0FBT0MsR0FDVixFQUFFIn0=",
                 "",
             ].join("\n"));
             var stderrLines = stderr.split("\n");
@@ -791,7 +791,7 @@ describe("bin/uglifyjs", function() {
             if (err) throw err;
             assert.strictEqual(stdout, [
                 '"use strict";var foo=function foo(x){return"foo "+x};console.log(foo("bar"));',
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbImZvbyIsIngiLCJjb25zb2xlIiwibG9nIl0sIm1hcHBpbmdzIjoiYUFBQSxJQUFJQSxJQUFNLFNBQU5BLElBQU1DLEdBQUEsTUFBSyxPQUFTQSxHQUN4QkMsUUFBUUMsSUFBSUgsSUFBSSJ9",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbImZvbyIsIngiLCJjb25zb2xlIiwibG9nIl0sIm1hcHBpbmdzIjoiYUFBQSxJQUFJQSxJQUFNLFNBQU5BLElBQU1DLEdBQUEsTUFBSyxPQUFTQSxDQUFkLEVBQ1ZDLFFBQVFDLElBQUlILElBQUksS0FBSixDQUFaIn0=",
                 ""
             ].join("\n"));
             done();
@@ -814,7 +814,7 @@ describe("bin/uglifyjs", function() {
             if (err) throw err;
             assert.strictEqual(stdout, [
                 'function foo(){return function(){console.log("PASS")}}foo()();',
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMjMxMC9pbnB1dC5qcyJdLCJuYW1lcyI6WyJmb28iLCJjb25zb2xlIiwibG9nIiwiZiJdLCJtYXBwaW5ncyI6IkFBQUEsU0FBU0EsTUFDTCxPQUFPLFdBQ0hDLFFBQVFDLElBQUksU0FLUkYsS0FDUkcifQ==",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRlc3QvaW5wdXQvaXNzdWUtMjMxMC9pbnB1dC5qcyJdLCJuYW1lcyI6WyJmb28iLCJjb25zb2xlIiwibG9nIl0sIm1hcHBpbmdzIjoiQUFBQSxTQUFTQSxNQUNMLE9BQU8sV0FDSEMsUUFBUUMsSUFBSSxNQUFNLENBQ3RCLENBQ0osQ0FHWUYsSUFBSSxFQUNWIn0=",
                 ""
             ].join("\n"));
             done();
