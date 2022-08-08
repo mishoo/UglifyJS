@@ -19,11 +19,11 @@ function source_map(code) {
 function get_map() {
     return {
         "version": 3,
-        "sources": ["index.js"],
+        "sources": [ "index.js" ],
         "names": [],
         "mappings": ";;AAAA,IAAI,MAAM,SAAN,GAAM;AAAA,SAAK,SAAS,CAAd;AAAA,CAAV;AACA,QAAQ,GAAR,CAAY,IAAI,KAAJ,CAAZ",
         "file": "bundle.js",
-        "sourcesContent": ["let foo = x => \"foo \" + x;\nconsole.log(foo(\"bar\"));"]
+        "sourcesContent": [ "let foo = x => \"foo \" + x;\nconsole.log(foo(\"bar\"));" ],
     };
 }
 
@@ -42,7 +42,7 @@ function prepare_map(sourceMap) {
         sourceMap: {
             content: sourceMap,
             includeSources: true,
-        }
+        },
     });
     if (result.error) throw result.error;
     return JSON.parse(result.map);
@@ -112,7 +112,7 @@ describe("sourcemaps", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, "class A{static P=42;set#q(s){}}");
-        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["A","P","#q","v"],"mappings":"MAAMA,EACFC,SAAW,GACXC,MAAOC"}');
+        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["A","P","#q","v"],"mappings":"MAAMA,EACFC,SAAW,GACXC,MAAOC,IACX"}');
     });
     it("Should mark array/object literals", function() {
         var result = UglifyJS.minify([
@@ -124,7 +124,7 @@ describe("sourcemaps", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, "({}).wat([]);");
-        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["wat"],"mappings":"CAAU,IACNA,IAAI"}');
+        assert.strictEqual(result.map, '{"version":3,"sources":["0"],"names":["wat"],"mappings":"CAAU,IACNA,IAAI,EAAE"}');
     });
     it("Should give correct sourceRoot", function() {
         var code = "console.log(42);";
@@ -135,7 +135,7 @@ describe("sourcemaps", function() {
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, code);
-        assert.strictEqual(result.map, '{"version":3,"sourceRoot":"//foo.bar/","sources":["0"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI"}');
+        assert.strictEqual(result.map, '{"version":3,"sourceRoot":"//foo.bar/","sources":["0"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI,EAAE"}');
     });
     it("Should produce same source map with DOS or UNIX line endings", function() {
         var code = [
@@ -160,8 +160,8 @@ describe("sourcemaps", function() {
                 sourceMap: {
                     content: read("test/input/issue-1236/simple.js.map"),
                     filename: "simple.min.js",
-                    includeSources: true
-                }
+                    includeSources: true,
+                },
             });
             if (result.error) throw result.error;
             var map = JSON.parse(result.map);
@@ -175,8 +175,8 @@ describe("sourcemaps", function() {
                 sourceMap: {
                     content: "inline",
                     includeSources: true,
-                    url: "inline"
-                }
+                    url: "inline",
+                },
             });
             if (result.error) throw result.error;
             assert.strictEqual(result.code + "\n", read("test/input/issue-520/output.js"));
@@ -185,7 +185,7 @@ describe("sourcemaps", function() {
             var result = UglifyJS.minify(read("test/input/issue-1323/sample.js"), {
                 mangle: false,
                 sourceMap: {
-                    content: "inline"
+                    content: "inline",
                 },
                 warnings: true,
             });
@@ -206,7 +206,7 @@ describe("sourcemaps", function() {
             if (result.error) throw result.error;
             assert.strictEqual(result.code, [
                 "var Foo=function(){console.log(3)},bar=(new Foo,function(o){return o});",
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwiMSJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFdBQWdCQyxRQUFRQyxJQUFJLElDQWxDQyxLREEyQyxJQUFJSCxJQ0MvQyxTQUFjRyxHQUNWLE9BQU9BIn0=",
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInN0ZGluIiwiMSJdLCJuYW1lcyI6WyJGb28iLCJjb25zb2xlIiwibG9nIiwiYmFyIl0sIm1hcHBpbmdzIjoiQUFBQSxJQUFNQSxJQUFJLFdBQWdCQyxRQUFRQyxJQUFJLENBQUcsQ0FBRSxFQ0F2Q0MsS0RBMkMsSUFBSUgsSUNDL0MsU0FBY0csR0FDVixPQUFPQSxDQUNYIn0=",
             ].join("\n"));
             assert.deepEqual(result.warnings, [ "WARN: inline source map not found: 1" ]);
         });
@@ -239,8 +239,8 @@ describe("sourcemaps", function() {
                 sourceMap: {
                     content: "inline",
                     includeSources: true,
-                    url: "inline"
-                }
+                    url: "inline",
+                },
             });
             if (result.error) throw result.error;
             assert.strictEqual(result.code + "\n", read("test/input/issue-3294/output.js"));
@@ -255,7 +255,7 @@ describe("sourcemaps", function() {
             });
             if (result.error) throw result.error;
             assert.strictEqual(result.code, '(function(){console.log("hello")}).call(this);');
-            assert.strictEqual(result.map, '{"version":3,"sources":["main.coffee"],"names":["console","log"],"mappings":"CAAA,WAAAA,QAAQC,IAAI"}');
+            assert.strictEqual(result.map, '{"version":3,"sources":["main.coffee"],"names":["console","log"],"mappings":"CAAA,WAAAA,QAAQC,IAAI,OAAZ"}');
         });
         it("Should not overwrite existing sourcesContent", function() {
             var result = UglifyJS.minify({
@@ -302,7 +302,7 @@ describe("sourcemaps", function() {
             if (result.error) throw result.error;
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};\n" +
-                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsSUFBSUEsRUFBSSxTQUFTQyxHQUFPLE9BQU9BIn0=");
+                "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsSUFBSUEsRUFBSSxTQUFTQyxHQUFPLE9BQU9BLENBQUsifQ==");
         });
         it("Should not append source map to output js when sourceMapInline is not enabled", function() {
             var result = UglifyJS.minify('var a = function(foo) { return foo; };');
