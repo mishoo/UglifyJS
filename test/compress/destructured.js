@@ -1902,8 +1902,8 @@ issue_4288: {
                 console.log(typeof b);
             }()]: a,
         }) {
-            var b = a;
-            b++;
+            var a = a;
+            a++;
         }
         f(0);
     }
@@ -2076,17 +2076,16 @@ issue_4312: {
         console.log(a);
     }
     expect: {
-        var a;
         b = "PASS",
         c = "FAIL",
         [
             {
-                [a = b]: d,
+                [c = b]: d,
             },
         ] = [ c && c ],
         void 0;
         var b, c, d;
-        console.log(a);
+        console.log(c);
     }
     expect_stdout: "PASS"
     node_version: ">=6"
