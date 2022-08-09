@@ -1718,7 +1718,7 @@ issue_4540: {
     node_version: ">=6"
 }
 
-issue_4548: {
+issue_4548_1: {
     options = {
         merge_vars: true,
         toplevel: true,
@@ -1734,6 +1734,32 @@ issue_4548: {
         A = "foo";
         var a = A;
         [ b = c = "bar" ] = [ console, console.log(a) ];
+        console.log(c);
+        var c;
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+    ]
+    node_version: ">=6"
+}
+
+issue_4548_2: {
+    options = {
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        A = "foo";
+        var a = A;
+        var [ b = c = "bar" ] = [ console, console.log(a) ];
+        console.log(c);
+        var c;
+    }
+    expect: {
+        A = "foo";
+        var a = A;
+        var [ b = c = "bar" ] = [ console, console.log(a) ];
         console.log(c);
         var c;
     }
