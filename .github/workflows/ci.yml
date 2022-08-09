@@ -15,6 +15,7 @@ jobs:
     env:
       NODE: ${{ matrix.node }}
       TYPE: ${{ matrix.script }}
+      UGLIFY_GITHUB_LAG: 10000
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
