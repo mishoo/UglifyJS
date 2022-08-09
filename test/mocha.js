@@ -68,7 +68,8 @@ process.nextTick(function run() {
         if (task.length) {
             task.timeout = function(limit) {
                 clearTimeout(timer);
-                task.limit = limit + lag;
+                limit += lag;
+                task.limit = limit;
                 timer = setTimeout(function() {
                     raise(new Error("Timed out: exceeds " + limit + "ms"));
                 }, limit);
