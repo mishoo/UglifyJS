@@ -425,7 +425,7 @@ function createTopLevelCode() {
         if (rng(2)) {
             s.push(createStatements(3, MAX_GENERATION_RECURSION_DEPTH, CANNOT_THROW, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, 0));
         } else {
-            s.push(createFunctions(rng(MAX_GENERATED_TOPLEVELS_PER_RUN) + 1, MAX_GENERATION_RECURSION_DEPTH, DEFUN_OK, CANNOT_THROW, 0));
+            s.push(createFunctions(MAX_GENERATED_TOPLEVELS_PER_RUN, MAX_GENERATION_RECURSION_DEPTH, DEFUN_OK, CANNOT_THROW, 0));
         }
     });
     // preceding `null` makes for a cleaner output (empty string still shows up etc)
@@ -440,6 +440,7 @@ function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
     var s = "";
     while (n-- > 0) {
         s += createFunction(recurmax, allowDefun, canThrow, stmtDepth) + "\n";
+        if (rng(2)) break;
     }
     return s;
 }
@@ -455,7 +456,7 @@ function createParams(was_async, was_generator, noDuplicate) {
     if (!generator) generator = was_generator;
     var len = unique_vars.length;
     var params = [];
-    for (var n = rng(4); --n >= 0;) {
+    for (var n = 3; --n >= 0 && rng(2);) {
         var name = createVarName(MANDATORY);
         if (noDuplicate || in_class) unique_vars.push(name);
         params.push(name);
@@ -470,7 +471,7 @@ function createArgs(recurmax, stmtDepth, canThrow, noTemplate) {
     recurmax--;
     if (SUPPORT.template && !noTemplate && rng(20) == 0) return createTemplateLiteral(recurmax, stmtDepth, canThrow);
     var args = [];
-    for (var n = rng(4); --n >= 0;) switch (SUPPORT.spread ? rng(50) : 3) {
+    for (var n = 3; --n >= 0 && rng(2);) switch (SUPPORT.spread ? rng(50) : 3) {
       case 0:
       case 1:
         var name = getVarName();
@@ -850,7 +851,7 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
         s.push(defns());
         if (rng(5) === 0) {
             // functions with functions. lower the recursion to prevent a mess.
-            s.push(createFunctions(rng(5) + 1, Math.ceil(recurmax * 0.7), DEFUN_OK, canThrow, stmtDepth));
+            s.push(createFunctions(5, Math.ceil(recurmax * 0.7), DEFUN_OK, canThrow, stmtDepth));
         } else {
             // functions with statements
             s.push(_createStatements(3, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
@@ -884,6 +885,7 @@ function _createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotR
     var s = "";
     while (--n > 0) {
         s += createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "\n";
+        if (rng(2)) break;
     }
     return s;
 }
@@ -963,7 +965,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
     switch (target) {
       case STMT_BLOCK:
         var label = createLabel(canBreak);
-        return label.target + "{" + createStatements(rng(5) + 1, recurmax, canThrow, label.break, canContinue, cannotReturn, stmtDepth) + "}";
+        return label.target + "{" + createStatements(5, recurmax, canThrow, label.break, canContinue, cannotReturn, stmtDepth) + "}";
       case STMT_IF_ELSE:
         return "if (" + createExpression(recurmax, COMMA_OK, stmtDepth, canThrow) + ")" + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + (rng(2) ? " else " + createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) : "");
       case STMT_DO_WHILE:
@@ -1076,7 +1078,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                     s += " * as " + createImportAlias();
                 } else {
                     var names = [];
-                    for (var i = rng(4); --i >= 0;) {
+                    for (var i = 3; --i >= 0 && rng(2);) {
                         var name = createImportAlias();
                         names.push(rng(2) ? getDotKey() + " as " + name : name);
                     }
@@ -1184,7 +1186,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         }
         if (n !== 0) s += [
             " finally { ",
-            createStatements(rng(5) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+            createStatements(5, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
             " }",
         ].join("");
         return s;
@@ -1204,7 +1206,7 @@ function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotR
         if (hadDefault || rng(5) > 0) {
             s.push(
                 "case " + createExpression(recurmax, NO_COMMA, stmtDepth, canThrow) + ":",
-                _createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                _createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
                 rng(10) > 0 ? " break;" : "/* fall-through */",
                 ""
             );
@@ -1212,7 +1214,7 @@ function createSwitchParts(recurmax, n, canThrow, canBreak, canContinue, cannotR
             hadDefault = true;
             s.push(
                 "default:",
-                _createStatements(rng(3) + 1, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
+                _createStatements(3, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth),
                 ""
             );
         }
@@ -1343,7 +1345,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                             "(" + params + "{",
                             strictMode(),
                             defns(),
-                            _createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth)
+                            _createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth)
                         );
                         suffix = "})";
                     } else {
@@ -1375,7 +1377,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 s.push(
                     "(" + makeFunction(name) + "(){",
                     strictMode(),
-                    createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                    createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                     rng(2) ? "})" : "})()" + invokeGenerator(save_generator)
                 );
             }
@@ -1384,7 +1386,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             s.push(
                 "+" + makeFunction(name) + "(){",
                 strictMode(),
-                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "}()" + invokeGenerator(save_generator)
             );
             break;
@@ -1392,7 +1394,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             s.push(
                 "!" + makeFunction(name) + "(){",
                 strictMode(),
-                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "}()" + invokeGenerator(save_generator)
             );
             break;
@@ -1400,7 +1402,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
             s.push(
                 "void " + makeFunction(name) + "(){",
                 strictMode(),
-                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
+                createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth),
                 "}()" + invokeGenerator(save_generator)
             );
             break;
@@ -1416,10 +1418,10 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 var add_new_target = SUPPORT.new_target && VALUES.indexOf("new.target") < 0;
                 if (add_new_target) VALUES.push("new.target");
                 s.push(defns());
-                if (instantiate) for (var i = rng(4); --i >= 0;) {
+                if (instantiate) for (var i = 3; --i >= 0 && rng(2);) {
                     s.push((in_class ? "if (this) " : "") + createThisAssignment(recurmax, stmtDepth, canThrow));
                 }
-                s.push(_createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
+                s.push(_createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
                 if (add_new_target) VALUES.splice(VALUES.indexOf("new.target"), 1);
             });
             generator = save_generator;
@@ -1565,7 +1567,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
 function createArrayLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var arr = [];
-    for (var i = rng(6); --i >= 0;) switch (SUPPORT.spread ? rng(50) : 3 + rng(47)) {
+    for (var i = 5; --i >= 0 && rng(2);) switch (SUPPORT.spread ? rng(50) : 3 + rng(47)) {
       case 0:
       case 1:
         var name = getVarName();
@@ -1594,7 +1596,7 @@ function createTemplateLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var s = [];
     addText();
-    for (var i = rng(6); --i >= 0;) {
+    for (var i = 5; --i >= 0 && rng(2);) {
         s.push("${", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "}");
         addText();
     }
@@ -1749,7 +1751,7 @@ function createObjectFunction(recurmax, stmtDepth, canThrow, internal, isClazz) 
             s.push(_createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, stmtDepth));
             if (internal == "super") s.push("super" + createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE) + ";");
             allow_this = save_allow;
-            if (/^(constructor|super)$/.test(internal) || rng(10) == 0) for (var i = rng(4); --i >= 0;) {
+            if (/^(constructor|super)$/.test(internal) || rng(10) == 0) for (var i = 3; --i >= 0 && rng(2);) {
                 s.push(rng(2) ? createSuperAssignment(recurmax, stmtDepth, canThrow) : createThisAssignment(recurmax, stmtDepth, canThrow));
             }
             s.push(_createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth), "}");
@@ -1768,7 +1770,7 @@ function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     var obj = [ "({" ];
     var offset = SUPPORT.spread_object ? 0 : SUPPORT.computed_key ? 2 : 4;
     var has_proto = false;
-    for (var i = rng(6); --i >= 0;) switch (offset + rng(50 - offset)) {
+    for (var i = 5; --i >= 0 && rng(2);) switch (offset + rng(50 - offset)) {
       case 0:
         obj.push("..." + getVarName() + ",");
         break;
@@ -1815,7 +1817,7 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
     }
     s += " {\n";
     var declared = [];
-    for (var i = rng(6); --i >= 0;) {
+    for (var i = 5; --i >= 0 && rng(2);) {
         var fixed = false;
         if (rng(5) == 0) {
             fixed = true;
@@ -1849,7 +1851,7 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
             generator = false;
             s += [
                 "{ ",
-                createStatements(rng(5) + 1, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, stmtDepth),
+                createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, stmtDepth),
                 " }\n",
             ].join("");
             generator = save_generator;
