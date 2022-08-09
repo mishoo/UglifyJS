@@ -1,13 +1,14 @@
 var fs = require("fs");
 
 var config = {
-    limit: 10000,
     timeout: function(limit) {
-        this.limit = limit;
-    }
+        this.limit = limit + lag;
+    },
 };
+var lag = +process.env["UGLIFY_GITHUB_LAG"] || 0;
 var tasks = [];
 var titles = [];
+config.timeout(10000);
 describe = function(title, fn) {
     config = Object.create(config);
     titles.push(title);
@@ -21,10 +22,11 @@ it = function(title, fn) {
     fn.titles.push(title);
     tasks.push(fn);
 };
-
-fs.readdirSync("test/mocha").filter(function(file) {
-    return /\.js$/.test(file);
-}).forEach(function(file) {
+(function(arg) {
+    return arg ? [ arg ] : fs.readdirSync("test/mocha").filter(function(file) {
+        return /\.js$/.test(file);
+    });
+})(process.argv[2]).forEach(function(file) {
     require("./mocha/" + file);
 });
 
@@ -66,12 +68,12 @@ process.nextTick(function run() {
         if (task.length) {
             task.timeout = function(limit) {
                 clearTimeout(timer);
-                task.limit = limit;
+                task.limit = limit + lag;
                 timer = setTimeout(function() {
                     raise(new Error("Timed out: exceeds " + limit + "ms"));
                 }, limit);
             };
-            task.timeout(task.limit);
+            task.timeout(task.limit - lag);
             process.on("uncaughtException", raise);
             task.call(task, done);
         } else {
