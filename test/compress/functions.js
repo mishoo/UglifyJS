@@ -5512,6 +5512,40 @@ substitute_use_strict: {
     ]
 }
 
+substitute_assignment: {
+    options = {
+        evaluate: true,
+        inline: true,
+        passes: 2,
+        properties: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a, b, c) {
+            a[b] = c;
+        }
+        var o = {};
+        f(o, 42, null);
+        f(o, "foo", "bar");
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect: {
+        var o = {};
+        o[42] = null;
+        o.foo = "bar";
+        for (var k in o)
+            console.log(k, o[k]);
+    }
+    expect_stdout: [
+        "42 null",
+        "foo bar",
+    ]
+}
+
 issue_3833_1: {
     options = {
         inline: 3,
