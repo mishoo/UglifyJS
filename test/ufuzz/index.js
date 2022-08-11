@@ -371,9 +371,16 @@ var in_class = 0;
 var called = Object.create(null);
 var labels = 10000;
 
-function rng(max) {
+function rng(limit) {
     var r = randomBytes(2).readUInt16LE(0) / 65536;
-    return Math.floor(max * r);
+    return Math.floor(limit * r);
+}
+
+function get_num(max) {
+    if (rng(max + 1) == 0) return 0;
+    var i = 1;
+    while (i < max && rng(2)) i++;
+    return i;
 }
 
 function strictMode() {
@@ -438,9 +445,8 @@ function createTopLevelCode() {
 function createFunctions(n, recurmax, allowDefun, canThrow, stmtDepth) {
     if (--recurmax < 0) { return ";"; }
     var s = "";
-    while (n-- > 0) {
+    for (var i = get_num(n - 1) + 1; --i >= 0;) {
         s += createFunction(recurmax, allowDefun, canThrow, stmtDepth) + "\n";
-        if (rng(2)) break;
     }
     return s;
 }
@@ -456,7 +462,7 @@ function createParams(was_async, was_generator, noDuplicate) {
     if (!generator) generator = was_generator;
     var len = unique_vars.length;
     var params = [];
-    for (var n = 3; --n >= 0 && rng(2);) {
+    for (var i = get_num(3); --i >= 0;) {
         var name = createVarName(MANDATORY);
         if (noDuplicate || in_class) unique_vars.push(name);
         params.push(name);
@@ -471,7 +477,7 @@ function createArgs(recurmax, stmtDepth, canThrow, noTemplate) {
     recurmax--;
     if (SUPPORT.template && !noTemplate && rng(20) == 0) return createTemplateLiteral(recurmax, stmtDepth, canThrow);
     var args = [];
-    for (var n = 3; --n >= 0 && rng(2);) switch (SUPPORT.spread ? rng(50) : 3) {
+    for (var i = get_num(3); --i >= 0;) switch (SUPPORT.spread ? rng(50) : 3) {
       case 0:
       case 1:
         var name = getVarName();
@@ -881,11 +887,10 @@ function createFunction(recurmax, allowDefun, canThrow, stmtDepth) {
 }
 
 function _createStatements(n, recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) {
-    if (--recurmax < 0) { return ";"; }
+    if (--recurmax < 0) return ";";
     var s = "";
-    while (--n > 0) {
+    for (var i = get_num(n); --i >= 0;) {
         s += createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn, stmtDepth) + "\n";
-        if (rng(2)) break;
     }
     return s;
 }
@@ -1078,7 +1083,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
                     s += " * as " + createImportAlias();
                 } else {
                     var names = [];
-                    for (var i = 3; --i >= 0 && rng(2);) {
+                    for (var i = get_num(3); --i >= 0;) {
                         var name = createImportAlias();
                         names.push(rng(2) ? getDotKey() + " as " + name : name);
                     }
@@ -1418,7 +1423,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
                 var add_new_target = SUPPORT.new_target && VALUES.indexOf("new.target") < 0;
                 if (add_new_target) VALUES.push("new.target");
                 s.push(defns());
-                if (instantiate) for (var i = 3; --i >= 0 && rng(2);) {
+                if (instantiate) for (var i = get_num(3); --i >= 0;) {
                     s.push((in_class ? "if (this) " : "") + createThisAssignment(recurmax, stmtDepth, canThrow));
                 }
                 s.push(_createStatements(5, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth));
@@ -1567,7 +1572,7 @@ function _createExpression(recurmax, noComma, stmtDepth, canThrow) {
 function createArrayLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var arr = [];
-    for (var i = 5; --i >= 0 && rng(2);) switch (SUPPORT.spread ? rng(50) : 3 + rng(47)) {
+    for (var i = get_num(5); --i >= 0;) switch (SUPPORT.spread ? rng(50) : 3 + rng(47)) {
       case 0:
       case 1:
         var name = getVarName();
@@ -1596,7 +1601,7 @@ function createTemplateLiteral(recurmax, stmtDepth, canThrow) {
     recurmax--;
     var s = [];
     addText();
-    for (var i = 5; --i >= 0 && rng(2);) {
+    for (var i = get_num(5); --i >= 0;) {
         s.push("${", createExpression(recurmax, COMMA_OK, stmtDepth, canThrow), "}");
         addText();
     }
@@ -1751,7 +1756,7 @@ function createObjectFunction(recurmax, stmtDepth, canThrow, internal, isClazz) 
             s.push(_createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CANNOT_RETURN, stmtDepth));
             if (internal == "super") s.push("super" + createArgs(recurmax, stmtDepth, canThrow, NO_TEMPLATE) + ";");
             allow_this = save_allow;
-            if (/^(constructor|super)$/.test(internal) || rng(10) == 0) for (var i = 3; --i >= 0 && rng(2);) {
+            if (/^(constructor|super)$/.test(internal) || rng(10) == 0) for (var i = get_num(3); --i >= 0;) {
                 s.push(rng(2) ? createSuperAssignment(recurmax, stmtDepth, canThrow) : createThisAssignment(recurmax, stmtDepth, canThrow));
             }
             s.push(_createStatements(2, recurmax, canThrow, CANNOT_BREAK, CANNOT_CONTINUE, CAN_RETURN, stmtDepth), "}");
@@ -1770,7 +1775,7 @@ function createObjectLiteral(recurmax, stmtDepth, canThrow) {
     var obj = [ "({" ];
     var offset = SUPPORT.spread_object ? 0 : SUPPORT.computed_key ? 2 : 4;
     var has_proto = false;
-    for (var i = 5; --i >= 0 && rng(2);) switch (offset + rng(50 - offset)) {
+    for (var i = get_num(5); --i >= 0;) switch (offset + rng(50 - offset)) {
       case 0:
         obj.push("..." + getVarName() + ",");
         break;
@@ -1817,7 +1822,7 @@ function createClassLiteral(recurmax, stmtDepth, canThrow, name) {
     }
     s += " {\n";
     var declared = [];
-    for (var i = 5; --i >= 0 && rng(2);) {
+    for (var i = get_num(5); --i >= 0;) {
         var fixed = false;
         if (rng(5) == 0) {
             fixed = true;
