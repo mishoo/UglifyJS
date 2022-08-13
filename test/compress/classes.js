@@ -746,6 +746,56 @@ separate_name: {
     node_version: ">=4"
 }
 
+static_getter: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        (class {
+            static get p() {
+                console.log("PASS");
+            };
+        }).p;
+    }
+    expect: {
+        "use strict";
+        (class {
+            static get p() {
+                console.log("PASS");
+            };
+        }).p;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+static_setter: {
+    options = {
+        pure_getters: "strict",
+        side_effects: true,
+    }
+    input: {
+        "use strict";
+        (class {
+            static set p(v) {
+                console.log(v);
+            };
+        }).p = "PASS";
+    }
+    expect: {
+        "use strict";
+        (class {
+            static set p(v) {
+                console.log(v);
+            };
+        }).p = "PASS";
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 static_side_effects: {
     options = {
         inline: true,
