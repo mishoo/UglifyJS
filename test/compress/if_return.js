@@ -2305,3 +2305,56 @@ issue_5597: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5619_1: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        console.log(function() {
+            if (console)
+                if (console)
+                    return "PASS";
+            var a = FAIL;
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (console)
+                if (console)
+                    return "PASS";
+            var a = FAIL;
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5619_2: {
+    options = {
+        dead_code: true,
+        if_return: true,
+        loops: true,
+    }
+    input: {
+        console.log(function() {
+            if (console)
+                while (console)
+                    return "PASS";
+            var a = FAIL;
+            return "PASS";
+        }());
+    }
+    expect: {
+        console.log(function() {
+            if (console) {
+                if (console)
+                    return "PASS";
+            }
+            var a = FAIL;
+            return "PASS";
+        }());
+    }
+    expect_stdout: "PASS"
+}
