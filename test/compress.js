@@ -459,6 +459,7 @@ function to_toplevel(input, mangle_options, expression) {
     var tokens = [];
     input.walk(new U.TreeWalker(function(node) {
         if (U.push_uniq(tokens, node.start)) node.start.line -= offset;
+        if (U.push_uniq(tokens, node.end)) node.end.line -= offset;
     }));
     var toplevel;
     if (!expression) {

@@ -2200,6 +2200,14 @@ mangle_properties: {
         console.log(A.s, new A().e);
     }
     expect_stdout: "PASS 42"
+    expect_warnings: [
+        "INFO: Mapping property #P to #t",
+        "INFO: Mapping property Q to s",
+        "INFO: Mapping property #p to #i",
+        "INFO: Mapping property r to e",
+        "INFO: Preserving property q",
+        "INFO: Preserving property log",
+    ]
     node_version: ">=14.6"
 }
 
