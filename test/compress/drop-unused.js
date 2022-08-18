@@ -409,6 +409,15 @@ drop_toplevel_retain: {
         a = 2;
         console.log(3);
     }
+    expect_stdout: "3"
+    expect_warnings: [
+        "INFO: Retaining variable a",
+        "INFO: Retaining variable f",
+        "INFO: Dropping unused variable b [test/compress/drop-unused.js:1,15]",
+        "INFO: Dropping unused variable c [test/compress/drop-unused.js:1,22]",
+        "INFO: Dropping unused function g [test/compress/drop-unused.js:8,17]",
+        "WARN: Dropping unused function h [test/compress/drop-unused.js:9,17]",
+    ]
 }
 
 drop_toplevel_retain_array: {
@@ -442,6 +451,15 @@ drop_toplevel_retain_array: {
         a = 2;
         console.log(3);
     }
+    expect_stdout: "3"
+    expect_warnings: [
+        "INFO: Retaining variable a",
+        "INFO: Retaining variable f",
+        "INFO: Dropping unused variable b [test/compress/drop-unused.js:1,15]",
+        "INFO: Dropping unused variable c [test/compress/drop-unused.js:1,22]",
+        "INFO: Dropping unused function g [test/compress/drop-unused.js:8,17]",
+        "WARN: Dropping unused function h [test/compress/drop-unused.js:9,17]",
+    ]
 }
 
 drop_toplevel_retain_regex: {
@@ -471,6 +489,15 @@ drop_toplevel_retain_regex: {
         a = 2;
         console.log(3);
     }
+    expect_stdout: "3"
+    expect_warnings: [
+        "INFO: Retaining variable a",
+        "INFO: Retaining variable f",
+        "INFO: Dropping unused variable b [test/compress/drop-unused.js:1,15]",
+        "INFO: Dropping unused variable c [test/compress/drop-unused.js:1,22]",
+        "INFO: Dropping unused function g [test/compress/drop-unused.js:8,17]",
+        "WARN: Dropping unused function h [test/compress/drop-unused.js:9,17]",
+    ]
 }
 
 drop_toplevel_all_retain: {
@@ -501,6 +528,15 @@ drop_toplevel_all_retain: {
         a = 2;
         console.log(3);
     }
+    expect_stdout: "3"
+    expect_warnings: [
+        "INFO: Retaining variable a",
+        "INFO: Retaining variable f",
+        "INFO: Dropping unused variable b [test/compress/drop-unused.js:1,15]",
+        "INFO: Dropping unused variable c [test/compress/drop-unused.js:1,22]",
+        "INFO: Dropping unused function g [test/compress/drop-unused.js:8,17]",
+        "WARN: Dropping unused function h [test/compress/drop-unused.js:9,17]",
+    ]
 }
 
 drop_toplevel_funcs_retain: {
@@ -532,6 +568,12 @@ drop_toplevel_funcs_retain: {
         function g() {}
         console.log(b = 3);
     }
+    expect_stdout: "3"
+    expect_warnings: [
+        "INFO: Retaining variable a",
+        "INFO: Retaining variable f",
+        "WARN: Dropping unused function h [test/compress/drop-unused.js:9,17]",
+    ]
 }
 
 drop_toplevel_vars_retain: {
@@ -564,6 +606,13 @@ drop_toplevel_vars_retain: {
         function h() {}
         console.log(3);
     }
+    expect_stdout: "3"
+    expect_warnings: [
+        "INFO: Retaining variable a",
+        "INFO: Retaining variable f",
+        "INFO: Dropping unused variable b [test/compress/drop-unused.js:1,15]",
+        "INFO: Dropping unused variable c [test/compress/drop-unused.js:1,22]",
+    ]
 }
 
 drop_toplevel_keep_assign: {
