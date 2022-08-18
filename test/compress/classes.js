@@ -2201,12 +2201,12 @@ mangle_properties: {
     }
     expect_stdout: "PASS 42"
     expect_warnings: [
+        "INFO: Preserving reserved property q",
+        "INFO: Preserving reserved property log",
         "INFO: Mapping property #P to #t",
         "INFO: Mapping property Q to s",
         "INFO: Mapping property #p to #i",
         "INFO: Mapping property r to e",
-        "INFO: Preserving property q",
-        "INFO: Preserving property log",
     ]
     node_version: ">=14.6"
 }

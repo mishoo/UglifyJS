@@ -19,6 +19,11 @@ dont_reuse_prop: {
         console.log(obj.a);
     }
     expect_stdout: "123"
+    expect_warnings: [
+        "INFO: Preserving excluded property a",
+        "INFO: Preserving reserved property log",
+        "INFO: Mapping property asd to b",
+    ]
 }
 
 unmangleable_props_should_always_be_reserved: {
@@ -42,4 +47,9 @@ unmangleable_props_should_always_be_reserved: {
         console.log(obj.a);
     }
     expect_stdout: "123"
+    expect_warnings: [
+        "INFO: Preserving excluded property a",
+        "INFO: Preserving reserved property log",
+        "INFO: Mapping property asd to b",
+    ]
 }

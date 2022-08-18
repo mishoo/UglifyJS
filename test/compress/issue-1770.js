@@ -53,6 +53,14 @@ mangle_props: {
         );
     }
     expect_stdout: "1 1 1 2 2 2 3 3 3 4 4 4 5 5"
+    expect_warnings: [
+        "INFO: Preserving reserved property undefined",
+        "INFO: Preserving reserved property NaN",
+        "INFO: Preserving reserved property Infinity",
+        "INFO: Preserving reserved property -Infinity",
+        "INFO: Preserving reserved property null",
+        "INFO: Preserving reserved property log",
+    ]
 }
 
 numeric_literal: {
@@ -105,6 +113,11 @@ numeric_literal: {
         "3 3",
         "4 5 4 4",
         "8 7 8",
+    ]
+    expect_warnings: [
+        "INFO: Preserving reserved property log",
+        "INFO: Mapping property 0x25 to o",
+        "INFO: Mapping property 1E42 to b",
     ]
 }
 

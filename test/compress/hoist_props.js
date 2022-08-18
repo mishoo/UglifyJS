@@ -462,6 +462,11 @@ issue_2473_1: {
         var x = {};
         var y = [];
     }
+    expect_warnings: [
+        "INFO: Retaining variable x",
+        "INFO: Retaining variable y",
+        "WARN: Dropping unused variable z [test/compress/hoist_props.js:3,12]",
+    ]
 }
 
 issue_2473_2: {
@@ -484,6 +489,11 @@ issue_2473_2: {
         var x = {};
         var y = [];
     }
+    expect_warnings: [
+        "INFO: Retaining variable x",
+        "INFO: Retaining variable y",
+        "WARN: Dropping unused variable z [test/compress/hoist_props.js:3,12]",
+    ]
 }
 
 issue_2473_3: {
@@ -509,6 +519,9 @@ issue_2473_3: {
         console.log(o.a, o.b);
     }
     expect_stdout: "1 2"
+    expect_warnings: [
+        "INFO: Retaining variable o",
+    ]
 }
 
 issue_2473_4: {
@@ -535,6 +548,9 @@ issue_2473_4: {
         })();
     }
     expect_stdout: "1 2"
+    expect_warnings: [
+        "INFO: Dropping unused variable o [test/compress/hoist_props.js:2,16]",
+    ]
 }
 
 issue_2508_1: {
