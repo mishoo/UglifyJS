@@ -7896,3 +7896,33 @@ issue_5434: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5623: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 0;
+        function f() {
+            var b = a;
+            a = b;
+        }
+        f && f((a++ && a).toString());
+        console.log(a);
+    }
+    expect: {
+        var a = 0;
+        function f() {
+            var b;
+            a = a;
+        }
+        f((a++ && a).toString());
+        console.log(a);
+    }
+    expect_stdout: "1"
+}
