@@ -1652,6 +1652,8 @@ fn_name_unused: {
 hoist_vars: {
     options = {
         hoist_vars: true,
+        join_vars: true,
+        unused: true,
     }
     input: {
         var a = "PASS";
@@ -1659,8 +1661,7 @@ hoist_vars: {
         console.log(a, b);
     }
     expect: {
-        var a = "PASS";
-        var [ b ] = [ 42 ];
+        var a = "PASS", b = [ 42 ][0];
         console.log(a, b);
     }
     expect_stdout: "PASS 42"
