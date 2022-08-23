@@ -668,6 +668,8 @@ drop_fargs: {
 hoist_vars: {
     options = {
         hoist_vars: true,
+        join_vars: true,
+        unused: true,
     }
     input: {
         var a = "PASS";
@@ -675,8 +677,7 @@ hoist_vars: {
         console.log(a, b);
     }
     expect: {
-        var a = "PASS";
-        var [ b = 42 ] = [];
+        var a = "PASS", [ b = 42 ] = [];
         console.log(a, b);
     }
     expect_stdout: "PASS 42"
@@ -3035,7 +3036,8 @@ issue_5566_5: {
         (function(a, f = function() {
             return a;
         }) {
-            var b, a = "foo";
+            var a, b;
+            a = "foo";
             console.log(a, f());
         })("bar");
     }

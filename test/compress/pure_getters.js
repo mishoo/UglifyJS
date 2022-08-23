@@ -1540,10 +1540,12 @@ this_toString: {
 issue_4803: {
     options = {
         hoist_vars: true,
+        join_vars: true,
         pure_getters: "strict",
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
+        unused: true,
     }
     input: {
         var o = {
