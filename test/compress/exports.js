@@ -560,3 +560,23 @@ issue_5444: {
         export var a = console;
     }
 }
+
+issue_5628: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a;
+        export default function f() {
+            for (a in 42);
+        }
+        console.log(a);
+    }
+    expect: {
+        var a;
+        export default function f() {
+            for (a in 42);
+        }
+        console.log(a);
+    }
+}
