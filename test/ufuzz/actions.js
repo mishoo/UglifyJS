@@ -2,12 +2,14 @@ var get = require("https").get;
 var parse = require("url").parse;
 
 var base, token, run_number;
+var expires = Date.now() + (5 * 60 + 55) * 60 * 1000;
 exports.init = function(url, auth, num) {
     base = url;
     token = auth;
     run_number = num;
 };
 exports.should_stop = function(callback) {
+    if (Date.now() > expires) return callback();
     read(base + "/actions/runs?per_page=100", function(reply) {
         var runs = verify(reply, "workflow_runs").sort(function(a, b) {
             return b.run_number - a.run_number;
