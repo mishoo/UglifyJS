@@ -20,13 +20,9 @@ switch (process.argv.length) {
 var tasks = [ run(), run() ];
 if (iterations) return;
 var alive = setInterval(function() {
-    actions.should_stop(function() {
-        clearInterval(alive);
-        tasks.forEach(function(kill) {
-            kill();
-        });
-    });
+    actions.should_stop(stop);
 }, 8 * 60 * 1000);
+var deadline = setTimeout(stop, (5 * 60 + 55) * 60 * 1000);
 
 function run() {
     var child, stdout, stderr, log;
@@ -75,4 +71,12 @@ function run() {
             child.stderr.removeListener("data", trap);
         }
     }
+}
+
+function stop() {
+    clearInterval(alive);
+    clearInterval(deadline);
+    tasks.forEach(function(kill) {
+        kill();
+    });
 }
