@@ -9,8 +9,7 @@ exports.init = function(url, auth, num) {
 };
 exports.should_stop = function(callback) {
     read(base + "/actions/runs?per_page=100", function(reply) {
-        if (!reply || !Array.isArray(reply.workflow_runs)) return;
-        var runs = reply.workflow_runs.sort(function(a, b) {
+        var runs = verify(reply, "workflow_runs").sort(function(a, b) {
             return b.run_number - a.run_number;
         });
         var found = false, remaining = 20;
@@ -22,8 +21,7 @@ exports.should_stop = function(callback) {
                 if (is_cron(workflow) && workflow.run_number == run_number) found = true;
             } while (!found && workflow.status == "completed");
             read(workflow.jobs_url, function(reply) {
-                if (!reply || !Array.isArray(reply.jobs)) return;
-                if (!reply.jobs.every(function(job) {
+                if (!verify(reply, "jobs").every(function(job) {
                     if (job.status == "completed") return true;
                     remaining--;
                     return found || !is_cron(workflow);
@@ -68,5 +66,14 @@ function read(url, callback) {
         });
     }).on("error", function() {
         done();
+    });
+}
+
+function verify(reply, field) {
+    if (!reply) return [];
+    var values = reply[field];
+    if (!Array.isArray(values)) return [];
+    return values.filter(function(value) {
+        return value;
     });
 }
