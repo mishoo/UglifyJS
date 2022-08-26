@@ -48,6 +48,8 @@ done
 nvs use $NODE
 node --version
 npm config set audit false
+npm config set fund false
+npm config set loglevel error
 npm config set optional false
 npm config set save false
 npm config set strict-ssl false
