@@ -62,6 +62,7 @@ if (typeof phantom == "undefined") {
         var cmd = process.platform == "win32" ? "npm.cmd" : "npm";
 
         function npm(args, done) {
+            args.push("--loglevel=error");
             child_process.spawn(cmd, args, { stdio: [ "ignore", 1, 2 ] }).on("exit", done);
         }
 
@@ -72,9 +73,12 @@ if (typeof phantom == "undefined") {
                 "is-my-json-valid@2.20.5",
                 "phantomjs-prebuilt@2.1.14",
                 "--no-audit",
+                "--no-fund",
                 "--no-optional",
                 "--no-save",
+                "--no-strict-ssl",
                 "--no-update-notifier",
+                "--production",
             ], function(code) {
                 if (code) {
                     console.log("npm install failed with code", code);
