@@ -2,7 +2,7 @@ var get = require("https").get;
 var parse = require("url").parse;
 
 var base, token, run_number;
-var expires = Date.now() + (5 * 60 + 55) * 60 * 1000;
+var expires = Date.now() + (6 * 60 - 10) * 60 * 1000;
 exports.init = function(url, auth, num) {
     base = url;
     token = auth;
