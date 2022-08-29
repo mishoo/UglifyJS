@@ -624,7 +624,7 @@ issue_5411_2: {
         var b, c;
         b++;
         b = "PASS",
-        c = c && c[b];
+        c;
         console.log(b);
     }
     expect_stdout: "PASS"

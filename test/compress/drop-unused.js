@@ -1878,7 +1878,7 @@ issue_2846: {
         var c = function(a, b) {
             a = 0;
             b && b(a);
-            return a++;
+            return +a;
         }();
         console.log(c);
     }
@@ -2976,14 +2976,12 @@ issue_4025: {
         console.log(a, b, d);
     }
     expect: {
-        var c = 0;
         try {
-            console.log(c);
+            console.log(0);
         } finally {
-            var d = c + 1;
-            c = 0;
+            0;
         }
-        console.log(1, 1, d);
+        console.log(1, 1, 1);
     }
     expect_stdout: [
         "0",
@@ -3696,7 +3694,7 @@ issue_5224: {
                 (function() {
                     var a = "FAIL 1";
                     null;
-                    a = console.log(a);
+                    console.log(a);
                 })(function() {
                     console.log(1 / 0);
                     a;
