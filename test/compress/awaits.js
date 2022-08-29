@@ -3229,3 +3229,154 @@ issue_5528_4: {
     ]
     node_version: ">=8"
 }
+
+issue_5634_1: {
+    options = {
+        awaits: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            (async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            })();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            try {
+                return {
+                    then(resolve) {
+                        console.log("bar");
+                        resolve();
+                        console.log("baz");
+                    },
+                };
+            } finally {
+                a = "moo";
+            }
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "moo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_5634_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            await async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            }();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            await async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            }();
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "moo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_5634_3: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            return async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            }();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            return async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            }();
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "moo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
