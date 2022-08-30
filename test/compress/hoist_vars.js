@@ -701,3 +701,57 @@ issue_5626: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5638_1: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var o = { foo: 42 };
+        for (var k in o) {
+            var v = o[k];
+            log(k || v, v++);
+        }
+    }
+    expect: {
+        var log, o, k, v;
+        log = console.log;
+        for (k in o = { foo: 42 }) {
+            v = o[k];
+            log(k || v, v++);
+        }
+    }
+    expect_stdout: "foo 42"
+}
+
+issue_5638_2: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var o = { foo: 6 };
+        for (var k in o) {
+            var v = o[k];
+            log(k || v, v *= 7);
+        }
+    }
+    expect: {
+        var log, o, k, v;
+        log = console.log;
+        for (k in o = { foo: 6 }) {
+            v = o[k];
+            log(k || v, v *= 7);
+        }
+    }
+    expect_stdout: "foo 42"
+}

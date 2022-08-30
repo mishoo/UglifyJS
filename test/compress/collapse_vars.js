@@ -10000,3 +10000,55 @@ issue_5568: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5638_1: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var a = { foo: 42 }, b;
+        for (var k in a) {
+            b = a[k];
+            log(k || b, b++);
+        }
+    }
+    expect: {
+        var log = console.log;
+        var a = { foo: 42 }, b;
+        for (var k in a) {
+            b = a[k];
+            log(k || b, b++);
+        }
+    }
+    expect_stdout: "foo 42"
+}
+
+issue_5638_2: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var log = console.log;
+        var a = { foo: 6 }, b;
+        for (var k in a) {
+            b = a[k];
+            log(k || b, b *= 7);
+        }
+    }
+    expect: {
+        var log = console.log;
+        var a = { foo: 6 }, b;
+        for (var k in a) {
+            b = a[k];
+            log(k || b, b *= 7);
+        }
+    }
+    expect_stdout: "foo 42"
+}
