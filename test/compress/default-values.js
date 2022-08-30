@@ -2505,7 +2505,7 @@ issue_5463: {
         var a, b, b;
         console.log("PASS") && (
             b = a = void 0,
-            b = [a = FAIL] = a && a
+            b = [a = FAIL] = a
         );
     }
     expect_stdout: "PASS"

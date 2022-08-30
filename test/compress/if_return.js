@@ -1834,6 +1834,33 @@ switch_return_5: {
     ]
 }
 
+merged_references: {
+    options = {
+        if_return: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a, b = "PASS";
+        console.log(function(c) {
+            if (c = b)
+                return a || c;
+            c = FAIL;
+            return a || c;
+        }());
+    }
+    expect: {
+        var a, b = "PASS";
+        console.log(function(c) {
+            if (c = b);
+            else
+                c = FAIL;
+            return a || c;
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
 issue_5583: {
     options = {
         conditionals: true,

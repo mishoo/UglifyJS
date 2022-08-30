@@ -9321,12 +9321,11 @@ issue_4874: {
         })(a = 42);
     }
     expect: {
-        var a;
         null;
         (function(b) {
-            for (var c in a && a[console.log("PASS")])
+            for (var c in 42, 42[console.log("PASS")])
                 console;
-        })(a = 42);
+        })();
     }
     expect_stdout: "PASS"
 }
