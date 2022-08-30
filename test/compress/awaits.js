@@ -529,6 +529,7 @@ inline_block_await: {
 
 inline_block_await_async: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -2747,6 +2748,7 @@ issue_5177: {
 
 issue_5250: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -2855,6 +2857,7 @@ issue_5298: {
 
 issue_5305_1: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -2888,6 +2891,7 @@ issue_5305_1: {
 
 issue_5305_2: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -3234,6 +3238,57 @@ issue_5634_1: {
     options = {
         awaits: true,
         inline: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            (async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            })();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            (async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            })();
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "moo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_5634_1_side_effects: {
+    options = {
+        awaits: true,
+        inline: true,
         side_effects: true,
     }
     input: {
@@ -3282,6 +3337,7 @@ issue_5634_1: {
 
 issue_5634_2: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -3319,6 +3375,56 @@ issue_5634_2: {
                     a = "moo";
                 }
             }();
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "moo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_5634_2_side_effects: {
+    options = {
+        awaits: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            await async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            }();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            try {
+                return {
+                    then(resolve) {
+                        console.log("bar");
+                        resolve();
+                        console.log("baz");
+                    },
+                };
+            } finally {
+                a = "moo";
+            }
         })();
         console.log(a);
     }
@@ -3370,6 +3476,56 @@ issue_5634_3: {
                     a = "moo";
                 }
             }();
+        })();
+        console.log(a);
+    }
+    expect_stdout: [
+        "moo",
+        "bar",
+        "baz",
+    ]
+    node_version: ">=8"
+}
+
+issue_5634_3_side_effects: {
+    options = {
+        awaits: true,
+        inline: true,
+        side_effects: true,
+    }
+    input: {
+        var a = "foo";
+        (async function() {
+            return async function() {
+                try {
+                    return {
+                        then(resolve) {
+                            console.log("bar");
+                            resolve();
+                            console.log("baz");
+                        },
+                    };
+                } finally {
+                    a = "moo";
+                }
+            }();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (async function() {
+            try {
+                return {
+                    then(resolve) {
+                        console.log("bar");
+                        resolve();
+                        console.log("baz");
+                    },
+                };
+            } finally {
+                a = "moo";
+            }
         })();
         console.log(a);
     }
