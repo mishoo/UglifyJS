@@ -3082,6 +3082,7 @@ issue_5506: {
 
 issue_5528_1: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -3117,6 +3118,7 @@ issue_5528_1: {
 
 issue_5528_2: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -3152,6 +3154,7 @@ issue_5528_2: {
 
 issue_5528_3: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {
@@ -3192,6 +3195,7 @@ issue_5528_3: {
 
 issue_5528_4: {
     options = {
+        awaits: true,
         inline: true,
     }
     input: {

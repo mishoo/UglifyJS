@@ -706,6 +706,52 @@ issue_5638_1: {
     options = {
         collapse_vars: true,
         hoist_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "FAIL";
+        var a = [ 42 ];
+        console || FAIL(a);
+        console.log(a++);
+    }
+    expect: {
+        var a;
+        a = "FAIL";
+        a = [ 42 ];
+        console || FAIL(a);
+        console.log(a++);
+    }
+    expect_stdout: "42"
+}
+
+issue_5638_2: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = "FAIL";
+        var a = [ 6 ];
+        console || FAIL(a);
+        console.log(a *= 7);
+    }
+    expect: {
+        var a;
+        a = "FAIL";
+        a = [ 6 ];
+        console || FAIL(a);
+        console.log(a *= 7);
+    }
+    expect_stdout: "42"
+}
+
+issue_5638_3: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
         pure_getters: "strict",
         reduce_vars: true,
         toplevel: true,
@@ -729,7 +775,7 @@ issue_5638_1: {
     expect_stdout: "foo 42"
 }
 
-issue_5638_2: {
+issue_5638_4: {
     options = {
         collapse_vars: true,
         hoist_vars: true,
