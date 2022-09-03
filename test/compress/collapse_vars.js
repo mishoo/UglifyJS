@@ -10098,3 +10098,26 @@ issue_5638_4: {
     }
     expect_stdout: "foo 42"
 }
+
+issue_5643: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 3, b;
+        a *= 7;
+        b = !!this;
+        console || console.log(b);
+        console.log(a * ++b);
+    }
+    expect: {
+        var a = 3, b;
+        a *= 7;
+        b = !!this;
+        console || console.log(b);
+        console.log(a * ++b);
+    }
+    expect_stdout: "42"
+}
