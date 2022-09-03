@@ -1705,3 +1705,28 @@ issue_5506: {
         "bar",
     ]
 }
+
+issue_5641: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        dead_code: true,
+    }
+    input: {
+        function f(a) {
+            if (a || b) {
+                var b = "PASS", c = b && console.log(b);
+            } else
+                var d = a || b;
+        }
+        f(42);
+    }
+    expect: {
+        function f(a) {
+            var b, c, d;
+            (a || b) && (b = "PASS") && console.log(b);
+        }
+        f(42);
+    }
+    expect_stdout: "PASS"
+}
