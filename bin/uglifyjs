@@ -278,6 +278,8 @@ if (specified["self"]) {
     if (paths.length) UglifyJS.AST_Node.warn("Ignoring input files since --self was passed");
     if (!options.wrap) options.wrap = "UglifyJS";
     paths = UglifyJS.FILES;
+} else if (paths.length) {
+    paths = simple_glob(paths);
 }
 if (specified["in-situ"]) {
     if (output && output != "spidermonkey" || specified["reduce-test"] || specified["self"]) {
@@ -292,7 +294,7 @@ if (specified["in-situ"]) {
         run();
     });
 } else if (paths.length) {
-    simple_glob(paths).forEach(function(name) {
+    paths.forEach(function(name) {
         files[convert_path(name)] = read_file(name);
     });
     run();
@@ -491,33 +493,42 @@ function fatal(message) {
 
 // A file glob function that only supports "*" and "?" wildcards in the basename.
 // Example: "foo/bar/*baz??.*.js"
-// Argument `glob` may be a string or an array of strings.
+// Argument `paths` must be an array of strings.
 // Returns an array of strings. Garbage in, garbage out.
-function simple_glob(glob) {
-    if (Array.isArray(glob)) {
-        return [].concat.apply([], glob.map(simple_glob));
-    }
-    if (glob.match(/\*|\?/)) {
-        var dir = path.dirname(glob);
-        try {
-            var entries = fs.readdirSync(dir);
-        } catch (ex) {}
-        if (entries) {
-            var pattern = "^" + path.basename(glob)
-                .replace(/[.+^$[\]\\(){}]/g, "\\$&")
-                .replace(/\*/g, "[^/\\\\]*")
-                .replace(/\?/g, "[^/\\\\]") + "$";
-            var mod = process.platform === "win32" ? "i" : "";
-            var rx = new RegExp(pattern, mod);
-            var results = entries.sort().filter(function(name) {
-                return rx.test(name);
-            }).map(function(name) {
-                return path.join(dir, name);
-            });
-            if (results.length) return results;
+function simple_glob(paths) {
+    return paths.reduce(function(paths, glob) {
+        if (/\*|\?/.test(glob)) {
+            var dir = path.dirname(glob);
+            try {
+                var entries = fs.readdirSync(dir).filter(function(name) {
+                    try {
+                        return fs.statSync(path.join(dir, name)).isFile();
+                    } catch (ex) {
+                        return false;
+                    }
+                });
+            } catch (ex) {}
+            if (entries) {
+                var pattern = "^" + path.basename(glob)
+                    .replace(/[.+^$[\]\\(){}]/g, "\\$&")
+                    .replace(/\*/g, "[^/\\\\]*")
+                    .replace(/\?/g, "[^/\\\\]") + "$";
+                var mod = process.platform === "win32" ? "i" : "";
+                var rx = new RegExp(pattern, mod);
+                var results = entries.filter(function(name) {
+                    return rx.test(name);
+                }).sort().map(function(name) {
+                    return path.join(dir, name);
+                });
+                if (results.length) {
+                    [].push.apply(paths, results);
+                    return paths;
+                }
+            }
         }
-    }
-    return [ glob ];
+        paths.push(glob);
+        return paths;
+    }, []);
 }
 
 function read_file(path, default_value) {
