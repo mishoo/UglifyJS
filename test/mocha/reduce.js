@@ -449,6 +449,27 @@ describe("test/reduce.js", function() {
         ].join("\n"));
     });
     it("Should transform `export default function` correctly", function() {
+        if (semver.satisfies(process.version, "<8")) return;
+        var code = [
+            "export default function f(a) {",
+            "    for (var k in a)",
+            "        console.log(k);",
+            "    (async function() {})();",
+            "}",
+            "f(this);",
+        ].join("\n");
+        var result = reduce_test(code, {
+            mangle: false,
+        });
+        if (result.error) throw result.error;
+        assert.strictEqual(result.code, [
+            "// Can't reproduce test failure",
+            "// minify options: {",
+            '//   "mangle": false',
+            "// }",
+        ].join("\n"));
+    });
+    it("Should transform `export default (function)` correctly", function() {
         var code = [
             "for (var k in this)",
             "    console.log(k);",

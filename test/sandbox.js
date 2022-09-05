@@ -57,7 +57,7 @@ exports.patch_module_statements = function(code) {
         strict_mode = match;
         return "";
     }).replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
-        if (/^export\s+default/.test(match)) has_default = "var _uglify_export_default_;";
+        if (/^export\s+default/.test(match)) has_default = "function _uglify_export_default_() {}";
         if (!header) return "";
         if (header.length == 1) return "0, " + header;
         var name = "_uglify_export_default_";
