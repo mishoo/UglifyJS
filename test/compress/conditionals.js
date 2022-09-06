@@ -1176,6 +1176,52 @@ trivial_boolean_ternary_expressions : {
     }
 }
 
+extendscript_1: {
+    beautify = {
+        extendscript: true,
+    }
+    input: {
+        var alert = console.log;
+        function f(a, b) {
+            return a ? b ? "foo" : "bar" : "baz";
+        }
+        alert(f());
+        alert(f(42));
+        alert(f(null, true));
+        alert(f([], {}));
+    }
+    expect_exact: 'var alert=console.log;function f(a,b){return a?(b?"foo":"bar"):"baz"}alert(f());alert(f(42));alert(f(null,true));alert(f([],{}));'
+    expect_stdout: [
+        "baz",
+        "bar",
+        "baz",
+        "foo",
+    ]
+}
+
+extendscript_2: {
+    beautify = {
+        extendscript: true,
+    }
+    input: {
+        var alert = console.log;
+        function f(a, b) {
+            return a ? "foo" : b ? "bar" : "baz";
+        }
+        alert(f());
+        alert(f(42));
+        alert(f(null, true));
+        alert(f([], {}));
+    }
+    expect_exact: 'var alert=console.log;function f(a,b){return a?"foo":(b?"bar":"baz")}alert(f());alert(f(42));alert(f(null,true));alert(f([],{}));'
+    expect_stdout: [
+        "baz",
+        "foo",
+        "bar",
+        "foo",
+    ]
+}
+
 issue_1154: {
     options = {
         booleans: true,

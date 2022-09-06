@@ -930,6 +930,9 @@ can pass additional arguments that control the code output:
   }
   ```
 
+- `extendscript` (default: `false`) — enable workarounds for Adobe ExtendScript
+  bugs
+
 - `galio` (default: `false`) — enable workarounds for ANT Galio bugs
 
 - `indent_level` (default: `4`) — indent by specified number of spaces or the
@@ -1444,5 +1447,19 @@ To allow for better optimizations, the compiler makes various assumptions:
   }());
   // Expected: "PASS"
   // Actual:   TypeError: invalid assignment to const 'f'
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
+- Adobe ExtendScript will give incorrect results with the following:
+  ```javascript
+  alert(true ? "PASS" : false ? "FAIL" : null);
+  // Expected: "PASS"
+  // Actual:   "FAIL"
+  ```
+  UglifyJS may modify the input which in turn may suppress those errors.
+- Adobe ExtendScript will give incorrect results with the following:
+  ```javascript
+  alert(42 ? null ? "FAIL" : "PASS" : "FAIL");
+  // Expected: "PASS"
+  // Actual:   SyntaxError: Expected: :
   ```
   UglifyJS may modify the input which in turn may suppress those errors.
