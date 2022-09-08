@@ -3044,3 +3044,28 @@ issue_5566_5: {
     expect_stdout: "foo bar"
     node_version: ">=6"
 }
+
+issue_5651: {
+    options = {
+        ie: true,
+        unused: true,
+    }
+    input: {
+        console.log(function arguments(a = "FAIL") {
+            try {} catch (arguments) {
+                var arguments;
+            }
+            return arguments[0];
+        }());
+    }
+    expect: {
+        console.log(function arguments(a = "FAIL") {
+            try {} catch (arguments) {
+                var arguments;
+            }
+            return arguments[0];
+        }());
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
