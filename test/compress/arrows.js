@@ -1212,3 +1212,28 @@ issue_5495: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_5653: {
+    options = {
+        arrows: true,
+        hoist_props: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        console.log((a => {
+            a = { p: console };
+            return a++;
+        })());
+    }
+    expect: {
+        console.log((a => {
+            return console, +{};
+        })());
+    }
+    expect_stdout: "NaN"
+    node_version: ">=4"
+}
