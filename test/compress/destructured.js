@@ -3844,3 +3844,28 @@ issue_5573: {
     ]
     node_version: ">=6"
 }
+
+issue_5651: {
+    options = {
+        ie: true,
+        unused: true,
+    }
+    input: {
+        console.log(function arguments({}) {
+            try {} catch (arguments) {
+                var arguments;
+            }
+            return arguments[0];
+        }("PASS"));
+    }
+    expect: {
+        console.log(function arguments({}) {
+            try {} catch (arguments) {
+                var arguments;
+            }
+            return arguments[0];
+        }("PASS"));
+    }
+    expect_stdout: true
+    node_version: ">=6"
+}
