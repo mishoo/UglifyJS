@@ -2385,3 +2385,30 @@ issue_5619_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5649: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        console.log(function() {
+            try {
+                throw new Error("FAIL");
+            } catch (e) {
+                return "PASS";
+            }
+            throw new Error("FAIL");
+        }());
+    }
+    expect: {
+        console.log(function() {
+            try {
+                throw new Error("FAIL");
+            } catch (e) {
+                return "PASS";
+            }
+            throw new Error("FAIL");
+        }());
+    }
+    expect_stdout: "PASS"
+}
