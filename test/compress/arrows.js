@@ -668,6 +668,28 @@ single_use_recursive: {
     node_version: ">=4"
 }
 
+inline_iife_within_arrow: {
+    options = {
+        arrows: true,
+        inline: true,
+    }
+    input: {
+        var f = () => console.log(function(a) {
+            return Math.ceil(a);
+        }(Math.random()));
+        f();
+    }
+    expect: {
+        var f = () => {
+            return console.log((a = Math.random(), Math.ceil(a)));
+            var a;
+        };
+        f();
+    }
+    expect_stdout: "1"
+    node_version: ">=4"
+}
+
 issue_4388: {
     options = {
         inline: true,
