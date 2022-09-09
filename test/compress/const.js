@@ -2144,3 +2144,28 @@ issue_5591: {
     ]
     node_version: ">=4"
 }
+
+issue_5656: {
+    options = {
+        collapse_vars: true,
+        merge_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = a;
+            b++;
+            {
+                const a = b;
+            }
+        }());
+    }
+    expect: {
+        console.log(function(a) {
+            var b = a;
+            {
+                const a = ++b;
+            }
+        }());
+    }
+    expect_stdout: true
+}
