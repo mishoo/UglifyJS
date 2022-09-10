@@ -194,6 +194,43 @@ scope_adjustment_let: {
     node_version: ">=4"
 }
 
+escaped_const: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        const log = console.log;
+        log("PASS");
+    }
+    expect: {
+        var log = console.log;
+        log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+escaped_let: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        let log = console.log;
+        log("PASS");
+    }
+    expect: {
+        "use strict";
+        var log = console.log;
+        log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 issue_4191_const: {
     options = {
         functions: true,
