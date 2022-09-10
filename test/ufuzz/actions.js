@@ -11,7 +11,9 @@ exports.init = function(url, auth, num) {
 exports.should_stop = function(callback) {
     if (Date.now() > expires) return callback();
     read(base + "/actions/runs?per_page=100", function(reply) {
-        var runs = verify(reply, "workflow_runs").sort(function(a, b) {
+        var runs = verify(reply, "workflow_runs").filter(function(workflow) {
+            return workflow.status != "completed";
+        }).sort(function(a, b) {
             return b.run_number - a.run_number;
         });
         var found = false, remaining = 20;
@@ -20,14 +22,13 @@ exports.should_stop = function(callback) {
             do {
                 workflow = runs.pop();
                 if (!workflow) return;
-                if (is_cron(workflow) && workflow.run_number == run_number) found = true;
-            } while (!found && workflow.status == "completed");
+                if (!is_cron(workflow)) break;
+                if (workflow.run_number == run_number) found = true;
+            } while (!found);
             read(workflow.jobs_url, function(reply) {
-                if (!verify(reply, "jobs").every(function(job) {
-                    if (job.status == "completed") return true;
-                    remaining--;
-                    return found || !is_cron(workflow);
-                })) return;
+                verify(reply, "jobs").forEach(function(job) {
+                    if (job.status != "completed") remaining--;
+                });
                 if (remaining >= 0) {
                     next();
                 } else {
