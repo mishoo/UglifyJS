@@ -2169,3 +2169,38 @@ issue_5656: {
     }
     expect_stdout: true
 }
+
+issue_5660: {
+    options = {
+        merge_vars: true,
+        side_effects: true,
+    }
+    input: {
+        function f() {
+            try {
+                a;
+                var b;
+                return b;
+            } catch (e) {
+                var a = "FAIL";
+                const b = null;
+                return a;
+            }
+        }
+        console.log(f());
+    }
+    expect: {
+        function f() {
+            try {
+                var b;
+                return b;
+            } catch (e) {
+                var a = "FAIL";
+                const b = null;
+                return a;
+            }
+        }
+        console.log(f());
+    }
+    expect_stdout: true
+}
