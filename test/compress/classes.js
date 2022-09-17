@@ -3586,3 +3586,36 @@ issue_5531_3: {
     expect_stdout: "foo"
     node_version: ">=16"
 }
+
+issue_5662: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(new (function() {
+            var g = function(a) {
+                return a;
+            };
+            return class {
+                h(b) {
+                    return g(b);
+                }
+            };
+        }())().h("PASS"));
+    }
+    expect: {
+        console.log(new (function() {
+            var g = function(a) {
+                return a;
+            };
+            return class {
+                h(b) {
+                    return g(b);
+                }
+            };
+        }())().h("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
