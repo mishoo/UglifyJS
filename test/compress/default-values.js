@@ -2713,7 +2713,7 @@ issue_5533_2_drop_fargs: {
         try {
             (function() {
                 for (;;) {
-                    var [ [] = [] ] = [];
+                    var [ [ , ] = [] ] = [];
                     throw "PASS";
                 }
             })();
