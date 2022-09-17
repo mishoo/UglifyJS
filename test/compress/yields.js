@@ -1735,3 +1735,37 @@ issue_5576: {
     ]
     node_version: ">=10"
 }
+
+issue_5663: {
+    options = {
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var [ , a ] = function*() {
+            console.log("foo");
+            yield console.log("bar");
+            console.log("baz");
+            yield console.log("moo");
+            console.log("moz");
+            yield FAIL;
+        }();
+    }
+    expect: {
+        var [ , , ] = function*() {
+            console.log("foo");
+            yield console.log("bar");
+            console.log("baz");
+            yield console.log("moo");
+            console.log("moz");
+            yield FAIL;
+        }();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "baz",
+        "moo",
+    ]
+    node_version: ">=6"
+}
