@@ -353,6 +353,68 @@ mangle_debug_suffix_keep_quoted: {
     }
 }
 
+keep_substituted_property: {
+    options = {
+        evaluate: true,
+        properties: true,
+        reduce_vars: true,
+    }
+    mangle = {
+        properties: {
+            keep_quoted: true,
+        },
+    }
+    input: {
+        var o = { p: [] };
+        function f(b) {
+            return o[b];
+        }
+        function g() {
+            var a = "p";
+            return o[a] === f(a);
+        }
+        console.log(g() ? "PASS" : "FAIL");
+    }
+    expect: {
+        var o = { p: [] };
+        function f(n) {
+            return o[n];
+        }
+        function g() {
+            var n = "p";
+            return o.p === f(n);
+        }
+        console.log(g() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+keep_substituted_property_quotes: {
+    options = {
+        evaluate: true,
+        properties: true,
+        reduce_vars: true,
+    }
+    beautify = {
+        keep_quoted_props: true,
+    }
+    input: {
+        function f(o) {
+            var a = "p";
+            return o[a];
+        }
+        console.log(f({ p: "PASS" }));
+    }
+    expect: {
+        function f(o) {
+            var a = "p";
+            return o["p"];
+        }
+        console.log(f({ p: "PASS" }));
+    }
+    expect_stdout: "PASS"
+}
+
 first_256_chars_as_properties: {
     beautify = {
         ascii_only: true,
@@ -899,12 +961,15 @@ issue_2256: {
         },
     }
     input: {
-        ({ "keep": 1 });
-        g.keep = g.change;
+        ({ "keep": 42 });
+        global.keep = global.change;
+        console.log(keep);
     }
     expect: {
-        g.keep = g.g;
+        global.keep = global.l;
+        console.log(keep);
     }
+    expect_stdout: "undefined"
 }
 
 lhs_prop_1: {
