@@ -2878,3 +2878,53 @@ issue_5546_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5666_1: {
+    options = {
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function() {
+            var b = a;
+            a ? a = b : (b++, a = b);
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a;
+        (function() {
+            var b = a;
+            a = (a ? 0 : b++, b);
+        })();
+        console.log(a);
+    }
+    expect_stdout: "NaN"
+}
+
+issue_5666_2: {
+    options = {
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "foo";
+        (function() {
+            var b = a;
+            a ? (b++, a = b) : a = b;
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "foo";
+        (function() {
+            var b = a;
+            a = (a ? b++ : 0, b);
+        })();
+        console.log(a);
+    }
+    expect_stdout: "NaN"
+}
