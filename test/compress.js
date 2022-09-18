@@ -307,8 +307,9 @@ function test_case(test) {
             warnings_emitted.push(text);
         }, /"INFO: /.test(expected_warnings));
     }
+    var quoted_props;
     if (test.mangle && test.mangle.properties && test.mangle.properties.keep_quoted) {
-        var quoted_props = test.mangle.properties.reserved;
+        quoted_props = test.mangle.properties.reserved;
         if (!Array.isArray(quoted_props)) quoted_props = [];
         test.mangle.properties.reserved = quoted_props;
         U.reserve_quoted_keys(input, quoted_props);
@@ -323,6 +324,7 @@ function test_case(test) {
     if (test.mangle) {
         output.compute_char_frequency(test.mangle);
         output.mangle_names(test.mangle);
+        if (quoted_props) U.reserve_quoted_keys(input, quoted_props);
         if (test.mangle.properties) U.mangle_properties(output, test.mangle.properties);
     }
     var output_code = make_code(output, output_options, test.expression);

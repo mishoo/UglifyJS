@@ -327,7 +327,7 @@ unquoted style (`o.foo`). Example:
 // stuff.js
 var o = {
     "foo": 1,
-    bar: 3
+    bar: 3,
 };
 o.foo += o.bar;
 console.log(o.foo);
@@ -337,6 +337,16 @@ $ uglifyjs stuff.js --mangle-props keep_quoted -c -m
 ```
 ```javascript
 var o={foo:1,o:3};o.foo+=o.o,console.log(o.foo);
+```
+
+If the minified output will be processed again by UglifyJS, consider specifying
+`keep_quoted_props` so the same property names are preserved:
+
+```bash
+$ uglifyjs stuff.js --mangle-props keep_quoted -c -m -O keep_quoted_props
+```
+```javascript
+var o={"foo":1,o:3};o.foo+=o.o,console.log(o.foo);
 ```
 
 ### Debugging property name mangling
