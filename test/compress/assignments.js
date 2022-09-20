@@ -803,3 +803,23 @@ issue_4924_2: {
     expect_stdout: "PASS"
     node_version: ">=15"
 }
+
+issue_5670: {
+    options = {
+        assignments: true,
+        evaluate: true,
+        reduce_vars: true,
+    }
+    input: {
+        (function(a, b) {
+            a && a && (a = b += "") || console.log("PASS");
+        })();
+    }
+    expect: {
+        (function(a, b) {
+            a = a,
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+}
