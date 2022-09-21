@@ -2928,3 +2928,45 @@ issue_5666_2: {
     }
     expect_stdout: "NaN"
 }
+
+issue_5673_1: {
+    options = {
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS", b = null;
+        console.log(function(c) {
+            return c || (b ? c : (c = a) && c);
+        }());
+    }
+    expect: {
+        var a = "PASS", b = null;
+        console.log(function(c) {
+            return c || (b || (c = a)) && c;
+        }());
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5673_2: {
+    options = {
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        console.log(function(b) {
+            return (b = a) ? b : (b = a) && b;
+        }());
+    }
+    expect: {
+        var a = "PASS";
+        console.log(function(b) {
+            return ((b = a) || (b = a)) && b;
+        }());
+    }
+    expect_stdout: "PASS"
+}
