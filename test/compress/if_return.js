@@ -1834,7 +1834,7 @@ switch_return_5: {
     ]
 }
 
-merged_references: {
+merged_references_1: {
     options = {
         if_return: true,
         reduce_vars: true,
@@ -1857,6 +1857,36 @@ merged_references: {
                 c = FAIL;
             return a || c;
         }());
+    }
+    expect_stdout: "PASS"
+}
+
+merged_references_2: {
+    options = {
+        if_return: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        var a;
+        console.log(function(b) {
+            if (a = b)
+                return console && a;
+            a = FAIL;
+            return console && a;
+        }(A));
+    }
+    expect: {
+        A = "PASS";
+        var a;
+        console.log(function(b) {
+            if (a = b);
+            else
+                a = FAIL;
+            return console && a;
+        }(A));
     }
     expect_stdout: "PASS"
 }
