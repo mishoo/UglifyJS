@@ -278,6 +278,36 @@ merge_tail_2: {
     ]
 }
 
+merge_tail_3: {
+    options = {
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            if (b = a.shift())
+                console.log(b);
+            else {
+                if (b = a.shift())
+                    while (console.log("foo"));
+                console.log(b);
+            }
+        })([ false, "bar" ]);
+    }
+    expect: {
+        (function(a, b) {
+            if (!(b = a.shift()) && (b = a.shift()))
+                while (console.log("foo"));
+            console.log(b);
+        })([ false, "bar" ]);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+}
+
 merge_tail_sequence_1: {
     options = {
         conditionals: true,
@@ -365,6 +395,39 @@ merge_tail_sequence_2: {
         "foo",
         "bar",
         "foo",
+    ]
+}
+
+merge_tail_sequence_3: {
+    options = {
+        conditionals: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (function(a, b) {
+            if (b = a.shift())
+                console.log("foo"),
+                console.log(b);
+            else {
+                if (b = a.shift())
+                    while (console.log("bar"));
+                console.log(b);
+            }
+        })([ false, "baz" ]);
+    }
+    expect: {
+        (function(a, b) {
+            if (b = a.shift())
+                console.log("foo");
+            else if (b = a.shift())
+                while (console.log("bar"));
+            console.log(b);
+        })([ false, "baz" ]);
+    }
+    expect_stdout: [
+        "bar",
+        "baz",
     ]
 }
 
