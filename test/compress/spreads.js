@@ -13,12 +13,12 @@ collapse_vars_1: {
     }
     input: {
         var a;
-        [ ...a = "PASS", "PASS"].slice();
+        [ ...a = "PASS", "PASS" ].slice();
         console.log(a);
     }
     expect: {
         var a;
-        [ ...a = "PASS", "PASS"].slice();
+        [ ...a = "PASS", "PASS" ].slice();
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -33,7 +33,7 @@ collapse_vars_2: {
         var a = "FAIL";
         try {
             a = "PASS";
-            [ ...42, "PASS"].slice();
+            [ ...42, "PASS" ].slice();
         } catch (e) {
             console.log(a);
         }
@@ -42,7 +42,7 @@ collapse_vars_2: {
         var a = "FAIL";
         try {
             a = "PASS";
-            [ ...42, "PASS"].slice();
+            [ ...42, "PASS" ].slice();
         } catch (e) {
             console.log(a);
         }
@@ -58,7 +58,7 @@ collapse_vars_3: {
     input: {
         var a = "FAIL";
         try {
-            [ ...(a = "PASS", 42), "PASS"].slice();
+            [ ...(a = "PASS", 42), "PASS" ].slice();
         } catch (e) {
             console.log(a);
         }
@@ -66,7 +66,7 @@ collapse_vars_3: {
     expect: {
         var a = "FAIL";
         try {
-            [ ...(a = "PASS", 42), "PASS"].slice();
+            [ ...(a = "PASS", 42), "PASS" ].slice();
         } catch (e) {
             console.log(a);
         }
