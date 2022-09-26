@@ -3,6 +3,10 @@ on:
   pull_request:
   push:
     branches: [ master ]
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   ufuzz:
     strategy:
