@@ -25,7 +25,7 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
     } while (prev !== stdout);
     return stdout;
 } : semver.satisfies(process.version, "<0.12") ? run_code_vm : function(code, toplevel, timeout) {
-    if ([
+    var stdout = ([
         /\b(async[ \t]+function|Promise|setImmediate|setInterval|setTimeout)\b/,
         /\basync([ \t]+|[ \t]*#)[^\s()[\]{}#:;,.&|!~=*%/+-]+(\s*\(|[ \t]*=>)/,
         /\basync[ \t]*\*[ \t]*[^\s()[\]{}#:;,.&|!~=*%/+-]+\s*\(/,
@@ -33,11 +33,8 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
         /\basync[ \t]*\([\s\S]*?\)[ \t]*=>/,
     ].some(function(pattern) {
         return pattern.test(code);
-    })) {
-        return run_code_exec(code, toplevel, timeout);
-    } else {
-        return run_code_vm(code, toplevel, timeout);
-    }
+    }) ? run_code_exec : run_code_vm)(code, toplevel, timeout);
+    return stdout.length > 1000 ? stdout.slice(0, 1000) + "…《" + stdout.length + "》" : stdout;
 };
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
     if (typeof expected != typeof actual) return false;
@@ -286,6 +283,7 @@ function run_code_exec(code, toplevel, timeout) {
     var result = spawnSync(process.argv[0], [ '--max-old-space-size=2048' ], {
         encoding: "utf8",
         input: code,
+        maxBuffer: 1073741824,
         stdio: "pipe",
         timeout: timeout || 5000,
     });
