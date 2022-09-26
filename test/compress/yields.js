@@ -1769,3 +1769,223 @@ issue_5663: {
     ]
     node_version: ">=6"
 }
+
+issue_5679_1: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return;
+                else
+                    return;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                b;
+                return;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
+
+issue_5679_2: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return undefined;
+                else
+                    return;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return void 0;
+                return;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
+
+issue_5679_3: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return;
+                else
+                    return undefined;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f(42).next();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return;
+                return void 0;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f(42).next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
+
+issue_5679_4: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        var a = "PASS";
+        async function* f(b) {
+            try {
+                if (b)
+                    return undefined;
+                else
+                    return undefined;
+            } finally {
+                a = "FAIL";
+            }
+        }
+        f(null).next();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        async function* f(b) {
+            try {
+                return b, void 0;
+            } finally {
+                a = "FAIL";
+            }
+        }
+        f(null).next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
+
+issue_5679_5: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return console;
+                else
+                    return;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        async function* f(b) {
+            try {
+                if (b)
+                    return console;
+                return;
+            } finally {
+                a = "PASS";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
+
+issue_5679_6: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        var a = "PASS";
+        async function* f(b) {
+            try {
+                if (b)
+                    return;
+                else
+                    return console;
+            } finally {
+                a = "FAIL";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect: {
+        var a = "PASS";
+        async function* f(b) {
+            try {
+                if (!b)
+                    return console;
+            } finally {
+                a = "FAIL";
+            }
+        }
+        f().next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
