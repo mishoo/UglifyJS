@@ -11,6 +11,10 @@ on:
 env:
   BASE_URL: https://api.github.com/repos/${{ github.repository }}
   TOKEN: ${{ github.token }}
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   ufuzz:
     strategy:
