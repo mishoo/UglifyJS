@@ -205,15 +205,15 @@ describe("minify", function() {
                     'a["foo"]="bar",a.a="red",x={"bar":10};');
         });
         it("Should not mangle quoted property within dead code", function() {
-            var result = UglifyJS.minify('({ "keep": 1 }); g.keep = g.change;', {
+            var result = UglifyJS.minify('({ "keep": 1 }); g.keep = g.change = 42;', {
                 mangle: {
                     properties: {
-                        keep_quoted: true
-                    }
-                }
+                        keep_quoted: true,
+                    },
+                },
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code, "g.keep=g.g;");
+            assert.strictEqual(result.code, "g.keep=g.g=42;");
         });
     });
 

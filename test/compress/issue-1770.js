@@ -115,9 +115,9 @@ numeric_literal: {
         "8 7 8",
     ]
     expect_warnings: [
-        "INFO: Preserving reserved property log",
         "INFO: Mapping property 0x25 to o",
         "INFO: Mapping property 1E42 to b",
+        "INFO: Preserving reserved property log",
     ]
 }
 

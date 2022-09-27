@@ -2202,11 +2202,11 @@ mangle_properties: {
     expect_stdout: "PASS 42"
     expect_warnings: [
         "INFO: Preserving reserved property q",
-        "INFO: Preserving reserved property log",
         "INFO: Mapping property #P to #t",
         "INFO: Mapping property Q to s",
         "INFO: Mapping property #p to #i",
         "INFO: Mapping property r to e",
+        "INFO: Preserving reserved property log",
     ]
     node_version: ">=14.6"
 }
@@ -3618,4 +3618,60 @@ issue_5662: {
     }
     expect_stdout: "PASS"
     node_version: ">=6"
+}
+
+issue_5682_class_key: {
+    mangle = {
+        properties: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            return "foo" in a;
+        }
+        class A {
+            foo() {}
+        }
+        console.log(f(new A()) ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        function f(o) {
+            return "o" in o;
+        }
+        class A {
+            o() {}
+        }
+        console.log(f(new A()) ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5682_class_key_computed: {
+    mangle = {
+        properties: true,
+    }
+    input: {
+        "use strict";
+        function f(a) {
+            return "foo" in a;
+        }
+        class A {
+            ["foo"]() {}
+        }
+        console.log(f(new A()) ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        function f(o) {
+            return "o" in o;
+        }
+        class A {
+            ["o"]() {}
+        }
+        console.log(f(new A()) ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
