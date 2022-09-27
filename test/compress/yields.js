@@ -1989,3 +1989,32 @@ issue_5679_6: {
     expect_stdout: "PASS"
     node_version: ">=10"
 }
+
+issue_5684: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        (async function*() {
+            switch (42) {
+              default:
+                if (console.log("PASS"))
+                    return;
+                return null;
+              case false:
+            }
+        })().next();
+    }
+    expect: {
+        (async function*() {
+            switch (42) {
+              default:
+                return console.log("PASS") ? void 0 : null;
+              case false:
+            }
+        })().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
