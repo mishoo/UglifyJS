@@ -42,7 +42,9 @@ describe("let", function() {
             compress: false,
             ie: true,
             mangle: {
-                properties: true,
+                properties: {
+                    domprops: true,
+                },
             },
         });
         if (result.error) throw result.error;

@@ -110,10 +110,12 @@ describe("minify", function() {
             var result = UglifyJS.minify(code, {
                 compress: false,
                 mangle: {
-                    properties: true,
-                    toplevel: true
+                    properties: {
+                        domprops: true,
+                    },
+                    toplevel: true,
                 },
-                nameCache: cache
+                nameCache: cache,
             });
             if (result.error) throw result.error;
             original += code;
@@ -188,21 +190,19 @@ describe("minify", function() {
         it("Shouldn't mangle quoted properties", function() {
             var js = 'a["foo"] = "bar"; a.color = "red"; x = {"bar": 10};';
             var result = UglifyJS.minify(js, {
-                compress: {
-                    properties: false
-                },
+                compress: true,
                 mangle: {
                     properties: {
-                        keep_quoted: true
-                    }
+                        domprops: true,
+                        keep_quoted: true,
+                    },
                 },
                 output: {
                     keep_quoted_props: true,
-                    quote_style: 3
-                }
+                    quote_style: 3,
+                },
             });
-            assert.strictEqual(result.code,
-                    'a["foo"]="bar",a.a="red",x={"bar":10};');
+            assert.strictEqual(result.code, 'a["foo"]="bar",a.a="red",x={"bar":10};');
         });
         it("Should not mangle quoted property within dead code", function() {
             var result = UglifyJS.minify('({ "keep": 1 }); g.keep = g.change = 42;', {

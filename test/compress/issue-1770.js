@@ -65,7 +65,9 @@ mangle_props: {
 
 numeric_literal: {
     mangle = {
-        properties: true,
+        properties: {
+            domprops: true,
+        },
     }
     beautify = {
         beautify: true,
@@ -125,6 +127,7 @@ identifier: {
     mangle = {
         properties: {
             builtins: true,
+            domprops: true,
         },
     }
     input: {

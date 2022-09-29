@@ -271,7 +271,9 @@ function test_case(test) {
         expect = test.expect_exact;
     }
     var input = to_toplevel(test.input, test.mangle, test.expression);
-    var input_code = make_code(input, {}, test.expression);
+    var input_code = make_code(input, {
+        keep_quoted_props: true,
+    }, test.expression);
     var input_formatted = make_code(test.input, {
         annotations: true,
         beautify: true,

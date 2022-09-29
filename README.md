@@ -891,11 +891,14 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 ### Mangle properties options
 
-- `builtins` (default: `false`) — Use `true` to allow the mangling of builtin
-  DOM properties. Not recommended to override this setting.
+- `builtins` (default: `false`) — Use `true` to allow the mangling of built-in
+  properties of JavaScript API. Not recommended to override this setting.
 
 - `debug` (default: `false`) — Mangle names with the original name still present.
   Pass an empty string `""` to enable, or a non-empty string to set the debug suffix.
+
+- `domprops` (default: `false`) — Use `true` to allow the mangling of properties
+  commonly found in Document Object Model. Not recommended to override this setting.
 
 - `keep_fargs` (default: `false`) — Use `true` to prevent mangling of function
   arguments.

@@ -133,6 +133,7 @@ evaluate_string_length: {
 mangle_properties_1: {
     mangle = {
         properties: {
+            domprops: true,
             keep_quoted: false,
         },
     }
@@ -155,9 +156,10 @@ mangle_properties_1: {
 mangle_properties_2: {
     mangle = {
         properties: {
+            domprops: true,
             reserved: [
                 "value",
-            ]
+            ],
         },
     }
     input: {
@@ -199,6 +201,24 @@ mangle_properties_2: {
     ]
 }
 
+mangle_properties_3: {
+    mangle = {
+        properties: true,
+    }
+    input: {
+        console.log({
+            [(console, "foo")]: "PASS",
+        }.foo);
+    }
+    expect: {
+        console.log({
+            [(console, "o")]: "PASS",
+        }.o);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 mangle_unquoted_properties: {
     options = {
         evaluate: true,
@@ -207,6 +227,7 @@ mangle_unquoted_properties: {
     mangle = {
         properties: {
             builtins: true,
+            domprops: true,
             keep_quoted: true,
         },
     }
@@ -308,6 +329,7 @@ mangle_debug_suffix_keep_quoted: {
         properties: {
             builtins: true,
             debug: "XYZ",
+            domprops: true,
             keep_quoted: true,
             reserved: [],
         },

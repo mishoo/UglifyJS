@@ -1737,6 +1737,23 @@ singleton_side_effects: {
     node_version: ">=6"
 }
 
+mangle_properties: {
+    mangle = {
+        properties: {
+            domprops: true,
+        },
+    }
+    input: {
+        function f({ p: a }) {
+            return a;
+        }
+        console.log(f({ p: "PASS" }));
+    }
+    expect_exact: 'function f({n}){return n}console.log(f({n:"PASS"}));'
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
 issue_4280: {
     options = {
         evaluate: true,
