@@ -2442,3 +2442,41 @@ issue_5649: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5688: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        L: do {
+            switch (console) {
+              default:
+                if (console)
+                    break;
+                if (FAIL_1)
+                    ;
+                else
+                    break L;
+                break;
+              case 42:
+                FAIL_2;
+            }
+        } while (console.log("PASS"));
+    }
+    expect: {
+        L: do {
+            switch (console) {
+              default:
+                if (console)
+                    break;
+                if (FAIL_1)
+                    break;
+                break L;
+              case 42:
+                FAIL_2;
+            }
+        } while (console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+}
