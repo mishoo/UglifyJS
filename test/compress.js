@@ -126,6 +126,17 @@ function parse_test(file) {
                     croak(node);
                 }
                 var name = node.left.name;
+                assert.ok([
+                    "beautify",
+                    "expression",
+                    "mangle",
+                    "options",
+                    "rename",
+                ].indexOf(name) >= 0, tmpl("Unsupported setting {name} [{line},{col}]", {
+                    name: name,
+                    line: node.start.line,
+                    col: node.start.col,
+                }));
                 test[name] = evaluate(node.right);
                 return true;
             }
