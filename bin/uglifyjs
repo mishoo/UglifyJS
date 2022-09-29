@@ -238,17 +238,6 @@ if (specified["beautify"] && specified["output-opts"]) fatal("--beautify cannot 
 [ "compress", "mangle" ].forEach(function(name) {
     if (!(name in options)) options[name] = false;
 });
-if (options.mangle && options.mangle.properties) {
-    if (options.mangle.properties.domprops) {
-        delete options.mangle.properties.domprops;
-    } else {
-        if (typeof options.mangle.properties != "object") options.mangle.properties = {};
-        if (!Array.isArray(options.mangle.properties.reserved)) options.mangle.properties.reserved = [];
-        require("../tools/domprops").forEach(function(name) {
-            UglifyJS.push_uniq(options.mangle.properties.reserved, name);
-        });
-    }
-}
 if (/^ast|spidermonkey$/.test(output)) {
     if (typeof options.output != "object") options.output = {};
     options.output.ast = true;

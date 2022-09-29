@@ -1,6 +1,7 @@
 issue_1321_no_debug: {
     mangle = {
         properties: {
+            domprops: true,
             keep_quoted: true,
         },
     }
@@ -23,6 +24,7 @@ issue_1321_debug: {
     mangle = {
         properties: {
             debug: "",
+            domprops: true,
             keep_quoted: true,
         },
     }
@@ -44,6 +46,7 @@ issue_1321_debug: {
 issue_1321_with_quoted: {
     mangle = {
         properties: {
+            domprops: true,
             keep_quoted: false,
         },
     }

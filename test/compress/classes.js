@@ -2164,6 +2164,7 @@ issue_4829_2: {
 mangle_properties: {
     mangle = {
         properties: {
+            domprops: true,
             keep_quoted: true,
         },
     }

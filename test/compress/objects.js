@@ -173,7 +173,9 @@ numeric_literal: {
         side_effects: true,
     }
     mangle = {
-        properties: true,
+        properties: {
+            domprops: true,
+        },
     }
     beautify = {
         beautify: true,

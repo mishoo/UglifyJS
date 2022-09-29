@@ -1,6 +1,7 @@
 dont_reuse_prop: {
     mangle = {
         properties: {
+            domprops: true,
             regex: /asd/,
         },
     }
@@ -29,6 +30,7 @@ dont_reuse_prop: {
 unmangleable_props_should_always_be_reserved: {
     mangle = {
         properties: {
+            domprops: true,
             regex: /asd/,
         },
     }
