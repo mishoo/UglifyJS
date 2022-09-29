@@ -599,6 +599,7 @@ drop_extends: {
         inline: true,
         passes: 2,
         pure_getters: "strict",
+        reduce_funcs: true,
         reduce_vars: true,
         sequences: true,
         side_effects: true,
@@ -921,6 +922,7 @@ single_use_3: {
 
 single_use_4: {
     options = {
+        reduce_funcs: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -1501,6 +1503,218 @@ keep_instanceof_3: {
     }
     expect_stdout: "true true"
     node_version: ">=4"
+}
+
+keep_field_reference_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {}
+        class A {
+            p = f;
+        }
+        console.log(new A().p === new A().p ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        function f() {}
+        class A {
+            p = f;
+        }
+        console.log(new A().p === new A().p ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_field_reference_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {}
+        var A = class {
+            p = f;
+        };
+        console.log(new A().p === new A().p ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        function f() {}
+        var A = class {
+            p = f;
+        };
+        console.log(new A().p === new A().p ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_field_reference_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        class B {
+            p = A;
+        }
+        console.log(new B().p === new B().p ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        class A {}
+        class B {
+            p = A;
+        }
+        console.log(new B().p === new B().p ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_field_reference_4: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var A = class {};
+        var B = class {
+            p = A;
+        };
+        console.log(new B().p === new B().p ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        var A = class {};
+        var B = class {
+            p = A;
+        };
+        console.log(new B().p === new B().p ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_static_field_reference_1: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {}
+        class A {
+            static P = f;
+        }
+        console.log(A.P === A.P ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        class A {
+            static P = function() {};
+        }
+        console.log(A.P === A.P ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_static_field_reference_2: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {}
+        var A = class {
+            static P = f;
+        };
+        console.log(A.P === A.P ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        var A = class {
+            static P = function() {};
+        };
+        console.log(A.P === A.P ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_static_field_reference_3: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {}
+        class B {
+            static P = A;
+        }
+        console.log(B.P === B.P ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        class B {
+            static P = class {};
+        }
+        console.log(B.P === B.P ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+keep_static_field_reference_4: {
+    options = {
+        reduce_funcs: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var A = class {};
+        var B = class {
+            static P = A;
+        };
+        console.log(B.P === B.P ? "PASS" : "FAIL");
+    }
+    expect: {
+        "use strict";
+        var B = class {
+            static P = class {};
+        };
+        console.log(B.P === B.P ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
 }
 
 issue_805_1: {
@@ -2313,6 +2527,7 @@ issue_4962_1: {
     options = {
         ie: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2344,6 +2559,7 @@ issue_4962_1_strict: {
     options = {
         ie: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2371,6 +2587,7 @@ issue_4962_1_strict_direct: {
     options = {
         ie: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2402,6 +2619,7 @@ issue_4962_2: {
     options = {
         ie: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2433,6 +2651,7 @@ issue_4962_2_strict: {
     options = {
         ie: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2461,6 +2680,7 @@ issue_4962_2_strict_direct: {
     options = {
         ie: true,
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2495,6 +2715,7 @@ issue_4962_2_strict_direct_inline: {
         ie: true,
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2878,6 +3099,7 @@ issue_5053_4: {
 issue_5082_1: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2910,6 +3132,7 @@ issue_5082_1: {
 issue_5082_1_strict: {
     options = {
         inline: true,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2943,6 +3166,7 @@ issue_5082_2: {
     options = {
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
@@ -2976,6 +3200,7 @@ issue_5082_2_static: {
     options = {
         inline: true,
         passes: 2,
+        reduce_funcs: true,
         reduce_vars: true,
         unused: true,
     }
