@@ -76,12 +76,14 @@ self_comparison_1: {
         comparisons: true,
     }
     input: {
+        var a, b;
         a === a;
         a !== b;
         b.c === a.c;
         b.c !== b.c;
     }
     expect: {
+        var a, b;
         a == a;
         a !== b;
         b.c === a.c;
@@ -275,6 +277,7 @@ issue_2857_3: {
 issue_2857_4: {
     options = {
         comparisons: true,
+        conditionals: true,
     }
     input: {
         function f(a, p) {
@@ -305,6 +308,7 @@ issue_2857_4: {
 issue_2857_5: {
     options = {
         comparisons: true,
+        conditionals: true,
     }
     input: {
         function f(a, p) {
@@ -528,6 +532,7 @@ nullish_assign: {
 nullish_chain: {
     options = {
         comparisons: true,
+        conditionals: true,
     }
     input: {
         var a;
