@@ -8719,3 +8719,24 @@ single_use_inline_collision: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5692: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (function() {
+            while (console.log("PASS"))
+                if (console)
+                    return;
+        })();
+    }
+    expect: {
+        (function() {
+            while (console.log("PASS"))
+                if (console)
+                    return;
+        })();
+    }
+    expect_stdout: "PASS"
+}
