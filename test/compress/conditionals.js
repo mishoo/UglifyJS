@@ -3033,3 +3033,21 @@ issue_5673_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5694: {
+    options = {
+        conditionals: true,
+    }
+    input: {
+        FORCE_EXEC = "async()=>{}";
+        var a = "foo";
+        // Node.js v0.12~6 (vm): foo
+        console.log((NaN = a) ? NaN : 42);
+    }
+    expect: {
+        FORCE_EXEC = "async()=>{}";
+        var a = "foo";
+        console.log((NaN = a) ? NaN : 42);
+    }
+    expect_stdout: "NaN"
+}
