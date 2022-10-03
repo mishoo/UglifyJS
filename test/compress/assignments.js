@@ -290,6 +290,45 @@ increment_decrement_2: {
     expect_stdout: "42"
 }
 
+lazily_chained_assignments: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        conditionals: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            if (a = console.log("foo"))
+                a = console.log("bar");
+            return a;
+        }
+        function g(b) {
+            if (b = console.log("baz"))
+                ;
+            else
+                b = console.log("moo");
+            return b;
+        }
+        console.log(f(), g());
+    }
+    expect: {
+        function f(a) {
+            return console.log("foo") && console.log("bar");
+        }
+        function g(b) {
+            return console.log("baz") || console.log("moo");
+        }
+        console.log(f(), g());
+    }
+    expect_stdout: [
+        "foo",
+        "baz",
+        "moo",
+        "undefined undefined",
+    ]
+}
+
 issue_3375_1: {
     options = {
         assignments: true,

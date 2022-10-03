@@ -3028,7 +3028,7 @@ issue_5673_2: {
     expect: {
         var a = "PASS";
         console.log(function(b) {
-            return ((b = a) || (b = a)) && b;
+            return a || (b = a) && b;
         }());
     }
     expect_stdout: "PASS"
