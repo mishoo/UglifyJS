@@ -76,14 +76,12 @@ self_comparison_1: {
         comparisons: true,
     }
     input: {
-        var a, b;
         a === a;
         a !== b;
         b.c === a.c;
         b.c !== b.c;
     }
     expect: {
-        var a, b;
         a == a;
         a !== b;
         b.c === a.c;

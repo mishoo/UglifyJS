@@ -976,33 +976,33 @@ nested_if_return: {
         if_return: true,
     }
     input: {
-        function f(a, b, c, d, e, f, g, h, i, j, k, l, m, n) {
-            if (a) {
-                if (b)
-                    return b;
-                if (c)
-                    return d;
-                if (e)
-                    return f;
-                if (g)
-                    return h;
-                if (i) {
-                    if (j)
-                        return k;
+        function f() {
+            if (A) {
+                if (B)
+                    return B;
+                if (C)
+                    return D;
+                if (E)
+                    return F;
+                if (G)
+                    return H;
+                if (I) {
+                    if (J)
+                        return K;
                     return;
                 }
-                if (l) {
-                    if (m)
+                if (L) {
+                    if (M)
                         return;
-                    return n;
+                    return N;
                 }
             }
         }
     }
     expect: {
-        function f(a, b, c, d, e, f, g, h, i, j, k, l, m, n) {
-            if (a)
-                return b || (c ? d : e ? f : g ? h : i ? j ? k : void 0 : l && !m ? n : void 0);
+        function f() {
+            if (A)
+                return B || (C ? D : E ? F : G ? H : I ? J ? K : void 0 : L && !M ? N : void 0);
         }
     }
 }

@@ -830,3 +830,20 @@ issue_5469: {
     }
     expect_stdout: "undefined"
 }
+
+issue_5694: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        var undefined;
+        // Node.js v0.12~6 (vm): 42
+        console.log((undefined = 42) && undefined);
+    }
+    expect: {
+        var undefined;
+        console.log((undefined = 42) && undefined);
+    }
+    expect_stdout: true
+}
