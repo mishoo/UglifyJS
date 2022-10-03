@@ -3540,3 +3540,61 @@ issue_5634_3_side_effects: {
     ]
     node_version: ">=8"
 }
+
+issue_5692_1: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        (async function() {
+            (async function() {
+                for await (var k of []);
+            })();
+            console.log("foo");
+        })();
+        console.log("bar");
+    }
+    expect: {
+        (async function() {
+            (async function() {
+                for await (var k of []);
+            })();
+            console.log("foo");
+        })();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=10"
+}
+
+issue_5692_2: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        (async function() {
+            (async function() {
+                for (var k of []);
+            })();
+            console.log("foo");
+        })();
+        console.log("bar");
+    }
+    expect: {
+        (async function() {
+            for (var k of []);
+            console.log("foo");
+        })();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
