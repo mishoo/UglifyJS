@@ -831,19 +831,36 @@ issue_5469: {
     expect_stdout: "undefined"
 }
 
-issue_5694: {
+issue_5694_1: {
+    options = {
+        booleans: true,
+        conditionals: true,
+    }
+    input: {
+        var Infinity;
+        // Node.js v0.12~6 (vm): 42
+        console.log((Infinity = 42) && Infinity);
+    }
+    expect: {
+        var Infinity;
+        console.log((Infinity = 42) && Infinity);
+    }
+    expect_stdout: true
+}
+
+issue_5694_2: {
     options = {
         booleans: true,
         conditionals: true,
     }
     input: {
         var undefined;
-        // Node.js v0.12~6 (vm): 42
-        console.log((undefined = 42) && undefined);
+        // Node.js v0.12~6 (vm): NaN
+        console.log(("foo", ++undefined) || undefined);
     }
     expect: {
         var undefined;
-        console.log((undefined = 42) && undefined);
+        console.log(("foo", ++undefined) || undefined);
     }
     expect_stdout: true
 }
