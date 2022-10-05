@@ -12,7 +12,7 @@ concat_1: {
 
         var e = 1 + x() + 2 + "X" + 3 + "boo";
 
-        // be careful with concatentation with "\0" with octal-looking strings.
+        // be careful with concatenation with "\0" with octal-looking strings.
         var f = "\0" + 360 + "\0" + 8 + "\0";
     }
     expect: {

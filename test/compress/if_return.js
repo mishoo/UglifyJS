@@ -525,7 +525,7 @@ if_var_return_2: {
     }
 }
 
-if_var_retrn_3: {
+if_var_return_3: {
     options = {
         conditionals: true,
         if_return: true,

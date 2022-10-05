@@ -3,7 +3,7 @@ Contributing
 
 ## Documentation
 
-Every new feature and API change should be accompanied by a README additon.
+Every new feature and API change should be accompanied by a README addition.
 
 ## Testing
 

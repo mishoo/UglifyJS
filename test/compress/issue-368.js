@@ -15,7 +15,7 @@ collapse: {
             var a;
             b = c();
             a = typeof b === 'function' ? b() : b;
-            return 'stirng' == typeof a && d();
+            return 'string' == typeof a && d();
         }
         function f3(c) {
             var a;
@@ -41,7 +41,7 @@ collapse: {
             return void 0 !== ('function' === typeof b ? b() : b) && c();
         }
         function f2(b) {
-            return 'stirng' == typeof ('function' === typeof (b = c()) ? b() : b) && d();
+            return 'string' == typeof ('function' === typeof (b = c()) ? b() : b) && d();
         }
         function f3(c) {
             var a;

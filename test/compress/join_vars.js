@@ -570,7 +570,7 @@ inlined_assignments: {
     expect_stdout: "PASS"
 }
 
-inilne_for: {
+inline_for: {
     options = {
         inline: true,
         join_vars: true,
@@ -590,7 +590,7 @@ inilne_for: {
     expect_stdout: "PASS"
 }
 
-inilne_var: {
+inline_var: {
     options = {
         inline: true,
         join_vars: true,

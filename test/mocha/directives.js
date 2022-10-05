@@ -348,7 +348,7 @@ describe("Directives", function() {
                 '"use strict";doSomething("foo");'
             ],
             [
-                // Nothing gets optimised in the compressor because "use asm" is the first statement
+                // Nothing gets optimized in the compressor because "use asm" is the first statement
                 '"use asm";"use\\x20strict";1+1;',
                 '"use asm";"use\\x20strict";1+1;'
             ],

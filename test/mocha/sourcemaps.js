@@ -245,7 +245,7 @@ describe("sourcemaps", function() {
             if (result.error) throw result.error;
             assert.strictEqual(result.code + "\n", read("test/input/issue-3294/output.js"));
         });
-        it("Should work in presence of unrecognised annotations", function() {
+        it("Should work in presence of unrecognized annotations", function() {
             var result = UglifyJS.minify(read("test/input/issue-3441/input.js"), {
                 compress: false,
                 mangle: false,
