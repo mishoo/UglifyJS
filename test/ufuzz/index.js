@@ -1142,7 +1142,7 @@ function createStatement(recurmax, canThrow, canBreak, canContinue, cannotReturn
         }
       case STMT_FUNC_EXPR:
         // "In non-strict mode code, functions can only be declared at top level, inside a block, or ..."
-        // (dont both with func decls in `if`; it's only a parser thing because you cant call them without a block)
+        // (don't make func decls in `if`; it's only a parser thing because you can't call them without a block)
         return "{" + createFunction(recurmax, NO_DEFUN, canThrow, stmtDepth) + "}";
       case STMT_TRY:
         // catch var could cause some problems

@@ -646,7 +646,7 @@ to be `false` and all symbol names will be omitted.
 - `bare_returns` (default: `false`) — support top level `return` statements
 
 - `html5_comments` (default: `true`) — process HTML comment as workaround for
-  browsers which do not recognise `<script>` tags
+  browsers which do not recognize `<script>` tags
 
 - `module` (default: `false`) — set to `true` if you wish to process input as
   ES module, i.e. implicit `"use strict";` and support for top-level `await`.
@@ -753,7 +753,7 @@ to be `false` and all symbol names will be omitted.
   ES module, i.e. implicit `"use strict";` alongside with `toplevel` enabled.
 
 - `negate_iife` (default: `true`) — negate "Immediately-Called Function Expressions"
-  where the return value is discarded, to avoid the parens that the
+  where the return value is discarded, to avoid the parentheses that the
   code generator would insert.
 
 - `objects` (default: `true`) — compact duplicate keys in object literals.
@@ -851,7 +851,7 @@ to be `false` and all symbol names will be omitted.
 - `unused` (default: `true`) — drop unreferenced functions and variables (simple
   direct variable assignments do not count as references unless set to `"keep_assign"`)
 
-- `varify` (default: `true`) — convert block-scoped declaractions into `var`
+- `varify` (default: `true`) — convert block-scoped declarations into `var`
   whenever safe to do so
 
 - `yields` (default: `true`) — apply optimizations to `yield` expressions

@@ -400,7 +400,7 @@ describe("comments", function() {
             assert.strictEqual(ast.print_to_string({comments: "all"}), "/*!test1*/\n/*test2*/\n//!test3\n//test4\n//test5\n//!test6\n//test7\n//!test8");
         });
 
-        it("Should be able to filter commments with the 'some' option", function() {
+        it("Should be able to filter comments with the 'some' option", function() {
             var ast = UglifyJS.parse("// foo\n/*@preserve*/\n// bar\n/*@license*/\n//@license with the wrong comment type\n/*@cc_on something*/");
             assert.strictEqual(ast.print_to_string({comments: "some"}), "/*@preserve*/\n/*@license*/\n/*@cc_on something*/");
         });

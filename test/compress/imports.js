@@ -140,12 +140,12 @@ mangle: {
     }
     input: {
         import foo, { bar } from "baz";
-        consoe.log(moo);
+        console.log(moo);
         import * as moo from "moz";
     }
     expect: {
         import o, { bar as m } from "baz";
-        consoe.log(r);
+        console.log(r);
         import * as r from "moz";
     }
 }
@@ -157,12 +157,12 @@ rename_mangle: {
     }
     input: {
         import foo, { bar } from "baz";
-        consoe.log(moo);
+        console.log(moo);
         import * as moo from "moz";
     }
     expect: {
         import o, { bar as m } from "baz";
-        consoe.log(r);
+        console.log(r);
         import * as r from "moz";
     }
 }
