@@ -273,6 +273,23 @@ concat_9: {
     expect_stdout: true
 }
 
+concat_sequence: {
+    options = {
+        collapse_vars: true,
+        strings: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        console.log(12 + (a = null, "34" + a));
+    }
+    expect: {
+        console.log(12 + "34" + null);
+    }
+    expect_stdout: "1234null"
+}
+
 issue_3689: {
     options = {
         strings: true,
