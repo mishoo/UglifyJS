@@ -584,7 +584,9 @@ issue_4668: {
     }
     expect: {
         console.log(function f() {
-            (function g() {})();
+            (function g() {
+                0;
+            })();
         }());
     }
     expect_stdout: "undefined"
