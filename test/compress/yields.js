@@ -2018,3 +2018,24 @@ issue_5684: {
     expect_stdout: "PASS"
     node_version: ">=10"
 }
+
+issue_5707: {
+    options = {
+        hoist_props: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a, b;
+        function* f(c = (b = 42, console.log("PASS"))) {}
+        b = f();
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
