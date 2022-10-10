@@ -1624,3 +1624,21 @@ issue_5552_4: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5705: {
+    options = {
+        reduce_vars: true,
+        rests: true,
+        unused: true,
+    }
+    input: {
+        (function(...a) {
+            var b = { ...a };
+        })(console.log("PASS"));
+    }
+    expect: {
+        (function() {})(console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8.3.0"
+}
