@@ -2039,3 +2039,40 @@ issue_5707: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5710: {
+    options = {
+        conditionals: true,
+        if_return: true,
+    }
+    input: {
+        (async function*() {
+            try {
+                switch (42) {
+                  case 42:
+                    {
+                        if (console.log("PASS"))
+                            return;
+                        return null;
+                    }
+                    break;
+                }
+            } finally {}
+        })().next();
+    }
+    expect: {
+        (async function*() {
+            try {
+                switch (42) {
+                  case 42:
+                    if (console.log("PASS"))
+                        return;
+                    return null;
+                    break;
+                }
+            } finally {}
+        })().next();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
