@@ -3051,3 +3051,20 @@ issue_5694: {
     }
     expect_stdout: "NaN"
 }
+
+issue_5712: {
+    options = {
+        booleans: true,
+        conditionals: true,
+        evaluate: true,
+    }
+    input: {
+        var a = 0;
+        a || (++a).toString() && a && console.log("PASS");
+    }
+    expect: {
+        var a = 0;
+        a || (++a).toString() && a && console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
