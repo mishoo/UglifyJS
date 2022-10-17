@@ -3845,3 +3845,47 @@ issue_5471_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5714: {
+    options = {
+        inline: true,
+        join_vars: true,
+        loops: true,
+        merge_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        console.log(function() {
+            var i = 1;
+            while (i--) {
+                var a = function f(b) {
+                    console.log(b);
+                    var c = function(d) {
+                        console.log(typeof d);
+                    }(console);
+                }();
+                var e = 42;
+            }
+            return e;
+        }());
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            for (var i = 1; i--;) {
+                var b = void 0;
+                console.log(b);
+                b = console,
+                console.log(typeof b);
+                var e = 42;
+            }
+            return e;
+        }());
+    }
+    expect_stdout: [
+        "undefined",
+        "object",
+        "42",
+    ]
+}
