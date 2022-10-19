@@ -7927,3 +7927,138 @@ issue_5623: {
     }
     expect_stdout: "1"
 }
+
+issue_5716_1: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var b = [ c, c ], c = function() {
+                return b++ + (a = b);
+            }();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        c = [ c, c ],
+        void (c = ++c);
+        var c;
+        console.log(c);
+    }
+    expect_stdout: "NaN"
+}
+
+issue_5716_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var b = [ c, c ], c = function() {
+                return (b += 4) + (a = b += 2);
+            }();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        void (c = c = (c = [ c, c ]) + 4 + 2);
+        var c;
+        console.log(c);
+    }
+    expect_stdout: ",42"
+}
+
+issue_5716_3: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var b = [ c, c ], c = function() {
+                return (b = b + 4) + (a = b += 2);
+            }();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        void (c = c = (c = [ c, c ]) + 4 + 2);
+        var c;
+        console.log(c);
+    }
+    expect_stdout: ",42"
+}
+
+issue_5716_4: {
+    options = {
+        assignments: true,
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        function f() {
+            var b = [ c, c ], c = function() {
+                return (b = true | b) + (a = b *= 42);
+            }();
+        }
+        f();
+        console.log(a);
+    }
+    expect: {
+        void (c = c = ((c = [ c, c ]) | true) * 42);
+        var c;
+        console.log(c);
+    }
+    expect_stdout: "42"
+}
+
+issue_5716_5: {
+    options = {
+        assignments: true,
+        reduce_vars: true,
+    }
+    input: {
+        console.log(function() {
+            return 0 || (a = 42 | a);
+            var a = function() {
+                return a;
+            };
+        }());
+    }
+    expect: {
+        console.log(function() {
+            return 0 || (a |= 42);
+            var a = function() {
+                return a;
+            };
+        }());
+    }
+    expect_stdout: "42"
+}
