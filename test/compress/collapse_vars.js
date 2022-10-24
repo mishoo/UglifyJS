@@ -10121,3 +10121,30 @@ issue_5643: {
     }
     expect_stdout: "42"
 }
+
+issue_5719: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 42, b;
+        switch (b = a) {
+          case a:
+          case b:
+          case a++:
+        }
+        console.log(a === b++ ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = 42, b;
+        switch (b = a) {
+          case a:
+          case b:
+          case a++:
+        }
+        console.log(a === b++ ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
