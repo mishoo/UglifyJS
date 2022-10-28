@@ -3068,3 +3068,23 @@ issue_5712: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5722: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        keep_fnames: true,
+        side_effects: true,
+    }
+    input: {
+        var a = true;
+        a && function f() {
+            return 42;
+        }(a++) ? null + (console.log("PASS") && a++) : "";
+    }
+    expect: {
+        var a = true;
+        a && (void a++, console.log("PASS")) && a++;
+    }
+    expect_stdout: "PASS"
+}
