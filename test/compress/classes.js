@@ -3901,3 +3901,29 @@ issue_5682_class_key_computed: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5724: {
+    options = {
+        arrows: true,
+        inline: true,
+        keep_fargs: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        class A {
+            static P = function(a) {
+                console.log(a, a);
+            }(a);
+        }
+    }
+    expect: {
+        "use strict";
+        (function(a) {
+            console.log(a, a);
+        })(a);
+    }
+    expect_stdout: ReferenceError("a is not defined")
+    node_version: ">=12"
+}
