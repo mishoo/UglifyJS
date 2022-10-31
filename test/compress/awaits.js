@@ -1348,7 +1348,7 @@ functions_inner_var: {
     node_version: ">=8"
 }
 
-instanceof_lambda: {
+instanceof_lambda_1: {
     options = {
         evaluate: true,
         side_effects: true,
@@ -1360,6 +1360,50 @@ instanceof_lambda: {
         console.log(false);
     }
     expect_stdout: "false"
+    node_version: ">=8"
+}
+
+instanceof_lambda_2: {
+    options = {
+        evaluate: true,
+        side_effects: false,
+    }
+    input: {
+        console.log(null instanceof async function() {});
+    }
+    expect: {
+        console.log((null, async function() {}, false));
+    }
+    expect_stdout: "false"
+    node_version: ">=8"
+}
+
+instanceof_lambda_3: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log({} instanceof async function() {});
+    }
+    expect: {
+        console.log({} instanceof async function() {});
+    }
+    expect_stdout: TypeError("Function has non-object prototype 'undefined' in instanceof check")
+    node_version: ">=8"
+}
+
+instanceof_lambda_4: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({ p: "foo" }) instanceof async function() {};
+    }
+    expect: {
+        [] instanceof async function() {};
+    }
+    expect_stdout: TypeError("Function has non-object prototype 'undefined' in instanceof check")
     node_version: ">=8"
 }
 
