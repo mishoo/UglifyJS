@@ -690,6 +690,65 @@ inline_iife_within_arrow: {
     node_version: ">=4"
 }
 
+instanceof_lambda_1: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(42 instanceof (() => {}));
+    }
+    expect: {
+        console.log(false);
+    }
+    expect_stdout: "false"
+    node_version: ">=4"
+}
+
+instanceof_lambda_2: {
+    options = {
+        evaluate: true,
+        side_effects: false,
+    }
+    input: {
+        console.log(null instanceof (() => {}));
+    }
+    expect: {
+        console.log((null, () => {}, false));
+    }
+    expect_stdout: "false"
+    node_version: ">=4"
+}
+
+instanceof_lambda_3: {
+    options = {
+        evaluate: true,
+        side_effects: true,
+    }
+    input: {
+        console.log({} instanceof (() => {}));
+    }
+    expect: {
+        console.log({} instanceof (() => {}));
+    }
+    expect_stdout: TypeError("Function has non-object prototype 'undefined' in instanceof check")
+    node_version: ">=4"
+}
+
+instanceof_lambda_4: {
+    options = {
+        side_effects: true,
+    }
+    input: {
+        ({ p: "foo" }) instanceof (() => {});
+    }
+    expect: {
+        [] instanceof (() => {});
+    }
+    expect_stdout: TypeError("Function has non-object prototype 'undefined' in instanceof check")
+    node_version: ">=4"
+}
+
 issue_4388: {
     options = {
         inline: true,
