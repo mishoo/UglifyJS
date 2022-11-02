@@ -90,3 +90,17 @@ issue_4801: {
     expect_stdout: "PASS"
     node_version: ">=10.4.0"
 }
+
+issue_5728: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log("" + 4n + 2);
+    }
+    expect: {
+        console.log("42");
+    }
+    expect_stdout: "42"
+    node_version: ">=10.4.0"
+}
