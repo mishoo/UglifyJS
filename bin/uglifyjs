@@ -21,6 +21,7 @@ var short_forms = {
     d: "define",
     e: "enclose",
     h: "help",
+    l: "line-length",
     m: "mangle",
     o: "output",
     O: "output-opts",
@@ -108,6 +109,7 @@ function process_option(name, no_value) {
                 "  --ie                                     Support non-standard Internet Explorer.",
                 "  --keep-fargs                             Do not mangle/drop function arguments.",
                 "  --keep-fnames                            Do not mangle/drop function names. Useful for code relying on Function.prototype.name.",
+                "  -l, --line-length <value>                Maximum line length for output code.",
                 "  --module                                 Process input as ES module (implies --toplevel)",
                 "  --name-cache <file>                      File to hold mangled name mappings.",
                 "  --rename                                 Force symbol expansion.",
@@ -155,6 +157,9 @@ function process_option(name, no_value) {
       case "expression":
       case "ie":
       case "ie8":
+      case "line-length":
+        options.max_line_len = read_value(true);
+        break;
       case "module":
       case "timings":
       case "toplevel":

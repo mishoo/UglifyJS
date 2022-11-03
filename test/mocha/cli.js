@@ -981,4 +981,20 @@ describe("bin/uglifyjs", function() {
             done();
         }).stdin.end(code);
     });
+    it("Should fail with empty --line-length", function(done) {
+        exec(uglifyjscmd + " -l", function(err, stdout, stderr) {
+            assert.ok(err);
+            assert.strictEqual(stdout, "");
+            assert.strictEqual(stderr, "ERROR: missing option argument for --line-length\n");
+            done();
+        })
+    });
+    it("Should work with --line-length", function(done) {
+        exec(uglifyjscmd + " --line-length 20 test/input/reduce/label.js", function(err, stdout, stderr) {
+            if (err) throw err
+            assert.strictEqual(stdout, "UNUSED:{console.log(\n0-.1-.1-.1)}\n");
+            assert.strictEqual(stderr, "");
+            done();
+        })
+    });
 });
