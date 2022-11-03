@@ -8062,3 +8062,89 @@ issue_5716_5: {
     }
     expect_stdout: "42"
 }
+
+issue_5730_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        L: {
+            var f = function() {
+                console.log(a);
+            };
+        }
+        f();
+        a++;
+    }
+    expect: {
+        var a = "PASS";
+        var f = function() {
+            console.log(a);
+        };
+        f();
+        a++;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5730_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        try {
+            var f = function() {
+                console.log(a);
+            };
+        } finally {}
+        f();
+        a++;
+    }
+    expect: {
+        var a = "PASS";
+        try {
+            var f = function() {
+                console.log(a);
+            };
+        } finally {}
+        f();
+        a++;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5730_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f, a = "PASS";
+        L: {
+            f = function() {
+                console.log(a);
+            };
+        }
+        f();
+        a++;
+    }
+    expect: {
+        var f, a = "PASS";
+        f = function() {
+            console.log(a);
+        };
+        f();
+        a++;
+    }
+    expect_stdout: "PASS"
+}
