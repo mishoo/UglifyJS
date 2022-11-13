@@ -3927,3 +3927,50 @@ issue_5724: {
     expect_stdout: ReferenceError("a is not defined")
     node_version: ">=12"
 }
+
+issue_5735_1: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(typeof function(a) {
+            return class {
+                static P = { ...a };
+            };
+        }([ 42..p ] = []));
+    }
+    expect: {
+        console.log(typeof function(a) {
+            return class {
+                static P = { ...a };
+            };
+        }([ 42..p ] = []));
+    }
+    expect_stdout: "function"
+    node_version: ">=12"
+}
+
+issue_5735_2: {
+    options = {
+        inline: true,
+    }
+    input: {
+        console.log(typeof function(a) {
+            return class {
+                p = a;
+            };
+        }(console.log("PASS")));
+    }
+    expect: {
+        console.log(typeof function(a) {
+            return class {
+                p = a;
+            };
+        }(console.log("PASS")));
+    }
+    expect_stdout: [
+        "PASS",
+        "function",
+    ]
+    node_version: ">=12"
+}
