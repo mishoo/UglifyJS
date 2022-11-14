@@ -2268,6 +2268,7 @@ function log(options) {
         var reduce_options = JSON.parse(options);
         reduce_options.validate = true;
         var reduced = reduce_test(original_code, reduce_options, {
+            max_timeout: max_timeout,
             verbose: false,
         }).code;
         if (reduced) {
@@ -2529,6 +2530,7 @@ beautify_options = JSON.stringify(beautify_options);
 minify_options = minify_options.map(JSON.stringify);
 var original_code, original_result, original_erred;
 var uglify_code, uglify_result, ok;
+var max_timeout = 10000;
 for (var round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
 
@@ -2546,13 +2548,19 @@ for (var round = 1; round <= num_iterations; round++) {
         println("original result:");
         println(result);
         println();
-            // ignore v8 parser bug
-        return bug_async_arrow_rest(result)
-            // ignore Node.js `__proto__` quirks
-            || bug_proto_stream(result)
-            // ignore runtime platform bugs
-            || result.message == "Script execution aborted.";
-    })) continue;
+        if (is_error_timeout(result)) orig_result[toplevel] = result = run_code(original_code, toplevel, max_timeout);
+        // skip over test cases which take too long to run
+        if (is_error_timeout(result)) return true;
+        // ignore v8 parser bug
+        if (bug_async_arrow_rest(result)) return true;
+        // ignore Node.js `__proto__` quirks
+        if (bug_proto_stream(result)) return true;
+        // ignore runtime platform bugs
+        if (result.message == "Script execution aborted.") return true;
+    })) {
+        num_iterations++;
+        continue;
+    }
     minify_options.forEach(function(options) {
         var o = JSON.parse(options);
         if (async && has_await) {
@@ -2575,22 +2583,10 @@ for (var round = 1; round <= num_iterations; round++) {
             if (!ok && uglify_erred && bug_proto_stream(uglify_result)) ok = true;
             // ignore runtime platform bugs
             if (!ok && uglify_erred && uglify_result.message == "Script execution aborted.") ok = true;
-            // handle difference caused by time-outs
-            if (!ok) {
-                if (original_erred && is_error_timeout(original_result)) {
-                    if (uglify_erred && is_error_timeout(uglify_result)) {
-                        // ignore difference in error message
-                        ok = true;
-                    } else {
-                        // ignore spurious time-outs
-                        if (!orig_result[toplevel ? 3 : 2]) orig_result[toplevel ? 3 : 2] = run_code(original_code, toplevel, 10000);
-                        ok = sandbox.same_stdout(orig_result[toplevel ? 3 : 2], uglify_result);
-                    }
-                } else if (uglify_erred && is_error_timeout(uglify_result)) {
-                    // ignore spurious time-outs
-                    var waited_result = run_code(uglify_code, toplevel, 10000);
-                    ok = sandbox.same_stdout(original_result, waited_result);
-                }
+            // ignore spurious time-outs
+            if (!ok && uglify_erred && is_error_timeout(uglify_result)) {
+                var waited_result = run_code(uglify_code, toplevel, max_timeout);
+                ok = sandbox.same_stdout(original_result, waited_result);
             }
             // ignore declaration order of global variables
             if (!ok && !toplevel) {
