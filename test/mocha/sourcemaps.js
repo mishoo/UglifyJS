@@ -109,6 +109,7 @@ describe("sourcemaps", function() {
             "}",
         ].join("\n"), {
             sourceMap: true,
+            toplevel: false,
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, "class A{static P=42;set#q(s){}}");
@@ -187,6 +188,7 @@ describe("sourcemaps", function() {
                 sourceMap: {
                     content: "inline",
                 },
+                toplevel: false,
                 warnings: true,
             });
             assert.strictEqual(result.code, "var bar=function(bar){return bar};");
@@ -201,6 +203,7 @@ describe("sourcemaps", function() {
                     content: "inline",
                     url: "inline",
                 },
+                toplevel: false,
                 warnings: true,
             });
             if (result.error) throw result.error;
@@ -296,8 +299,9 @@ describe("sourcemaps", function() {
         it("Should append source map to output js when sourceMapInline is enabled", function() {
             var result = UglifyJS.minify('var a = function(foo) { return foo; };', {
                 sourceMap: {
-                    url: "inline"
-                }
+                    url: "inline",
+                },
+                toplevel: false,
             });
             if (result.error) throw result.error;
             var code = result.code;
@@ -305,7 +309,9 @@ describe("sourcemaps", function() {
                 "//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIjAiXSwibmFtZXMiOlsiYSIsImZvbyJdLCJtYXBwaW5ncyI6IkFBQUEsSUFBSUEsRUFBSSxTQUFTQyxHQUFPLE9BQU9BLENBQUsifQ==");
         });
         it("Should not append source map to output js when sourceMapInline is not enabled", function() {
-            var result = UglifyJS.minify('var a = function(foo) { return foo; };');
+            var result = UglifyJS.minify("var a = function(foo) { return foo; };", {
+                module: false,
+            });
             if (result.error) throw result.error;
             var code = result.code;
             assert.strictEqual(code, "var a=function(n){return n};");
@@ -316,11 +322,12 @@ describe("sourcemaps", function() {
                     directives: false,
                 },
                 output: {
-                    max_line_len: 20
+                    max_line_len: 20,
                 },
                 sourceMap: {
-                    url: "inline"
-                }
+                    url: "inline",
+                },
+                toplevel: false,
             });
             if (result.error) throw result.error;
             assert.strictEqual(result.code, read("test/input/issue-505/output.js"));
@@ -334,7 +341,8 @@ describe("sourcemaps", function() {
                 sourceMap: {
                     includeSources: true,
                     url: "inline",
-                }
+                },
+                toplevel: false,
             });
             if (result.error) throw result.error;
             var map = JSON.parse(result.map);
@@ -348,7 +356,8 @@ describe("sourcemaps", function() {
                 sourceMap: {
                     content: "inline",
                     includeSources: true,
-                }
+                },
+                toplevel: false,
             });
             if (result.error) throw result.error;
             map = JSON.parse(result.map);

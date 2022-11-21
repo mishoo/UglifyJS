@@ -12,8 +12,8 @@ jobs:
           - '-mb braces'
           - '--ie -c'
           - '-mc'
-          - '-p acorn --toplevel -mco spidermonkey'
-          - '--toplevel -mc passes=3,pure_getters,unsafe'
+          - '-p acorn -mco spidermonkey'
+          - '-mc passes=3,pure_getters,unsafe'
         script:
           - acorn.sh
           - bootstrap.sh

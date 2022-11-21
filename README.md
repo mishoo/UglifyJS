@@ -119,6 +119,8 @@ a double dash to prevent input files being used as option arguments:
     --keep-fnames               Do not mangle/drop function names.  Useful for
                                 code relying on Function.prototype.name.
     --module                    Process input as ES module (implies --toplevel)
+    --no-module                 Avoid optimizations which may alter runtime behavior
+                                under prior versions of JavaScript.
     --name-cache <file>         File to hold mangled name mappings.
     --self                      Build UglifyJS as a library (implies --wrap UglifyJS)
     --source-map [options]      Enable source map/specify source map options:
@@ -530,9 +532,9 @@ if (result.error) throw result.error;
   - `mangle.properties` (default: `false`) — a subcategory of the mangle option.
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
-- `module` (default: `false`) — set to `true` if you wish to process input as
-  ES module, i.e. implicit `"use strict";` and support for top-level `await`,
-  alongside with `toplevel` enabled.
+- `module` (default: `true`) — process input as ES module, i.e. implicit
+  `"use strict";` and support for top-level `await`, alongside with `toplevel`
+  enabled.
 
 - `nameCache` (default: `null`) — pass an empty object `{}` or a previously
   used `nameCache` object if you wish to cache mangled variable and

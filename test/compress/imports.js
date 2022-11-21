@@ -167,6 +167,34 @@ rename_mangle: {
     }
 }
 
+mangle_export_import: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        export let o = A;
+        import { p as A } from "foo";
+    }
+    expect: {
+        export let o = p;
+        import { p } from "foo";
+    }
+}
+
+mangle_import_export: {
+    mangle = {
+        toplevel: true,
+    }
+    input: {
+        import { p as A } from "foo";
+        export let o = A;
+    }
+    expect: {
+        import { p } from "foo";
+        export let o = p;
+    }
+}
+
 keep_ref: {
     options = {
         reduce_vars: true,

@@ -373,7 +373,9 @@ describe("Directives", function() {
                 'function f(){}'
             ],
         ].forEach(function(test) {
-            var result = UglifyJS.minify(test[0]);
+            var result = UglifyJS.minify(test[0], {
+                module: false,
+            });
             if (result.error) throw result.error;
             assert.strictEqual(result.code, test[1], test[0]);
         });

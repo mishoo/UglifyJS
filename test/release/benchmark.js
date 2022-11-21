@@ -3,7 +3,7 @@ require("./run")([
     "-b braces",
     "-m",
     "-mc passes=3",
-    "-mc passes=3,toplevel",
+    "--no-module -mc",
     "-mc passes=3,unsafe",
     "-mc keep_fargs=false,passes=3",
     "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",

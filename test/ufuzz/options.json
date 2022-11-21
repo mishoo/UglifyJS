@@ -2,6 +2,7 @@
     {
         "compress": false,
         "mangle": false,
+        "module": false,
         "output": {
             "beautify": true,
             "braces": true
@@ -9,14 +10,19 @@
         "rename": true
     },
     {
-        "compress": false
+        "compress": false,
+        "module": false
     },
     {
-        "mangle": false
+        "mangle": false,
+        "module": false
     },
-    {},
+    {
+        "module": false
+    },
     {
         "ie": true,
+        "module": false,
         "toplevel": true
     },
     {
@@ -28,6 +34,7 @@
         },
         "keep_fargs": true,
         "keep_fnames": true,
+        "module": false,
         "toplevel": true
     },
     {
@@ -39,6 +46,7 @@
             "unsafe_math": true,
             "unsafe_proto": true,
             "unsafe_regexp": true
-        }
+        },
+        "module": false
     }
 ]

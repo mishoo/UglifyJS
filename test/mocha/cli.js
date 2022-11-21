@@ -206,7 +206,13 @@ describe("bin/uglifyjs", function() {
         }, 1000);
     });
     it("Should work with --keep-fargs (mangle only)", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fargs -m';
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-1431/sample.js",
+            "--keep-fargs",
+            "--mangle",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(x){return function(){function n(a){return a*a}return x(n)}}function g(op){return op(1)+op(2)}console.log(f(g)()==5);\n");
@@ -214,7 +220,14 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with --keep-fargs (mangle & compress)", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fargs -m -c';
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-1431/sample.js",
+            "--keep-fargs",
+            "--mangle",
+            "--no-module",
+            "--compress",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(x){return function(){return x(function(a){return a*a})}}function g(op){return op(1)+op(2)}console.log(5==f(g)());\n");
@@ -222,7 +235,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with keep_fargs under mangler options", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1431/sample.js -m keep_fargs=true';
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-1431/sample.js",
+            "--mangle", "keep_fargs=true",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(x){return function(){function n(a){return a*a}return x(n)}}function g(op){return op(1)+op(2)}console.log(f(g)()==5);\n");
@@ -230,7 +248,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with --keep-fnames (mangle only)", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m';
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-1431/sample.js",
+            "--keep-fnames",
+            "--mangle",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(r){return function(){function n(n){return n*n}return r(n)}}function g(n){return n(1)+n(2)}console.log(f(g)()==5);\n");
@@ -238,7 +261,14 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with --keep-fnames (mangle & compress)", function(done) {
-        var command = uglifyjscmd + ' test/input/issue-1431/sample.js --keep-fnames -m -c';
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-1431/sample.js",
+            "--keep-fnames",
+            "--mangle",
+            "--no-module",
+            "--compress",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(n){return function(){return n(function n(r){return r*r})}}function g(n){return n(1)+n(2)}console.log(5==f(g)());\n");
@@ -557,7 +587,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (delete x)", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/delete.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/delete.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -571,7 +605,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (function g(arguments))", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/function_1.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/function_1.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -585,7 +623,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (function eval())", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/function_2.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/function_2.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -599,7 +641,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (iife arguments())", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/function_3.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/function_3.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -613,7 +659,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (catch (eval))", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/try.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/try.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -627,7 +677,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (var eval)", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/var.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/var.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -641,7 +695,11 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should throw syntax error (var { eval })", function(done) {
-        var command = uglifyjscmd + " test/input/invalid/destructured_var.js";
+        var command = [
+            uglifyjscmd,
+            "test/input/invalid/destructured_var.js",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             assert.ok(err);
             assert.strictEqual(stdout, "");
@@ -807,7 +865,8 @@ describe("bin/uglifyjs", function() {
         var command = [
             uglifyjscmd,
             "test/input/issue-2310/input.js",
-            "-c",
+            "--compress",
+            "--no-module",
             "--source-map", "url=inline",
         ].join(" ");
         exec(command, function(err, stdout, stderr) {
@@ -840,7 +899,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with --mangle reserved=[]", function(done) {
-        var command = uglifyjscmd + " test/input/issue-505/input.js -m reserved=[callback]";
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-505/input.js",
+            "--mangle", "reserved=[callback]",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, 'function test(callback){"aaaaaaaaaaaaaaaa";callback(err,data);callback(err,data)}\n');
@@ -848,7 +912,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with --mangle reserved=false", function(done) {
-        var command = uglifyjscmd + " test/input/issue-505/input.js -m reserved=false";
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-505/input.js",
+            "--mangle", "reserved=false",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, 'function test(a){"aaaaaaaaaaaaaaaa";a(err,data);a(err,data)}\n');
@@ -865,7 +934,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with mangle.properties.regex from --config-file", function(done) {
-        var command = uglifyjscmd + " test/input/issue-3315/input.js --config-file test/input/issue-3315/config.json";
+        var command = [
+            uglifyjscmd,
+            "test/input/issue-3315/input.js",
+            "--config-file", "test/input/issue-3315/config.json",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, 'function f(){"aaaaaaaaaa";var a={prop:1,t:2};return a.prop+a.t}\n');
@@ -882,7 +956,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with explicit --rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js --rename";
+        var command = [
+            uglifyjscmd,
+            "test/input/rename/input.js",
+            "--no-module",
+            "--rename",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(a){return b(a);function b(c){return c+c}}\n");
@@ -890,7 +969,14 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with explicit --no-rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js -mc passes=2 --no-rename";
+        var command = [
+            uglifyjscmd,
+            "test/input/rename/input.js",
+            "--compress", "passes=2",
+            "--mangle",
+            "--no-module",
+            "--no-rename",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(n){return function(n){return n+n}(n)}\n");
@@ -898,7 +984,13 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with implicit --rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js -mc passes=2";
+        var command = [
+            uglifyjscmd,
+            "test/input/rename/input.js",
+            "--compress", "passes=2",
+            "--mangle",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(n){return n+n}\n");
@@ -906,7 +998,12 @@ describe("bin/uglifyjs", function() {
         });
     });
     it("Should work with implicit --no-rename", function(done) {
-        var command = uglifyjscmd + " test/input/rename/input.js -c passes=2";
+        var command = [
+            uglifyjscmd,
+            "test/input/rename/input.js",
+            "--compress", "passes=2",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout, stderr) {
             if (err) throw err;
             assert.strictEqual(stdout, "function f(x){return function(x){return x+x}(x)}\n");
@@ -971,12 +1068,7 @@ describe("bin/uglifyjs", function() {
         ]).join("\n");
         exec(uglifyjscmd + " -mc", function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, [
-                "console.log(function(){",
-                "var p={p:25},n={p:121},o={p:1024};",
-                "return p.p+n.p+o.p",
-                "}());\n",
-            ].join(""));
+            assert.strictEqual(stdout, "console.log({p:25}.p+{p:121}.p+{p:1024}.p);\n");
             assert.strictEqual(run_code(stdout), run_code(code));
             done();
         }).stdin.end(code);

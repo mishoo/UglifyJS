@@ -117,6 +117,7 @@ describe("comments", function() {
                     beautify: true,
                     comments: "all",
                 },
+                toplevel: false,
             });
             if (result.error) throw result.error;
             assert.strictEqual(result.code, [
@@ -376,6 +377,7 @@ describe("comments", function() {
             var result = UglifyJS.minify(js, {
                 compress: { collapse_vars: false, reduce_vars: false },
                 output: { comments: true },
+                toplevel: false,
             });
             assert.strictEqual(result.code, 'function f(){/*c1*/var/*c2*/n=/*c3*/!1;return n}');
         });
@@ -384,6 +386,7 @@ describe("comments", function() {
             var result = UglifyJS.minify(js, {
                 compress: { collapse_vars: false, reduce_vars: false },
                 output: { comments: false },
+                toplevel: false,
             });
             assert.strictEqual(result.code, 'function f(){var n=!1;return n}');
         });
@@ -458,6 +461,7 @@ describe("comments", function() {
         it("Should handle shebang and preamble correctly", function() {
             var code = UglifyJS.minify("#!/usr/bin/node\nvar x = 10;", {
                 output: { preamble: "/* Build */" },
+                toplevel: false,
             }).code;
             assert.strictEqual(code, "#!/usr/bin/node\n/* Build */\nvar x=10;");
         });
@@ -465,6 +469,7 @@ describe("comments", function() {
         it("Should handle preamble without shebang correctly", function() {
             var code = UglifyJS.minify("var x = 10;", {
                 output: { preamble: "/* Build */" },
+                toplevel: false,
             }).code;
             assert.strictEqual(code, "/* Build */\nvar x=10;");
         });
@@ -476,7 +481,10 @@ describe("comments", function() {
             for (var i = 1; i <= 5000; ++i) js += "// " + i + "\n";
             for (; i <= 10000; ++i) js += "/* " + i + " */ /**/";
             js += "x; }";
-            var result = UglifyJS.minify(js, { mangle: false });
+            var result = UglifyJS.minify(js, {
+                mangle: false,
+                toplevel: false,
+            });
             assert.strictEqual(result.code, "function lots_of_comments(x){return 7-x}");
         });
     });

@@ -11,7 +11,9 @@ function read(path) {
 describe("minify", function() {
     it("Should test basic sanity of minify with default options", function() {
         var js = "function foo(bar) { if (bar) return 3; else return 7; var u = not_called(); }";
-        var result = UglifyJS.minify(js);
+        var result = UglifyJS.minify(js, {
+            module: false,
+        });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, "function foo(n){return n?3:7}");
     });
@@ -46,10 +48,13 @@ describe("minify", function() {
         ].forEach(function(file) {
             var code = read("test/input/issue-1242/" + file);
             var result = UglifyJS.minify(code, {
+                compress: {
+                    toplevel: false,
+                },
                 mangle: {
                     cache: cache,
-                    toplevel: true
-                }
+                    toplevel: true,
+                },
             });
             if (result.error) throw result.error;
             original += code;
@@ -78,10 +83,13 @@ describe("minify", function() {
         ].forEach(function(file) {
             var code = read("test/input/issue-1242/" + file);
             var result = UglifyJS.minify(code, {
-                mangle: {
-                    toplevel: true
+                compress: {
+                    toplevel: false,
                 },
-                nameCache: cache
+                mangle: {
+                    toplevel: true,
+                },
+                nameCache: cache,
             });
             if (result.error) throw result.error;
             original += code;
@@ -162,8 +170,10 @@ describe("minify", function() {
             var js = 'var foo = {"x": 1, y: 2, \'z\': 3};';
             var result = UglifyJS.minify(js, {
                 output: {
-                    keep_quoted_props: true
-                }});
+                    keep_quoted_props: true,
+                },
+                toplevel: false,
+            });
             assert.strictEqual(result.code, 'var foo={"x":1,y:2,"z":3};');
         });
         it("Should preserve quote styles when quote_style is 3", function() {
@@ -171,8 +181,10 @@ describe("minify", function() {
             var result = UglifyJS.minify(js, {
                 output: {
                     keep_quoted_props: true,
-                    quote_style: 3
-                }});
+                    quote_style: 3,
+                },
+                toplevel: false,
+            });
             assert.strictEqual(result.code, 'var foo={"x":1,y:2,\'z\':3};');
         });
         it("Should not preserve quotes in object literals when disabled", function() {
@@ -180,8 +192,10 @@ describe("minify", function() {
             var result = UglifyJS.minify(js, {
                 output: {
                     keep_quoted_props: false,
-                    quote_style: 3
-                }});
+                    quote_style: 3,
+                },
+                toplevel: false,
+            });
             assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
         });
     });
@@ -223,7 +237,7 @@ describe("minify", function() {
                 output: {
                     comments: "all",
                     beautify: false,
-                }
+                },
             });
             var code = result.code;
             assert.strictEqual(code, "//  comment1   comment2\nbar();");
@@ -233,7 +247,8 @@ describe("minify", function() {
                 output: {
                     comments: "all",
                     beautify: false,
-                }
+                },
+                toplevel: false,
             });
             var code = result.code;
             assert.strictEqual(code, "var a=function(){foo()}();");
@@ -301,7 +316,7 @@ describe("minify", function() {
                 compress: false,
                 mangle: false,
                 output: {
-                    ast: true
+                    ast: true,
                 },
             }).ast;
             assert.strictEqual(ast.TYPE, "Toplevel");
@@ -312,9 +327,10 @@ describe("minify", function() {
             var stat = ast.body[0].body[0];
             UglifyJS.minify(ast, {
                 compress: {
-                    sequences: false
+                    sequences: false,
+                    toplevel: false,
                 },
-                mangle: false
+                mangle: false,
             });
             assert.ok(stat.body);
             assert.strictEqual(stat.print_to_string(), "a=x()");
