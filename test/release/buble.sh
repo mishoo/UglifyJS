@@ -41,6 +41,11 @@ rm -rf tmp/buble \
 @@ -309 +309 @@ export default class BlockStatement extends Node {
 -                               let cont = false; // TODO implement proper continue...
 +                               let cont = !declarations; // TODO implement proper continue...
+--- a/src/program/types/VariableDeclaration.js
++++ b/src/program/types/VariableDeclaration.js
+@@ -38 +38 @@ export default class VariableDeclaration extends Node {
+-                                               code.remove(c, declarator.id.start);
++                                               code.remove(c, declarator.id.start, lastDeclaratorIsPattern);
 EOF
 ERR=$?; if [ "$ERR" != "0" ]; then echo "Error: $ERR"; exit $ERR; fi
 minify_in_situ "src" \

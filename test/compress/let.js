@@ -1130,6 +1130,130 @@ default_init: {
     node_version: ">=4"
 }
 
+join_let_var_1: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        var a = "foo";
+        let b = "bar";
+        for (var c of [ a, b ])
+            console.log(c);
+    }
+    expect: {
+        "use strict";
+        let a = "foo", b = "bar";
+        for (var c of [ a, b ])
+            console.log(c);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
+join_let_var_2: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        let a = "foo";
+        var b = "bar";
+        for (let c of [ a, b ])
+            console.log(c);
+    }
+    expect: {
+        "use strict";
+        let a = "foo", b = "bar";
+        for (let c of [ a, b ])
+            console.log(c);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
+keep_let_var_1: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        var a = "foo";
+        let b = "bar";
+        for (var c of [ a, b ])
+            console.log(c);
+        function f() {
+            return a;
+        }
+        console.log(f(f));
+    }
+    expect: {
+        "use strict";
+        var a = "foo", c;
+        let b = "bar";
+        for (c of [ a, b ])
+            console.log(c);
+        function f() {
+            return a;
+        }
+        console.log(f(f));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+    ]
+    node_version: ">=4"
+}
+
+keep_let_var_2: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        let a = "foo";
+        var b = "bar";
+        for (let c of [ a, b ])
+            console.log(c);
+        function f() {
+            return b;
+        }
+        console.log(f(f));
+    }
+    expect: {
+        "use strict";
+        let a = "foo";
+        var b = "bar";
+        for (let c of [ a, b ])
+            console.log(c);
+        function f() {
+            return b;
+        }
+        console.log(f(f));
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "bar",
+    ]
+    node_version: ">=4"
+}
+
 issue_4191: {
     options = {
         functions: true,
