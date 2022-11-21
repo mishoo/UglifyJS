@@ -6,8 +6,11 @@ describe("Input file as map", function() {
         var jsMap = {
             '/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'
         };
-        var result = UglifyJS.minify(jsMap, {sourceMap: true});
-
+        var result = UglifyJS.minify(jsMap, {
+            sourceMap: true,
+            toplevel: false,
+        });
+        if (result.error) throw result.error;
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
         assert.deepEqual(map.sources, ['/scripts/foo.js']);
@@ -26,8 +29,11 @@ describe("Input file as map", function() {
             'var foo = {"x": 1, y: 2, \'z\': 3};',
             'var bar = 15;'
         ];
-        var result = UglifyJS.minify(jsSeq, {sourceMap: true});
-
+        var result = UglifyJS.minify(jsSeq, {
+            sourceMap: true,
+            toplevel: false,
+        });
+        if (result.error) throw result.error;
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3},bar=15;');
         assert.deepEqual(map.sources, ['0', '1']);
@@ -37,8 +43,13 @@ describe("Input file as map", function() {
         var jsMap = {
             '/scripts/foo.js': 'var foo = {"x": 1, y: 2, \'z\': 3};'
         };
-        var result = UglifyJS.minify(jsMap, {sourceMap: {includeSources: true}});
-
+        var result = UglifyJS.minify(jsMap, {
+            sourceMap: {
+                includeSources: true,
+            },
+            toplevel: false,
+        });
+        if (result.error) throw result.error;
         var map = JSON.parse(result.map);
         assert.strictEqual(result.code, 'var foo={x:1,y:2,z:3};');
         assert.deepEqual(map.sourcesContent, ['var foo = {"x": 1, y: 2, \'z\': 3};']);

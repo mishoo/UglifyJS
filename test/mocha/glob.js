@@ -5,31 +5,44 @@ var path = require("path");
 describe("bin/uglifyjs with input file globs", function() {
     var uglifyjscmd = '"' + process.argv[0] + '" bin/uglifyjs';
     it("bin/uglifyjs with one input file extension glob.", function(done) {
-        var command = uglifyjscmd + ' "test/input/issue-1242/foo.*" -cm';
-
+        var command = [
+            uglifyjscmd,
+            '"test/input/issue-1242/foo.*"',
+            "--compress",
+            "--mangle",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
-
             assert.strictEqual(stdout, 'var print=console.log.bind(console);function foo(o){print("Foo:",2*o)}\n');
             done();
         });
     });
     it("bin/uglifyjs with one input file name glob.", function(done) {
-        var command = uglifyjscmd + ' "test/input/issue-1242/b*.es5" -cm';
-
+        var command = [
+            uglifyjscmd,
+            '"test/input/issue-1242/b*.es5"',
+            "--compress",
+            "--mangle",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
-
             assert.strictEqual(stdout, 'function bar(n){return 3*n}function baz(n){return n/2}\n');
             done();
         });
     });
     it("bin/uglifyjs with multiple input file globs.", function(done) {
-        var command = uglifyjscmd + ' "test/input/issue-1242/???.es5" "test/input/issue-1242/*.js" -mc toplevel,passes=3';
-
+        var command = [
+            uglifyjscmd,
+            '"test/input/issue-1242/???.es5"',
+            '"test/input/issue-1242/*.js"',
+            "--compress", "toplevel,passes=3",
+            "--mangle",
+            "--no-module",
+        ].join(" ");
         exec(command, function(err, stdout) {
             if (err) throw err;
-
             assert.strictEqual(stdout, 'var print=console.log.bind(console);print("qux",9,6),print("Foo:",22);\n');
             done();
         });

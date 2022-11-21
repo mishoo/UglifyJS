@@ -5,5 +5,6 @@ require("./run")([
     var args = options.split(/ /);
     args.unshift("test/jetstream.js");
     args.push("-b", "beautify=false,webkit");
+    args.push("--no-module");
     return args;
 }));
