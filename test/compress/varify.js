@@ -329,6 +329,42 @@ forin_const_2: {
     node_version: ">=6"
 }
 
+forin_const_3: {
+    options = {
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        const o = {
+            p: 42,
+            q: "PASS",
+        };
+        for (const k in o)
+            (function f() {
+                console.log(k, o[k]);
+            })();
+    }
+    expect: {
+        "use strict";
+        let o = {
+            p: 42,
+            q: "PASS",
+        };
+        for (let k in o)
+            (function f() {
+                console.log(k, o[k]);
+            })();
+    }
+    expect_stdout: [
+        "p 42",
+        "q PASS",
+    ]
+    node_version: ">=4"
+}
+
 forin_let_1: {
     options = {
         join_vars: true,
