@@ -2294,3 +2294,37 @@ issue_5591: {
     ]
     node_version: ">=4"
 }
+
+issue_5741: {
+    options = {
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+    }
+    input: {
+        "use strict";
+        (function(a) {
+            let b = function() {
+                var c = a;
+                console.log(c);
+            }();
+            function g() {
+                a++;
+                b;
+            }
+        })("PASS");
+    }
+    expect: {
+        "use strict";
+        (function(a) {
+            let b = (c = a, void console.log(c));
+            var c;
+            function g() {
+                a++;
+                b;
+            }
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
