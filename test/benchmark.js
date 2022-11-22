@@ -3,6 +3,7 @@
 
 "use strict";
 
+require("../tools/tty");
 var createHash = require("crypto").createHash;
 var fetch = require("./fetch");
 var spawn = require("child_process").spawn;
