@@ -2494,6 +2494,7 @@ function patch_try_catch(orig, toplevel) {
 var beautify_options = {
     compress: false,
     mangle: false,
+    module: false,
     output: {
         beautify: true,
         braces: true,
