@@ -2139,7 +2139,7 @@ function errorln(msg) {
 
 function try_beautify(code, toplevel, result, printfn, options) {
     var o = JSON.parse(beautify_options);
-    if (async && has_await) o.module = true;
+    o.module = !!(async && has_await);
     var beautified = UglifyJS.minify(code, o);
     if (beautified.error) {
         printfn("// !!! beautify failed !!!");
@@ -2494,7 +2494,6 @@ function patch_try_catch(orig, toplevel) {
 var beautify_options = {
     compress: false,
     mangle: false,
-    module: false,
     output: {
         beautify: true,
         braces: true,

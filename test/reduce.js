@@ -621,6 +621,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var beautified = U.minify(testcase, {
         compress: false,
         mangle: false,
+        module: minify_options.module,
         output: function() {
             var options = JSON.parse(JSON.stringify(print_options));
             options.beautify = true;
