@@ -2328,3 +2328,66 @@ issue_5741: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5745_1: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        {
+            let f = function() {
+                return f && "PASS";
+            };
+            var a = f();
+        }
+        a;
+        console.log(a);
+    }
+    expect: {
+        "use strict";
+        {
+            let f = function() {
+                return f && "PASS";
+            };
+            var a = f();
+        }
+        a;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5745_2: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        {
+            let f = function() {
+                return f && "PASS";
+            };
+            var a = f();
+            a;
+            console.log(a);
+        }
+    }
+    expect: {
+        "use strict";
+        {
+            let f = function() {
+                return f && "PASS";
+            }, a = f();
+            a;
+            console.log(a);
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
