@@ -1165,9 +1165,9 @@ collapse_rhs_static: {
         "use strict";
         var a = "FAIL";
         class A {
-            static p = a = "PASS";
+            static p = "PASS";
         }
-        console.log(a);
+        console.log(a = "PASS");
     }
     expect_stdout: "PASS"
     node_version: ">=12"
@@ -3973,4 +3973,60 @@ issue_5735_2: {
         "function",
     ]
     node_version: ">=12"
+}
+
+issue_5747_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        (async function() {
+            var a = await 42;
+            class A {
+                static P = a && console.log(typeof this);
+            }
+        })();
+    }
+    expect: {
+        "use strict";
+        (async function() {
+            var a = await 42;
+            class A {
+                static P = a && console.log(typeof this);
+            }
+        })();
+    }
+    expect_stdout: "function"
+    node_version: ">=12"
+}
+
+issue_5747_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        (async function() {
+            var a = await 42;
+            class A {
+                static {
+                    a && console.log(typeof this);
+                }
+            }
+        })();
+    }
+    expect: {
+        "use strict";
+        (async function() {
+            var a = await 42;
+            class A {
+                static {
+                    a && console.log(typeof this);
+                }
+            }
+        })();
+    }
+    expect_stdout: "function"
+    node_version: ">=16"
 }
