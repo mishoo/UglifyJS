@@ -896,8 +896,29 @@ dont_inline_nested: {
     node_version: ">=4"
 }
 
-drop_body: {
+drop_body_1: {
     options = {
+        side_effects: true,
+        yields: true,
+    }
+    input: {
+        (function*([ , a = console.log("foo") ]) {
+            console.log("bar");
+        })([ console.log("baz") ]);
+    }
+    expect: {
+        void ([ [ , [][0] = console.log("foo") ] ] = [ [ console.log("baz") ] ]);
+    }
+    expect_stdout: [
+        "baz",
+        "foo",
+    ]
+    node_version: ">=6"
+}
+
+drop_body_2: {
+    options = {
+        passes: 2,
         side_effects: true,
         yields: true,
     }
@@ -2019,9 +2040,31 @@ issue_5684: {
     node_version: ">=10"
 }
 
-issue_5707: {
+issue_5707_1: {
     options = {
         hoist_props: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a, b;
+        function* f(c = (b = 42, console.log("PASS"))) {}
+        b = f();
+    }
+    expect: {
+        (function(c = console.log("PASS")) {})();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5707_2: {
+    options = {
+        hoist_props: true,
+        passes: 2,
         reduce_vars: true,
         side_effects: true,
         toplevel: true,
@@ -2075,4 +2118,54 @@ issue_5710: {
     }
     expect_stdout: "PASS"
     node_version: ">=10"
+}
+
+issue_5749_1: {
+    options = {
+        collapse_vars: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a;
+        function* f() {}
+        a = f(new function() {
+            var b = a |= 0, c = a += console.log("PASS");
+        }());
+    }
+    expect: {
+        (function() {})(function() {
+            console.log("PASS");
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5749_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        sequences: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+        yields: true,
+    }
+    input: {
+        var a;
+        function* f() {}
+        a = f(new function() {
+            var b = a |= 0, c = a += console.log("PASS");
+        }());
+    }
+    expect: {
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
 }
