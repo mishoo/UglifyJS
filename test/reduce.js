@@ -539,7 +539,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var before_iterations, diff_error_message, passes = 3, testcase_ast;
     for (var pass = 1; pass <= passes; pass++) {
         if (before_iterations !== testcase) {
-            testcase_ast = U.parse(testcase);
+            testcase_ast = U.parse(testcase, {
+                module: minify_options.module,
+            });
             if (diff_error_message === testcase) {
                 // only difference detected is in error message, so expose that and try again
                 testcase_ast.transform(new U.TreeTransformer(function(node, descend) {
@@ -561,7 +563,9 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     testcase = code;
                     differs = diff;
                 } else {
-                    testcase_ast = U.parse(testcase);
+                    testcase_ast = U.parse(testcase, {
+                        module: minify_options.module,
+                    });
                 }
             }
             diff_error_message = null;
