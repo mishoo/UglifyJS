@@ -2169,3 +2169,41 @@ issue_5749_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5754: {
+    options = {
+        if_return: true,
+    }
+    input: {
+        async function* f(a, b) {
+            try {
+                if (a)
+                    return void 0;
+            } finally {
+                console.log(b);
+            }
+        }
+        f(42, "foo").next();
+        f(null, "bar").next();
+        console.log("baz");
+    }
+    expect: {
+        async function* f(a, b) {
+            try {
+                if (a)
+                    return void 0;
+            } finally {
+                console.log(b);
+            }
+        }
+        f(42, "foo").next();
+        f(null, "bar").next();
+        console.log("baz");
+    }
+    expect_stdout: [
+        "bar",
+        "baz",
+        "foo",
+    ]
+    node_version: ">=10"
+}
