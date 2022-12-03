@@ -2391,3 +2391,105 @@ issue_5745_2: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5756_1: {
+    options = {
+        join_vars: true,
+        loops: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        do {
+            function f() {
+                return b;
+            }
+            var a = "PASS".toString();
+            let b;
+            console.log(a);
+        } while (!console);
+    }
+    expect: {
+        "use strict";
+        do {
+            function f() {
+                return b;
+            }
+            let a = "PASS".toString(), b;
+            console.log(a);
+        } while (!console);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5756_2: {
+    options = {
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            let a = console.log("PASS");
+            {
+                var b;
+                for (var c in b) {
+                    b;
+                    var c = function() {
+                        a;
+                    };
+                }
+            }
+        }
+        f();
+    }
+    expect: {
+        "use strict";
+        (function() {
+            let a = console.log("PASS"), b;
+            for (c in b) {
+                b;
+                var c = function() {
+                    a;
+                };
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+issue_5756_3: {
+    options = {
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+        varify: true,
+    }
+    input: {
+        "use strict";
+        console.log(f()());
+        function f() {
+            const a = "PASS";
+            return function() {
+                return a;
+            };
+        }
+    }
+    expect: {
+        "use strict";
+        console.log(function() {
+            let a = "PASS";
+            return function() {
+                return a;
+            };
+        }()());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
