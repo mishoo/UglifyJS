@@ -272,7 +272,6 @@ if (typeof options.sourceMap == "object" && "base" in options.sourceMap) {
 if (specified["self"]) {
     if (paths.length) UglifyJS.AST_Node.warn("Ignoring input files since --self was passed");
     if (!options.wrap) options.wrap = "UglifyJS";
-    if (!("toplevel" in options)) options.toplevel = false;
     paths = UglifyJS.FILES;
 } else if (paths.length) {
     paths = simple_glob(paths);

@@ -333,6 +333,7 @@ describe("test/reduce.js", function() {
                 unsafe_math: true,
             },
             mangle: false,
+            module: false,
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
@@ -346,7 +347,8 @@ describe("test/reduce.js", function() {
             '//   "compress": {',
             '//     "unsafe_math": true',
             '//   },',
-            '//   "mangle": false',
+            '//   "mangle": false,',
+            '//   "module": false',
             "// }",
         ].join("\n"));
     });

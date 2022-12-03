@@ -14,7 +14,7 @@ if (typeof phantom == "undefined") {
         args.splice(debug, 1);
         debug = true;
     }
-    if (!args.length) args.push("-mcb", "beautify=false,webkit");
+    if (!args.length) args.push("-mcO", "webkit");
     args.unshift("bin/uglifyjs");
     args.push("--validate", "--timings");
     var child_process = require("child_process");
