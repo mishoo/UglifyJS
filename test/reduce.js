@@ -20,6 +20,9 @@ Error.stackTraceLimit = Infinity;
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
     minify_options = minify_options || {};
     reduce_options = reduce_options || {};
+    var parse_options = {
+        module: minify_options.module || minify_options.module === undefined,
+    }
     var print_options = {};
     [
         "ie",
@@ -539,9 +542,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
     var before_iterations, diff_error_message, passes = 3, testcase_ast;
     for (var pass = 1; pass <= passes; pass++) {
         if (before_iterations !== testcase) {
-            testcase_ast = U.parse(testcase, {
-                module: minify_options.module,
-            });
+            testcase_ast = U.parse(testcase, parse_options);
             if (diff_error_message === testcase) {
                 // only difference detected is in error message, so expose that and try again
                 testcase_ast.transform(new U.TreeTransformer(function(node, descend) {
@@ -563,9 +564,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                     testcase = code;
                     differs = diff;
                 } else {
-                    testcase_ast = U.parse(testcase, {
-                        module: minify_options.module,
-                    });
+                    testcase_ast = U.parse(testcase, parse_options);
                 }
             }
             diff_error_message = null;
@@ -778,7 +777,7 @@ function run_code(code, toplevel, result_cache, timeout) {
     if (!value) {
         var start = Date.now();
         result_cache[key] = value = {
-            result: sandbox.run_code(sandbox.patch_module_statements(code), toplevel, timeout),
+            result: sandbox.run_code(code, toplevel, timeout),
             elapsed: Date.now() - start,
         };
     }
@@ -806,13 +805,7 @@ function compare_run_code(code, minify_options, result_cache, max_timeout) {
     };
 
     function run(code, timeout) {
-        if (minify_options.module) code = [
-            '"use strict";',
-            "(async()=>{",
-            code,
-            '})().catch(e=>process.on("exit",()=>{throw e}));',
-        ].join("\n");
-        return run_code(code, toplevel, result_cache, timeout);
+        return run_code(sandbox.patch_module_statements(code, minify_options.module), toplevel, result_cache, timeout);
     }
 }
 

@@ -8663,6 +8663,7 @@ module_inline: {
         inline: true,
         module: true,
         reduce_vars: true,
+        toplevel: true,
     }
     input: {
         var a = f;

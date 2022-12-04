@@ -1,11 +1,8 @@
 require("./run")([
-    "-b",
-    "-b braces",
-    "-m",
-    "-mc passes=3",
+    "-mb braces",
+    "--toplevel -c",
     "--no-module -mc",
     "-mc passes=3,unsafe",
-    "-mc keep_fargs=false,passes=3",
     "-mc keep_fargs=false,passes=3,pure_getters,unsafe,unsafe_comps,unsafe_math,unsafe_proto",
 ].map(function(options) {
     var args = options.split(/ /);

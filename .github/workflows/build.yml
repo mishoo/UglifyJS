@@ -9,9 +9,9 @@ jobs:
       fail-fast: false
       matrix:
         options:
-          - '-mb braces'
           - '--ie -c'
-          - '-mc'
+          - '-mb braces'
+          - '--toplevel -mc'
           - '-p acorn -mco spidermonkey'
           - '-mc passes=3,pure_getters,unsafe'
         script:

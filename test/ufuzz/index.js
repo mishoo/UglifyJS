@@ -2113,13 +2113,7 @@ if (require.main !== module) {
 }
 
 function run_code(code, toplevel, timeout) {
-    if (async && has_await) code = [
-        '"use strict";',
-        "(async()=>{",
-        code,
-        '})().catch(e=>process.on("exit",()=>{throw e}));',
-    ].join("\n");
-    return sandbox.run_code(sandbox.patch_module_statements(code), toplevel, timeout);
+    return sandbox.run_code(sandbox.patch_module_statements(code, async && has_await), toplevel, timeout);
 }
 
 function writeln(stream, msg) {

@@ -533,8 +533,8 @@ if (result.error) throw result.error;
     Pass an object to specify custom [mangle property options](#mangle-properties-options).
 
 - `module` (default: `true`) — process input as ES module, i.e. implicit
-  `"use strict";` and support for top-level `await`, alongside with `toplevel`
-  enabled.
+  `"use strict";` and support for top-level `await`. When explicitly specified,
+  also enables `toplevel`.
 
 - `nameCache` (default: `null`) — pass an empty object `{}` or a previously
   used `nameCache` object if you wish to cache mangled variable and
@@ -752,7 +752,7 @@ to be `false` and all symbol names will be omitted.
 - `merge_vars` (default: `true`) — combine and reuse variables.
 
 - `module` (default: `false`) — set to `true` if you wish to process input as
-  ES module, i.e. implicit `"use strict";` alongside with `toplevel` enabled.
+  ES module, i.e. implicit `"use strict";`.
 
 - `negate_iife` (default: `true`) — negate "Immediately-Called Function Expressions"
   where the return value is discarded, to avoid the parentheses that the
@@ -927,9 +927,8 @@ can pass additional arguments that control the code output:
   regexps (affects directives with non-ascii characters becoming invalid)
 
 - `beautify` (default: `true`) — whether to actually beautify the output.
-  Passing `-b` will set this to true, but you might need to pass `-b` even
-  when you want to generate minified code, in order to specify additional
-  arguments, so you can use `-b beautify=false` to override it.
+  Passing `-b` will set this to true. Use `-O` if you want to generate minified
+  code and specify additional arguments.
 
 - `braces` (default: `false`) — always insert braces in `if`, `for`,
   `do`, `while` or `with` statements, even if their body is a single

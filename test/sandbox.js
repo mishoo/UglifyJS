@@ -48,7 +48,16 @@ exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expec
 } : function(expected, actual) {
     return typeof expected == typeof actual && strip_func_ids(expected) == strip_func_ids(actual);
 };
-exports.patch_module_statements = function(code) {
+exports.patch_module_statements = function(code, module) {
+    if (module || module === undefined && /\bawait\b/.test(code)) {
+        code = [
+            "(async()=>{",
+            code,
+            '})().catch(e=>process.on("exit",()=>{throw e}));',
+        ];
+        if (module) code.unshift('"use strict";');
+        code = code.join("\n");
+    }
     var count = 0, has_default = "", imports = [], strict_mode = "";
     code = code.replace(/^\s*("|')use strict\1\s*;?/, function(match) {
         strict_mode = match;

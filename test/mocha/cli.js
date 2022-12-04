@@ -1068,7 +1068,7 @@ describe("bin/uglifyjs", function() {
         ]).join("\n");
         exec(uglifyjscmd + " -mc", function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, "console.log({p:25}.p+{p:121}.p+{p:1024}.p);\n");
+            assert.strictEqual(stdout, "console.log(function(){var p={p:25},n={p:121},o={p:1024};return p.p+n.p+o.p}());\n");
             assert.strictEqual(run_code(stdout), run_code(code));
             done();
         }).stdin.end(code);

@@ -8,7 +8,6 @@ describe("Input file as map", function() {
         };
         var result = UglifyJS.minify(jsMap, {
             sourceMap: true,
-            toplevel: false,
         });
         if (result.error) throw result.error;
         var map = JSON.parse(result.map);
@@ -31,7 +30,6 @@ describe("Input file as map", function() {
         ];
         var result = UglifyJS.minify(jsSeq, {
             sourceMap: true,
-            toplevel: false,
         });
         if (result.error) throw result.error;
         var map = JSON.parse(result.map);
@@ -47,7 +45,6 @@ describe("Input file as map", function() {
             sourceMap: {
                 includeSources: true,
             },
-            toplevel: false,
         });
         if (result.error) throw result.error;
         var map = JSON.parse(result.map);
