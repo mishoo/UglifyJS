@@ -2493,3 +2493,47 @@ issue_5756_3: {
     expect_stdout: "PASS"
     node_version: ">=4"
 }
+
+issue_5759: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        function f() {
+            for (var a in [ true ]) {
+                let b;
+                (function() {
+                    var c = void 0;
+                    b;
+                    console.log(c);
+                    var d = null;
+                    console.log(c);
+                })();
+            }
+        }
+        f();
+    }
+    expect: {
+        "use strict";
+        function f() {
+            for (var a in [ true ]) {
+                let b;
+                var c = c = void 0;
+                b;
+                console.log(c);
+                console.log(c);
+            }
+        }
+        f();
+    }
+    expect_stdout: [
+        "undefined",
+        "undefined",
+    ]
+    node_version: ">=4"
+}
