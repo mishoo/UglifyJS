@@ -125,6 +125,7 @@ log_nested: {
 
 timers: {
     options = {
+        evaluate: true,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -132,26 +133,22 @@ timers: {
     input: {
         var count = 0, interval = 1000, duration = 3210;
         var timer = setInterval(function() {
-            console.log(++count);
+            if (!count++) setTimeout(function() {
+                clearInterval(timer);
+                console.log(count <= 4 ? "PASS" : "FAIL");
+            }, duration);
         }, interval);
-        setTimeout(function() {
-            clearInterval(timer);
-        }, duration);
     }
     expect: {
         var count = 0;
         var timer = setInterval(function() {
-            console.log(++count);
+            if (!count++) setTimeout(function() {
+                clearInterval(timer);
+                console.log(count <= 4 ? "PASS" : "FAIL");
+            }, 3210);
         }, 1000);
-        setTimeout(function() {
-            clearInterval(timer);
-        }, 3210);
     }
-    expect_stdout: [
-        "1",
-        "2",
-        "3",
-    ]
+    expect_stdout: "PASS"
     node_version: ">=0.12"
 }
 

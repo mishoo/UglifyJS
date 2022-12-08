@@ -34,7 +34,8 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
     ].some(function(pattern) {
         return pattern.test(code);
     }) ? run_code_exec : run_code_vm)(code, toplevel, timeout);
-    return stdout.length > 1000 ? stdout.slice(0, 1000) + "…《" + stdout.length + "》" : stdout;
+    var len = typeof stdout == "string" && stdout.length;
+    return len > 1000 ? stdout.slice(0, 1000) + "…《" + len + "》" : stdout;
 };
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
     if (typeof expected != typeof actual) return false;
