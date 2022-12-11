@@ -301,9 +301,19 @@ if (specified["in-situ"]) {
     process.stdin.setEncoding("utf8");
     process.stdin.once("data", function() {
         clearTimeout(timerId);
-    }).on("data", function(chunk) {
+    }).on("data", process.stdin.isTTY ? function(chunk) {
+        // emulate console input termination via Ctrl+D / Ctrl+Z
+        var match = /[\x04\x1a]\r?\n?$/.exec(chunk);
+        if (match) {
+            chunks.push(chunk.slice(0, -match[0].length));
+            process.stdin.pause();
+            process.stdin.emit("end");
+        } else {
+            chunks.push(chunk);
+        }
+    } : function(chunk) {
         chunks.push(chunk);
-    }).on("end", function() {
+    }).once("end", function() {
         files = { STDIN: chunks.join("") };
         run();
     });

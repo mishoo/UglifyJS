@@ -6,7 +6,7 @@ try {
 } catch (e) {
     // ensure output buffers are flushed before process termination
     var exit = process.exit;
-    process.exit = function() {
+    if ("bufferSize" in process.stdout) process.exit = function() {
         var args = [].slice.call(arguments);
         process.once("uncaughtException", function() {
             (function callback() {
