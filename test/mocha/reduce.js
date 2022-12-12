@@ -236,9 +236,9 @@ describe("test/reduce.js", function() {
     });
     it("Should report trailing whitespace difference in stringified format", function() {
         var code = [
-            "for (var a in (1 - .8).toString()) {",
+            "[].forEach.call((1 - .8).toString(), function() {",
             "    console.log();",
-            "}",
+            "});",
         ].join("\n");
         var result = reduce_test(code, {
             compress: {
