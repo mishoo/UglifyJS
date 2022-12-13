@@ -193,7 +193,7 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         }
         else if (node instanceof U.AST_BlockStatement) {
             if (in_list && node.body.filter(function(node) {
-                return node instanceof U.AST_Const;
+                return node instanceof U.AST_Const || node instanceof U.AST_Let;
             }).length == 0) {
                 node.start._permute++;
                 CHANGED = true;
@@ -335,19 +335,21 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
         }
         else if (node instanceof U.AST_ForEnumeration) {
             var expr;
-            switch ((node.start._permute * steps | 0) % 3) {
+            switch ((node.start._permute * steps | 0) % 4) {
               case 0:
-                if (node.init instanceof U.AST_Definitions) {
-                    if (node.init instanceof U.AST_Const) break;
-                    if (node.init.definitions[0].name instanceof U.AST_Destructured) break;
-                }
-                expr = node.init;
-                break;
-              case 1:
                 expr = node.object;
                 break;
+              case 1:
+                expr = wrap_with_console_log(node.object);
+                break;
               case 2:
-                if (!has_loopcontrol(node.body, node, parent)) expr = node.body;
+                if (has_loopcontrol(node.body, node, parent)) break;
+                expr = node.body;
+                break;
+              case 3:
+                if (!(node.init instanceof U.AST_Var)) break;
+                if (node.init.definitions[0].name instanceof U.AST_Destructured) break;
+                expr = node.init;
                 break;
             }
             node.start._permute += step;

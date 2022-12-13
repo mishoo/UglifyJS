@@ -1,16 +1,10 @@
 // (beautified)
-var b = 0;
-
 var expr2 = (0 - 1 - .1 - .1).toString();
 
-for (var key2 in expr2) {
-    --b;
-}
-
-console.log(b);
-// output: -19
+console.log(expr2);
+// output: -1.2000000000000002
 // 
-// minify: -4
+// minify: -1.2
 // 
 // options: {
 //   "compress": {
