@@ -3,5 +3,5 @@
 tmp/
 
 # files generated at build time
-bin/uglifyjs
 index.js
+*.js.map

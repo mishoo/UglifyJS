@@ -18,6 +18,7 @@
   },
   "files": [
     "index.js",
+    "tools/tty.js",
     "LICENSE"
   ],
   "devDependencies": {
@@ -26,7 +27,7 @@
   },
   "scripts": {
     "test": "node test/compress.js && node test/mocha.js",
-    "prepack": "bin/uglifyjs.js --self --mangle --compress --output index.js && bin/uglifyjs.js bin/uglifyjs.js --mangle --compress --output bin/uglifyjs"
+    "prepack": "bin/uglifyjs --self --beautify --source-map --output index.js"
   },
   "keywords": [
     "cli",
