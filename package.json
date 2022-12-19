@@ -18,6 +18,7 @@
   },
   "files": [
     "index.js",
+    "index.js.map",
     "tools/tty.js",
     "LICENSE"
   ],
