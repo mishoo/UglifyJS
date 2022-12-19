@@ -1,3 +1,7 @@
 /node_modules/
 /npm-debug.log
 tmp/
+
+# files generated at build time
+bin/uglifyjs
+index.js
