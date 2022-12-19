@@ -3,5 +3,4 @@
 tmp/
 
 # files generated at build time
-index.js
-*.js.map
+index.js.map
