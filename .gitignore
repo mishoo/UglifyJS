@@ -1,6 +1,4 @@
-/node_modules/
-/npm-debug.log
-tmp/
-
-# files generated at build time
 index.js.map
+node_modules/
+npm-debug.log
+tmp/

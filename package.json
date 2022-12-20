@@ -28,7 +28,7 @@
   },
   "scripts": {
     "test": "node test/compress.js && node test/mocha.js",
-    "prepack": "bin/uglifyjs --self --beautify --source-map --output index.js"
+    "prepack": "node bin/uglifyjs --self --no-wrap --beautify --source-map --output index.js"
   },
   "keywords": [
     "cli",

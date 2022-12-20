@@ -1,1 +1,1 @@
-module.exports = require("./tools/node.js");
+module.exports = require("./tools/node");

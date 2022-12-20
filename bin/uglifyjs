@@ -175,6 +175,9 @@ function process_option(name, no_value) {
       case "wrap":
         options[name] = read_value(true);
         break;
+      case "no-wrap":
+        options.wrap = false;
+        break;
       case "verbose":
         options.warnings = "verbose";
         break;
@@ -271,7 +274,7 @@ if (typeof options.sourceMap == "object" && "base" in options.sourceMap) {
 }
 if (specified["self"]) {
     if (paths.length) UglifyJS.AST_Node.warn("Ignoring input files since --self was passed");
-    if (!options.wrap) options.wrap = "UglifyJS";
+    if (!("wrap" in options)) options.wrap = "UglifyJS";
     paths = UglifyJS.FILES;
 } else if (paths.length) {
     paths = simple_glob(paths);
