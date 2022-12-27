@@ -8741,3 +8741,79 @@ issue_5692: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5766_1: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        functions: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        log = function(a) {
+            console.log(typeof a);
+        };
+        do {
+            (function() {
+                try {
+                    var f = function() {};
+                    log(f && f);
+                } catch (e) {}
+            })();
+        } while (0);
+    }
+    expect: {
+        log = function(a) {
+            console.log(typeof a);
+        };
+        do {
+            try {
+                function f() {}
+                log(f);
+            } catch (e) {}
+        } while (0);
+    }
+    expect_stdout: "function"
+}
+
+issue_5766_2: {
+    options = {
+        evaluate: true,
+        functions: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        log = function(a) {
+            console.log(typeof a);
+        };
+        do {
+            (function() {
+                try {
+                    var f = function() {};
+                    log(f && f);
+                } catch (e) {}
+            })();
+        } while (0);
+    }
+    expect: {
+        log = function(a) {
+            console.log(typeof a);
+        };
+        do {
+            try {
+                function f() {}
+                log(f);
+            } catch (e) {}
+        } while (0);
+    }
+    expect_stdout: "function"
+}
