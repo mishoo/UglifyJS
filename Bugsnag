@@ -1,0 +1,12 @@
+<script src="https://d2wy8f7a9ursnm.cloudfront.net/v4.0.0/bugsnag.min.js"></script>
+Bugsnag.start({
+  onError: function (event) {
+    event.errors[0].stacktrace = event.errors[0].stacktrace.map(function (frame) {
+      frame.file = frame.file.replace(/chrome-extension:/g, 'chrome_extension:')
+      frame.file = frame.file.replace(/moz-extension:/g, 'moz_extension:')
+      frame.file = frame.file.replace(/safari-extension:/g, 'safari_extension:')
+      frame.file = frame.file.replace(/safari-web-extension:/g, 'safari_web_extension:')
+      return frame
+    })
+  }
+})
