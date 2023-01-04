@@ -3889,3 +3889,56 @@ issue_5714: {
         "42",
     ]
 }
+
+issue_5770_1: {
+    options = {
+        dead_code: true,
+        loops: true,
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        L: do {
+            if (console)
+                for (var a = "FAIL 1"; a; a--)
+                    continue L;
+            var b = "FAIL 2";
+        } while (console.log(b || "PASS"));
+    }
+    expect: {
+        L: do {
+            if (console) {
+                var a = "FAIL 1";
+                if (a)
+                    continue L;
+            }
+            var b = "FAIL 2";
+        } while (console.log(b || "PASS"));
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5770_2: {
+    options = {
+        conditionals: true,
+        dead_code: true,
+        if_return: true,
+        loops: true,
+        merge_vars: true,
+        toplevel: true,
+    }
+    input: {
+        L: do {
+            for (var a = "FAIL 1"; a; a--)
+                continue L;
+            var b = "FAIL 2";
+        } while (console.log(b || "PASS"));
+    }
+    expect: {
+        L: do {
+            var a = "FAIL 1";
+            var b;
+        } while (a || (b = "FAIL 2"), console.log(b || "PASS"));
+    }
+    expect_stdout: "PASS"
+}
