@@ -363,9 +363,17 @@ module.exports = function reduce_test(testcase, minify_options, reduce_options) 
                 node.condition,
                 node.body,
                 node.alternative,
-            ][ (node.start._permute * steps | 0) % 3 ];
+                node,
+            ][ (node.start._permute * steps | 0) % 4 ];
             node.start._permute += step;
-            if (expr) {
+            if (expr === node) {
+                if (node.alternative) {
+                    expr = node.clone();
+                    expr.alternative = null;
+                    CHANGED = true;
+                    return expr;
+                }
+            } else if (expr) {
                 // replace if statement with its condition, then block or else block
                 CHANGED = true;
                 return to_statement(expr);
