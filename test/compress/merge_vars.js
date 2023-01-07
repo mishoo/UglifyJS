@@ -3942,3 +3942,61 @@ issue_5770_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5772_1: {
+    options = {
+        dead_code: true,
+        merge_vars: true,
+        loops: true,
+    }
+    input: {
+        (function(a) {
+            while (--a)
+                return;
+            var b = console.log("foo") && (c = 42) ? 0 : console.log(c);
+            var c = b;
+        })();
+    }
+    expect: {
+        (function(a) {
+            if (--a)
+                return;
+            var a = console.log("foo") && (c = 42) ? 0 : console.log(c);
+            var c = a;
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+    ]
+}
+
+issue_5772_2: {
+    options = {
+        dead_code: true,
+        merge_vars: true,
+        loops: true,
+    }
+    input: {
+        (function(a) {
+            while (--a)
+                return;
+            var b;
+            var c = console.log("foo") && (b = 1) ? 2 : 3;
+            console.log(b, c);
+        })();
+    }
+    expect: {
+        (function(a) {
+            if (--a)
+                return;
+            var b;
+            var a = console.log("foo") && (b = 1) ? 2 : 3;
+            console.log(b, a);
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "undefined 3",
+    ]
+}
