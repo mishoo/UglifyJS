@@ -3069,3 +3069,41 @@ issue_5651: {
     expect_stdout: true
     node_version: ">=6"
 }
+
+issue_5774: {
+    options = {
+        collapse_vars: true,
+        conditionals: true,
+        evaluate: true,
+        join_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        unsafe: true,
+    }
+    input: {
+        (function() {
+            while (console.log("PASS")) {
+                if (console) {
+                    a = void 0;
+                    var b = void 0;
+                    var c = void 0;
+                    ([ a = 0 ] = [ b, b ]);
+                    var a;
+                }
+            }
+        })();
+    }
+    expect: {
+        (function() {
+            while (console.log("PASS")) {
+                var a, b, c, a;
+                console && (
+                    c = b = a = void 0,
+                    [ a = 0 ] = [ a, a ]
+                );
+            }
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
