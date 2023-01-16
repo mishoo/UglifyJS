@@ -12,14 +12,14 @@
     "Mihai Bazon <mihai.bazon@gmail.com> (http://lisperator.net/)"
   ],
   "repository": "mishoo/UglifyJS",
-  "main": "tools/node.js",
+  "main": "index.js",
   "bin": {
     "uglifyjs": "bin/uglifyjs"
   },
   "files": [
-    "bin",
-    "lib",
-    "tools",
+    "index.js",
+    "index.js.map",
+    "tools/tty.js",
     "LICENSE"
   ],
   "devDependencies": {
@@ -27,7 +27,8 @@
     "semver": "~6.3.0"
   },
   "scripts": {
-    "test": "node test/compress.js && node test/mocha.js"
+    "test": "node test/compress.js && node test/mocha.js",
+    "prepack": "node bin/uglifyjs --self --no-wrap --beautify --source-map --output index.js"
   },
   "keywords": [
     "cli",

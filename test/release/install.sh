@@ -58,3 +58,4 @@ npm --version
 while !(npm install); do
     while !(npm cache clean --force); do echo "'npm cache clean' failed - retrying..."; done
 done
+npm run prepack
