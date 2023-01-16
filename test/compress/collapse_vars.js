@@ -9864,7 +9864,8 @@ issue_5276: {
     }
     expect: {
         var a = A = "PASS";
-        a.p = a.p + null - 42;
+        a.p += null;
+        a.p -= 42;
         console.log(a);
     }
     expect_stdout: "PASS"
@@ -10145,6 +10146,29 @@ issue_5719: {
           case a++:
         }
         console.log(a === b++ ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5779: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = A = "foo";
+        a.p = 42;
+        if (a && !a.p)
+            console.log("PASS");
+    }
+    expect: {
+        var a = A = "foo";
+        a.p = 42;
+        if (a, !a.p)
+            console.log("PASS");
     }
     expect_stdout: "PASS"
 }
