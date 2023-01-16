@@ -8148,3 +8148,77 @@ issue_5730_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5777_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            (function(a) {
+                function g() {
+                    h();
+                }
+                g();
+                a = function() {};
+                function h() {
+                    console.log(a);
+                }
+            })("PASS");
+        }
+        f();
+    }
+    expect: {
+        function f() {
+            (function(a) {
+                (function() {
+                    h();
+                })();
+                a = function() {};
+                function h() {
+                    console.log(a);
+                }
+            })("PASS");
+        }
+        f();
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5777_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            (function() {
+                function g() {
+                    h();
+                }
+                g();
+                a = function() {};
+                function h() {
+                    console.log(a);
+                }
+            })();
+        }
+        f("PASS");
+    }
+    expect: {
+        (function(a) {
+            (function() {
+                (function() {
+                    h();
+                })();
+                a = function() {};
+                function h() {
+                    console.log(a);
+                }
+            })();
+        })("PASS");
+    }
+    expect_stdout: "PASS"
+}
