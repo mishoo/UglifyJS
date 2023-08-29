@@ -2,21 +2,21 @@
 
 require("../tools/tty");
 
-var assert = require("assert");
-var child_process = require("child_process");
-var fs = require("fs");
-var path = require("path");
-var sandbox = require("./sandbox");
-var semver = require("semver");
-var U = require("./node");
+let assert = require("assert");
+let child_process = require("child_process");
+let fs = require("fs");
+let path = require("path");
+let sandbox = require("./sandbox");
+let semver = require("semver");
+let U = require("./node");
 
-var batch = 50;
-var dir = path.resolve(path.dirname(module.filename), "compress");
+let batch = 50;
+let dir = path.resolve(path.dirname(module.filename), "compress");
 if (process.argv.length > 3) {
-    var file = process.argv[2];
-    var start = process.argv[3] | 0;
-    var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
-    var tests = parse_test(path.resolve(dir, file));
+    let file = process.argv[2];
+    let start = process.argv[3] | 0;
+    let minify_options = require("./ufuzz/options.json").map(JSON.stringify);
+    let tests = parse_test(path.resolve(dir, file));
     process.exit(Object.keys(tests).slice(start, start + batch).filter(function(name) {
         return !test_case(tests[name]);
     }).length);
