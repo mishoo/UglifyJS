@@ -1,4 +1,4 @@
-var fs = require("fs");
+let fs = require("fs");
 
 new Function("domprops", "exports", require("../tools/node").FILES.map(function(file) {
     if (/exports\.js$/.test(file)) file = require.resolve("./exports");
