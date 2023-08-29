@@ -1,10 +1,10 @@
-var readFileSync = require("fs").readFileSync;
-var semver = require("semver");
-var spawnSync = require("child_process").spawnSync;
-var vm = require("vm");
+let readFileSync = require("fs").readFileSync;
+let semver = require("semver");
+let spawnSync = require("child_process").spawnSync;
+let vm = require("vm");
 
 setup_log();
-var setup_code = "(" + setup + ")(" + [
+let setup_code = "(" + setup + ")(" + [
     "this",
     find_builtins(),
     setup_log,
@@ -17,15 +17,15 @@ exports.has_toplevel = function(options) {
 };
 exports.is_error = is_error;
 exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, toplevel, timeout) {
-    var stdout = run_code_vm(code, toplevel, timeout);
+    let stdout = run_code_vm(code, toplevel, timeout);
     if (typeof stdout != "string" || !/arguments/.test(code)) return stdout;
     do {
-        var prev = stdout;
+        let prev = stdout;
         stdout = run_code_vm(code, toplevel, timeout);
     } while (prev !== stdout);
     return stdout;
 } : semver.satisfies(process.version, "<0.12") ? run_code_vm : function(code, toplevel, timeout) {
-    var stdout = ([
+    let stdout = ([
         /\b(async[ \t]+function|Promise|setImmediate|setInterval|setTimeout)\b/,
         /\basync([ \t]+|[ \t]*#)[^\s()[\]{}#:;,.&|!~=*%/+-]+(\s*\(|[ \t]*=>)/,
         /\basync[ \t]*\*[ \t]*[^\s()[\]{}#:;,.&|!~=*%/+-]+\s*\(/,
@@ -34,7 +34,7 @@ exports.run_code = semver.satisfies(process.version, "0.8") ? function(code, top
     ].some(function(pattern) {
         return pattern.test(code);
     }) ? run_code_exec : run_code_vm)(code, toplevel, timeout);
-    var len = typeof stdout == "string" && stdout.length;
+    let len = typeof stdout == "string" && stdout.length;
     return len > 1000 ? stdout.slice(0, 1000) + "…《" + len + "》" : stdout;
 };
 exports.same_stdout = semver.satisfies(process.version, "0.12") ? function(expected, actual) {
@@ -59,7 +59,7 @@ exports.patch_module_statements = function(code, module) {
         if (module) code.unshift('"use strict";');
         code = code.join("\n");
     }
-    var count = 0, has_default = "", imports = [], strict_mode = "";
+    let count = 0, has_default = "", imports = [], strict_mode = "";
     code = code.replace(/^\s*("|')use strict\1\s*;?/, function(match) {
         strict_mode = match;
         return "";
@@ -67,7 +67,7 @@ exports.patch_module_statements = function(code, module) {
         if (/^export\s+default/.test(match)) has_default = "function _uglify_export_default_() {}";
         if (!header) return "";
         if (header.length == 1) return "0, " + header;
-        var name = "_uglify_export_default_";
+        let name = "_uglify_export_default_";
         if (/^class\b/.test(header)) do {
             name = "_uglify_export_default_" + ++count;
         } while (code.indexOf(name) >= 0);
@@ -104,9 +104,9 @@ function strip_func_ids(text) {
 }
 
 function setup_log() {
-    var inspect = require("util").inspect;
+    let inspect = require("util").inspect;
     if (inspect.defaultOptions) {
-        var log_options = {
+        let log_options = {
             breakLength: Infinity,
             colors: false,
             compact: true,
@@ -116,7 +116,7 @@ function setup_log() {
             maxStringLength: Infinity,
             showHidden: false,
         };
-        for (var name in log_options) {
+        for (let name in log_options) {
             if (name in inspect.defaultOptions) inspect.defaultOptions[name] = log_options[name];
         }
     }
@@ -125,7 +125,7 @@ function setup_log() {
 
 function find_builtins() {
     setup_code = "console.log(Object.keys(this));";
-    var builtins = run_code_vm("");
+    let builtins = run_code_vm("");
     if (semver.satisfies(process.version, ">=0.12")) builtins += ".concat(" + run_code_exec("") + ")";
     return builtins;
 }
@@ -135,10 +135,10 @@ function setup(global, builtins, setup_log, setup_tty) {
         f.toString = Function.prototype.toString;
     });
     Function.prototype.toString = function() {
-        var configurable = Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable;
-        var id = 100000;
+        let configurable = Object.getOwnPropertyDescriptor(Function.prototype, "name").configurable;
+        let id = 100000;
         return function() {
-            var n = this.name;
+            let n = this.name;
             if (!/^F[0-9]{6}N$/.test(n)) {
                 n = "F" + ++id + "N";
                 if (configurable) Object.defineProperty(this, "name", {
@@ -150,26 +150,26 @@ function setup(global, builtins, setup_log, setup_tty) {
             return "function(){}";
         };
     }();
-    var process = global.process;
+    let process = global.process;
     if (process) {
         setup_tty(process);
-        var inspect = setup_log();
+        let inspect = setup_log();
         process.on("uncaughtException", function(ex) {
-            var value = ex;
+            let value = ex;
             if (value instanceof Error) {
                 value = {};
-                for (var name in ex) {
+                for (let name in ex) {
                     value[name] = ex[name];
                     delete ex[name];
                 }
             }
-            var marker = "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n";
+            let marker = "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n";
             process.stderr.write(marker + inspect(value) + marker);
             throw ex;
         }).on("unhandledRejection", function() {});
     }
-    var log = console.log;
-    var safe_console = {
+    let log = console.log;
+    let safe_console = {
         log: function(msg) {
             if (arguments.length == 1 && typeof msg == "string") return log("%s", msg);
             return log.apply(null, [].map.call(arguments, function(arg) {
@@ -181,7 +181,7 @@ function setup(global, builtins, setup_log, setup_tty) {
             }));
         },
     };
-    var props = {
+    let props = {
         // for Node.js v8
         console: {
             get: function() {
@@ -206,7 +206,7 @@ function setup(global, builtins, setup_log, setup_tty) {
         "setInterval",
         "setTimeout",
     ].forEach(function(name) {
-        var value = global[name];
+        let value = global[name];
         props[name] = {
             get: function() {
                 return value;
@@ -239,14 +239,14 @@ function setup(global, builtins, setup_log, setup_tty) {
             if (/Error$/.test(arg.name)) return arg.toString();
             if (typeof arg.then == "function") return "[object Promise]";
             if (arg.constructor) arg.constructor.toString();
-            var index = cache.original.indexOf(arg);
+            let index = cache.original.indexOf(arg);
             if (index >= 0) return cache.replaced[index];
             if (--cache.level < 0) return "[object Object]";
-            var value = {};
+            let value = {};
             cache.original.push(arg);
             cache.replaced.push(value);
-            for (var key in arg) {
-                var desc = Object.getOwnPropertyDescriptor(arg, key);
+            for (let key in arg) {
+                let desc = Object.getOwnPropertyDescriptor(arg, key);
                 if (desc && (desc.get || desc.set)) {
                     Object.defineProperty(value, key, desc);
                 } else {
@@ -261,13 +261,13 @@ function setup(global, builtins, setup_log, setup_tty) {
 
 function run_code_vm(code, toplevel, timeout) {
     timeout = timeout || 5000;
-    var stdout = "";
-    var original_write = process.stdout.write;
+    let stdout = "";
+    let original_write = process.stdout.write;
     process.stdout.write = function(chunk) {
         stdout += chunk;
     };
     try {
-        var ctx = vm.createContext({ console: console });
+        let ctx = vm.createContext({ console: console });
         // for Node.js v6
         vm.runInContext(setup_code, ctx);
         vm.runInContext(toplevel ? "(function(){\n" + code + "\n})();" : code, ctx, { timeout: timeout });
@@ -290,7 +290,7 @@ function run_code_exec(code, toplevel, timeout) {
             return directive + setup_code;
         });
     }
-    var result = spawnSync(process.argv[0], [ '--max-old-space-size=2048' ], {
+    let result = spawnSync(process.argv[0], [ '--max-old-space-size=2048' ], {
         encoding: "utf8",
         input: code,
         maxBuffer: 1073741824,
@@ -298,16 +298,16 @@ function run_code_exec(code, toplevel, timeout) {
         timeout: timeout || 5000,
     });
     if (result.status === 0) return result.stdout;
-    var msg = ("" + result.stderr).replace(/\r\n/g, "\n");
+    let msg = ("" + result.stderr).replace(/\r\n/g, "\n");
     if (result.error && result.error.code == "ETIMEDOUT" || /FATAL ERROR:/.test(msg)) {
         return new Error("Script execution timed out.");
     }
     if (result.error) return result.error;
-    var match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
-    var marker = "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n";
-    var start = msg.indexOf(marker) + marker.length;
-    var end = msg.indexOf(marker, start);
-    var details;
+    let match = /\n([^:\s]*Error)(?:: ([\s\S]+?))?\n(    at [\s\S]+)\n$/.exec(msg);
+    let marker = "\n\n-----===== UNCAUGHT EXCEPTION =====-----\n\n";
+    let start = msg.indexOf(marker) + marker.length;
+    let end = msg.indexOf(marker, start);
+    let details;
     if (end >= 0) {
         details = msg.slice(start, end).replace(/<([1-9][0-9]*) empty items?>/g, function(match, count) {
             return new Array(+count).join();
@@ -319,10 +319,10 @@ function run_code_exec(code, toplevel, timeout) {
         return new Error("Script execution aborted.");
     }
     if (!match) return details;
-    var ex = new global[match[1]](match[2]);
+    let ex = new global[match[1]](match[2]);
     ex.stack = ex.stack.slice(0, ex.stack.indexOf("    at ")) + match[3];
     if (typeof details == "object") {
-        for (var name in details) ex[name] = details[name];
+        for (let name in details) ex[name] = details[name];
     } else if (end >= 0) {
         ex.details = details;
     }
