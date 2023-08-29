@@ -1,8 +1,8 @@
-var crypto = require("crypto");
-var U = require("..");
-var List = U.List;
-var os = require("os");
-var sandbox = require("./sandbox");
+let crypto = require("crypto");
+let U = require("..");
+let List = U.List;
+let os = require("os");
+let sandbox = require("./sandbox");
 
 // Reduce a test case by iteratively replacing AST nodes with various
 // permutations. Each AST_Statement in the tree is also speculatively dropped
@@ -20,31 +20,31 @@ Error.stackTraceLimit = Infinity;
 module.exports = function reduce_test(testcase, minify_options, reduce_options) {
     minify_options = minify_options || {};
     reduce_options = reduce_options || {};
-    var parse_options = {
+    let parse_options = {
         module: minify_options.module || minify_options.module === undefined,
     }
-    var print_options = {};
+    let print_options = {};
     [
         "ie",
         "v8",
         "webkit",
     ].forEach(function(name) {
-        var value = minify_options[name] || minify_options.output && minify_options.output[name];
+        let value = minify_options[name] || minify_options.output && minify_options.output[name];
         if (value) print_options[name] = value;
     });
     if (testcase instanceof U.AST_Node) testcase = testcase.print_to_string(print_options);
-    var max_iterations = reduce_options.max_iterations || 1000;
-    var max_timeout = reduce_options.max_timeout || 10000;
-    var warnings = [];
-    var log = reduce_options.log || function(msg) {
+    let max_iterations = reduce_options.max_iterations || 1000;
+    let max_timeout = reduce_options.max_timeout || 10000;
+    let warnings = [];
+    let log = reduce_options.log || function(msg) {
         warnings.push(msg);
     };
-    var verbose = reduce_options.verbose;
-    var minify_options_json = JSON.stringify(minify_options, null, 2);
-    var result_cache = Object.create(null);
-    var test_for_diff = compare_run_code;
+    let verbose = reduce_options.verbose;
+    let minify_options_json = JSON.stringify(minify_options, null, 2);
+    let result_cache = Object.create(null);
+    let test_for_diff = compare_run_code;
     // the initial timeout to assess the viability of the test case must be large
-    var differs = test_for_diff(testcase, minify_options, result_cache, max_timeout);
+    let differs = test_for_diff(testcase, minify_options, result_cache, max_timeout);
 
     if (verbose) {
         log("// Node.js " + process.version + " on " + os.platform() + " " + os.arch());
