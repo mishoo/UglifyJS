@@ -4,15 +4,15 @@
 "use strict";
 
 require("../tools/tty");
-var createHash = require("crypto").createHash;
-var fetch = require("./fetch");
-var spawn = require("child_process").spawn;
-var zlib = require("zlib");
-var args = process.argv.slice(2);
+let createHash = require("crypto").createHash;
+let fetch = require("./fetch");
+let spawn = require("child_process").spawn;
+let zlib = require("zlib");
+let args = process.argv.slice(2);
 if (!args.length) args.push("-mc");
 args.unshift("bin/uglifyjs");
 args.push("--timings");
-var urls = [
+let urls = [
     "https://code.jquery.com/jquery-3.4.1.js",
     "https://code.angularjs.org/1.7.8/angular.js",
     "https://unpkg.com/mathjs@6.2.3/dist/math.js",
