@@ -3,11 +3,11 @@
 
 "use strict";
 
-var site = "https://browserbench.org/JetStream1.1";
+let site = "https://browserbench.org/JetStream1.1";
 if (typeof phantom == "undefined") {
     require("../tools/tty");
-    var args = process.argv.slice(2);
-    var debug = args.indexOf("--debug");
+    let args = process.argv.slice(2);
+    let debug = args.indexOf("--debug");
     if (debug < 0) {
         debug = false;
     } else {
@@ -17,12 +17,12 @@ if (typeof phantom == "undefined") {
     if (!args.length) args.push("-mcO", "webkit");
     args.unshift("bin/uglifyjs");
     args.push("--validate", "--timings");
-    var child_process = require("child_process");
-    var fetch = require("./fetch");
-    var http = require("http");
-    var server = http.createServer(function(request, response) {
+    let child_process = require("child_process");
+    let fetch = require("./fetch");
+    let http = require("http");
+    let server = http.createServer(function(request, response) {
         request.resume();
-        var url = site + request.url;
+        let url = site + request.url;
         fetch(url, function(err, res) {
             if (err) {
                 if (typeof err != "number") throw err;
