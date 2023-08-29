@@ -5,9 +5,9 @@ try {
     process.stderr._handle.setBlocking(true);
 } catch (e) {
     // ensure output buffers are flushed before process termination
-    var exit = process.exit;
+    let exit = process.exit;
     if ("bufferSize" in process.stdout) process.exit = function() {
-        var args = [].slice.call(arguments);
+        let args = [].slice.call(arguments);
         process.once("uncaughtException", function() {
             (function callback() {
                 if (process.stdout.bufferSize || process.stderr.bufferSize) {
