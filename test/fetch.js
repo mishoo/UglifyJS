@@ -1,6 +1,6 @@
-var fs = require("fs");
-var parse = require("url").parse;
-var path = require("path");
+let fs = require("fs");
+let parse = require("url").parse;
+let path = require("path");
 
 try {
     fs.mkdirSync("./tmp");
@@ -17,10 +17,10 @@ function read(url) {
 }
 
 module.exports = function(url, callback) {
-    var result = read(url);
+    let result = read(url);
     result.on("error", function(e) {
         if (e.code != "ENOENT") return callback(e);
-        var options = parse(url);
+        let options = parse(url);
         options.rejectUnauthorized = false;
         require(options.protocol.slice(0, -1)).get(options, function(res) {
             if (res.statusCode !== 200) return callback(res.statusCode);
