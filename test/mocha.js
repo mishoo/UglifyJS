@@ -1,13 +1,13 @@
-var fs = require("fs");
+let fs = require("fs");
 
-var config = {
+let config = {
     timeout: function(limit) {
         this.limit = limit + lag;
     },
 };
-var lag = +process.env["UGLIFY_GITHUB_LAG"] || 0;
-var tasks = [];
-var titles = [];
+let lag = +process.env["UGLIFY_GITHUB_LAG"] || 0;
+let tasks = [];
+let titles = [];
 config.timeout(10000);
 describe = function(title, fn) {
     config = Object.create(config);
@@ -31,9 +31,9 @@ it = function(title, fn) {
 });
 
 function log_titles(log, current, marker) {
-    var indent = "";
-    var writing = false;
-    for (var i = 0; i < current.length; i++, indent += "  ") {
+    let indent = "";
+    let writing = false;
+    for (let i = 0; i < current.length; i++, indent += "  ") {
         if (titles[i] != current[i]) writing = true;
         if (writing) log(indent + (i == current.length - 1 && marker || "") + current[i]);
     }
@@ -48,15 +48,15 @@ function green(text) {
     return "\u001B[32m" + text + "\u001B[39m";
 }
 
-var errors = [];
-var total = tasks.length;
+let errors = [];
+let total = tasks.length;
 titles = [];
 process.nextTick(function run() {
-    var task = tasks.shift();
+    let task = tasks.shift();
     if (task) try {
-        var elapsed = Date.now();
-        var timer;
-        var done = function() {
+        let elapsed = Date.now();
+        let timer;
+        let done = function() {
             elapsed = Date.now() - elapsed;
             if (elapsed > task.limit) {
                 throw new Error("Timed out: " + elapsed + "ms > " + task.limit + "ms");
