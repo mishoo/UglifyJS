@@ -1,5 +1,5 @@
-var assert = require("assert");
-var UglifyJS = require("../node");
+let assert = require("assert");
+let UglifyJS = require("../node");
 
 describe("generator", function() {
     it("Should reject `yield` as symbol name within generator functions only", function() {
@@ -11,7 +11,7 @@ describe("generator", function() {
             "function() { function yield() {} }",
             "function() { try {} catch (yield) {} }",
         ].forEach(function(code) {
-            var ast = UglifyJS.parse("(" + code + ")();");
+            let ast = UglifyJS.parse("(" + code + ")();");
             assert.strictEqual(ast.TYPE, "Toplevel");
             assert.strictEqual(ast.body.length, 1);
             assert.strictEqual(ast.body[0].TYPE, "SimpleStatement");
@@ -54,7 +54,7 @@ describe("generator", function() {
             "function f({ [function*() { yield 42; }()]: a }) {}",
             "function* f({ [function*() { yield 42; }()]: a }) {}",
         ].forEach(function(code) {
-            var ast = UglifyJS.parse(code);
+            let ast = UglifyJS.parse(code);
             assert.strictEqual(ast.TYPE, "Toplevel");
             assert.strictEqual(ast.body.length, 1);
             assert.strictEqual(ast.body[0].argnames.length, 1);
