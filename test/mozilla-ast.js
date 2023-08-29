@@ -1,12 +1,12 @@
 // Testing UglifyJS <-> SpiderMonkey AST conversion
 "use strict";
 
-var acorn = require("acorn");
-var ufuzz = require("./ufuzz");
-var UglifyJS = require("..");
+let acorn = require("acorn");
+let ufuzz = require("./ufuzz");
+let UglifyJS = require("..");
 
 function beautify(ast) {
-    var beautified = UglifyJS.minify(ast, {
+    let beautified = UglifyJS.minify(ast, {
         compress: false,
         mangle: false,
         module: ufuzz.module,
@@ -17,7 +17,7 @@ function beautify(ast) {
         },
     });
     if (!beautified.error) {
-        var verify = UglifyJS.minify(beautified.code, {
+        let verify = UglifyJS.minify(beautified.code, {
             compress: false,
             mangle: false,
             module: ufuzz.module,
@@ -58,7 +58,7 @@ function equals(input, transformed) {
 
 function test(input, to_moz, description, skip_on_error, beautified) {
     try {
-        var ast = UglifyJS.AST_Node.from_mozilla_ast(to_moz(input));
+        let ast = UglifyJS.AST_Node.from_mozilla_ast(to_moz(input));
     } catch (e) {
         if (skip_on_error) return true;
         console.error("//=============================================================");
@@ -69,7 +69,7 @@ function test(input, to_moz, description, skip_on_error, beautified) {
         console.error(input.code);
         return false;
     }
-    var transformed = validate(ast);
+    let transformed = validate(ast);
     if (transformed.error || !equals(input, transformed)) {
         if (!beautified) {
             beautified = beautify(input.ast);
@@ -111,12 +111,12 @@ function test(input, to_moz, description, skip_on_error, beautified) {
     return true;
 }
 
-var num_iterations = ufuzz.num_iterations;
-var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
+let num_iterations = ufuzz.num_iterations;
+let minify_options = require("./ufuzz/options.json").map(JSON.stringify);
 minify_options.unshift(null);
-for (var round = 1; round <= num_iterations; round++) {
+for (let round = 1; round <= num_iterations; round++) {
     process.stdout.write(round + " of " + num_iterations + "\r");
-    var code = ufuzz.createTopLevelCode();
+    let code = ufuzz.createTopLevelCode();
     minify_options.forEach(function(options) {
         var ok = true;
         var minified;
