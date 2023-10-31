@@ -22,7 +22,7 @@ evaluate: {
       unsafe: true,
   }
   input: {
-      console.log((0xDEAD_BEEFn).toString(16));
+      console.log((0xDEADBEEFn).toString(16));
   }
   expect: {
       console.log(0xdeadbeefn.toString(16));
@@ -36,10 +36,10 @@ Number: {
       unsafe: true,
   }
   input: {
-      console.log(Number(-0xfeed_dead_beef_badn));
+      console.log(Number(-0xfeeddeadbeefbadn));
   }
   expect: {
-      console.log(+("" + -0xfeed_dead_beef_badn));
+      console.log(+("" + -0xfeeddeadbeefbadn));
   }
   expect_stdout: "-1148098955808013200"
   node_version: ">=10"

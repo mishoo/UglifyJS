@@ -88,6 +88,7 @@
     "BatteryManager",
     "BeforeLoadEvent",
     "BeforeUnloadEvent",
+    "BigInt",
     "BiquadFilterNode",
     "Blob",
     "BlobEvent",

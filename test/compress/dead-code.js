@@ -516,6 +516,7 @@ global_fns: {
     }
     input: {
         Boolean(1, 2);
+        BigInt(10);
         decodeURI(1, 2);
         decodeURIComponent(1, 2);
         Date(1, 2);
