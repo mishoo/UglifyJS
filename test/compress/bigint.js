@@ -44,3 +44,17 @@ Number: {
   expect_stdout: "-1148098955808013200"
   node_version: ">=10"
 }
+
+issue_5728: {
+    options = {
+        evaluate: true,
+    }
+    input: {
+        console.log("" + 4n + 2);
+    }
+    expect: {
+        console.log("42");
+    }
+    expect_stdout: "42"
+    node_version: ">=10.4.0"
+}
