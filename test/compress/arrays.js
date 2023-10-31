@@ -15,7 +15,7 @@ holes_and_undefined: {
     }
 }
 
-constant_join: {
+constant_join_1: {
     options = {
         unsafe   : true,
         evaluate : true
@@ -37,7 +37,7 @@ constant_join: {
         var c5 = [ boo() + bar() + "foo", 1, 2, 3, "bar", bar() + "foo" ].join();
         var c6 = [ 1, 2, null, undefined, "foo", "bar", baz() ].join();
         var d = [ "foo", 1 + 2 + "bar", "baz" ].join("-");
-        var e = [].join(foo + bar);
+        var e = (foo, bar, "");
         var f = [].join("");
         var g = [].join("foo");
     }
