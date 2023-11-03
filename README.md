@@ -54,7 +54,7 @@ Once the sources are downloaded, install all the dependencies using NPM:
 
 (Optional) Check that everything is installed correctly by running the tests:
 
-> ./test/run-tests.js
+> npm test
 
 (Optional) Package for the browser. The UglifyJS2 provides a quick way to build itself for the browser using followig command:
 

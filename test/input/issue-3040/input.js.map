@@ -1,0 +1,11 @@
+{
+    "version": 3,
+    "sources": [
+        "input.js"
+    ],
+    "names": [],
+    "mappings": ";;;;;;;;;;;;;;eAAc,OAAO,CAAC,KAAD,C;IAAd,G,YAAA,G;;gBACS,OAAO,CAAC,OAAD,C;IAAhB,K,aAAA,K;;AAEP,GAAG,CAAC,CAAJ,OAAA,GAAG,qBAAM,GAAG,CAAC,CAAJ,CAAM,KAAK,CAAC,CAAZ,CAAN,EAAH",
+    "sourcesContent": [
+        "const {foo} = require(\"bar\");\nconst {hello} = require(\"world\");\n\nfoo.x(...foo.y(hello.z));\n"
+    ]
+}

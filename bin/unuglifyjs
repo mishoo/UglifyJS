@@ -74,22 +74,22 @@ if (ARGS.colors){
 
 if (ARGS.version || ARGS.V) {
 	//var json = require("../package.json");
-	sys.puts(json.name + ' ' + json.version);
+	console.log(json.name + ' ' + json.version);
 	process.exit(0);
 }
 
 if (ARGS.h || ARGS.help) {
-	sys.puts(yargs.help());
+	console.log(yargs.help());
 	process.exit(0);
 }
 
 var files = ARGS._.slice();
 if (files.length > 1) {
-	sys.error("WARNING: expected only single input file. Processing file '" + files[0] + "' while the rest is ignored.");
+	console.error("WARNING: expected only single input file. Processing file '" + files[0] + "' while the rest is ignored.");
 }
 
 if (ARGS.features === true) {
-	sys.error("ERROR: empty set of features.");
+	console.error("ERROR: empty set of features.");
 	process.exit(1);
 }
 
@@ -106,18 +106,16 @@ if (ARGS.extract_feeatures){
 var features = ARGS.features.split(",");
 for (var i = 0; i < features.length; i++) {
 	if (features[i] != "FNAMES" && features[i] != "ASTREL" && features[i] != "FSCOPE") {
-		sys.error("WARNING: ignoring not supported feature '" + features[i] + "'.");
+		console.error("WARNING: ignoring not supported feature '" + features[i] + "'.");
 	}
 }
 
 if (ARGS.package) {
 	if (files.length > 0) {
-		sys.error("WARN: ".yellow + "Ignoring input files since --package was passed");
+		console.error("WARN: ".yellow + "Ignoring input files since --package was passed");
 	}
 	files = UglifyJS.FILES;
 	ARGS.wrap = "UglifyJS";
-	ARGS.export_all = true;
-
 }
 
 var json_rpc_id = 0;
@@ -133,7 +131,7 @@ function processFile(file) {
 		code = fs.readFileSync(file, "utf-8");
 	}
 	catch (ex) {
-		sys.error("ERROR:".red + " can't read file '" + file + "'");
+		console.error("ERROR:".red + " can't read file '" + file + "'");
 		return;
 	}
 
@@ -148,9 +146,9 @@ function processFile(file) {
 			});
 		} catch(ex) {
 			if (ex instanceof UglifyJS.JS_Parse_Error) {
-				sys.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
-				sys.error(ex.message);
-				sys.error(ex.stack);
+				console.error("Parse error at " + file + ":" + ex.line + "," + ex.col);
+				console.error(ex.message);
+				console.error(ex.stack);
 				process.exit(1);
 			}
 			throw ex;
@@ -162,11 +160,11 @@ function processFile(file) {
 		var output = UglifyJS.extractFeatures(code, file, ARGS.print_ast, ARGS.features, ARGS.skip_minified);
 	} catch (ex){
 		if (ex instanceof UglifyJS.Parse_Error){
-			sys.error("ERROR: ".red + "cannot parse file '" + file + "': " + ex.message);
+			console.error("ERROR: ".red + "cannot parse file '" + file + "': " + ex.message);
 		} else if (ex instanceof  UglifyJS.Minified_Error){
-			//sys.error("WARN: ".yellow + "skipping minified file '" + file + "'");
+			//console.error("WARN: ".yellow + "skipping minified file '" + file + "'");
 		} else {
-			sys.error("ERROR: ".red + "'" + file + "': " + ex);
+			console.error("ERROR: ".red + "'" + file + "': " + ex);
 		}
 
 		return;
@@ -189,14 +187,14 @@ function processFile(file) {
     try {
         JSON.parse(output);
     } catch (e) {
-		sys.error("ERROR: ".red + "output is not valid JSON " + "'" + file + "'");
+		console.error("ERROR: ".red + "output is not valid JSON " + "'" + file + "'");
         throw e;
     }
 
 	if (removeWhitespace(output) == '{"query":[],"assign":[]}') {
-		sys.error("WARN: ".yellow + " no features extracted '" + file + "'");
+		console.error("WARN: ".yellow + " no features extracted '" + file + "'");
 	} else {
-		//sys.error("OK: ".green + "'" + file + "'");
+		//console.error("OK: ".green + "'" + file + "'");
 	}
 
 	if (ARGS.extract_features) {
@@ -230,15 +228,15 @@ function processFile(file) {
 						var renamed_js = UglifyJS.replaceMangled(code, file, inferred_names);
 						console.log(renamed_js);
 					} catch (ex) {
-						sys.error("ERROR: ".red + "failed rename '" + file + "': " + ex);
+						console.error("ERROR: ".red + "failed rename '" + file + "': " + ex);
 					}
 				} else {
-					sys.error("ERROR: ".red + "undefined response. Try to update unuglify-js to the latest version by 'npm update -g unuglify-js'");
+					console.error("ERROR: ".red + "undefined response. Try to update unuglify-js to the latest version by 'npm update -g unuglify-js'");
 				}
 
 			},
 			function(err) {
-				sys.error("ERROR: ".red + "connecting to server '" + HOST + ":" + PORT + "' " + err);
+				console.error("ERROR: ".red + "connecting to server '" + HOST + ":" + PORT + "' " + err);
 			});
 		return;
 	}
@@ -249,19 +247,19 @@ if (ARGS.package){
 		var output = UglifyJS.OutputStream({});
 	} catch(ex) {
 		if (ex instanceof UglifyJS.DefaultsError) {
-			sys.error(ex.msg);
-			sys.error("Supported options:");
-			sys.error(sys.inspect(ex.defs));
+			console.error(ex.msg);
+			console.error("Supported options:");
+			console.error(sys.inspect(ex.defs));
 			process.exit(1);
 		}
 	}
 
-	TOPLEVEL = TOPLEVEL.wrap_commonjs(ARGS.wrap, ARGS.export_all);
+	TOPLEVEL = TOPLEVEL.wrap(ARGS.wrap);
 	TOPLEVEL.print(output);
 
 	output = output.get();
 
-	sys.print(output);
+	console.log(output);
 }
 
 function callServer(server, port, methodName, params, success_cb, error_cb) {

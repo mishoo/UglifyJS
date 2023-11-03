@@ -1,8 +1,8 @@
 issue_611: {
   options = {
-    sequences: true,
-    side_effects: true
-  };
+        sequences: true,
+        side_effects: true,
+    }
   input: {
     define(function() {
       function fn() {}

@@ -1,103 +1,190 @@
 // Testing UglifyJS <-> SpiderMonkey AST conversion
-// through generative testing.
+"use strict";
 
-var UglifyJS = require(".."),
-    escodegen = require("escodegen"),
-    esfuzz = require("esfuzz"),
-    estraverse = require("estraverse"),
-    prefix = Array(20).join("\b") + "    ";
+var acorn = require("acorn");
+var ufuzz = require("./ufuzz");
+var UglifyJS = require("..");
 
-// Normalizes input AST for UglifyJS in order to get correct comparison.
+function beautify(ast) {
+    var beautified = UglifyJS.minify(ast, {
+        compress: false,
+        mangle: false,
+        module: ufuzz.module,
+        output: {
+            ast: true,
+            beautify: true,
+            braces: true,
+        },
+    });
+    if (!beautified.error) {
+        var verify = UglifyJS.minify(beautified.code, {
+            compress: false,
+            mangle: false,
+            module: ufuzz.module,
+        });
+        if (verify.error) return verify;
+    }
+    return beautified;
+}
 
-function normalizeInput(ast) {
-    return estraverse.replace(ast, {
-        enter: function(node, parent) {
-            switch (node.type) {
-                // Internally mark all the properties with semi-standard type "Property".
-                case "ObjectExpression":
-                    node.properties.forEach(function (property) {
-                        property.type = "Property";
-                    });
-                    break;
-
-                // Since UglifyJS doesn"t recognize different types of property keys,
-                // decision on SpiderMonkey node type is based on check whether key
-                // can be valid identifier or not - so we do in input AST.
-                case "Property":
-                    var key = node.key;
-                    if (key.type === "Literal" && typeof key.value === "string" && UglifyJS.is_identifier(key.value)) {
-                        node.key = {
-                            type: "Identifier",
-                            name: key.value
-                        };
-                    } else if (key.type === "Identifier" && !UglifyJS.is_identifier(key.name)) {
-                        node.key = {
-                            type: "Literal",
-                            value: key.name
-                        };
-                    }
-                    break;
-
-                // UglifyJS internally flattens all the expression sequences - either
-                // to one element (if sequence contains only one element) or flat list.
-                case "SequenceExpression":
-                    node.expressions = node.expressions.reduce(function flatten(list, expr) {
-                        return list.concat(expr.type === "SequenceExpression" ? expr.expressions.reduce(flatten, []) : [expr]);
-                    }, []);
-                    if (node.expressions.length === 1) {
-                        return node.expressions[0];
-                    }
-                    break;
-            }
-        }
+function validate(ast) {
+    try {
+        ast.walk(new UglifyJS.TreeWalker(function(node) {
+            node.validate();
+        }));
+    } catch (e) {
+        return { error: e };
+    }
+    return UglifyJS.minify(ast, {
+        compress: false,
+        mangle: false,
+        module: ufuzz.module,
+        output: {
+            ast: true,
+        },
+        validate: true,
     });
 }
 
-module.exports = function(options) {
-    console.log("--- UglifyJS <-> Mozilla AST conversion");
+function patch_import(code) {
+    return code.replace(/\bimport\s*\{\s*\}\s*from\s*(['"])/g, "import$1")
+        .replace(/\b(import\b.*?)\s*,\s*\{\s*\}\s*(from\s*['"])/g, "$1 $2");
+}
 
-    for (var counter = 0; counter < options.iterations; counter++) {
-        process.stdout.write(prefix + counter + "/" + options.iterations);
+function equals(input, transformed) {
+    if (input.code === transformed.code) return true;
+    return patch_import(input.code) === patch_import(transformed.code);
+}
 
-        var ast1 = normalizeInput(esfuzz.generate({
-            maxDepth: options.maxDepth
-        }));
-        
-        var ast2 =
-            UglifyJS
-            .AST_Node
-            .from_mozilla_ast(ast1)
-            .to_mozilla_ast();
-
-        var astPair = [
-            {name: 'expected', value: ast1},
-            {name: 'actual', value: ast2}
-        ];
-
-        var jsPair = astPair.map(function(item) {
-            return {
-                name: item.name,
-                value: escodegen.generate(item.value)
-            }
-        });
-
-        if (jsPair[0].value !== jsPair[1].value) {
-            var fs = require("fs");
-            var acorn = require("acorn");
-
-            fs.existsSync("tmp") || fs.mkdirSync("tmp");
-
-            jsPair.forEach(function (item) {
-                var fileName = "tmp/dump_" + item.name;
-                var ast = acorn.parse(item.value);
-                fs.writeFileSync(fileName + ".js", item.value);
-                fs.writeFileSync(fileName + ".json", JSON.stringify(ast, null, 2));
-            });
-
-            process.stdout.write("\n");
-            throw new Error("Got different outputs, check out tmp/dump_*.{js,json} for codes and ASTs.");
-        }
+function test(input, to_moz, description, skip_on_error, beautified) {
+    try {
+        var ast = UglifyJS.AST_Node.from_mozilla_ast(to_moz(input));
+    } catch (e) {
+        if (skip_on_error) return true;
+        console.error("//=============================================================");
+        console.error("//", description, "failed... round", round);
+        console.error(e);
+        console.error("// original code");
+        if (beautified === true) console.error("// (beautified)");
+        console.error(input.code);
+        return false;
     }
+    var transformed = validate(ast);
+    if (transformed.error || !equals(input, transformed)) {
+        if (!beautified) {
+            beautified = beautify(input.ast);
+            if (!beautified.error) {
+                beautified.raw = beautified.code;
+                if (!test(beautified, to_moz, description, skip_on_error, true)) return false;
+            }
+        }
+        console.error("//=============================================================");
+        console.error("// !!!!!! Failed... round", round);
+        console.error("// original code");
+        if (beautified.error) {
+            console.error("// !!! beautify failed !!!");
+            console.error(beautified.error.stack);
+        } else if (beautified === true) {
+            console.error("// (beautified)");
+        }
+        console.error(input.raw);
+        console.error();
+        console.error();
+        console.error("//-------------------------------------------------------------");
+        console.error("//", description);
+        if (transformed.error) {
+            console.error(transformed.error.stack);
+        } else {
+            beautified = beautify(transformed.ast);
+            if (beautified.error) {
+                console.error("// !!! beautify failed !!!");
+                console.error(beautified.error.stack);
+                console.error(transformed.code);
+            } else {
+                console.error("// (beautified)");
+                console.error(beautified.code);
+            }
+        }
+        console.error("!!!!!! Failed... round", round);
+        return false;
+    }
+    return true;
+}
 
-    process.stdout.write(prefix + "Probability of error is less than " + (100 / options.iterations) + "%, stopping.\n");
-};
+var num_iterations = ufuzz.num_iterations;
+var minify_options = require("./ufuzz/options.json").map(JSON.stringify);
+minify_options.unshift(null);
+for (var round = 1; round <= num_iterations; round++) {
+    process.stdout.write(round + " of " + num_iterations + "\r");
+    var code = ufuzz.createTopLevelCode();
+    minify_options.forEach(function(options) {
+        var ok = true;
+        var minified;
+        if (options) {
+            var o = JSON.parse(options);
+            o.module = ufuzz.module;
+            minified = UglifyJS.minify(code, o);
+            if (minified.error) {
+                console.log("//=============================================================");
+                console.log("// minify() failed... round", round);
+                console.log("// original code");
+                console.log(code);
+                console.log();
+                console.log();
+                console.log("//-------------------------------------------------------------");
+                console.log("minify(options):");
+                console.log(JSON.stringify(o, null, 2));
+                return;
+            }
+            minified = minified.code;
+        }
+        var input = UglifyJS.minify(minified || code, {
+            compress: false,
+            mangle: false,
+            module: ufuzz.module,
+            output: {
+                ast: true,
+            },
+        });
+        input.raw = options ? input.code : code;
+        if (input.error) {
+            ok = false;
+            console.error("//=============================================================");
+            console.error("// parse() failed... round", round);
+            console.error("// original code");
+            console.error(code);
+            console.error();
+            console.error();
+            if (options) {
+                console.error("//-------------------------------------------------------------");
+                console.error("// minified code");
+                console.error(minified);
+                console.error();
+                console.error();
+                console.error("//-------------------------------------------------------------");
+                console.error("minify(options):");
+                console.error(JSON.stringify(o, null, 2));
+                console.error();
+                console.error();
+            }
+            console.error("//-------------------------------------------------------------");
+            console.error("// parse() error");
+            console.error(input.error);
+        }
+        if (ok) ok = test(input, function(input) {
+            return input.ast.to_mozilla_ast();
+        }, "AST_Node.to_mozilla_ast()");
+        if (ok) ok = test(input, function(input) {
+            return acorn.parse(input.raw, {
+                ecmaVersion: "latest",
+                locations: true,
+                sourceType: "module",
+            });
+        }, "acorn.parse()", !ufuzz.verbose);
+        if (!ok && isFinite(num_iterations)) {
+            console.log();
+            process.exit(1);
+        }
+    });
+}
+console.log();

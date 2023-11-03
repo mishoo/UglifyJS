@@ -7,17 +7,15 @@ truncate_constants: {
 			var x = "very long string, very long string, very long string, very long string, very long string, very long string, very long string, very long string, very long string, very long string, very long string, very long string";
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef[1]-String"}
+			{"a": 0,	"b": 1,	"f2": "[0]:VarDef[1]-String"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "x"},
 			{"v": 1,	"giv": "very%20long%20string%2C%20very%20long%20string%2C%20very%20long%20string%2C%20very%20long%20"}
 			]
-		}'
-	}
+		}`
 }
 
 escape_constants: {
@@ -29,17 +27,15 @@ escape_constants: {
 			var x = '"quoted text"';
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef[1]-String"}
+			{"a": 0,	"b": 1,	"f2": "[0]:VarDef[1]-String"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "x"},
 			{"v": 1,	"giv": "%22quoted%20text%22"}
 			]
-		}'
-	}
+		}`
 }
 
 
@@ -55,16 +51,15 @@ var_scope: {
 			x = a + b;
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef[1]-Number"},
-			{"a": 2,	"b": 3,	"f2": ":VarDef[1]-Number"},
-			{"a": 4,	"b": 0,	"f2": ":VarDef[1]Binary+[0]"},
-			{"a": 4,	"b": 2,	"f2": ":VarDef[1]Binary+[1]"},
-			{"a": 0,	"b": 2,	"f2": ":Binary+[1]"},
-			{"a": 4,	"b": 0,	"f2": ":Assign=[1]Binary+[0]"},
-			{"a": 4,	"b": 2,	"f2": ":Assign=[1]Binary+[1]"}
+			{"a": 0,	"b": 1,	"f2": "[0]:VarDef[1]-Number"},
+			{"a": 2,	"b": 3,	"f2": "[0]:VarDef[1]-Number"},
+			{"a": 4,	"b": 0,	"f2": "[0]:VarDef[1]Binary+[0]"},
+			{"a": 4,	"b": 2,	"f2": "[0]:VarDef[1]Binary+[1]"},
+			{"a": 0,	"b": 2,	"f2": "[0]:Binary+[1]"},
+			{"a": 4,	"b": 0,	"f2": "[0]:Assign=[1]Binary+[0]"},
+			{"a": 4,	"b": 2,	"f2": "[0]:Assign=[1]Binary+[1]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "a"},
@@ -73,8 +68,7 @@ var_scope: {
 			{"v": 3,	"giv": "2"},
 			{"v": 4,	"inf": "x"}
 			]
-		}'
-	}
+		}`
 }
 
 this_scope: {
@@ -90,13 +84,12 @@ this_scope: {
 			this.x = a;  
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Assign=[1]"},			
-			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=[1]"},
-			{"a": 0,	"b": 3,	"f2": ":Assign=[1]"},			
-			{"a": 2,	"b": 3,	"f2": "Dot[0]:Assign=[1]"}
+			{"a": 0,	"b": 1,	"f2": "[0]:Assign=[1]"},			
+			{"a": 2,	"b": 1,	"f2": "[0]Dot[0]:Assign=[1]"},
+			{"a": 0,	"b": 3,	"f2": "[0]:Assign=[1]"},			
+			{"a": 2,	"b": 3,	"f2": "[0]Dot[0]:Assign=[1]"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "x"},
@@ -104,8 +97,7 @@ this_scope: {
 			{"v": 2,	"giv": "this"},
 			{"v": 3,	"inf": "a"}			
 			]
-		}'
-	}
+		}`
 }
 
 this_is_given: {
@@ -117,19 +109,17 @@ this_is_given: {
 			this.x = a;  
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Assign=[1]"},			
-			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=[1]"}
+			{"a": 0,	"b": 1,	"f2": "[0]:Assign=[1]"},			
+			{"a": 2,	"b": 1,	"f2": "[0]Dot[0]:Assign=[1]"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "x"},
 			{"v": 1,	"inf": "a"},
 			{"v": 2,	"giv": "this"}
 			]
-		}'
-	}
+		}`
 }
 
 
@@ -143,13 +133,12 @@ this_attr_scope: {
 			this.x = b;
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Assign=[1]"},			
-			{"a": 2,	"b": 1,	"f2": "Dot[0]:Assign=[1]"},
-			{"a": 0,	"b": 3,	"f2": ":Assign=[1]"},
-			{"a": 2,	"b": 3,	"f2": "Dot[0]:Assign=[1]"}
+			{"a": 0,	"b": 1,	"f2": "[0]:Assign=[1]"},			
+			{"a": 2,	"b": 1,	"f2": "[0]Dot[0]:Assign=[1]"},
+			{"a": 0,	"b": 3,	"f2": "[0]:Assign=[1]"},
+			{"a": 2,	"b": 3,	"f2": "[0]Dot[0]:Assign=[1]"}
 			],
 			"assign":[
 			{"v": 0,	"giv": "x"},
@@ -157,8 +146,7 @@ this_attr_scope: {
 			{"v": 2,	"giv": "this"},
 			{"v": 3,	"inf": "b"}
 			]
-		}'
-	}
+		}`
 }
 
 bool_const_type: {
@@ -170,8 +158,7 @@ bool_const_type: {
 			var x = true;
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNDECL"}			
 			],
@@ -179,8 +166,7 @@ bool_const_type: {
 			{"v": 0,	"giv": "chunkData"},
 			{"v": 1,	"inf": "x"}			
 			]
-		}'
-	}
+		}`
 }
 
 handles_toString_call: {
@@ -193,8 +179,7 @@ handles_toString_call: {
 			x.toString();
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNDECL"}
 			],
@@ -202,8 +187,7 @@ handles_toString_call: {
 			{"v": 0,	"giv": "chunkData"},
 			{"v": 1,	"inf": "x"}			
 			]
-		}'
-	}
+		}`
 }
 
 escape_backslash: {
@@ -215,8 +199,7 @@ escape_backslash: {
 			x.replace(/\s/g, "a");
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNPAR"}			
 			],
@@ -224,8 +207,7 @@ escape_backslash: {
 			{"v": 0,	"giv": "chunkData"},
 			{"v": 1,	"inf": "x"}			
 			]
-		}'
-	}
+		}`
 }
 
 func_no_duplicates: {
@@ -238,18 +220,16 @@ func_no_duplicates: {
 			a = new chunkData();			
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":VarDef[1]New[0]"},
-			{"a": 0,	"b": 1,	"f2": ":Assign=[1]New[0]"}
+			{"a": 0,	"b": 1,	"f2": "[0]:VarDef[1]New[0]"},
+			{"a": 0,	"b": 1,	"f2": "[0]:Assign=[1]New[0]"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "a"},
 			{"v": 1,	"giv": "chunkData"}
 			]
-		}'
-	}
+		}`
 }
 
 func_allow_different_features_duplicates: {
@@ -262,22 +242,20 @@ func_allow_different_features_duplicates: {
 			return 42;
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Dot[0]"},
-			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[1]-Number"},
-			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[2]-Number"},
-			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[3]-Number"},
-			{"a": 0,	"b": 2,	"f2": "Dot[0]:Call[4]-Number"}
+			{"a": 0,	"b": 1,	"f2": "[0]:Dot[0]"},
+			{"a": 0,	"b": 2,	"f2": "[0]Dot[0]:Call[1]-Number"},
+			{"a": 0,	"b": 2,	"f2": "[0]Dot[0]:Call[2]-Number"},
+			{"a": 0,	"b": 2,	"f2": "[0]Dot[0]:Call[3]-Number"},
+			{"a": 0,	"b": 2,	"f2": "[0]Dot[0]:Call[4]-Number"}
 			],
 			"assign":[
 			{"v": 0,	"inf": "x"},
 			{"v": 1,	"giv": "foo"},
 			{"v": 2,	"giv": "42"}
 			]
-		}'
-	}
+		}`
 }
 
 method_name_fixed: {	
@@ -287,10 +265,9 @@ method_name_fixed: {
 			bar();
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
-			{"a": 0,	"b": 1,	"f2": ":Dot[0]"},
+			{"a": 0,	"b": 1,	"f2": "[0]:Dot[0]"},
 			{"a": 2,	"b": 0,	"f2": "FNPAR"}
 			],
 			"assign":[
@@ -298,6 +275,5 @@ method_name_fixed: {
 			{"v": 1,	"giv": "foo"},
 			{"v": 2,	"giv": "chunkData"}
 			]
-		}'
-	}
+		}`
 }

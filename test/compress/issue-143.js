@@ -1,5 +1,5 @@
 /**
- * There was an incorrect sort behaviour documented in issue #143:
+ * There was an incorrect sort behavior documented in issue #143:
  * (x = f(…)) <= x → x >= (x = f(…))
  *
  * For example, let the equation be:
@@ -12,37 +12,54 @@
  * a >= (a = parseInt('100')) → 99 >= 100 → false
  */
 
-tranformation_sort_order_equal: {
+transformation_sort_order_equal: {
     options = {
         comparisons: true,
-    };
-
-    input: { (a = parseInt('100')) == a }
-    expect: { (a = parseInt('100')) == a }
+    }
+    input: {
+        console.log((a = parseInt("100")) == a);
+    }
+    expect: {
+        console.log((a = parseInt("100")) == a);
+    }
+    expect_stdout: "true"
 }
 
-tranformation_sort_order_unequal: {
+transformation_sort_order_unequal: {
     options = {
         comparisons: true,
-    };
-
-    input: { (a = parseInt('100')) != a }
-    expect: { (a = parseInt('100')) != a }
+    }
+    input: {
+        console.log((a = parseInt("100")) != a);
+    }
+    expect: {
+        console.log((a = parseInt("100")) != a);
+    }
+    expect_stdout: "false"
 }
 
-tranformation_sort_order_lesser_or_equal: {
+transformation_sort_order_lesser_or_equal: {
     options = {
         comparisons: true,
-    };
-
-    input: { (a = parseInt('100')) <= a }
-    expect: { (a = parseInt('100')) <= a }
+    }
+    input: {
+        console.log((a = parseInt("100")) <= a);
+    }
+    expect: {
+        console.log((a = parseInt("100")) <= a);
+    }
+    expect_stdout: "true"
 }
-tranformation_sort_order_greater_or_equal: {
+
+transformation_sort_order_greater_or_equal: {
     options = {
         comparisons: true,
-    };
-
-    input: { (a = parseInt('100')) >= a }
-    expect: { (a = parseInt('100')) >= a }
+    }
+    input: {
+        console.log((a = parseInt("100")) >= a);
+    }
+    expect: {
+        console.log((a = parseInt("100")) >= a);
+    }
+    expect_stdout: "true"
 }

@@ -1,170 +1,74 @@
-var path = require("path");
 var fs = require("fs");
-var vm = require("vm");
-var sys = require("util");
 
-var UglifyJS = vm.createContext({
-    sys           : sys,
-    console       : console,
-    process       : process,
-    Buffer        : Buffer,
-    MOZ_SourceMap : require("source-map")
-});
+exports.FILES = [
+    require.resolve("../lib/utils.js"),
+    require.resolve("../lib/ast.js"),
+    require.resolve("../lib/transform.js"),
+    require.resolve("../lib/parse.js"),
+    require.resolve("../lib/scope.js"),
+    require.resolve("../lib/compress.js"),
+    require.resolve("../lib/output.js"),
+    require.resolve("../lib/sourcemap.js"),
+    require.resolve("../lib/mozilla-ast.js"),
+    require.resolve("../lib/feature_extractor.js"),
+    require.resolve("../lib/propmangle.js"),
+    require.resolve("../lib/minify.js"),
+    require.resolve("./exports.js"),
+];
 
-function load_global(file) {
-    file = path.resolve(path.dirname(module.filename), file);
-    try {
-        var code = fs.readFileSync(file, "utf8");
-        return vm.runInContext(code, UglifyJS, file);
-    } catch(ex) {
-        // XXX: in case of a syntax error, the message is kinda
-        // useless. (no location information).
-        sys.debug("ERROR in file: " + file + " / " + ex);
-        process.exit(1);
-    }
-};
+new Function("domprops", "exports", function() {
+    var code = exports.FILES.map(function(file) {
+        return fs.readFileSync(file, "utf8");
+    });
+    code.push("exports.describe_ast = " + describe_ast.toString());
+    return code.join("\n\n");
+}())(require("./domprops.json"), exports);
 
-var FILES = exports.FILES = [
-    "../lib/utils.js",
-    "../lib/ast.js",
-    "../lib/parse.js",
-    "../lib/transform.js",
-    "../lib/scope.js",
-    "../lib/output.js",
-    "../lib/compress.js",
-    "../lib/sourcemap.js",
-    "../lib/mozilla-ast.js",
-    "../lib/feature_extractor.js"
-].map(function(file){
-    return fs.realpathSync(path.join(path.dirname(__filename), file));
-});
-
-FILES.forEach(load_global);
-
-UglifyJS.AST_Node.warn_function = function(txt) {
-    sys.error("WARN: " + txt);
-};
-
-// XXX: perhaps we shouldn't export everything but heck, I'm lazy.
-for (var i in UglifyJS) {
-    if (UglifyJS.hasOwnProperty(i)) {
-        exports[i] = UglifyJS[i];
-    }
+function to_comment(value) {
+    if (typeof value != "string") value = JSON.stringify(value, function(key, value) {
+        return typeof value == "function" ? "<[ " + value + " ]>" : value;
+    }, 2);
+    return "// " + value.replace(/\n/g, "\n// ");
 }
 
-exports.minify = function(files, options) {
-    options = UglifyJS.defaults(options, {
-        spidermonkey : false,
-        outSourceMap : null,
-        sourceRoot   : null,
-        inSourceMap  : null,
-        fromString   : false,
-        warnings     : false,
-        mangle       : {},
-        output       : null,
-        compress     : {}
-    });
-    UglifyJS.base54.reset();
-
-    // 1. parse
-    var toplevel = null,
-        sourcesContent = {};
-
-    if (options.spidermonkey) {
-        toplevel = UglifyJS.AST_Node.from_mozilla_ast(files);
-    } else {
-        if (typeof files == "string")
-            files = [ files ];
-        files.forEach(function(file){
-            var code = options.fromString
-                ? file
-                : fs.readFileSync(file, "utf8");
-            sourcesContent[file] = code;
-            toplevel = UglifyJS.parse(code, {
-                filename: options.fromString ? "?" : file,
-                toplevel: toplevel
-            });
-        });
+if (+process.env["UGLIFY_BUG_REPORT"]) exports.minify = function(files, options) {
+    if (typeof options == "undefined") options = "<<undefined>>";
+    var code = [
+        "// UGLIFY_BUG_REPORT",
+        to_comment(options),
+    ];
+    if (typeof files == "string") {
+        code.push("");
+        code.push("//-------------------------------------------------------------")
+        code.push("// INPUT CODE", files);
+    } else for (var name in files) {
+        code.push("");
+        code.push("//-------------------------------------------------------------")
+        code.push(to_comment(name), files[name]);
     }
-
-    // 2. compress
-    if (options.compress) {
-        var compress = { warnings: options.warnings };
-        UglifyJS.merge(compress, options.compress);
-        toplevel.figure_out_scope();
-        var sq = UglifyJS.Compressor(compress);
-        toplevel = toplevel.transform(sq);
+    if (options.sourceMap && options.sourceMap.url) {
+        code.push("");
+        code.push("//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiJ9");
     }
-
-    // 3. mangle
-    if (options.mangle) {
-        toplevel.figure_out_scope(options.mangle);
-        toplevel.compute_char_frequency(options.mangle);
-        toplevel.mangle_names(options.mangle);
-    }
-
-    // 4. output
-    var inMap = options.inSourceMap;
-    var output = {};
-    if (typeof options.inSourceMap == "string") {
-        inMap = fs.readFileSync(options.inSourceMap, "utf8");
-    }
-    if (options.outSourceMap) {
-        output.source_map = UglifyJS.SourceMap({
-            file: options.outSourceMap,
-            orig: inMap,
-            root: options.sourceRoot
-        });
-        if (options.sourceMapIncludeSources) {
-            for (var file in sourcesContent) {
-                if (sourcesContent.hasOwnProperty(file)) {
-                    output.source_map.get().setSourceContent(file, sourcesContent[file]);
-                }
-            }
-        }
-
-    }
-    if (options.output) {
-        UglifyJS.merge(output, options.output);
-    }
-    var stream = UglifyJS.OutputStream(output);
-    toplevel.print(stream);
-
-    if(options.outSourceMap){
-        stream += "\n//# sourceMappingURL=" + options.outSourceMap;
-    }
-
-    return {
-        code : stream + "",
-        map  : output.source_map + ""
-    };
+    var result = { code: code.join("\n") };
+    if (options.sourceMap) result.map = '{"version":3,"sources":[],"names":[],"mappings":""}';
+    return result;
 };
 
-// exports.describe_ast = function() {
-//     function doitem(ctor) {
-//         var sub = {};
-//         ctor.SUBCLASSES.forEach(function(ctor){
-//             sub[ctor.TYPE] = doitem(ctor);
-//         });
-//         var ret = {};
-//         if (ctor.SELF_PROPS.length > 0) ret.props = ctor.SELF_PROPS;
-//         if (ctor.SUBCLASSES.length > 0) ret.sub = sub;
-//         return ret;
-//     }
-//     return doitem(UglifyJS.AST_Node).sub;
-// }
+function describe_ast() {
+    var out = OutputStream({ beautify: true });
+    doitem(AST_Node);
+    return out.get() + "\n";
 
-exports.describe_ast = function() {
-    var out = UglifyJS.OutputStream({ beautify: true });
     function doitem(ctor) {
         out.print("AST_" + ctor.TYPE);
-        var props = ctor.SELF_PROPS.filter(function(prop){
+        var props = ctor.SELF_PROPS.filter(function(prop) {
             return !/^\$/.test(prop);
         });
         if (props.length > 0) {
             out.space();
-            out.with_parens(function(){
-                props.forEach(function(prop, i){
+            out.with_parens(function() {
+                props.forEach(function(prop, i) {
                     if (i) out.space();
                     out.print(prop);
                 });
@@ -176,15 +80,32 @@ exports.describe_ast = function() {
         }
         if (ctor.SUBCLASSES.length > 0) {
             out.space();
-            out.with_block(function(){
-                ctor.SUBCLASSES.forEach(function(ctor, i){
+            out.with_block(function() {
+                ctor.SUBCLASSES.sort(function(a, b) {
+                    return a.TYPE < b.TYPE ? -1 : 1;
+                }).forEach(function(ctor, i) {
                     out.indent();
                     doitem(ctor);
                     out.newline();
                 });
             });
         }
-    };
-    doitem(UglifyJS.AST_Node);
-    return out + "";
+    }
+}
+
+function infer_options(options) {
+    var result = exports.minify("", options);
+    return result.error && result.error.defs;
+}
+
+exports.default_options = function() {
+    var defs = infer_options({ 0: 0 });
+    Object.keys(defs).forEach(function(component) {
+        var options = { module: false };
+        options[component] = { 0: 0 };
+        if (options = infer_options(options)) {
+            defs[component] = options;
+        }
+    });
+    return defs;
 };

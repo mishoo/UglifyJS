@@ -1,5 +1,7 @@
 issue_44_valid_ast_1: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function a(b) {
             for (var i = 0, e = b.qoo(); ; i++) {}
@@ -14,7 +16,9 @@ issue_44_valid_ast_1: {
 }
 
 issue_44_valid_ast_2: {
-    options = { unused: true };
+    options = {
+        unused: true,
+    }
     input: {
         function a(b) {
             if (foo) for (var i = 0, e = b.qoo(); ; i++) {}

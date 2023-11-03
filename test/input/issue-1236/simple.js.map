@@ -1,0 +1,8 @@
+{
+    "version": 3,
+    "sources": ["index.js"],
+    "names": [],
+    "mappings": ";;AAAA,IAAI,MAAM,SAAN,GAAM;AAAA,SAAK,SAAS,CAAd;AAAA,CAAV;AACA,QAAQ,GAAR,CAAY,IAAI,KAAJ,CAAZ",
+    "file": "simple.js",
+    "sourcesContent": ["let foo = x => \"foo \" + x;\nconsole.log(foo(\"bar\"));"]
+}

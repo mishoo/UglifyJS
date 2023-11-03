@@ -1,0 +1,52 @@
+[
+    {
+        "compress": false,
+        "mangle": false,
+        "module": false,
+        "output": {
+            "beautify": true,
+            "braces": true
+        },
+        "rename": true
+    },
+    {
+        "compress": false,
+        "module": false
+    },
+    {
+        "mangle": false,
+        "module": false
+    },
+    {
+        "module": false
+    },
+    {
+        "ie": true,
+        "module": false,
+        "toplevel": true
+    },
+    {
+        "compress": {
+            "hoist_vars": true,
+            "keep_infinity": true,
+            "passes": 1e6,
+            "unsafe": true
+        },
+        "keep_fargs": true,
+        "keep_fnames": true,
+        "module": false,
+        "toplevel": true
+    },
+    {
+        "compress": {
+            "passes": 1e6,
+            "sequences": 1e6,
+            "unsafe": true,
+            "unsafe_Function": true,
+            "unsafe_math": true,
+            "unsafe_proto": true,
+            "unsafe_regexp": true
+        },
+        "module": false
+    }
+]

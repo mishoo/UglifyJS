@@ -1,5 +1,7 @@
 return_with_no_value_in_if_body: {
-    options = { conditionals: true };
+    options = {
+        conditionals: true,
+    }
     input: {
         function foo(bar) {
             if (bar) {

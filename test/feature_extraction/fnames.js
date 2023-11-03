@@ -5,8 +5,7 @@ func_decl_params: {
 	input: {
 		function chunkData(e, t) { }
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,  "b": 1, "f2": "FNPAR"},
 			{"a": 0,  "b": 2, "f2": "FNPAR"}
@@ -16,8 +15,7 @@ func_decl_params: {
 			{"v": 1,  "inf": "e"},
 			{"v": 2,  "inf": "t"}
 			]
-		}'
-	}
+		}`
 }
 
 func_simple_call: {
@@ -29,15 +27,13 @@ func_simple_call: {
 			foo();
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			],
 			"assign":[
 			]
 		}
-		'
-	}
+		`
 }
 
 func_args: {
@@ -50,8 +46,7 @@ func_args: {
 			x.foo(b, n1, 42, n1, 42);
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNPAR"},
 			{"a": 0,	"b": 2,	"f2": "FNDECL"}			
@@ -62,8 +57,7 @@ func_args: {
 			{"v": 2,	"inf": "n1"}			
 			]
 		}
-		'
-	}
+		`
 }
 
 inner_lambda_assign_local: {
@@ -77,8 +71,7 @@ inner_lambda_assign_local: {
 			};
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNPAR"},
 			{"a": 0,	"b": 2,	"f2": "FNDECL"},
@@ -92,8 +85,7 @@ inner_lambda_assign_local: {
 			{"v": 3,	"giv": "log"},
 			{"v": 4,	"giv": "hello"}
 			]
-		}'
-	}
+		}`
 }
 
 inner_lambda_assign_global: {
@@ -107,8 +99,7 @@ inner_lambda_assign_global: {
 			};
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNPAR"}
 			],
@@ -116,8 +107,7 @@ inner_lambda_assign_global: {
 			{"v": 0,	"giv": "global"},
 			{"v": 1,	"inf": "a"}
 			]
-		}'
-	}
+		}`
 }
 
 inner_lambda_assign_sub: {
@@ -131,8 +121,7 @@ inner_lambda_assign_sub: {
 			};
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "[]-FNPAR"}
 			],
@@ -140,8 +129,7 @@ inner_lambda_assign_sub: {
 			{"v": 0,	"giv": "global"},
 			{"v": 1,	"inf": "a"}
 			]
-		}'
-	}
+		}`
 }
 
 inner_lambda_prop: {
@@ -157,8 +145,7 @@ inner_lambda_prop: {
 			});
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNPAR"},			
 			{"a": 2,	"b": 3,	"f2": "FNPAR"}			
@@ -169,8 +156,7 @@ inner_lambda_prop: {
 			{"v": 2,	"giv": "awesome_key"},
 			{"v": 3,	"inf": "a"}			
 			]
-		}'
-	}
+		}`
 }
 
 inner_lambda_arg: {
@@ -184,8 +170,7 @@ inner_lambda_arg: {
 			});
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "(2)-FNPAR"}
 			],
@@ -193,8 +178,7 @@ inner_lambda_arg: {
 			{"v": 0,	"giv": "substring"},
 			{"v": 1,	"inf": "x"}
 			]
-		}'
-	}
+		}`
 }
 
 inner_lambda_arg2: {
@@ -208,8 +192,7 @@ inner_lambda_arg2: {
 			});
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "(2)-FNPAR"}
 			],
@@ -217,8 +200,7 @@ inner_lambda_arg2: {
 			{"v": 0,	"giv": "substring"},
 			{"v": 1,	"inf": "b"}
 			]
-		}'
-	}
+		}`
 }
 
 func_return: {
@@ -231,8 +213,7 @@ func_return: {
 			return a;
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNDECL"},			
 			{"a": 0,	"b": 1,	"f2": "FNRETURN"}
@@ -241,8 +222,7 @@ func_return: {
 			{"v": 0,	"giv": "chunkData"},
 			{"v": 1,	"inf": "a"}			
 			]
-		}'
-	}
+		}`
 }
 
 func_scopes: {
@@ -257,8 +237,7 @@ func_scopes: {
 			})(2);
 		}
 	}
-	expect: {
-		'{
+	expect: `{
 			"query":[
 			{"a": 0,	"b": 1,	"f2": "FNPAR"},
 			{"a": 0,	"b": 2,	"f2": "FNPAR"},
@@ -275,7 +254,6 @@ func_scopes: {
 			{"v": 4,	"giv": "y"},
 			{"v": 5,	"inf": "r"}
 			]
-		}'
-	}
+		}`
 }
 

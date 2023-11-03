@@ -1,32 +1,28 @@
 {
   "name": "unuglify-js",
   "description": "JavaScript tool that renames variables and parameters to names based on statistical model learnt from thousands of open source projects",
-    "homepage": "https://github.com/eth-srl/UnuglifyJS",
-    "main": "tools/node.js",
-    "version": "0.9.5",
-    "engines": { "node" : ">=0.4.0" },
-    "maintainers": [{
-        "name": "Pavol Bielik",
-        "email": "pavol.bielik@inf.ethz.ch"
-    }],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/eth-srl/UnuglifyJS"
-    },
-    "dependencies": {
-        "source-map" : "0.1.34",
-        "yargs": "~1.3.3",
-        "colors": "~1.0.3"
-    },
-    "devDependencies": {
-        "acorn": "~0.6.0",
-        "escodegen": "~1.3.3",
-        "esfuzz": "~0.3.1",
-        "estraverse": "~1.5.1"
-    },
-    "bin": {
-        "unuglifyjs" : "bin/unuglifyjs"
-    },
-    "license": "BSD",
-    "scripts": {"test": "node test/run-tests.js"}
+  "homepage": "https://github.com/eth-srl/UnuglifyJS",
+  "license": "BSD",
+  "version": "0.9.5",
+  "engines": { "node" : ">=0.8.0" },
+  "maintainers": [{
+    "name": "Pavol Bielik",
+    "email": "pavol.bielik@inf.ethz.ch"
+  }],
+  "repository": "/eth-srl/UnuglifyJS",
+  "main": "tools/node.js",
+  "bin": {
+    "unuglifyjs" : "bin/unuglifyjs"
+  },
+  "dependencies": {
+    "yargs": "~1.3.3",
+    "colors": "~1.0.3"
+  },
+  "devDependencies": {
+    "acorn": "~8.7.1",
+    "semver": "~6.3.0"
+  },
+  "scripts": {
+    "test": "node test/feature_extraction.js"
+  }
 }
