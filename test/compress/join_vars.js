@@ -16,6 +16,104 @@ join_vars_assign: {
     expect_stdout: "PASS"
 }
 
+join_array_assignments_1: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function () {
+            var a = ["foo", , "bar"];
+            a[1] = "baz";
+            a[7] = "moo";
+            a[0] = "moz";
+            return a;
+        }().join());
+    }
+    expect: {
+        console.log(function () {
+            var a = ["moz", "baz", "bar", , , , , "moo"];
+            return a;
+        }().join());
+    }
+    expect_stdout: "moz,baz,bar,,,,,moo"
+}
+
+join_array_assignments_2: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function () {
+            var a = ["foo"];
+            a[1] = "bar";
+            a[7] = "baz";
+            a[2] = "moo";
+            return a;
+        }().join());
+    }
+    expect: {
+        console.log(function () {
+            var a = ["foo", "bar"];
+            a[7] = "baz";
+            a[2] = "moo";
+            return a;
+        }().join());
+    }
+    expect_stdout: "foo,bar,moo,,,,,baz"
+}
+
+join_array_assignments_3: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function () {
+            var a = ["foo"];
+            a[1] = "bar";
+            a.b = "baz";
+            a[2] = "moo";
+            return a;
+        }().join());
+    }
+    expect: {
+        console.log(function () {
+            var a = ["foo", "bar"];
+            a.b = "baz";
+            a[2] = "moo";
+            return a;
+        }().join());
+    }
+    expect_stdout: true
+}
+
+join_array_assignments_4: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        console.log(function () {
+            var a = ["foo"];
+            a[0] = "bar";
+            a[1] = a;
+            a[2] = "baz";
+            return a;
+        }().join());
+    }
+    expect: {
+        console.log(function () {
+            var a = ["bar"];
+            a[1] = a;
+            a[2] = "baz";
+            return a;
+        }().join());
+    }
+    expect_stdout: true
+}
+
 join_object_assignments_1: {
     options = {
         evaluate: true,
