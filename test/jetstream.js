@@ -63,7 +63,10 @@ if (typeof phantom == "undefined") {
 
         function npm(args, done) {
             args.push("--loglevel=error");
-            child_process.spawn(cmd, args, { stdio: [ "ignore", 1, 2 ] }).on("exit", done);
+            child_process.spawn(cmd, args, {
+                shell: true,
+                stdio: [ "ignore", 1, 2 ],
+            }).on("exit", done);
         }
 
         (function install() {
