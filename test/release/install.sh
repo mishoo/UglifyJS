@@ -50,7 +50,8 @@ node --version
 npm config set audit false
 npm config set fund false
 npm config set loglevel error
-npm config set optional false
+npm config set omit optional || true
+npm config set optional false || true
 npm config set save false
 npm config set strict-ssl false
 npm config set update-notifier false
