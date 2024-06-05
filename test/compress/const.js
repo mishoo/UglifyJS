@@ -2204,3 +2204,30 @@ issue_5660: {
     }
     expect_stdout: true
 }
+
+issue_5787: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            const a = 42;
+            switch (a) {
+              case 42:
+                const a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            const a = 42;
+            switch (a) {
+              case 42:
+                const a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect_stdout: true
+}

@@ -2537,3 +2537,32 @@ issue_5759: {
     ]
     node_version: ">=4"
 }
+
+issue_5787: {
+    options = {
+        unused: true,
+    }
+    input: {
+        console.log(function() {
+            let a = 42;
+            switch (a) {
+              case 42:
+                // Node.js v4 (vm): SyntaxError: Identifier 'a' has already been declared
+                let a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            let a = 42;
+            switch (a) {
+              case 42:
+                let a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}

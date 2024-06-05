@@ -739,3 +739,55 @@ issue_3480_ie8_toplevel: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5787_1: {
+    rename = true
+    input: {
+        console.log(function() {
+            const a = 42;
+            switch (a) {
+              case 42:
+                const a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            const a = 42;
+            switch (a) {
+              case 42:
+                const a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect_stdout: true
+}
+
+issue_5787_2: {
+    rename = true
+    input: {
+        console.log(function() {
+            let a = 42;
+            switch (a) {
+              case 42:
+                // Node.js v4 (vm): SyntaxError: Identifier 'a' has already been declared
+                let a = "PASS";
+                return a;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            let a = 42;
+            switch (a) {
+              case 42:
+                let b = "PASS";
+                return b;
+            }
+        }());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
