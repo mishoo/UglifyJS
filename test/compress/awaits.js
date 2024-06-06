@@ -3642,3 +3642,66 @@ issue_5692_2: {
     ]
     node_version: ">=8"
 }
+
+issue_5791: {
+    options = {
+        awaits: true,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (async function() {
+            async function f() {
+                try {
+                    await {
+                        then(resolve) {
+                            setImmediate(() => {
+                                console.log("foo");
+                                resolve();
+                            });
+                        },
+                    };
+                } catch (e) {
+                    console.log("FAIL", e);
+                }
+            }
+            async function g() {
+                try {
+                    await f();
+                } catch (e) {}
+            }
+            await g();
+            console.log("bar");
+        })();
+    }
+    expect: {
+        (async function() {
+            await async function() {
+                try {
+                    await async function() {
+                        try {
+                            await {
+                                then(resolve) {
+                                    setImmediate(() => {
+                                        console.log("foo");
+                                        resolve();
+                                    });
+                                },
+                            };
+                        } catch (e) {
+                            console.log("FAIL", e);
+                        }
+                    }();
+                } catch (e) {}
+            }();
+            console.log("bar");
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}
