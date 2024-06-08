@@ -8222,3 +8222,127 @@ issue_5777_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_1666: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect: {
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect_stdout: true
+}
+
+issue_1666_strict: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect: {
+        "use strict";
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect_stdout: true
+}
+
+issue_1666_undefined: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect: {
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect_stdout: true
+}
+
+issue_1666_undefined_strict: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect: {
+        "use strict";
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect_stdout: true
+}

@@ -10172,3 +10172,115 @@ issue_5779: {
     }
     expect_stdout: "PASS"
 }
+
+issue_1666: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect: {
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect_stdout: true
+}
+
+issue_1666_strict: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect: {
+        "use strict";
+        var x = 42;
+        {
+            x();
+            function x() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof x);
+    }
+    expect_stdout: true
+}
+
+issue_1666_undefined: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect: {
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect_stdout: true
+}
+
+issue_1666_undefined_strict: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        "use strict";
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect: {
+        "use strict";
+        var undefined = 42;
+        {
+            undefined();
+            function undefined() {
+                console.log("foo");
+            }
+        }
+        console.log(typeof undefined);
+    }
+    expect_stdout: true
+}
