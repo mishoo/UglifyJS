@@ -32,7 +32,7 @@ join_array_assignments_1: {
     }
     expect: {
         console.log(function () {
-            var a = ["moz", "baz", "bar", , , , , "moo"];
+            var a = [("foo", "moz"), "baz", "bar", , , , , "moo"];
             return a;
         }().join());
     }
@@ -93,6 +93,7 @@ join_array_assignments_4: {
     options = {
         evaluate: true,
         join_vars: true,
+        side_effects: true,
     }
     input: {
         console.log(function () {
@@ -1491,4 +1492,19 @@ issue_5175: {
         });
     }
     expect_stdout: "PASS PASS"
+}
+
+issue_5831: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+    }
+    input: {
+        var a = [ console.log("PASS") ];
+        a[0] = 42;
+    }
+    expect: {
+        var a = [ (console.log("PASS"), 42) ];
+    }
+    expect_stdout: "PASS"
 }
