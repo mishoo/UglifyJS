@@ -344,3 +344,43 @@ issue_5266: {
     ]
     node_version: ">=14"
 }
+
+issue_5829_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        (function f(a) {
+            var b;
+            (!a ?? (b = 0)) || console.log(b || "PASS");
+        })("FAIL");
+    }
+    expect: {
+        (function f(a) {
+            var b;
+            (!a ?? (b = 0)) || console.log(b || "PASS");
+        })("FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+issue_5829_2: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        (function f(a) {
+            var b;
+            (a ?? (b = 0)) && console.log(b || "PASS");
+        })("FAIL");
+    }
+    expect: {
+        (function f(a) {
+            var b;
+            (a ?? (b = 0)) && console.log(b || "PASS");
+        })("FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
