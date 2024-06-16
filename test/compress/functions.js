@@ -8817,3 +8817,103 @@ issue_5766_2: {
     }
     expect_stdout: "function"
 }
+
+issue_5841_1: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        inline: true,
+        join_vars: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        (function() {
+            f();
+            var b = f();
+            function f() {
+                if (console && a)
+                    g && g();
+            }
+            function g() {
+                var c;
+                for (;console.log("foo"););
+                (function h(d) {
+                    d && d.p;
+                })();
+            }
+        })();
+    }
+    expect: {
+        var a = 42;
+        (function() {
+            f();
+            f();
+            function f() {
+                {
+                    if (console && a) {
+                        for (;console.log("foo"););
+                        return;
+                    }
+                    return;
+                }
+            }
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
+
+issue_5841_2: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        if_return: true,
+        inline: true,
+        join_vars: true,
+        passes: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = 42;
+        (function() {
+            f();
+            var b = f();
+            function f() {
+                if (console && a)
+                    g && g();
+            }
+            function g() {
+                var c;
+                for (;console.log("foo"););
+                (function h(d) {
+                    d && d.p;
+                })();
+            }
+        })();
+    }
+    expect: {
+        var a = 42;
+        (function() {
+            f();
+            f();
+            function f() {
+                if (console && a)
+                    for (;console.log("foo"););
+            }
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
