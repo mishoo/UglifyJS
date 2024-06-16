@@ -2207,3 +2207,43 @@ issue_5754: {
     ]
     node_version: ">=10"
 }
+
+issue_5842: {
+    options = {
+        inline: true,
+    }
+    input: {
+        var a = "FAIL";
+        (async function*() {
+            (function() {
+                try {
+                    try {
+                        return console;
+                    } finally {
+                        a = "PASS";
+                    }
+                } catch (e) {}
+                FAIL;
+            })();
+        })().next();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (async function*() {
+            (function() {
+                try {
+                    try {
+                        return console;
+                    } finally {
+                        a = "PASS";
+                    }
+                } catch (e) {}
+                FAIL;
+            })();
+        })().next();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=10"
+}
