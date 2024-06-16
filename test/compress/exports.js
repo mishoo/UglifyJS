@@ -260,7 +260,7 @@ hoist_exports_2: {
         }
     }
     expect: {
-        let e, a = 42["foo"];
+        let e, a = 42..foo;
         function f(t, { [e]: o }) {
             t(o, f);
         }

@@ -2293,7 +2293,7 @@ issue_5340_3: {
     }
     expect: {
         var a;
-        (function() {})(a = true["p"]);
+        (function() {})(a = true.p);
         console.log(a);
     }
     expect_stdout: "undefined"

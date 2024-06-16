@@ -1386,7 +1386,7 @@ issue_5076_1: {
     expect: {
         var a;
         console.log("PASS"),
-        a = 42["a"];
+        a = 42..a;
     }
     expect_stdout: "PASS"
     node_version: ">=6"
