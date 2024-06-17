@@ -3937,3 +3937,25 @@ issue_5843_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5844: {
+    options = {
+        inline: true,
+    }
+    input: {
+        try {
+            (function(a) {
+                [ a.p ] = 42;
+            })(console.log("PASS"));
+        } catch (e) {}
+    }
+    expect: {
+        try {
+            (function(a) {
+                [ a.p ] = 42;
+            })(console.log("PASS"));
+        } catch (e) {}
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
