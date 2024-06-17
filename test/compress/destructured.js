@@ -1382,7 +1382,7 @@ side_effects_object: {
         }
     }
     expect: {
-        var a = null, c = (console, 42["c"]);
+        var a = null, c = (console, 42..c);
         try {
             c[a = "PASS"];
         } catch (e) {
@@ -1684,7 +1684,7 @@ singleton_1: {
     expect: {
         var b, a = "P"[0], o = {};
         o.p = [ "FAIL"["1"] ][0];
-        o.q = { foo: "S"[0] }["foo"];
+        o.q = { foo: "S"[0] }.foo;
         [ b = "S" ] = [];
         console.log(a + o.p + o.q + b);
     }
@@ -3884,5 +3884,56 @@ issue_5651: {
         }("PASS"));
     }
     expect_stdout: true
+    node_version: ">=6"
+}
+
+issue_5843_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var { p: a } = {
+            __proto__: {
+                p: "PASS",
+            },
+        };
+        console.log(a);
+    }
+    expect: {
+        var a = {
+            __proto__: {
+                p: "PASS",
+            },
+        }.p;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5843_2: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        ({ p: a } = {
+            __proto__: {
+                p: "PASS",
+            },
+        });
+        console.log(a);
+    }
+    expect: {
+        var a;
+        a = {
+            __proto__: {
+                p: "PASS",
+            },
+        }.p;
+        console.log(a);
+    }
+    expect_stdout: "PASS"
     node_version: ">=6"
 }
