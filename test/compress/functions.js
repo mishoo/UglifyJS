@@ -8917,3 +8917,57 @@ issue_5841_2: {
         "foo",
     ]
 }
+
+issue_5851_1: {
+    options = {
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        console.log("PASS") && f();
+        function f() {
+            return f();
+        }
+        f;
+    }
+    expect: {
+        console.log("PASS") && f();
+        function f() {
+            return f();
+        }
+        f;
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5851_2: {
+    options = {
+        conditionals: true,
+        inline: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = f();
+        f();
+        function f() {
+            if (console.log("foo"))
+                console && f();
+        }
+    }
+    expect: {
+        f();
+        f();
+        function f() {
+            console.log("foo") && console && f();
+        }
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
