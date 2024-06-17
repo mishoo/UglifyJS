@@ -1253,3 +1253,24 @@ issue_5602: {
     ]
     node_version: ">=6"
 }
+
+issue_5850: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = [ ..."FAIL" ];
+        a[0] = "P";
+        a[2] = a[3] = "S";
+        console.log(a.join(""));
+    }
+    expect: {
+        var a = [ ..."FAIL" ];
+        a[0] = "P";
+        a[2] = a[3] = "S";
+        console.log(a.join(""));
+    }
+    node_version: ">=6"
+}

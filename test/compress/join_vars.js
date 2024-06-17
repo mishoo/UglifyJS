@@ -23,7 +23,7 @@ join_array_assignments_1: {
     }
     input: {
         console.log(function () {
-            var a = ["foo", , "bar"];
+            var a = [ "foo", , "bar" ];
             a[1] = "baz";
             a[7] = "moo";
             a[0] = "moz";
@@ -32,7 +32,7 @@ join_array_assignments_1: {
     }
     expect: {
         console.log(function () {
-            var a = [("foo", "moz"), "baz", "bar", , , , , "moo"];
+            var a = [ "moz", "baz", "bar", , , , , "moo" ];
             return a;
         }().join());
     }
@@ -46,7 +46,7 @@ join_array_assignments_2: {
     }
     input: {
         console.log(function () {
-            var a = ["foo"];
+            var a = [ "foo" ];
             a[1] = "bar";
             a[7] = "baz";
             a[2] = "moo";
@@ -55,7 +55,7 @@ join_array_assignments_2: {
     }
     expect: {
         console.log(function () {
-            var a = ["foo", "bar"];
+            var a = [ "foo", "bar" ];
             a[7] = "baz";
             a[2] = "moo";
             return a;
@@ -71,7 +71,7 @@ join_array_assignments_3: {
     }
     input: {
         console.log(function () {
-            var a = ["foo"];
+            var a = [ "foo" ];
             a[1] = "bar";
             a.b = "baz";
             a[2] = "moo";
@@ -80,7 +80,7 @@ join_array_assignments_3: {
     }
     expect: {
         console.log(function () {
-            var a = ["foo", "bar"];
+            var a = [ "foo", "bar" ];
             a.b = "baz";
             a[2] = "moo";
             return a;
@@ -97,7 +97,7 @@ join_array_assignments_4: {
     }
     input: {
         console.log(function () {
-            var a = ["foo"];
+            var a = [ "foo" ];
             a[0] = "bar";
             a[1] = a;
             a[2] = "baz";
@@ -106,7 +106,7 @@ join_array_assignments_4: {
     }
     expect: {
         console.log(function () {
-            var a = ["bar"];
+            var a = [ "bar" ];
             a[1] = a;
             a[2] = "baz";
             return a;
@@ -1505,6 +1505,25 @@ issue_5831: {
     }
     expect: {
         var a = [ (console.log("PASS"), 42) ];
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5849: {
+    options = {
+        evaluate: true,
+        join_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a;
+        a = [ 42 ];
+        a[0] = "PASS";
+        console.log(a.join(""));
+    }
+    expect: {
+        var a, a = [ "PASS" ];
+        console.log(a.join(""));
     }
     expect_stdout: "PASS"
 }
