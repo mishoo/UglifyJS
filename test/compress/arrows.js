@@ -1312,7 +1312,7 @@ issue_5653: {
     }
     expect: {
         console.log((a => {
-            return console, +{};
+            return +{};
         })());
     }
     expect_stdout: "NaN"

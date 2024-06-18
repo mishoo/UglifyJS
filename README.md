@@ -779,11 +779,11 @@ to be `false` and all symbol names will be omitted.
   overhead (compression will be slower). Make sure symbols under `pure_funcs`
   are also under `mangle.reserved` to avoid mangling.
 
-- `pure_getters` (default: `"strict"`) — If you pass `true` for
-  this, UglifyJS will assume that object property access
-  (e.g. `foo.bar` or `foo["bar"]`) doesn't have any side effects.
-  Specify `"strict"` to treat `foo.bar` as side-effect-free only when
-  `foo` is certain to not throw, i.e. not `null` or `undefined`.
+- `pure_getters` (default: `"strict"`) — Pass `true` for UglifyJS to assume that
+  object property access (e.g. `foo.bar` or `a[42]`) does not throw exception or
+  alter program states via getter function. Pass `"strict"` to allow dropping or
+  reordering `foo.bar` only if `foo` is not `null` or `undefined` and is safe to
+  access as a variable. Pass `false` to retain all property accesses.
 
 - `reduce_funcs` (default: `true`) — Allows single-use functions to be
   inlined as function expressions when permissible allowing further

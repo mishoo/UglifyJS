@@ -724,3 +724,106 @@ retain_instanceof: {
     }
     expect_stdout: "PASS"
 }
+
+drop_access: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var o = {};
+        o.p;
+        try {
+            (function() {
+                o.q;
+            })();
+            console.log("PASS");
+        } catch (e) {
+            console.log("FAIL");
+        }
+    }
+    expect: {
+        var o = {};
+        o.p;
+        try {
+            console.log("PASS");
+        } catch (e) {
+            console.log("FAIL");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+keep_access: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var o = {};
+        o.p;
+        o = null;
+        try {
+            (function() {
+                o.q;
+            })();
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var o = {};
+        o.p;
+        o = null;
+        try {
+            (function() {
+                o.q;
+            })();
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+keep_access_after_call: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var o = {};
+        o.p;
+        o.q;
+        f();
+        try {
+            o.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+        function f() {
+            o = null;
+        }
+    }
+    expect: {
+        var o = {};
+        o.p;
+        f();
+        try {
+            o.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+        function f() {
+            o = null;
+        }
+    }
+    expect_stdout: "PASS"
+}
