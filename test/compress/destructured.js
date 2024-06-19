@@ -3959,3 +3959,51 @@ issue_5844: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5854_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = a;
+            a++;
+            [ b[0] ] = [ "foo" ];
+            return a;
+        }([]) ? "PASS" : "FAIL");
+    }
+    expect: {
+        console.log(function(a) {
+            var b = a;
+            a++;
+            [ b[0] ] = [ "foo" ];
+            return a;
+        }([]) ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5854_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        console.log(function(a) {
+            var b = a;
+            a++;
+            ({ p: b[0] } = { p: "foo" });
+            return a;
+        }([]) ? "PASS" : "FAIL");
+    }
+    expect: {
+        console.log(function(a) {
+            var b = a;
+            a++;
+            ({ p: b[0] } = { p: "foo" });
+            return a;
+        }([]) ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
