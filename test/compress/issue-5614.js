@@ -26,7 +26,7 @@ record_update: {
 currying: {
     options = {
         inline: true,
-        passes: 2,
+        passes: 3,
         pure_getters: "strict",
         reduce_funcs: true,
         reduce_vars: true,

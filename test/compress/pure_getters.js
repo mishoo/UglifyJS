@@ -1687,3 +1687,31 @@ issue_4939: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5856: {
+    options = {
+        pure_getters: true,
+        reduce_vars: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = [ "FAIL", "PASS" ];
+        (function(b) {
+            var c = b[0];
+            b[0] = b[1];
+            b[1] = c;
+        })(a);
+        console.log(a[0]);
+    }
+    expect: {
+        var a = [ "FAIL", "PASS" ];
+        (function(b) {
+            var c = b[0];
+            b[0] = b[1];
+            b[1] = c;
+        })(a);
+        console.log(a[0]);
+    }
+    expect_stdout: "PASS"
+}

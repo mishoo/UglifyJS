@@ -617,3 +617,33 @@ issue_5292_sub_pure_getters_strict: {
     ]
     node_version: ">=14"
 }
+
+issue_5856: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        try {
+            var a;
+            a?.p;
+            a.q;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            var a;
+            a?.p;
+            a.q;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
