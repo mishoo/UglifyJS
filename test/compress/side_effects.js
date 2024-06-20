@@ -827,3 +827,143 @@ keep_access_after_call: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5860_drop_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a.p;
+        var a;
+        a.q;
+        console.log("PASS");
+    }
+    expect: {
+        var a = {};
+        a.p;
+        var a;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5860_drop_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        a = {};
+        a.p;
+        var a;
+        a.q;
+        console.log("PASS");
+    }
+    expect: {
+        a = {};
+        a.p;
+        var a;
+        console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5860_keep_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a.p;
+        a.q;
+        var a = null;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a.p;
+        var a = null;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5860_keep_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        a = {};
+        a.p;
+        a.q;
+        var a = null;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        a = {};
+        a.p;
+        var a = null;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5860_keep_3: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a.p;
+        a.q;
+        a = null;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a.p;
+        a = null;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
