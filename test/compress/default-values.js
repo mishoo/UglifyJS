@@ -3107,3 +3107,31 @@ issue_5774: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5863: {
+    options = {
+        collapse_vars: true,
+        hoist_vars: true,
+    }
+    input: {
+        console.log(typeof function f(a = function() {
+            f = 42;
+            return f;
+        }()) {
+            var f;
+            var f;
+            return a;
+        }());
+    }
+    expect: {
+        console.log(typeof function f(a = function() {
+            f = 42;
+            return f;
+        }()) {
+            var f;
+            return a;
+        }());
+    }
+    expect_stdout: "function"
+    node_version: ">=6"
+}
