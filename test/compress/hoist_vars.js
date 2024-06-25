@@ -228,6 +228,7 @@ issue_4489: {
         evaluate: true,
         hoist_vars: true,
         reduce_vars: true,
+        sequences: true,
         toplevel: true,
         unused: true,
     }
@@ -363,6 +364,7 @@ issue_4893_1: {
         evaluate: true,
         hoist_vars: true,
         reduce_vars: true,
+        side_effects: true,
         toplevel: true,
         unused: true,
     }
@@ -383,9 +385,8 @@ issue_4893_1: {
     }
     expect: {
         try{
-            (function f() {
+            (function() {
                 null.p += 42;
-                f;
             })();
         } catch (e) {
             console.log("PASS");
@@ -422,9 +423,7 @@ issue_4893_2: {
     expect: {
         try{
             (function() {
-                var a;
-                a = null;
-                a.p += 42;
+                null.p += 42;
             })();
         } catch (e) {
             console.log("PASS");
@@ -610,6 +609,7 @@ issue_5411_2: {
         evaluate: true,
         hoist_vars: true,
         reduce_vars: true,
+        sequences: true,
         toplevel: true,
         unused: true,
     }
@@ -622,9 +622,9 @@ issue_5411_2: {
     }
     expect: {
         var b, c;
-        b++;
+        b++,
         b = "PASS",
-        c;
+        c,
         console.log(b);
     }
     expect_stdout: "PASS"
