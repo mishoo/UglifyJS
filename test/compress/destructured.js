@@ -4007,3 +4007,237 @@ issue_5854_2: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5866_1: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = {};
+        var { p: { q: b } } = {
+            p: a,
+            r: a.q = "PASS",
+        };
+        console.log(b);
+    }
+    expect: {
+        var a = {};
+        var { q: b } = {
+            p: a,
+            r: a.q = "PASS",
+        }.p;
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_2: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = {}, b;
+        ({ p: { q: b } } = {
+            p: a,
+            r: a.q = "PASS",
+        });
+        console.log(b);
+    }
+    expect: {
+        var b, a = {};
+        ({ q: b } = {
+            p: a,
+            r: a.q = "PASS",
+        }.p);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_3: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = {};
+        var [ { p: b } ] = [ a, a.p = "PASS" ];
+        console.log(b);
+    }
+    expect: {
+        var a = {};
+        var { p: b } = [ a, a.p = "PASS" ][0];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_4: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = {}, b;
+        [ { p: b } ] = [ a, a.p = "PASS" ];
+        console.log(b);
+    }
+    expect: {
+        var b, a = {};
+        ({ p: b } = [ a, a.p = "PASS" ][0]);
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_5: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = [];
+        var [ [ b ] ] = [ a, a[0] = "PASS" ];
+        console.log(b);
+    }
+    expect: {
+        var a = [];
+        var [ b ] = [ a, a[0] = "PASS" ][0];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_6: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = [], b;
+        [ [ b ] ] = [ a, a[0] = "PASS" ];
+        console.log(b);
+    }
+    expect: {
+        var b, a = [];
+        [ b ] = [ a, a[0] = "PASS" ][0];
+        console.log(b);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_7: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = {};
+        var [ { p: b }, c ] = [ a, a.p = {} ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = {};
+        var [ { p: b }, c ] = [ a, a.p = {} ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_8: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = {}, b, c;
+        [ { p: b }, c ] = [ a, a.p = {} ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect: {
+        var b, c, a = {};
+        [ { p: b }, c ] = [ a, a.p = {} ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_9: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = {};
+        var [ b, { p: c } ] = [ a.p = {}, a ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = {};
+        var [ b, c ] = [ a.p = {}, a.p ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_10: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = {}, b, c;
+        [ b, { p: c } ] = [ a.p = {}, a ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect: {
+        var b, c, a = {};
+        [ b, c ] = [ a.p = {}, a.p ];
+        console.log(b === c ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_11: {
+    options = {
+        unused: true,
+    }
+    input: {
+        var a = {};
+        var { p: { q: b } } = { p: a = { q: {} } };
+        console.log(a.q === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = {};
+        var b = { p: (a = { q: {} }).q }.p;
+        console.log(a.q === b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5866_12: {
+    options = {
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        var a = {}, b;
+        ({ p: { q: b } } = { p: a = { q: {} } });
+        console.log(a.q === b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var b, a = {};
+        b = { p: (a = { q: {} }).q }.p;
+        console.log(a.q === b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
