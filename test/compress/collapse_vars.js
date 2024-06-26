@@ -4996,7 +4996,7 @@ cascade_forin: {
     ]
 }
 
-unsafe_builtin: {
+unsafe_builtin_1: {
     options = {
         collapse_vars: true,
         pure_getters: "strict",
@@ -5018,6 +5018,46 @@ unsafe_builtin: {
         console.log(f(-1), f(2));
     }
     expect_stdout: "1 4"
+}
+
+unsafe_builtin_2: {
+    options = {
+        collapse_vars: true,
+        toplevel: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        var a = A;
+        console.log(a);
+    }
+    expect: {
+        console.log(A = "PASS");
+    }
+    expect_stdout: "PASS"
+}
+
+unsafe_builtin_3: {
+    options = {
+        collapse_vars: true,
+        unsafe: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        (function() {
+            var a = A;
+            console.log(a);
+        })();
+    }
+    expect: {
+        A = "PASS";
+        (function() {
+            console.log(A);
+        })();
+    }
+    expect_stdout: "PASS"
 }
 
 return_1: {
@@ -7350,30 +7390,39 @@ substitution_assign: {
             b = 1 + (b = a);
             console.log(a, b);
         }
+        function f4(a, b) {
+            b = 1 + (a = b);
+            console.log(a, b);
+        }
         f1(42, "foo");
         f2(42, "foo");
         f3(42, "foo");
+        f4("bar", 41);
     }
     expect: {
         function f1(a, b) {
             console.log(f1 = a, a);
         }
         function f2(a, b) {
-            a = 1 + (b = a);
-            console.log(a, b);
+            console.log(a = 1 + (b = a), b);
         }
         function f3(a, b) {
-            b = 1 + (b = a);
+            console.log(a, b = 1 + (b = a));
+        }
+        function f4(a, b) {
+            b = 1 + (a = b);
             console.log(a, b);
         }
         f1(42, "foo");
         f2(42, "foo");
         f3(42, "foo");
+        f4("bar", 41);
     }
     expect_stdout: [
         "42 42",
         "43 42",
         "42 43",
+        "41 42",
     ]
 }
 
