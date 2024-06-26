@@ -1339,7 +1339,7 @@ maintain_position_var: {
     }
     expect: {
         A = "FAIL";
-        var [ , b ] = [ A ];
+        var b = [ A ][1];
         console.log(b || "PASS");
     }
     expect_stdout: "PASS"
