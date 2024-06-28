@@ -10333,3 +10333,27 @@ issue_1666_undefined_strict: {
     }
     expect_stdout: true
 }
+
+issue_5869: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a, b, log = console.log;
+        log();
+        a.p = 0;
+        b = a;
+        log(b);
+    }
+    expect: {
+        var a, log = console.log;
+        log();
+        log(void (a.p = 0));
+    }
+    expect_stdout: TypeError("Cannot set properties of undefined")
+}
