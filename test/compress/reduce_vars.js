@@ -8346,3 +8346,119 @@ issue_1666_undefined_strict: {
     }
     expect_stdout: true
 }
+
+issue_5872_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 42;
+        try {
+            while (!function f() {
+                a.p;
+                a = null;
+            }(a.q)) {
+                a.r;
+                console.log("FAIL");
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = 42;
+        try {
+            while (!function f() {
+                a.p;
+                a = null;
+            }(a.q)) {
+                a.r;
+                console.log("FAIL");
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5872_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {
+            a.p;
+            a = null;
+        }
+
+        var a = 42;
+        try {
+            while (!f(a.q)) {
+                a.r;
+                console.log("FAIL");
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        function f() {
+            a.p;
+            a = null;
+        }
+
+        var a = 42;
+        try {
+            while (!f(a.q)) {
+                a.r;
+                console.log("FAIL");
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5872_3: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 42;
+        try {
+            while (new function() {
+                a.p;
+                a = null;
+            }(a.q)) {
+                a.r;
+                console.log("FAIL");
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = 42;
+        try {
+            while (new function() {
+                a.p;
+                a = null;
+            }(a.q)) {
+                a.r;
+                console.log("FAIL");
+            }
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
