@@ -4030,3 +4030,32 @@ issue_5747_2: {
     expect_stdout: "function"
     node_version: ">=16"
 }
+
+issue_5874: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = "PASS";
+        console.log(Object.keys(function() {
+            class A {
+                [a];
+            }
+            a = "FAIL";
+            return new A();
+        }())[0]);
+    }
+    expect: {
+        var a = "PASS";
+        console.log(Object.keys(function() {
+            class A {
+                [a];
+            }
+            a = "FAIL";
+            return new A();
+        }())[0]);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
