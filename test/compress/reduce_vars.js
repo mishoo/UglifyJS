@@ -6882,9 +6882,7 @@ issue_3622: {
     }
     expect: {
         var c = "FAIL";
-        var a;
-        a = this,
-        !void (a && (c = "PASS")),
+        !void (this && (c = "PASS")),
         console.log(c);
     }
     expect_stdout: "PASS"
