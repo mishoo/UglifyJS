@@ -3196,7 +3196,7 @@ issue_5082_2: {
     node_version: ">=12"
 }
 
-issue_5082_2_static: {
+issue_5082_2_strict: {
     options = {
         inline: true,
         passes: 2,
@@ -4057,5 +4057,58 @@ issue_5874: {
         }())[0]);
     }
     expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5876_1: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A {
+            static p = this.q;
+            f() {}
+        }
+        if (A)
+            console.log("PASS");
+    }
+    expect: {
+        class A {
+            static p = this.q;
+            f() {}
+        }
+        if (A)
+            console.log("PASS");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5876_2: {
+    options = {
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        class A {
+            static p = console.log("foo");
+        }
+        if (A)
+            console.log("bar");
+    }
+    expect: {
+        class A {
+            static p = console.log("foo");
+        }
+        if (A)
+            console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
     node_version: ">=12"
 }

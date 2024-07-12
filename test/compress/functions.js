@@ -8242,9 +8242,7 @@ issue_5328: {
         })(this);
     }
     expect: {
-        (function(arguments) {
-            console.log(Object.keys(arguments).join());
-        })(this);
+        void console.log(Object.keys(this).join());
     }
     expect_stdout: ""
 }
