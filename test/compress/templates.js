@@ -769,3 +769,16 @@ issue_5199: {
     expect_stdout: "undefined"
     node_version: ">=4"
 }
+
+issue_5878: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        console.log("PASS");
+        `42`;
+    }
+    expect_exact: 'console.log("PASS");`42`\n'
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}

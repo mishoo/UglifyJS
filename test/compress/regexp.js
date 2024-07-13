@@ -489,3 +489,15 @@ reset_state_between_evaluate: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5878: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        console.log("PASS");
+        /b/.exec({});
+    }
+    expect_exact: 'console.log("PASS");/b/.exec({})\n'
+    expect_stdout: "PASS"
+}

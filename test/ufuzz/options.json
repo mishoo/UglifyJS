@@ -23,6 +23,9 @@
     {
         "ie": true,
         "module": false,
+        "output": {
+            "semicolons": false
+        },
         "toplevel": true
     },
     {

@@ -65,7 +65,7 @@ exports.patch_module_statements = function(code, module) {
         return "";
     }).replace(/\bexport(?:\s*\{[^{}]*}\s*?(?:$|\n|;)|\s+default\b(?:\s*(\(|\{|class\s*\{|class\s+(?=extends\b)|(?:async\s+)?function\s*(?:\*\s*)?\())?|\b)/g, function(match, header) {
         if (/^export\s+default/.test(match)) has_default = "function _uglify_export_default_() {}";
-        if (!header) return "";
+        if (!header) return ";";
         if (header.length == 1) return "0, " + header;
         var name = "_uglify_export_default_";
         if (/^class\b/.test(header)) do {
@@ -85,7 +85,7 @@ exports.patch_module_statements = function(code, module) {
                 "} = new Proxy(Object.create(null), { get(_, value) { return { value }; } });",
             ].join(""));
         }
-        return "";
+        return ";";
     });
     imports.push("");
     return strict_mode + has_default + imports.join("\n") + code;

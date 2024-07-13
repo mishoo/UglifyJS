@@ -2173,7 +2173,8 @@ function log_suspects(minify_options, component) {
     var defs = default_options[component];
     var toplevel = sandbox.has_toplevel(minify_options);
     var suspects = Object.keys(defs).filter(function(name) {
-        var flip = component == "compress" && name == "keep_fargs";
+        var flip = component == "compress" && name == "keep_fargs"
+            || component == "output" && name == "semicolons";
         if (flip !== (name in options ? options : defs)[name]) {
             var m = JSON.parse(JSON.stringify(minify_options));
             var o = JSON.parse(JSON.stringify(options));

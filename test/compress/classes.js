@@ -4112,3 +4112,68 @@ issue_5876_2: {
     ]
     node_version: ">=12"
 }
+
+issue_5878_1: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        new class {
+            p = {};
+            in = console.log("PASS");
+        }();
+    }
+    expect_exact: 'new class{p={};in=console.log("PASS")}\n'
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5878_2: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        class A {
+            static p = console.log("PASS");
+            instanceof() {}
+        }
+    }
+    expect_exact: 'class A{static p=console.log("PASS");instanceof(){}}'
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5878_3: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        new class {
+            p;
+            in = console.log("PASS");
+        }();
+    }
+    expect_exact: 'new class{p;in=console.log("PASS")}\n'
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5878_4: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        "use strict";
+        console.log(typeof class {
+            f() {}
+            instanceof() {}
+        });
+    }
+    expect_exact: [
+        '"use strict"',
+        "console.log(typeof class{f(){}instanceof(){}})",
+        "",
+    ]
+    expect_stdout: "function"
+    node_version: ">=4"
+}

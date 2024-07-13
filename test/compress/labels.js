@@ -431,3 +431,41 @@ issue_5524: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5878_1: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        console.log("PASS");
+        L:;
+    }
+    expect_exact: 'console.log("PASS")\nL:;'
+    expect_stdout: "PASS"
+}
+
+issue_5878_2: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        L: ;
+        L: console.log("PASS");
+    }
+    expect_exact: 'L:;L:console.log("PASS")\n'
+    expect_stdout: "PASS"
+}
+
+issue_5878_3: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        if (console.log("PASS"))
+            A:;
+        else
+            B:;
+    }
+    expect_exact: 'if(console.log("PASS"))A:;else B:;'
+    expect_stdout: "PASS"
+}
