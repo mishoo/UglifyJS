@@ -4177,3 +4177,52 @@ issue_5878_4: {
     expect_stdout: "function"
     node_version: ">=4"
 }
+
+issue_5880_1: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        new class {
+            get;
+            p = console.log("PASS");
+        }();
+    }
+    expect_exact: 'new class{get;p=console.log("PASS")}\n'
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
+
+issue_5880_2: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        class A {
+            set;
+            static {
+                console.log("PASS");
+            }
+        }
+    }
+    expect_exact: 'class A{set;static{console.log("PASS")}}'
+    expect_stdout: "PASS"
+    node_version: ">=16"
+}
+
+issue_5880_3: {
+    beautify = {
+        semicolons: false,
+    }
+    input: {
+        new class {
+            static;
+            f() {
+                console.log("PASS");
+            }
+        }().f();
+    }
+    expect_exact: '(new class{static;f(){console.log("PASS")}}).f()\n'
+    expect_stdout: "PASS"
+    node_version: ">=12"
+}
