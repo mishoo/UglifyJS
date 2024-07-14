@@ -1730,3 +1730,49 @@ issue_5641: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5882_1: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+    }
+    input: {
+        console.log(delete (42..p = NaN));
+    }
+    expect: {
+        console.log(delete (0, NaN));
+    }
+    expect_stdout: "true"
+}
+
+issue_5882_2: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(delete (42..p = NaN));
+    }
+    expect: {
+        console.log(delete (0, NaN));
+    }
+    expect_stdout: "true"
+}
+
+issue_5882_3: {
+    options = {
+        dead_code: true,
+        pure_getters: "strict",
+        sequences: true,
+        side_effects: true,
+    }
+    input: {
+        console.log(delete (42..p = Infinity));
+    }
+    expect: {
+        console.log(delete (1 / 0));
+    }
+    expect_stdout: "true"
+}
