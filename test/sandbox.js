@@ -73,7 +73,7 @@ exports.patch_module_statements = function(code, module) {
         } while (code.indexOf(name) >= 0);
         return header.slice(0, -1) + " " + name + header.slice(-1);
     }).replace(/\bimport\.meta\b/g, function() {
-        return '({ url: "https://example.com/path/index.html" })';
+        return 'Object.create({ url: "https://example.com/path/index.html" })';
     }).replace(/\bimport\b(?:\s*([^\s('"][^('"]*)\bfrom\b)?\s*(['"]).*?\2(?:$|\n|;)/g, function(match, symbols) {
         if (symbols) {
             if (!/^[{*]/.test(symbols)) symbols = "default:" + symbols;
