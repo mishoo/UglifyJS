@@ -8706,10 +8706,9 @@ single_use_inline_collision: {
     expect: {
         var a = "PASS";
         (function() {
-            (function() {
+            void function() {
                 while (console.log(a));
-                return;
-            })();
+            }();
             (function(a) {
                 a || a("FAIL");
             })(console.log);

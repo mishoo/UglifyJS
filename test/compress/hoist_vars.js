@@ -801,3 +801,71 @@ issue_5638_4: {
     }
     expect_stdout: "foo 42"
 }
+
+issue_5884_1: {
+    options = {
+        hoist_vars: true,
+        inline: true,
+        join_vars: true,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            var f = function() {
+                var a = [ "PASS" ];
+                for (b in a)
+                    console.log(a[b]);
+            };
+            f();
+        } finally {
+            var b;
+        }
+    }
+    expect: {
+        var b;
+        try {
+            (function() {
+                var a = [ "PASS" ];
+                for (b in a)
+                    console.log(a[b]);
+            })();
+        } finally {}
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5884_2: {
+    options = {
+        hoist_vars: true,
+        inline: true,
+        join_vars: true,
+        passes: 2,
+        reduce_vars: true,
+        sequences: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        try {
+            var f = function() {
+                var a = [ "PASS" ];
+                for (b in a)
+                    console.log(a[b]);
+            };
+            f();
+        } finally {
+            var b;
+        }
+    }
+    expect: {
+        try {
+            var a = [ "PASS" ];
+            for (var b in a)
+                console.log(a[b]);
+        } finally {}
+    }
+    expect_stdout: "PASS"
+}
