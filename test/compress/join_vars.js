@@ -669,10 +669,33 @@ inlined_assignments: {
     expect_stdout: "PASS"
 }
 
-inline_for: {
+single_use_for: {
     options = {
         inline: true,
         join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a = function() {
+            for (; console.log("PASS"););
+        };
+        a();
+    }
+    expect: {
+        (function() {
+            for (; console.log("PASS"););
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+single_use_for_inline: {
+    options = {
+        inline: true,
+        join_vars: true,
+        passes: 2,
         reduce_vars: true,
         toplevel: true,
         unused: true,
@@ -689,10 +712,37 @@ inline_for: {
     expect_stdout: "PASS"
 }
 
-inline_var: {
+single_use_var: {
     options = {
         inline: true,
         join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        A = "PASS";
+        var a = function() {
+            var b = A;
+            for (b in console.log(b));
+        };
+        a();
+    }
+    expect: {
+        A = "PASS";
+        (function() {
+            var b = A;
+            for (b in console.log(b));
+        })();
+    }
+    expect_stdout: "PASS"
+}
+
+single_use_var_inline: {
+    options = {
+        inline: true,
+        join_vars: true,
+        passes: 2,
         reduce_vars: true,
         toplevel: true,
         unused: true,
