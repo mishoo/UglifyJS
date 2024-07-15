@@ -8968,3 +8968,32 @@ issue_5851_2: {
         "foo",
     ]
 }
+
+issue_5885: {
+    options = {
+        booleans: true,
+        evaluate: true,
+        inline: true,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        f();
+        function f() {
+            return ++a + "foo";
+        }
+        console.log(a = f());
+    }
+    expect: {
+        var a;
+        f();
+        function f() {
+            return ++a + "foo";
+        }
+        console.log(a = f());
+    }
+    expect_stdout: "NaNfoo"
+}
