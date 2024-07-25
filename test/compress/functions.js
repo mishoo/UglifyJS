@@ -5720,9 +5720,9 @@ issue_3929: {
             var abc = function f() {
                 (function() {
                     switch (f) {
-                    default:
+                      default:
                         var abc = 0;
-                    case 0:
+                      case 0:
                         abc.p;
                     }
                     console.log(typeof f);
@@ -5736,10 +5736,9 @@ issue_3929: {
             var abc = function f() {
                 (function() {
                     switch (f) {
-                    default:
-                        var abc = 0;
-                    case 0:
-                        abc.p;
+                      default:
+                      case 0:
+                        0..p;
                     }
                     console.log(typeof f);
                 })();

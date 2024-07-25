@@ -1688,3 +1688,42 @@ issue_5543_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5890: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a.p;
+        try {
+            switch (42) {
+              default:
+                a = null;
+              case false:
+                a.q;
+            }
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a.p;
+        try {
+            switch (42) {
+              default:
+                a = null;
+              case false:
+                a.q;
+            }
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
