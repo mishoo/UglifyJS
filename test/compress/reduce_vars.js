@@ -8460,3 +8460,36 @@ issue_5872_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5892: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        try {
+            var a = 42;
+            a.p;
+            if (console)
+                a = null;
+            a.q;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            var a = 42;
+            a.p;
+            if (console)
+                a = null;
+            a.q;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}

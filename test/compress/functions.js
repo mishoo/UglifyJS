@@ -5737,8 +5737,9 @@ issue_3929: {
                 (function() {
                     switch (f) {
                       default:
+                        var abc = 0;
                       case 0:
-                        0..p;
+                        abc.p;
                     }
                     console.log(typeof f);
                 })();

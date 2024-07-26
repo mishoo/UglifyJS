@@ -1727,3 +1727,74 @@ issue_5890: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5892_1: {
+    options = {
+        reduce_vars: true,
+        unused: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            switch (42) {
+              case null:
+                var a = "foo";
+              default:
+                a.p;
+            }
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            switch (42) {
+              case null:
+                var a = "foo";
+              default:
+                a.p;
+            }
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5892_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        try {
+            switch (42) {
+              case null:
+                var a = "foo";
+              default:
+                a.p;
+            }
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        try {
+            switch (42) {
+              case null:
+                var a = "foo";
+              default:
+                a.p;
+            }
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
