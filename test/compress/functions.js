@@ -8997,3 +8997,82 @@ issue_5885: {
     }
     expect_stdout: "NaNfoo"
 }
+
+issue_5895_1: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            for (var a in [ 1, 2 ])
+                try {
+                    return function() {
+                        var b;
+                        b[b = 42];
+                        while (!console);
+                    }();
+                } catch (e) {
+                    console.log("foo");
+                }
+        })();
+    }
+    expect: {
+        (function() {
+            for (var a in [ 1, 2 ])
+                try {
+                    b = void 0;
+                    var b;
+                    b[b = 42];
+                    while (!console);
+                    return;
+                } catch (e) {
+                    console.log("foo");
+                }
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
+
+issue_5895_2: {
+    options = {
+        inline: true,
+        unused: true,
+    }
+    input: {
+        (function() {
+            for (var a in [ 1, 2 ])
+                try {
+                    return function() {
+                        (function f(b) {
+                            b[b = 42];
+                        })();
+                        while (!console);
+                    }();
+                } catch (e) {
+                    console.log("foo");
+                }
+        })();
+    }
+    expect: {
+        (function() {
+            for (var a in [ 1, 2 ])
+                try {
+                    b = void 0;
+                    void b[b = 42];
+                    var b;
+                    while (!console);
+                    return;
+                } catch (e) {
+                    console.log("foo");
+                }
+        })();
+    }
+    expect_stdout: [
+        "foo",
+        "foo",
+    ]
+}
