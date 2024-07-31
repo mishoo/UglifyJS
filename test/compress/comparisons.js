@@ -517,3 +517,63 @@ nullish_chain: {
         A || B || null == a || C;
     }
 }
+
+nullish_inline: {
+    options = {
+        comparisons: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function isNull(a) {
+            return null === a;
+        }
+        function isUndefined(b) {
+            return void 0 === b;
+        }
+        null === c || void 0 === c;
+        isNull(c) || void 0 === c;
+        null === c || isUndefined(c);
+        isNull(c) || isUndefined(c);
+    }
+    expect: {
+        null == c;
+        null == c;
+        null == c;
+        null == c;
+    }
+}
+
+nullish_inline_renamed: {
+    rename = true
+    mangle = {
+        toplevel: true,
+    }
+    options = {
+        comparisons: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function isNull(a) {
+            return null === a;
+        }
+        function isUndefined(b) {
+            return void 0 === b;
+        }
+        null === c || void 0 === c;
+        isNull(c) || void 0 === c;
+        null === c || isUndefined(c);
+        isNull(c) || isUndefined(c);
+    }
+    expect: {
+        null == c;
+        null == c;
+        null == c;
+        null == c;
+    }
+}
