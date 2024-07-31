@@ -99,6 +99,53 @@ de_morgan_1d: {
     expect_stdout: "false false"
 }
 
+de_morgan_1e: {
+    options = {
+        booleans: true,
+    }
+    input: {
+        function f(a) {
+            return a.p || a.p;
+        }
+        console.log(f({ p: null }), f({ p: 42 }));
+    }
+    expect: {
+        function f(a) {
+            return a.p;
+        }
+        console.log(f({ p: null }), f({ p: 42 }));
+    }
+    expect_stdout: "null 42"
+}
+
+de_morgan_1f: {
+    options = {
+        booleans: true,
+        inline: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f(a, b) {
+            return a.p + b.q;
+        }
+        console.log(f({ p: null }, { q: false }) || f({ p: null }, { q: false }));
+        console.log(f({ p: "foo" }, { q: 42 }) && f({ p: "foo" }, { q: 42 }));
+    }
+    expect: {
+        function f(a, b) {
+            return a.p + b.q;
+        }
+        console.log(f({ p: null }, { q: !1 }));
+        console.log(f({ p: "foo" }, { q: 42 }));
+    }
+    expect_stdout: [
+        "0",
+        "foo42",
+    ]
+}
+
 de_morgan_2a: {
     options = {
         booleans: true,
