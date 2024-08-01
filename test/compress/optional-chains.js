@@ -586,7 +586,7 @@ issue_5292_sub_pure_getters: {
                 console.log("foo");
             }
         };
-        console.log("bar");
+        o?.[console.log("bar")];
     }
 }
 
@@ -643,6 +643,28 @@ issue_5856: {
         } catch (e) {
             console.log("PASS");
         }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
+
+issue_5900: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = 42, b = "PASS";
+        a[a = null];
+        a?.[b = "FAIL"];
+        console.log(b);
+    }
+    expect: {
+        var a = 42, b = "PASS";
+        a[a = null];
+        a?.[b = "FAIL"];
+        console.log(b);
     }
     expect_stdout: "PASS"
     node_version: ">=14"
