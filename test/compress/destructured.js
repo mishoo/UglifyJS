@@ -4241,3 +4241,51 @@ issue_5866_12: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5899_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log, a, b;
+        a = "foo";
+        log(a && a);
+        b = { p: a } = a;
+        log(a);
+    }
+    expect: {
+        var log = console.log, a, b;
+        log((a = "foo") && a);
+        b = { p: a } = a;
+        log(a);
+    }
+    expect_stdout: [
+        "foo",
+        "undefined",
+    ]
+    node_version: ">=6"
+}
+
+issue_5899_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        var log = console.log, a, b;
+        a = "foo";
+        log(a && a);
+        b = [ a ] = a;
+        log(a);
+    }
+    expect: {
+        var log = console.log, a, b;
+        log((a = "foo") && a);
+        b = [ a ] = a;
+        log(a);
+    }
+    expect_stdout: [
+        "foo",
+        "f",
+    ]
+    node_version: ">=6"
+}
