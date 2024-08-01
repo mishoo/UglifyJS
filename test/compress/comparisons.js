@@ -471,6 +471,28 @@ unsafe_indexOf: {
     ]
 }
 
+unsafe_indexOf_assignment: {
+    options = {
+        booleans: true,
+        comparisons: true,
+        unsafe: true,
+    }
+    input: {
+        var a;
+        if ((a = Object.keys({ foo: 42 }).indexOf("bar")) < 0) console.log("PASS");
+        if (0 > (a = Object.keys({ foo: 42 }).indexOf("bar"))) console.log("PASS");
+    }
+    expect: {
+        var a;
+        if (!~(a = Object.keys({ foo: 42 }).indexOf("bar"))) console.log("PASS");
+        if (!~(a = Object.keys({ foo: 42 }).indexOf("bar"))) console.log("PASS");
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
+
 issue_3413: {
     options = {
         comparisons: true,
