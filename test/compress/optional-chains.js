@@ -669,3 +669,27 @@ issue_5900: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_5905: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        do {
+            var b = a++;
+            var c = c ?? b?.[42];
+        } while (console.log("PASS"));
+    }
+    expect: {
+        var a;
+        do {
+            a++;
+        } while (console.log("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}
