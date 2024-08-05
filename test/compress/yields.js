@@ -970,6 +970,61 @@ instanceof_lambda: {
     node_version: ">=4"
 }
 
+keep_yield: {
+    options = {
+        arrows: true,
+        module: true,
+    }
+    input: {
+        console.log(function*() {
+            yield "PASS";
+        }().next().value);
+    }
+    expect: {
+        console.log(function*() {
+            yield "PASS";
+        }().next().value);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+func_to_arrow_arg: {
+    options = {
+        arrows: true,
+        module: true,
+    }
+    input: {
+        console.log(function(yield) {
+            return yield;
+        }("PASS"));
+    }
+    expect: {
+        console.log((yield => yield)("PASS"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+func_to_arrow_var: {
+    options = {
+        arrows: true,
+        module: true,
+    }
+    input: {
+        var yield = "PASS";
+        console.log(function() {
+            return yield;
+        }());
+    }
+    expect: {
+        var yield = "PASS";
+        console.log((() => yield)());
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 issue_4454_1: {
     rename = false
     options = {

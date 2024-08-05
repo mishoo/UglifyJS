@@ -1407,6 +1407,30 @@ instanceof_lambda_4: {
     node_version: ">=8"
 }
 
+async_to_arrow: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        (async function() {
+            var f = async function(a, b, c) {
+                return b + a + c + c;
+            };
+            console.log(await f("A", "P", "S"));
+        })();
+    }
+    expect: {
+        (async () => {
+            console.log(await (async (a, b, c) => b + a + c + c)("A", "P", "S"));
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
 issue_4335_1: {
     options = {
         inline: true,
