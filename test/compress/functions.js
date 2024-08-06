@@ -7139,7 +7139,7 @@ reduce_cross_reference_2_toplevel: {
 reduce_cross_reference_3: {
     options = {
         collapse_vars: true,
-        passes: 3,
+        passes: 4,
         pure_getters: "strict",
         reduce_vars: true,
         sequences: true,
