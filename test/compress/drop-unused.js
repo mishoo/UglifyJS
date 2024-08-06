@@ -3814,3 +3814,59 @@ issue_5533_drop_fargs: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5908_1: {
+    options = {
+        collapse_vars: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = function(b) {
+            function f() {}
+            b = f.prototype;
+            b.p = 42;
+            b.q = "PASS";
+            return f;
+        }();
+        console.log(a.prototype.q);
+    }
+    expect: {
+        var a = function(b) {
+            function f() {}
+            (b = f.prototype).p = 42;
+            b.q = "PASS";
+            return f;
+        }();
+        console.log(a.prototype.q);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5908_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a = function(b) {
+            function f() {}
+            (b = f.prototype).p = 42;
+            b.q = "PASS";
+            return f;
+        }();
+        console.log(a.prototype.q);
+    }
+    expect: {
+        var a = function(b) {
+            function f() {}
+            (b = f.prototype).p = 42;
+            b.q = "PASS";
+            return f;
+        }();
+        console.log(a.prototype.q);
+    }
+    expect_stdout: "PASS"
+}
