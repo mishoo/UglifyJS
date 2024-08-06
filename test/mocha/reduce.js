@@ -224,14 +224,20 @@ describe("test/reduce.js", function() {
         ].join("\n"));
     });
     it("Should ignore difference in Error.message", function() {
-        var result = reduce_test("null[function() {\n}];");
+        var result = reduce_test("null[function() {\n}];", {
+            module: false,
+        });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, (semver.satisfies(process.version, "<=0.10") ? [
             "// Can't reproduce test failure",
-            "// minify options: {}",
+            "// minify options: {",
+            '//   "module": false',
+            "// }",
         ] : [
             "// No differences except in error message",
-            "// minify options: {}",
+            "// minify options: {",
+            '//   "module": false',
+            "// }",
         ]).join("\n"));
     });
     it("Should report trailing whitespace difference in stringified format", function() {
@@ -245,6 +251,7 @@ describe("test/reduce.js", function() {
                 unsafe_math: true,
             },
             mangle: false,
+            module: false,
         });
         if (result.error) throw result.error;
         assert.strictEqual(result.code, [
@@ -257,7 +264,8 @@ describe("test/reduce.js", function() {
             '//   "compress": {',
             '//     "unsafe_math": true',
             '//   },',
-            '//   "mangle": false',
+            '//   "mangle": false,',
+            '//   "module": false',
             "// }",
         ].join("\n"));
     });

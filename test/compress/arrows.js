@@ -749,6 +749,86 @@ instanceof_lambda_4: {
     node_version: ">=4"
 }
 
+func_to_arrow: {
+    options = {
+        arrows: true,
+        module: true,
+    }
+    input: {
+        console.log(function(a, b, c) {
+            return b + a + c + c;
+        }("A", "P", "S"));
+    }
+    expect: {
+        console.log(((a, b, c) => b + a + c + c)("A", "P", "S"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+func_to_arrow_var: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function(a, b, c) {
+            return b + a + c + c;
+        };
+        console.log(f("A", "P", "S"));
+    }
+    expect: {
+        console.log(((a, b, c) => b + a + c + c)("A", "P", "S"));
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+keep_new: {
+    options = {
+        arrows: true,
+        module: true,
+    }
+    input: {
+        new function(a, b, c) {
+            console.log(b + a + c + c);
+        }("A", "P", "S");
+    }
+    expect: {
+        new function(a, b, c) {
+            console.log(b + a + c + c);
+        }("A", "P", "S");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+keep_new_var: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        var f = function(a, b, c) {
+            console.log(b + a + c + c);
+        };
+        new f("A", "P", "S");
+    }
+    expect: {
+        new function(a, b, c) {
+            console.log(b + a + c + c);
+        }("A", "P", "S");
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 issue_4388: {
     options = {
         inline: true,
@@ -1175,13 +1255,11 @@ issue_5416_1: {
     }
     expect: {
         var f = () => {
-            {
-                console;
-                arguments = void 0,
-                console.log(arguments);
-                var arguments;
-                return;
-            }
+            console;
+            arguments = void 0,
+            console.log(arguments);
+            var arguments;
+            return;
         };
         f();
     }
@@ -1210,12 +1288,10 @@ issue_5416_2: {
     }
     expect: {
         var f = () => {
-            {
-                console;
-                var arguments = void 0;
-                for (; console.log(arguments););
-                return;
-            }
+            console;
+            var arguments = void 0;
+            for (; console.log(arguments););
+            return;
         };
         f();
     }
@@ -1311,9 +1387,7 @@ issue_5653: {
         })());
     }
     expect: {
-        console.log((a => {
-            return +{};
-        })());
+        console.log((a => +{})());
     }
     expect_stdout: "NaN"
     node_version: ">=4"

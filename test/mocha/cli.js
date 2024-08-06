@@ -16,8 +16,9 @@ describe("bin/uglifyjs", function() {
         var command = [
             uglifyjscmd,
             "--self",
-            semver.satisfies(process.version, "<=0.12") ? "-mc hoist_funs" : "-mc",
             "--wrap WrappedUglifyJS",
+            semver.satisfies(process.version, "<4") ? "--no-module" : "--module",
+            semver.satisfies(process.version, "<=0.12") ? "-mc hoist_funs" : "-mc",
         ].join(" ");
         exec(command, { maxBuffer: 1048576 }, function(err, stdout) {
             if (err) throw err;
@@ -61,7 +62,7 @@ describe("bin/uglifyjs", function() {
             "--mangle",
         ].join(" "), function(err, stdout) {
             if (err) throw err;
-            assert.strictEqual(stdout, "function(n){for(;n(););return 42}(A)\n");
+            assert.strictEqual(stdout, "(r=>{for(;r(););return 42})(A)\n");
             done();
         }).stdin.end([
             "function(x) {",
@@ -1066,7 +1067,7 @@ describe("bin/uglifyjs", function() {
             "return obj25.p + obj121.p + obj1024.p;",
             "}());",
         ]).join("\n");
-        exec(uglifyjscmd + " -mc", function(err, stdout) {
+        exec(uglifyjscmd + " --no-module -mc", function(err, stdout) {
             if (err) throw err;
             assert.strictEqual(stdout, "console.log(function(){var p={p:25},n={p:121},o={p:1024};return p.p+n.p+o.p}());\n");
             assert.strictEqual(run_code(stdout), run_code(code));

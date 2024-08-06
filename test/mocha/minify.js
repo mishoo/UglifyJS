@@ -239,7 +239,7 @@ describe("minify", function() {
                 },
             });
             var code = result.code;
-            assert.strictEqual(code, "var a=function(){foo()}();");
+            assert.strictEqual(code, "var a=(()=>{foo()})();");
         });
     });
 
@@ -325,20 +325,30 @@ describe("minify", function() {
     });
 
     describe("module", function() {
-        it("Should not inline `await` variables", function() {
-            if (semver.satisfies(process.version, "<8")) return;
-            var code = [
-                "console.log(function() {",
-                "    return typeof await;",
-                "}());",
-            ].join("\n");
-            assert.strictEqual(run_code("(async function(){" + code + "})();"), "undefined\n");
+        var code = [
+            "console.log(function() {",
+            "    return typeof await;",
+            "}());",
+        ].join("\n");
+        it("Should inline `await` variables", function() {
+            var result = UglifyJS.minify(code, {
+                module: false,
+            });
+            if (result.error) throw result.error;
+            assert.strictEqual(result.code, "console.log(typeof await);");
+            assert.strictEqual(run_code(code), "undefined\n");
+            assert.strictEqual(run_code(result.code), "undefined\n");
+        });
+        it("Should not inline `await` variables in ES modules", function() {
             var result = UglifyJS.minify(code, {
                 module: true,
             });
             if (result.error) throw result.error;
-            assert.strictEqual(result.code, "console.log(function(){return typeof await}());");
-            assert.strictEqual(run_code("(async function(){" + result.code + "})();"), "undefined\n");
+            assert.strictEqual(result.code, "console.log((()=>typeof await)());");
+            if (semver.satisfies(process.version, ">=8")) {
+                assert.strictEqual(run_code("(async function(){" + code + "})();"), "undefined\n");
+                assert.strictEqual(run_code("(async function(){" + result.code + "})();"), "undefined\n");
+            }
         });
     });
 

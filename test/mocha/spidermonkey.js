@@ -7,20 +7,21 @@ describe("spidermonkey export/import sanity test", function() {
     it("Should produce a functional build when using --self with spidermonkey", function(done) {
         this.timeout(120000);
         var uglifyjs = '"' + process.argv[0] + '" bin/uglifyjs';
-        var options = semver.satisfies(process.version, "<=0.12") ? "-mc hoist_funs" : "-mc";
+        var options = [
+            semver.satisfies(process.version, "<4") ? "--no-module" : "--module",
+            semver.satisfies(process.version, "<=0.12") ? "-mc hoist_funs" : "-mc",
+        ];
         var command = [
             [
                 uglifyjs,
                 "--self",
-                options,
                 "--wrap SpiderUglify",
                 "-o spidermonkey",
-            ].join(" "),
+            ].concat(options).join(" "),
             [
                 uglifyjs,
                 "-p spidermonkey",
-                options,
-            ].join(" "),
+            ].concat(options).join(" "),
         ].join(" | ");
         exec(command, { maxBuffer: 1048576 }, function(err, stdout) {
             if (err) throw err;
