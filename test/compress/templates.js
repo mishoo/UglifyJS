@@ -429,6 +429,70 @@ pure_funcs: {
     node_version: ">=4"
 }
 
+ascii_only: {
+    beautify = {
+        ascii_only: true,
+    }
+    options = {
+        templates: false,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`\\ud801\\udc37\\ud801\\ud801\\udc37${42}\\u{10437}`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
+ascii_only_templates: {
+    beautify = {
+        ascii_only: true,
+    }
+    options = {
+        templates: true,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`\\ud801\\udc37\\ud801\\ud801\\udc37${42}\\ud801\\udc37`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
+unicode: {
+    beautify = {
+        ascii_only: false,
+    }
+    options = {
+        templates: false,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`\\ud801\\udc37\\ud801𐐷${42}\\u{10437}`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
+unicode_templates: {
+    beautify = {
+        ascii_only: false,
+    }
+    options = {
+        templates: true,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`𐐷\\ud801𐐷${42}𐐷`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
 issue_4604: {
     options = {
         collapse_vars: true,
