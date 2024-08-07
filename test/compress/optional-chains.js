@@ -693,3 +693,35 @@ issue_5905: {
     expect_stdout: "PASS"
     node_version: ">=14"
 }
+
+issue_5912: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a, b = {};
+        b = b.p;
+        a?.[b.q];
+        try {
+            b.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a, b = {};
+        b = b.p;
+        a?.[b.q];
+        try {
+            b.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=14"
+}

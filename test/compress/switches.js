@@ -1798,3 +1798,77 @@ issue_5892_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5912_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a = a.p;
+        switch (console) {
+          case 42:
+            a.q;
+        }
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a = a.p;
+        switch (console) {
+          case 42:
+            a.q;
+        }
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5912_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a, b = {};
+        b = b.p;
+        switch (a) {
+          case void 0:
+          case b.q:
+        }
+        try {
+            b.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a, b = {};
+        b = b.p;
+        switch (a) {
+          case void 0:
+          case b.q:
+        }
+        try {
+            b.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
