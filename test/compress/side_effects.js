@@ -967,3 +967,104 @@ issue_5860_keep_3: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5912_1: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a = a.p;
+        console || a.q;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a = a.p;
+        console || a.q;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5912_2: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a = a.p;
+        if (!console) a.q;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a = a.p;
+        if (!console) a.q;
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5912_3: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = {};
+        a = a.p;
+        try {
+            console;
+        } catch (e) {
+            a.q;
+        }
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a = {};
+        a = a.p;
+        try {
+            console;
+        } catch (e) {
+            a.q;
+        }
+        try {
+            a.r;
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
