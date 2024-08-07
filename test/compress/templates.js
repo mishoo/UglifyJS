@@ -432,6 +432,7 @@ pure_funcs: {
 ascii_only: {
     beautify = {
         ascii_only: true,
+        module: false,
     }
     options = {
         templates: false,
@@ -445,9 +446,27 @@ ascii_only: {
     node_version: ">=6"
 }
 
+ascii_only_ecma: {
+    beautify = {
+        ascii_only: true,
+        module: true,
+    }
+    options = {
+        templates: false,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`\\ud801\\udc37\\ud801\\u{10437}${42}\\u{10437}`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
 ascii_only_templates: {
     beautify = {
         ascii_only: true,
+        module: false,
     }
     options = {
         templates: true,
@@ -461,9 +480,44 @@ ascii_only_templates: {
     node_version: ">=6"
 }
 
+ascii_only_templates_ecma: {
+    beautify = {
+        ascii_only: true,
+        module: true,
+    }
+    options = {
+        templates: true,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`\\u{10437}\\ud801\\u{10437}${42}\\u{10437}`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
 unicode: {
     beautify = {
         ascii_only: false,
+        module: false,
+    }
+    options = {
+        templates: false,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`\\ud801\\udc37\\ud801𐐷${42}\\u{10437}`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
+unicode_ecma: {
+    beautify = {
+        ascii_only: false,
+        module: true,
     }
     options = {
         templates: false,
@@ -480,6 +534,24 @@ unicode: {
 unicode_templates: {
     beautify = {
         ascii_only: false,
+        module: false,
+    }
+    options = {
+        templates: true,
+    }
+    input: {
+        console.log(`\ud801\udc37\ud801𐐷${42}\u{10437}`);
+    }
+    expect_exact: "console.log(`𐐷\\ud801𐐷${42}𐐷`);"
+    expect_stdout: "𐐷\ud801𐐷42𐐷"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
+unicode_templates_ecma: {
+    beautify = {
+        ascii_only: false,
+        module: true,
     }
     options = {
         templates: true,

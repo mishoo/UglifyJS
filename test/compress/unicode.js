@@ -191,6 +191,24 @@ issue_2569: {
 surrogate_pair: {
     beautify = {
         ascii_only: false,
+        module: false,
+    }
+    input: {
+        var \u{2f800} = {
+            \u{2f801}: "\u{100000}",
+        };
+        \u{2f800}.\u{2f802} = "\u{100001}";
+        console.log(typeof \u{2f800}, \u{2f800}.\u{2f801}, \u{2f800}["\u{2f802}"]);
+    }
+    expect_exact: 'var \ud87e\udc00={"\ud87e\udc01":"\udbc0\udc00"};\ud87e\udc00.\ud87e\udc02="\udbc0\udc01";console.log(typeof \ud87e\udc00,\ud87e\udc00.\ud87e\udc01,\ud87e\udc00["\ud87e\udc02"]);'
+    expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+surrogate_pair_ecma: {
+    beautify = {
+        ascii_only: false,
+        module: true,
     }
     input: {
         var \u{2f800} = {
@@ -208,6 +226,7 @@ surrogate_pair: {
 surrogate_pair_ascii: {
     beautify = {
         ascii_only: true,
+        module: false,
     }
     input: {
         var \u{2f800} = {
@@ -217,6 +236,24 @@ surrogate_pair_ascii: {
         console.log(typeof \u{2f800}, \u{2f800}.\u{2f801}, \u{2f800}["\u{2f802}"]);
     }
     expect_exact: 'var \\u{2f800}={"\\ud87e\\udc01":"\\udbc0\\udc00"};\\u{2f800}.\\u{2f802}="\\udbc0\\udc01";console.log(typeof \\u{2f800},\\u{2f800}.\\u{2f801},\\u{2f800}["\\ud87e\\udc02"]);'
+    expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
+    // non-BMP support is platform-dependent on Node.js v4
+    node_version: ">=6"
+}
+
+surrogate_pair_ascii_ecma: {
+    beautify = {
+        ascii_only: true,
+        module: true,
+    }
+    input: {
+        var \u{2f800} = {
+            \u{2f801}: "\u{100000}",
+        };
+        \u{2f800}.\u{2f802} = "\u{100001}";
+        console.log(typeof \u{2f800}, \u{2f800}.\u{2f801}, \u{2f800}["\u{2f802}"]);
+    }
+    expect_exact: 'var \\u{2f800}={"\\u{2f801}":"\\u{100000}"};\\u{2f800}.\\u{2f802}="\\u{100001}";console.log(typeof \\u{2f800},\\u{2f800}.\\u{2f801},\\u{2f800}["\\u{2f802}"]);'
     expect_stdout: "object \udbc0\udc00 \udbc0\udc01"
     // non-BMP support is platform-dependent on Node.js v4
     node_version: ">=6"

@@ -467,11 +467,14 @@ function run() {
     } else if (output) {
         var code;
         if (result.ast) {
-            var opts = {};
-            for (var name in options.output) {
-                if (!/^ast|code$/.test(name)) opts[name] = options.output[name];
+            var output_options = {};
+            for (var name in UglifyJS.default_options("output")) {
+                if (name in options) output_options[name] = options[name];
             }
-            code = UglifyJS.AST_Node.from_mozilla_ast(result.ast.to_mozilla_ast()).print_to_string(opts);
+            for (var name in options.output) {
+                if (!/^ast|code$/.test(name)) output_options[name] = options.output[name];
+            }
+            code = UglifyJS.AST_Node.from_mozilla_ast(result.ast.to_mozilla_ast()).print_to_string(output_options);
         } else {
             code = result.code;
         }
