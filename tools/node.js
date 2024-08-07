@@ -97,7 +97,12 @@ function infer_options(options) {
     return result.error && result.error.defs;
 }
 
-exports.default_options = function() {
+exports.default_options = function(component) {
+    if (component) {
+        var options = { module: false };
+        options[component] = { 0: 0 };
+        return infer_options(options);
+    }
     var defs = infer_options({ 0: 0 });
     Object.keys(defs).forEach(function(component) {
         var options = { module: false };

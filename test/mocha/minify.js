@@ -19,7 +19,10 @@ describe("minify", function() {
         var options = {
             compress: true,
             mangle: false,
-            output: {},
+            output: {
+                v8: false,
+            },
+            webkit: true,
         };
         var value = JSON.stringify(options);
         var result = UglifyJS.minify("print(6 * 7);", options);
