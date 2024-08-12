@@ -8493,3 +8493,96 @@ issue_5892: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5915_1: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        f = void 0;
+        if (console) {
+            console.log(typeof f);
+            function f() {}
+        }
+    }
+    expect: {
+        f = void 0;
+        if (console) {
+            console.log(typeof f);
+            function f() {}
+        }
+    }
+    expect_stdout: true
+}
+
+issue_5915_2: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        f = void 0;
+        if (console) {
+            function f() {}
+            console.log(typeof f);
+        }
+    }
+    expect: {
+        f = void 0;
+        if (console) {
+            function f() {}
+            console.log(typeof f);
+        }
+    }
+    expect_stdout: true
+}
+
+issue_5915_3: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        f = void 0;
+        function f() {}
+        if (console) {
+            console.log(typeof f);
+        }
+    }
+    expect: {
+        void 0;
+        if (console)
+            console.log("undefined");
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5915_4: {
+    options = {
+        evaluate: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        if (console) {
+            f = void 0;
+            function f() {}
+            console.log(typeof f);
+        }
+    }
+    expect: {
+        if (console) {
+            void 0;
+            console.log("undefined");
+        }
+    }
+    expect_stdout: "undefined"
+}
