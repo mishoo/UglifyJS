@@ -10357,3 +10357,81 @@ issue_5869: {
     }
     expect_stdout: TypeError("Cannot set properties of undefined")
 }
+
+issue_5915_1: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        f = void 0;
+        {
+            console.log(typeof f);
+            function f() {}
+        }
+    }
+    expect: {
+        f = void 0;
+        {
+            console.log(typeof f);
+            function f() {}
+        }
+    }
+    expect_stdout: true
+}
+
+issue_5915_2: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        f = void 0;
+        {
+            function f() {}
+            console.log(typeof f);
+        }
+    }
+    expect: {
+        f = void 0;
+        {
+            function f() {}
+            console.log(typeof f);
+        }
+    }
+    expect_stdout: true
+}
+
+issue_5915_3: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        f = void 0;
+        function f() {}
+        {
+            console.log(typeof f);
+        }
+    }
+    expect: {
+        function f() {}
+        console.log(typeof (f = void 0));
+    }
+    expect_stdout: "undefined"
+}
+
+issue_5915_4: {
+    options = {
+        collapse_vars: true,
+    }
+    input: {
+        {
+            f = void 0;
+            function f() {}
+            console.log(typeof f);
+        }
+    }
+    expect: {
+        function f() {}
+        console.log(typeof (f = void 0));
+    }
+    expect_stdout: "undefined"
+}
