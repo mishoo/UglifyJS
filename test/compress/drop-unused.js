@@ -3870,3 +3870,32 @@ issue_5908_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5918: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        unused: true,
+    }
+    input: {
+        var a;
+        (function(b) {
+            b.p = 42;
+        })(a = function() {
+            arguments;
+        });
+        for (var i in a)
+            console.log("PASS");
+    }
+    expect: {
+        var a;
+        (function(b) {
+            b.p = 42;
+        })(a = function() {
+            arguments;
+        });
+        for (var i in a)
+            console.log("PASS");
+    }
+    expect_stdout: "PASS"
+}
