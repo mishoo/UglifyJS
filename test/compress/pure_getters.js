@@ -1715,3 +1715,39 @@ issue_5856: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5917: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var a;
+        console || (a = function() {})(f);
+        function f() {
+            a.p;
+        }
+        try {
+            f();
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var a;
+        console || (a = function() {})(f);
+        function f() {
+            a.p;
+        }
+        try {
+            f();
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
