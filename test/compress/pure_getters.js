@@ -1716,7 +1716,7 @@ issue_5856: {
     expect_stdout: "PASS"
 }
 
-issue_5917: {
+issue_5917_1: {
     options = {
         pure_getters: "strict",
         reduce_vars: true,
@@ -1741,6 +1741,49 @@ issue_5917: {
         console || (a = function() {})(f);
         function f() {
             a.p;
+        }
+        try {
+            f();
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5917_2: {
+    options = {
+        passes: 2,
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+    }
+    input: {
+        var b;
+        if (!console) {
+            b = function() {};
+            FAIL(f);
+        }
+        function f() {
+            b.p;
+        }
+        try {
+            f();
+            console.log("FAIL");
+        } catch (e) {
+            console.log("PASS");
+        }
+    }
+    expect: {
+        var b;
+        if (!console) {
+            b = function() {};
+            FAIL(f);
+        }
+        function f() {
+            b.p;
         }
         try {
             f();
