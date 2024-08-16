@@ -1285,6 +1285,75 @@ extendscript_2: {
     ]
 }
 
+common_condition_1: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(a, b) {
+            a && console.log("foo");
+            a && b && console.log("bar");
+            a && b || console.log("baz");
+        }
+        f(false, false);
+        f(false, true);
+        f(true, false);
+        f(true, true);
+    }
+    expect: {
+        function f(a, b) {
+            a && (console.log("foo"), b && console.log("bar")),
+            a && b || console.log("baz");
+        }
+        f(false, false),
+        f(false, true),
+        f(true, false),
+        f(true, true);
+    }
+    expect_stdout: [
+        "baz",
+        "baz",
+        "foo",
+        "baz",
+        "foo",
+        "bar",
+    ]
+}
+
+common_condition_2: {
+    options = {
+        conditionals: true,
+        sequences: true,
+    }
+    input: {
+        function f(a, b) {
+            a || console.log("foo");
+            a || b || console.log("bar");
+            a || b && console.log("baz");
+        }
+        f(false, false);
+        f(false, true);
+        f(true, false);
+        f(true, true);
+    }
+    expect: {
+        function f(a, b) {
+            a || (console.log("foo"), b || console.log("bar"), b && console.log("baz"));
+        }
+        f(false, false),
+        f(false, true),
+        f(true, false),
+        f(true, true);
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+        "foo",
+        "baz",
+    ]
+}
+
 issue_1154: {
     options = {
         booleans: true,
