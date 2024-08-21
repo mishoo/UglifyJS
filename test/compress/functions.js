@@ -9076,3 +9076,68 @@ issue_5895_2: {
         "foo",
     ]
 }
+
+issue_5924: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        var a = 42;
+        function f() {
+            return a - 41;
+        }
+        function g() {
+            return f;
+        }
+        var b = f();
+        a--;
+        console.log(b ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = 42;
+        function f() {
+            return a - 41;
+        }
+        function g() {
+            return f;
+        }
+        var b = f();
+        a--;
+        console.log(b ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5925: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        reduce_vars: true,
+    }
+    input: {
+        var a = 42;
+        console.log(function() {
+            function f() {
+                return +a - 41;
+            }
+            var b = f(f);
+            a--;
+            return b;
+        }() ? "PASS" : "FAIL");
+    }
+    expect: {
+        var a = 42;
+        console.log(function() {
+            function f() {
+                return +a - 41;
+            }
+            var b = f(f);
+            a--;
+            return b;
+        }() ? "PASS" : "FAIL");
+    }
+    expect_stdout: "PASS"
+}
