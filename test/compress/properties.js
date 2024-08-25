@@ -1827,3 +1827,27 @@ issue_5682_sub_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5927: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        A = {};
+        while (console.log("PASS"));
+        A.p;
+        A.q = 42;
+        A.q.r = 42;
+    }
+    expect: {
+        A = {};
+        while (console.log("PASS"));
+        A.p;
+        A.q = 42;
+        A.q.r = 42;
+    }
+    expect_stdout: "PASS"
+}
