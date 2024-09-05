@@ -2231,3 +2231,66 @@ issue_5787: {
     }
     expect_stdout: true
 }
+
+issue_5930_1: {
+    options = {
+        merge_vars: true,
+    }
+    input: {
+        console.log(function() {
+            var a;
+            (f = a) && f();
+            {
+                const a = 42;
+                var f;
+            }
+        }());
+    }
+    expect: {
+        console.log(function() {
+            var a;
+            (f = a) && f();
+            {
+                const a = 42;
+                var f;
+            }
+        }());
+    }
+    expect_stdout: true
+}
+
+issue_5930_2: {
+    options = {
+        collapse_vars: true,
+        inline: true,
+        merge_vars: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        (function() {
+            f = function g(a) {
+                a.p;
+            }();
+            f && f();
+            {
+                const a = 42;
+                var b = false;
+                var f;
+            }
+        })();
+    }
+    expect: {
+        "use strict";
+        (function() {
+            var a;
+            (f = void a.p) && f();
+            {
+                const a = 42;
+                var f;
+            }
+        })();
+    }
+    expect_stdout: TypeError("Cannot read properties of undefined")
+    node_version: ">=4"
+}
