@@ -68,6 +68,7 @@ a double dash to prevent input files being used as option arguments:
                                 `debug`  Add debug prefix and suffix.
                                 `domprops`  Mangle property names that overlaps
                                             with DOM properties.
+                                `globals`  Mangle variable access via global object.
                                 `keep_quoted`  Only mangle unquoted properties.
                                 `regex`  Only mangle matched property names.
                                 `reserved`  List of names that should not be mangled.
@@ -292,6 +293,9 @@ var x={o:0,_:1,calc:function(){return this._+this.o}};x.bar_=2,x.o=3,console.log
 
 In order for this to be of any use, we avoid mangling standard JS names by
 default (`--mangle-props builtins` to override).
+
+Specify `--mangle-props globals` to mangle property names of global
+object (e.g. `self.foo`) as global variables.
 
 A default exclusion file is provided in `tools/domprops.json` which should
 cover most standard JS and DOM properties defined in various browsers.  Pass
@@ -901,6 +905,9 @@ UglifyJS.minify(code, { mangle: { toplevel: true } }).code;
 
 - `domprops` (default: `false`) — Use `true` to allow the mangling of properties
   commonly found in Document Object Model. Not recommended to override this setting.
+
+- `globals` (default: `false`) — Use `true` to mangle properties of global object
+  alongside undeclared variables.
 
 - `keep_fargs` (default: `false`) — Use `true` to prevent mangling of function
   arguments.

@@ -837,6 +837,147 @@ accessor_this: {
     expect_stdout: "1 2 2"
 }
 
+ignore_global_property: {
+    mangle = {
+        properties: {
+            globals: false,
+        }
+    }
+    input: {
+        foo = "PASS";
+        global.foo = "FAIL";
+        console.log(foo);
+    }
+    expect: {
+        foo = "PASS";
+        global.o = "FAIL";
+        console.log(foo);
+    }
+}
+
+mangle_global_property_read: {
+    mangle = {
+        properties: {
+            globals: true,
+        }
+    }
+    input: {
+        foo = "PASS";
+        console.log(global.foo);
+    }
+    expect: {
+        o = "PASS";
+        console.log(global.o);
+    }
+    expect_stdout: "PASS"
+}
+
+mangle_global_property_write: {
+    mangle = {
+        properties: {
+            globals: true,
+        }
+    }
+    input: {
+        foo = "FAIL";
+        global.foo = "PASS";
+        console.log(foo);
+    }
+    expect: {
+        o = "FAIL";
+        global.o = "PASS";
+        console.log(o);
+    }
+    expect_stdout: "PASS"
+}
+
+keep_sandboxed_variable: {
+    mangle = {
+        properties: {
+            globals: true,
+        }
+    }
+    options = {
+        toplevel: true,
+    }
+    input: {
+        var foo = "PASS";
+        global.foo = "FAIL";
+        console.log(foo);
+    }
+    expect: {
+        var foo = "PASS";
+        global.o = "FAIL";
+        console.log(foo);
+    }
+    expect_stdout: "PASS"
+}
+
+mangle_global_property_collision_global: {
+    mangle = {
+        properties: {
+            globals: true,
+        }
+    }
+    input: {
+        o = "foo";
+        A = "bar";
+        global.A = "baz";
+        console.log(o, A);
+    }
+    expect: {
+        o = "foo";
+        l = "bar";
+        global.l = "baz";
+        console.log(o, l);
+    }
+    expect_stdout: "foo baz"
+}
+
+mangle_global_property_collision_local: {
+    mangle = {
+        properties: {
+            globals: true,
+        }
+    }
+    input: {
+        var o = "foo";
+        A = "bar";
+        global.A = "baz";
+        console.log(o, A);
+    }
+    expect: {
+        var o = "foo";
+        l = "bar";
+        global.l = "baz";
+        console.log(o, l);
+    }
+    expect_stdout: "foo baz"
+}
+
+mangle_global_property_collision_property: {
+    mangle = {
+        properties: {
+            globals: true,
+        }
+    }
+    input: {
+        var a = global;
+        a.p = "foo";
+        A = "bar";
+        global.A = "baz";
+        console.log(a.p, A);
+    }
+    expect: {
+        var a = global;
+        a.l = "foo";
+        o = "bar";
+        global.o = "baz";
+        console.log(a.l, o);
+    }
+    expect_stdout: "foo baz"
+}
+
 issue_2208_1: {
     options = {
         inline: true,
