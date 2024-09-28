@@ -3416,3 +3416,26 @@ issue_5558: {
     }
     expect_stdout: "100"
 }
+
+issue_5940: {
+    options = {
+        conditionals: true,
+        evaluate: true,
+        sequences: true,
+        side_effects: true,
+        unused: true,
+    }
+    input: {
+        (function f(a) {
+            f && (console, 42) && (f && (a = [])) && console.log("PASS");
+            f = 42;
+        })();
+    }
+    expect: {
+        (function f(a) {
+            f && (console, 42) && (f && []) && console.log("PASS"),
+            f = 42;
+        })();
+    }
+    expect_stdout: "PASS"
+}
