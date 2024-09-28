@@ -862,3 +862,21 @@ issue_5670: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5941: {
+    options = {
+        assignments: true,
+        conditionals: true,
+        dead_code: true,
+    }
+    input: {
+        var a = 1;
+        a = a &&= (a = console) && console.log(typeof a);
+    }
+    expect: {
+        var a = 1;
+        a = (a = a && console) && console.log(typeof a);
+    }
+    expect_stdout: "object"
+    node_version: ">=15"
+}
