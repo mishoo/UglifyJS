@@ -2401,27 +2401,89 @@ mangle_properties: {
     expect: {
         class A {
             static #t = "PASS";
-            static get s() {
+            static get t() {
                 return this.#t;
             }
-            #i(t) {
-                return (this["q"] = t) * this.e;
+            #s(t) {
+                return (this["q"] = t) * this.s;
             }
             set q(t) {
-                this.e = t + 1;
+                this.s = t + 1;
             }
-            e = this.#i(6);
+            s = this.#s(6);
         }
-        console.log(A.s, new A().e);
+        console.log(A.t, new A().s);
     }
     expect_stdout: "PASS 42"
     expect_warnings: [
         "INFO: Preserving reserved property q",
         "INFO: Mapping property #P to #t",
-        "INFO: Mapping property Q to s",
-        "INFO: Mapping property #p to #i",
-        "INFO: Mapping property r to e",
+        "INFO: Mapping property Q to t",
+        "INFO: Mapping property #p to #s",
+        "INFO: Mapping property r to s",
         "INFO: Preserving reserved property log",
+    ]
+    node_version: ">=14.6"
+}
+
+mangle_private_local: {
+    mangle = {
+        properties: {
+            domprops: true,
+        },
+    }
+    input: {
+        class A {
+            p = "foo";
+            #q = "bar";
+            f() {
+                console.log(this.p, this.#q);
+            }
+        }
+        class B {
+            #r = "moo";
+            #g() {
+                return "baz";
+            }
+            h() {
+                console.log(this.#r, this.#g());
+            }
+        }
+        new A().f();
+        new B().h();
+    }
+    expect: {
+        class A {
+            s = "foo";
+            #s = "bar";
+            o() {
+                console.log(this.s, this.#s);
+            }
+        }
+        class B {
+            #s = "moo";
+            #o() {
+                return "baz";
+            }
+            e() {
+                console.log(this.#s, this.#o());
+            }
+        }
+        new A().o();
+        new B().e();
+    }
+    expect_stdout: [
+        "foo bar",
+        "moo baz",
+    ]
+    expect_warnings: [
+        "INFO: Mapping property p to s",
+        "INFO: Mapping property #q to #s",
+        "INFO: Mapping property f to o",
+        "INFO: Preserving reserved property log",
+        "INFO: Mapping property #r to #s",
+        "INFO: Mapping property #g to #o",
+        "INFO: Mapping property h to e",
     ]
     node_version: ">=14.6"
 }
