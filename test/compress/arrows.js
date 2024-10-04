@@ -829,6 +829,144 @@ keep_new_var: {
     node_version: ">=4"
 }
 
+arrowify: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return "foo";
+        }
+        console.log(typeof f());
+    }
+    expect: {
+        console.log(typeof (() => "foo")());
+    }
+    expect_stdout: "string"
+    node_version: ">=4"
+}
+
+no_arrowify: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: false,
+        unused: true,
+    }
+    input: {
+        // may be referenced by prepending code
+        function f() {
+            return "foo";
+        }
+        console.log(typeof f());
+    }
+    expect: {
+        function f() {
+            return "foo";
+        }
+        console.log(typeof f());
+    }
+    expect_stdout: "string"
+}
+
+no_arrowify_new: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {}
+        console.log(typeof new f(f));
+    }
+    expect: {
+        function f() {}
+        console.log(typeof new f(f));
+    }
+    expect_stdout: "object"
+}
+
+arrowify_new: {
+    options = {
+        arrows: true,
+        module: true,
+        passes: 2,
+        reduce_vars: true,
+        side_effects: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            console.log("PASS");
+        }
+        new f(f);
+    }
+    expect: {
+        (() => {
+            console.log("PASS");
+        })();
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
+arrowify_recursive: {
+    options = {
+        arrows: true,
+        inline: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f() {
+            return (() => f)();
+        }
+        console.log(typeof f());
+    }
+    expect: {
+        var f = () => f;
+        console.log(typeof f);
+    }
+    expect_stdout: "function"
+    node_version: ">=4"
+}
+
+arrowify_farg: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        function f(a) {
+            console.log(a);
+        }
+        f("PASS");
+        function g() {}
+        f;
+    }
+    expect: {
+        var f = a => {
+            console.log(a);
+        };
+        f("PASS");
+        f;
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
+
 issue_4388: {
     options = {
         inline: true,
