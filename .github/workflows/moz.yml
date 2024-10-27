@@ -8,7 +8,7 @@ jobs:
     name: fuzzing
     runs-on: ubuntu-latest
     env:
-      NODE: latest
+      NODE: 22
     steps:
       - uses: actions/checkout@v4
       - name: Perform tests
