@@ -2566,3 +2566,35 @@ issue_5787: {
     expect_stdout: "PASS"
     node_version: ">=6"
 }
+
+issue_5950: {
+    options = {
+        conditionals: true,
+        join_vars: true,
+        reduce_vars: true,
+        toplevel: true,
+        unused: true,
+    }
+    input: {
+        "use strict";
+        {
+            let a;
+            if (console.log("PASS")) {
+                var b = function() {
+                    a;
+                }, c = b;
+            }
+        }
+    }
+    expect: {
+        "use strict";
+        {
+            let a;
+            console.log("PASS") && function() {
+                a;
+            };
+        }
+    }
+    expect_stdout: "PASS"
+    node_version: ">=4"
+}
