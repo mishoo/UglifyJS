@@ -3474,3 +3474,40 @@ issue_5350_ie: {
     }
     expect_stdout: "undefined 42"
 }
+
+issue_5958: {
+    options = {
+        dead_code: true,
+        evaluate: true,
+        ie: true,
+        inline: true,
+        loops: true,
+        sequences: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        while (function() {
+            if (a === console.log("PASS")) {
+                var a = function b() {};
+                try {
+                    a++;
+                } catch (b) {
+                    b[a];
+                }
+            }
+        }());
+    }
+    expect: {
+        "use strict";
+        if (a = void 0, a === console.log("PASS")) {
+            var a = function b() {};
+            try {
+                a++;
+            } catch (b) {
+                b[a];
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
