@@ -3729,3 +3729,88 @@ issue_5791: {
     ]
     node_version: ">=8"
 }
+
+issue_5842: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        var a = "FAIL";
+        (async function() {
+            await function() {
+                try {
+                    try {
+                        return console;
+                    } finally {
+                        a = "PASS";
+                    }
+                } catch (e) {}
+                FAIL;
+            }();
+        })();
+        console.log(a);
+    }
+    expect: {
+        var a = "FAIL";
+        (async function() {
+            await function() {
+                try {
+                    try {
+                        return console;
+                    } finally {
+                        a = "PASS";
+                    }
+                } catch (e) {}
+                FAIL;
+            }();
+        })();
+        console.log(a);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=8"
+}
+
+issue_5956: {
+    options = {
+        awaits: true,
+        inline: true,
+    }
+    input: {
+        (async function() {
+            await function() {
+                try {
+                    FAIL;
+                } finally {
+                    try {
+                        return 42;
+                    } finally {
+                        console.log("foo");
+                    }
+                }
+            }();
+        })();
+        console.log("bar");
+    }
+    expect: {
+        (async function() {
+            await function() {
+                try {
+                    FAIL;
+                } finally {
+                    try {
+                        return 42;
+                    } finally {
+                        console.log("foo");
+                    }
+                }
+            }();
+        })();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=8"
+}

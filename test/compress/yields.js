@@ -2302,3 +2302,46 @@ issue_5842: {
     expect_stdout: "PASS"
     node_version: ">=10"
 }
+
+issue_5956: {
+    options = {
+        inline: true,
+    }
+    input: {
+        (async function*() {
+            (function() {
+                try {
+                    FAIL;
+                } finally {
+                    try {
+                        return console;
+                    } finally {
+                        console.log("foo");
+                    }
+                }
+            })();
+        })().next();
+        console.log("bar");
+    }
+    expect: {
+        (async function*() {
+            (function() {
+                try {
+                    FAIL;
+                } finally {
+                    try {
+                        return console;
+                    } finally {
+                        console.log("foo");
+                    }
+                }
+            })();
+        })().next();
+        console.log("bar");
+    }
+    expect_stdout: [
+        "foo",
+        "bar",
+    ]
+    node_version: ">=10"
+}
