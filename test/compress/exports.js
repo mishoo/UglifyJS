@@ -468,6 +468,53 @@ instanceof_default_function: {
     }
 }
 
+no_arrowify_declaration: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        export function f() {}
+    }
+    expect: {
+        export function f() {}
+    }
+}
+
+no_arrowify_default: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        export default function f() {}
+    }
+    expect: {
+        export default function f() {}
+    }
+}
+
+no_arrowify_reference: {
+    options = {
+        arrows: true,
+        module: true,
+        reduce_vars: true,
+        toplevel: true,
+    }
+    input: {
+        function f() {}
+        export { f };
+    }
+    expect: {
+        function f() {}
+        export { f };
+    }
+}
+
 issue_4742_join_vars_1: {
     options = {
         join_vars: true,
