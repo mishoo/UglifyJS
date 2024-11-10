@@ -3479,6 +3479,43 @@ issue_5958: {
     options = {
         dead_code: true,
         evaluate: true,
+        ie: false,
+        inline: true,
+        loops: true,
+        sequences: true,
+        toplevel: true,
+    }
+    input: {
+        "use strict";
+        while (function() {
+            if (a === console.log("PASS")) {
+                var a = function b() {};
+                try {
+                    a++;
+                } catch (b) {
+                    b[a];
+                }
+            }
+        }());
+    }
+    expect: {
+        "use strict";
+        if (a = void 0, a === console.log("PASS")) {
+            var a = function b() {};
+            try {
+                a++;
+            } catch (b) {
+                b[a];
+            }
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5958_ie: {
+    options = {
+        dead_code: true,
+        evaluate: true,
         ie: true,
         inline: true,
         loops: true,
@@ -3510,4 +3547,76 @@ issue_5958: {
         }
     }
     expect_stdout: "PASS"
+}
+
+issue_5961: {
+    options = {
+        ie: false,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a in [ 1, 2 ]) {
+            (function() {
+                try {
+                    (function f() {});
+                } finally {
+                    var b = f, f = "FAIL";
+                    console.log(b || "PASS");
+                }
+            })();
+        }
+    }
+    expect: {
+        for (var a in [ 1, 2 ]) {
+            b = void 0;
+            f = void 0;
+            try {
+                (function f() {});
+            } finally {
+                var b = f, f = "FAIL";
+                console.log(b || "PASS");
+            }
+        }
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
+}
+
+issue_5961_ie: {
+    options = {
+        ie: true,
+        inline: true,
+        toplevel: true,
+    }
+    input: {
+        for (var a in [ 1, 2 ]) {
+            (function() {
+                try {
+                    (function f() {});
+                } finally {
+                    var b = f, f = "FAIL";
+                    console.log(b || "PASS");
+                }
+            })();
+        }
+    }
+    expect: {
+        for (var a in [ 1, 2 ]) {
+            b = void 0;
+            f = void 0;
+            try {
+                (function f() {});
+            } finally {
+                var b = f, f = "FAIL";
+                console.log(b || "PASS");
+            }
+        }
+    }
+    expect_stdout: [
+        "PASS",
+        "PASS",
+    ]
 }
