@@ -2046,3 +2046,125 @@ issue_5949_2: {
     }
     expect_stdout: "PASS"
 }
+
+issue_5963_dot: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        var a = "PASS", b;
+        try {
+            b.p = (b.q = null, a = "FAIL 1", !0);
+            console.log("FAIL 2")
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = "PASS", b;
+        try {
+            b.p = (b.q = null, a = "FAIL 1", !0);
+            console.log("FAIL 2")
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5963_sub: {
+    options = {
+        collapse_vars: true,
+        evaluate: true,
+        pure_getters: "strict",
+        reduce_vars: true,
+    }
+    input: {
+        var a = "PASS", b;
+        try {
+            b[42] = (b.q = null, a = "FAIL 1", !0);
+            console.log("FAIL 2")
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect: {
+        var a = "PASS", b;
+        try {
+            b[42] = (b.q = null, a = "FAIL 1", !0);
+            console.log("FAIL 2")
+        } catch (e) {
+            console.log(a);
+        }
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5963_assign: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = Object.create(null);
+        a.PASS = 42;
+        a.FAIL;
+        for (var p in a)
+            console.log(p);
+    }
+    expect: {
+        var a = Object.create(null);
+        a.PASS = 42;
+        for (var p in a)
+            console.log(p);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5963_compound_assign: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = Object.create(null);
+        a.PASS ^= 42;
+        a.FAIL;
+        for (var p in a)
+            console.log(p);
+    }
+    expect: {
+        var a = Object.create(null);
+        a.PASS ^= 42;
+        for (var p in a)
+            console.log(p);
+    }
+    expect_stdout: "PASS"
+}
+
+issue_5963_unary: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = Object.create(null);
+        a.PASS++;
+        a.FAIL;
+        for (var p in a)
+            console.log(p);
+    }
+    expect: {
+        var a = Object.create(null);
+        a.PASS++;
+        for (var p in a)
+            console.log(p);
+    }
+    expect_stdout: "PASS"
+}
