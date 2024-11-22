@@ -965,6 +965,20 @@ function_name_mangle: {
     expect_stdout: "function"
 }
 
+function_name_mangle_from_preferred_comment: {
+    options = {
+        keep_fargs: false,
+    }
+    mangle = {}
+    input: {
+        (function(one /*#mangleTo:W*/, two) {
+            console.log(one, two);
+        })(1, 2);
+    }
+    expect_exact: "(function(W,o){console.log(W,o)})(1,2);"
+    expect_stdout: "1 2"
+}
+
 function_name_mangle_ie8: {
     options = {
         keep_fargs: false,

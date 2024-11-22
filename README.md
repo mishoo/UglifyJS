@@ -1036,6 +1036,15 @@ discarded by the compressor as not referenced.
 The safest comments where to place copyright information (or other info that
 needs to be kept in the output) are comments attached to toplevel nodes.
 
+### Specify preferred mangled name in comment annotations
+
+`/*@mangleTo:X*/` or `/*@mangleTo:X*/` comments allow you to choose the name.
+
+```javascript
+(function(one /*#mangleTo:H*/, two /*#mangleTo:i*/) { /*..*/ })(1, 2);
+// results (function(H,i){ /*..*/ )(1,2);
+```
+
 ### The `unsafe` `compress` option
 
 It enables some transformations that *might* break code logic in certain
