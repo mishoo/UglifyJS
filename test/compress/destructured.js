@@ -4289,3 +4289,49 @@ issue_5899_2: {
     ]
     node_version: ">=6"
 }
+
+issue_5963_array: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = Object.create(null);
+        [ a.PASS ] = [ 42 ];
+        a.FAIL;
+        for (var p in a)
+            console.log(p);
+    }
+    expect: {
+        var a = Object.create(null);
+        [ a.PASS ] = [ 42 ];
+        for (var p in a)
+            console.log(p);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
+
+issue_5963_object: {
+    options = {
+        pure_getters: "strict",
+        reduce_vars: true,
+        side_effects: true,
+    }
+    input: {
+        var a = Object.create(null);
+        ({ p: a.PASS } = { p: 42 });
+        a.FAIL;
+        for (var p in a)
+            console.log(p);
+    }
+    expect: {
+        var a = Object.create(null);
+        ({ p: a.PASS } = { p: 42 });
+        for (var p in a)
+            console.log(p);
+    }
+    expect_stdout: "PASS"
+    node_version: ">=6"
+}
