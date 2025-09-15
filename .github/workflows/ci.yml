@@ -3,6 +3,8 @@ on:
   pull_request:
   push:
     branches: [ master ]
+permissions:
+  contents: read
 jobs:
   test:
     strategy:
@@ -12,6 +14,8 @@ jobs:
         script: [ compress, mocha, release/benchmark, release/jetstream ]
     name: ${{ matrix.node }} ${{ matrix.os }} ${{ matrix.script }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     env:
       NODE: ${{ matrix.node }}
       TYPE: ${{ matrix.script }}
