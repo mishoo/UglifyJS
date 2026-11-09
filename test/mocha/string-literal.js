@@ -8,8 +8,6 @@ describe("String literals", function() {
             "'\n'",
             "'\r'",
             '"\r\n"',
-            "'\u2028'",
-            '"\u2029"',
         ].forEach(function(input) {
             assert.throws(function() {
                 UglifyJS.parse(input);
@@ -17,6 +15,17 @@ describe("String literals", function() {
                 return e instanceof UglifyJS.JS_Parse_Error
                     && e.message === "Unterminated string constant";
             });
+        });
+    });
+    it("Should allow line and paragraph separators in string literals", function() {
+        [
+            "\u2028",
+            "\u2029",
+        ].forEach(function(separator) {
+            var code = 'console.log("a' + separator + 'b");';
+            var result = UglifyJS.minify(code);
+            if (result.error) throw result.error;
+            assert.strictEqual(run_code(result.code), run_code(code));
         });
     });
     it("Should handle line continuation correctly", function() {
